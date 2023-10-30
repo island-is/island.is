@@ -19,11 +19,10 @@ class CreateApplicationApplicantDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Middle name',
     example: 'Þór',
   })
-  @ApiPropertyOptional()
   middleName?: string
 
   @IsString()
@@ -176,12 +175,11 @@ export class CreateApplicationDto {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     description:
       'Preferred languange, should be language user used when filling out application in application system',
     example: 'IS',
   })
-  @ApiPropertyOptional()
   preferredLanguage?: string
 
   @IsArray()

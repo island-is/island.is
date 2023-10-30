@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Application } from './model'
-import { University } from '../university/model'
+import { Application } from './model/application'
+import { University } from '../university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import {
   ApplicationStatus,
   UniversityNationalIds,
-} from '@island.is/university-gateway-lib'
+} from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
 import { Op } from 'sequelize'
 
@@ -27,38 +27,25 @@ class InternalApplicationService {
   ) {}
 
   async updateApplicationStatus(): Promise<void> {
-    try {
-      logger.info('Updating application statuses for Reykjavik University')
+    Promise.allSettled([
       await this.doUpdateApplicationStatusForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         (applicationExternalId: string) =>
           this.reykjavikUniversityClient.getApplicationStatus(
             applicationExternalId,
           ),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update application statuses for Reykjavik University, reason:',
-        e,
-      )
-    }
-
-    // TODO need to perform for all Uglu universities
-    try {
-      logger.info('Updating application statuses for University of Iceland')
+      ),
+      // TODO need to perform for all Uglu universities
       await this.doUpdateApplicationStatusForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
         (applicationExternalId: string) =>
           this.universityOfIcelandClient.getApplicationStatus(
             applicationExternalId,
           ),
-      )
-    } catch (e) {
-      logger.error(
-        'Failed to update application statuses for University of Iceland, reason:',
-        e,
-      )
-    }
+      ),
+    ]).catch((e) => {
+      logger.error('Failed to update application statuses, reason:', e)
+    })
   }
 
   private async doUpdateApplicationStatusForUniversity(

@@ -1,4 +1,5 @@
 export * from './lib/consts/universityNationalIds'
+export * from './lib/model/application'
 export * from './lib/model/course'
 export * from './lib/model/program'
 export * from './lib/model/programExtraApplicationField'

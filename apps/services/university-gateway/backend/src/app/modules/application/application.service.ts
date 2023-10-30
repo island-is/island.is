@@ -12,9 +12,8 @@ import {
   IApplication,
   UniversityNationalIds,
 } from '@island.is/university-gateway'
-import { logger } from '@island.is/logging'
 import { University } from '../university'
-import { ProgramTable } from '../program'
+import { ProgramModeOfDelivery, ProgramTable } from '../program'
 
 @Injectable()
 export class ApplicationService {
@@ -29,6 +28,9 @@ export class ApplicationService {
     @InjectModel(ProgramTable)
     private programModel: typeof ProgramTable,
 
+    @InjectModel(ProgramModeOfDelivery)
+    private programModeOfDeliveryModel: typeof ProgramModeOfDelivery,
+
     @InjectModel(University)
     private universityModel: typeof University,
   ) {}
@@ -40,9 +42,9 @@ export class ApplicationService {
     })
 
     if (!application) {
-      const errorMsg = `Application with id ${id} and for user with national id ${user.nationalId} not found`
-      logger.error(`Failed to get application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `Application with id ${id} and for user with national id ${user.nationalId} not found`,
+      )
     }
 
     return { data: application }
@@ -53,28 +55,45 @@ export class ApplicationService {
     user: User,
   ): Promise<Application> {
     // Get university national id
-    const university = await this.universityModel.findOne({
-      where: { id: applicationDto.universityId },
-    })
+    const university = await this.universityModel.findByPk(
+      applicationDto.universityId,
+    )
     if (!university) {
-      const errorMsg = `University with id ${applicationDto.universityId} not found in DB`
-      logger.error(`Failed to create application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `University with id ${applicationDto.universityId} not found in DB`,
+      )
     }
 
+    // Get program info
     const program = await this.programModel.findOne({
       where: { id: applicationDto.programId, universityId: university.id },
     })
     if (!program) {
-      const errorMsg = `Program with id ${applicationDto.programId} for university with national id ${university.nationalId} not found`
-      logger.error(`Failed to create application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `Program with id ${applicationDto.programId} for university with national id ${university.nationalId} not found`,
+      )
+    }
+
+    const programModeOfDelivery = await this.programModeOfDeliveryModel.findOne(
+      {
+        where: {
+          programId: program.id,
+          modeOfDelivery: applicationDto.modeOfDelivery,
+        },
+      },
+    )
+    if (!programModeOfDelivery) {
+      throw new Error(
+        `Program mode of delivery with program id ${
+          program.id
+        } and mode of delivery ${applicationDto.modeOfDelivery.toString()} not found`,
+      )
     }
 
     // Wrap answers in obj that can be sent to libs/clients for universities
     const applicationObj: IApplication = {
       programExternalId: program.externalId,
-      modeOfDelivery: applicationDto.modeOfDelivery,
+      modeOfDelivery: programModeOfDelivery.modeOfDelivery,
       startingSemesterYear: program.startingSemesterYear,
       startingSemesterSeason: program.startingSemesterSeason,
       applicant: {
@@ -104,7 +123,7 @@ export class ApplicationService {
         nationalId: user.nationalId,
         universityId: university.id,
         programId: program.id,
-        modeOfDeliveryId: applicationObj.modeOfDelivery,
+        modeOfDeliveryId: programModeOfDelivery.id,
         status: ApplicationStatus.IN_REVIEW,
       })
     ).id
@@ -114,9 +133,9 @@ export class ApplicationService {
       try {
         await this.reykjavikUniversityClient.createApplication(applicationObj)
       } catch (e) {
-        const errorMsg = `Failed to create application in Reykjavik University DB`
-        logger.error(`Failed to create application, reason:`, errorMsg, e)
-        throw new Error(errorMsg)
+        throw new Error(
+          `Failed to create application in Reykjavik University DB`,
+        )
       }
     } else if (
       university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
@@ -125,9 +144,9 @@ export class ApplicationService {
       try {
         await this.universityOfIcelandClient.createApplication(applicationObj)
       } catch (e) {
-        const errorMsg = `Failed to create application in University of Iceland DB`
-        logger.error(`Failed to create application, reason:`, errorMsg, e)
-        throw new Error(errorMsg)
+        throw new Error(
+          `Failed to create application in University of Iceland DB`,
+        )
       }
     }
 
@@ -136,9 +155,9 @@ export class ApplicationService {
       where: { id: applicationId, nationalId: user.nationalId },
     })
     if (!application) {
-      const errorMsg = `Application with id ${applicationId} for user with national id ${user.nationalId} not found`
-      logger.error(`Failed to create application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,
+      )
     }
     return application
   }
@@ -154,19 +173,19 @@ export class ApplicationService {
       where: { id: applicationId, nationalId: user.nationalId },
     })
     if (!application) {
-      const errorMsg = `Application with id ${applicationId} for user with national id ${user.nationalId} not found`
-      logger.error(`Failed to update application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,
+      )
     }
 
     // Get university national id
-    const university = await this.universityModel.findOne({
-      where: { id: application.universityId },
-    })
+    const university = await this.universityModel.findByPk(
+      application.universityId,
+    )
     if (!university) {
-      const errorMsg = `University with id ${application.universityId} not found`
-      logger.error(`Failed to update application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `University with id ${application.universityId} not found`,
+      )
     }
 
     // Update the application status in our DB
@@ -187,9 +206,9 @@ export class ApplicationService {
           applicationDto.status,
         )
       } catch (e) {
-        const errorMsg = `Failed to update application status in Reykjavik University DB`
-        logger.error(`Failed to update application, reason:`, errorMsg, e)
-        throw new Error(errorMsg)
+        throw new Error(
+          `Failed to update application status in Reykjavik University DB`,
+        )
       }
     } else if (
       university.nationalId === UniversityNationalIds.UNIVERSITY_OF_ICELAND
@@ -201,9 +220,9 @@ export class ApplicationService {
           applicationDto.status,
         )
       } catch (e) {
-        const errorMsg = `Failed to update application status inUniversity of Iceland DB`
-        logger.error(`Failed to update application, reason:`, errorMsg, e)
-        throw new Error(errorMsg)
+        throw new Error(
+          `Failed to update application status inUniversity of Iceland DB`,
+        )
       }
     }
 
@@ -212,9 +231,9 @@ export class ApplicationService {
       where: { id: applicationId, nationalId: user.nationalId },
     })
     if (!updatedApplication) {
-      const errorMsg = `Application with id ${applicationId} for user with national id ${user.nationalId} not found`
-      logger.error(`Failed to update application, reason:`, errorMsg)
-      throw new Error(errorMsg)
+      throw new Error(
+        `Application with id ${applicationId} for user with national id ${user.nationalId} not found`,
+      )
     }
     return updatedApplication
   }

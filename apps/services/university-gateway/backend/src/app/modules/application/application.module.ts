@@ -5,14 +5,19 @@ import { ApplicationService } from './application.service'
 import { InternalApplicationController } from './internalApplication.controller'
 import { InternalApplicationService } from './internalApplication.service'
 import { Application } from './model/application'
-import { ProgramTable } from '../program'
+import { ProgramModeOfDelivery, ProgramTable } from '../program'
 import { University } from '../university'
 import { ReykjavikUniversityApplicationClientModule } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientModule } from '@island.is/clients/university-application/university-of-iceland'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Application, ProgramTable, University]),
+    SequelizeModule.forFeature([
+      Application,
+      ProgramModeOfDelivery,
+      ProgramTable,
+      University,
+    ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
   ],

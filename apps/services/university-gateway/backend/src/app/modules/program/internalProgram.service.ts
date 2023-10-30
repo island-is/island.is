@@ -4,13 +4,13 @@ import { Tag } from './model/tag'
 import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
+import { ProgramMinor } from './model/programMinor'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { University } from '../university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
 import { logger } from '@island.is/logging'
-import { ProgramMinor } from './model'
 
 @Injectable()
 export class InternalProgramService {
