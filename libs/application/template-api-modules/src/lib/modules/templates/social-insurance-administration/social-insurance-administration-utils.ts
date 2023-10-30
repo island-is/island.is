@@ -54,13 +54,13 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     paymentInfo: {
-      bank: bank,
+      bank: '',
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
       spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
       personalAllowanceUsage:
         YES === personalAllowance ? +personalAllowanceUsage : 0,
-      taxLevel: taxLevel,
+      taxLevel: +taxLevel,
     },
     applicantInfo: {
       email: applicantEmail,

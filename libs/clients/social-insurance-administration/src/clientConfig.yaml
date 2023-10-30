@@ -227,7 +227,7 @@ components:
           type: number
           format: float
         taxLevel:
-          type: string
+          type: number
     ApplicantInfo:
       type: object
       additionalProperties: false
