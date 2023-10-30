@@ -311,8 +311,10 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) =>
-        JSON.parse(variables?.data?.getNamespace?.fields || '[]'),
+      .then<ApplicationsTexts>((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {} satisfies ApplicationsTexts,
       ),
   ])
 
