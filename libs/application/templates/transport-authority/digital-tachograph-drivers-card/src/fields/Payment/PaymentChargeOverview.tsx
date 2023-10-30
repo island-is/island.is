@@ -4,16 +4,13 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodes } from '../../utils'
-import { DigitalTachographDriversCard } from '../../lib/dataSchema'
 
 export const PaymentChargeOverview: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes(
-    application.answers as DigitalTachographDriversCard,
-  )
+  const chargeItemCodes = getChargeItemCodes(application)
   const { externalData } = application
   const allItems = externalData?.payment?.data as [
     {

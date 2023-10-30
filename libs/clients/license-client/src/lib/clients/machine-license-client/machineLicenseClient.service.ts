@@ -36,6 +36,8 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
   ): LicensePkPassAvailability {
