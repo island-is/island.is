@@ -13,3 +13,13 @@ export const pdfRow = style({
 })
 
 export const cursor = style({ cursor: 'pointer' })
+
+export const fileNameContainer = style({
+  flexBasis: '50%',
+  marginRight: theme.spacing[2],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      flexBasis: '70%',
+    },
+  },
+})
