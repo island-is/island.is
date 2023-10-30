@@ -90,7 +90,7 @@ export class UserProfileService {
       this.formatPhoneNumber(userProfile.mobilePhoneNumber)
 
     return await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, transaction] as const
+      const commonArgs = [nationalId, { transaction, maxRetries: 3 }] as const
 
       const promises = await Promise.all(
         [

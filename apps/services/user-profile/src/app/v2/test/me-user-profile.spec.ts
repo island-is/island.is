@@ -331,7 +331,7 @@ describe('MeUserProfile', () => {
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
         statusCode: 400,
-        message: 'Email verification with hash 000 does not exist',
+        message: 'Email code is not a match. 3 tries remaining.',
       })
 
       // Assert Db records
@@ -354,7 +354,7 @@ describe('MeUserProfile', () => {
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
         statusCode: 400,
-        message: 'SMS code is not a match. 5 tries remaining.',
+        message: 'SMS code is not a match. 3 tries remaining.',
       })
 
       // Assert Db records

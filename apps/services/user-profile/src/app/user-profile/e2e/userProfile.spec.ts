@@ -492,7 +492,8 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
         Object {
           "confirmed": false,
-          "message": "Email verification with hash ${INCORRECT_HASH} does not exist",
+          "message": "Email code is not a match. 4 tries remaining.",
+          "remainingAttempts": 4,
         }
       `)
     })

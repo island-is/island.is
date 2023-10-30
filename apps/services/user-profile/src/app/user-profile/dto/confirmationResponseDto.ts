@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class ConfirmationDtoResponse {
   @ApiProperty()
@@ -6,4 +6,7 @@ export class ConfirmationDtoResponse {
 
   @ApiProperty()
   readonly message!: string
+
+  @ApiPropertyOptional()
+  remainingAttempts?: number
 }
