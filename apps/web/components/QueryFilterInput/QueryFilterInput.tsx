@@ -1,8 +1,9 @@
-import { useContext, useState, useEffect, type FC } from 'react'
-import { FilterInput, type FilterInputProps } from '@island.is/island-ui/core'
+import { type FC, type MouseEventHandler, useContext, useEffect, useState } from 'react'
 import { useQueryState } from 'next-usequerystate'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
+import { FilterInput, type FilterInputProps } from '@island.is/island-ui/core'
 import { GlobalContext } from '@island.is/web/context'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 
 type QueryFilterInputProps = {
   shallow?: boolean
@@ -16,8 +17,6 @@ const QueryFilterInput: FC<QueryFilterInputProps> = (props) => {
   const [value, setValue] = useState<string>('')
 
   const handleKeyDown: FilterInputProps['onKeyDown'] = (event) => {
-    const { value } = event.currentTarget
-
     if (event.key === 'Enter') {
       event.currentTarget.blur()
       setQuery(value || null)
@@ -35,6 +34,10 @@ const QueryFilterInput: FC<QueryFilterInputProps> = (props) => {
       value={value}
       onChange={setValue}
       onKeyDown={handleKeyDown}
+      button={{
+        onClick: () =>  setQuery(value || null),
+        label: 'Search',
+      }}
     />
   )
 }
