@@ -1,10 +1,7 @@
 import React from 'react'
 
 import { Box, FocusableBox, Stack, Text } from '@island.is/island-ui/core'
-import {
-  EventLocation as EventLocationSchema,
-  Image,
-} from '@island.is/web/graphql/schema'
+import { EventLocation as EventLocationSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -15,7 +12,7 @@ import * as styles from './LatestEventSliceCard.css'
 
 interface EventCardProps {
   title: string
-  image?: Partial<Image>
+  image?: string
   namespace: Record<string, string>
   parameters?: Array<string>
   startTime: string
@@ -49,7 +46,7 @@ export const LatestEventSliceCard: React.FC<
     >
       <Box>
         <Box marginBottom={2} width="full">
-          <img src={image?.url} alt={image?.title} className={styles.image} />
+          <img src={image} alt="" className={styles.image} />
         </Box>
         <Box>
           <Box

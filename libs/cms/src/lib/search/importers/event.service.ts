@@ -20,7 +20,7 @@ export class EventSyncService implements CmsSyncProvider<IEvent> {
         !!entry.fields.title &&
         !!entry.fields.startDate &&
         !!entry.fields.slug &&
-        !!entry.fields.image,
+        !!entry.fields.thumbnailImage,
     )
   }
 

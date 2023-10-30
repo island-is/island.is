@@ -72,7 +72,7 @@ export const EventList = ({
                   namespace={namespace}
                   title={eventItem.title}
                   location={eventItem.location}
-                  image={eventItem.image}
+                  image={eventItem.thumbnailImage}
                   startTime={eventItem.time?.startTime ?? ''}
                   endTime={eventItem.time?.endTime ?? ''}
                   titleAs="h2"
@@ -96,10 +96,7 @@ export const EventList = ({
                   title={eventItem.title}
                   location={eventItem.location}
                   namespace={namespace}
-                  image={{
-                    url: eventItem.image?.url || '',
-                    title: eventItem.image?.title || '',
-                  }}
+                  image={eventItem.thumbnailImage?.url || ''}
                   startTime={eventItem.time?.startTime ?? ''}
                   endTime={eventItem.time?.endTime ?? ''}
                   href={eventHref}

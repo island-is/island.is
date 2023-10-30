@@ -67,7 +67,10 @@ export class Event {
   video?: EmbeddedVideo | null
 
   @CacheField(() => Image, { nullable: true })
-  image!: Image | null
+  thumbnailImage?: Image | null
+
+  @CacheField(() => Image, { nullable: true })
+  contentImage?: Image | null
 
   @Field(() => Boolean, { nullable: true })
   fullWidthImageInContent?: boolean
@@ -105,7 +108,10 @@ export const mapEvent = ({ sys, fields }: IEvent): SystemMetadata<Event> => {
       ? mapDocument(fields.content, sys.id + ':content')
       : [],
     video: fields.video ? mapEmbeddedVideo(fields.video) : null,
-    image: fields.image ? mapImage(fields.image) : null,
+    thumbnailImage: fields.thumbnailImage
+      ? mapImage(fields.thumbnailImage)
+      : null,
+    contentImage: fields.contentImage ? mapImage(fields.contentImage) : null,
     slug: fields.slug ?? '',
     featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
     fullWidthImageInContent: fields.fullWidthImageInContent ?? true,

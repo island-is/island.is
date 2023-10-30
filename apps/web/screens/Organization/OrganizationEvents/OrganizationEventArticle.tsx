@@ -9,7 +9,6 @@ import {
   GridColumn,
   GridRow,
   Icon,
-  Inline,
   ResponsiveSpace,
   Stack,
   Text,
@@ -55,8 +54,9 @@ const EventItemImage = ({
 }: {
   eventItem: EventModel
   floatRight?: boolean
-}) =>
-  eventItem?.image && (
+}) => {
+  if (!eventItem?.contentImage) return null
+  return (
     <Box
       paddingY={2}
       className={cn({
@@ -64,20 +64,22 @@ const EventItemImage = ({
       })}
     >
       <Image
-        {...eventItem.image}
+        {...eventItem.contentImage}
         url={
-          eventItem.image?.url
-            ? eventItem.image?.url + '?w=774&fm=webp&q=80'
+          eventItem.contentImage?.url
+            ? eventItem.contentImage?.url + '?w=774&fm=webp&q=80'
             : ''
         }
         thumbnail={
-          eventItem.image?.url
-            ? eventItem.image?.url + '?w=50&fm=webp&q=80'
+          eventItem.contentImage?.url
+            ? eventItem.contentImage?.url + '?w=50&fm=webp&q=80'
             : ''
         }
       />
     </Box>
   )
+}
+
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
   event: EventModel
@@ -129,8 +131,9 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
     },
   ]
 
-  const socialImage = event.featuredImage ?? event.image
-
+  const socialImage =
+    event.featuredImage ?? event.contentImage ?? event.thumbnailImage
+  console.log(event)
   return (
     <>
       <OrganizationWrapper
@@ -216,19 +219,19 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
               </Stack>
             </Box>
           </GridColumn>
-          {!isSmall && !event.video?.url && event.image && (
+          {!isSmall && !event.video?.url && event.contentImage && (
             <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
               <EventItemImage eventItem={event} floatRight={false} />
             </GridColumn>
           )}
         </GridRow>
-        {isSmall && !event.video?.url && event.image && (
+        {isSmall && !event.video?.url && event.contentImage && (
           <GridColumn paddingBottom={3}>
             <EventItemImage eventItem={event} floatRight={false} />
           </GridColumn>
         )}
 
-        {!isSmall && event.video?.url && event.image && (
+        {!isSmall && event.video?.url && event.contentImage && (
           <GridColumn>
             <EventItemImage eventItem={event} />
           </GridColumn>
@@ -252,7 +255,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
           )}
         </Text>
 
-        {isSmall && event.video?.url && event.image && (
+        {isSmall && event.video?.url && event.contentImage && (
           <GridColumn paddingTop={3} paddingBottom={3}>
             <EventItemImage eventItem={event} floatRight={false} />
           </GridColumn>

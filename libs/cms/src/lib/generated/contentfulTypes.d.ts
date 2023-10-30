@@ -163,7 +163,7 @@ export interface IArticleFields {
   category: IArticleCategory
 
   /** Group (Main) */
-  group?: IArticleGroup | undefined
+  group: IArticleGroup
 
   /** Subgroup (Main) */
   subgroup?: IArticleSubgroup | undefined
@@ -720,11 +720,14 @@ export interface IEventFields {
   /** Content */
   content?: Document | undefined
 
-  /** video */
+  /** Video */
   video?: IEmbeddedVideo | undefined
 
-  /** Image */
-  image: Asset
+  /** Thumbnail Image */
+  thumbnailImage: Asset
+
+  /** Content Image */
+  contentImage?: Asset | undefined
 
   /** Full Width Image In Content */
   fullWidthImageInContent?: boolean | undefined
@@ -2891,6 +2894,7 @@ export interface IProjectPageFields {
     | 'ukraine'
     | 'opinbernyskopun'
     | 'gagnasidur-fiskistofu'
+    | 'directorate-of-health'
 
   /** Sidebar */
   sidebar: boolean

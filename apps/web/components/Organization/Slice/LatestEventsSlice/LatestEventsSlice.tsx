@@ -71,7 +71,14 @@ export const LatestEventsSlice = ({
             .slice(0, 3)
             .map(
               (
-                { title, image, slug: eventSlug, startDate, time, location },
+                {
+                  title,
+                  thumbnailImage,
+                  slug: eventSlug,
+                  startDate,
+                  time,
+                  location,
+                },
                 index,
               ) => (
                 <LatestEventSliceCard
@@ -85,10 +92,7 @@ export const LatestEventsSlice = ({
                   date={startDate}
                   location={location}
                   namespace={namespace}
-                  image={{
-                    url: image?.url || '',
-                    title: image?.title || '',
-                  }}
+                  image={thumbnailImage?.url || ''}
                 />
               ),
             )}

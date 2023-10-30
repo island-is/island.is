@@ -727,7 +727,7 @@ export const slices = gql`
         floor
         postalCode
       }
-      image {
+      thumbnailImage {
         url
         title
         width
