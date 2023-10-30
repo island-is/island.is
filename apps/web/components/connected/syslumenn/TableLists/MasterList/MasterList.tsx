@@ -50,6 +50,15 @@ const MasterList = ({ slice }: MasterListProps) => {
   const [searchTerms, _setSearchTerms] = useState([] as string[])
   const setSearchString = (searchString: string) =>
     _setSearchTerms(getNormalizedSearchTerms(searchString))
+  const [
+    availableLicenceProfessionOptions,
+    setAvailableLicenceProfessionOptions,
+  ] = useState<{ label: string; value: string }[]>([])
+
+  const [filterLicenceProfession, setFilterLicenceProfession] = useState<{
+    label: string
+    value: string
+  } | null>(null)
 
   const onSearch = (searchString: string) => {
     setCurrentPageNumber(1)
@@ -63,6 +72,23 @@ const MasterList = ({ slice }: MasterListProps) => {
       ]
       setLicences(fetchedMasterLicences.sort(sortAlpha('name')))
       setListState('loaded')
+      const options = [
+        allLicenceProfessionOption,
+        ...Array.from(
+          new Set<string>(
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            fetchedMasterLicences.map((x) => x.profession),
+          ).values(),
+        ),
+      ]
+        .map((x) => ({
+          label: x,
+          value: x,
+        }))
+        .sort(sortAlpha('label'))
+      setAvailableLicenceProfessionOptions(options)
+      setFilterLicenceProfession(options?.[0])
     },
     onError: () => {
       setListState('error')
@@ -82,7 +108,9 @@ const MasterList = ({ slice }: MasterListProps) => {
           dataRows.push([
             licence.name, // Nafn
             licence.profession, // Iðngrein
-            format(new Date(licence.dateOfPublication), 'yyyy'), // Útgáfuár
+            licence.dateOfPublication // Útgáfuár
+              ? format(new Date(licence.dateOfPublication), 'yyyy')
+              : '',
           ])
         }
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -97,24 +125,14 @@ const MasterList = ({ slice }: MasterListProps) => {
   const allLicenceProfessionOption = n(
     'filterLicenceProfessionAll',
     'Allar tegundir',
-  )
-  const avaibleLicenceProfessionOptions = [
-    allLicenceProfessionOption,
-    ...Array.from(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      new Set<string>(licences.map((x) => x.profession)).values(),
-    ),
-  ]
-  const [filterLicenceProfession, setFilterLicenceProfession] =
-    useState<string>(avaibleLicenceProfessionOptions[0])
+  ) as string
 
   // Filter
   const filteredMasterLicences = getSortedAndFilteredList(
     licences.filter((licence) =>
-      filterLicenceProfession === allLicenceProfessionOption
+      filterLicenceProfession?.value === allLicenceProfessionOption
         ? true
-        : licence.profession === filterLicenceProfession,
+        : licence.profession === filterLicenceProfession?.value,
     ),
     searchTerms,
     SEARCH_KEYS,
@@ -177,21 +195,13 @@ const MasterList = ({ slice }: MasterListProps) => {
                     'Iðngrein',
                   )}
                   name="licenceProfessionSelect"
-                  options={avaibleLicenceProfessionOptions.map((x) => ({
-                    label: x,
-                    value: x,
-                  }))}
-                  value={avaibleLicenceProfessionOptions
-                    .map((x) => ({
-                      label: x,
-                      value: x,
-                    }))
-                    .find((x) => x.value === filterLicenceProfession)}
+                  options={availableLicenceProfessionOptions}
+                  value={filterLicenceProfession}
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
-                  onChange={({ value }: Option) => {
+                  onChange={(option: Option) => {
                     setCurrentPageNumber(1)
-                    setFilterLicenceProfession(String(value))
+                    setFilterLicenceProfession(option)
                   }}
                 />
               </GridColumn>
@@ -270,14 +280,16 @@ const MasterList = ({ slice }: MasterListProps) => {
                           </Box>
                         </T.Data>
                         <T.Data>
-                          <Box>
-                            <Text textAlign="right" variant="small">
-                              {format(
-                                new Date(licences.dateOfPublication),
-                                'yyyy',
-                              )}
-                            </Text>
-                          </Box>
+                          {licences.dateOfPublication && (
+                            <Box>
+                              <Text textAlign="right" variant="small">
+                                {format(
+                                  new Date(licences.dateOfPublication),
+                                  'yyyy',
+                                )}
+                              </Text>
+                            </Box>
+                          )}
                         </T.Data>
                       </T.Row>
                     )
