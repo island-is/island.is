@@ -89,7 +89,6 @@ export const Icon = ({
         aria-hidden={ariaHidden}
         fill={colors[color]}
         color={colors[color]}
-        stroke={colors[color]}
         {...optionalProps}
       />
     </Suspense>
