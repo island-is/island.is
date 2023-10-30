@@ -35,8 +35,8 @@ const QueryFilterInput: FC<QueryFilterInputProps> = (props) => {
       onChange={setValue}
       onKeyDown={handleKeyDown}
       button={{
-        onClick: () =>  setQuery(value || null),
-        label: 'Search',
+        onClick: () => setQuery(value || null),
+        label: n('filterInputPlaceholder', 'Sía eftir leitarorði'),
       }}
     />
   )
