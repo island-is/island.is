@@ -31,6 +31,11 @@ import {
 import {
   GET_CUSTOMER_CHARGETYPE,
   GET_CUSTOMER_RECORDS,
+  GET_ASSESSMENT_YEARS,
+  GET_CHARGE_TYPES_BY_YEAR,
+  GET_CHARGE_TYPES_DETAILS_BY_YEAR,
+  GET_CHARGE_TYPE_PERIOD_SUBJECT,
+  GET_CHARGE_ITEM_SUBJECTS_BY_YEAR,
 } from '@island.is/service-portal/graphql'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
@@ -75,6 +80,49 @@ const FinanceTransactions = () => {
 
   const [loadCustomerRecords, { data, loading, called, error }] =
     useLazyQuery(GET_CUSTOMER_RECORDS)
+
+  const {
+    data: assessmentYearsData,
+    loading: assessmentYearsLoading,
+    error: assessmentYearsError,
+  } = useQuery<Query>(GET_ASSESSMENT_YEARS, {
+    onCompleted: (data) => {
+      console.log('assessmentYears', { data })
+    },
+  })
+
+  const {
+    data: getChargeTypesByYearData,
+    loading: getChargeTypesByYearLoading,
+    error: getChargeTypesByYearError,
+  } = useQuery<Query>(GET_CHARGE_TYPES_BY_YEAR, {
+    variables: { input: { year: '2022' } },
+    onCompleted: (data) => {
+      console.log('getChargeTypesByYear', { data })
+    },
+  })
+
+  const {
+    data: getChargeTypeDetailsData,
+    loading: getChargeTypeDetailsLoading,
+    error: getChargeTypeDetailsError,
+  } = useQuery<Query>(GET_CHARGE_TYPES_DETAILS_BY_YEAR, {
+    variables: { input: { year: '2022', typeId: 'AY' } },
+    onCompleted: (data) => {
+      console.log('getChargeTypeDetails', { data })
+    },
+  })
+
+  const {
+    data: getChargeItemSubjectsByYearData,
+    loading: getChargeItemSubjectsByYearLoading,
+    error: getChargeItemSubjectsByYearError,
+  } = useQuery<Query>(GET_CHARGE_ITEM_SUBJECTS_BY_YEAR, {
+    variables: { input: { year: '2022', typeId: 'AY', nextKey: '' } },
+    onCompleted: (data) => {
+      console.log('getChargeItemSubjectsByYear', { data })
+    },
+  })
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
