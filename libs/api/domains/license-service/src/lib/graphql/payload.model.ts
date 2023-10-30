@@ -3,7 +3,7 @@ import { IsObject } from 'class-validator'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
 import graphqlTypeJson from 'graphql-type-json'
 import {
-  GenericUserLicenseMetaLink,
+  GenericUserLicenseMetaLinks,
   GenericUserLicenseMetadata,
 } from './genericLicense.model'
 
@@ -34,11 +34,11 @@ export class GenericLicenseDataField {
   })
   description?: string
 
-  @Field(() => GenericUserLicenseMetaLink, {
+  @Field(() => GenericUserLicenseMetaLinks, {
     nullable: true,
     description: 'External meta link',
   })
-  link?: GenericUserLicenseMetaLink
+  link?: GenericUserLicenseMetaLinks
 
   @Field({
     nullable: true,
