@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-2 : 20230516.1",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-13 : 20231018.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -243,6 +243,61 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "403": { "description": "Forbidden" }
+        },
+        "security": [{ "OAuth2": ["OAuth2"] }]
+      }
+    },
+    "/VehicleHistory/{requestedPersidno}": {
+      "get": {
+        "tags": ["VehicleSearch"],
+        "parameters": [
+          {
+            "name": "requestedPersidno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "showDeregistered",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "showHistory",
+            "in": "query",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "dtFrom",
+            "in": "query",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          { "name": "permno", "in": "query", "schema": { "type": "string" } },
+          { "name": "type", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32", "default": 50 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VehicleDtoListPagedResponse"
+                }
               }
             }
           },
@@ -585,7 +640,7 @@
           "fl": { "type": "boolean", "nullable": true },
           "ox": { "type": "boolean", "nullable": true },
           "at": { "type": "boolean", "nullable": true },
-          "pressexpires": { "type": "string", "nullable": true },
+          "pressexpires": { "type": "string", "format": "date-time" },
           "invaliddate": { "type": "string", "format": "date-time" }
         },
         "additionalProperties": false
@@ -1105,7 +1160,8 @@
           "engine": { "type": "string", "nullable": true },
           "pass": { "type": "integer", "format": "int32", "nullable": true },
           "passbydr": {
-            "type": "boolean",
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "engingemanuf": { "type": "string", "nullable": true },
@@ -1640,6 +1696,21 @@
             "nullable": true
           },
           "lastInspectionType": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "VehicleDtoListPagedResponse": {
+        "type": "object",
+        "properties": {
+          "pageNumber": { "type": "integer", "format": "int32" },
+          "pageSize": { "type": "integer", "format": "int32" },
+          "totalPages": { "type": "integer", "format": "int32" },
+          "totalRecords": { "type": "integer", "format": "int32" },
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/VehicleDto" },
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },

@@ -23,6 +23,7 @@ import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -45,28 +46,14 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,
-    @Args('nextCursor', { type: () => String, nullable: true })
-    nextCursor?: string,
+    @Args('input') input: GetVehiclesForUserInput,
   ) {
-    const res = await this.vehiclesService.getVehiclesForUser(
-      user,
-      false,
-      false,
-      nextCursor,
-    )
+    const res = await this.vehiclesService.getVehiclesForUser(user, input)
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-    return { ...res?.data, nextCursor: res?.nextCursor, downloadServiceURL }
-  }
-
-  @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesHistory, {
-    name: 'vehiclesHistoryList',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleHistory(@CurrentUser() user: User) {
-    const res = await this.vehiclesService.getVehiclesForUser(user, true, true)
-    return { ...res.data }
+    return {
+      ...res?.data,
+      downloadServiceURL: !input.type ? downloadServiceURL : null,
+    }
   }
 
   @Scopes(

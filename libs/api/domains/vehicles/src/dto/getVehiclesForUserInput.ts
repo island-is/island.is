@@ -1,7 +1,29 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+
+export enum VehicleUserTypeEnum {
+  eigandi = 'Eigandi',
+  medeigandi = 'Meðeigandi',
+  umradamadur = 'Umráðamaður',
+}
+
+registerEnumType(VehicleUserTypeEnum, {
+  name: 'VehicleUserTypeEnum',
+})
 
 @InputType()
 export class GetVehiclesForUserInput {
   @Field()
-  nationalId!: string
+  pageSize!: number
+
+  @Field()
+  page!: number
+
+  @Field(() => VehicleUserTypeEnum, { nullable: true })
+  type?: VehicleUserTypeEnum
+
+  @Field()
+  showDegeristered!: boolean
+
+  @Field()
+  showHistory!: boolean
 }

@@ -6,11 +6,16 @@ import {
   VehicleSearchDto,
   PublicVehicleSearchApi,
   PersidnoLookupResultDto,
+  VehicleDtoListPagedResponse,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import {
+  GetVehiclesForUserInput,
+  VehicleUserTypeEnum,
+} from '../dto/getVehiclesForUserInput'
 
 @Injectable()
 export class VehiclesService {
@@ -27,28 +32,40 @@ export class VehiclesService {
 
   async getVehiclesForUser(
     auth: User,
-    showDeregistered: boolean,
-    showHistory: boolean,
-    nextCursor?: string,
-  ): Promise<PersidnoLookupResultDto> {
-    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+    input: GetVehiclesForUserInput,
+  ): Promise<VehicleDtoListPagedResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).vehicleHistoryRequestedPersidnoGet({
       requestedPersidno: auth.nationalId,
-      showDeregistered: showDeregistered,
-      showHistory: showHistory,
-      cursor: nextCursor,
+      showDeregistered: input.showDegeristered,
+      showHistory: input.showHistory,
+      page: input.page,
+      pageSize: input.pageSize,
+      type: input.type,
     })
   }
 
   async getVehiclesSearch(
     auth: User,
     search: string,
-  ): Promise<VehicleSearchDto | null> {
-    const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+    page = 1,
+    pageSize = 50,
+  ): Promise<VehicleDtoListPagedResponse | null> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).vehicleHistoryRequestedPersidnoGet({
+      requestedPersidno: auth.nationalId,
+      permno: `${search}*`,
+      page,
+      pageSize,
+    })
+    /*const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
       search,
     })
     const { data } = res
     if (!data) return null
-    return data[0]
+    return data[0]*/
   }
 
   async getPublicVehicleSearch(search: string) {
