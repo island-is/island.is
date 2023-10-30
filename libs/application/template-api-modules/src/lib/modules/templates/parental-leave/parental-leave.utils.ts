@@ -346,7 +346,13 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
-  type?: 'period' | 'documentPeriod' | 'document' | undefined,
+  type?:
+    | 'period'
+    | 'documentPeriod'
+    | 'document'
+    | 'empper'
+    | 'employer'
+    | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,

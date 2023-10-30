@@ -1526,6 +1526,13 @@ export class NotificationService {
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
     ]
 
+    const courtEmail = this.getCourtEmail(theCase.courtId)
+    if (courtEmail) {
+      promises.push(
+        this.sendEmail(subject, html, theCase.court?.name, courtEmail),
+      )
+    }
+
     if (theCase.registrar) {
       promises.push(
         this.sendEmail(

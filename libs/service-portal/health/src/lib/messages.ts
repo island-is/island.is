@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  from: {
+    id: 'sp.health:from',
+    defaultMessage: 'Frá',
+  },
+  to: {
+    id: 'sp.health:to',
+    defaultMessage: 'Til',
+  },
   calculate: {
     id: 'sp.health:calculate',
     defaultMessage: 'Reikna',
@@ -8,18 +16,6 @@ export const messages = defineMessages({
   chooseMedicineTabs: {
     id: 'sp.health:choose-medicine-tabs',
     defaultMessage: 'Veldu flokk',
-  },
-  month: {
-    id: 'service.portal:month',
-    defaultMessage: 'Mánuður',
-  },
-  dateOfOnvoiceShort: {
-    id: 'service.portal:date-of-invoice',
-    defaultMessage: 'Dags. reiknings',
-  },
-  totalPrice: {
-    id: 'service.portal:total-price',
-    defaultMessage: 'Heildarverð',
   },
   typeofService: {
     id: 'sp.health:typeof-service',
@@ -621,7 +617,7 @@ export const messages = defineMessages({
   medicineTitleIntro: {
     id: 'sp.health:medicine-title-intro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
   },
   medicinePurchacePeriod: {
     id: 'sp.health:medicine-purchase-period',
@@ -632,13 +628,13 @@ export const messages = defineMessages({
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
   medicinePurchaseIntroTitle: {
-    id: 'sp.health:medicine-purchase-title',
+    id: 'sp.health:medicine-purchase-intro-title',
     defaultMessage: 'Þrepastaða þín',
   },
   medicinePurchaseIntroText: {
-    id: 'sp.health:medicine-purchase-intro',
+    id: 'sp.health:medicine-purchase-intro-text',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Greiðsluþátttökukerfið vegna lyfjakaupa byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Tólf mánaða greiðslutímabil hefst við fyrstu lyfjakaup eftir að seinna tólf mánaða tímabili lýkur.',
   },
   medicineCalculatorTitle: {
     id: 'sp.health:medicine-calculator-title',
