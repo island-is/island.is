@@ -31,7 +31,7 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description, child } = useAppealAlertBanner(workingCase)
+  const { title, description } = useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -39,12 +39,9 @@ const CourtOfAppealOverview: React.FC<
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  console.log(child)
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description}>
-        {child}
-      </AlertBanner>
+      <AlertBanner variant="warning" title={title} description={description} />
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
