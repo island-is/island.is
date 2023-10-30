@@ -37,11 +37,11 @@ export const FilterInput: React.FC<
       placeholder={placeholder}
       backgroundColor={backgroundColor}
       size="xs"
-      icon={button ? undefined : icon}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       onKeyDown={onKeyDown}
       buttons={button && [{ ...icon, ...button }]}
+      {...(button ? {} : { icon })}
     />
   )
 }
