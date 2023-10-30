@@ -379,7 +379,7 @@ const LicenseDetail = () => {
         </GridRow>
       </Box>
       {heading.link && (
-        <Text marginTop={5} marginBottom={queryLoading ? 5 : 0}>
+        <Text marginTop={5} marginBottom={5}>
           <LinkButton
             to={formatMessage(heading.link)}
             text={formatMessage(m.externalLicenseDetailLink)}
