@@ -19,7 +19,7 @@ import {
   Taekifaerisleyfi,
   Verdbrefamidlari,
   Erfingar,
- /** Malsvari,**/
+  /** Malsvari,**/
   Meistaraleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
@@ -53,11 +53,11 @@ import {
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 type Malsvari = {
-  heimilisfang: string,
-  netfang: string,
-  nafn: string,
-  kennitala: string,
-  simi:  string,
+  heimilisfang: string
+  netfang: string
+  nafn: string
+  kennitala: string
+  simi: string
 }
 export const cleanPropertyNumber = (propertyNumber: string): string => {
   const firstChar = propertyNumber.charAt(0).toUpperCase()
@@ -322,7 +322,9 @@ export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
     name: estateRaw.nafn ?? '',
     nationalId: estateRaw.kennitala ?? '',
     relation: estateRaw.tengsl ?? 'Annað',
-    advocate: ((estateRaw as {malsvari: Malsvari}).malsvari) ? mapAdvocate((estateRaw as {malsvari: Malsvari}).malsvari) : undefined,
+    advocate: (estateRaw as { malsvari: Malsvari }).malsvari
+      ? mapAdvocate((estateRaw as { malsvari: Malsvari }).malsvari)
+      : undefined,
   }
 }
 
@@ -444,11 +446,11 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
   }
 }
-export const  mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
+export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
   return {
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
-    office: licence.embaetti
+    office: licence.embaetti,
   }
 }
