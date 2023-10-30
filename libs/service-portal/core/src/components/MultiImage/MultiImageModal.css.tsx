@@ -27,7 +27,7 @@ export const content = style({
   height: '80%',
 })
 
-export const mainIMage = style({
+export const mainImage = style({
   height: '100%',
 })
 

@@ -16,7 +16,7 @@ import { Image } from './models/getDesignImage.model'
 import { GetIntellectualPropertyInput } from './dto/getPatent.input'
 import { Trademark } from './models/getTrademark.model'
 import { GetIntellectualPropertyDesignImagesInput } from './dto/getDesignImages.input'
-import { ExcludesFalse } from './utils'
+import { isDefined } from '@island.is/shared/utils'
 import { ImageList } from './models/designImageList.model'
 import { IntellectualPropertyList } from './models/intellectualPropertyList.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -46,9 +46,7 @@ export class IntellectualPropertyResolver {
       this.ipService.getTrademarks(user),
     ])
 
-    const flattenedData = data
-      .filter(Boolean as unknown as ExcludesFalse)
-      .flat()
+    const flattenedData = data.filter(isDefined).flat()
 
     return {
       count: flattenedData.length,

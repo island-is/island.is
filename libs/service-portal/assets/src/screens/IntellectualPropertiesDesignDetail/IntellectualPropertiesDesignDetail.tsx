@@ -24,6 +24,7 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyDesignQuery } from './IntellectualPropertiesDesignDetail.generated'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -192,7 +193,7 @@ const IntellectualPropertiesDesignDetail = () => {
                       title: 'Flokkun',
                       value: ip?.status ?? '',
                     },
-                  ].filter(Boolean as unknown as ExcludesFalse),
+                  ].filter(isDefined),
                   2,
                 )}
               />

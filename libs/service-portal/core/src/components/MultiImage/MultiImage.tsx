@@ -5,6 +5,7 @@ import { useMountedState } from 'react-use'
 import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
 import { ExcludesFalse } from '../..'
 import MultiImageModal from './MultiImageModal'
+import { isDefined } from '@island.is/shared/utils'
 
 export interface MultiImageProps {
   images: Array<{
@@ -13,23 +14,6 @@ export interface MultiImageProps {
   }>
   title: string
   loading?: boolean
-}
-
-const useImageLoader = (url: string): boolean => {
-  const isMounted = useMountedState()
-  const [loaded, setLoaded] = useState(false)
-
-  useEffect(() => {
-    const img = new window.Image(100)
-    img.onload = img.onerror = () => {
-      if (isMounted()) {
-        setLoaded(true)
-      }
-    }
-    img.src = url
-  }, [url])
-
-  return loaded
 }
 
 export const MultiImage: FC<MultiImageProps> = ({
@@ -99,7 +83,7 @@ export const MultiImage: FC<MultiImageProps> = ({
                   </Box>
                 )
               })
-              .filter(Boolean as unknown as ExcludesFalse)}
+              .filter(isDefined)}
             {lastImage && lastImage.image && (
               <Box
                 className={cn(styles.container)}
@@ -137,11 +121,11 @@ export const MultiImage: FC<MultiImageProps> = ({
               <img
                 key={index}
                 src={`data:image/png;base64,${i.image}`}
-                alt={`some alt text`}
+                alt={index}
                 className={styles.image}
               />
             ))
-            .filter(Boolean as unknown as ExcludesFalse)}
+            .filter(isDefined)}
           label="all designs"
         />
       )}

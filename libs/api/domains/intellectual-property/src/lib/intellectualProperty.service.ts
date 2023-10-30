@@ -10,6 +10,7 @@ import { Image } from './models/getDesignImage.model'
 import addMonths from 'date-fns/addMonths'
 import { mapTrademarkSubtype, mapTrademarkType } from './mapper'
 import { parseDateIfValid } from './utils'
+import { isDefined } from '@island.is/shared/utils'
 
 type ExcludesFalse = <T>(x: T | null | undefined | false | '') => x is T
 
@@ -171,7 +172,7 @@ export class IntellectualPropertyService {
             } as Image),
         ),
       )
-      .filter(Boolean as unknown as ExcludesFalse)
+      .filter(isDefined)
 
     return designImages
   }

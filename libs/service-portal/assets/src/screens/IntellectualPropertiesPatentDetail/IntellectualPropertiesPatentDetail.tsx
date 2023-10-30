@@ -25,6 +25,7 @@ import {
 import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyPatentByIdQuery } from './IntellectualPropertiesPatentDetail.generated'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -204,7 +205,7 @@ const IntellectualPropertiesPatentDetail = () => {
                       ? formatDate(ip.registeredDate, 'dd.MM.yy')
                       : '',
                   },
-                ].filter(Boolean as unknown as ExcludesFalse),
+                ].filter(isDefined),
                 2,
               )}
             />

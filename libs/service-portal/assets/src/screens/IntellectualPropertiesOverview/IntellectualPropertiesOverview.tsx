@@ -12,6 +12,7 @@ import { Box } from '@island.is/island-ui/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { ipMessages as messages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
+import { isDefined } from '@island.is/shared/utils'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
@@ -125,7 +126,7 @@ const IntellectualPropertiesOverview = () => {
                 return null
             }
           })
-          .filter(Boolean as unknown as ExcludesFalse)}
+          .filter(isDefined)}
     </Box>
   )
 }

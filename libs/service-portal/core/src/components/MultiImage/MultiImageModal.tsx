@@ -11,6 +11,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import * as styles from './MultiImageModal.css'
 import cn from 'classnames'
+import { useMountedState } from 'react-use'
 
 interface Props {
   id: string
@@ -91,7 +92,7 @@ export const MultiImageModal: FC<Props> = ({
     >
       <Box className={styles.container}>
         <GridContainer className={styles.content}>
-          <GridRow className={styles.mainIMage}>
+          <GridRow className={styles.mainImage}>
             <GridColumn className={styles.arrows} span={'2/12'}>
               <Button
                 icon="chevronBack"

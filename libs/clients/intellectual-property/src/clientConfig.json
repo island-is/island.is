@@ -44,6 +44,80 @@
         }
       }
     },
+    "/Certificate/CreateDesignCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          {
+            "name": "applicationNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "enum": ["Renewed", "Registered"], "type": "string" }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
+    "/Certificate/CreatePatentCertificate": {
+      "get": {
+        "tags": ["Certificate"],
+        "parameters": [
+          {
+            "name": "applicationNumber",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          { "name": "email", "in": "query", "schema": { "type": "string" } },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": { "enum": ["AnnualFee", "Granted"], "type": "string" }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": { "enum": ["Icelandic", "English"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          }
+        }
+      }
+    },
     "/getPriceListBySource": {
       "get": {
         "tags": ["Common"],
@@ -2302,34 +2376,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
-                }
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
               }
             },
             "application/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
-                }
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
               }
             },
             "text/json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
-                }
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
               }
             },
             "application/*+json": {
               "schema": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/HUX.ELS.API.Common.TrademarkModels.Category"
-                }
+                "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.CategoriesList"
               }
             }
           }
@@ -2807,14 +2869,13 @@
       "HUX.ELS.API.Common.DesignModels.DesignSearchModel": {
         "type": "object",
         "properties": {
+          "id": { "type": "integer", "format": "int32" },
           "applicationDate": { "type": "string", "format": "date-time" },
+          "applicationImmidiateAvailability": { "type": "boolean" },
           "applicationDateAvailable": {
             "type": "string",
             "format": "date-time"
           },
-          "status_ID": { "type": "integer", "format": "int32" },
-          "hid": { "type": "string", "nullable": true },
-          "applicationImmidiateAvailability": { "type": "boolean" },
           "applicationDatePublishedAsAvailable": {
             "type": "string",
             "format": "date-time"
@@ -2835,15 +2896,16 @@
           "registrationDate": { "type": "string", "format": "date-time" },
           "publishDate": { "type": "string", "format": "date-time" },
           "agent_ID": { "type": "integer", "format": "int32" },
+          "status_ID": { "type": "integer", "format": "int32" },
           "dividedFrom": { "type": "string", "nullable": true },
           "dividedTo": { "type": "string", "nullable": true },
           "referenceNumber": { "type": "string", "nullable": true },
           "createDate": { "type": "string", "format": "date-time" },
           "lastModified": { "type": "string", "format": "date-time" },
-          "id": { "type": "integer", "format": "int32" },
           "status": { "type": "string", "nullable": true },
           "contact_ID": { "type": "integer", "format": "int32" },
           "applicationNumber": { "type": "string", "nullable": true },
+          "hid": { "type": "string", "nullable": true },
           "specification": {
             "$ref": "#/components/schemas/HUX.ELS.API.Common.DesignModels.DesignSearchSpecification"
           },
@@ -3999,15 +4061,6 @@
         },
         "additionalProperties": false
       },
-      "HUX.ELS.API.Common.TrademarkModels.Category": {
-        "type": "object",
-        "properties": {
-          "number": { "type": "string", "nullable": true },
-          "description": { "type": "string", "nullable": true },
-          "dropCategory": { "type": "boolean" }
-        },
-        "additionalProperties": false
-      },
       "HUX.ELS.API.Common.TrademarkModels.Diary": {
         "type": "object",
         "properties": {
@@ -4367,6 +4420,28 @@
             },
             "nullable": true
           }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Controllers.CategoriesList": {
+        "type": "object",
+        "properties": {
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HUX.ELS.APIv2.Controllers.Category"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HUX.ELS.APIv2.Controllers.Category": {
+        "type": "object",
+        "properties": {
+          "number": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "dropCategory": { "type": "boolean" }
         },
         "additionalProperties": false
       },

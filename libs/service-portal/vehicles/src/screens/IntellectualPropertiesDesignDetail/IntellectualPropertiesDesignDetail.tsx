@@ -185,7 +185,7 @@ const IntellectualPropertiesDesignDetail = () => {
                     title: 'Flokkun',
                     value: ip?.status ?? '',
                   },
-                ].filter(Boolean as unknown as ExcludesFalse),
+                ].filter(isDefined),
                 2,
               )}
             />

@@ -28,6 +28,7 @@ import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertyTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 import { AudioPlayer, VideoPlayer, Image } from '@island.is/service-portal/core'
 import { TrademarkType } from '@island.is/api/schema'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -234,7 +235,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                       ? formatDate(ip.dateExpires, 'dd.MM.yy')
                       : '',
                   },
-                ].filter(Boolean as unknown as ExcludesFalse),
+                ].filter(isDefined),
                 2,
               )}
             />
@@ -289,7 +290,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   </AccordionItem>
                 )
               })
-              .filter(Boolean as unknown as ExcludesFalse)}
+              .filter(isDefined)}
           </Accordion>
         )}
         <Text variant="small" paddingBottom={2}>
