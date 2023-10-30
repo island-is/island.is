@@ -7,8 +7,6 @@ import {
 } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
-import { DataType } from 'sequelize-typescript'
 import { Locale } from '../../user-profile/types/localeTypes'
 
 export class UserProfileDto {
@@ -26,10 +24,7 @@ export class UserProfileDto {
   @IsString()
   readonly mobilePhoneNumber?: string
 
-  @ApiPropertyOptional({
-    enum: Locale,
-    enumName: 'Locale',
-  })
+  @ApiPropertyOptional()
   @IsOptional()
   @IsEnum(Locale)
   readonly locale?: Locale
@@ -48,4 +43,14 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly documentNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly profileImageUrl?: string
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  readonly needsNudge?: boolean | null
 }
