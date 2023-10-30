@@ -7,7 +7,6 @@ import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import {
   BasicCardInfoDTO,
   EhicApi,
-  TempPDFCardResponseDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { EhicCardResponse } from './ehicCardClient.type'
 

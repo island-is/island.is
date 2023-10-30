@@ -35,7 +35,6 @@ import {
 } from '../../utils/dataMapper'
 import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
-import { head } from 'lodash'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
