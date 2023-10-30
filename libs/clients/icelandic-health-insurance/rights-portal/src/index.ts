@@ -16,4 +16,5 @@ export {
   OverviewApi,
   PaymentApi,
   PaymentOverviewDTO,
+  TempPDFCardResponseDTO,
 } from '../gen/fetch'

@@ -3,11 +3,13 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { LicenseClient, Result } from '../../licenseClient.type'
-import { FetchError } from '@island.is/clients/middlewares'
+import { FetchError, handle404 } from '@island.is/clients/middlewares'
 import {
   BasicCardInfoDTO,
   EhicApi,
+  TempPDFCardResponseDTO,
 } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { EhicCardResponse } from './ehicCardClient.type'
 
 @Injectable()
 export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
@@ -16,12 +18,29 @@ export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
     private ehicApi: EhicApi,
   ) {}
   clientSupportsPkPass = false
-  async getLicense(user: User): Promise<Result<BasicCardInfoDTO | null>> {
+
+  async getLicense(user: User): Promise<Result<EhicCardResponse | null>> {
     try {
-      const licenseInfo = await this.ehicApi
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getEhicCard()
-      return { ok: true, data: licenseInfo }
+      const api = this.ehicApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+      const data = await api.getEhicCard()
+
+      if (data.hasTempCard) {
+        const pdfData = await api.getEhicPdfCard().catch(handle404)
+
+        this.logger.debug(pdfData)
+        if (pdfData?.data) {
+          return {
+            ok: true,
+            data: {
+              ...data,
+              tempCardPdf: pdfData.data,
+            },
+          }
+        }
+      }
+
+      return { ok: true, data }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
@@ -43,7 +62,6 @@ export class EhicClient implements LicenseClient<BasicCardInfoDTO> {
           data: JSON.stringify(unknownError),
         }
       }
-
       return {
         ok: false,
         error,

@@ -9,9 +9,9 @@ import {
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
-import { isDefined } from '@island.is/shared/utils'
+import { getDocument, isDefined } from '@island.is/shared/utils'
 import { format } from 'kennitala'
-import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { EhicCardResponse } from '@island.is/clients/license-client'
 
 @Injectable()
 export class EHICCardPayloadMapper implements GenericLicenseMapper {
@@ -20,7 +20,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
   ): GenericUserLicensePayload | null {
-    const typedPayload = payload as BasicCardInfoDTO
+    const typedPayload = payload as EhicCardResponse
 
     if (!typedPayload || !typedPayload.expiryDate) return null
 
@@ -81,6 +81,15 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
         licenseNumber: typedPayload.cardNumber?.toString() ?? '',
         expired,
         expireDate: typedPayload.expiryDate.toISOString(),
+        links:
+          typedPayload.hasTempCard && typedPayload.tempCardPdf
+            ? [
+                {
+                  label: getLabel('getEHICPdf', locale, label),
+                  value: getDocument(typedPayload.tempCardPdf, 'pdf'),
+                },
+              ]
+            : undefined,
       },
     }
   }
