@@ -18,7 +18,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
-import { GetDocumentsListInput } from './dto/getDocumentsList.input'
+import { GetFinanceDocumentsListInput } from './dto/getFinanceDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
 import { CustomerChargeType } from './models/customerChargeType.model'
@@ -109,7 +109,7 @@ export class FinanceResolver {
   @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   async getDocumentsList(
     @CurrentUser() user: User,
-    @Args('input') input: GetDocumentsListInput,
+    @Args('input') input: GetFinanceDocumentsListInput,
   ) {
     if (
       input.listPath === 'employeeClaims' &&
