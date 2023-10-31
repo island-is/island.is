@@ -321,7 +321,7 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
-    share: assetRaw.eignarhlutfall / 100.0 ?? 1,
+    share: assetRaw.eignarhlutfall ? assetRaw.eignarhlutfall / 100.0 : 1,
   }
 }
 
