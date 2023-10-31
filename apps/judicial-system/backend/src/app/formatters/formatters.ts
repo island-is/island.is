@@ -668,7 +668,6 @@ export function formatCourtOfAppealJudgeAssignedEmailNotification(
     caseNumber,
   })
 
-  console.log(isForeperson)
   const body = isForeperson
     ? formatMessage(notifications.COAJudgeAssigned.forepersonBody, {
         caseNumber,
