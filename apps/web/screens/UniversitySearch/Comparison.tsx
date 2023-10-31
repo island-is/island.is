@@ -12,11 +12,11 @@ import {
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  GetUniversityGatewayByIdQuery,
-  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayQuery,
+  GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
-  ProgramDetails,
-  University,
+  UniversityGatewayProgramDetails,
+  UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -33,10 +33,10 @@ import { TranslationDefaults } from './TranslationDefaults'
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 interface UniversityComparisonProps {
-  data: Array<ProgramDetails>
+  data: Array<UniversityGatewayProgramDetails>
   locale: string
   namespace: Record<string, string>
-  universities: Array<University>
+  universities: Array<UniversityGatewayUniversity>
 }
 
 const Comparison: Screen<UniversityComparisonProps> = ({
@@ -48,9 +48,9 @@ const Comparison: Screen<UniversityComparisonProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const [selectedComparison, setSelectedComparison] =
-    useState<Array<ProgramDetails>>(data)
+    useState<Array<UniversityGatewayProgramDetails>>(data)
 
-  const handleDelete = (dataItem: ProgramDetails) => {
+  const handleDelete = (dataItem: UniversityGatewayProgramDetails) => {
     const found = selectedComparison.some((x) => x.id === dataItem.id)
 
     if (found) {
@@ -297,8 +297,8 @@ Comparison.getProps = async ({ query, apolloClient, locale }) => {
   const allResolvedPromises = await Promise.all(
     parsedComparison.map(async (item: string) => {
       return await apolloClient.query<
-        GetUniversityGatewayByIdQuery,
-        GetUniversityGatewayByIdQueryVariables
+        GetUniversityGatewayQuery,
+        GetUniversityGatewayQueryVariables
       >({
         query: GET_UNIVERSITY_GATEWAY_PROGRAM,
         variables: {

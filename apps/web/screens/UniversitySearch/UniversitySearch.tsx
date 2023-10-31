@@ -1,63 +1,65 @@
-import Fuse from 'fuse.js'
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import Fuse from 'fuse.js'
 import getConfig from 'next/config'
+import { useRouter } from 'next/router'
+
 import {
-  Box,
-  ContentBlock,
-  Icon,
-  Inline,
-  Tag,
-  Text,
-  Button,
-  GridContainer,
-  GridColumn,
-  GridRow,
-  Stack,
-  Checkbox,
   Accordion,
   AccordionItem,
-  Pagination,
-  LinkV2,
-  Input,
-  VisuallyHidden,
-  ToastContainer,
-  toast,
-  Hidden,
+  Box,
+  Button,
+  Checkbox,
+  ContentBlock,
   Filter,
   FilterMultiChoice,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Icon,
+  Inline,
+  Input,
+  LinkV2,
+  Pagination,
+  Stack,
+  Tag,
+  Text,
+  toast,
+  ToastContainer,
+  VisuallyHidden,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
 import {
   ActionCategoryCard,
   CTAProps,
   ListViewCard,
 } from '@island.is/web/components'
-import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  GetUniversityGatewayActiveProgramsQuery,
   GetUniversityGatewayProgramFiltersQuery,
+  GetUniversityGatewayProgramsQuery,
   GetUniversityGatewayUniversitiesQuery,
-  Program,
-  ProgramFilter,
-  University,
+  UniversityGatewayProgram,
+  UniversityGatewayProgramFilter,
+  UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { SearchProducts } from '@island.is/web/utils/useUniversitySearch'
+
+import { GET_NAMESPACE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_FILTERS,
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
-import { GET_NAMESPACE_QUERY } from '../queries'
+import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as styles from './UniversitySearch.css'
-import { Comparison } from './ComparisonComponent'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -66,11 +68,11 @@ const NUMBER_OF_FILTERS = 6
 const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
-  data: Array<Program>
+  data: Array<UniversityGatewayProgram>
   namespace: Record<string, string>
-  filterOptions: Array<ProgramFilter>
+  filterOptions: Array<UniversityGatewayProgramFilter>
   locale: string
-  universities: Array<University>
+  universities: Array<UniversityGatewayUniversity>
   searchQuery: string
 }
 
@@ -135,9 +137,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
   const [filteredResults, setFilteredResults] = useState<
-    Array<Fuse.FuseResult<Program>>
+    Array<Fuse.FuseResult<UniversityGatewayProgram>>
   >(
-    data.map((item: Program, index: number) => {
+    data.map((item: UniversityGatewayProgram, index: number) => {
       return { item, refIndex: index, score: 1 }
     }),
   )
@@ -225,15 +227,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<Fuse.FuseResult<Program>> = data.map(
-      (item: Program, index: number) => {
+    const resultProducts: Array<Fuse.FuseResult<UniversityGatewayProgram>> =
+      data.map((item: UniversityGatewayProgram, index: number) => {
         return { item, refIndex: index, score: 1 }
-      },
-    )
+      })
     setFilteredResults(resultProducts)
   }
 
-  const createPrimaryCTA = (item: Program) => {
+  const createPrimaryCTA = (item: UniversityGatewayProgram) => {
     const now = new Date()
     const CTA: CTAProps = {
       label: n('apply', 'Sækja um'),

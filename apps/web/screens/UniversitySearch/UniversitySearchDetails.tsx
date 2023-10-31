@@ -4,7 +4,6 @@ import is from 'date-fns/locale/is'
 import parse from 'html-react-parser'
 import getConfig from 'next/config'
 
-import { ProgramCourse } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
@@ -23,11 +22,12 @@ import { IconTitleCard } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
-  GetUniversityGatewayByIdQuery,
-  GetUniversityGatewayByIdQueryVariables,
+  GetUniversityGatewayQuery,
+  GetUniversityGatewayQueryVariables,
   GetUniversityGatewayUniversitiesQuery,
-  ProgramDetails,
-  University,
+  UniversityGatewayProgramCourse,
+  UniversityGatewayProgramDetails,
+  UniversityGatewayUniversity,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -45,10 +45,10 @@ import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 interface UniversityDetailsProps {
-  data: ProgramDetails
+  data: UniversityGatewayProgramDetails
   namespace: Record<string, string>
   locale: string
-  universities: Array<University>
+  universities: Array<UniversityGatewayUniversity>
 }
 
 const UniversityDetails: Screen<UniversityDetailsProps> = ({
@@ -59,7 +59,9 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
 }) => {
   const n = useNamespace(namespace)
 
-  const [sortedCourses, setSortedCourses] = useState<Array<ProgramCourse>>([])
+  const [sortedCourses, setSortedCourses] = useState<
+    Array<UniversityGatewayProgramCourse>
+  >([])
   const { linkResolver } = useLinkResolver()
   const [isOpen, setIsOpen] = useState<Array<boolean>>([
     false,
@@ -409,8 +411,8 @@ UniversityDetails.getProps = async ({ query, apolloClient, locale }) => {
   }
 
   const newResponse = await apolloClient.query<
-    GetUniversityGatewayByIdQuery,
-    GetUniversityGatewayByIdQueryVariables
+    GetUniversityGatewayQuery,
+    GetUniversityGatewayQueryVariables
   >({
     query: GET_UNIVERSITY_GATEWAY_PROGRAM,
     variables: {
