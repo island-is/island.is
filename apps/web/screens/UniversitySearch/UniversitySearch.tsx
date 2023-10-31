@@ -71,6 +71,7 @@ interface UniversitySearchProps {
   filterOptions: Array<ProgramFilter>
   locale: string
   universities: Array<University>
+  searchQuery: string
 }
 
 interface FilterProps {
@@ -86,7 +87,7 @@ interface FilterProps {
   // tags: Array<string>
 }
 
-const initialFilters = {
+const initialFilters: FilterProps = {
   degreeType: [],
   modeOfDelivery: [],
   durationInYears: [],
@@ -115,6 +116,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   data,
   filterOptions,
   namespace,
+  searchQuery,
   locale,
   universities,
 }) => {
@@ -126,7 +128,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const isMobileScreenWidth = width < theme.breakpoints.md
   const isTabletScreenWidth = width < theme.breakpoints.lg
 
-  const [searchTerm, setSearchTerm] = useState('')
   const [selectedPage, setSelectedPage] = useState(1)
   const [selectedComparison, setSelectedComparison] = useState<
     Array<ComparisonProps>
@@ -142,7 +143,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   )
   const { linkResolver } = useLinkResolver()
 
-  const [filters, setFilters] = useState<FilterProps>(initialFilters)
+  //creating a deep copy to avoid original being affected by changes to filters
+  const [filters, setFilters] = useState<FilterProps>(
+    JSON.parse(JSON.stringify(initialFilters)),
+  )
 
   const [gridView, setGridView] = useState<boolean>(true)
 
@@ -172,21 +176,14 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       const parsedFilters = JSON.parse(savedFilters)
       setFilters(parsedFilters)
     }
-  }, [])
 
-  //Fuse options:
-  // isCaseSensitive: false,
-  // includeScore: false,
-  // shouldSort: true,
-  // includeMatches: false,
-  // findAllMatches: false,
-  // minMatchCharLength: 1,
-  // location: 0,
-  // distance: 100,
-  // useExtendedSearch: false,
-  // ignoreLocation: false,
-  // ignoreFieldNorm: false,
-  // fieldNormWeight: 1,
+    if (searchQuery) {
+      setQuery(searchQuery)
+
+      //also set deep copy here
+      setFilters(JSON.parse(JSON.stringify(initialFilters)))
+    }
+  }, [])
 
   const fuseOptions = {
     threshold: 0.2,
@@ -244,7 +241,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       size: 'small',
       icon: 'arrowForward',
       iconType: 'outline',
-      onClick: () => console.log('TODO'),
       disabled:
         new Date(item.applicationStartDate) > now ||
         new Date(item.applicationEndDate) < now,
@@ -295,12 +291,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }
 
   useEffect(() => {
-    //update localStorage
     localStorage.setItem('comparison', JSON.stringify(selectedComparison))
   }, [selectedComparison])
 
   useEffect(() => {
-    //update localStorage
     localStorage.setItem('viewChoice', gridView ? 'true' : 'false')
   }, [gridView])
 
@@ -349,7 +343,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
 
   return (
     <GridContainer>
-      <LinkV2 href={linkResolver('universitysearch').href} skipTab>
+      <LinkV2 href={linkResolver('universitylandingpage').href} skipTab>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -503,7 +497,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   variant="text"
                   icon="reload"
                   size="small"
-                  onClick={() => setFilters(initialFilters)}
+                  onClick={() =>
+                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                  }
                 >
                   {n('clearAllFilters', 'Hreinsa allar síur')}
                 </Button>
@@ -525,11 +521,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               label={n('searchPrograms', 'Leit í háskólanámi')}
               id="searchuniversity"
               name="filterInput"
-              value={searchTerm}
+              value={query}
               backgroundColor="blue"
               onChange={(e) => {
                 setSelectedPage(1)
-                setSearchTerm(e.target.value)
                 searchTermHasBeenInitialized.current = true
                 setQuery(e.target.value)
               }}
@@ -537,15 +532,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
             <ContentBlock>
               <Box paddingTop={2} hidden>
                 <Inline space={[1, 2]}>
-                  <Tag
-                    onClick={() => resetFilteredList()}
-                    customClassName={
-                      Object.keys(filters).filter((x) => x.length > 0).length >
-                      0
-                        ? styles.tagActive
-                        : styles.tagNotActive
-                    }
-                  >
+                  <Tag onClick={() => resetFilteredList()}>
                     {n('showAll', 'Sýna allt')}
                   </Tag>
                   {filterOptions.map((option) => {
@@ -558,11 +545,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                           return (
                             <Tag
                               onClick={() => handleFilters('degreeType', item)}
-                              customClassName={
-                                filters.degreeType.includes(item)
-                                  ? styles.tagActive
-                                  : styles.tagNotActive
-                              }
                             >
                               {n(
                                 option.field === 'universityId'
@@ -596,16 +578,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   labelResult={n('showResults', 'Skoða niðurstöður')}
                   labelTitle={n('filterResults', 'Sía niðurstöður')}
                   onFilterClear={() => {
-                    //TODO fix the bug that always returns initialFilter with new items!!
-                    const newInitial = {
-                      degreeType: [],
-                      modeOfDelivery: [],
-                      durationInYears: [],
-                      universityId: [],
-                      startingSemesterSeason: [],
-                    }
                     setSelectedPage(1)
-                    setFilters(newInitial)
+                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
                   }}
                 >
                   <FilterMultiChoice
@@ -1162,11 +1136,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 <Button
                   variant="text"
                   icon="close"
-                  textSize="md"
                   size="small"
                   onClick={() => setSelectedComparison([])}
                 >
-                  {n('clearFilter', 'Hreinsa val')}
+                  <Text variant="eyebrow" color="blue400" as="span">
+                    {n('clearFilter', 'Hreinsa val')}
+                  </Text>
                 </Button>
               </Box>
               <Box
@@ -1192,7 +1167,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   )
 }
 
-UniversitySearch.getProps = async ({ apolloClient, locale }) => {
+UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
     GetNamespaceQueryVariables
@@ -1205,6 +1180,8 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
       },
     },
   })
+
+  const { search } = query
 
   const namespace = JSON.parse(
     namespaceResponse?.data?.getNamespace?.fields || '{}',
@@ -1243,6 +1220,7 @@ UniversitySearch.getProps = async ({ apolloClient, locale }) => {
 
   return {
     data,
+    searchQuery: search as string,
     filterOptions: filters.data.universityGatewayProgramFilters,
     locale,
     namespace,

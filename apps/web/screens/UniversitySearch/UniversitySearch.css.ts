@@ -1,5 +1,65 @@
-import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
+
+import { theme, themeUtils } from '@island.is/island-ui/theme'
+
+export const wrapper = style({
+  display: 'inline-block',
+  position: 'relative',
+  width: '100%',
+  borderRadius: '8px',
+  ':after': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+    pointerEvents: 'none',
+    borderRadius: 6,
+    borderWidth: 3,
+    borderStyle: 'solid',
+    borderColor: theme.color.mint400,
+    opacity: 0,
+  },
+})
+
+export const searchInput = style({
+  paddingRight: 96,
+  height: 58,
+  fontSize: 24,
+  background: theme.color.blue100,
+  fontWeight: theme.typography.light,
+  border: 'none',
+  outline: 'none',
+  width: '100%',
+})
+
+export const searchIcon = style({
+  position: 'absolute',
+  lineHeight: 0,
+  top: '50%',
+  right: 46,
+  transform: 'translateY(-50%)',
+  outline: 0,
+  selectors: {
+    '&::before': {
+      content: '',
+      zIndex: -1,
+      left: -10,
+      right: -10,
+      top: -10,
+      bottom: -10,
+      borderRadius: 5,
+      position: 'absolute',
+      cursor: 'pointer',
+      backgroundColor: theme.color.white,
+      borderColor: theme.color.blue200,
+      borderStyle: 'solid',
+      borderWidth: 1,
+      transition: `opacity 150ms ease`,
+    },
+  },
+})
 
 export const iconButton = style({
   margin: '0 7px',

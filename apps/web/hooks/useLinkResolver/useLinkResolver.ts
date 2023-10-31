@@ -226,15 +226,19 @@ export const routesTemplate = {
   },
   universitysearchdetails: {
     is: '/haskolanam/[id]',
-    en: '/en/haskolanam/[id]',
+    en: '/en/university-studies/[id]',
   },
   universitysearchcomparison: {
     is: '/haskolanam/samanburdur',
-    en: '/en/haskolanam/samanburdur',
+    en: '/en/university-studies/comparison',
   },
   universitysearch: {
+    is: '/haskolanam/leit',
+    en: '/en/university-studies/search',
+  },
+  universitylandingpage: {
     is: '/haskolanam',
-    en: '/en/haskolanam',
+    en: '/en/university-studies',
   },
   homepage: {
     is: '/',

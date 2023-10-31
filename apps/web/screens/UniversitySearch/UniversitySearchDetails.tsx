@@ -1,6 +1,10 @@
-import parse from 'html-react-parser'
 import React, { useEffect, useState } from 'react'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import parse from 'html-react-parser'
+import getConfig from 'next/config'
+
+import { ProgramCourse } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
@@ -15,7 +19,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
+import { IconTitleCard } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
@@ -25,20 +29,18 @@ import {
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+import SidebarLayout from '../Layouts/SidebarLayout'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_PROGRAM,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { IconTitleCard } from '@island.is/web/components'
-import SidebarLayout from '../Layouts/SidebarLayout'
-import { GET_NAMESPACE_QUERY } from '../queries'
 import { TranslationDefaults } from './TranslationDefaults'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
-import getConfig from 'next/config'
-import { ProgramCourse } from '@island.is/api/schema'
 import * as styles from './UniversitySearch.css'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
@@ -58,6 +60,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
   const n = useNamespace(namespace)
 
   const [sortedCourses, setSortedCourses] = useState<Array<ProgramCourse>>([])
+  const { linkResolver } = useLinkResolver()
   const [isOpen, setIsOpen] = useState<Array<boolean>>([
     false,
     false,
@@ -89,7 +92,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     <SidebarLayout
       sidebarContent={
         <Stack space={3}>
-          <LinkV2 href="/haskolanam" skipTab>
+          <LinkV2 href={linkResolver('universitysearch').href} skipTab>
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"
@@ -136,7 +139,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
         </Text>
 
         <Box marginTop={2}>
-          {data.credits && parseInt(data.credits) > 0 ? (
+          {data.credits && data.credits > 0 ? (
             <Text variant="default">{`${data.degreeAbbreviation} - ${data.credits} einingar`}</Text>
           ) : (
             <Text variant="default">{`${data.degreeAbbreviation}`}</Text>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import getConfig from 'next/config'
+
 import {
   Box,
   Button,
@@ -8,7 +9,6 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
 import {
   GetNamespaceQuery,
   GetNamespaceQueryVariables,
@@ -18,16 +18,17 @@ import {
   ProgramDetails,
   University,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+
+import { GET_NAMESPACE_QUERY } from '../queries'
 import {
   GET_UNIVERSITY_GATEWAY_PROGRAM,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { TranslationDefaults } from './TranslationDefaults'
-
-import getConfig from 'next/config'
-import { CustomNextError } from '@island.is/web/units/errors'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -69,7 +70,6 @@ const Comparison: Screen<UniversityComparisonProps> = ({
   }
 
   useEffect(() => {
-    //update localStorage
     const parsedData = selectedComparison.map((item) => {
       return {
         id: item.id,
@@ -260,8 +260,8 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 }
 
 Comparison.getProps = async ({ query, apolloClient, locale }) => {
-  const { comparison } = query
-  const parsedComparison = JSON.parse(comparison ? (comparison as string) : '')
+  const { items } = query
+  const parsedComparison = items ? JSON.parse(items as string) : []
 
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
