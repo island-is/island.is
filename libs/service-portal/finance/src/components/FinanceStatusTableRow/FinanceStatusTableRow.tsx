@@ -1,4 +1,3 @@
-import { gql, useLazyQuery } from '@apollo/client'
 import React, { FC } from 'react'
 
 import { amountFormat, ExpandRow } from '@island.is/service-portal/core'
@@ -9,12 +8,7 @@ import {
   FinanceStatusOrganizationChargeType,
   FinanceStatusOrganizationType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
-
-const GetFinanceStatusDetailsQuery = gql`
-  query GetFinanceStatusDetailsQuery($input: GetFinancialOverviewInput!) {
-    getFinanceStatusDetails(input: $input)
-  }
-`
+import { useGetFinanceStatusDetailsLazyQuery } from './FinanceStatusTableRow.generated'
 
 interface Props {
   organization: FinanceStatusOrganizationType
@@ -27,11 +21,10 @@ const FinanceStatusTableRow: FC<React.PropsWithChildren<Props>> = ({
   chargeType,
   downloadURL,
 }) => {
-  const [getDetailsQuery, { loading, error, ...detailsQuery }] = useLazyQuery(
-    GetFinanceStatusDetailsQuery,
-  )
+  const [getDetailsQuery, { loading, error, data }] =
+    useGetFinanceStatusDetailsLazyQuery()
   const financeStatusDetails: FinanceStatusDetailsType =
-    detailsQuery.data?.getFinanceStatusDetails || {}
+    data?.getFinanceStatusDetails || {}
 
   return (
     <ExpandRow
