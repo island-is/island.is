@@ -1,50 +1,49 @@
 import {
-  AnswerValidator,
+  buildDataProviderItem,
+  buildPaymentChargeOverviewField,
+  buildSection,
+  buildSubmitField,
   coreHistoryMessages,
   corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
-  AllowedDelegation,
   Application,
   ApplicationContext,
   ApplicationRole,
-  ApplicationStateSchema,
   ApplicationStateMachineStatus,
+  ApplicationStateMeta,
+  ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  DefaultEvents,
-  RoleInState,
-  Schema,
-  StateLifeCycle,
-  StaticText,
-  TemplateApi,
-  ApplicationStateMeta,
   DataProviderBuilderItem,
-  NationalRegistryUserApi,
-  UserProfileApi,
-  PaymentCatalogApi,
-  InstitutionNationalIds,
-  ValidateCriminalRecordApi,
   DataProviderItem,
+  DefaultEvents,
+  FormItemTypes,
+  FormModes,
   HistoryEventMessage,
+  InstitutionNationalIds,
+  NationalRegistryUserApi,
+  PaymentCatalogApi,
   PendingAction,
+  RoleInState,
+  StateLifeCycle,
+  TemplateApi,
+  UserProfileApi,
+  ValidateCriminalRecordApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import {
   AnyEventObject,
   EventObject,
   StateNodeConfig,
-  TransitionsConfig,
-  MachineConfig,
-  MachineOptions,
   StatesConfig,
+  TransitionsConfig,
 } from 'xstate'
 
 import { z } from 'zod'
 
-import { data, completedData } from './states'
-import { buildDataProviderItem } from '@island.is/application/core'
+import { completedData, data } from './states'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 export interface ApplicationBlueprint {
   ApplicatonType: ApplicationTypes
@@ -329,48 +328,38 @@ export function buildCertificateTemplate<
     const payment = {
       id: 'SampleFormId',
       title: title,
-      mode: 'draft',
-      type: 'FORM',
+      mode: FormModes.DRAFT,
+      type: FormItemTypes.FORM,
       renderLastScreenBackButton: true,
       renderLastScreenButton: true,
       children: [
-        {
+        buildSection({
           id: 'section',
           title: 'Greiðsla',
-          type: 'SECTION',
           children: [
             {
               id: 'multifield_payment_approval',
               title: 'Greiðsla',
-              type: 'MULTI_FIELD',
+              type: FormItemTypes.MULTI_FIELD,
               children: [
-                {
+                buildPaymentChargeOverviewField({
                   id: 'paymentChargeOverviewField',
-                  component: 'PaymentChargeOverviewFormField',
-                  type: 'PAYMENT_CHARGE_OVERVIEW',
-                  chargeItemCode: 'AY101',
-                },
-                {
+                  chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
+                  title: '',
+                }),
+                buildSubmitField({
                   id: 'submit2',
                   title: 'Greiðslu upplýsingar',
-                  type: 'SUBMIT',
-                  placement: 'footer',
-                  children: null,
-                  doesNotRequireAnswer: false,
                   refetchApplicationAfterSubmit: true,
-                  component: 'SubmitFormField',
+                  placement: 'footer',
                   actions: [
-                    {
-                      event: 'SUBMIT',
-                      name: 'Staðfesta',
-                      type: 'primary',
-                    },
+                    { event: 'SUBMIT', name: 'Confirm', type: 'primary' },
                   ],
-                },
+                }),
               ],
             },
           ],
-        },
+        }),
       ],
     }
     return JSON.stringify(payment)
@@ -402,18 +391,6 @@ export function buildCertificateTemplate<
                   children: null,
                   component: 'PdfViewerFormField',
                   pdfKey: 'criminalRecord.data.contentBase64',
-                  openMySitesLabel: 'Opna í Mínum síðum',
-                  downloadPdfButtonLabel: 'Sækja PDF',
-                  successTitle: 'Tókst',
-                  successDescription: 'Umsókn þín hefur verið móttekin.',
-                  verificationDescription:
-                    'Vinsamlegast staðfestu upplýsingar hér að neðan.',
-                  verificationLinkTitle: 'Leiðbeiningar um staðfestingu',
-                  verificationLinkUrl: 'https://verification-url-example.com',
-                  viewPdfButtonLabel: 'Skoða PDF',
-                  openInboxButtonLabel: 'Opna tölvupóstinn',
-                  confirmationMessage:
-                    'Upplýsingum þínum hefur verið staðfest.',
                 },
               ],
             },
