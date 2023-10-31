@@ -270,6 +270,10 @@ export const m = defineMessages({
     id: 'service.portal:my-vehicles',
     defaultMessage: 'Ökutækin mín',
   },
+  vehicleMilage: {
+    id: 'service.portal:my-vehicles-milage',
+    defaultMessage: 'Kílómetrastaða',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -890,6 +894,10 @@ export const m = defineMessages({
   saveInfo: {
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',
+  },
+  save: {
+    id: 'service.portal:save',
+    defaultMessage: 'Vista',
   },
   startPage: {
     id: 'service.portal:start-page',

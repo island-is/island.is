@@ -27,12 +27,20 @@ export const assetsNavigation: PortalNavigationItem = {
         {
           name: m.myVehicles,
           path: AssetsPaths.AssetsMyVehicles,
+          breadcrumbHide: true,
           children: [
             {
               // Path param reference
               name: 'id',
               navHide: true,
               path: AssetsPaths.AssetsVehiclesDetail,
+              children: [
+                {
+                  name: m.vehicleMilage,
+                  navHide: true,
+                  path: AssetsPaths.AssetsVehiclesDetailMilage,
+                },
+              ],
             },
           ],
         },

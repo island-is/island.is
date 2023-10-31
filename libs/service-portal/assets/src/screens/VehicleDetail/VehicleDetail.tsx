@@ -1,9 +1,7 @@
 import isNumber from 'lodash/isNumber'
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery, gql } from '@apollo/client'
 import {
-  Query,
   VehiclesCurrentOwnerInfo,
   VehiclesOperator,
 } from '@island.is/api/schema'
@@ -47,122 +45,8 @@ import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import { getDateLocale } from '../../utils/constants'
-
-export const GET_USERS_VEHICLE_DETAIL = gql`
-  query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
-    vehiclesDetail(input: $input) {
-      mainInfo {
-        model
-        subModel
-        regno
-        year
-        co2
-        weightedCo2
-        co2Wltp
-        weightedCo2Wltp
-        cubicCapacity
-        trailerWithBrakesWeight
-        trailerWithoutBrakesWeight
-      }
-      basicInfo {
-        model
-        regno
-        subModel
-        permno
-        verno
-        year
-        country
-        preregDateYear
-        formerCountry
-        importStatus
-      }
-      registrationInfo {
-        firstRegistrationDate
-        preRegistrationDate
-        newRegistrationDate
-        vehicleGroup
-        color
-        reggroup
-        reggroupName
-        passengers
-        useGroup
-        driversPassengers
-        standingPassengers
-        plateLocation
-        specialName
-        plateStatus
-      }
-      currentOwnerInfo {
-        owner
-        nationalId
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      inspectionInfo {
-        type
-        date
-        result
-        odometer
-        nextInspectionDate
-        lastInspectionDate
-        insuranceStatus
-        mortages
-        carTax
-        inspectionFine
-      }
-      technicalInfo {
-        engine
-        totalWeight
-        cubicCapacity
-        capacityWeight
-        length
-        vehicleWeight
-        width
-        trailerWithoutBrakesWeight
-        horsepower
-        trailerWithBrakesWeight
-        carryingCapacity
-        axleTotalWeight
-        axles {
-          axleMaxWeight
-          wheelAxle
-        }
-        tyres {
-          axle1
-          axle2
-          axle3
-          axle4
-          axle5
-        }
-      }
-      ownersInfo {
-        name
-        address
-        dateOfPurchase
-      }
-      coOwners {
-        nationalId
-        owner
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      operators {
-        nationalId
-        name
-        address
-        postalcode
-        city
-        startDate
-        endDate
-      }
-      downloadServiceURL
-    }
-  }
-`
+import { useGetUsersVehiclesDetailQuery } from './VehicleDetail.generated'
+import { AssetsPaths } from '../../lib/paths'
 
 type UseParams = {
   id: string
@@ -173,7 +57,7 @@ const VehicleDetail = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
+  const { data, loading, error } = useGetUsersVehiclesDetailQuery({
     variables: {
       input: {
         regno: '',
@@ -200,6 +84,7 @@ const VehicleDetail = () => {
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
+  console.log('data', data)
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -404,6 +289,31 @@ const VehicleDetail = () => {
                 'g/km',
               )}
               loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {data?.vehiclesDetail?.inspectionInfo?.odometer && ( // TODO: Should this come from here, or should this come from the `Mileagereading` service?
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.lastKnownOdometerStatus)}
+              content={displayWithUnit(
+                data.vehiclesDetail.inspectionInfo.odometer,
+                'km',
+                true,
+              )}
+              loading={loading}
+              editLink={{
+                title: m.viewDetail,
+                url: id
+                  ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                      ':id',
+                      id.toString(),
+                    )
+                  : '',
+                external: false,
+              }}
             />
             <Divider />
           </>

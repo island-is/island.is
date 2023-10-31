@@ -177,6 +177,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
+  vehicleMilageIntro: {
+    id: 'sp.vehicles:vehicle-milage-intro',
+    defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár`,
+  },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
@@ -788,6 +792,26 @@ export const vehicleMessage = defineMessages({
   odometer: {
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
+  },
+  lastKnownOdometerStatus: {
+    id: 'sp.vehicles:last-known-odometer-status',
+    defaultMessage: 'Síðasta kílómetrastaða',
+  },
+  vehicleMilageInputLabel: {
+    id: 'sp.vehicles:milage-input-label',
+    defaultMessage: 'Kílómetrastaða',
+  },
+  vehicleMilageInputPlaceholder: {
+    id: 'sp.vehicles:milage-input-placeholder',
+    defaultMessage: '20.000',
+  },
+  vehicleMilageInputTitle: {
+    id: 'sp.vehicles:milage-input-title',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  vehicleMilageRegistration: {
+    id: 'sp.vehicles:milage-registration',
+    defaultMessage: 'Skráning',
   },
 })
 
