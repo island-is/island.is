@@ -279,6 +279,8 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/ @island-is/origo
 
 /apps/services/university-gateway/                                                                       @island-is/origo
+/apps/web/screens/UniversitySearch/                                                                      @island-is/origo
+/apps/web/components/ListViewCard/                                                                       @island-is/origo
 /libs/clients/university-application/                                                                    @island-is/origo
 /libs/clients/university-gateway-api/                                                                    @island-is/origo
 /libs/api/domains/university-gateway/                                                                    @island-is/origo

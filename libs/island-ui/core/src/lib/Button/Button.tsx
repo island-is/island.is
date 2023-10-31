@@ -40,7 +40,7 @@ type UtilityButtonType = {
 
 export type ButtonSizes = Exclude<
   keyof typeof styles.size,
-  'utility' | 'textSmall'
+  'utility' | 'textSmall' | 'textMedium'
 >
 
 export type ButtonTypes =
@@ -57,6 +57,7 @@ export interface ButtonProps {
   children?: ReactNode
   size?: ButtonSizes
   disabled?: boolean
+  textSize?: 'sm' | 'md'
   unfocusable?: boolean
   fluid?: boolean
   icon?: IconType
@@ -101,6 +102,7 @@ export const Button = forwardRef<
       unfocusable,
       value,
       name,
+      textSize,
       ...buttonProps
     },
     ref,
@@ -125,7 +127,9 @@ export const Button = forwardRef<
             [styles.fluid]: fluid,
             [styles.nowrap]: nowrap,
             [styles.size.utility]: variant === 'utility',
-            [styles.size.textSmall]: variant === 'text' && size === 'small',
+            [styles.size.textSmall]:
+              (variant === 'text' && size === 'small') || textSize === 'sm',
+            [styles.size.textMedium]: textSize === 'md',
             [styles.circleSizes[size]]: circle,
             [styles.circle]: circle,
             [styles.padding[size]]:
