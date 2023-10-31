@@ -16,14 +16,13 @@ import { DegreeType, Season } from '@island.is/university-gateway'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
 @Controller({
-  path: 'programs',
   version: ['1'],
 })
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
   @BypassAuth()
-  @Get()
+  @Get('programs')
   @Documentation({
     description: 'Get all programs',
     response: {
@@ -104,7 +103,7 @@ export class ProgramController {
   }
 
   @BypassAuth()
-  @Get(':id')
+  @Get('programs/:id')
   @Documentation({
     description: 'Get program (and courses) by ID',
     response: {

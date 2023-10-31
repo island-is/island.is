@@ -12,7 +12,7 @@ export const UniversityGatewayApiClientConfig = defineConfig({
     return {
       basePath: env.required(
         'UNIVERSITY_GATEWAY_API_URL',
-        'http://localhost:3380',
+        'http://localhost:3380/v1',
       ),
     }
   },
