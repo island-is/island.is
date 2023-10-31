@@ -1428,7 +1428,7 @@ export class NotificationService {
       theCase.appealJudge3,
     ]
 
-    recipientRoles.map((recipient) => {
+    recipientRoles.forEach((recipient) => {
       if (theCase.appealCaseNumber && recipient && theCase.appealJudge1?.name) {
         const { subject, body } =
           formatCourtOfAppealJudgeAssignedEmailNotification(
