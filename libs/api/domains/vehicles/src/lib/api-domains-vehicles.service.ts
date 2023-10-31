@@ -38,6 +38,8 @@ export class VehiclesService {
       page: input.page,
       pageSize: input.pageSize,
       type: input.type,
+      dtFrom: input.dtFrom,
+      dtTo: input.dtTo,
     })
   }
 

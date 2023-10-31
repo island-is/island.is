@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridRow,
   Input,
+  Pagination,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -60,7 +61,7 @@ const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
   const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
-
+  const [page, setPage] = useState(1)
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   const [filterValue, setFilterValue] =
@@ -71,8 +72,8 @@ const VehiclesOverview = () => {
   ] = useGetUsersVehiclesLazyQuery({
     variables: {
       input: {
-        pageSize: 50,
-        page: 1,
+        pageSize: 10,
+        page: page,
         showDeregeristered: false,
         showHistory: false,
       },
@@ -81,38 +82,15 @@ const VehiclesOverview = () => {
 
   useEffect(() => {
     GetUsersVehiclesLazyQuery()
-  }, [])
+  }, [page])
 
-  const paginate = () => {
-    fetchMore({
-      variables: {
-        input: {
-          pageSize: 50,
-          page: 1,
-          showDeregistered: false,
-          showHistory: false,
-        },
-      },
-      updateQuery: (prevResult, { fetchMoreResult }) => {
-        if (
-          fetchMoreResult.vehiclesList?.vehicleList &&
-          prevResult.vehiclesList?.vehicleList
-        ) {
-          fetchMoreResult.vehiclesList.vehicleList = [
-            ...prevResult.vehiclesList.vehicleList,
-            ...fetchMoreResult.vehiclesList.vehicleList,
-          ]
-        }
-        return fetchMoreResult
-      },
-    })
-  }
   const vehicles = usersVehicleQuery.data?.vehiclesList?.vehicleList || []
   const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
   const filteredVehicles = getFilteredVehicles(
     usersVehicleQuery?.data?.vehiclesList?.vehicleList ?? [],
     filterValue,
   )
+
   const handleSearchChange = useCallback((value: string) => {
     setFilterValue({ ...defaultFilterValues, searchQuery: value })
     if (!searchInteractionEventSent) {
@@ -281,6 +259,23 @@ const VehiclesOverview = () => {
                 return <VehicleCard vehicle={item} key={index} />
               })}
             </Stack>
+          </Box>
+        )}
+        {!loading && filteredVehicles.length > 0 && (
+          <Box>
+            <Pagination
+              page={
+                usersVehicleQuery.data?.vehiclesList?.paging?.pageNumber ?? 0
+              }
+              totalPages={
+                usersVehicleQuery.data?.vehiclesList?.paging?.totalPages ?? 0
+              }
+              renderLink={(page, className, children) => (
+                <button className={className} onClick={() => setPage(page)}>
+                  {children}
+                </button>
+              )}
+            />
           </Box>
         )}
       </Stack>

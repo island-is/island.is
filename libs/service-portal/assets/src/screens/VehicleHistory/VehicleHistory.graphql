@@ -1,26 +1,46 @@
-query GetUsersVehicles {
-  vehiclesList {
+query GetUsersVehicles($input: GetVehiclesForUserInput!) {
+  vehiclesList(input: $input) {
     vehicleList {
+      isCurrent
       permno
       regno
+      vin
       type
       color
       firstRegDate
       modelYear
       productYear
+      registrationType
       role
       operatorStartDate
       operatorEndDate
       outOfUse
       otherOwners
       termination
+      buyerPersidno
+      ownerPersidno
       vehicleStatus
+      useGroup
+      vehGroup
       plateStatus
       nextInspection {
         nextInspectionDate
         nextInspectionDateIfPassedInspectionToday
       }
-      deregistrationDate
+      operatorNumber
+      primaryOperator
+      ownerSsid
+      ownerName
+      lastInspectionResult
+      lastInspectionDate
+      lastInspectionType
+      nextInspectionDate
+    }
+    paging {
+      pageNumber
+      pageSize
+      totalPages
+      totalRecords
     }
   }
 }
