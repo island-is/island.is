@@ -13,7 +13,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IArticle } from '../generated/contentfulTypes'
 import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
-import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { mapDocument } from '../unions/slice.union'
 import { mapOrganization, Organization } from './organization.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
@@ -31,9 +31,6 @@ export class ArticleReference {
 
   @Field()
   intro?: string
-
-  @CacheField(() => [SliceUnion], { nullable: true })
-  body?: Array<typeof SliceUnion> = []
 
   @CacheField(() => ArticleGroup, { nullable: true })
   group?: ArticleGroup | null
@@ -60,7 +57,6 @@ export const mapArticleReference = ({
   title: fields?.title ?? '',
   slug: fields?.slug ?? '',
   intro: fields?.intro ?? '',
-  body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   group: fields?.group ? mapArticleGroup(fields.group) : null,
   category: fields?.category ? mapArticleCategory(fields.category) : null,
   organization: (fields?.organization ?? [])
