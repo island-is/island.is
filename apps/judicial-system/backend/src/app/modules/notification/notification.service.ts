@@ -1437,7 +1437,7 @@ export class NotificationService {
             recipient.id === theCase.appealJudge1Id,
             theCase.appealJudge1.name,
             recipient.role,
-            `${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}`,
+            `${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}`,
           )
 
         promises.push(

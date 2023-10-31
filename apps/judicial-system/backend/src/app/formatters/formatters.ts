@@ -664,16 +664,18 @@ export function formatCourtOfAppealJudgeAssignedEmailNotification(
   role: UserRole,
   overviewUrl: string,
 ) {
-  const subject = formatMessage(notifications.COAJudgedAssigned.subject, {
+  const subject = formatMessage(notifications.COAJudgeAssigned.subject, {
     caseNumber,
   })
+
+  console.log(isForeperson)
   const body = isForeperson
-    ? formatMessage(notifications.COAJudgedAssigned.forepersonBody, {
+    ? formatMessage(notifications.COAJudgeAssigned.forepersonBody, {
         caseNumber,
         linkStart: `<a href="${overviewUrl}">`,
         linkEnd: '</a>',
       })
-    : formatMessage(notifications.COAJudgedAssigned.body, {
+    : formatMessage(notifications.COAJudgeAssigned.body, {
         role,
         caseNumber,
         foreperson: forepersonName,

@@ -7,7 +7,7 @@ import { useQuery } from '@apollo/client'
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { NotificationType } from '@island.is/judicial-system/types'
-import { core, errors } from '@island.is/judicial-system-web/messages'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
