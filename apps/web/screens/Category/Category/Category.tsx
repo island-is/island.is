@@ -364,15 +364,15 @@ const Category: Screen<CategoryProps> = ({
                                 [article.slug],
                               ).href
                             }
-                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                            // @ts-ignore make web strict
-                            tag={
-                              hasProcessEntries(article as Article) &&
-                              n(
-                                article.processEntryButtonText || 'application',
-                                'Umsókn',
-                              )
-                            }
+                            {...(hasProcessEntries(article as Article) ||
+                              article.processEntryButtonText
+                                ? {
+                                    tag: n(
+                                      article.processEntryButtonText || 'application',
+                                      'Umsókn',
+                                    ),
+                                  }
+                                : {})}
                           >
                             {article.title}
                           </TopicCard>

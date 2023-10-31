@@ -266,12 +266,15 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               {({ isFocused }) => (
                 <LinkCard
                   isFocused={isFocused}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  tag={
-                    hasProcessEntries(article) &&
-                    n(article.processEntryButtonText || 'application', 'Umsókn')
-                  }
+                  {...(hasProcessEntries(article as Article) ||
+                    article.processEntryButtonText
+                      ? {
+                          tag: n(
+                            article.processEntryButtonText || 'application',
+                            'Umsókn',
+                          ),
+                        }
+                      : {})}
                 >
                   {article.title}
                 </LinkCard>
