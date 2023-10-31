@@ -39,8 +39,8 @@ export const information = {
       defaultMessage: 'Netfang',
       description: 'Complainers email ',
     },
-    phone: {
-      id: 'ctao.application:information.aboutTheComplainer.phone',
+    phoneNumber: {
+      id: 'ctao.application:information.aboutTheComplainer.phoneNumber',
       defaultMessage: 'Símanúmer',
       description: 'Complainers phone number',
     },

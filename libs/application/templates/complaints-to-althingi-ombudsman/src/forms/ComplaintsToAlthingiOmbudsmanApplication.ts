@@ -175,8 +175,8 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               variant: 'email',
             }),
             buildPhoneField({
-              id: 'complainedForInformation.phone',
-              title: information.aboutTheComplainer.phone,
+              id: 'complainedForInformation.phoneNumber',
+              title: information.aboutTheComplainer.phoneNumber,
               width: 'half',
               backgroundColor: 'blue',
               defaultValue: '',
