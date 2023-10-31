@@ -32,12 +32,14 @@ import {
   PageLayout,
   PdfButton,
   RestrictionTags,
+  RulingDateLabel,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import CaseTitleInfoAndTags from '../../components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { api } from '../../services'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
@@ -89,31 +91,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Box>
             )}
           <Box marginBottom={5}>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader dataTestid="caseTitle" />
-                {completedCaseStates.includes(workingCase.state) && (
-                  <Box>
-                    <Text variant="h5">
-                      {formatMessage(strings.rulingDate, {
-                        rulingDate: `${formatDate(
-                          workingCase.rulingDate,
-                          'PPP',
-                        )} kl. ${formatDate(
-                          workingCase.rulingDate,
-                          constants.TIME_FORMAT,
-                        )}`,
-                      })}
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-              {completedCaseStates.includes(workingCase.state) && (
-                <Box display="flex" flexDirection="column">
-                  <RestrictionTags workingCase={workingCase} />
-                </Box>
-              )}
-            </Box>
+            <CaseTitleInfoAndTags />
             {completedCaseStates.includes(workingCase.state) &&
               isRestrictionCase(workingCase.type) &&
               workingCase.state === CaseState.ACCEPTED && (

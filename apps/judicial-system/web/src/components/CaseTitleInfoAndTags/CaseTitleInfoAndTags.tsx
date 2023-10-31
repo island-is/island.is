@@ -56,12 +56,17 @@ const CaseTitleInfoAndTags: React.FC = () => {
               workingCase.appealReceivedByCourtDate && (
                 <Box marginTop={1}>
                   <Text as="h5" variant="h5">
-                    {formatMessage(strings.appealSentAt, {
-                      appealSent: formatDate(
-                        workingCase.appealReceivedByCourtDate,
-                        'PPPp',
-                      ),
-                    })}
+                    {formatMessage(
+                      user.institution.type === InstitutionType.COURT_OF_APPEALS
+                        ? strings.COAAppealReceivedAt
+                        : strings.appealReceivedAt,
+                      {
+                        appealReceived: formatDate(
+                          workingCase.appealReceivedByCourtDate,
+                          'PPPp',
+                        ),
+                      },
+                    )}
                   </Text>
                 </Box>
               )}
