@@ -41,6 +41,11 @@ const dataFragment = gql`
     name
     label
     value
+    link {
+      __typename
+      label
+      value
+    }
     hideFromServicePortal
     fields {
       type
@@ -135,6 +140,14 @@ const DataFields = ({
                 <UserInfoLine
                   title={field.name ?? ''}
                   label={field.label ?? ''}
+                  editLink={
+                    field.link
+                      ? {
+                          url: field.link.value,
+                          title: field.link.label ?? undefined,
+                        }
+                      : undefined
+                  }
                   renderContent={
                     field.value &&
                     (field.label?.toLowerCase().includes('gildir til') ||
@@ -202,8 +215,6 @@ const DataFields = ({
                     )
                     .join(' ')}
                   paddingY={3}
-                  labelColumnSpan={['1/1', '6/12']}
-                  valueColumnSpan={['1/1', '6/12']}
                 />
                 <Divider />
               </>

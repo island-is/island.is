@@ -103,6 +103,8 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  //if any functionality comes attached to said data field, f.x. renewLicense
+  link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }
