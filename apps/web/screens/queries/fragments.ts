@@ -86,7 +86,16 @@ export const slices = gql`
     }
   }
 
-  fragment LinkCardFields on LinkCardSlice {
+  fragment LinkCardFields on LinkCard {
+    __typename
+    id
+    title
+    body
+    cardLink: link
+    linkText
+  }
+
+  fragment LinkCardSliceFields on LinkCardSlice {
     __typename
     id
     title
@@ -717,6 +726,7 @@ export const slices = gql`
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
+    ...LinkCardSliceFields
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
@@ -793,7 +803,7 @@ const nestedContainerFields = `
     }
   }
   ... on TabSection {
-    ...TabSectionFields 
+    ...TabSectionFields
     tabs {
       tabTitle
       contentTitle

@@ -5,6 +5,7 @@ import { logger } from '@island.is/logging'
 import {
   ITimeline,
   ISectionHeading,
+  ICard,
   ICardSection,
   IStorySection,
   ILogoListSlice,
@@ -46,6 +47,7 @@ import { Asset, mapAsset } from '../models/asset.model'
 import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
+import { LinkCard, mapLinkCard } from '../models/linkCard.model'
 import { LinkCardSlice, mapLinkCardSlice } from '../models/linkCardSlice.model'
 import {
   LatestNewsSlice,
@@ -115,6 +117,7 @@ import { Embed, mapEmbed } from '../models/embed.model'
 type SliceTypes =
   | ITimeline
   | ISectionHeading
+  | ICard
   | ICardSection
   | IStorySection
   | ILogoListSlice
@@ -156,6 +159,7 @@ export const SliceUnion = createUnionType({
   types: () => [
     TimelineSlice,
     HeadingSlice,
+    LinkCard,
     LinkCardSlice,
     StorySlice,
     LogoListSlice,
@@ -205,6 +209,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapTimelineSlice(slice as ITimeline)
     case 'sectionHeading':
       return mapHeadingSlice(slice as ISectionHeading)
+    case 'card':
+      return mapLinkCard(slice as ICard)
     case 'cardSection':
       return mapLinkCardSlice(slice as ICardSection)
     case 'storySection':

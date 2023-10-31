@@ -1,8 +1,11 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ICard } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class LinkCard {
+  @Field(() => ID)
+  id!: string
+
   @Field()
   title!: string
 
@@ -16,7 +19,8 @@ export class LinkCard {
   linkText?: string
 }
 
-export const mapLinkCard = ({ fields }: ICard): LinkCard => ({
+export const mapLinkCard = ({ sys, fields }: ICard): LinkCard => ({
+  id: sys.id,
   title: fields?.title ?? '',
   body: fields?.body ?? '',
   link: fields?.link ?? '',
