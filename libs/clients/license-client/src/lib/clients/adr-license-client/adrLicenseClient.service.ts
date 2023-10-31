@@ -32,6 +32,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     private adrApi: AdrApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: AdrDto,
   ): LicensePkPassAvailability {
@@ -146,7 +149,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
       return {
         ok: false,
@@ -184,7 +187,7 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       }
     }
 
-    return this.smartApi.generatePkPass(payload, format(user.nationalId))
+    return this.smartApi.generatePkPass(payload)
   }
 
   async getPkPassQRCode(user: User): Promise<Result<string>> {

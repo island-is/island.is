@@ -3,9 +3,6 @@ import {
   buildPaymentChargeOverviewField,
   buildSection,
   buildSubmitField,
-  coreHistoryMessages,
-  corePendingActionMessages,
-  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   Application,
@@ -38,11 +35,11 @@ import {
   StateNodeConfig,
   StatesConfig,
   TransitionsConfig,
+  StatesConfig,
 } from 'xstate'
 
 import { z } from 'zod'
 
-import { completedData, data } from './states'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 export interface ApplicationBlueprint {
@@ -50,7 +47,6 @@ export interface ApplicationBlueprint {
   initalState: string
   name: string
   states: StateBlueprint[]
-  dataProviders: TemplateApi[] //TODO: maybe later map these to the state nodes but for now just limit to just the prerequisites state
 }
 
 export interface Transition {
@@ -68,6 +64,7 @@ export interface StateBlueprint {
   historyLogs?: HistoryEventMessage[] | HistoryEventMessage
   onEntry?: TemplateApi[] | TemplateApi
   onExit?: TemplateApi[] | TemplateApi
+  dataProviders?: TemplateApi[]
 }
 
 export type Events =
@@ -97,10 +94,17 @@ export function buildTemplate<
   bluePrint: ApplicationBlueprint,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> {
   // 1. Extract data from blueprint
-  const { initalState, name, states, ApplicatonType, dataProviders } = bluePrint
+  const { initalState, name, states, ApplicatonType } = bluePrint
 
   // 2. Build states configuration
   const stateNodes: StatesConfig<TContext, TStateSchema, TEvents> =
+    states.reduce((acc: any, state) => {
+      acc[state.name] = buildState({}, state)
+      return acc as ApplicationStateMeta<TEvents>
+    }, {} as StatesConfig<TContext, TStateSchema, TEvents>)
+
+  // 2. Build states configuration
+  /*const stateNodes: StatesConfig<TContext, TStateSchema, TEvents> =
     states.reduce((acc: any, state) => {
       acc[state.name] = {
         meta: {
@@ -134,7 +138,7 @@ export function buildTemplate<
         on: buildTransitions(state.transitions),
       }
       return acc as ApplicationStateMeta<TEvents>
-    }, {} as StatesConfig<TContext, TStateSchema, TEvents>)
+    }, {} as StatesConfig<TContext, TStateSchema, TEvents>)*/
 
   const Schema = z.object({
     approveExternalData: z.boolean().refine((v) => v),
@@ -163,17 +167,6 @@ export function buildTemplate<
       return undefined
     },
   }
-}
-
-function buildTransitions<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject = Events,
->(transitions: Transition[]): TransitionsConfig<TContext, Events> {
-  return transitions.reduce((acc: any, transition) => {
-    acc[transition.event] = transition.target
-    return acc
-  }, {} as TransitionsConfig<TContext, Events>)
 }
 
 /**
@@ -213,59 +206,32 @@ type StateConfigOptions<T extends EventObject = AnyEventObject, R = unknown> = {
 
 export function buildState<T extends EventObject = AnyEventObject, R = unknown>(
   options: StateConfigOptions<T, R>,
+  stateBlueprint: StateBlueprint,
 ): StateNodeConfig<ApplicationContext, ApplicationStateSchema<T>, T> {
-  const { onExit, onEntry } = options
-  let submitTransitions: Array<{
-    target: string
-    cond?: (context: ApplicationContext) => boolean
-  }> = []
-
-  if (typeof options.submitTarget === 'string') {
-    submitTransitions = [{ target: options.submitTarget }]
-  } else if (options.submitTarget && Array.isArray(options.submitTarget)) {
-    submitTransitions = options.submitTarget.map((targetObj) => {
-      if (targetObj.cond) {
-        return {
-          target: targetObj.target,
-          cond: targetObj.cond,
-        }
-      }
-      return {
-        target: targetObj.target,
-      }
-    })
-  }
-  submitTransitions =
-    submitTransitions.length < 1 ? [{ target: 'done' }] : submitTransitions
-  const transitions = {
-    [DefaultEvents.SUBMIT]: [...submitTransitions],
-    [DefaultEvents.ABORT]: { target: options.abortTarget || 'draft' },
-  } as TransitionsConfig<ApplicationContext, T>
+  const {
+    transitions,
+    onEntry,
+    onExit,
+    name,
+    status,
+    lifecycle,
+    form,
+    historyLogs,
+    pendingAction,
+    dataProviders,
+  } = stateBlueprint
 
   return {
     meta: {
-      name: 'Greiðsla',
-      status: 'inprogress',
-      lifecycle: options.lifecycle || pruneAfterDays(1),
+      name,
+      status,
+      lifecycle,
       actionCard: {
-        historyLogs: [
-          {
-            logMessage: coreHistoryMessages.paymentAccepted,
-            onEvent: DefaultEvents.SUBMIT,
-          },
-          {
-            logMessage: coreHistoryMessages.paymentCancelled,
-            onEvent: DefaultEvents.ABORT,
-          },
-        ],
-        pendingAction: {
-          title: corePendingActionMessages.paymentPendingTitle,
-          content: corePendingActionMessages.paymentPendingDescription,
-          displayStatus: 'warning',
-        },
+        historyLogs,
+        pendingAction,
       },
-      ...(onExit || []),
-      ...(onEntry || []),
+      onExit,
+      onEntry,
       roles: options.roles || [
         {
           id: 'applicant',
@@ -277,13 +243,39 @@ export function buildState<T extends EventObject = AnyEventObject, R = unknown>(
               type: 'primary',
             },
           ],
+          form,
+          api: dataProviders,
           write: 'all',
           delete: true,
         },
       ],
     },
-    on: transitions,
+    on: transformTransitions(transitions),
   }
+}
+
+type TransitionConfigOrTarget<TContext, TEvent extends EventObject> = {
+  target: string
+}
+
+type TransitionsConfig<TContext, TEvents extends EventObject> = {
+  [K in TEvents['type']]?: TransitionConfigOrTarget<
+    TContext,
+    TEvents extends { type: K } ? TEvents : never
+  >
+} & {
+  [key: string]: TransitionConfigOrTarget<TContext, TEvents>
+}
+function transformTransitions<T extends EventObject>(
+  transitions: Transition[],
+): TransitionsConfig<unknown, T> {
+  const result: { [key: string]: TransitionConfigOrTarget<unknown, T> } = {}
+
+  for (const element of transitions) {
+    result[element.event] = { target: element.target }
+  }
+
+  return result as TransitionsConfig<unknown, T>
 }
 
 export function buildCertificateTemplate<
@@ -297,9 +289,6 @@ export function buildCertificateTemplate<
   templateId: ApplicationTypes,
   title: string,
 ): ApplicationTemplate<TContext, TStateSchema, TEvents> {
-  const dataString: string = JSON.stringify(data)
-  const completedDataString: string = JSON.stringify(completedData)
-
   const providers = [
     buildDataProviderItem({
       provider: NationalRegistryUserApi,
@@ -454,12 +443,6 @@ export function buildCertificateTemplate<
     ApplicatonType: templateId,
     initalState: 'prerequisites',
     name: name,
-    dataProviders: [
-      PaymentCatalogApi,
-      UserProfileApi,
-      NationalRegistryUserApi,
-      ValidateCriminalRecordApi,
-    ],
     states: [
       {
         name: 'prerequisites',
@@ -474,6 +457,12 @@ export function buildCertificateTemplate<
           shouldBeListed: true,
           shouldBePruned: false,
         },
+        dataProviders: [
+          PaymentCatalogApi,
+          UserProfileApi,
+          NationalRegistryUserApi,
+          ValidateCriminalRecordApi,
+        ],
       },
       {
         name: 'draft',
