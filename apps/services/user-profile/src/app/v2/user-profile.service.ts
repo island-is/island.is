@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { parsePhoneNumber } from 'libphonenumber-js'
 import { isEmail } from 'class-validator'
 import pick from 'lodash/pick'
+import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 
@@ -11,7 +12,6 @@ import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { IslykillService } from './islykill.service'
-import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class UserProfileService {
@@ -41,8 +41,6 @@ export class UserProfileService {
         needsNudge: true,
       }
     }
-
-    console.log('userProfile', userProfile.lastNudge)
 
     return {
       nationalId: userProfile.nationalId,
@@ -144,7 +142,7 @@ export class UserProfileService {
         { transaction },
       )
 
-      await this.islykillService.updateIslykillSettings({
+      await this.islykillService.upsertIslykillSettings({
         nationalId,
         phoneNumber: parsedPhoneNumber,
         email: userProfile.email,
@@ -190,7 +188,6 @@ export class UserProfileService {
   }
 
   private checkNeedsNudge(lastNudge: NonNullable<Date>): boolean {
-    console.log('lastNudge', lastNudge)
     const sixMonthsAgoDate = new Date()
     sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
 
