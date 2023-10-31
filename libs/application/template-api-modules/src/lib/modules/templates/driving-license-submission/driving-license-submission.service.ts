@@ -21,6 +21,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { User } from '@island.is/auth-nest-tools'
+import {
+  PostTemporaryLicenseWithHealthDeclarationMapper,
+  DrivingLicenseSchema,
+} from './utils/healthDeclarationMapper'
+import { removeCountryCode } from './utils'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -83,7 +89,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
 
     let result
     try {
-      result = await this.createLicense(nationalId, answers, auth.authorization)
+      result = await this.createLicense(nationalId, answers, auth)
     } catch (e) {
       this.log('error', 'Creating license failed', {
         e,
@@ -123,7 +129,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   private async createLicense(
     nationalId: string,
     answers: FormValue,
-    auth: string,
+    auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
       getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
@@ -135,7 +141,27 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const phone = answers.phone as string
+    const phone = removeCountryCode(answers.phone as string)
+
+    const postHealthDeclaration = async (
+      nationalId: string,
+      answers: FormValue,
+      auth: User,
+    ) => {
+      await this.drivingLicenseService
+        .postHealthDeclaration(
+          nationalId,
+          PostTemporaryLicenseWithHealthDeclarationMapper(
+            answers as DrivingLicenseSchema,
+          ),
+          auth.authorization.split(' ')[1] ?? '',
+        )
+        .catch((e) => {
+          throw new Error(
+            `Unexpected error (creating driver's license with health declarations): '${e}'`,
+          )
+        })
+    }
 
     if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
@@ -144,9 +170,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         needsToPresentQualityPhoto: needsQualityPhoto,
       })
     } else if (applicationFor === 'B-temp') {
+      if (needsHealthCert) {
+        await postHealthDeclaration(nationalId, answers, auth)
+      }
       return this.drivingLicenseService.newTemporaryDrivingLicense(
         nationalId,
-        auth,
+        auth.authorization.replace('Bearer ', ''),
         {
           jurisdictionId: jurisdictionId as number,
           needsToPresentHealthCertificate: needsHealthCert,

@@ -34,7 +34,6 @@ export const FootNote = ({ notes, serviceProviderID }: Props) => {
       else setCurrentOrganization(undefined)
     }
   }, [loading, pathname])
-
   return (
     <Box style={{ pageBreakBefore: 'always' }}>
       {notes?.map((item, index) => {

@@ -86,7 +86,7 @@ export const m = defineMessages({
     description: 'Some description',
   },
   selectPassportSectionDescription: {
-    id: 'pa.application:selectPassport.description',
+    id: 'pa.application:selectPassport.description#markdown',
     defaultMessage:
       'Þú getur sótt um nýtt vegabréf fyrir þig og eftirfarandi einstaklinga í þinni umsjón. Veldu þann einstakling sem þú vilt hefja umsókn fyrir og haltu síðan áfram í næsta skref.',
     description: 'Some description',
