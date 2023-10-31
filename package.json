@@ -289,7 +289,7 @@
     "whatwg-fetch": "3.6.2",
     "winston": "3.7.2",
     "winston-cloudwatch": "3.1.1",
-    "winston-transport": "4.5.0",
+    "winston-transport": "4.6.0",
     "xlsx": "0.17.0",
     "xml2js": "0.4.23",
     "xstate": "4.20.0",
