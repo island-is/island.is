@@ -227,7 +227,6 @@ const Applications: Screen<CategoryProps> = ({
 }
 
 Applications.getProps = async ({ apolloClient, locale, query }) => {
-  // TODO - file bugreport with next-usequerystate regarding missing default on server
   const {
     q = '*',
     page: pageParam = '1',
