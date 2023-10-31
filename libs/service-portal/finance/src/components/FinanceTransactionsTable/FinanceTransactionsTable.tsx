@@ -1,8 +1,8 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, amountFormat } from '@island.is/service-portal/core'
+import { m, amountFormat, periodFormat } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
@@ -15,9 +15,7 @@ interface Props {
   recordsArray: Array<CustomerRecordsDetails>
 }
 
-const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
-  recordsArray,
-}) => {
+const FinanceTransactionsTable = ({ recordsArray }: Props) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 
@@ -53,7 +51,7 @@ const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
                   { value: record.chargeType },
                   { value: record.itemCode },
                   { value: record.chargeItemSubject },
-                  { value: record.period },
+                  { value: periodFormat(record.period) },
                   { value: amountFormat(record.amount), align: 'right' },
                 ]}
               >

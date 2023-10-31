@@ -572,7 +572,7 @@ export const m = defineMessages({
     defaultMessage: 'Hreyfingar',
   },
   financeTransactionPeriods: {
-    id: 'service.portal:finance-transaction-subjects',
+    id: 'service.portal:finance-transaction-periods',
     defaultMessage: 'Gjaldtímabil',
   },
   financeBills: {

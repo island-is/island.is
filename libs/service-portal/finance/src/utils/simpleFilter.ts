@@ -43,14 +43,14 @@ export const transactionPeriodFilter = (
   select: string[],
 ) => {
   if (!query && !select.length) return data
+
+  const q = query.toLowerCase()
   const filteredArray = data.filter((item) => {
     const foundInQuery = query
-      ? item.name.toLowerCase().includes(query.toLowerCase()) ||
-        item.chargeItemSubjects.toLowerCase().includes(query.toLowerCase()) ||
-        item.chargeItemSubjectDescription
-          .toString()
-          .includes(query.toLowerCase()) ||
-        format(new Date(item.lastMovementDate), dateFormat.is).includes(query)
+      ? item.name.toLowerCase().includes(q) ||
+        item.chargeItemSubjects.toLowerCase().includes(q) ||
+        item.chargeItemSubjectDescription.includes(q) ||
+        format(new Date(item.lastMovementDate), dateFormat.is).includes(q)
       : true
 
     const foundInSelect = select.length ? select.includes(item.name) : true

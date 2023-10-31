@@ -28,6 +28,7 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeTransactionPeriods,
       path: FinancePaths.FinanceTransactionPeriods,
+      navHide: true,
     },
     {
       name: m.financeBills,

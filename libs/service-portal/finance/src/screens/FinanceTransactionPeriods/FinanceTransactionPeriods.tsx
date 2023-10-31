@@ -1,17 +1,11 @@
-import format from 'date-fns/format'
-import sub from 'date-fns/sub'
 import { useEffect, useState } from 'react'
 import {
-  Accordion,
-  AccordionItem,
   AlertBanner,
   Box,
   Button,
-  DatePicker,
   FilterInput,
   FilterMultiChoice,
   Hidden,
-  Select,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
@@ -28,10 +22,7 @@ import FinanceIntro from '../../components/FinanceIntro'
 import {
   GetChargeTypesByYearQuery,
   GetChargeTypesDetailsByYearQuery,
-  useGetAssessmentYearsLazyQuery,
   useGetAssessmentYearsQuery,
-  useGetChargeItemSubjectsByYearLazyQuery,
-  useGetChargeTypePeriodSubjectLazyQuery,
   useGetChargeTypesByYearLazyQuery,
   useGetChargeTypesDetailsByYearLazyQuery,
 } from './FinanceTransactionPeriods.generated'
@@ -39,10 +30,10 @@ import FinanceTransactionsPeriodsTable from '../../components/FinanceTransaction
 import { transactionPeriodFilter } from '../../utils/simpleFilter'
 
 const FinanceTransactionPeriods = () => {
-  useNamespaces('sp.finance-transaction-subjects')
+  useNamespaces('sp.finance-transaction-periods')
   const { formatMessage } = useLocale()
 
-  const [activeYear, setActiveYear] = useState<string>()
+  const [activeYear, setActiveYear] = useState<string>('')
   const [assessmentYears, setAssessmentYears] = useState<
     { label: string; value: string }[]
   >([])
@@ -60,8 +51,6 @@ const FinanceTransactionPeriods = () => {
   const { data: assessmentYearsData, error: assessmentYearsError } =
     useGetAssessmentYearsQuery()
 
-  console.log({ assessmentYearsData })
-
   const [getChargeTypesByYear] = useGetChargeTypesByYearLazyQuery()
   const [
     getChargeTypesDetailsByYear,
@@ -71,9 +60,6 @@ const FinanceTransactionPeriods = () => {
       error: chargeTypesDetailsError,
     },
   ] = useGetChargeTypesDetailsByYearLazyQuery()
-  const [getChargeItemSubjectsByYear] =
-    useGetChargeItemSubjectsByYearLazyQuery()
-  const [getChargeTypePeriodSubject] = useGetChargeTypePeriodSubjectLazyQuery()
 
   useEffect(() => {
     if (assessmentYearsData) {
@@ -92,15 +78,11 @@ const FinanceTransactionPeriods = () => {
 
   useEffect(() => {
     if (activeYear) {
-      console.log({ activeYear })
-
       getChargeTypesByYear({
         variables: {
           input: { year: activeYear },
         },
         onCompleted: (data) => {
-          console.log('getChargeTypesByYear', { data })
-
           setChargeTypes(data.getChargeTypesByYear)
         },
       })
@@ -110,34 +92,12 @@ const FinanceTransactionPeriods = () => {
           input: { year: activeYear, typeId: activeChargeType },
         },
         onCompleted: (data) => {
-          console.log('getChargeTypesDetailsByYear', { data })
-
           setChargeTypeDetails(data.getChargeTypesDetailsByYear)
         },
       })
     } else {
       setChargeTypes(undefined)
     }
-
-    /*
-    getChargeItemSubjectsByYear({
-      variables: {
-        input: { year: '2022', typeId: 'AY', nextKey: '' },
-      },
-      onCompleted: (data) => {
-        console.log('getChargeItemSubjectsByYear', { data })
-      },
-    })
-
-    getChargeTypePeriodSubject({
-      variables: {
-        input: { year: '2022', typeId: 'AY', subject: '', period: '' },
-      },
-      onCompleted: (data) => {
-        console.log('getChargeTypePeriodSubject', { data })
-      },
-    })
-*/
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeYear, activeChargeType])
 
@@ -169,7 +129,7 @@ const FinanceTransactionPeriods = () => {
       <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
         <FinanceIntro
           text={formatMessage({
-            id: 'sp.finance-transaction-subjects:intro',
+            id: 'sp.finance-transaction-periods:intro',
             defaultMessage:
               'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
           })}
@@ -188,7 +148,7 @@ const FinanceTransactionPeriods = () => {
                 filterInput={
                   <FilterInput
                     placeholder={formatMessage(m.searchPlaceholder)}
-                    name="finance-transaction-subjects-input"
+                    name="finance-transaction-periods-input"
                     value={q}
                     onChange={(e) => setQ(e)}
                     backgroundColor="blue"
@@ -269,7 +229,10 @@ const FinanceTransactionPeriods = () => {
                 />
               )}
             {chargeTypeDetails?.chargeType?.length ? (
-              <FinanceTransactionsPeriodsTable records={recordsDataArray} />
+              <FinanceTransactionsPeriodsTable
+                records={recordsDataArray}
+                year={activeYear}
+              />
             ) : null}
           </Box>
         </Stack>
