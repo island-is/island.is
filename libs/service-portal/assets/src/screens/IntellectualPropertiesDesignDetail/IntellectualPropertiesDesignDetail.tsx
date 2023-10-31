@@ -3,10 +3,9 @@ import { useParams } from 'react-router-dom'
 import {
   EmptyState,
   ErrorScreen,
-  ExcludesFalse,
+  Gallery,
+  GalleryItem,
   IntroHeader,
-  MultiImage,
-  NotFound,
   TableGrid,
   UserInfoLine,
   formatDate,
@@ -105,11 +104,44 @@ const IntellectualPropertiesDesignDetail = () => {
             </Button>
           </Inline>
         </Box>
-        <MultiImage
+        <Gallery
           loading={loading}
-          images={data?.intellectualPropertyDesignImageList?.images ?? []}
-          title="Design images"
-        />
+          thumbnails={data?.intellectualPropertyDesignImageList?.images.map(
+            (item, i) => {
+              if (!item) {
+                return null
+              }
+
+              return (
+                <GalleryItem key={i} thumbnail>
+                  <img
+                    width={365}
+                    height={365}
+                    src={`data:image/png;base64,${item.image}`}
+                    alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                  />
+                </GalleryItem>
+              )
+            },
+          )}
+        >
+          {data?.intellectualPropertyDesignImageList?.images.map((item, i) => {
+            if (!item) {
+              return null
+            }
+
+            return (
+              <GalleryItem key={i}>
+                <img
+                  width={365}
+                  height={365}
+                  src={`data:image/png;base64,${item.image}`}
+                  alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                />
+              </GalleryItem>
+            )
+          })}
+        </Gallery>
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}

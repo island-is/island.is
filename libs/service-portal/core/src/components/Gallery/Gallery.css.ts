@@ -1,6 +1,23 @@
 import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 import { hexToRgba } from '@island.is/island-ui/utils'
+import { relative } from 'path'
+
+export const gallery = style({
+  contain: 'layout',
+  position: 'relative',
+  zIndex: theme.zIndex.base,
+})
+
+export const galleryImageWrap = style({
+  position: 'relative',
+  height: '100%',
+  width: '100%',
+
+  ':before': {
+    display: 'block',
+  },
+})
 
 export const thumbnailGrid = style({
   display: 'flex',
@@ -9,25 +26,21 @@ export const thumbnailGrid = style({
   height: '100%',
 })
 
-export const container = style({
-  position: 'relative',
+export const galleryButton = style({
   border: '1px solid #d2d2d2',
   borderRadius: ' 8px',
   overflow: 'hidden',
-  transition: 'border .2s',
-})
-
-export const selectedImageOverlay = style({
-  borderColor: theme.color.blue400,
-})
-
-export const image = style({
-  position: 'absolute',
-  top: '0',
-  left: '0',
+  position: 'relative',
+  display: 'block',
+  zIndex: theme.zIndex.base,
   width: '100%',
-  height: '100%',
-  objectFit: 'contain',
+  opacity: 0.8,
+})
+
+export const activeGalleryButton = style({
+  borderColor: theme.color.blue400,
+  transition: theme.transitions.fast,
+  opacity: 1,
 })
 
 export const lastImageOverlay = style({
@@ -40,18 +53,4 @@ export const lastImageOverlay = style({
   justifyContent: 'center',
   alignItems: 'center',
   background: hexToRgba(theme.color.blue100, 0.6),
-})
-
-export const thumbnail = style({
-  opacity: 1,
-  filter: 'blur(20px)',
-  transform: 'scale(1.05)',
-})
-
-export const show = style({
-  opacity: 1,
-})
-
-export const hide = style({
-  opacity: 0,
 })

@@ -9,7 +9,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import * as styles from './MultiImageModal.css'
+import * as styles from './GalleryModal.css'
 import cn from 'classnames'
 import { useMountedState } from 'react-use'
 
@@ -26,7 +26,7 @@ interface Props {
 
 const MAX_GALLERY_IMAGES = 6
 
-export const MultiImageModal: FC<Props> = ({
+export const GalleryModal: FC<Props> = ({
   id,
   onVisibilityChange,
   isVisible,
@@ -146,5 +146,3 @@ export const MultiImageModal: FC<Props> = ({
     </ModalBase>
   )
 }
-
-export default MultiImageModal
