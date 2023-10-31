@@ -44,6 +44,7 @@ import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
+  getBank,
   getChildPensionDescription,
   getChildPensionTitle,
   getTaxOptions,
@@ -267,11 +268,7 @@ export const OldAgePensionForm: Form = buildForm({
                     const bankInfo = application.externalData
                       .socialInsuranceAdministrationBankInfo.data as BankInfo
 
-                    return bankInfo.bank &&
-                      bankInfo.ledger &&
-                      bankInfo.accountNumber
-                      ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
-                      : ''
+                    return getBank(bankInfo)
                   },
                 }),
                 buildRadioField({

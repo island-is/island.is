@@ -29,7 +29,12 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
+import {
+  CombinedResidenceHistory,
+  Employer,
+  ChildPensionRow,
+  BankInfo,
+} from '../types'
 
 export interface FileType {
   key: string
@@ -103,11 +108,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
+  // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
     answers,
     'residenceHistory.question',
+    YES,
   ) as YesOrNo
 
   const onePaymentPerYear = getValueViaPath(
@@ -157,6 +162,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'childPensionRepeater',
     [],
   ) as ChildPensionRow[]
+
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
   const personalAllowance = getValueViaPath(
     answers,
@@ -333,10 +340,10 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
-  const bank = getValueViaPath(
+  const bankInfo = getValueViaPath(
     externalData,
-    'userProfile.data.bankInfo',
-  ) as string
+    'socialInsuranceAdministrationBankInfo.data',
+  ) as BankInfo
 
   return {
     residenceHistory,
@@ -350,7 +357,7 @@ export function getApplicationExternalData(
     spouseName,
     spouseNationalId,
     maritalStatus,
-    bank,
+    bankInfo,
   }
 }
 
@@ -812,4 +819,10 @@ export const formatBankInfo = (bankInfo: string) => {
   }
 
   return bankInfo
+}
+
+export const getBank = (bankInfo: BankInfo) => {
+  return bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+    : ''
 }

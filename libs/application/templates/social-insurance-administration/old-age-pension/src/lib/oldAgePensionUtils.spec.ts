@@ -19,6 +19,7 @@ import {
   isExistsCohabitantOlderThan25,
   childCustodyLivesWithApplicant,
   filterValidEmployers,
+  getBank,
 } from './oldAgePensionUtils'
 import { ApplicationType, MONTHS } from './constants'
 import * as kennitala from 'kennitala'
@@ -379,5 +380,30 @@ describe('filterValidEmployers', () => {
 
     expect(employers).toEqual(filteredList)
     expect(res).toEqual(filteredList)
+  })
+})
+
+describe('getBank', () => {
+  it('should return icelandic bank number if bank, ledger and account number is returned', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationBankInfo: {
+          data: {
+            bank: "2222",
+            ledger: "00",
+            accountNumber: "123456"
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(
+      application.externalData,
+    )
+    const bankNumer = getBank(bankInfo)
+
+    expect("222200123456").toEqual(bankNumer)
   })
 })

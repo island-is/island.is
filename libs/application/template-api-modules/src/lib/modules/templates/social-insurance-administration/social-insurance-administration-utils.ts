@@ -1,17 +1,18 @@
-import { Application, YES, YesOrNo } from '@island.is/application/types'
+import { Application, YES } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
   Child,
   OldAgePension,
   Uploads,
 } from '@island.is/clients/social-insurance-administration'
-import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationType,
   ConnectedApplications,
   HouseholdSupplementHousing,
   getApplicationAnswers,
+  getApplicationExternalData,
   isEarlyRetirement,
+  getBank,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 
 export const transformApplicationToOldAgePensionDTO = (
@@ -38,14 +39,11 @@ export const transformApplicationToOldAgePensionDTO = (
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
+    residenceHistoryQuestion,
   } = getApplicationAnswers(application.answers)
 
-  // If foreign residence is found then this is always true
-  const residenceHistoryQuestion = getValueViaPath(
-    application.answers,
-    'residenceHistory.question',
-    YES,
-  ) as YesOrNo
+  const { bankInfo } = getApplicationExternalData(application.externalData)
+  const bankNumber = getBank(bankInfo)
 
   const oldAgePensionDTO: OldAgePension = {
     period: {
@@ -54,7 +52,7 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     paymentInfo: {
-      bank: '',
+      bank: bank === bankNumber ? '' : bank,
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
       spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
