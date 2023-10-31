@@ -753,6 +753,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:more',
     defaultMessage: 'Meira',
   },
+  actions: {
+    id: 'sp.vehicles:actions',
+    defaultMessage: 'Aðgerðir',
+  },
   orderRegistrationNumber: {
     id: 'sp.vehicles:order-registration-number',
     defaultMessage: 'Panta skráningarmerki',
@@ -814,7 +818,7 @@ export const urls = defineMessages({
   },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',
-    defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
+    defaultMessage: 'https://island.is/umsoknir/endurnyja-einkanumer',
   },
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',

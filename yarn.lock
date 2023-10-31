@@ -9858,22 +9858,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hugsmidjan/qj@npm:^4.1.1, @hugsmidjan/qj@npm:^4.7.0":
-  version: 4.9.0
-  resolution: "@hugsmidjan/qj@npm:4.9.0"
-  checksum: 1ccc21559fd3f9aee553935142145dcc1b074614cf0e33f30cd30edd7eb38dfc4c13a1d938cf59e31defa9c6d437ee49730b8c11ca5d64e1e51195e1830cb1e1
+"@hugsmidjan/htmldiff-js@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@hugsmidjan/htmldiff-js@npm:1.2.1"
+  checksum: 1289d9446b984beb8dce10e108c00bba87f41ec320f232d7d3cfa4d18e7257da366c0cf19cad408026e043683c4afff6d10bf6857682172359957f559fe9634c
   languageName: node
   linkType: hard
 
-"@hugsmidjan/react@npm:^0.4.4":
-  version: 0.4.5
-  resolution: "@hugsmidjan/react@npm:0.4.5"
+"@hugsmidjan/qj@npm:^4.10.2, @hugsmidjan/qj@npm:^4.19.0":
+  version: 4.22.1
+  resolution: "@hugsmidjan/qj@npm:4.22.1"
+  checksum: 9bc8999a625b31f59b1ef1dc636d253440a2b55a81384cd83dad651be2b0d05ccf140bd1f5b9393c99e7e09f6bcc69db7af8963bacf087fe062e30d84659894a
+  languageName: node
+  linkType: hard
+
+"@hugsmidjan/react@npm:^0.4.23":
+  version: 0.4.33
+  resolution: "@hugsmidjan/react@npm:0.4.33"
   dependencies:
-    "@hugsmidjan/qj": ^4.1.1
+    "@hugsmidjan/qj": ^4.19.0
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 6eda878e20e3ddaaf19ae19b76a9c912d9d549a471863057e1d84a62fe123713f3a9a895c3e0f8a8e71cd3e3e9a09ded5ce0b53fa182e071af1a398d2f847214
+  checksum: c204cf76075d27de6d01ff75879c1a44256e64ecb1929ecb80bb93c57c3cd191aada3ee2d0a1030b3e2743e05084e05a0209348de8e0b08690711102c5602a98
   languageName: node
   linkType: hard
 
@@ -10025,22 +10032,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.9":
-  version: 0.7.9
-  resolution: "@island.is/regulations-tools@npm:0.7.9"
+"@island.is/regulations-tools@npm:0.7.11":
+  version: 0.7.11
+  resolution: "@island.is/regulations-tools@npm:0.7.11"
   dependencies:
-    "@hugsmidjan/qj": ^4.7.0
-    "@hugsmidjan/react": ^0.4.4
+    "@hugsmidjan/htmldiff-js": ^1.2.1
+    "@hugsmidjan/qj": ^4.10.2
+    "@hugsmidjan/react": ^0.4.23
     "@tinymce/tinymce-react": ^3.13.0
     cleanup-prettier: "npm:prettier@2.2.0"
-    htmldiff-js: "github:hugsmidjan-is/htmldiff-js#semver:^1.1.1"
     jsdom: ^16.4.0
     tinymce: ^5.10.2
     translate.js: ^1.3.2
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
+  checksum: f3fba70becfadb2c0f87027f2d84ba2a7429da7eaf8fbf5e10d000f41b92e02117a974f72a28f761cf10f8bdfb6c9ed0f51c525d3a58fbdefa632d63c95253d3
   languageName: node
   linkType: hard
 
@@ -11524,24 +11531,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:9.2.2":
-  version: 9.2.2
-  resolution: "@nestjs/terminus@npm:9.2.2"
+"@nestjs/terminus@npm:10.1.1":
+  version: 10.1.1
+  resolution: "@nestjs/terminus@npm:10.1.1"
   dependencies:
     boxen: 5.1.2
-    check-disk-space: 3.3.1
+    check-disk-space: 3.4.0
   peerDependencies:
     "@grpc/grpc-js": "*"
     "@grpc/proto-loader": "*"
     "@mikro-orm/core": "*"
     "@mikro-orm/nestjs": "*"
-    "@nestjs/axios": "*"
-    "@nestjs/common": 9.x
-    "@nestjs/core": 9.x
-    "@nestjs/microservices": "*"
-    "@nestjs/mongoose": "*"
-    "@nestjs/sequelize": "*"
-    "@nestjs/typeorm": "*"
+    "@nestjs/axios": ^1.0.0 || ^2.0.0 || ^3.0.0
+    "@nestjs/common": ^9.0.0 || ^10.0.0
+    "@nestjs/core": ^9.0.0 || ^10.0.0
+    "@nestjs/microservices": ^9.0.0 || ^10.0.0
+    "@nestjs/mongoose": ^9.0.0 || ^10.0.0
+    "@nestjs/sequelize": ^9.0.0 || ^10.0.0
+    "@nestjs/typeorm": ^9.0.0 || ^10.0.0
+    "@prisma/client": "*"
     mongoose: "*"
     reflect-metadata: 0.1.x
     rxjs: 7.x
@@ -11566,13 +11574,15 @@ __metadata:
       optional: true
     "@nestjs/typeorm":
       optional: true
+    "@prisma/client":
+      optional: true
     mongoose:
       optional: true
     sequelize:
       optional: true
     typeorm:
       optional: true
-  checksum: c511dc30f70ffb00aa09c4524b38715c366aed3e075048adff6635e7206aeaf70d1728ae0de36fe0e7f3789b3cfe70100e2c571c00aa301e7bf2163cc6ee16cd
+  checksum: 62e8707b16e86500cd94415188c7b303eed18cf216951e207693ba917965241c7e2130e982d48fc481ceafed8ed998b2e71f1866f1097541b067a39d51cd84a0
   languageName: node
   linkType: hard
 
@@ -22724,10 +22734,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-disk-space@npm:3.3.1":
-  version: 3.3.1
-  resolution: "check-disk-space@npm:3.3.1"
-  checksum: 90b7b77ab932be0c0a24c5f68778d3c0e9179686282b04d84b1272a511a1c55b9f184c98f12b1a1628b832934971d66e63acaa9e3c82f14d9d221a4848b4cf8b
+"check-disk-space@npm:3.4.0":
+  version: 3.4.0
+  resolution: "check-disk-space@npm:3.4.0"
+  checksum: 0154c149c34a1233fe542f2a9f9ea2526bb90169489259eda8de1cf6870f765e8f5299c3b085085cc1ef33d9559f589fd10609c7e52d2e624ef6b5720dd9743c
   languageName: node
   linkType: hard
 
@@ -24614,10 +24624,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:4.1.1, crypto-js@npm:^4.0.0, crypto-js@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "crypto-js@npm:4.1.1"
-  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
+"crypto-js@npm:4.2.0, crypto-js@npm:^4.0.0, crypto-js@npm:^4.1.1":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
   languageName: node
   linkType: hard
 
@@ -31607,13 +31617,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"htmldiff-js@github:hugsmidjan-is/htmldiff-js#semver:^1.1.1":
-  version: 1.1.1
-  resolution: "htmldiff-js@https://github.com/hugsmidjan-is/htmldiff-js.git#commit=b2400db41f329180cedf33547f1cc5b6da85f15f"
-  checksum: 34acbed7bbf829a2f99075d54979b3c20ffb5dadf94e754c2d8b3f2ba88ef5a71dcb9d07ce73f12636cfa225110d6dff01c54c594cf6e0853332248016f7ccf6
-  languageName: node
-  linkType: hard
-
 "htmlnano@npm:0.2.7":
   version: 0.2.7
   resolution: "htmlnano@npm:0.2.7"
@@ -33573,7 +33576,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.9
+    "@island.is/regulations-tools": 0.7.11
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -33590,7 +33593,7 @@ __metadata:
     "@nestjs/schematics": 10.0.1
     "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 7.1.1
-    "@nestjs/terminus": 9.2.2
+    "@nestjs/terminus": 10.1.1
     "@nestjs/testing": 10.0.5
     "@nrwl/js": 16.9.0
     "@nx/cypress": 16.9.0
@@ -33719,7 +33722,7 @@ __metadata:
     core-js: 3.6.5
     cross-env: 7.0.2
     cross-spawn: 7.0.3
-    crypto-js: 4.1.1
+    crypto-js: 4.2.0
     csstype: 2.6.13
     csv-parse: 4.16.0
     csv-stringify: 5.6.5
@@ -33900,13 +33903,13 @@ __metadata:
     whatwg-fetch: 3.6.2
     winston: 3.7.2
     winston-cloudwatch: 3.1.1
-    winston-transport: 4.5.0
+    winston-transport: 4.6.0
     xlsx: 0.17.0
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 17.7.2
-    zod: ^3.21.2
-    zod-form-data: ^2.0.0
+    zod: 3.22.4
+    zod-form-data: 2.0.2
   languageName: unknown
   linkType: soft
 
@@ -53242,7 +53245,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"winston-transport@npm:4.5.0, winston-transport@npm:^4.5.0":
+"winston-transport@npm:4.6.0":
+  version: 4.6.0
+  resolution: "winston-transport@npm:4.6.0"
+  dependencies:
+    logform: ^2.3.2
+    readable-stream: ^3.6.0
+    triple-beam: ^1.3.0
+  checksum: 19f06ebdbb57cb14cdd48a23145d418d3bbe538851053303f84f04a8a849bb530b78b1495a175059c1299f92945dc61d5421c4914fee32d9a41bc397d84f26d7
+  languageName: node
+  linkType: hard
+
+"winston-transport@npm:^4.5.0":
   version: 4.5.0
   resolution: "winston-transport@npm:4.5.0"
   dependencies:
@@ -53983,19 +53997,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-form-data@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "zod-form-data@npm:2.0.0"
+"zod-form-data@npm:2.0.2":
+  version: 2.0.2
+  resolution: "zod-form-data@npm:2.0.2"
   peerDependencies:
-    zod: ^3.11.x
-  checksum: 7c0d56e2615d024516d9a5d1031d87db91aa15a06df9ae356dc694614dad65bb9708a7c36943e36ad3f05112287a10b55ed2a2e7fcbef188880726dd87ae09e2
+    zod: ">= 3.11.0"
+  checksum: 09bc98811ee92cade046670bef28bd636610cda539fa9427379758bfa200a9b11dc4cd807681a01a446c2b13f32d88306d14fc3903af58a545928aa1d7831ec2
   languageName: node
   linkType: hard
 
-"zod@npm:^3.21.2":
-  version: 3.21.2
-  resolution: "zod@npm:3.21.2"
-  checksum: 6a5fa0992827b61440de7087038ec737f76074efbdc1b3594630ecdad314fd566439f7900aa05d4938222a5f739e599c61a848f794a8264f80909720b96ed764
+"zod@npm:3.22.4":
+  version: 3.22.4
+  resolution: "zod@npm:3.22.4"
+  checksum: 80bfd7f8039b24fddeb0718a2ec7c02aa9856e4838d6aa4864335a047b6b37a3273b191ef335bf0b2002e5c514ef261ffcda5a589fb084a48c336ffc4cdbab7f
   languageName: node
   linkType: hard
 
