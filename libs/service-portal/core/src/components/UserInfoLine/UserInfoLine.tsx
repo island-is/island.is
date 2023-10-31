@@ -24,7 +24,7 @@ import cn from 'classnames'
 export type EditLink = {
   external?: boolean
   url: string
-  title?: MessageDescriptor
+  title?: MessageDescriptor | string
   skipOutboundTrack?: boolean
   icon?: ButtonProps['icon']
 }
