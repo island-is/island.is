@@ -1563,6 +1563,10 @@ export class NotificationService {
   private async sendAppealReceivedByCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    const statementDeadline =
+      theCase.appealReceivedByCourtDate &&
+      getStatementDeadline(theCase.appealReceivedByCourtDate)
+
     const subject = this.formatMessage(
       notifications.caseAppealReceivedByCourt.subject,
       {
@@ -1574,6 +1578,7 @@ export class NotificationService {
       notifications.caseAppealReceivedByCourt.courtOfAppealsBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
@@ -1587,10 +1592,6 @@ export class NotificationService {
         this.getCourtEmail(this.config.courtOfAppealsId),
       ),
     ]
-
-    const statementDeadline =
-      theCase.appealReceivedByCourtDate &&
-      getStatementDeadline(theCase.appealReceivedByCourtDate)
 
     const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
