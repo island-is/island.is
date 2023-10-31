@@ -47,6 +47,7 @@ import {
   QueryGetSingleArticleArgs,
   Organization,
   Stepper as StepperSchema,
+  LinkCard,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -477,6 +478,9 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
                 Form: (form) => <Form form={form} namespace={namespace} />,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                LinkCard: (card: LinkCard) => <p>{card.title}</p>,
               },
             },
             activeLocale,
@@ -492,7 +496,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         printHidden
       >
         {/**
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
          // @ts-ignore make web strict */}
         {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
@@ -746,7 +750,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               printHidden
               className="rs_read"
             >
-              {/** 
+              {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}
               <ProcessEntry {...processEntry} />
@@ -782,7 +786,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-              {/** 
+              {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}
               <ProcessEntry fixed {...processEntry} />
