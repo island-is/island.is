@@ -211,6 +211,8 @@ describe('MeUserProfile', () => {
         }),
       })
 
+      server = request(app.getHttpServer())
+
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -229,15 +231,23 @@ describe('MeUserProfile', () => {
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
 
+      // Mock islyklar api responses
       islyklarApi = app.get(IslyklarApi)
       islyklarApi.islyklarPut = jest
         .fn()
-        .mockImplementation((user: PublicUser) => {
-          return new Promise<PublicUser>((resolve) => resolve(user))
+        .mockResolvedValue((user: PublicUser) => {
+          return { ssn: user.ssn }
         })
-      islyklarApi.islyklarGet = jest.fn()
-
-      server = request(app.getHttpServer())
+      islyklarApi.islyklarPost = jest
+        .fn()
+        .mockResolvedValue((user: PublicUser) => {
+          return { ssn: user.ssn }
+        })
+      islyklarApi.islyklarGet = jest.fn().mockResolvedValue(() => {
+        return {
+          ssn: testUserProfile.nationalId,
+        }
+      })
     })
 
     afterEach(() => {
@@ -420,6 +430,41 @@ describe('MeUserProfile', () => {
 
       expect(userProfile.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(null)
+    })
+
+    it('PATCH /v2/me should return 201 and create islyklar profile when it does not exist', async () => {
+      // Arrange
+      islyklarApi.islyklarGet = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) =>
+          reject({
+            status: 404,
+          }),
+        )
+      })
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: null,
+        email: null,
+      })
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(islyklarApi.islyklarPut).not.toBeCalled()
+      expect(islyklarApi.islyklarPost).toBeCalled()
+    })
+
+    it('PATCH /v2/me should return 201 and should call the islyklar put method and not post', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: null,
+        email: null,
+      })
+
+      // Assert
+      expect(res.status).toEqual(201)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalled()
     })
   })
 
