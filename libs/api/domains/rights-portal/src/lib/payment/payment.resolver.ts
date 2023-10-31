@@ -19,10 +19,12 @@ import { CopaymentStatusResponse } from './models/copaymentStatus.response'
 import { CopaymentPeriodResponse } from './models/copaymentPeriods.response'
 import { CopaymentBillsInput } from './dto/copaymentBills.input'
 import { CopaymentBillResponse } from './models/copaymentBill.response'
-import { PaymentOverviewStatusResponse } from './models/paymentOverviewStatus.response'
-import { PaymentOverviewBillResponse } from './models/paymentOverviewBill.response'
+import { PaymentOverviewResponse } from './models/paymentOverview.response'
 import { PaymentOverviewDocumentResponse } from './models/paymentOverviewDocument.response'
 import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.input'
+import { PaymentOverviewInput } from './dto/paymentOverview.input'
+import { PaymentOverviewServiceTypeResponse } from './models/paymentOverviewServiceType.response'
+import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -50,8 +52,9 @@ export class PaymentResolver {
   @Audit()
   async getCopaymentPeriods(
     @CurrentUser() user: User,
+    @Args('input') input: CopaymentPeriodInput,
   ): Promise<CopaymentPeriodResponse> {
-    return await this.service.getCopaymentPeriods(user)
+    return await this.service.getCopaymentPeriods(user, input)
   }
 
   @Query(() => CopaymentBillResponse, {
@@ -66,26 +69,27 @@ export class PaymentResolver {
     return await this.service.getCopaymentBills(user, input)
   }
 
-  @Query(() => PaymentOverviewStatusResponse, {
-    name: 'rightsPortalPaymentOverviewStatus',
+  @Query(() => PaymentOverviewServiceTypeResponse, {
+    name: 'rightsPortalPaymentOverviewServiceTypes',
   })
   @Scopes(ApiScope.health)
   @Audit()
-  async getPaymentOverviewStatus(
+  async getPaymentOverviewServiceTypes(
     @CurrentUser() user: User,
-  ): Promise<PaymentOverviewStatusResponse> {
-    return await this.service.getPaymentOverviewStatus(user)
+  ): Promise<PaymentOverviewServiceTypeResponse> {
+    return await this.service.getPaymentOverviewServiceTypes(user)
   }
 
-  @Query(() => PaymentOverviewBillResponse, {
-    name: 'rightsPortalPaymentOverviewBills',
+  @Query(() => PaymentOverviewResponse, {
+    name: 'rightsPortalPaymentOverview',
   })
   @Scopes(ApiScope.health)
   @Audit()
-  async getPaymentOverviewBills(
+  async getPaymentOverview(
     @CurrentUser() user: User,
-  ): Promise<PaymentOverviewBillResponse> {
-    return await this.service.getPaymentOverviewBills(user)
+    @Args('input') input: PaymentOverviewInput,
+  ): Promise<PaymentOverviewResponse> {
+    return await this.service.getPaymentOverview(user, input)
   }
 
   @Query(() => PaymentOverviewDocumentResponse, {
