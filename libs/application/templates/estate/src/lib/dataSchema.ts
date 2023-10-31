@@ -104,6 +104,16 @@ export const estateSchema = z.object({
           path: ['nationalId'],
         },
       )
+      .refine(
+        ({ foreignCitizenship, nationalId }) => {
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
 
       /* Validating email and phone depending on whether the field is enabled */
       .refine(
@@ -376,6 +386,26 @@ export const estateSchema = z.object({
       {
         params: m.errorNationalIdIncorrect,
         path: ['nationalId'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || balance !== ''
+          ? isValidString(loanIdentity)
+          : true
+      },
+      {
+        path: ['loanIdentity'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
+          ? isValidString(balance)
+          : true
+      },
+      {
+        path: ['balance'],
       },
     )
     .array()
