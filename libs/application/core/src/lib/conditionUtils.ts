@@ -1,10 +1,11 @@
 import {
   AllOrAny,
-  FormItem,
   Answer,
-  ExternalData,
-  FormValue,
   Comparators,
+  DataProviderResult,
+  ExternalData,
+  FormItem,
+  FormValue,
   SingleConditionCheck,
   StaticCheck,
 } from '@island.is/application/types'
@@ -12,12 +13,17 @@ import { getValueViaPath } from './formUtils'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,
+  externalData: ExternalData,
   check: StaticCheck,
 ): boolean {
-  const { value, questionId, comparator } = check
+  const { value, questionId, comparator, externalDataId } = check
   let isValid = false
-  const answer = getValueViaPath(formValue, questionId) as Answer | undefined
-
+  let answer
+  if (questionId) {
+    answer = getValueViaPath(formValue, questionId) as Answer
+  } else if (externalDataId) {
+    answer = getValueViaPath(externalData, externalDataId) as Answer
+  }
   switch (comparator) {
     case Comparators.EQUALS:
       isValid = answer === value
@@ -43,6 +49,16 @@ function applyStaticConditionalCheck(
     case Comparators.LTE:
       if (answer) {
         isValid = answer <= value
+      }
+      break
+    case Comparators.CONTAINS:
+      if (answer && Array.isArray(answer)) {
+        isValid = answer.includes(value)
+      }
+      break
+    case Comparators.NOT_CONTAINS:
+      if (answer && Array.isArray(answer)) {
+        isValid = !answer.includes(value)
       }
       break
   }
@@ -72,7 +88,11 @@ export function shouldShowFormItem(
       if (typeof conditionalCheck === 'function') {
         isValid = conditionalCheck(formValue, externalData)
       } else {
-        isValid = applyStaticConditionalCheck(formValue, conditionalCheck)
+        isValid = applyStaticConditionalCheck(
+          formValue,
+          externalData,
+          conditionalCheck,
+        )
       }
 
       if (on === AllOrAny.ALL) {
@@ -86,5 +106,9 @@ export function shouldShowFormItem(
     return on === AllOrAny.ALL ? show : !show
   }
 
-  return applyStaticConditionalCheck(formValue, condition as StaticCheck)
+  return applyStaticConditionalCheck(
+    formValue,
+    externalData,
+    condition as StaticCheck,
+  )
 }

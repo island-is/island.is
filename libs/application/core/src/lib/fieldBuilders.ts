@@ -24,6 +24,7 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
   PdfViewerField,
   PhoneField,
@@ -543,7 +544,9 @@ export function buildLinkField(
   }
 }
 
-export function buildPdfPreviewField(data: PdfViewerField): PdfViewerField {
+export function buildPdfPreviewField(
+  data: Omit<PdfViewerField, 'type' | 'component' | 'children'>,
+): PdfViewerField {
   const {
     confirmationMessage,
     openInboxButtonLabel,
@@ -557,9 +560,6 @@ export function buildPdfPreviewField(data: PdfViewerField): PdfViewerField {
     viewPdfButtonLabel,
     pdfKey,
   } = data
-
-  console.log(data)
-  console.log('message', coreDefaultFieldMessages.downloadPdfButtonLabel)
 
   return {
     ...extractCommonFields(data),
@@ -583,9 +583,22 @@ export function buildPdfPreviewField(data: PdfViewerField): PdfViewerField {
       confirmationMessage || coreDefaultFieldMessages.confirmationMessage,
     openInboxButtonLabel:
       openInboxButtonLabel || coreDefaultFieldMessages.openInboxButtonLabel,
-    pdfKey: pdfKey || 'test',
+    pdfKey: pdfKey || '',
     children: undefined,
     type: FieldTypes.PDF_VIEWER,
     component: FieldComponents.PDF_VIEWER,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { chargeItemCode } = data
+  return {
+    ...extractCommonFields(data),
+    chargeItemCode,
+    children: undefined,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
   }
 }
