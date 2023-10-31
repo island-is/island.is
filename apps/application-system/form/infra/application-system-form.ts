@@ -62,4 +62,4 @@ export const serviceSetup = (services: {
         paths: ['/umsoknir'],
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'nginx-ingress-external')
+    .grantNamespaces('nginx-ingress-internal', 'nginx-ingress-external', 'islandis')

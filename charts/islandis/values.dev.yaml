@@ -845,6 +845,7 @@ application-system-form:
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'nginx-ingress-external'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
