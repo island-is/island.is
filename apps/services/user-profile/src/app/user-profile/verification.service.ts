@@ -70,7 +70,7 @@ export class VerificationService {
     const emailCode = this.generateVerificationCode(codeLength)
 
     const [record] = await this.emailVerificationModel.upsert(
-      { nationalId, email, hash: emailCode, created: new Date() },
+      { nationalId, email, hash: emailCode, created: new Date(), tries: 0 },
       {
         returning: true,
       },

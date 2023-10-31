@@ -114,9 +114,13 @@ export class UserProfileService {
         ].filter(Boolean),
       )
 
-      promises.map(({ confirmed, message }) => {
+      promises.map(({ confirmed, message, remainingAttempts }) => {
         if (confirmed === false) {
-          throw new BadRequestException(message)
+          throw new BadRequestException({
+            message,
+            remainingAttempts,
+            statusCode: 400,
+          })
         }
       })
 

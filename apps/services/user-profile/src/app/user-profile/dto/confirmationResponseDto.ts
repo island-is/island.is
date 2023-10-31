@@ -8,5 +8,5 @@ export class ConfirmationDtoResponse {
   readonly message!: string
 
   @ApiPropertyOptional()
-  remainingAttempts?: number
+  readonly remainingAttempts?: number
 }
