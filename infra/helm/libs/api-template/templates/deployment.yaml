@@ -232,4 +232,3 @@ spec:
             claimName: {{.name}}
         {{- end }}
     {{- end }}
-  {{- end }}
