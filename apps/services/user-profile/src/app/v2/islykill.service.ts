@@ -5,13 +5,15 @@ import {
 } from '@nestjs/common'
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 
+import { IslayklarUpsertDto } from './dto/islayklar-upsertDto'
+
 @Injectable()
 export class IslykillService {
   constructor(private readonly islyklarApi: IslyklarApi) {}
 
   async getIslykillSettings(
     nationalId: string,
-  ): Promise<PublicUser & { noUserFound?: boolean }> {
+  ): Promise<PublicUser & { userNotFound?: boolean }> {
     try {
       const userData: PublicUser = await this.islyklarApi.islyklarGet({
         ssn: nationalId,
@@ -29,16 +31,18 @@ export class IslykillService {
         onlyCert: userData.onlyCert,
         nudgeLastAsked: userData.nudgeLastAsked,
       }
-    } catch ({ status, message }) {
-      if (status === 404) {
+    } catch (e) {
+      const error = e as Error & { status?: number }
+
+      if (error.status === 404) {
         return {
           ssn: nationalId,
-          noUserFound: true,
+          userNotFound: true,
         }
       }
 
       throw new BadRequestException(
-        message,
+        error.message,
         'Unable to lookup islykill settings for user',
       )
     }
@@ -48,42 +52,47 @@ export class IslykillService {
     nationalId,
     email,
     phoneNumber,
-  }: {
-    nationalId: string
-    email?: string
-    phoneNumber?: string
-  }): Promise<PublicUser> {
+    publicUser,
+  }: IslayklarUpsertDto): Promise<PublicUser> {
     try {
       const user = {
+        ...publicUser,
         ssn: nationalId,
-        ...(email && { email }),
-        ...(phoneNumber && { mobile: phoneNumber }),
+        ...(email !== undefined && { email }),
+        ...(phoneNumber !== undefined && { mobile: phoneNumber }),
       }
 
-      return await this.islyklarApi.islyklarPut({ user })
-    } catch ({ message }) {
+      return this.islyklarApi.islyklarPut({ user })
+    } catch (e) {
+      const error = e as Error
+
       throw new InternalServerErrorException(
         'Unable to update islykill settings for user',
-        message,
+        error.message,
       )
     }
   }
 
-  async createIslykillSettings(
-    nationalId: string,
-    { email, mobile }: { email?: string; mobile?: string },
-  ): Promise<PublicUser> {
+  async createIslykillSettings({
+    nationalId,
+    email,
+    phoneNumber,
+    publicUser,
+  }: IslayklarUpsertDto): Promise<PublicUser> {
     try {
       const user = {
+        ...publicUser,
         ssn: nationalId,
-        ...(email && { email }),
-        ...(mobile && { mobile }),
+        ...(email === undefined && { email }),
+        ...(phoneNumber === undefined && { mobile: phoneNumber }),
       }
 
-      return await this.islyklarApi.islyklarPost({ user })
-    } catch ({ message }) {
+      return this.islyklarApi.islyklarPost({ user })
+    } catch (e) {
+      const error = e as Error
+
       throw new InternalServerErrorException(
-        message,
+        error.message,
         'Unable to create islykill settings for user',
       )
     }
@@ -93,24 +102,26 @@ export class IslykillService {
     nationalId,
     email,
     phoneNumber,
-  }: {
-    nationalId: string
-    email?: string
-    phoneNumber?: string
-  }): Promise<PublicUser> {
-    const { noUserFound } = await this.getIslykillSettings(nationalId)
+  }: IslayklarUpsertDto): Promise<PublicUser> {
+    const { userNotFound, ...islyklar } = await this.getIslykillSettings(
+      nationalId,
+    )
 
-    if (noUserFound) {
-      return await this.createIslykillSettings(nationalId, {
-        email,
-        mobile: phoneNumber,
-      })
-    } else {
-      return await this.updateIslykillSettings({
+    const islykillSettings = {
+      nationalId,
+      ...(email !== undefined && { email }),
+      ...(phoneNumber !== undefined && { phoneNumber }),
+      publicUser: islyklar,
+    }
+
+    if (userNotFound) {
+      return this.createIslykillSettings({
         nationalId,
         email,
         phoneNumber,
       })
+    } else {
+      return this.updateIslykillSettings(islykillSettings)
     }
   }
 }
