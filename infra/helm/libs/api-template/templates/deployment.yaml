@@ -156,7 +156,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ "$fullName" }}
+                  name: {{ $fullName }}
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
