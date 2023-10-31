@@ -15,26 +15,40 @@ import { useState } from 'react'
 import { SECTION_GAP } from '../../Medicine/constants'
 import * as styles from './Payments.css'
 import {
-  useGetPaymentOverviewBillsQuery,
-  useGetPaymentOverviewStatusQuery,
+  useGetPaymentOverviewQuery,
+  useGetPaymentOverviewServiceTypesQuery,
 } from '../Payments.generated'
 import { useIntl } from 'react-intl'
+import sub from 'date-fns/sub'
 
 export const PaymentOverview = () => {
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date>(sub(new Date(), { months: 1 }))
+  const [endDate, setEndDate] = useState<Date>(new Date())
 
-  const { data, loading, error } = useGetPaymentOverviewStatusQuery()
+  const { data, loading, error } = useGetPaymentOverviewServiceTypesQuery()
+
+  const status = data?.rightsPortalPaymentOverviewServiceTypes.items[0]
 
   const {
-    data: bills,
-    loading: billsLoading,
-    error: billsError,
-  } = useGetPaymentOverviewBillsQuery()
+    data: overviewData,
+    loading: overviewLoading,
+    error: overviewError,
+  } = useGetPaymentOverviewQuery({
+    variables: {
+      input: {
+        dateFrom: startDate?.toString(),
+        dateTo: endDate?.toString(),
+        serviceTypeCode: '',
+      }
+    }
+  })
+
+  const overview = overviewData?.rightsPortalPaymentOverview.items[0]
+
+
   const intl = useIntl()
   const { formatMessage, formatDateFns } = useLocale()
 
-  const status = data?.rightsPortalPaymentOverviewStatus.items[0]
 
   return (
     <Box paddingY={4} background="white">
@@ -59,17 +73,17 @@ export const PaymentOverview = () => {
                 titlePadding={2}
                 label={formatMessage(messages.credit)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.credit
-                    ? intl.formatNumber(status.credit)
-                    : status?.credit,
+                  amount: overview?.credit
+                    ? intl.formatNumber(overview.credit)
+                    : overview?.credit,
                 })}
               />
               <UserInfoLine
                 label={formatMessage(messages.debit)}
                 content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.debit
-                    ? intl.formatNumber(status.debit)
-                    : status?.debit,
+                  amount: overview?.debt
+                    ? intl.formatNumber(overview.debt)
+                    : overview?.debt,
                 })}
               />
             </Stack>
@@ -101,13 +115,13 @@ export const PaymentOverview = () => {
               />
             </Box>
             <Box marginBottom={SECTION_GAP}>
-              {billsError ? (
+              {overviewError ? (
                 <AlertMessage
                   type="error"
                   title="Villa kom upp"
                   message="Ekki tókst að sækja greiðsluupplýsingar"
                 />
-              ) : billsLoading ? (
+              ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : (
                 <T.Table>
@@ -129,13 +143,13 @@ export const PaymentOverview = () => {
                     </tr>
                   </T.Head>
                   <T.Body>
-                    {bills?.rightsPortalPaymentOverviewBills.items.map(
+                    {overview?.bills?.map(
                       (item, index) => (
                         <tr key={index} className={styles.tableRowStyle}>
                           <T.Data>
                             {formatDateFns(item.date, 'dd.MM.yyyy')}
                           </T.Data>
-                          <T.Data>{item.serviceType}</T.Data>
+                          <T.Data>{item.serviceType?.name}</T.Data>
                           <T.Data>{item.totalAmount}</T.Data>
                           <T.Data>{item.insuranceAmount}</T.Data>
                           <T.Data>

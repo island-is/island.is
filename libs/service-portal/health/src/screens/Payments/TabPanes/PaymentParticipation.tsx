@@ -19,10 +19,11 @@ import {
   useGetCopaymentBillsQuery,
 } from '../Payments.generated'
 import { useIntl } from 'react-intl'
+import sub from 'date-fns/sub'
 
 export const PaymentPartication = () => {
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date>(sub  (new Date(), { months: 1 }))
+  const [endDate, setEndDate] = useState<Date>(new Date())
   const intl = useIntl()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number>(1)
 
@@ -32,7 +33,14 @@ export const PaymentPartication = () => {
     data: periods,
     loading: periodsLoading,
     error: periodsError,
-  } = useGetCopaymentPeriodsQuery()
+  } = useGetCopaymentPeriodsQuery({
+    variables: {
+      input: {
+        dateTo: endDate.toString(),
+        dateFrom: startDate.toString(),
+      }
+    }
+  })
 
   const {
     data: bills,
@@ -145,7 +153,7 @@ export const PaymentPartication = () => {
                       (period) => {
                         return (
                           <tr className={styles.tableRowStyle} key={period.id}>
-                            <T.Data>{period.status}</T.Data>
+                            <T.Data>{period.status?.display}</T.Data>
                             <T.Data>{period.month}</T.Data>
                             <T.Data>
                               {formatMessage(

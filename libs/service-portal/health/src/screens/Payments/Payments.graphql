@@ -15,11 +15,14 @@ query getCopaymentStatus {
   }
 }
 
-query getCopaymentPeriods {
-  rightsPortalCopaymentPeriods {
+query getCopaymentPeriods($input: RightsPortalCopaymentPeriodInput!) {
+  rightsPortalCopaymentPeriods(input: $input) {
     items {
       id
-      status
+      status {
+        display
+        code
+      }
       maximumPayment
       monthPayment
       overpaid
@@ -68,7 +71,10 @@ query getPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
       debt
       bills {
         date
-        serviceType
+        serviceType {
+          code
+          name
+        }
         totalAmount
         insuranceAmount
         documentId
