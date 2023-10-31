@@ -80,6 +80,51 @@ const EventItemImage = ({
   )
 }
 
+const EventInformationBox = ({
+  event,
+  namespace,
+}: {
+  event: EventModel
+  namespace: Record<string, string>
+}) => {
+  const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
+  const formattedDate =
+    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
+  const n = useNamespace(namespace)
+
+  return (
+    <Box background="blue100" borderRadius="large" padding={[3, 3, 3, 2, 3]}>
+      <Stack space={3}>
+        <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
+          <Icon color="blue400" icon="calendar" type="outline" />
+          <Text>{formattedDate}</Text>
+        </Box>
+        {event.time?.startTime && (
+          <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
+            <Icon color="blue400" icon="time" type="outline" />
+            <EventTime
+              startTime={event.time?.startTime ?? ''}
+              endTime={event.time?.endTime ?? ''}
+              timeSuffix={
+                n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string
+              }
+            />
+          </Box>
+        )}
+        {event.location && (
+          <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
+            <Box>
+              <Icon color="blue400" icon="home" type="outline" />
+            </Box>
+            <EventLocation location={event.location} />
+          </Box>
+        )}
+      </Stack>
+    </Box>
+  )
+}
+
 interface OrganizationEventArticleProps {
   organizationPage: OrganizationPage
   event: EventModel
@@ -95,9 +140,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
 }) => {
   const n = useNamespace(namespace)
   const router = useRouter()
-  const { format } = useDateUtils()
-  const formattedDate =
-    event.startDate && format(new Date(event.startDate), 'do MMMM yyyy')
+
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
@@ -133,7 +176,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
 
   const socialImage =
     event.featuredImage ?? event.contentImage ?? event.thumbnailImage
-  console.log(event)
+
   return (
     <>
       <OrganizationWrapper
@@ -155,6 +198,26 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
         <Text variant="h1" as="h1" paddingBottom={5}>
           {event.title}
         </Text>
+
+        {event?.video && (
+          <GridRow>
+            <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
+              <EmbeddedVideo
+                url={event.video.url}
+                locale={locale}
+                title={event.video.title}
+              />
+            </GridColumn>
+            <GridColumn
+              span={isSmall ? '12/12' : '5/12'}
+              paddingTop={event.video?.url ? [2, 2, 2, 0, 0] : 2}
+              paddingBottom={2}
+            >
+              <EventInformationBox event={event} namespace={namespace} />
+            </GridColumn>
+          </GridRow>
+        )}
+
         <GridRow>
           {event?.video && (
             <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
@@ -174,50 +237,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
               background="blue100"
               borderRadius="large"
               padding={[3, 3, 3, 2, 3]}
-            >
-              <Stack space={3}>
-                <Box
-                  display="flex"
-                  flexWrap="nowrap"
-                  columnGap={ICON_TEXT_SPACE}
-                >
-                  <Icon color="blue400" icon="calendar" type="outline" />
-                  <Text>{formattedDate}</Text>
-                </Box>
-                {event.time?.startTime && (
-                  <Box
-                    display="flex"
-                    flexWrap="nowrap"
-                    columnGap={ICON_TEXT_SPACE}
-                  >
-                    <Icon color="blue400" icon="time" type="outline" />
-                    <EventTime
-                      startTime={event.time?.startTime ?? ''}
-                      endTime={event.time?.endTime ?? ''}
-                      timeSuffix={
-                        n(
-                          'timeSuffix',
-                          activeLocale === 'is' ? 'til' : 'to',
-                        ) as string
-                      }
-                    />
-                  </Box>
-                )}
-                {event.location && (
-                  <Box
-                    display="flex"
-                    flexWrap="nowrap"
-                    columnGap={ICON_TEXT_SPACE}
-                  >
-                    <Box>
-                      <Icon color="blue400" icon="home" type="outline" />
-                    </Box>
-
-                    <EventLocation location={event.location} />
-                  </Box>
-                )}
-              </Stack>
-            </Box>
+            ></Box>
           </GridColumn>
           {!isSmall && !event.video?.url && event.contentImage && (
             <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
