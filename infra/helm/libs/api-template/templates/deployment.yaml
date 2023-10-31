@@ -85,7 +85,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $fullName }}-init-container
+                  name: ${{ include "api-template.name" . }}-init-container
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
@@ -156,7 +156,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $fullName }}
+                  name: {{ include "api-template.name" . }}
                   key: {{ $key }}
             {{- end }}
             - name: APP_VERSION
