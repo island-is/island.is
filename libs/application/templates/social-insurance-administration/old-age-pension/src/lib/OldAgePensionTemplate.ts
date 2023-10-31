@@ -38,8 +38,6 @@ import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationTestApi,
-  SocialInsuranceAdministrationStatusApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
 } from '../dataProviders'
@@ -101,8 +99,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
-                SocialInsuranceAdministrationTestApi,
-                SocialInsuranceAdministrationStatusApi,
                 SocialInsuranceAdministrationBankInfoApi,
                 SocialInsuranceAdministrationSpouseInNursingHomeApi,
               ],

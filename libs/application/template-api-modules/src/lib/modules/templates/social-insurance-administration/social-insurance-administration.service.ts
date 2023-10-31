@@ -261,53 +261,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
     }
   }
 
-  async helloWorld({ application, auth }: TemplateApiModuleActionProps) {
-    let response
-
-    try {
-      response = await this.siaClientService.getOddur(auth)
-    } catch (e) {
-      throw new TemplateApiError(
-        {
-          title: 'Computer says NO!',
-          summary: 'Villa hjá TR',
-        },
-        500,
-      )
-    }
-
-    return response
-  }
-
-  async getStatus({ application, auth }: TemplateApiModuleActionProps) {
-    console.log('--------------- AUTH -------------------', auth)
-
-    /*
-    When applicant creates new application:
-    If no application, create new one
-    If there is application with status ‘TRYGGINGASTOFNUN_SUBMITTED' ( send to TR and waiting for them to open ), No creating new application, can only change old one
-    If there is application with status ‘TRYGGINGASTOFNUN_IN_REVIEW’ or 'REJECTED’, create new one
-    */
-
-    try {
-      const resp = await this.siaClientService.getStatus(auth)
-
-      console.log('Computer says OK!!!!', resp)
-    } catch (e) {
-      this.logger.error('No HELLO!!!!', e)
-
-      throw new TemplateApiError(
-        {
-          title: 'Computer says NO!',
-          summary: 'Villa hjá TR',
-        },
-        500,
-      )
-    }
-
-    return true
-  }
-
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const attachments = await this.getAttachments(application)

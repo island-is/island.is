@@ -29,7 +29,6 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationTestApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
 } from '../dataProviders'
@@ -86,17 +85,13 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationTestApi,
-                  title:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
-                }),
-                buildDataProviderItem({
                   provider: SocialInsuranceAdministrationBankInfoApi,
-                  title: '',
+                  title:
+                  oldAgePensionFormMessage.pre
+                    .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                  oldAgePensionFormMessage.pre
+                    .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,

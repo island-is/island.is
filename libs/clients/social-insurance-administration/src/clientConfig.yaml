@@ -10,54 +10,6 @@ servers:
   - url: https://xroad.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/
     description: Optional server description, XROAD-PROD
 paths:
-  /Test/hello:
-    get:
-      tags:
-        - Hello Oddur
-      operationId: hello_oddur
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TestHello'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: string
-        '500':
-          description: internal Error
-          content:
-            application/json:
-              schema:
-                type: string
-  /Status/oldagepension:
-    get:
-      tags:
-        - Get status
-      operationId: get_status
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Status'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: string
-        '500':
-          description: internal Error
-          content:
-            application/json:
-              schema:
-                type: string
   /Application/{applicationType}:
     post:
       tags:
@@ -145,10 +97,6 @@ components:
       type: http
       scheme: bearer
   schemas:
-    TestHello:
-      type: string
-      example: true
-      description: Hello from the Oddur side
     Application:
       type: object
       description: Application
@@ -337,16 +285,6 @@ components:
           type: string
         param:
           type: string
-    Status:
-      type: object
-      description: The status of the applicant applications at TR, if the applicant has one
-      properties:
-        hasPension:
-          type: boolean
-        applications:
-          type: array
-          items:
-            $ref: '#/components/schemas/Application'
     BankInfo:
       type: object
       description: Returns bank information from TR if applicant has one registered there

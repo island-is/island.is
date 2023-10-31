@@ -18,16 +18,6 @@ export const NationalRegistryCohabitantsApi = defineTemplateApi({
   namespace: 'NationalRegistry',
 })
 
-export const SocialInsuranceAdministrationTestApi = defineTemplateApi({
-  action: 'helloWorld',
-  externalDataId: 'socialInsuranceAdministrationTest',
-})
-
-export const SocialInsuranceAdministrationStatusApi = defineTemplateApi({
-  action: 'getStatus',
-  externalDataId: 'socialInsuranceAdministrationStatus',
-})
-
 export const SocialInsuranceAdministrationBankInfoApi = defineTemplateApi({
   action: 'getBankInfo',
   externalDataId: 'socialInsuranceAdministrationBankInfo',
