@@ -272,7 +272,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
     namespace,
   ] = await Promise.all([
     apolloClient.query<GetApplicationsQuery, QuerySearchResultsArgs>({
-      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_APPLICATIONS_QUERY,
       variables: {
         query: {
@@ -288,7 +287,6 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<GetSearchCountTagsQuery, QuerySearchResultsArgs>({
-      fetchPolicy: 'no-cache', // overriding because at least local caching is broken
       query: GET_SEARCH_COUNT_QUERY,
       variables: {
         query: {
@@ -313,7 +311,7 @@ Applications.getProps = async ({ apolloClient, locale, query }) => {
       .then<ApplicationsTexts>((variables) =>
         variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
-          : {} satisfies ApplicationsTexts,
+          : {},
       ),
   ])
 

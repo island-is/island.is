@@ -267,14 +267,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 <LinkCard
                   isFocused={isFocused}
                   {...(hasProcessEntries(article as Article) ||
-                    article.processEntryButtonText
-                      ? {
-                          tag: n(
-                            article.processEntryButtonText || 'application',
-                            'Umsókn',
-                          ),
-                        }
-                      : {})}
+                  article.processEntryButtonText
+                    ? {
+                        tag: n(
+                          article.processEntryButtonText || 'application',
+                          'Umsókn',
+                        ),
+                      }
+                    : {})}
                 >
                   {article.title}
                 </LinkCard>

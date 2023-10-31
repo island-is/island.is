@@ -365,14 +365,15 @@ const Category: Screen<CategoryProps> = ({
                               ).href
                             }
                             {...(hasProcessEntries(article as Article) ||
-                              article.processEntryButtonText
-                                ? {
-                                    tag: n(
-                                      article.processEntryButtonText || 'application',
-                                      'Umsókn',
-                                    ),
-                                  }
-                                : {})}
+                            article.processEntryButtonText
+                              ? {
+                                  tag: n(
+                                    article.processEntryButtonText ||
+                                      'application',
+                                    'Umsókn',
+                                  ),
+                                }
+                              : {})}
                           >
                             {article.title}
                           </TopicCard>
