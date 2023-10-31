@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { CopaymentStatus } from './models/copaymentStatus.model'
@@ -16,7 +16,6 @@ import { PaymentOverview } from './models/paymentOverview.model'
 import { PaymentOverviewInput } from './dto/paymentOverview.input'
 import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 
-
 export type PaymentResponse<T> = {
   items: T[]
   errors: PaymentError[]
@@ -24,9 +23,7 @@ export type PaymentResponse<T> = {
 
 @Injectable()
 export class PaymentService {
-  constructor(
-    private readonly api: PaymentApi,
-  ) {}
+  constructor(private readonly api: PaymentApi) {}
 
   async getCopaymentStatus(
     user: User,
@@ -93,15 +90,19 @@ export class PaymentService {
     }
   }
 
-  async getPaymentOverviewServiceTypes(user: User): Promise<PaymentResponse<PaymentOverviewServiceType>> {
+  async getPaymentOverviewServiceTypes(
+    user: User,
+  ): Promise<PaymentResponse<PaymentOverviewServiceType>> {
     try {
-      const data = await this.api.withMiddleware(new AuthMiddleware(user as Auth)).getPaymentsOverviewServiceTypes().catch(handle404)
+      const data = await this.api
+        .withMiddleware(new AuthMiddleware(user as Auth))
+        .getPaymentsOverviewServiceTypes()
+        .catch(handle404)
 
       return {
         items: data ? data : [],
         errors: [],
       }
-
     } catch (error) {
       return {
         items: [],
@@ -112,7 +113,7 @@ export class PaymentService {
 
   async getPaymentOverview(
     user: User,
-    input: PaymentOverviewInput
+    input: PaymentOverviewInput,
   ): Promise<PaymentResponse<PaymentOverview>> {
     try {
       const data = await this.api

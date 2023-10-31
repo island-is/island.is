@@ -22,7 +22,9 @@ import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
 
 export const PaymentOverview = () => {
-  const [startDate, setStartDate] = useState<Date>(sub(new Date(), { months: 1 }))
+  const [startDate, setStartDate] = useState<Date>(
+    sub(new Date(), { months: 1 }),
+  )
   const [endDate, setEndDate] = useState<Date>(new Date())
 
   const { data, loading, error } = useGetPaymentOverviewServiceTypesQuery()
@@ -39,16 +41,14 @@ export const PaymentOverview = () => {
         dateFrom: startDate?.toString(),
         dateTo: endDate?.toString(),
         serviceTypeCode: '',
-      }
-    }
+      },
+    },
   })
 
   const overview = overviewData?.rightsPortalPaymentOverview.items[0]
 
-
   const intl = useIntl()
   const { formatMessage, formatDateFns } = useLocale()
-
 
   return (
     <Box paddingY={4} background="white">
@@ -143,29 +143,27 @@ export const PaymentOverview = () => {
                     </tr>
                   </T.Head>
                   <T.Body>
-                    {overview?.bills?.map(
-                      (item, index) => (
-                        <tr key={index} className={styles.tableRowStyle}>
-                          <T.Data>
-                            {formatDateFns(item.date, 'dd.MM.yyyy')}
-                          </T.Data>
-                          <T.Data>{item.serviceType?.name}</T.Data>
-                          <T.Data>{item.totalAmount}</T.Data>
-                          <T.Data>{item.insuranceAmount}</T.Data>
-                          <T.Data>
-                            <Button
-                              iconType="outline"
-                              onClick={() => undefined} // TODO: Add download functionality
-                              variant="text"
-                              icon="open"
-                              size="small"
-                            >
-                              Sækja skjal
-                            </Button>
-                          </T.Data>
-                        </tr>
-                      ),
-                    )}
+                    {overview?.bills?.map((item, index) => (
+                      <tr key={index} className={styles.tableRowStyle}>
+                        <T.Data>
+                          {formatDateFns(item.date, 'dd.MM.yyyy')}
+                        </T.Data>
+                        <T.Data>{item.serviceType?.name}</T.Data>
+                        <T.Data>{item.totalAmount}</T.Data>
+                        <T.Data>{item.insuranceAmount}</T.Data>
+                        <T.Data>
+                          <Button
+                            iconType="outline"
+                            onClick={() => undefined} // TODO: Add download functionality
+                            variant="text"
+                            icon="open"
+                            size="small"
+                          >
+                            Sækja skjal
+                          </Button>
+                        </T.Data>
+                      </tr>
+                    ))}
                   </T.Body>
                 </T.Table>
               )}
