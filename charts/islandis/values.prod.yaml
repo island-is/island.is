@@ -834,7 +834,7 @@ application-system-form:
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
-    - 'islandis'
+    - 'nginx-ingress-external'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
