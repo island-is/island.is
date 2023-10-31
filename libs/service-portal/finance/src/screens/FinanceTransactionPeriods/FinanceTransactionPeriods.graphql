@@ -1,0 +1,71 @@
+query getAssessmentYears {
+  getAssessmentYears {
+    year
+  }
+}
+
+query GetChargeTypesByYear($input: GetChargeTypesByYearInput!) {
+  getChargeTypesByYear(input: $input) {
+    chargeType {
+      ID
+      name
+    }
+  }
+}
+
+query GetChargeTypesDetailsByYear($input: GetChargeTypesDetailsByYearInput!) {
+  getChargeTypesDetailsByYear(input: $input) {
+    chargeType {
+      ID
+      name
+      chargeItemSubjects
+      chargeItemSubjectDescription
+      lastMovementDate
+    }
+  }
+}
+
+query GetChargeItemSubjectsByYear($input: GetChargeItemSubjectsByYearInput!) {
+  getChargeItemSubjectsByYear(input: $input) {
+    chargeItemSubjects {
+      chargeItemSubject
+      lastMoveDate
+      totalAmount
+      periods {
+        period
+        description
+        lastMoveDate
+        amount
+      }
+    }
+    more
+    nextKey
+  }
+}
+
+query GetChargeTypePeriodSubject($input: GetChargeTypePeriodSubjectInput!) {
+  getChargeTypePeriodSubject(input: $input) {
+    message
+    nextKey
+    more
+    records {
+      createDate
+      createTime
+      valueDate
+      performingOrganization
+      collectingOrganization
+      chargeType
+      itemCode
+      chargeItemSubject
+      periodType
+      period
+      amount
+      category
+      subCategory
+      actionCategory
+      reference
+      referenceToLevy
+      accountReference
+    }
+  }
+}

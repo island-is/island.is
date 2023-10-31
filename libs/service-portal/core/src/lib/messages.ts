@@ -81,9 +81,17 @@ export const m = defineMessages({
     id: 'service.portal:fee-base',
     defaultMessage: 'Gjaldgrunnur',
   },
+  feeBaseDescription: {
+    id: 'service.portal:fee-category-description',
+    defaultMessage: 'Skýring á gjaldgrunni',
+  },
   period: {
     id: 'service.portal:period',
     defaultMessage: 'Tímabil',
+  },
+  lastMovement: {
+    id: 'service.portal:last-movement',
+    defaultMessage: 'Síðasta hreyfing',
   },
   guardian: {
     id: 'service.portal:guardian',
@@ -562,6 +570,10 @@ export const m = defineMessages({
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionPeriods: {
+    id: 'service.portal:finance-transaction-subjects',
+    defaultMessage: 'Gjaldtímabil',
   },
   financeBills: {
     id: 'service.portal:finance-bills',

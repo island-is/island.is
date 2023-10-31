@@ -13,6 +13,21 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeTransactions,
       path: FinancePaths.FinanceTransactions,
+      // TODO: Second level does not work
+      children: [
+        {
+          name: m.financeTransactions,
+          path: FinancePaths.FinanceTransactions,
+        },
+        {
+          name: m.financeTransactionPeriods,
+          path: FinancePaths.FinanceTransactionPeriods,
+        },
+      ],
+    },
+    {
+      name: m.financeTransactionPeriods,
+      path: FinancePaths.FinanceTransactionPeriods,
     },
     {
       name: m.financeBills,
