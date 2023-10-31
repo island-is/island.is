@@ -504,6 +504,17 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const VehiclesMileage = new XroadConf({
+  env: {
+    XROAD_VEHICLES_MILEAGE_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      staging:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+    },
+  },
+})
+
 export const ChargeFjsV2 = new XroadConf({
   env: {
     XROAD_CHARGE_FJS_V2_PATH: {

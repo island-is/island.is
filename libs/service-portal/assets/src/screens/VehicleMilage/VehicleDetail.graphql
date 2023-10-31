@@ -1,0 +1,8 @@
+query GetUsersMileage($input: GetVehicleMileageInput!) {
+  vehicleMileageDetails(input: $input) {
+    permno
+    readDate
+    originCode
+    mileage
+  }
+}

@@ -8,6 +8,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  SkeletonLoader,
   Stack,
   Table,
   Text,
@@ -18,15 +19,18 @@ import {
   FootNote,
   SAMGONGUSTOFA_ID,
   IntroHeader,
+  formatDate,
 } from '@island.is/service-portal/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
+import { useGetUsersMileageQuery } from './VehicleDetail.generated'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 type UseParams = {
   id: string
 }
 
-interface FormOutput {
+interface FormData {
   date: Date
   odometerStatus: number
 }
@@ -34,17 +38,22 @@ interface FormOutput {
 const VehicleMilage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
+  const { id } = useParams() as UseParams
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormOutput>()
+  } = useForm<FormData>()
 
-  const handleSubmitForm = async (submitData: FormOutput) => {
+  const handleSubmitForm = async (submitData: FormData) => {
     console.log({ submitData })
   }
 
-  const { id } = useParams() as UseParams
+  const { data, loading, error } = useGetUsersMileageQuery({
+    variables: { input: { permno: id } },
+  })
+
+  console.log({ data })
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -135,39 +144,60 @@ const VehicleMilage = () => {
               </GridContainer>
             </form>
           )}
-          <GridContainer>
-            <GridRow marginBottom={2}>
-              <GridColumn span="1/1">
-                <Text as="h3" variant="h5">
-                  {formatMessage(m.overview)}
-                </Text>
-              </GridColumn>
-            </GridRow>
-            <GridRow>
-              <GridColumn span="1/1">
-                <Table.Table width="100%">
-                  <Table.Head>
-                    <Table.Row>
-                      <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
-                      <Table.HeadData align="center">
-                        {formatMessage(messages.vehicleMilageRegistration)}
-                      </Table.HeadData>
-                      <Table.HeadData align="right">
-                        {formatMessage(messages.odometer)}
-                      </Table.HeadData>
-                    </Table.Row>
-                  </Table.Head>
-                  <Table.Body>
-                    <Table.Row key="1">
-                      <Table.Data>1</Table.Data>
-                      <Table.Data align="center">2</Table.Data>
-                      <Table.Data align="right">3</Table.Data>
-                    </Table.Row>
-                  </Table.Body>
-                </Table.Table>
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          {loading && (
+            <Box marginTop={2}>
+              <SkeletonLoader
+                space={2}
+                repeat={4}
+                display="block"
+                width="full"
+                height={35}
+              />
+            </Box>
+          )}
+          {!loading && (
+            <GridContainer>
+              <GridRow marginBottom={2}>
+                <GridColumn span="1/1">
+                  <Text as="h3" variant="h5">
+                    {formatMessage(m.overview)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+              <GridRow>
+                <GridColumn span="1/1">
+                  <Table.Table width="100%">
+                    <Table.Head>
+                      <Table.Row>
+                        <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
+                        <Table.HeadData align="center">
+                          {formatMessage(messages.vehicleMilageRegistration)}
+                        </Table.HeadData>
+                        <Table.HeadData align="right">
+                          {formatMessage(messages.odometer)}
+                        </Table.HeadData>
+                      </Table.Row>
+                    </Table.Head>
+                    <Table.Body>
+                      {data?.vehicleMileageDetails?.map((item, i) => (
+                        <Table.Row key={i}>
+                          <Table.Data>
+                            {item.readDate ? formatDate(item.readDate) : ''}
+                          </Table.Data>
+                          <Table.Data align="center">
+                            {item.originCode}
+                          </Table.Data>
+                          <Table.Data align="right">
+                            {displayWithUnit(item.mileage, 'km', true)}
+                          </Table.Data>
+                        </Table.Row>
+                      ))}
+                    </Table.Body>
+                  </Table.Table>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          )}
         </Stack>
       </Box>
 

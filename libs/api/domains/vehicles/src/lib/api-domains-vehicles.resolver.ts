@@ -23,6 +23,8 @@ import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
+import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -67,6 +69,19 @@ export class VehiclesResolver {
   async getVehicleHistory(@CurrentUser() user: User) {
     const res = await this.vehiclesService.getVehiclesForUser(user, true, true)
     return { ...res.data }
+  }
+
+  @Scopes(ApiScope.vehicles)
+  @Query(() => [VehicleMileageDetail], {
+    name: 'vehicleMileageDetails',
+    nullable: true,
+  })
+  @Audit()
+  async getVehicleMileage(
+    @Args('input') input: GetVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehicleMileage(user, input)
   }
 
   @Scopes(

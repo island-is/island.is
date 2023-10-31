@@ -7,15 +7,21 @@ import {
   PublicVehicleSearchApi,
   PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
+import {
+  GetMileageReadingRequest,
+  MileageReadingApi,
+} from '@island.is/clients/vehicles-mileage'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
 
 @Injectable()
 export class VehiclesService {
   constructor(
     @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
+    @Inject(MileageReadingApi) private mileageReadingApi: MileageReadingApi,
     @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
@@ -23,6 +29,10 @@ export class VehiclesService {
 
   private getVehiclesWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private getMileageWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getVehiclesForUser(
@@ -80,5 +90,17 @@ export class VehiclesService {
     if (!res) return null
 
     return basicVehicleInformationMapper(res, auth.nationalId)
+  }
+
+  async getVehicleMileage(
+    auth: User,
+    input: GetMileageReadingRequest,
+  ): Promise<VehicleMileageDetail[] | null> {
+    const res = await this.getMileageWithAuth(auth).getMileageReading({
+      permno: input.permno,
+    })
+    if (!res) return null
+
+    return res
   }
 }
