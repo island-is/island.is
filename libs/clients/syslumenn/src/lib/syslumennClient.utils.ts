@@ -321,7 +321,10 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
-    share: assetRaw.eignarhlutfall ?? 1,
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? assetRaw.eignarhlutfall / 100.0
+        : 1,
   }
 }
 
@@ -339,7 +342,7 @@ export const mapEstateRegistrant = (
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
               a?.fastanumer &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer),
           )
           .map(assetMapper)
       : [],
@@ -392,9 +395,9 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
       ? syslaData.eignir
           .filter(
             (a) =>
+              a?.tegundAngalgs !== undefined &&
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
-              a?.tegundAngalgs &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer ?? ''),
           )
           .map(assetMapper)
       : [],
