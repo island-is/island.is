@@ -34,8 +34,6 @@ import {
   EventObject,
   StateNodeConfig,
   StatesConfig,
-  TransitionsConfig,
-  StatesConfig,
 } from 'xstate'
 
 import { z } from 'zod'
