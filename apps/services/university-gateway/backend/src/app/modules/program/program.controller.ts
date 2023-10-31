@@ -17,6 +17,7 @@ import { ProgramResponse } from './dto/programResponse'
 import { ProgramDetailsResponse } from './dto/programDetailsResponse'
 import { TagResponse } from './dto/tagResponse'
 import { DegreeType, Season } from '@island.is/university-gateway'
+import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
@@ -126,6 +127,7 @@ export class ProgramController {
     },
   })
   getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
+    console.log(' AM I HERE????')
     return this.programService.getProgramDetails(id)
   }
 
