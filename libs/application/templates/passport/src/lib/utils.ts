@@ -50,7 +50,7 @@ export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
   const isChildPassport = (answers.passport as Passport)?.childPassport !== ''
   const hasDisabilityDiscount =
     (answers.passport as Passport)?.userPassport !== '' &&
-    (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscountChecked
+    (answers.personalInfo as PersonalInfo)?.hasDisabilityLicense
   const age = (
     externalData.nationalRegistry?.data as {
       age?: number
