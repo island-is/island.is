@@ -371,6 +371,7 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
+                  space: 'containerGutter',
                   condition: (_, externalData) => {
                     const { residenceHistory } =
                       getApplicationExternalData(externalData)
