@@ -759,7 +759,7 @@ export class CaseService {
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
-        type: MessageType.DELIVER_CASE_TO_POLICE,
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
         user,
         caseId: theCase.id,
       })

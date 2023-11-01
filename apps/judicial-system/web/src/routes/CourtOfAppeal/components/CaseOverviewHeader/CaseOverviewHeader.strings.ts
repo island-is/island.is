@@ -22,4 +22,10 @@ export const courtOfAppealCaseOverviewHeader = defineMessages({
     description:
       'Notað í alert skilaboðum á Landsréttar yfirliti þegar verjandi/sækjandi/fangelsi hefur opnað málið eftir niðurstöðu.',
   },
+  appealSentAfterDeadline: {
+    id: 'judicial.system.core:court_of_appeal.case_overview_header.appeal_sent_after_deadline',
+    defaultMessage: 'Kæra barst að kærufresti liðnum',
+    description:
+      'Notaður sem texti fyrir "Kæra barst að kærufresti liðnum" á yfirlitsskjá mála hjá Landsrétti.',
+  },
 })
