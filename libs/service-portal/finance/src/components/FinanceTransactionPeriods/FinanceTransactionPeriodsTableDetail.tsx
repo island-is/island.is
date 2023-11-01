@@ -8,7 +8,7 @@ import {
 } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
-import * as styles from './FinanceTransactionsPeriodsTableDetail.css'
+import * as styles from './FinanceTransactionPeriodsTableDetail.css'
 import { GetChargeItemSubjectsByYearQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { amountFormat, periodFormat } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -22,7 +22,7 @@ interface Props {
 
 const ITEMS_ON_PAGE = 5
 
-const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
+const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
 
@@ -185,4 +185,4 @@ const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
   )
 }
 
-export default FinanceTransactionsPeriodsTableDetail
+export default FinanceTransactionPeriodsTableDetail

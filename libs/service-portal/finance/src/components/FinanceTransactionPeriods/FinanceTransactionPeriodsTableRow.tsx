@@ -1,5 +1,5 @@
 import { ExpandRow } from '@island.is/service-portal/core'
-import FinanceTransactionsPeriodsTableDetail from './FinanceTransactionsPeriodsTableDetail'
+import FinanceTransactionPeriodsTableDetail from './FinanceTransactionPeriodsTableDetail'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import {
@@ -7,13 +7,15 @@ import {
   useGetChargeItemSubjectsByYearLazyQuery,
 } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { cropText } from '../../utils/cropText'
+import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 
 interface Props {
   record: GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']['chargeType'][0]
-  year: string
 }
 
-const FinanceTransactionsPeriodsTableRow = ({ record, year }: Props) => {
+const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
+  const { financeTransactionPeriodsState } = useFinanceTransactionPeriodsState()
+
   const [getChargeItemSubjectsByYear, { data, loading, error }] =
     useGetChargeItemSubjectsByYearLazyQuery()
 
@@ -37,7 +39,7 @@ const FinanceTransactionsPeriodsTableRow = ({ record, year }: Props) => {
             input: {
               nextKey: '',
               typeId: record.ID,
-              year,
+              year: financeTransactionPeriodsState.year ?? '',
             },
           },
         })
@@ -46,10 +48,10 @@ const FinanceTransactionsPeriodsTableRow = ({ record, year }: Props) => {
       error={error}
     >
       {chargeItemSubjects.length ? (
-        <FinanceTransactionsPeriodsTableDetail data={chargeItemSubjects} />
+        <FinanceTransactionPeriodsTableDetail data={chargeItemSubjects} />
       ) : null}
     </ExpandRow>
   )
 }
 
-export default FinanceTransactionsPeriodsTableRow
+export default FinanceTransactionPeriodsTableRow

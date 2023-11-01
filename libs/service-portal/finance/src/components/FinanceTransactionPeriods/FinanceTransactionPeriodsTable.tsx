@@ -5,14 +5,13 @@ import sortBy from 'lodash/sortBy'
 import { ExpandHeader } from '@island.is/service-portal/core'
 import { GetChargeTypesDetailsByYearQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 
-import FinanceTransactionsPeriodsTableRow from './FinanceTransactionsPeriodsTableRow'
+import FinanceTransactionPeriodsTableRow from './FinanceTransactionPeriodsTableRow'
 
 interface Props {
   records: GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']['chargeType']
-  year: string
 }
 
-const FinanceTransactionsPeriodsTable = ({ records, year }: Props) => {
+const FinanceTransactionPeriodsTable = ({ records }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -32,10 +31,9 @@ const FinanceTransactionsPeriodsTable = ({ records, year }: Props) => {
         })
           .reverse()
           .map((record) => (
-            <FinanceTransactionsPeriodsTableRow
+            <FinanceTransactionPeriodsTableRow
               key={record.ID}
               record={record}
-              year={year}
             />
           ))}
       </T.Body>
@@ -43,4 +41,4 @@ const FinanceTransactionsPeriodsTable = ({ records, year }: Props) => {
   )
 }
 
-export default FinanceTransactionsPeriodsTable
+export default FinanceTransactionPeriodsTable
