@@ -148,6 +148,10 @@ module.exports = {
             type: Sequelize.BOOLEAN,
             allowNull: false,
           },
+          tmp_active: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
           created: {
             type: Sequelize.DATE,
             allowNull: false,

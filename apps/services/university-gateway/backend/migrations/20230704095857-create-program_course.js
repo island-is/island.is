@@ -52,6 +52,10 @@ module.exports = {
             type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
             allowNull: false,
           },
+          tmp_active: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
           created: {
             type: Sequelize.DATE,
             allowNull: false,

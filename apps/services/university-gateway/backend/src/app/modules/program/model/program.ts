@@ -45,17 +45,6 @@ export class Program extends Model {
   externalId!: string
 
   @ApiProperty({
-    description:
-      'Whether the program is active and should be displayed on the external web',
-    example: true,
-  })
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-  })
-  active!: boolean
-
-  @ApiProperty({
     description: 'Program name (Icelandic)',
     example: 'Tölvunarfræði',
   })
@@ -294,6 +283,24 @@ export class Program extends Model {
   })
   @HasMany(() => ProgramModeOfDelivery)
   modeOfDelivery!: ProgramModeOfDelivery[]
+
+  @ApiProperty({
+    description:
+      'Whether the program is active and should be displayed on the external web',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  active!: boolean
+
+  @ApiHideProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  tmpActive!: boolean
 
   @ApiHideProperty()
   @CreatedAt
