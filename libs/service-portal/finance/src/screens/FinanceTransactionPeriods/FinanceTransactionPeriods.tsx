@@ -61,20 +61,18 @@ const FinanceTransactionPeriods = () => {
     },
   ] = useGetChargeTypesDetailsByYearLazyQuery()
 
-  useEffect(() => {
-    if (assessmentYearsData) {
-      const years = [...(assessmentYearsData?.getAssessmentYears.year ?? [])]
-        .reverse()
-        .map((y) => {
-          return { label: y, value: y }
-        })
+  if (assessmentYearsData && !assessmentYears.length) {
+    const years = [...(assessmentYearsData?.getAssessmentYears.year ?? [])]
+      .reverse()
+      .map((y) => {
+        return { label: y, value: y }
+      })
 
-      if (years.length) {
-        setAssessmentYears(years)
-        setActiveYear(years[0].value)
-      }
+    if (years.length) {
+      setAssessmentYears(years)
+      setActiveYear(years[0].value)
     }
-  }, [assessmentYearsData])
+  }
 
   useEffect(() => {
     if (activeYear) {
@@ -97,6 +95,7 @@ const FinanceTransactionPeriods = () => {
       })
     } else {
       setChargeTypes(undefined)
+      setChargeTypeDetails(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeYear, activeChargeType])
@@ -111,6 +110,8 @@ const FinanceTransactionPeriods = () => {
     clearFilter()
     setQ('')
   }
+
+  console.log(chargeTypeDetails?.chargeType)
 
   const recordsDataArray =
     transactionPeriodFilter(

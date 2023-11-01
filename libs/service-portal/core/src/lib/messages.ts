@@ -81,6 +81,14 @@ export const m = defineMessages({
     id: 'service.portal:fee-base',
     defaultMessage: 'Gjaldgrunnur',
   },
+  feeBasePlural: {
+    id: 'service.portal:fee-base-plural',
+    defaultMessage: 'Gjaldgrunnar',
+  },
+  feeBasePlaceholder: {
+    id: 'service.portal:fee-base-placeholder',
+    defaultMessage: 'Veldu gjaldgrunna',
+  },
   feeBaseDescription: {
     id: 'service.portal:fee-category-description',
     defaultMessage: 'Skýring á gjaldgrunni',

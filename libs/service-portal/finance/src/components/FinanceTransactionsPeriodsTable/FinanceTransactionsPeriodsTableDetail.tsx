@@ -1,4 +1,11 @@
-import { Box, Text, Table as T, Pagination } from '@island.is/island-ui/core'
+import {
+  Box,
+  Text,
+  Table as T,
+  Pagination,
+  Select,
+  Option,
+} from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import * as styles from './FinanceTransactionsPeriodsTableDetail.css'
@@ -6,7 +13,7 @@ import { GetChargeItemSubjectsByYearQuery } from '../../screens/FinanceTransacti
 import { amountFormat, periodFormat } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
 
 interface Props {
@@ -16,9 +23,14 @@ interface Props {
 const ITEMS_ON_PAGE = 5
 
 const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
-  console.log({ data })
-  const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
+  const [page, setPage] = useState(1)
+
+  const [activeSubjects, setActiveSubjects] = useState<Array<Option<string>>>(
+    [],
+  )
+  const [subjectsFilter, setSubjectsFilter] = useState<Array<string>>([])
+  const [filteredSubjects, setFilteredSubjects] = useState<typeof data>([])
 
   const subjects = useMemo(() => {
     return sortBy(data, (item) => {
@@ -26,20 +38,59 @@ const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
     }).reverse()
   }, [data])
 
+  useEffect(() => {
+    const subjectsArray: Array<Option<string>> = []
+    subjects.forEach((s) => {
+      subjectsArray.push({
+        label: s.chargeItemSubject,
+        value: s.chargeItemSubject,
+      })
+    })
+    setActiveSubjects(subjectsArray)
+  }, [subjects])
+
+  useEffect(() => {
+    if (subjectsFilter.length) {
+      setFilteredSubjects(
+        subjects.filter((s) => subjectsFilter.includes(s.chargeItemSubject)),
+      )
+    } else {
+      setFilteredSubjects(subjects)
+    }
+  }, [subjects, subjectsFilter, activeSubjects])
+
   const totalPages =
-    data.length > ITEMS_ON_PAGE ? Math.ceil(data.length / ITEMS_ON_PAGE) : 0
+    filteredSubjects && filteredSubjects.length > ITEMS_ON_PAGE
+      ? Math.ceil(filteredSubjects.length / ITEMS_ON_PAGE)
+      : 0
 
   return (
     <Box padding={2} background="blue100">
-      {subjects
+      <Box padding={2} paddingBottom={4} width="half">
+        <Select
+          name="filter-subjects"
+          label={formatMessage(m.feeBasePlural)}
+          placeholder={formatMessage(m.feeBasePlaceholder)}
+          value={activeSubjects.filter((v) => subjectsFilter.includes(v.value))}
+          options={activeSubjects}
+          onChange={(val) => {
+            setSubjectsFilter(val?.value ? [val.value] : [])
+          }}
+          isClearable
+          isSearchable
+          // isMulti // isMulti is not supported by Select component, always returns single value
+        />
+      </Box>
+      {filteredSubjects
         .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
         .map((item) => (
           <Box
             className={styles.innerCol}
             key={item.chargeItemSubject}
             padding={2}
+            paddingBottom={4}
           >
-            <Box>
+            <Box paddingBottom={2}>
               <Text fontWeight="semiBold" variant="medium" as="span">
                 {formatMessage(m.feeBase)} -{' '}
               </Text>
@@ -48,11 +99,11 @@ const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
               </Text>
             </Box>
 
-            <T.Table>
+            <T.Table box={{ className: styles.zebraTable }}>
               <T.Head>
                 <T.Row>
-                  <T.HeadData></T.HeadData>
-                  <T.HeadData>
+                  <T.HeadData width={56}></T.HeadData>
+                  <T.HeadData width="15%">
                     <Text variant="small" fontWeight="semiBold">
                       {formatMessage(m.period)}
                     </Text>
@@ -67,7 +118,7 @@ const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
                       {formatMessage(m.lastMovement)}
                     </Text>
                   </T.HeadData>
-                  <T.HeadData align="right">
+                  <T.HeadData align="right" width="15%">
                     <Text variant="small" fontWeight="semiBold">
                       {formatMessage(m.financeStatus)}
                     </Text>
@@ -78,13 +129,19 @@ const FinanceTransactionsPeriodsTableDetail = ({ data }: Props) => {
                 {item.periods.map((period, i) => (
                   <T.Row key={`${period.period}-${i}-${period.lastMoveDate}`}>
                     <T.Data></T.Data>
-                    <T.Data>{periodFormat(period.period)}</T.Data>
+                    <T.Data>
+                      <Text variant="small" whiteSpace="nowrap">
+                        {periodFormat(period.period)}
+                      </Text>
+                    </T.Data>
                     <T.Data>{period.description}</T.Data>
                     <T.Data>
                       {format(new Date(period.lastMoveDate), dateFormat.is)}
                     </T.Data>
                     <T.Data align="right">
-                      {amountFormat(Number(period.amount))}
+                      <Text variant="small" whiteSpace="nowrap">
+                        {amountFormat(Number(period.amount))}
+                      </Text>
                     </T.Data>
                   </T.Row>
                 ))}

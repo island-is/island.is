@@ -6,8 +6,7 @@ import {
   GetChargeTypesDetailsByYearQuery,
   useGetChargeItemSubjectsByYearLazyQuery,
 } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
-import { useLocale } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { cropText } from '../../utils/cropText'
 
 interface Props {
   record: GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']['chargeType'][0]
@@ -15,7 +14,6 @@ interface Props {
 }
 
 const FinanceTransactionsPeriodsTableRow = ({ record, year }: Props) => {
-  const { formatMessage } = useLocale()
   const [getChargeItemSubjectsByYear, { data, loading, error }] =
     useGetChargeItemSubjectsByYearLazyQuery()
 
@@ -27,7 +25,7 @@ const FinanceTransactionsPeriodsTableRow = ({ record, year }: Props) => {
       key={`${record.ID}-${record.chargeItemSubjects}-${record.lastMovementDate}`}
       data={[
         { value: record.name },
-        { value: record.chargeItemSubjects },
+        { value: cropText(record.chargeItemSubjects, 24) },
         { value: record.chargeItemSubjectDescription },
         {
           value: format(new Date(record.lastMovementDate), dateFormat.is),
