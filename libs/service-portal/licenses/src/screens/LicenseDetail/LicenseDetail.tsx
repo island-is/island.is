@@ -149,7 +149,7 @@ const DataFields = ({
                   editLink={
                     field.link
                       ? {
-                          url: field.link.value,
+                          url: field.link.value ?? '',
                           title: field.link.label ?? undefined,
                         }
                       : undefined
