@@ -1,8 +1,11 @@
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentRenderer.css'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
+import { useUserInfo } from '@island.is/auth/react'
 import { useState } from 'react'
 import { ActiveDocumentType } from '../../lib/types'
+import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -12,6 +15,7 @@ type PdfDocumentProps = {
 
 export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
   const [scalePDF, setScalePDF] = useState(1.0)
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   return (
     <>
@@ -57,13 +61,28 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
           scale={scalePDF}
           autoWidth={false}
           errorComponent={
-            <Problem
-              message={formatMessage(messages.documentFetchError, {
-                senderName: document.sender,
-              })}
-              title={formatMessage(messages.documentNotFoundError)}
-              type="not_found"
-            />
+            <Box>
+              <Problem
+                message={formatMessage(messages.documentDisplayError, {
+                  senderName: document.sender,
+                })}
+                title={formatMessage(messages.documentErrorLoad)}
+                type="no_data"
+              />
+              <Box
+                marginBottom={4}
+                alignItems="center"
+                justifyContent="center"
+                display="flex"
+              >
+                <Button
+                  size="small"
+                  onClick={() => downloadFile(document, userInfo)}
+                >
+                  {formatMessage(m.getDocument)}
+                </Button>
+              </Box>
+            </Box>
           }
         />
       </Box>
