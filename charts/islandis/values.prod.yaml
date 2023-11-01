@@ -2398,6 +2398,7 @@ user-notification:
   enabled: true
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
+    IDENTITY_SERVER_PATH: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'

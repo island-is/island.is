@@ -19,16 +19,17 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { UserNotificationScope } from '@island.is/auth/scopes'
+import { NotificationsScope } from '@island.is/auth/scopes'
 
 import { NotificationsService } from './notifications.service'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { environment } from '../../../environments/environment'
 
 
 @Controller({
   path: 'me/notifications',
 })
-@UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard, ScopesGuard)
 export class MeNotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -36,17 +37,20 @@ export class MeNotificationsController {
   ) {}
   
   @Get('')
-  @Scopes(UserNotificationScope.read) // IDS TODO
-  @ApiSecurity('oauth2', [UserNotificationScope.read])
+  @Scopes(NotificationsScope.read)
+  @ApiSecurity('oauth2', [NotificationsScope.read])
   @ApiTags("user notification")
   @Version('1')
-  findAll(@Query('cursor') cursor: number): Promise<Notification[]> {
+  findAll(@Query('cursor') cursor: number): any { // async
+    // console.log(environment)
+    // console.log(process.env)
+    return process.env
     return this.notificationsService.findAll(cursor);
   }
   
   @Get(':id')
-  @Scopes(UserNotificationScope.read) // IDS TODO
-  @ApiSecurity('oauth2', [UserNotificationScope.read])
+  @Scopes(NotificationsScope.read)
+  @ApiSecurity('oauth2', [NotificationsScope.read])
   @ApiTags("user notification")
   @Version('1')
   findOne(@Param('id') id: number): Promise<Notification> {
@@ -54,8 +58,8 @@ export class MeNotificationsController {
   }
 
   @Patch(':id')
-  @Scopes(UserNotificationScope.write) // IDS TODO
-  @ApiSecurity('oauth2', [UserNotificationScope.write])
+  @Scopes(NotificationsScope.write)
+  @ApiSecurity('oauth2', [NotificationsScope.write])
   @ApiTags("user notification")
   @Version('1')
   update(@Param('id') id: number): Promise<Notification> {

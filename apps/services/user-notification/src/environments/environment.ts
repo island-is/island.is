@@ -11,6 +11,7 @@ if (!env.NODE_ENV || env.NODE_ENV === 'development') {
     SQS_ACCESS_KEY: 'testing',
     SQS_SECRET_ACCESS_KEY: 'testing',
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev',
+    
     ...env,
   }
 }
@@ -20,10 +21,11 @@ const required = (name: string): string => env[name] ?? ''
 const job = processJob()
 
 export const environment = {
+  
   identityServerPath: required('IDENTITY_SERVER_PATH'),
   userProfileServiceBasePath: required('SERVICE_USER_PROFILE_BASEPATH'),
-  notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'),
-  notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'),
+  notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'), // machine client ?
+  notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'), // machine client ?
 
   appProtocol: required('USER_NOTIFICATION_APP_PROTOCOL'),
 
@@ -46,6 +48,10 @@ export const environment = {
       }),
   },
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+  auth: {
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    audience: ['@island.is', '@admin.island.is'],
+  },
 }
 
 export type Config = typeof environment
