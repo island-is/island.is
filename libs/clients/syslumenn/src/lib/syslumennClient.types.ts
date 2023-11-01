@@ -281,3 +281,10 @@ interface UnitsOfUseModel {
 interface UnitsOfUse {
   explanation?: string
 }
+
+export interface MasterLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+  office?: string
+}
