@@ -94,7 +94,11 @@ export const m = defineMessages({
   ehicDescription: {
     id: 'sp.license:ehic-description',
     defaultMessage:
-      'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss. ',
+      'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss.',
+  },
+  ehicDescription2: {
+    id: 'sp.license:ehic-description-2',
+    defaultMessage: '<link> Nánar um kortið.</link>',
   },
   ehicDescriptionLink: {
     id: 'sp.license:ehic-description-link',

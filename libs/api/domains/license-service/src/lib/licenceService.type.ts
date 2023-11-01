@@ -66,6 +66,11 @@ export enum GenericUserLicensePkPassStatus {
   Unknown = 'Unknown',
 }
 
+export enum GenericUserLicenseMetaLinksType {
+  External = 'External',
+  Download = 'Download',
+}
+
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
 
@@ -114,6 +119,7 @@ export type GenericLicenseDataField = {
 export type GenericUserLicenseMetaLinks = {
   label?: string
   value?: string
+  type?: GenericUserLicenseMetaLinksType
 }
 
 export type GenericUserLicenseMetadata = {

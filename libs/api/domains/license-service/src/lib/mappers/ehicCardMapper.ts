@@ -5,6 +5,7 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
   GenericLicenseMapper,
+  GenericUserLicenseMetaLinksType,
   GenericUserLicensePayload,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
@@ -81,15 +82,19 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
         licenseNumber: typedPayload.cardNumber?.toString() ?? '',
         expired,
         expireDate: typedPayload.expiryDate.toISOString(),
-        links:
+        links: [
           typedPayload.hasTempCard && typedPayload.tempCardPdf
-            ? [
-                {
-                  label: getLabel('getEHICPdf', locale, label),
-                  value: getDocument(typedPayload.tempCardPdf, 'pdf'),
-                },
-              ]
+            ? {
+                label: getLabel('downloadCard', locale, label),
+                value: getDocument(typedPayload.tempCardPdf, 'pdf'),
+                type: GenericUserLicenseMetaLinksType.Download,
+              }
             : undefined,
+          {
+            label: getLabel('applyForNewCard', locale, label),
+            value: 'https://island.is/umsoknir/evropska-sjukratryggingakortid',
+          },
+        ].filter(isDefined),
       },
     }
   }

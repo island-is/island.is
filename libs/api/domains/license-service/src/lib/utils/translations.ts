@@ -68,9 +68,13 @@ export const i18n = {
     is: 'Endurnýja skotvopnaleyfi',
     en: 'Renew firearm license',
   },
-  getEHICPdf: {
-    is: 'Sækja rafrænt ES kort',
-    en: 'Fetch temp EHIC pdf',
+  downloadCard: {
+    is: 'Hlaða niður korti',
+    en: 'Download card',
+  },
+  applyForNewCard: {
+    is: 'Sækja um nýtt kort',
+    en: 'Apply for a new card',
   },
   collectorLicenseValidTo: {
     is: 'Safnaraskírteini gildir til',

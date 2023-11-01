@@ -1,5 +1,7 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../lib/messages'
+import { FormatMessage } from '@island.is/localization'
+import { LinkButton } from '@island.is/service-portal/core'
 
 interface Category {
   id:
@@ -470,54 +472,72 @@ enum LicenseProviderPath {
   sjukratryggingar = 'sjukratryggingar',
 }
 
-export const getLicenseDetailHeading = (type: string) => {
+export const getLicenseDetailHeading = (
+  type: string,
+  formatMessage: FormatMessage,
+) => {
   switch (type) {
     case LicenseType.DriversLicense:
       return {
-        title: m.yourDrivingLicense,
-        text: m.drivingLicenseDescription,
+        title: formatMessage(m.yourDrivingLicense),
+        text: formatMessage(m.drivingLicenseDescription),
       }
-      break
+
     case LicenseType.AdrLicense:
-      return { title: m.yourADRLicense, text: m.adrLicenseDescription }
-      break
+      return {
+        title: formatMessage(m.yourADRLicense),
+        text: formatMessage(m.adrLicenseDescription),
+      }
+
     case LicenseType.MachineLicense:
       return {
-        title: m.yourMachineLicense,
-        text: m.machineLicenseDescription,
+        title: formatMessage(m.yourMachineLicense),
+        text: formatMessage(m.machineLicenseDescription),
       }
-      break
+
     case LicenseType.FirearmLicense:
       return {
-        title: m.yourFirearmLicense,
-        text: m.firearmLicenseDescription,
+        title: formatMessage(m.yourFirearmLicense),
+        text: formatMessage(m.firearmLicenseDescription),
       }
-      break
+
     case LicenseType.DisabilityLicense:
       return {
-        title: m.yourDisabilityicense,
-        text: m.disabilityLicenseDescription,
+        title: formatMessage(m.yourDisabilityicense),
+        text: formatMessage(m.disabilityLicenseDescription),
       }
-      break
+
     case LicenseType.PCard:
       return {
-        title: m.pCard,
-        text: m.yourPCardDescription,
+        title: formatMessage(m.pCard),
+        text: formatMessage(m.yourPCardDescription),
       }
-      break
+
     case LicenseType.Ehic:
       return {
-        title: m.ehic,
-        text: m.ehicDescription,
-        link: m.ehicDescriptionLink,
+        title: formatMessage(m.ehic),
+        text: (
+          <>
+            {formatMessage(m.ehicDescription)}
+            <br />
+            {formatMessage(m.ehicDescription2, {
+              link: (str: any) => (
+                <LinkButton
+                  skipIcon
+                  to={formatMessage(m.ehicDescriptionLink)}
+                  text={str ?? ''}
+                />
+              ),
+            })}
+          </>
+        ),
       }
-      break
+
     default:
       return {
-        title: m.license,
+        title: formatMessage(m.license),
         text: '',
       }
-      break
   }
 }
 export const getTitleAndLogo = (type: string) => {

@@ -19,7 +19,6 @@ import {
   CardLoader,
   ErrorScreen,
   m as coreMessages,
-  LinkButton,
 } from '@island.is/service-portal/core'
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
@@ -27,7 +26,11 @@ import { gql, useQuery } from '@apollo/client'
 import { useLocation, useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import { GenericLicenseDataField, Query } from '@island.is/api/schema'
+import {
+  GenericLicenseDataField,
+  GenericUserLicenseMetaLinksType,
+  Query,
+} from '@island.is/api/schema'
 import { PkPass } from '../../components/QRCodeModal/PkPass'
 import {
   getLicenseDetailHeading,
@@ -35,6 +38,7 @@ import {
 } from '../../utils/dataMapper'
 import { isExpired } from '../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
+import { isDefined } from '@island.is/shared/utils'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -91,6 +95,7 @@ const GenericLicenseQuery = gql`
           licenseNumber
           expired
           links {
+            type
             label
             value
           }
@@ -344,7 +349,7 @@ const LicenseDetail = () => {
 
   const { genericLicense = null } = data ?? {}
 
-  const heading = getLicenseDetailHeading(licenseType ?? '')
+  const heading = getLicenseDetailHeading(licenseType ?? '', formatMessage)
 
   if (error && !queryLoading) {
     return (
@@ -368,25 +373,16 @@ const LicenseDetail = () => {
           <GridColumn span={['12/12', '12/12', '6/8', '6/8']}>
             <Stack space={1}>
               <Text variant="h3" as="h1" paddingTop={0}>
-                {formatMessage(heading.title)}
+                {heading.title}
               </Text>
               <Text as="p" variant="default">
-                {formatMessage(heading.text)}
+                {heading.text}
               </Text>
             </Stack>
           </GridColumn>
         </GridRow>
       </Box>
-      {heading.link && (
-        <Text marginTop={5} marginBottom={5}>
-          <LinkButton
-            to={formatMessage(heading.link)}
-            text={formatMessage(m.externalLicenseDetailLink)}
-          />
-        </Text>
-      )}
       {queryLoading && <CardLoader />}
-
       {!error && !queryLoading && (
         <>
           <Box
@@ -394,6 +390,8 @@ const LicenseDetail = () => {
             flexDirection={['column', 'row']}
             alignItems={['flexStart', 'center']}
             marginBottom={2}
+            columnGap={2}
+            rowGap={2}
           >
             {!expired &&
               genericLicense?.license.pkpass &&
@@ -404,25 +402,34 @@ const LicenseDetail = () => {
                   <Box marginX={[0, 1]} marginY={[1, 0]} />
                 </>
               )}
-            {genericLicense?.payload?.metadata?.links?.map((link, index) => {
-              return (
-                <a
-                  href={link.value}
-                  target="_blank"
-                  rel="noreferrer"
-                  key={licenseType + '_link_' + index}
-                >
-                  <Button
-                    variant="utility"
-                    size="small"
-                    icon="open"
-                    iconType="outline"
-                  >
-                    {link.label}
-                  </Button>
-                </a>
-              )
-            })}
+            {genericLicense?.payload?.metadata?.links
+              ?.map((link, index) => {
+                if (link.label && link.value) {
+                  return (
+                    <a
+                      href={link.value}
+                      target="_blank"
+                      rel="noreferrer"
+                      key={licenseType + '_link_' + index}
+                    >
+                      <Button
+                        variant="utility"
+                        size="small"
+                        icon={
+                          link.type === GenericUserLicenseMetaLinksType.Download
+                            ? 'download'
+                            : 'open'
+                        }
+                        iconType="outline"
+                      >
+                        {link.label}
+                      </Button>
+                    </a>
+                  )
+                }
+                return null
+              })
+              .filter(isDefined)}
           </Box>
 
           <DataFields
