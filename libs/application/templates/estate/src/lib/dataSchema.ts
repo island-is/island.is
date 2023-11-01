@@ -133,14 +133,6 @@ export const estateSchema = z.object({
           path: ['email'],
         },
       )
-      .refine(
-        ({ enabled, relationWithApplicant }) => {
-          return enabled ? relationWithApplicant !== '' : true
-        },
-        {
-          path: ['relationWithApplicant'],
-        },
-      )
 
       /* phone and email validation for advocates */
       .refine(

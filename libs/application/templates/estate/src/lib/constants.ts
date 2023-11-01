@@ -37,6 +37,8 @@ export const EstateTypes = {
   divisionOfEstateByHeirs: 'Einkaskipti',
 }
 
+// Relations fixed list used in "Seta í óskiptu búi".
+// The District Commissioner's relation endpoint was not suitable for this list.
 export const relationWithApplicant = [
   'Barn (sameiginlegt barn hjóna)',
   'Stjúpbarn (barn látins maka)',

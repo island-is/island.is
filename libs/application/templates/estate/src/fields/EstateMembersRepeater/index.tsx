@@ -7,7 +7,6 @@ import {
   Button,
   GridColumn,
   GridRow,
-  Select,
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
