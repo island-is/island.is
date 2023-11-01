@@ -59,6 +59,12 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
 
       return acc
     }, [] as EventLog[])
+
+  const wasAppealedAfterDeadline =
+    workingCase.appealedDate &&
+    workingCase.appealDeadline &&
+    workingCase.appealedDate > workingCase.appealDeadline
+
   return (
     <>
       <Box marginBottom={5}>
@@ -72,6 +78,14 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Button>
         </Box>
       </Box>
+      {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(strings.appealSentAfterDeadline)}
+            type="warning"
+          />
+        </Box>
+      )}
       {workingCase.appealRulingDecision &&
         workingCase.eventLogs &&
         workingCase.eventLogs.length > 0 && (

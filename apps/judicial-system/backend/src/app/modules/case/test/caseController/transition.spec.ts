@@ -432,7 +432,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_TO_POLICE,
+                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
                   user: defaultUser,
                   caseId: theCase.id,
                 },
