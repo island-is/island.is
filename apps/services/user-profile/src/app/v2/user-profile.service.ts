@@ -42,8 +42,6 @@ export class UserProfileService {
       }
     }
 
-    console.log('userProfile', userProfile.lastNudge)
-
     return {
       nationalId: userProfile.nationalId,
       email: userProfile.email,
@@ -90,7 +88,7 @@ export class UserProfileService {
       this.formatPhoneNumber(userProfile.mobilePhoneNumber)
 
     return await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, { transaction, maxRetries: 3 }] as const
+      const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
       const promises = await Promise.all(
         [
@@ -194,7 +192,6 @@ export class UserProfileService {
   }
 
   private checkNeedsNudge(lastNudge: NonNullable<Date>): boolean {
-    console.log('lastNudge', lastNudge)
     const sixMonthsAgoDate = new Date()
     sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
 
