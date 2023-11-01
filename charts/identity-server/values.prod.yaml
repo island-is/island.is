@@ -107,7 +107,7 @@ identity-server:
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     NODE_OPTIONS: '--max-old-space-size=1843'
     NO_UPDATE_NOTIFIER: 'true'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'true'
     PersistenceSettings__SessionsBaseAddress: 'https://sessions-api.internal.island.is'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'

@@ -25,7 +25,7 @@ judicial-system-api:
     AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://judicial-system.dev01.devland.is'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.dev01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'preview.contentful.com'
     HIDDEN_FEATURES: ''
@@ -239,7 +239,7 @@ judicial-system-message-handler:
     - 'node'
   enabled: true
   env:
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
@@ -303,7 +303,7 @@ judicial-system-scheduler:
     - 'node'
   enabled: true
   env:
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     TIME_TO_LIVE_MINUTES: '30'
@@ -355,7 +355,7 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://judicial-system.dev01.devland.is'
-    INTERNAL_API_URL: 'http://web-judicial-system-api'
+    INTERNAL_API_URL: 'http://judicial-system-api'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -419,7 +419,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
