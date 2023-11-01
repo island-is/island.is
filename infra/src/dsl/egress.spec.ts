@@ -48,7 +48,7 @@ describe('Egress', () => {
 
   it('Variable has address of the mock', () => {
     expect(serviceDef.serviceDef[0].env['A']).toBe(
-      'http://web-mock-server:9209',
+      'http://mock-server:9209',
     )
   })
 
