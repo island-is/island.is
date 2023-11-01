@@ -4,16 +4,23 @@ import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.css'
 
-const FALLBACK_WIDTH = 316
+const FALLBACK_WIDTH = 10
 
-export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
+interface Props {
+  width?: number
+}
+
+export const Swiper: FC<React.PropsWithChildren<Props>> = ({
+  children,
+  width,
+}) => {
+  const [itemWidth, setItemWidth] = useState<number>(width ?? FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 
   const onResize = useCallback(() => {
     if (ref?.current) {
       const w = ref?.current?.offsetWidth as number
-      setWidth(~~(w * 0.77))
+      setItemWidth(~~(w * 0.77))
     }
   }, [ref])
 
@@ -34,7 +41,7 @@ export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
               key={i}
               className={styles.slide}
               style={{
-                width: i === arr.length - 1 ? theme.spacing[3] + width : width,
+                width: '80px',
               }}
             >
               {child}

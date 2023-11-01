@@ -1,9 +1,17 @@
 import { FC, useState, Children, cloneElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Gallery.css'
-import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Inline,
+  LoadingDots,
+  Swiper,
+  Text,
+} from '@island.is/island-ui/core'
 import { GalleryItemProps } from '../..'
 import { isDefined } from '@island.is/shared/utils'
+import { GalleryModal } from './GalleryModal'
 
 export interface GalleryProps {
   loading?: boolean
@@ -112,26 +120,18 @@ export const Gallery: FC<GalleryProps> = ({
           </Box>
         )}
       </Inline>
-      {/*
-      {isModalOpen && lastImage.image && (
+
+      {isModalOpen && (
         <GalleryModal
           id="ip-design-modal"
           isVisible={isModalOpen}
           onVisibilityChange={(isVisible) => setIsModalOpen(isVisible)}
-          images={images
-            .map((i, i) => (
-              <img
-                key={index}
-                src={`data:image/png;base64,${i.image}`}
-                alt={'belbe'}
-                className={styles.image}
-              />
-            ))
-            .filter(isDefined)}
+          thumbnails={thumbnails}
           label="all designs"
-        />
+        >
+          {children}
+        </GalleryModal>
       )}
-            */}
     </>
   )
 }

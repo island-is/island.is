@@ -19,41 +19,8 @@ export const modal = style({
 export const container = style({
   height: '100%',
   width: '100%',
+  display: 'grid',
+  gridTemplateRows: '4fr 1fr',
+  rowGap: '5px',
   backgroundColor: white,
-  padding: theme.spacing[1],
-})
-
-export const content = style({
-  height: '80%',
-})
-
-export const mainImage = style({
-  height: '100%',
-})
-
-export const arrows = style({
-  alignSelf: 'center',
-  color: theme.color.dark300,
-})
-
-export const thumbnailGallery = style({
-  display: 'flex',
-  gap: theme.spacing[1],
-  paddingLeft: theme.spacing[2],
-  paddingRight: theme.spacing[2],
-})
-
-export const thumbnail = style({
-  position: 'relative',
-  height: theme.spacing[10],
-  width: theme.spacing[10],
-  border: '1px solid',
-  borderRadius: theme.border.radius.large,
-  borderColor: theme.border.color.blue200,
-  opacity: 0.6,
-})
-
-export const selectedThumbnail = style({
-  opacity: 1,
-  borderColor: theme.border.color.blue400,
 })
