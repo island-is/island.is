@@ -403,6 +403,7 @@ export class DrivingLicenseApi {
         await this.v5.apiDrivinglicenseV5ApplicationsNewTemporaryPost({
           apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
           apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          jwttoken: params.auth.replace('Bearer ', ''),
           postTemporaryLicense: {
             bringsHealthCertificate: params.willBringHealthCertificate,
             ssn: params.nationalIdApplicant,
@@ -426,7 +427,7 @@ export class DrivingLicenseApi {
       // The generated api does not map the error correctly so we check if the canApply status has changed to "HAS_B_Category"
       if ((e as { status: number })?.status === 400) {
         const hasTemp = await this.getCanApplyForCategoryTemporary({
-          token: params.auth,
+          token: params.auth.replace('Bearer ', '')
         })
         return hasTemp.errorCode === 'HAS_B_CATEGORY'
       }
