@@ -2645,7 +2645,7 @@ user-notification:
   enabled: true
   env:
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
-    IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
