@@ -87,8 +87,8 @@ describe('Feature-deployment support', () => {
 
   it('dynamic service name generation', () => {
     expect(values.services.graphql.env).toEqual({
-      A: 'web-service-a',
-      B: 'feature-web-service-b.islandis.svc.cluster.local',
+      A: 'service-a',
+      B: 'feature-service-b.islandis.svc.cluster.local',
       DB_USER: 'feature_feature_A_graphql',
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
