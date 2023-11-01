@@ -54,7 +54,6 @@ export class InternalCourseService {
       await this.universityModel.findOne({
         attributes: ['id'],
         where: { nationalId: universityNationalId },
-        logging: false,
       })
     )?.id
 
@@ -72,7 +71,6 @@ export class InternalCourseService {
     const programList = await this.programModel.findAll({
       attributes: ['id', 'externalId'],
       where: { universityId },
-      logging: false,
     })
     for (let i = 0; i < programList.length; i++) {
       const program = programList[i]
@@ -89,7 +87,6 @@ export class InternalCourseService {
           },
           {
             where: { programId },
-            logging: false,
           },
         )
 
@@ -119,7 +116,6 @@ export class InternalCourseService {
               [courseObj],
               {
                 updateOnDuplicate: ['externalId'],
-                logging: false,
               },
             )
             const courseId = updatedCourse[0].id
@@ -137,7 +133,6 @@ export class InternalCourseService {
             // 3. CREATE or UPDATE program course (make sure tmpActive becomes true)
             await this.programCourseModel.bulkCreate([programCourseObj], {
               updateOnDuplicate: ['programId', 'courseId'],
-              logging: false,
             })
 
             activeCourseIdList.push(courseId)
@@ -157,7 +152,6 @@ export class InternalCourseService {
       // 4. DELETE all program courses for this program that are "temporarily inactive"
       await this.programCourseModel.destroy({
         where: { programId, tmpActive: false },
-        logging: false,
       })
     }
 
@@ -167,7 +161,6 @@ export class InternalCourseService {
         universityId,
         id: { [Op.notIn]: activeCourseIdList },
       },
-      logging: false,
     })
 
     logger.info(

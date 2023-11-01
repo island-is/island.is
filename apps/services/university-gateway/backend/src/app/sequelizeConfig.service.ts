@@ -24,6 +24,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
     return {
       ...config,
       ...getOptions({ logger: this.logger }),
+      logging: false,
     }
   }
 }

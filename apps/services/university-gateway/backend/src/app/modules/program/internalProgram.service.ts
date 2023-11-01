@@ -60,7 +60,6 @@ export class InternalProgramService {
       await this.universityModel.findOne({
         attributes: ['id'],
         where: { nationalId: universityNationalId },
-        logging: false,
       })
     )?.id
 
@@ -82,7 +81,6 @@ export class InternalProgramService {
       },
       {
         where: { universityId },
-        logging: false,
       },
     )
 
@@ -136,7 +134,6 @@ export class InternalProgramService {
           [programObj],
           {
             updateOnDuplicate: ['externalId'],
-            logging: false,
           },
         )
         const programId = updatedProgram[0].id
@@ -144,7 +141,6 @@ export class InternalProgramService {
         // 3a. DELETE program tag
         await this.programTagModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
         // 3b. CREATE program tag
@@ -152,60 +148,48 @@ export class InternalProgramService {
           const tag = await this.tagModel.findOne({
             attributes: ['id'],
             where: { code: tagList[j].code },
-            logging: false,
           })
 
           if (!tag) continue
 
-          await this.programTagModel.create(
-            {
-              programId: programId,
-              tagId: tag?.id,
-            },
-            { logging: false },
-          )
+          await this.programTagModel.create({
+            programId: programId,
+            tagId: tag?.id,
+          })
         }
 
         // 4a. DELETE program mode of delivery
         await this.programModeOfDeliveryModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
         // 4b. CREATE program mode of delivery
         for (let j = 0; j < modeOfDeliveryList.length; j++) {
-          await this.programModeOfDeliveryModel.create(
-            {
-              programId: programId,
-              modeOfDelivery: modeOfDeliveryList[j],
-            },
-            { logging: false },
-          )
+          await this.programModeOfDeliveryModel.create({
+            programId: programId,
+            modeOfDelivery: modeOfDeliveryList[j],
+          })
         }
 
         // 5a. DELETE program extra application field
         await this.programExtraApplicationFieldModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
         // 5b. CREATE program extra application field
         for (let j = 0; j < extraApplicationFieldList.length; j++) {
-          await this.programExtraApplicationFieldModel.create(
-            {
-              programId: programId,
-              externalId: extraApplicationFieldList[j].externalId,
-              nameIs: extraApplicationFieldList[j].nameIs,
-              nameEn: extraApplicationFieldList[j].nameEn,
-              descriptionIs: extraApplicationFieldList[j].descriptionIs,
-              descriptionEn: extraApplicationFieldList[j].descriptionEn,
-              required: extraApplicationFieldList[j].required,
-              fieldType: extraApplicationFieldList[j].fieldType,
-              uploadAcceptedFileType:
-                extraApplicationFieldList[j].uploadAcceptedFileType,
-            },
-            { logging: false },
-          )
+          await this.programExtraApplicationFieldModel.create({
+            programId: programId,
+            externalId: extraApplicationFieldList[j].externalId,
+            nameIs: extraApplicationFieldList[j].nameIs,
+            nameEn: extraApplicationFieldList[j].nameEn,
+            descriptionIs: extraApplicationFieldList[j].descriptionIs,
+            descriptionEn: extraApplicationFieldList[j].descriptionEn,
+            required: extraApplicationFieldList[j].required,
+            fieldType: extraApplicationFieldList[j].fieldType,
+            uploadAcceptedFileType:
+              extraApplicationFieldList[j].uploadAcceptedFileType,
+          })
         }
       } catch (e) {
         logger.error(
@@ -222,7 +206,6 @@ export class InternalProgramService {
       },
       {
         where: { universityId, tmpActive: false },
-        logging: false,
       },
     )
 
