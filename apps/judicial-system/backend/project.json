@@ -64,8 +64,9 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/judicial-system/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "logHeapUsage": true,
+        "passWithNoTests": true,
+        "workerIdleMemoryLimit": "1028"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
     },

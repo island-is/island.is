@@ -1802,6 +1802,77 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
   }
 }
 
+export interface IManualFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Info */
+  info?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapters */
+  chapters: IManualChapter[]
+}
+
+export interface IManual extends Entry<IManualFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manual'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IManualChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapter Items */
+  chapterItems?: IOneColumnText[] | undefined
+
+  /** Changelog */
+  changelog?: Record<string, any> | undefined
+}
+
+export interface IManualChapter extends Entry<IManualChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manualChapter'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IMenuFields {
   /** Title */
   title?: string | undefined
@@ -4359,6 +4430,8 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
+  | 'manual'
+  | 'manualChapter'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'

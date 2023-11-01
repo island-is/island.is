@@ -7,6 +7,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -330,6 +331,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: currentAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           const updatedCase = {
@@ -338,6 +340,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: newAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           beforeEach(async () => {
@@ -429,7 +432,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_TO_POLICE,
+                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
                   user: defaultUser,
                   caseId: theCase.id,
                 },

@@ -108,7 +108,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["sequelize-cli db:seed:all --seeders-path ./seeders"],
-        "parallel": false,
         "cwd": "apps/services/user-profile/"
       }
     },
