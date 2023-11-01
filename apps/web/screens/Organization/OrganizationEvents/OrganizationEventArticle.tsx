@@ -19,11 +19,13 @@ import {
   getThemeConfig,
   HeadWithSocialSharing,
   OrganizationWrapper,
+  Webreader,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
   Event as EventModel,
   GetNamespaceQuery,
+  Image as ImageSchema,
   OrganizationPage,
   Query,
   QueryGetNamespaceArgs,
@@ -31,7 +33,9 @@ import {
   QueryGetSingleEventArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -53,28 +57,27 @@ const EventItemImage = ({
   floatRight = true,
 }: {
   eventItem: EventModel
-  floatRight?: boolean
+  floatRight?: boolean | null
 }) => {
-  if (!eventItem?.contentImage) return null
+  if (!eventItem?.contentImage?.url) return null
   return (
     <Box
       paddingY={2}
-      className={cn({
-        [styles.floatedImage]: floatRight,
-      })}
+      className={cn(
+        {
+          [styles.floatedImage]: floatRight,
+        },
+        styles.imageContainer,
+      )}
     >
-      <Image
-        {...eventItem.contentImage}
-        url={
+      <img
+        className={styles.image}
+        src={
           eventItem.contentImage?.url
             ? eventItem.contentImage?.url + '?w=774&fm=webp&q=80'
             : ''
         }
-        thumbnail={
-          eventItem.contentImage?.url
-            ? eventItem.contentImage?.url + '?w=50&fm=webp&q=80'
-            : ''
-        }
+        alt=""
       />
     </Box>
   )
@@ -145,6 +148,10 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   const { activeLocale } = useI18n()
   const { linkResolver } = useLinkResolver()
 
+  useLocalLinkTypeResolver()
+  // TODO: test this out so it works changing to english locale
+  useContentfulId(organizationPage?.id, event?.id)
+
   const { width } = useWindowSize()
 
   const isSmall = width <= LAYOUT_CHANGE_BREAKPOINT
@@ -195,91 +202,69 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
           ),
         }}
       >
-        <Text variant="h1" as="h1" paddingBottom={5}>
+        <Text variant="h1" as="h1">
           {event.title}
         </Text>
 
-        {event?.video && (
+        <Webreader
+          marginTop={3}
+          marginBottom={5}
+          readId={undefined}
+          readClass="rs_read"
+        />
+
+        <Stack space={3}>
           <GridRow>
-            <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
-              <EmbeddedVideo
-                url={event.video.url}
-                locale={locale}
-                title={event.video.title}
-              />
-            </GridColumn>
+            {event.video?.url && (
+              <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
+                <EmbeddedVideo
+                  url={event.video.url}
+                  locale={locale}
+                  title={event.video.title}
+                />
+              </GridColumn>
+            )}
             <GridColumn
-              span={isSmall ? '12/12' : '5/12'}
-              paddingTop={event.video?.url ? [2, 2, 2, 0, 0] : 2}
+              span={
+                isSmall || (!event.video?.url && !event.contentImage?.url)
+                  ? '12/12'
+                  : '5/12'
+              }
+              paddingTop={[2, 2, 2, 0, 0]}
               paddingBottom={2}
             >
               <EventInformationBox event={event} namespace={namespace} />
             </GridColumn>
+            {!isSmall && !event.video?.url && event.contentImage?.url && (
+              <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
+                <EventItemImage eventItem={event} floatRight={false} />
+              </GridColumn>
+            )}
           </GridRow>
-        )}
 
-        <GridRow>
-          {event?.video && (
-            <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
-              <EmbeddedVideo
-                url={event.video.url}
-                locale={locale}
-                title={event.video.title}
-              />
-            </GridColumn>
+          {event.contentImage?.url && !event.video?.url && isSmall && (
+            <EventItemImage
+              eventItem={event}
+              floatRight={!event.fullWidthImageInContent}
+            />
           )}
-          <GridColumn
-            span={isSmall ? '12/12' : '5/12'}
-            paddingTop={event.video?.url ? [2, 2, 2, 0, 0] : 2}
-            paddingBottom={2}
-          >
-            <Box
-              background="blue100"
-              borderRadius="large"
-              padding={[3, 3, 3, 2, 3]}
-            ></Box>
-          </GridColumn>
-          {!isSmall && !event.video?.url && event.contentImage && (
-            <GridColumn paddingBottom={3} span={isSmall ? '12/12' : '7/12'}>
-              <EventItemImage eventItem={event} floatRight={false} />
-            </GridColumn>
-          )}
-        </GridRow>
-        {isSmall && !event.video?.url && event.contentImage && (
-          <GridColumn paddingBottom={3}>
-            <EventItemImage eventItem={event} floatRight={false} />
-          </GridColumn>
-        )}
 
-        {!isSmall && event.video?.url && event.contentImage && (
-          <GridColumn>
-            <EventItemImage eventItem={event} />
-          </GridColumn>
-        )}
-        <Text>
-          {webRichText(
-            event.content ?? [],
-            {
-              renderComponent: {
-                // Make sure that images in the content are full width
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                Image: (slice) => (
-                  <Box className={styles.clearBoth}>
-                    <Image {...slice} thumbnail={slice.url + '?w=50'} />
-                  </Box>
-                ),
+          <Text>
+            {webRichText(
+              event.content ?? [],
+              {
+                renderComponent: {
+                  Image: (slice: ImageSchema) => (
+                    <Box className={styles.clearBoth}>
+                      <Image {...slice} thumbnail={slice.url + '?w=50'} />
+                    </Box>
+                  ),
+                },
               },
-            },
-            activeLocale,
-          )}
-        </Text>
-
-        {isSmall && event.video?.url && event.contentImage && (
-          <GridColumn paddingTop={3} paddingBottom={3}>
-            <EventItemImage eventItem={event} floatRight={false} />
-          </GridColumn>
-        )}
+              activeLocale,
+            )}
+          </Text>
+        </Stack>
       </OrganizationWrapper>
       <HeadWithSocialSharing
         title={`${event.title ?? ''} | ${organizationPage.title}`}

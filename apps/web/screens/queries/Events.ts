@@ -5,6 +5,7 @@ import { slices } from './fragments'
 export const GET_SINGLE_EVENT_QUERY = gql`
   query GetSingleEvent($input: GetSingleEventInput!) {
     getSingleEvent(input: $input) {
+      id
       title
       slug
       startDate

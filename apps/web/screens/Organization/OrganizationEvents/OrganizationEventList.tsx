@@ -23,6 +23,8 @@ import {
   QueryGetOrganizationPageArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespaceStrict } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen, ScreenContext } from '@island.is/web/types'
@@ -52,6 +54,9 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
   const { linkResolver } = useLinkResolver()
   const n = useNamespaceStrict(namespace)
   const { activeLocale } = useI18n()
+
+  useLocalLinkTypeResolver()
+  useContentfulId(organizationPage?.id)
 
   const breadCrumbs: BreadCrumbItem[] = [
     {
@@ -92,31 +97,33 @@ const OrganizationEventList: Screen<OrganizationEventListProps> = ({
         ),
       }}
     >
-      <EventList
-        title={eventsHeading}
-        namespace={namespace}
-        eventList={eventList?.items}
-        parentPageSlug={organizationPage.slug}
-      />
+      <Box paddingBottom={3}>
+        <EventList
+          title={eventsHeading}
+          namespace={namespace}
+          eventList={eventList?.items}
+          parentPageSlug={organizationPage.slug}
+        />
 
-      {!!eventList.items.length && eventList.total > PAGE_SIZE && (
-        <Box marginTop={[4, 4, 8]}>
-          <Pagination
-            totalPages={Math.ceil(eventList.total / PAGE_SIZE)}
-            page={selectedPage}
-            renderLink={(page, className, children) => (
-              <LinkV2
-                href={{
-                  pathname: eventOverviewHref,
-                  query: { page },
-                }}
-              >
-                <span className={className}>{children}</span>
-              </LinkV2>
-            )}
-          />
-        </Box>
-      )}
+        {!!eventList.items.length && eventList.total > PAGE_SIZE && (
+          <Box marginTop={[4, 4, 8]}>
+            <Pagination
+              totalPages={Math.ceil(eventList.total / PAGE_SIZE)}
+              page={selectedPage}
+              renderLink={(page, className, children) => (
+                <LinkV2
+                  href={{
+                    pathname: eventOverviewHref,
+                    query: { page },
+                  }}
+                >
+                  <span className={className}>{children}</span>
+                </LinkV2>
+              )}
+            />
+          </Box>
+        )}
+      </Box>
     </OrganizationWrapper>
   )
 }
@@ -166,6 +173,7 @@ OrganizationEventList.getProps = async ({ apolloClient, query, locale }) => {
           lang: locale as Locale,
           page: selectedPage,
           size: PAGE_SIZE,
+          order: 'asc',
         },
       },
     }),

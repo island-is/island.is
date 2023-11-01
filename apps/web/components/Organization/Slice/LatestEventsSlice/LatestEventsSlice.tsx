@@ -65,10 +65,10 @@ export const LatestEventsSlice = ({
           paddingTop={5}
           paddingBottom={5}
           insideGridContainer
-          third
+          quarter
         >
           {slice.events
-            .slice(0, 3)
+            .slice(0, 4)
             .map(
               (
                 {

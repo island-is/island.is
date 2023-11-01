@@ -1,25 +1,28 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
+
 import {
-  Text,
   Box,
   Button,
   FocusableBox,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Image } from '@island.is/web/graphql/schema'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import * as styles from './NewsCard.css'
 
 interface NewsCardProps {
   title: string
-  introduction: string
+  introduction: string | React.ReactNode
   image?: Partial<Image>
   readMoreText?: string
   href: string
   date?: string
+  dateTextColor?: 'dark400' | 'purple400'
+  titleVariant?: 'h2' | 'h3'
   titleAs?: 'h2' | 'h3' | 'h4'
   mini?: boolean
 }
@@ -31,6 +34,8 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
   readMoreText = 'Lesa nánar',
   href,
   date,
+  dateTextColor = 'dark400',
+  titleVariant = 'h2',
   titleAs = 'h3',
   mini,
 }) => {
@@ -57,7 +62,11 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
           paddingX={[3, 3, 0]}
         >
           <Stack space={2}>
-            {!!formattedDate && <Text variant="eyebrow">{formattedDate}</Text>}
+            {!!formattedDate && (
+              <Text variant="eyebrow" color={dateTextColor}>
+                {formattedDate}
+              </Text>
+            )}
             <Text variant="h2" as={titleAs}>
               {title}
             </Text>
@@ -95,23 +104,27 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
             justifyContent="spaceBetween"
           >
             <Stack space={2}>
-              <Text variant="eyebrow">{formattedDate}</Text>
-              <Text variant="h2" as={titleAs}>
+              <Text variant="eyebrow" color={dateTextColor}>
+                {formattedDate}
+              </Text>
+              <Text variant={titleVariant} as={titleAs}>
                 {title}
               </Text>
               <Text>{introduction}</Text>
             </Stack>
-            <Box marginTop={2}>
-              <Button
-                icon="arrowForward"
-                iconType="filled"
-                variant="text"
-                as="span"
-                unfocusable
-              >
-                {readMoreText}
-              </Button>
-            </Box>
+            {readMoreText && (
+              <Box marginTop={2}>
+                <Button
+                  icon="arrowForward"
+                  iconType="filled"
+                  variant="text"
+                  as="span"
+                  unfocusable
+                >
+                  {readMoreText}
+                </Button>
+              </Box>
+            )}
           </Box>
           {!!showImage && (
             <Box flexGrow={0} width="full" className={styles.image}>

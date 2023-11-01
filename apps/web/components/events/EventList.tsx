@@ -3,11 +3,16 @@ import { useEffect, useState } from 'react'
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
-  EventCard,
+  EventLocation,
+  EventTime,
   LatestEventSliceCard,
+  NewsCard,
   Webreader,
 } from '@island.is/web/components'
-import { GetEventsQuery } from '@island.is/web/graphql/schema'
+import {
+  GetEventsQuery,
+  Image as ImageSchema,
+} from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
@@ -67,17 +72,37 @@ export const EventList = ({
                 eventItem.slug,
               ]).href
               return (
-                <EventCard
+                <NewsCard
                   key={index}
-                  namespace={namespace}
-                  title={eventItem.title}
-                  location={eventItem.location}
-                  image={eventItem.thumbnailImage}
-                  startTime={eventItem.time?.startTime ?? ''}
-                  endTime={eventItem.time?.endTime ?? ''}
-                  titleAs="h2"
                   href={eventHref}
+                  title={eventItem.title}
+                  titleVariant="h3"
+                  dateTextColor="purple400"
+                  introduction={
+                    <Stack space={4}>
+                      <EventLocation location={eventItem.location} />
+                      <EventTime
+                        startTime={eventItem.time?.startTime ?? ''}
+                        endTime={eventItem.time?.endTime ?? ''}
+                        timePrefix={
+                          n(
+                            'timePrefix',
+                            activeLocale === 'is' ? 'kl.' : '',
+                          ) as string
+                        }
+                        timeSuffix={
+                          n(
+                            'timeSuffix',
+                            activeLocale === 'is' ? 'til' : 'to',
+                          ) as string
+                        }
+                      />
+                    </Stack>
+                  }
                   date={eventItem.startDate}
+                  image={eventItem.thumbnailImage as ImageSchema}
+                  titleAs="h2"
+                  readMoreText=""
                 />
               )
             })}

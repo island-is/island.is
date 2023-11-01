@@ -1,6 +1,12 @@
 import React from 'react'
 
-import { Box, FocusableBox, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  LinkV2,
+  ProfileCard,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { EventLocation as EventLocationSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -8,7 +14,6 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { EventLocation } from '../EventLocation'
 import { EventTime } from '../EventTime'
-import * as styles from './LatestEventSliceCard.css'
 
 interface EventCardProps {
   title: string
@@ -31,53 +36,37 @@ export const LatestEventSliceCard: React.FC<
   const n = useNamespace(namespace)
 
   return (
-    <FocusableBox
-      href={href}
-      overflow="hidden"
-      display="flex"
-      flexDirection="column"
-      background="white"
-      borderColor="blue200"
-      borderRadius="large"
-      borderWidth="standard"
-      height="full"
-      color="blue"
-      className={styles.container}
-    >
-      <Box>
-        <Box marginBottom={2} width="full">
-          <img src={image} alt="" className={styles.image} />
-        </Box>
-        <Box>
-          <Box
-            height="full"
-            paddingBottom={2}
-            paddingX={[2, 2, 4]}
-            flexGrow={1}
-          >
-            <Stack space={1}>
-              <Text color="purple400" variant="eyebrow">
-                {formattedDate}
-              </Text>
-              <Text as="h3" variant="h3" title={title}>
-                {title}
-              </Text>
-              <EventLocation location={location} />
-              <EventTime
-                startTime={startTime}
-                endTime={endTime}
-                timeSuffix={
-                  n(
-                    'timeSuffix',
-                    activeLocale === 'is' ? 'til' : 'to',
-                  ) as string
-                }
-              />
-            </Stack>
+    <LinkV2 href={href}>
+      <ProfileCard
+        image={image}
+        heightFull={true}
+        description={
+          <Box>
+            <Box height="full" paddingBottom={2}>
+              <Stack space={1}>
+                <Text color="purple400" variant="eyebrow">
+                  {formattedDate}
+                </Text>
+                <Text as="h3" variant="h3" title={title}>
+                  {title}
+                </Text>
+                <EventLocation location={location} />
+                <EventTime
+                  startTime={startTime}
+                  endTime={endTime}
+                  timeSuffix={
+                    n(
+                      'timeSuffix',
+                      activeLocale === 'is' ? 'til' : 'to',
+                    ) as string
+                  }
+                />
+              </Stack>
+            </Box>
           </Box>
-        </Box>
-      </Box>
-    </FocusableBox>
+        }
+      />
+    </LinkV2>
   )
 }
 
