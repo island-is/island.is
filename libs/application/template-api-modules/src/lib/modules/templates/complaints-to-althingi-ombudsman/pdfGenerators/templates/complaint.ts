@@ -33,7 +33,12 @@ export async function generateComplaintPdf(application: Application) {
     doc,
   )
   addValue(
-    `${answers.applicant.address}, ${answers.applicant.postalCode} ${answers.applicant.postalCode}`,
+    `${answers.applicant.address}, ${answers.applicant.city} ${answers.applicant.postalCode}`,
+    doc,
+  )
+  addValue(answers.applicant.email, doc)
+  addValue(
+    answers.applicant.phoneNumber,
     doc,
     PdfConstants.NORMAL_FONT,
     PdfConstants.NORMAL_LINE_GAP,
