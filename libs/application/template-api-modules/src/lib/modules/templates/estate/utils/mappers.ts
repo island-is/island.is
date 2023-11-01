@@ -28,6 +28,7 @@ const estateMemberMapper = (element: EstateMember) => {
     enabled: true,
     phone: '',
     email: '',
+    relationWithApplicant: '',
     advocate: element.advocate
       ? {
           ...element.advocate,
@@ -122,7 +123,8 @@ export const expandEstateMembers = (
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
       phone: member.phone ?? '',
-      relation: member.relation ?? 'Óþekkt',
+      relation: member.relation ?? '',
+      relationWithApplicant: member.relationWithApplicant ?? '',
       advocate: {
         address: member.advocate?.address ?? '',
         email: member.advocate?.email ?? '',
