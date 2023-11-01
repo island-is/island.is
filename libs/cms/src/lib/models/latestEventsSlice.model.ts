@@ -30,7 +30,7 @@ export const mapLatestEventsSlice = ({
     lang:
       sys.locale === 'is-IS' ? 'is' : (sys.locale as ElasticsearchIndexLocale),
     size: 4,
-    order: 'desc',
+    order: 'asc',
     organization: fields.organization
       ? mapOrganization(fields.organization).slug
       : undefined,
