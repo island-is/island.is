@@ -68,6 +68,10 @@ export class InternalProgramService {
       throw new Error('University not found in DB')
     }
 
+    logger.info(
+      `Started updating programs for university ${universityNationalId}`,
+    )
+
     // 1. Mark all programs as "temporarily inactive", so we know in the end which programs
     // should actually be inactive (hidden)
     // This is done to make sure not all programs for the university are marked as
@@ -85,6 +89,7 @@ export class InternalProgramService {
     // CREATE/UPDATE all programs for this university (make then active again)
     for (let i = 0; i < programList.length; i++) {
       const program = programList[i]
+
       try {
         // Map to programModel object
         const programObj = {
@@ -219,6 +224,10 @@ export class InternalProgramService {
         where: { universityId, tmpActive: false },
         logging: false,
       },
+    )
+
+    logger.info(
+      `Finished updating programs for university ${universityNationalId}`,
     )
   }
 }

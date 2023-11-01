@@ -62,6 +62,13 @@ export class InternalCourseService {
       throw new Error('University not found in DB')
     }
 
+    logger.info(
+      `Started updating courses for university ${universityNationalId}`,
+    )
+
+    // Keep list of courses that are active
+    const activeCourseIdList: string[] = []
+
     const programList = await this.programModel.findAll({
       attributes: ['id', 'externalId'],
       where: { universityId },
@@ -90,6 +97,7 @@ export class InternalCourseService {
 
         for (let j = 0; j < courseList.length; j++) {
           const course = courseList[j]
+
           try {
             // Map to courseModel object
             const courseObj = {
@@ -131,6 +139,8 @@ export class InternalCourseService {
               updateOnDuplicate: ['programId', 'courseId'],
               logging: false,
             })
+
+            activeCourseIdList.push(courseId)
           } catch (e) {
             logger.error(
               `Failed to update course with externalId ${course.externalId} for program with externalId ${program.externalId}, reason:`,
@@ -152,16 +162,16 @@ export class InternalCourseService {
     }
 
     // 5. DELETE all courses for this university that are not being used
-    const updatedProgramCourseList = await this.programCourseModel.findAll({
-      attributes: ['courseId'],
-      where: { universityId },
-      logging: false,
-    })
     await this.courseModel.destroy({
       where: {
-        id: { [Op.notIn]: updatedProgramCourseList.map((c) => c.courseId) },
+        universityId,
+        id: { [Op.notIn]: activeCourseIdList },
       },
       logging: false,
     })
+
+    logger.info(
+      `Finished updating courses for university ${universityNationalId}`,
+    )
   }
 }
