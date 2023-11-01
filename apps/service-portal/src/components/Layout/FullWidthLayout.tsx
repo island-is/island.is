@@ -4,7 +4,6 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Tabs,
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
 } from '@island.is/island-ui/core'

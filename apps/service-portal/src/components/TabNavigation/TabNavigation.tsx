@@ -58,9 +58,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             size="sm"
             name={label}
             label={label}
-            onChange={(opt) => {
-              opt ? tabChangeHandler(opt.value) : undefined
-            }}
+            onChange={(opt) => tabChangeHandler(opt?.value)}
             options={items.map((item) => ({
               label: formatMessage(item.name),
               value: item.path,
