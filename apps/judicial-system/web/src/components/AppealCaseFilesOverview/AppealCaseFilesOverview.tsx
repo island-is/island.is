@@ -33,6 +33,23 @@ const AppealCaseFilesOverview: React.FC<
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
+  const fileDate = (category: CaseFileCategory) => {
+    switch (category) {
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.prosecutorPostponedAppealDate
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
+        return workingCase.prosecutorStatementDate
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.accusedPostponedAppealDate
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
+        return workingCase.defendantStatementDate
+    }
+  }
+
   const appealCaseFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
       caseFile.category &&
@@ -90,8 +107,11 @@ const AppealCaseFilesOverview: React.FC<
             {file.category && file.category !== CaseFileCategory.APPEAL_RULING && (
               <Box display="flex" flexDirection="column">
                 <Text>
-                  {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
-                    file.created,
+                  {`${formatDate(
+                    fileDate(file.category),
+                    'dd.MM.y',
+                  )} kl. ${formatDate(
+                    fileDate(file.category),
                     constants.TIME_FORMAT,
                   )}`}
                 </Text>
