@@ -60,8 +60,8 @@ export type Answers = {
 export interface EstateMember {
   name: string
   nationalId: string
-  relation: RelationEnum | string
-  relationWithApplicant: RelationEnum | string
+  relation: string
+  relationWithApplicant?: string
   initial?: boolean
   dateOfBirth?: string
   custodian?: string

@@ -212,6 +212,7 @@ export type EstateMember = {
   name: string
   nationalId: string
   relation: string
+  relationWithApplicant?: string
   dateOfBirth?: string
   enabled?: boolean
   phone?: string

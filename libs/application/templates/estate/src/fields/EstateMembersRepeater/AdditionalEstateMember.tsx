@@ -14,8 +14,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
-import { GenericFormField } from '@island.is/application/types'
+import { EstateTypes, YES } from '../../lib/constants'
+import { GenericFormField, Application } from '@island.is/application/types'
 import { EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
@@ -27,13 +27,17 @@ export const AdditionalEstateMember = ({
   remove,
   fieldName,
   relationOptions,
+  relationWithApplicantOptions,
   error,
+  application,
 }: {
+  application: Application
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
+  relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
@@ -144,20 +148,22 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
-        {/*<GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <SelectController
-            key={relationWithApplicantField}
-            id={relationWithApplicantField}
-            name={relationWithApplicantField}
-            label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-            // TEMP: change to relationWithApplicant when backend is ready
-            //defaultValue={field.relation}
-            options={relationOptions}
-            error={error?.relation}
-            backgroundColor="blue"
-            required
-          />
-      </GridColumn>*/}
+        {application.answers.selectedEstate ===
+          EstateTypes.permitForUndividedEstate && (
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+            <SelectController
+              key={relationWithApplicantField}
+              id={relationWithApplicantField}
+              name={relationWithApplicantField}
+              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+              defaultValue={field.relationWithApplicant}
+              options={relationWithApplicantOptions}
+              error={error?.relationWithApplicant}
+              backgroundColor="blue"
+              required={!field.initial}
+            />
+          </GridColumn>
+        )}
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={emailField}

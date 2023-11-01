@@ -17,8 +17,10 @@ import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   InputController,
+  SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
+import { EstateTypes, relationWithApplicant } from '../../lib/constants'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -35,6 +37,12 @@ export const EstateMembersRepeater: FC<
     relationOptions: string[]
     estate: EstateRegistrant
   }
+
+  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
+    value: relation,
+    label: relation,
+  }))
+
   const relations =
     externalData.relationOptions?.map((relation) => ({
       value: relation,
@@ -138,27 +146,24 @@ export const EstateMembersRepeater: FC<
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <Select
-                  label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
-                  name={`${id}[${index}].relationWithApplicant`}
-                  options={relations}
-                  backgroundColor='blue'
-                  hasError={error && error[index] && error[index].relationWithApplicant}
-                  value={relations.find((option) => option.value === (member as any).relationWithApplicant)}
-                  //required
-                  isDisabled={!member.enabled}
-                  onChange={(newVal) => {
-                    clearErrors(`${id}[${index}].relationWithApplicant`)
-                    const updatedMember = {
-                      ...member,
-                      relationWithApplicant: newVal?.value,
-                    }
-                    update(index, updatedMember)
-                  }
-                }
-                />
-              </GridColumn>
+              {application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate && (
+                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                  <SelectController
+                    id={`${id}[${index}].relationWithApplicant`}
+                    name={`${id}[${index}].relationWithApplicant`}
+                    label={formatMessage(
+                      m.inheritanceRelationWithApplicantLabel,
+                    )}
+                    defaultValue={member.relationWithApplicant}
+                    options={relationsWithApplicant}
+                    error={error?.relationWithApplicant}
+                    backgroundColor="blue"
+                    disabled={!member.enabled}
+                    required
+                  />
+                </GridColumn>
+              )}
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
                   id={`${id}[${index}].email`}
@@ -263,18 +268,22 @@ export const EstateMembersRepeater: FC<
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {fields.map((member: GenericFormField<EstateMember>, index) => (
-        <Box key={member.id} hidden={member.initial}>
-          <AdditionalEstateMember
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((member: GenericFormField<EstateMember>, index) => {
+        return (
+          <Box key={member.id} hidden={member.initial}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              relationWithApplicantOptions={relationsWithApplicant}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
       <Box marginTop={3}>
         <Button
           variant="text"

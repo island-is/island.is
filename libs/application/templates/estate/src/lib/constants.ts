@@ -36,3 +36,12 @@ export const EstateTypes = {
   permitForUndividedEstate: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }
+
+export const relationWithApplicant = [
+  'Barn (sameiginlegt barn hjóna)',
+  'Stjúpbarn (barn látins maka)',
+  'Barnabarn (sameiginlegt barnabarn hjóna)',
+  'Stjúpbarnabarn (barnabarn látins maka)',
+  'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
+  'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
+]
