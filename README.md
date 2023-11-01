@@ -8,7 +8,7 @@ The repository is a [monorepo](https://docs.devland.is/technical-overview/monore
 
 ## Storybook
 
-The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is).
+The Ísland.is design system is developed and showcased using [Storybook](https://storybook.js.org) and is publicly available at [ui.devland.is](https://ui.devland.is). þetta ðá að vera svona
 
 ## Reading material
 
