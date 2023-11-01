@@ -26,8 +26,13 @@ interface Props {
   handleRetryClick?: (id: string) => void
 }
 
-const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
-  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+const getBackgroundColor = (
+  status: CaseFileStatus,
+  canOpen: boolean,
+): StatusColor => {
+  if (status === 'broken' || canOpen === false) {
+    return { background: 'dark100', border: 'dark200' }
+  }
 
   return { background: 'blue100', border: 'blue300' }
 }
@@ -79,7 +84,10 @@ const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
               } as TCaseFile
             }
             showFileSize={true}
-            defaultBackgroundColor={getBackgroundColor(file.status)}
+            defaultBackgroundColor={getBackgroundColor(
+              file.status,
+              canOpenFiles,
+            )}
             doneIcon="checkmark"
             hideIcons={
               hideIcons ||
