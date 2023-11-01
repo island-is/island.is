@@ -9,8 +9,8 @@ export const openApi = new DocumentBuilder()
   )
   .setExternalDoc('swagger.json', '/api/swagger-json')
   // TODOx use correct server path (only added here to test deploy feature)
-  // .addServer(process.env.PUBLIC_URL ?? `http://localhost:${environment.port}`)
-  .addServer('https://university-gateway-university-gateway.dev01.devland.is')
+  .addServer(process.env.PUBLIC_URL ?? `http://localhost:${environment.port}`)
+  // .addServer('https://university-gateway-university-gateway.dev01.devland.is')
   .addOAuth2(
     {
       type: 'oauth2',

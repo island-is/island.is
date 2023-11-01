@@ -9858,21 +9858,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hugsmidjan/htmldiff-js@npm:^1.2.1":
-  version: 1.2.1
-  resolution: "@hugsmidjan/htmldiff-js@npm:1.2.1"
-  checksum: 1289d9446b984beb8dce10e108c00bba87f41ec320f232d7d3cfa4d18e7257da366c0cf19cad408026e043683c4afff6d10bf6857682172359957f559fe9634c
-  languageName: node
-  linkType: hard
-
-"@hugsmidjan/qj@npm:^4.10.2, @hugsmidjan/qj@npm:^4.19.0":
+"@hugsmidjan/qj@npm:^4.19.0, @hugsmidjan/qj@npm:^4.7.0":
   version: 4.22.1
   resolution: "@hugsmidjan/qj@npm:4.22.1"
   checksum: 9bc8999a625b31f59b1ef1dc636d253440a2b55a81384cd83dad651be2b0d05ccf140bd1f5b9393c99e7e09f6bcc69db7af8963bacf087fe062e30d84659894a
   languageName: node
   linkType: hard
 
-"@hugsmidjan/react@npm:^0.4.23":
+"@hugsmidjan/react@npm:^0.4.4":
   version: 0.4.33
   resolution: "@hugsmidjan/react@npm:0.4.33"
   dependencies:
@@ -10032,22 +10025,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.11":
-  version: 0.7.11
-  resolution: "@island.is/regulations-tools@npm:0.7.11"
+"@island.is/regulations-tools@npm:0.7.9":
+  version: 0.7.9
+  resolution: "@island.is/regulations-tools@npm:0.7.9"
   dependencies:
-    "@hugsmidjan/htmldiff-js": ^1.2.1
-    "@hugsmidjan/qj": ^4.10.2
-    "@hugsmidjan/react": ^0.4.23
+    "@hugsmidjan/qj": ^4.7.0
+    "@hugsmidjan/react": ^0.4.4
     "@tinymce/tinymce-react": ^3.13.0
     cleanup-prettier: "npm:prettier@2.2.0"
+    htmldiff-js: "github:hugsmidjan-is/htmldiff-js#semver:^1.1.1"
     jsdom: ^16.4.0
     tinymce: ^5.10.2
     translate.js: ^1.3.2
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: f3fba70becfadb2c0f87027f2d84ba2a7429da7eaf8fbf5e10d000f41b92e02117a974f72a28f761cf10f8bdfb6c9ed0f51c525d3a58fbdefa632d63c95253d3
+  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
   languageName: node
   linkType: hard
 
@@ -11531,25 +11524,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/terminus@npm:10.1.1":
-  version: 10.1.1
-  resolution: "@nestjs/terminus@npm:10.1.1"
+"@nestjs/terminus@npm:9.2.2":
+  version: 9.2.2
+  resolution: "@nestjs/terminus@npm:9.2.2"
   dependencies:
     boxen: 5.1.2
-    check-disk-space: 3.4.0
+    check-disk-space: 3.3.1
   peerDependencies:
     "@grpc/grpc-js": "*"
     "@grpc/proto-loader": "*"
     "@mikro-orm/core": "*"
     "@mikro-orm/nestjs": "*"
-    "@nestjs/axios": ^1.0.0 || ^2.0.0 || ^3.0.0
-    "@nestjs/common": ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^9.0.0 || ^10.0.0
-    "@nestjs/microservices": ^9.0.0 || ^10.0.0
-    "@nestjs/mongoose": ^9.0.0 || ^10.0.0
-    "@nestjs/sequelize": ^9.0.0 || ^10.0.0
-    "@nestjs/typeorm": ^9.0.0 || ^10.0.0
-    "@prisma/client": "*"
+    "@nestjs/axios": "*"
+    "@nestjs/common": 9.x
+    "@nestjs/core": 9.x
+    "@nestjs/microservices": "*"
+    "@nestjs/mongoose": "*"
+    "@nestjs/sequelize": "*"
+    "@nestjs/typeorm": "*"
     mongoose: "*"
     reflect-metadata: 0.1.x
     rxjs: 7.x
@@ -11574,15 +11566,13 @@ __metadata:
       optional: true
     "@nestjs/typeorm":
       optional: true
-    "@prisma/client":
-      optional: true
     mongoose:
       optional: true
     sequelize:
       optional: true
     typeorm:
       optional: true
-  checksum: 62e8707b16e86500cd94415188c7b303eed18cf216951e207693ba917965241c7e2130e982d48fc481ceafed8ed998b2e71f1866f1097541b067a39d51cd84a0
+  checksum: c511dc30f70ffb00aa09c4524b38715c366aed3e075048adff6635e7206aeaf70d1728ae0de36fe0e7f3789b3cfe70100e2c571c00aa301e7bf2163cc6ee16cd
   languageName: node
   linkType: hard
 
@@ -22734,10 +22724,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"check-disk-space@npm:3.4.0":
-  version: 3.4.0
-  resolution: "check-disk-space@npm:3.4.0"
-  checksum: 0154c149c34a1233fe542f2a9f9ea2526bb90169489259eda8de1cf6870f765e8f5299c3b085085cc1ef33d9559f589fd10609c7e52d2e624ef6b5720dd9743c
+"check-disk-space@npm:3.3.1":
+  version: 3.3.1
+  resolution: "check-disk-space@npm:3.3.1"
+  checksum: 90b7b77ab932be0c0a24c5f68778d3c0e9179686282b04d84b1272a511a1c55b9f184c98f12b1a1628b832934971d66e63acaa9e3c82f14d9d221a4848b4cf8b
   languageName: node
   linkType: hard
 
@@ -24624,10 +24614,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:4.2.0, crypto-js@npm:^4.0.0, crypto-js@npm:^4.1.1":
-  version: 4.2.0
-  resolution: "crypto-js@npm:4.2.0"
-  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
+"crypto-js@npm:4.1.1, crypto-js@npm:^4.0.0, crypto-js@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "crypto-js@npm:4.1.1"
+  checksum: b3747c12ee3a7632fab3b3e171ea50f78b182545f0714f6d3e7e2858385f0f4101a15f2517e033802ce9d12ba50a391575ff4638c9de3dd9b2c4bc47768d5425
   languageName: node
   linkType: hard
 
@@ -26451,6 +26441,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"domhandler@npm:5.0.3, domhandler@npm:^5.0.2, domhandler@npm:^5.0.3":
+  version: 5.0.3
+  resolution: "domhandler@npm:5.0.3"
+  dependencies:
+    domelementtype: ^2.3.0
+  checksum: 0f58f4a6af63e6f3a4320aa446d28b5790a009018707bce2859dcb1d21144c7876482b5188395a188dfa974238c019e0a1e610d2fc269a12b2c192ea2b0b131c
+  languageName: node
+  linkType: hard
+
 "domhandler@npm:^2.3.0, domhandler@npm:^2.4.0":
   version: 2.4.2
   resolution: "domhandler@npm:2.4.2"
@@ -26475,15 +26474,6 @@ __metadata:
   dependencies:
     domelementtype: ^2.2.0
   checksum: 7921ac317d6899525a4e6a6038137307271522175a73db58233e13c7860987e15e86654583b2c0fd02fc46a602f9bd86fd2671af13b9068b72e8b229f07b3d03
-  languageName: node
-  linkType: hard
-
-"domhandler@npm:^5.0.2, domhandler@npm:^5.0.3":
-  version: 5.0.3
-  resolution: "domhandler@npm:5.0.3"
-  dependencies:
-    domelementtype: ^2.3.0
-  checksum: 0f58f4a6af63e6f3a4320aa446d28b5790a009018707bce2859dcb1d21144c7876482b5188395a188dfa974238c019e0a1e610d2fc269a12b2c192ea2b0b131c
   languageName: node
   linkType: hard
 
@@ -26515,7 +26505,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"domutils@npm:^3.0.1":
+"domutils@npm:^3.0.1, domutils@npm:^3.1.0":
   version: 3.1.0
   resolution: "domutils@npm:3.1.0"
   dependencies:
@@ -27006,7 +26996,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"entities@npm:^4.2.0, entities@npm:^4.4.0":
+"entities@npm:^4.2.0, entities@npm:^4.4.0, entities@npm:^4.5.0":
   version: 4.5.0
   resolution: "entities@npm:4.5.0"
   checksum: 853f8ebd5b425d350bffa97dd6958143179a5938352ccae092c62d1267c4e392a039be1bae7d51b6e4ffad25f51f9617531fedf5237f15df302ccfb452cbf2d7
@@ -30263,6 +30253,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fuse.js@npm:6.6.2":
+  version: 6.6.2
+  resolution: "fuse.js@npm:6.6.2"
+  checksum: 17ae758ce205276ebd88bd9c9f088a100be0b4896abac9f6b09847151269d1690f41d7f98ff5813d4a58973162dbd99d0072ce807020fee6f9de60170f6b08eb
+  languageName: node
+  linkType: hard
+
 "futoin-hkdf@npm:^1.3.2":
   version: 1.3.3
   resolution: "futoin-hkdf@npm:1.3.3"
@@ -31507,6 +31504,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-dom-parser@npm:4.0.0":
+  version: 4.0.0
+  resolution: "html-dom-parser@npm:4.0.0"
+  dependencies:
+    domhandler: 5.0.3
+    htmlparser2: 9.0.0
+  checksum: 95e483b2c945e1158e102e4eb69768124b06c94cf3c0abff8e9b02e146b7391dcdd620df8d54331efb9952c9187e0352ea436226e9ba5f26a0cc3cfe85853d4b
+  languageName: node
+  linkType: hard
+
 "html-encoding-sniffer@npm:^1.0.2":
   version: 1.0.2
   resolution: "html-encoding-sniffer@npm:1.0.2"
@@ -31572,6 +31579,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"html-react-parser@npm:4.2.2":
+  version: 4.2.2
+  resolution: "html-react-parser@npm:4.2.2"
+  dependencies:
+    domhandler: 5.0.3
+    html-dom-parser: 4.0.0
+    react-property: 2.0.0
+    style-to-js: 1.1.4
+  peerDependencies:
+    react: 0.14 || 15 || 16 || 17 || 18
+  checksum: 5f8c0aeba02d7d3ff2bce4c32eafbbf77fd1aa664f15555ef49d75cce666211edb9c87a73a9b5648467442361f617438da038d27185fdbae983ac9731d67cbb7
+  languageName: node
+  linkType: hard
+
 "html-tags@npm:^1.0.0":
   version: 1.2.0
   resolution: "html-tags@npm:1.2.0"
@@ -31617,6 +31638,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"htmldiff-js@github:hugsmidjan-is/htmldiff-js#semver:^1.1.1":
+  version: 1.1.1
+  resolution: "htmldiff-js@https://github.com/hugsmidjan-is/htmldiff-js.git#commit=b2400db41f329180cedf33547f1cc5b6da85f15f"
+  checksum: 34acbed7bbf829a2f99075d54979b3c20ffb5dadf94e754c2d8b3f2ba88ef5a71dcb9d07ce73f12636cfa225110d6dff01c54c594cf6e0853332248016f7ccf6
+  languageName: node
+  linkType: hard
+
 "htmlnano@npm:0.2.7":
   version: 0.2.7
   resolution: "htmlnano@npm:0.2.7"
@@ -31648,6 +31676,18 @@ __metadata:
     timsort: ^0.3.0
     uncss: ^0.17.3
   checksum: fc363ba5bdc7f48bbea7bd0e14140a37626537fe17d447100414e70c9414a01090576a55c0f39cdd23e253e5427b0b230f2da7176da027d0cdd676d0427d4847
+  languageName: node
+  linkType: hard
+
+"htmlparser2@npm:9.0.0":
+  version: 9.0.0
+  resolution: "htmlparser2@npm:9.0.0"
+  dependencies:
+    domelementtype: ^2.3.0
+    domhandler: ^5.0.3
+    domutils: ^3.1.0
+    entities: ^4.5.0
+  checksum: a234c3add821cae8308ca61ce4b8ad3e88af83cf9c3c2003059adc89c46a06ffc39cc2a92b39af8d16c3705e1055df6769d80877acb6529983867f0d7e74098d
   languageName: node
   linkType: hard
 
@@ -32284,6 +32324,13 @@ __metadata:
   version: 1.3.8
   resolution: "ini@npm:1.3.8"
   checksum: dfd98b0ca3a4fc1e323e38a6c8eb8936e31a97a918d3b377649ea15bdb15d481207a0dda1021efbd86b464cae29a0d33c1d7dcaf6c5672bee17fa849bc50a1b3
+  languageName: node
+  linkType: hard
+
+"inline-style-parser@npm:0.1.1":
+  version: 0.1.1
+  resolution: "inline-style-parser@npm:0.1.1"
+  checksum: 5d545056a3e1f2bf864c928a886a0e1656a3517127d36917b973de581bd54adc91b4bf1febcb0da054f204b4934763f1a4e09308b4d55002327cf1d48ac5d966
   languageName: node
   linkType: hard
 
@@ -33576,7 +33623,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.11
+    "@island.is/regulations-tools": 0.7.9
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
@@ -33593,7 +33640,7 @@ __metadata:
     "@nestjs/schematics": 10.0.1
     "@nestjs/sequelize": 9.0.2
     "@nestjs/swagger": 7.1.1
-    "@nestjs/terminus": 10.1.1
+    "@nestjs/terminus": 9.2.2
     "@nestjs/testing": 10.0.5
     "@nrwl/js": 16.9.0
     "@nx/cypress": 16.9.0
@@ -33722,7 +33769,7 @@ __metadata:
     core-js: 3.6.5
     cross-env: 7.0.2
     cross-spawn: 7.0.3
-    crypto-js: 4.2.0
+    crypto-js: 4.1.1
     csstype: 2.6.13
     csv-parse: 4.16.0
     csv-stringify: 5.6.5
@@ -33761,6 +33808,7 @@ __metadata:
     formik: 2.2.9
     framer-motion: 6.5.1
     fridagar: ^3.2.0
+    fuse.js: 6.6.2
     geoip-lite: 1.4.7
     glob: 7.1.6
     graphql: 16.6.0
@@ -33769,6 +33817,7 @@ __metadata:
     handlebars: 4.7.7
     history: ^5.3.0
     hot-shots: 9.0.0
+    html-react-parser: 4.2.2
     http-cache-semantics: 4.1.1
     http-proxy-middleware: 2.0.6
     hypher: 0.2.5
@@ -33908,8 +33957,8 @@ __metadata:
     xml2js: 0.4.23
     xstate: 4.20.0
     yargs: 17.7.2
-    zod: 3.22.4
-    zod-form-data: 2.0.2
+    zod: ^3.21.2
+    zod-form-data: ^2.0.0
   languageName: unknown
   linkType: soft
 
@@ -45256,6 +45305,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-property@npm:2.0.0":
+  version: 2.0.0
+  resolution: "react-property@npm:2.0.0"
+  checksum: 8a444df30ef0937689c7968dae2501a0ca523777169f450e1f7ef5beeb855d6509bd058bf612f6ed8f459aa35468335d356e50264492e1938586e59fdb988262
+  languageName: node
+  linkType: hard
+
 "react-refresh@npm:^0.11.0":
   version: 0.11.0
   resolution: "react-refresh@npm:0.11.0"
@@ -49469,6 +49525,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"style-to-js@npm:1.1.4":
+  version: 1.1.4
+  resolution: "style-to-js@npm:1.1.4"
+  dependencies:
+    style-to-object: 0.4.2
+  checksum: 0ed2b3400fb602f9ab6d024fb2ff23630e2f2cbdd98150e13ba16a2d9b46d7213b5e71fde15cef30b7e24f336f87ef6e8c7a29b520ff8c6a1dca92f8762e7358
+  languageName: node
+  linkType: hard
+
+"style-to-object@npm:0.4.2":
+  version: 0.4.2
+  resolution: "style-to-object@npm:0.4.2"
+  dependencies:
+    inline-style-parser: 0.1.1
+  checksum: 314a80bcfadde41c2b9c8d717a4b1f2220954561040c2c7740496715da5cb95f99920a8eeefe2d4a862149875f352a12eda9bbef5816d7e0a71910da00d1521f
+  languageName: node
+  linkType: hard
+
 "style-value-types@npm:5.0.0":
   version: 5.0.0
   resolution: "style-value-types@npm:5.0.0"
@@ -53577,10 +53651,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@github:xmldom/xmldom#0.7.0":
-  version: 0.7.0
-  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
-  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
+"xmldom@npm:0.1.27":
+  version: 0.1.27
+  resolution: "xmldom@npm:0.1.27"
+  checksum: a61ad9bd04c87f6df1dc69e88c0f14e3a761d85a9e3f5047b89c2db2b84491ebe25e1ac9a69e4bfc2a9d142b78614a476cc256932606b8a4bb91f342d43f034a
+  languageName: node
+  linkType: hard
+
+"xmldom@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "xmldom@npm:0.3.0"
+  checksum: a4d1e48dc7fa5f5e460c24e26d9d2d98edc52cdfcbf3b2c0edbb61d1808d1af986bc3ef7f4cafa673edf3f08130ed2def9ec6d0a993e2f33c2804b1726cab100
   languageName: node
   linkType: hard
 
@@ -53986,19 +54067,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-form-data@npm:2.0.2":
-  version: 2.0.2
-  resolution: "zod-form-data@npm:2.0.2"
+"zod-form-data@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "zod-form-data@npm:2.0.0"
   peerDependencies:
-    zod: ">= 3.11.0"
-  checksum: 09bc98811ee92cade046670bef28bd636610cda539fa9427379758bfa200a9b11dc4cd807681a01a446c2b13f32d88306d14fc3903af58a545928aa1d7831ec2
+    zod: ^3.11.x
+  checksum: 7c0d56e2615d024516d9a5d1031d87db91aa15a06df9ae356dc694614dad65bb9708a7c36943e36ad3f05112287a10b55ed2a2e7fcbef188880726dd87ae09e2
   languageName: node
   linkType: hard
 
-"zod@npm:3.22.4":
-  version: 3.22.4
-  resolution: "zod@npm:3.22.4"
-  checksum: 80bfd7f8039b24fddeb0718a2ec7c02aa9856e4838d6aa4864335a047b6b37a3273b191ef335bf0b2002e5c514ef261ffcda5a589fb084a48c336ffc4cdbab7f
+"zod@npm:^3.21.2":
+  version: 3.21.2
+  resolution: "zod@npm:3.21.2"
+  checksum: 6a5fa0992827b61440de7087038ec737f76074efbdc1b3594630ecdad314fd566439f7900aa05d4938222a5f739e599c61a848f794a8264f80909720b96ed764
   languageName: node
   linkType: hard
 
