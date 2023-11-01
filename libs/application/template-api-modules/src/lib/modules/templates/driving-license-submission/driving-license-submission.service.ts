@@ -68,7 +68,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<{ success: boolean }> {
-    const { answers } = application
+    const { answers, externalData } = application
     const nationalId = application.applicant
 
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
@@ -80,6 +80,17 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       return {
         success: false,
       }
+    }
+
+    // HOTFIX PLASTER to ensure applications get through
+    // TODO: Ensure phone comes through all application paths
+    // This should be removed in the future when the frontend path for B-full has been made to include
+    // phone in its answers. In the meantime this is needed as a plaster to support older applications
+    // which had their data calculated before this fix.
+    if (!answers.phone) {
+      answers.phone =
+        (externalData?.userProfile?.data as { mobilePhoneNumber?: string })
+          ?.mobilePhoneNumber ?? ''
     }
 
     let result
