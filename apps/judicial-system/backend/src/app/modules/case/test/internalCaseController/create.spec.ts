@@ -155,7 +155,6 @@ describe('InternalCaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
-          heightenedSecurityLevel: true,
         },
         {
           transaction,
@@ -164,7 +163,7 @@ describe('InternalCaseController - Create', () => {
     })
   })
 
-  describe('case created with heigthened security', () => {
+  describe('case created with heightened security', () => {
     const prosecutorNationalId = '1234567890'
     const caseToCreate = {
       type: CaseType.TRAVEL_BAN,
