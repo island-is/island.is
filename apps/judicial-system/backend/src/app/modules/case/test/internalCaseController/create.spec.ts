@@ -155,6 +155,50 @@ describe('InternalCaseController - Create', () => {
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,
+          heightenedSecurityLevel: true,
+        },
+        {
+          transaction,
+        },
+      )
+    })
+  })
+
+  describe('case created with heigthened security', () => {
+    const prosecutorNationalId = '1234567890'
+    const caseToCreate = {
+      type: CaseType.TRAVEL_BAN,
+      policeCaseNumbers: ['007-2021-777'],
+      prosecutorNationalId,
+      accusedNationalId: '1234567890',
+      accusedName: 'John Doe',
+      accusedAddress: 'Some Street',
+      accusedGender: Gender.MALE,
+      leadInvestigator: 'The Boss',
+    }
+    const userId = uuid()
+    const courtId = uuid()
+    const user = {
+      id: userId,
+      role: UserRole.PROSECUTOR,
+      institution: { defaultCourtId: courtId },
+    } as User
+
+    beforeEach(async () => {
+      const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
+      mockFindByNationalId.mockResolvedValueOnce(user)
+
+      await givenWhenThen(caseToCreate)
+    })
+
+    it('should create a case with heightened security', () => {
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        {
+          ...caseToCreate,
+          origin: CaseOrigin.LOKE,
+          creatingProsecutorId: userId,
+          prosecutorId: userId,
+          courtId,
         },
         {
           transaction,
