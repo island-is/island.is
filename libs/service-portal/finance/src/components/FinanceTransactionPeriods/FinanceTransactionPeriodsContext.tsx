@@ -1,9 +1,9 @@
 import { createContext, useCallback, useContext, useState } from 'react'
-import { GetChargeItemSubjectsByYearQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
+import { ChargeItemSubjects } from './FinanceTransactionPeriodsTypes'
 
 type FinanceTransactionPeriodsStateProps = {
   year?: string
-  selectedPeriods?: GetChargeItemSubjectsByYearQuery['getChargeItemSubjectsByYear']['chargeItemSubjects']
+  selectedPeriods?: ChargeItemSubjects
 }
 
 type FinanceTransactionPeriodsContext = {

@@ -3,12 +3,11 @@ import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
 import { ExpandHeader } from '@island.is/service-portal/core'
-import { GetChargeTypesDetailsByYearQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
-
 import FinanceTransactionPeriodsTableRow from './FinanceTransactionPeriodsTableRow'
+import { ChargeTypes } from './FinanceTransactionPeriodsTypes'
 
 interface Props {
-  records: GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']['chargeType']
+  records: ChargeTypes
 }
 
 const FinanceTransactionPeriodsTable = ({ records }: Props) => {

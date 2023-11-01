@@ -14,8 +14,6 @@ import { useLocale } from '@island.is/localization'
 import { m, Filter } from '@island.is/service-portal/core'
 
 import {
-  GetChargeTypesByYearQuery,
-  GetChargeTypesDetailsByYearQuery,
   useGetAssessmentYearsQuery,
   useGetChargeTypesByYearLazyQuery,
   useGetChargeTypesDetailsByYearLazyQuery,
@@ -23,6 +21,10 @@ import {
 import FinanceTransactionPeriodsTable from './FinanceTransactionPeriodsTable'
 import { transactionPeriodFilter } from '../../utils/simpleFilter'
 import { useFinanceTransactionPeriodsState } from '../../components/FinanceTransactionPeriods/FinanceTransactionPeriodsContext'
+import {
+  ChargeTypesByYear,
+  ChargeTypesDetailsByYear,
+} from './FinanceTransactionPeriodsTypes'
 
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()
@@ -34,12 +36,11 @@ const FinanceTransactionPeriodsFilter = () => {
     FilterMultiChoiceProps['categories'][0]['filters']
   >([])
 
-  const [chargeTypes, setChargeTypes] =
-    useState<GetChargeTypesByYearQuery['getChargeTypesByYear']>()
+  const [chargeTypes, setChargeTypes] = useState<ChargeTypesByYear>()
   const [activeChargeType, setActiveChargeType] = useState<string>('**')
 
   const [chargeTypeDetails, setChargeTypeDetails] =
-    useState<GetChargeTypesDetailsByYearQuery['getChargeTypesDetailsByYear']>()
+    useState<ChargeTypesDetailsByYear>()
 
   const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[]>([])
@@ -66,9 +67,15 @@ const FinanceTransactionPeriodsFilter = () => {
 
     if (years.length) {
       setAssessmentYears(years)
-      setFinanceTransactionPeriodsState({ year: years[0].value })
     }
   }
+
+  useEffect(() => {
+    if (assessmentYears.length) {
+      setFinanceTransactionPeriodsState({ year: assessmentYears[0].value })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assessmentYears])
 
   useEffect(() => {
     if (financeTransactionPeriodsState.year) {

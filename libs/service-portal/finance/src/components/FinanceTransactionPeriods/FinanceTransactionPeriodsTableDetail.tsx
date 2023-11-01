@@ -5,25 +5,34 @@ import {
   Pagination,
   Select,
   Option,
+  Checkbox,
 } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
 import format from 'date-fns/format'
 import * as styles from './FinanceTransactionPeriodsTableDetail.css'
-import { GetChargeItemSubjectsByYearQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { amountFormat, periodFormat } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useEffect, useMemo, useState } from 'react'
 import sortBy from 'lodash/sortBy'
+import {
+  ChargeItemSubject,
+  ChargeItemSubjects,
+  ChargeItemSubjectsPeriod,
+} from './FinanceTransactionPeriodsTypes'
+import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 
 interface Props {
-  data: GetChargeItemSubjectsByYearQuery['getChargeItemSubjectsByYear']['chargeItemSubjects']
+  data: ChargeItemSubjects
 }
 
 const ITEMS_ON_PAGE = 5
 
 const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
   const { formatMessage } = useLocale()
+  const { financeTransactionPeriodsState, setFinanceTransactionPeriodsState } =
+    useFinanceTransactionPeriodsState()
+
   const [page, setPage] = useState(1)
 
   const [activeSubjects, setActiveSubjects] = useState<Array<Option<string>>>(
@@ -63,6 +72,14 @@ const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
     filteredSubjects && filteredSubjects.length > ITEMS_ON_PAGE
       ? Math.ceil(filteredSubjects.length / ITEMS_ON_PAGE)
       : 0
+
+  const setActivePeriods = (
+    subject: ChargeItemSubject,
+    period: ChargeItemSubjectsPeriod,
+    selected: boolean,
+  ) => {
+    console.log({ period, selected })
+  }
 
   return (
     <Box padding={2} background="blue100">
@@ -128,7 +145,14 @@ const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
               <T.Body>
                 {item.periods.map((period, i) => (
                   <T.Row key={`${period.period}-${i}-${period.lastMoveDate}`}>
-                    <T.Data></T.Data>
+                    <T.Data>
+                      <Checkbox
+                        label="Velja tímabil"
+                        onChange={(e) => {
+                          setActivePeriods(item, period, e.target.checked)
+                        }}
+                      />
+                    </T.Data>
                     <T.Data>
                       <Text variant="small" whiteSpace="nowrap">
                         {periodFormat(period.period)}
