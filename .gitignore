@@ -103,3 +103,5 @@ apps/**/index.html
 # depcruiser
 .dependency-cruiser.local.js
 depgraph.*
+
+.nx/
