@@ -13,10 +13,10 @@ export class LinkCard {
   @Field()
   body!: string
 
-  @Field()
+  @Field({ nullable: true })
   linkUrl?: string
 
-  @Field()
+  @Field({ nullable: true })
   linkText?: string
 }
 
