@@ -238,27 +238,27 @@ export class NotificationsService {
   async update(id: number): Promise<any> {
     // return await this.notificationModel.findByPk(id);
     return {
-      "id": 2,
-      "nationalId": "B789012",
-      "templateId": "HNIPP.POSTHOLF.UPDATED_DOCUMENT",
-      "args": [
-          {
-              "key": "organization",
-              "value": "Hnipp Dev Team"
-          },
-          {
-              "key": "documentId",
-              "value": "efgh-efgh-efgh-efgh"
-          }
+      id: 2,
+      nationalId: 'B789012',
+      templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+      args: [
+        {
+          key: 'organization',
+          value: 'Hnipp Dev Team',
+        },
+        {
+          key: 'documentId',
+          value: 'efgh-efgh-efgh-efgh',
+        },
       ],
-      "compiled": {
-          "title": "Document Update Alert",
-          "body": "An existing document has been updated by Hnipp Dev Team.",
-          "click_action": "https://example.com/documents/efgh-efgh-efgh-efgh"
+      compiled: {
+        title: 'Document Update Alert',
+        body: 'An existing document has been updated by Hnipp Dev Team.',
+        click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
       },
-      "created": "2023-10-23T10:10:10.000Z",
-      "modified": "2023-10-23T10:12:12.000Z",
-      "state": "read"
-  }
+      created: '2023-10-23T10:10:10.000Z',
+      modified: '2023-10-23T10:12:12.000Z',
+      state: 'read',
+    }
   }
 }

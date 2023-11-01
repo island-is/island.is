@@ -18,7 +18,6 @@ export const openApi = new DocumentBuilder()
           ['profile']: '',
           [NotificationsScope.read]: '',
           [NotificationsScope.write]: '',
-         
         },
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,

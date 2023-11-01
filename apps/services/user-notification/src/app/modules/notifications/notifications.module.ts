@@ -40,7 +40,7 @@ import { MeNotificationsController } from './me-notifications.controller'
       },
     }),
   ],
-  controllers: [NotificationsController,MeNotificationsController],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,
