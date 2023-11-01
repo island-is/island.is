@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { ICard } from '../generated/contentfulTypes'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class LinkCard {
@@ -13,16 +14,17 @@ export class LinkCard {
   body!: string
 
   @Field()
-  link?: string
+  linkUrl?: string
 
   @Field()
   linkText?: string
 }
 
-export const mapLinkCard = ({ sys, fields }: ICard): LinkCard => ({
+export const mapLinkCard = ({ sys, fields }: ICard): SystemMetadata<LinkCard> => ({
+  typename: 'LinkCard',
   id: sys.id,
   title: fields?.title ?? '',
   body: fields?.body ?? '',
-  link: fields?.link ?? '',
+  linkUrl: fields?.link ?? '',
   linkText: fields?.linkText ?? '',
 })

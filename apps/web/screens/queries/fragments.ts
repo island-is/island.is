@@ -91,7 +91,7 @@ export const slices = gql`
     id
     title
     body
-    cardLink: link
+    linkUrl
     linkText
   }
 
@@ -100,10 +100,7 @@ export const slices = gql`
     id
     title
     cards {
-      title
-      body
-      link
-      linkText
+      ...LinkCardFields
     }
   }
 
