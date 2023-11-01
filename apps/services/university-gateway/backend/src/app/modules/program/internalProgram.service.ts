@@ -47,10 +47,10 @@ export class InternalProgramService {
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         await this.reykjavikUniversityClient.getPrograms(),
       ),
-      // await this.doUpdateProgramsForUniversity(
-      //   UniversityNationalIds.UNIVERSITY_OF_ICELAND,
-      //   await this.universityOfIcelandClient.getPrograms(),
-      // ),
+      await this.doUpdateProgramsForUniversity(
+        UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+        await this.universityOfIcelandClient.getPrograms(),
+      ),
     ]).catch((e) => {
       logger.error('Failed to update programs, reason:', e)
     })

@@ -39,11 +39,11 @@ export class InternalCourseService {
         (externalId: string) =>
           this.reykjavikUniversityClient.getCourses(externalId),
       ),
-      // await this.doUpdateCoursesForUniversity(
-      //   UniversityNationalIds.UNIVERSITY_OF_ICELAND,
-      //   (externalId: string) =>
-      //     this.universityOfIcelandClient.getCourses(externalId),
-      // ),
+      await this.doUpdateCoursesForUniversity(
+        UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+        (externalId: string) =>
+          this.universityOfIcelandClient.getCourses(externalId),
+      ),
     ]).catch((e) => {
       logger.error('Failed to update courses, reason:', e)
     })
