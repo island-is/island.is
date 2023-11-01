@@ -58,7 +58,8 @@
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",
     "charts": "cd ./infra && yarn charts",
-    "infra": "cd ./infra && yarn cli"
+    "infra": "cd ./infra && yarn cli",
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
@@ -89,7 +90,7 @@
     "@formatjs/intl-numberformat": "7.1.5",
     "@hookform/error-message": "2.0.1",
     "@island.is/login": "1.2.1",
-    "@island.is/regulations-tools": "0.7.9",
+    "@island.is/regulations-tools": "0.7.11",
     "@keyv/redis": "2.6.1",
     "@nestjs/apollo": "10.1.0",
     "@nestjs/axios": "2.0.0",
@@ -104,7 +105,7 @@
     "@nestjs/platform-express": "10.0.5",
     "@nestjs/sequelize": "9.0.2",
     "@nestjs/swagger": "7.1.1",
-    "@nestjs/terminus": "9.2.2",
+    "@nestjs/terminus": "10.1.1",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@sindresorhus/slugify": "1.0.0",
@@ -150,7 +151,7 @@
     "cookie-parser": "1.4.5",
     "copy-to-clipboard": "3.3.1",
     "core-js": "3.6.5",
-    "crypto-js": "4.1.1",
+    "crypto-js": "4.2.0",
     "csv-stringify": "5.6.5",
     "cypress-promise": "1.1.0",
     "dataloader": "2.1.0",
@@ -245,7 +246,7 @@
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.15.1",
     "react-number-format": "4.9.1",
-    "react-pdf": "5.2.0",
+    "react-pdf": "7.5.0",
     "react-popper": "2.3.0",
     "react-remove-scroll": "2.5.6",
     "react-router-dom": "6.11.2",
@@ -288,13 +289,13 @@
     "whatwg-fetch": "3.6.2",
     "winston": "3.7.2",
     "winston-cloudwatch": "3.1.1",
-    "winston-transport": "4.5.0",
+    "winston-transport": "4.6.0",
     "xlsx": "0.17.0",
     "xml2js": "0.4.23",
     "xstate": "4.20.0",
     "yargs": "17.7.2",
-    "zod": "^3.21.2",
-    "zod-form-data": "^2.0.0"
+    "zod": "3.22.4",
+    "zod-form-data": "2.0.2"
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "0.2.4",

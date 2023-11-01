@@ -1,29 +1,12 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
 import React, { useMemo } from 'react'
-import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
-import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { theme } from '@island.is/island-ui/theme'
-import { useNamespace } from '@island.is/web/hooks'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { getScreenWidthString } from '@island.is/web/utils/screenWidth'
-import * as styles from './TryggingastofnunHeader.css'
 
-const getDefaultStyle = (width: number) => {
-  if (width >= theme.breakpoints.lg) {
-    return {
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      backgroundImage:
-        "url('https://images.ctfassets.net/8k0h54kbe6bj/43iXK31NyP2Uv2Unxn9teW/b2b246e15c0b7f055c8c33782620b02e/TR-Header.jpg')",
-    }
-  }
-  return {
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundColor: '#c5e9ac',
-  }
-}
+import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
+import * as styles from './TryggingastofnunHeader.css'
 
 interface HeaderProps {
   organizationPage: OrganizationPage
@@ -38,16 +21,22 @@ const TryggingastofnunHeader: React.FC<
     [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
-  const { width } = useWindowSize()
-
-  const screenWidth = getScreenWidthString(width)
 
   return (
-    <div
-      style={n(`tryggingastofnunHeader-${screenWidth}`, getDefaultStyle(width))}
-      className={styles.headerBg}
-    >
+    <div className={styles.headerBg}>
       <div className={styles.headerWrapper}>
+        <Hidden below="lg">
+          <div className={styles.headerBgLogoWrapper}>
+            <img
+              src={n(
+                `tryggingastofnunHeaderLogo`,
+                'https://images.ctfassets.net/8k0h54kbe6bj/1AGuSiZPffij03q5ALWg42/134a9b74dc84372f9e38cb38d00c1570/TR-Header.png',
+              )}
+              alt=""
+              className={styles.headerBgLogo}
+            />
+          </div>
+        </Hidden>
         <SidebarLayout
           sidebarContent={
             !!organizationPage.organization?.logo && (
@@ -82,7 +71,11 @@ const TryggingastofnunHeader: React.FC<
               </Link>
             </Hidden>
           )}
-          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'right']}>
+          <Box
+            marginTop={[2, 2, 6]}
+            textAlign={['center', 'center', 'right']}
+            className={styles.headerTitleBox}
+          >
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href

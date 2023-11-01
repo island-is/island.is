@@ -11,7 +11,6 @@ const pdfError = 'Villa kom upp við að birta skjal, reyndu aftur síðar.'
 
 export interface PdfViewerProps {
   file: string
-  renderMode?: 'svg' | 'canvas'
   showAllPages?: boolean
   scale?: number
   autoWidth?: boolean
@@ -31,7 +30,6 @@ interface IPdfLib {
 
 export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
   file,
-  renderMode = 'svg',
   showAllPages = false,
   scale = 1,
   autoWidth = true,
@@ -75,7 +73,6 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
         <pdfLib.Document
           file={file}
           onLoadSuccess={onDocumentLoadSuccess}
-          renderMode={renderMode}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
           error={errorComponent ?? pdfError}
@@ -91,7 +88,12 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
               />
             ))
           ) : (
-            <pdfLib.Page pageNumber={pageNumber} scale={scale} />
+            <pdfLib.Page
+              renderTextLayer={false}
+              renderAnnotationLayer={false}
+              pageNumber={pageNumber}
+              scale={scale}
+            />
           )}
         </pdfLib.Document>
 

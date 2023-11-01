@@ -17,6 +17,7 @@ import {
   useOrganizations,
 } from '@island.is/service-portal/graphql'
 import {
+  GoBack,
   ServicePortalPath,
   formatPlausiblePathToParams,
   m,
@@ -29,7 +30,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -43,6 +44,7 @@ import { useUserInfo } from '@island.is/auth/react'
 import { useKeyDown } from '../../hooks/useKeyDown'
 import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
 import { FavAndStash } from '../../components/FavAndStash'
+import { messages } from '../../utils/messages'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
 import { ActiveDocumentType } from '../../lib/types'
 import {
@@ -59,7 +61,9 @@ export const ServicePortalDocuments = () => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
-  const navigate = useNavigate()
+  const [documentDisplayError, setDocumentDisplayError] = useState<string>()
+  const [docLoading, setDocLoading] = useState(false)
+  const [totalPages, setTotalPages] = useState<number>()
   const location = useLocation()
   const [activeDocument, setActiveDocument] =
     useState<ActiveDocumentType | null>(null)
@@ -177,11 +181,12 @@ export const ServicePortalDocuments = () => {
 
   const filteredDocuments = data.documents
 
-  const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
-    totalPages: Math.ceil(totalCount / pageSize),
-  }
+  useEffect(() => {
+    const pageCount = Math.ceil(totalCount / pageSize)
+    if (pageCount !== totalPages && pageCount !== 0) {
+      setTotalPages(pageCount)
+    }
+  }, [pageSize, totalCount])
 
   const { data: organizations } = useOrganizations()
 
@@ -292,11 +297,10 @@ export const ServicePortalDocuments = () => {
 
   const activeArchive = filterValue.archived === true
 
+  const rowDirection = error ? 'column' : 'columnReverse'
   return (
     <GridContainer>
-      <GridRow
-        direction={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
-      >
+      <GridRow direction={[rowDirection, rowDirection, rowDirection, 'row']}>
         <GridColumn
           hiddenBelow={activeDocument?.document ? 'lg' : undefined}
           span={['12/12', '12/12', '12/12', '5/12']}
@@ -307,17 +311,7 @@ export const ServicePortalDocuments = () => {
               display={'inlineFlex'}
               alignItems={'center'}
             >
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-                onClick={() => navigate('/')}
-              >
-                {formatMessage(m.goBackToDashboard)}
-              </Button>
+              <GoBack display="inline" noUnderline marginBottom={0} />
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}
@@ -422,13 +416,13 @@ export const ServicePortalDocuments = () => {
               )}
             </Box>
             {loading && (
-              <Box marginTop={4}>
+              <Box marginTop={2}>
                 <SkeletonLoader
                   space={2}
-                  repeat={6}
+                  repeat={pageSize}
                   display="block"
                   width="full"
-                  height={65}
+                  height={57}
                 />
               </Box>
             )}
@@ -436,9 +430,16 @@ export const ServicePortalDocuments = () => {
               {filteredDocuments.map((doc) => (
                 <Box key={doc.id}>
                   <DocumentLine
-                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
+                    img={getOrganizationLogoUrl(
+                      doc.senderName,
+                      organizations,
+                      60,
+                      'none',
+                    )}
                     documentLine={doc}
                     onClick={setActiveDocument}
+                    onError={(err) => setDocumentDisplayError(err)}
+                    onLoading={(l) => setDocLoading(l)}
                     active={doc.id === activeDocument?.id}
                     bookmarked={!!doc.bookmarked}
                     selected={selectedLines.includes(doc.id)}
@@ -463,6 +464,22 @@ export const ServicePortalDocuments = () => {
                   />
                 </Box>
               ))}
+              {totalPages && (
+                <Box paddingBottom={4} marginTop={4}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <button
+                        className={className}
+                        onClick={handlePageChange.bind(null, page)}
+                      >
+                        {children}
+                      </button>
+                    )}
+                  />
+                </Box>
+              )}
             </Stack>
           </Box>
         </GridColumn>
@@ -489,29 +506,14 @@ export const ServicePortalDocuments = () => {
                 })
               }
             }}
-            loading={loading}
-            error={error}
+            error={{
+              message: error
+                ? formatMessage(messages.error)
+                : documentDisplayError ?? undefined,
+              code: error ? 'list' : 'single',
+            }}
+            loading={docLoading}
           />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          {filteredDocuments && (
-            <Box paddingBottom={4} marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={pagedDocuments.totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

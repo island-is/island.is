@@ -15,3 +15,8 @@ export const BrokersList = dynamic(
   () => import('./TableLists/BrokersList/BrokersList'),
   { ssr: true },
 )
+
+export const MasterList = dynamic(
+  () => import('./TableLists/MasterList/MasterList'),
+  { ssr: true },
+)

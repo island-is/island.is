@@ -1,6 +1,5 @@
 import { useLocale } from '@island.is/localization'
 import * as styles from './DocumentRenderer.css'
-import { m, Tooltip } from '@island.is/service-portal/core'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { ActiveDocumentType } from '../../lib/types'
@@ -22,16 +21,14 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
         flexDirection="row"
         paddingBottom={2}
       >
-        <Tooltip placement="top" as="span" text={formatMessage(m.zoomOut)}>
-          <Button
-            circle
-            icon="remove"
-            variant="ghost"
-            size="small"
-            onClick={() => setScalePDF(scalePDF - 0.1)}
-            disabled={0.6 > scalePDF}
-          />
-        </Tooltip>
+        <Button
+          circle
+          icon="remove"
+          variant="ghost"
+          size="small"
+          onClick={() => setScalePDF(scalePDF - 0.1)}
+          disabled={0.6 > scalePDF}
+        />
         <Box
           paddingX={1}
           display="flex"
@@ -40,16 +37,14 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({ document }) => {
         >
           <Text variant="small">{(scalePDF * 100).toFixed(0) + '%'}</Text>
         </Box>
-        <Tooltip placement="top" as="span" text={formatMessage(m.zoomIn)}>
-          <Button
-            circle
-            icon="add"
-            variant="ghost"
-            size="small"
-            onClick={() => setScalePDF(scalePDF + 0.1)}
-            disabled={scalePDF > 3.5}
-          />
-        </Tooltip>
+        <Button
+          circle
+          icon="add"
+          variant="ghost"
+          size="small"
+          onClick={() => setScalePDF(scalePDF + 0.1)}
+          disabled={scalePDF > 3.5}
+        />
       </Box>
       <Box
         className={styles.pdfPage}
