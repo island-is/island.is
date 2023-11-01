@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
-@InputType()
+@InputType('FinanceAnnualStatusDocumentInput')
 export class GetAnnualStatusDocumentInput {
   @Field()
   @IsString()

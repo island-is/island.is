@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinanceAssessmentYearsData')
 export class AssessmentYearsData {
   @Field(() => [String])
   year!: string[]
 }
 
-@ObjectType()
+@ObjectType('FinanceAssessmentYearsModel')
 export class AssessmentYearsModel {
   @Field(() => [String], { nullable: true })
   year?: string[]

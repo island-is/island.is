@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinanceChargeTypeDetailsData')
 export class FinanceChargeTypeDetailsData {
   @Field()
   ID!: string
@@ -18,7 +18,7 @@ export class FinanceChargeTypeDetailsData {
   lastMovementDate!: string
 }
 
-@ObjectType()
+@ObjectType('FinanceChargeTypeDetailsModel')
 export class FinanceChargeTypeDetailsModel {
   @Field(() => [FinanceChargeTypeDetailsData])
   chargeType!: FinanceChargeTypeDetailsData[]
