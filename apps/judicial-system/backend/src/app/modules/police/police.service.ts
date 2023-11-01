@@ -381,11 +381,11 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    requestPdf: string,
-    courtRecordPdf: string,
-    rulingPdf: string,
-    appealRuling: string[],
+    requestPdf?: string,
+    courtRecordPdf?: string,
+    rulingPdf?: string,
     custodyNoticePdf?: string,
+    appealRuling?: string[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
@@ -407,13 +407,15 @@ export class PoliceService {
           expiringDate: validToDate?.toISOString(),
           courtVerdictString: caseConclusion,
           courtDocuments: [
-            { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
-            { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
-            { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
-            ...appealRuling.map((ruling) => ({
-              type: 'RVUL',
-              courtDocument: Base64.btoa(ruling),
-            })),
+            ...(requestPdf
+              ? [{ type: 'RVKR', courtDocument: Base64.btoa(requestPdf) }]
+              : []),
+            ...(courtRecordPdf
+              ? [{ type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) }]
+              : []),
+            ...(rulingPdf
+              ? [{ type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) }]
+              : []),
             ...(custodyNoticePdf
               ? [
                   {
@@ -422,6 +424,10 @@ export class PoliceService {
                   },
                 ]
               : []),
+            ...(appealRuling?.map((ruling) => ({
+              type: 'RVUL',
+              courtDocument: Base64.btoa(ruling),
+            })) ?? []),
           ],
         }),
       } as RequestInit,
