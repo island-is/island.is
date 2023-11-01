@@ -297,6 +297,13 @@ export class Program extends Model {
   active!: boolean
 
   @ApiHideProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  tmpActive!: boolean
+
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 

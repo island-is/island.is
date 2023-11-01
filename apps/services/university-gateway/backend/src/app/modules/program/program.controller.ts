@@ -12,18 +12,18 @@ import { ProgramResponse } from './dto/programResponse'
 import { ProgramDetailsResponse } from './dto/programDetailsResponse'
 import { TagResponse } from './dto/tagResponse'
 import { DegreeType, Season } from '@island.is/university-gateway'
+import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
 @Controller({
-  path: 'programs',
   version: ['1'],
 })
 export class ProgramController {
   constructor(private readonly programService: ProgramService) {}
 
   @BypassAuth()
-  @Get()
+  @Get('programs')
   @Documentation({
     description: 'Get all programs',
     response: {
@@ -104,7 +104,7 @@ export class ProgramController {
   }
 
   @BypassAuth()
-  @Get(':id')
+  @Get('programs/:id')
   @Documentation({
     description: 'Get program (and courses) by ID',
     response: {
@@ -122,6 +122,7 @@ export class ProgramController {
     },
   })
   getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
+    console.log(' AM I HERE????')
     return this.programService.getProgramDetails(id)
   }
 

@@ -13,7 +13,6 @@ export const Default = Template.bind({})
 Default.args = {
   title: 'Innskráning',
   icon: 'person',
-  openOnHover: true,
   items: [
     {
       title: 'Einstaklingur',

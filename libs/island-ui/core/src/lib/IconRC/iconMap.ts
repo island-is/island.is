@@ -79,6 +79,8 @@ export type Icon =
   | 'QRCode'
   | 'globe'
   | 'signLanguage'
+  | 'listView'
+  | 'gridView'
 
 export default {
   filled: {
@@ -161,6 +163,8 @@ export default {
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
     signLanguage: 'SignLanguage',
+    listView: 'ListView',
+    gridView: 'GridView',
   },
   outline: {
     archive: 'ArchiveOutline',
@@ -242,5 +246,7 @@ export default {
     QRCode: 'QRCodeOutline',
     globe: 'Globe',
     signLanguage: 'SignLanguage',
+    listView: 'ListView',
+    gridView: 'GridView',
   },
 }

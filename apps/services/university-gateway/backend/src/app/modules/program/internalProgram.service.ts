@@ -47,10 +47,10 @@ export class InternalProgramService {
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
         await this.reykjavikUniversityClient.getPrograms(),
       ),
-      await this.doUpdateProgramsForUniversity(
-        UniversityNationalIds.UNIVERSITY_OF_ICELAND,
-        await this.universityOfIcelandClient.getPrograms(),
-      ),
+      // await this.doUpdateProgramsForUniversity(
+      //   UniversityNationalIds.UNIVERSITY_OF_ICELAND,
+      //   await this.universityOfIcelandClient.getPrograms(),
+      // ),
     ]).catch((e) => {
       logger.error('Failed to update programs, reason:', e)
     })
@@ -64,7 +64,6 @@ export class InternalProgramService {
       await this.universityModel.findOne({
         attributes: ['id'],
         where: { nationalId: universityNationalId },
-        logging: false,
       })
     )?.id
 
@@ -74,24 +73,32 @@ export class InternalProgramService {
       )
     }
 
-    // UPDATE all programs for this university and make them inactive
+    logger.info(
+      `Started updating programs for university ${universityNationalId}`,
+    )
+
+    // 1. Mark all programs as "temporarily inactive", so we know in the end which programs
+    // should actually be inactive (hidden)
+    // This is done to make sure not all programs for the university are marked as
+    // inactive (hidden) while we are updating the list of programs
     await this.programModel.update(
       {
-        active: false,
+        tmpActive: false,
       },
       {
         where: { universityId },
-        logging: false,
       },
     )
 
     // CREATE/UPDATE all programs for this university (make then active again)
     for (let i = 0; i < programList.length; i++) {
       const program = programList[i]
+
       try {
         // Map to programModel object
         const programObj = {
           active: true,
+          tmpActive: true,
           universityId: universityId,
           externalId: program.externalId,
           nameIs: program.nameIs,
@@ -129,93 +136,67 @@ export class InternalProgramService {
         const extraApplicationFieldList = program.extraApplicationFields || []
         const minorList = program.minors || []
 
-        const oldProgramObj = await this.programModel.findOne({
-          attributes: ['id'],
-          where: {
-            externalId: programObj.externalId,
+        // 2. CREATE or UPDATE program (make sure tmpActive becomes true)
+        const updatedProgram = await this.programModel.bulkCreate(
+          [programObj],
+          {
+            updateOnDuplicate: ['externalId'],
           },
-          logging: false,
-        })
+        )
+        const programId = updatedProgram[0].id
 
-        // CREATE or UPDATE program
-        let programId: string | undefined
-        if (oldProgramObj) {
-          programId = oldProgramObj.id
-          await this.programModel.update(programObj, {
-            where: { id: programId },
-            logging: false,
-          })
-        } else {
-          programId = (
-            await this.programModel.create(programObj, { logging: false })
-          ).id
-        }
-
-        // DELETE program tag
+        // 3a. DELETE program tag
         await this.programTagModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
-        // CREATE program tag
+        // 3b. CREATE program tag
         for (let j = 0; j < tagList.length; j++) {
           const tag = await this.tagModel.findOne({
             attributes: ['id'],
             where: { code: tagList[j].code },
-            logging: false,
           })
 
           if (!tag) continue
 
-          await this.programTagModel.create(
-            {
-              programId: programId,
-              tagId: tag?.id,
-            },
-            { logging: false },
-          )
+          await this.programTagModel.create({
+            programId: programId,
+            tagId: tag?.id,
+          })
         }
 
-        // DELETE program mode of delivery
+        // 4a. DELETE program mode of delivery
         await this.programModeOfDeliveryModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
-        // CREATE program mode of delivery
+        // 4b. CREATE program mode of delivery
         for (let j = 0; j < modeOfDeliveryList.length; j++) {
-          await this.programModeOfDeliveryModel.create(
-            {
-              programId: programId,
-              modeOfDelivery: modeOfDeliveryList[j],
-            },
-            { logging: false },
-          )
+          await this.programModeOfDeliveryModel.create({
+            programId: programId,
+            modeOfDelivery: modeOfDeliveryList[j],
+          })
         }
 
-        // DELETE program extra application field
+        // 5a. DELETE program extra application field
         await this.programExtraApplicationFieldModel.destroy({
           where: { programId: programId },
-          logging: false,
         })
 
-        // CREATE program extra application field
+        // 5b. CREATE program extra application field
         for (let j = 0; j < extraApplicationFieldList.length; j++) {
-          await this.programExtraApplicationFieldModel.create(
-            {
-              programId: programId,
-              externalId: extraApplicationFieldList[j].externalId,
-              nameIs: extraApplicationFieldList[j].nameIs,
-              nameEn: extraApplicationFieldList[j].nameEn,
-              descriptionIs: extraApplicationFieldList[j].descriptionIs,
-              descriptionEn: extraApplicationFieldList[j].descriptionEn,
-              required: extraApplicationFieldList[j].required,
-              fieldType: extraApplicationFieldList[j].fieldType,
-              uploadAcceptedFileType:
-                extraApplicationFieldList[j].uploadAcceptedFileType,
-            },
-            { logging: false },
-          )
+          await this.programExtraApplicationFieldModel.create({
+            programId: programId,
+            externalId: extraApplicationFieldList[j].externalId,
+            nameIs: extraApplicationFieldList[j].nameIs,
+            nameEn: extraApplicationFieldList[j].nameEn,
+            descriptionIs: extraApplicationFieldList[j].descriptionIs,
+            descriptionEn: extraApplicationFieldList[j].descriptionEn,
+            required: extraApplicationFieldList[j].required,
+            fieldType: extraApplicationFieldList[j].fieldType,
+            uploadAcceptedFileType:
+              extraApplicationFieldList[j].uploadAcceptedFileType,
+          })
         }
 
         // DELETE program minor
@@ -243,5 +224,19 @@ export class InternalProgramService {
         )
       }
     }
+
+    // 6. UPDATE all programs for this university and make them inactive
+    await this.programModel.update(
+      {
+        active: false,
+      },
+      {
+        where: { universityId, tmpActive: false },
+      },
+    )
+
+    logger.info(
+      `Finished updating programs for university ${universityNationalId}`,
+    )
   }
 }

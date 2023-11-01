@@ -96,6 +96,13 @@ export class ProgramCourse extends Model {
   semesterSeason!: Season
 
   @ApiHideProperty()
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  tmpActive!: boolean
+
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: Date
 
