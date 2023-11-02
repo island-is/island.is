@@ -75,13 +75,14 @@ const Applications: Screen<CategoryProps> = ({
   const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { reset: resetFilters } = useSearchableTagsFilter()
-  const { reset: resetFilterInput } = useQueryFilter()
+  const { organization, category, reset: resetFilters } = useSearchableTagsFilter()
+  const { query: searchQuery, reset: resetFilterInput } = useQueryFilter()
 
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
+  const hasFilters = organization.length || category.length || searchQuery;
 
   const handleCLearAllFilter = () => {
     resetFilterInput()
@@ -112,6 +113,18 @@ const Applications: Screen<CategoryProps> = ({
               flexWrap="nowrap"
               collapseBelow="md"
             >
+              {hasFilters && (
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={handleCLearAllFilter}
+                  icon="reload"
+                  nowrap
+                >
+                  {gn('filterClearAll', 'Hreinsa allar síur')}
+                </Button>
+              )}
+
               <QueryFilterInput />
               <SearchableTagsFilter
                 resultCount={totalSearchResults}
