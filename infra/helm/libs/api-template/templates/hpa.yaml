@@ -1,5 +1,5 @@
 {{- if .Values.enabled }}
-{{- $appName := include "api-template.name" . -}
+{{- $appName := include "api-template.name" . -}}
 {{- $fullName := include "api-template.fullname" . -}}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
@@ -38,7 +38,7 @@ spec:
         name: nginx_ingress_controller_requests_rate
         selector:
           matchLabels:
-             ingress: "{{ $appName }}"
+             ingress: "{{$name}}"
       target:
         type: AverageValue
         averageValue: {{ $.Values.hpa.scaling.metric.nginxRequestsIrate }}
