@@ -9,17 +9,15 @@ import { createKeyProvider } from './create-key-provider'
 
 const AUTH_BODY_FIELD_NAME = '__accessToken'
 
-const jwtTokenExtractor = ExtractJwt.fromExtractors([
-  ExtractJwt.fromAuthHeaderAsBearerToken(),
-  ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
-])
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private config: AuthConfig) {
     super({
       secretOrKeyProvider: createKeyProvider(config.issuer),
-      jwtFromRequest: jwtTokenExtractor,
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        ExtractJwt.fromBodyField(AUTH_BODY_FIELD_NAME),
+      ]),
       audience: config.audience,
       issuer: config.issuer,
       algorithms: ['RS256'],
@@ -40,7 +38,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
   async validate(request: Request, payload: JwtPayload): Promise<Auth> {
     const actor = payload.actor
-    const token = jwtTokenExtractor(request)
+    const bodyToken = request.body?.[AUTH_BODY_FIELD_NAME] ?? ''
+    const token = request.headers.authorization || bodyToken || ''
 
     if (this.config.allowClientNationalId && payload.client_nationalId) {
       payload.nationalId = payload.client_nationalId
@@ -50,7 +49,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token,
       delegationType: payload.delegationType,
       actor: actor && {
         nationalId: actor.nationalId,

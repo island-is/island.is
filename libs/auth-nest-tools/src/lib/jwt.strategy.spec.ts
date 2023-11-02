@@ -74,6 +74,48 @@ describe('JwtStrategy#validate', () => {
 
   it('picks up request and jwt properties', async () => {
     // Arrange
+    const payload: JwtPayload = {
+      nationalId: '1234567890',
+      scope: ['test-scope-1'],
+      client_id: 'test-client',
+      delegationType: [AuthDelegationType.Custom],
+      actor: {
+        nationalId: '1234565555',
+        scope: ['test-scope-2'],
+      },
+      act: {
+        client_id: 'test-client-2',
+        act: {
+          client_id: 'test-client-3',
+        },
+      },
+    }
+    const request = {
+      headers: {
+        authorization: 'authorization',
+        'user-agent': 'test user agent',
+        'x-forwarded-for': '2.2.2.2, 3.3.3.3',
+      },
+      ip: '1.1.1.1',
+    } as unknown as Request
+
+    // Act
+    const user = await jwtStrategy.validate(request, payload)
+
+    // Assert
+    expect(user.nationalId).toEqual(payload.nationalId)
+    expect(user.scope).toEqual(payload.scope)
+    expect(user.client).toEqual(payload.client_id)
+    expect(user.authorization).toEqual(request.headers.authorization)
+    expect(user.ip).toEqual(request.headers['x-forwarded-for'])
+    expect(user.userAgent).toEqual(request.headers['user-agent'])
+    expect(user.actor!.nationalId).toEqual(payload.actor!.nationalId)
+    expect(user.actor!.scope).toEqual(payload.actor!.scope)
+    expect(user.act).toEqual(payload.act)
+  })
+
+  it('picks up request with __accessToken', async () => {
+    // Arrange
     const testToken = 'Bearer token'
     const payload: JwtPayload = {
       nationalId: '1234567890',
@@ -93,7 +135,6 @@ describe('JwtStrategy#validate', () => {
     }
     const request = {
       headers: {
-        authorization: testToken,
         'user-agent': 'test user agent',
         'x-forwarded-for': '2.2.2.2, 3.3.3.3',
       },
@@ -110,7 +151,6 @@ describe('JwtStrategy#validate', () => {
     expect(user.nationalId).toEqual(payload.nationalId)
     expect(user.scope).toEqual(payload.scope)
     expect(user.client).toEqual(payload.client_id)
-    expect(user.authorization).toEqual(request.headers.authorization)
     expect(user.authorization).toEqual(request.body.__accessToken)
     expect(user.ip).toEqual(request.headers['x-forwarded-for'])
     expect(user.userAgent).toEqual(request.headers['user-agent'])
