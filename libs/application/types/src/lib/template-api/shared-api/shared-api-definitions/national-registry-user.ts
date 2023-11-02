@@ -6,7 +6,7 @@ export interface NationalRegistryParameters {
   legalDomicileIceland?: boolean
   ageToValidateError?: ProviderErrorReason
   icelandicCitizenship?: boolean
-  allowDomicilePassOnChild?: boolean
+  allowPassOnChild?: boolean
 }
 
 export interface ChildrenCustodyInformationParameters {

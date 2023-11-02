@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import * as kennitala from 'kennitala'
 
 import {
   ApplicantChildCustodyInformation,
@@ -31,72 +30,100 @@ export class NationalRegistryService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
-    const individuals: Array<NationalRegistryIndividual | null> = []
-    const result = await this.getIndividual(auth.nationalId)
-    individuals.push(result)
+    const individual = await this.getIndividual(auth.nationalId)
 
-    if (params?.allowDomicilePassOnChild) {
-      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      children.forEach(async (child) => {
-        const childResult = await this.getIndividual(child)
-        individuals.push(childResult)
-      })
+    //Check if individual is found in national registry
+    if (!individual) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
+          summary:
+            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        },
+        404,
+      )
     }
 
-    // Make sure user has domicile country as Iceland
-    if (params?.legalDomicileIceland) {
-      // Check if any of the individuals has domicile in Iceland
-      // Should be a single individual unless allowDomicilePassOnChild is true
-      const passes = individuals.some((individual) => {
-        let domicileInIceland = true
-        const domicileCode = individual?.address?.municipalityCode
+    // Case when parent can apply for custody child without fulfilling some requirements
+    if (params?.allowPassOnChild) {
+      const children = await this.nationalRegistryApi.getCustodyChildren(auth)
+      this.validateChildren(params, children)
+    }
 
-        if (!domicileCode || domicileCode.substring(0, 2) === '99') {
-          domicileInIceland = false
-        }
-        return domicileInIceland
-      })
+    // Validate individual
+    this.validateIndividual(individual, false, params)
 
-      // If no individual has a domicile in Iceland, then we fail this check
-      if (!passes) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
-            summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
-          },
-          400,
-        )
-      }
+    return individual
+  }
+
+  private validateIndividual(
+    individual: NationalRegistryIndividual,
+    isChild: boolean,
+    params?: NationalRegistryParameters,
+  ) {
+    if (params?.legalDomicileIceland && !params?.allowPassOnChild) {
+      this.validateDomicleInIceland(individual, params.allowPassOnChild)
     }
 
     if (params?.icelandicCitizenship) {
-      const passes = individuals.some((individual) => {
-        let icelandicCitizenship = true
-        const citizenship = individual?.citizenship
-
-        if (!citizenship || citizenship.code !== 'IS') {
-          icelandicCitizenship = false
-        }
-        return icelandicCitizenship
-      })
-
-      // If no individual has a citizenship in Iceland, then we fail this check
-      if (!passes) {
-        throw new TemplateApiError(
-          {
-            title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
-            summary: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
-          },
-          400,
-        )
-      }
+      this.validateIcelandicCitizenship(individual)
     }
 
+    if (params?.ageToValidate && !isChild) {
+      this.validateAge(params, individual)
+    }
+  }
+
+  private async validateChildren(params: NationalRegistryParameters, childrenId: string[]) {
+    for (const id of childrenId) {
+      const individual = await this.getIndividual(id)
+      console.log('validateChildren', individual)
+      if (individual) {
+        this.validateIndividual(individual, true, params)
+      }
+    }
+  }
+
+  private validateDomicleInIceland(
+    individual: NationalRegistryIndividual,
+    allowPassOnChild?: boolean,
+  ) {
+    const domicileCode = individual?.address?.municipalityCode
     if (
-      params?.ageToValidate &&
-      result?.age &&
-      result?.age < params.ageToValidate
+      (!domicileCode || domicileCode.substring(0, 2) === '99') &&
+      !allowPassOnChild
     ) {
+      // If no individual has a domicile in Iceland, then we fail this check
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+          summary: coreErrorMessages.nationalRegistryLegalDomicileNotIceland,
+        },
+        400,
+      )
+    }
+  }
+
+  private validateIcelandicCitizenship(
+    individual: NationalRegistryIndividual,
+  ) {
+    const citizenship = individual?.citizenship
+    if (!citizenship || citizenship.code !== 'IS') {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+          summary: coreErrorMessages.nationalRegistryCitizenshipNotIcelandic,
+        },
+        400,
+      )
+    }
+  }
+
+  private validateAge(
+    params: any,
+    individual: NationalRegistryIndividual,
+  ) {
+    if (individual?.age && individual?.age < params.ageToValidate) {
       if (params?.ageToValidateError) {
         throw new TemplateApiError(params?.ageToValidateError, 400)
       } else {
@@ -109,8 +136,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
         )
       }
     }
-
-    return result
   }
 
   private getAgeFromDateOfBirth(dateOfBirth: Date): number {
