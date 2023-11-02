@@ -327,7 +327,7 @@
     "@nestjs/testing": "10.0.5",
     "@nrwl/js": "16.9.0",
     "@nx/cypress": "16.9.0",
-    "@nx/eslint-plugin": "16.9.0",
+    "@nx/eslint-plugin": "17.0.2",
     "@nx/express": "16.9.0",
     "@nx/jest": "16.9.0",
     "@nx/linter": "16.9.0",
