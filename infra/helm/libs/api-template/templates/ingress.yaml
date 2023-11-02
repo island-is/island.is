@@ -39,7 +39,7 @@ spec:
           - pathType: Prefix
             backend:
               service:
-                name: {{ appName }}
+                name: {{ $appName }}
                 port:
                   number: {{ $svcPort }}
           {{- if eq (kindOf .) "map" }}
