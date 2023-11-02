@@ -48,7 +48,10 @@ import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
 import { LinkCard, mapLinkCard } from '../models/linkCard.model'
-import { LinkCardSection, mapLinkCardSection } from '../models/linkCardSection.model'
+import {
+  LinkCardSection,
+  mapLinkCardSection,
+} from '../models/linkCardSection.model'
 import {
   LatestNewsSlice,
   mapLatestNewsSlice,

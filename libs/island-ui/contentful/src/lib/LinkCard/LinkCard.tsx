@@ -1,5 +1,11 @@
 import React, { FC } from 'react'
-import { Box, Button, Text, Link, type TextProps } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Text,
+  Link,
+  type TextProps,
+} from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 export interface LinkCardProps {
@@ -15,8 +21,8 @@ export const LinkCard: FC<React.PropsWithChildren<LinkCardProps>> = ({
   linkUrl,
   linkText,
 }) => {
-  const newTab = shouldLinkOpenInNewWindow(linkUrl);
-  const color: TextProps['color'] = 'currentColor';
+  const newTab = shouldLinkOpenInNewWindow(linkUrl)
+  const color: TextProps['color'] = 'currentColor'
 
   return (
     <Box
@@ -43,7 +49,11 @@ export const LinkCard: FC<React.PropsWithChildren<LinkCardProps>> = ({
         )}
       </Box>
       <Link href={linkUrl} newTab={newTab} skipTab>
-        <Button icon={newTab ? 'open' : 'arrowForward'} iconType="outline" nowrap>
+        <Button
+          icon={newTab ? 'open' : 'arrowForward'}
+          iconType="outline"
+          nowrap
+        >
           {linkText}
         </Button>
       </Link>

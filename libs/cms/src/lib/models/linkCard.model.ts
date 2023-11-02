@@ -20,7 +20,10 @@ export class LinkCard {
   linkText?: string
 }
 
-export const mapLinkCard = ({ sys, fields }: ICard): SystemMetadata<LinkCard> => ({
+export const mapLinkCard = ({
+  sys,
+  fields,
+}: ICard): SystemMetadata<LinkCard> => ({
   typename: 'LinkCard',
   id: sys.id,
   title: fields?.title ?? '',
