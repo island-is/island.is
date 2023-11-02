@@ -74,7 +74,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private async validateChildren(params: NationalRegistryParameters, childrenId: string[]) {
+  private async validateChildren(
+    params: NationalRegistryParameters,
+    childrenId: string[],
+  ) {
     for (const id of childrenId) {
       const individual = await this.getIndividual(id)
       console.log('validateChildren', individual)
@@ -104,9 +107,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private validateIcelandicCitizenship(
-    individual: NationalRegistryIndividual,
-  ) {
+  private validateIcelandicCitizenship(individual: NationalRegistryIndividual) {
     const citizenship = individual?.citizenship
     if (!citizenship || citizenship.code !== 'IS') {
       throw new TemplateApiError(
@@ -119,10 +120,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private validateAge(
-    params: any,
-    individual: NationalRegistryIndividual,
-  ) {
+  private validateAge(params: any, individual: NationalRegistryIndividual) {
     if (individual?.age && individual?.age < params.ageToValidate) {
       if (params?.ageToValidateError) {
         throw new TemplateApiError(params?.ageToValidateError, 400)
