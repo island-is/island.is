@@ -52,6 +52,11 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
       return acc
     }, [] as EventLog[])
 
+  const wasAppealedAfterDeadline =
+    workingCase.appealedDate &&
+    workingCase.appealDeadline &&
+    workingCase.appealedDate > workingCase.appealDeadline
+
   return (
     <>
       <Box marginBottom={5}>
@@ -65,6 +70,14 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Button>
         </Box>
       </Box>
+      {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(strings.appealSentAfterDeadline)}
+            type="warning"
+          />
+        </Box>
+      )}
       {workingCase.appealRulingDecision &&
         workingCase.eventLogs &&
         workingCase.eventLogs.length > 0 && (

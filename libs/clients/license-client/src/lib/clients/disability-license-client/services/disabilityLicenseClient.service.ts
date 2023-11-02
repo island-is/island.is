@@ -33,6 +33,8 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: OrorkuSkirteini,
   ): LicensePkPassAvailability {
