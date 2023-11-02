@@ -163,7 +163,9 @@ export const isDefendantStepValidRC = (
   return (
     policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
-    workingCase.requestSharedWithDefender !== undefined &&
+    (workingCase.defenderName
+      ? workingCase.requestSharedWithDefender !== undefined
+      : true) &&
     validate([
       ...policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
@@ -182,11 +184,14 @@ export const isDefendantStepValidIC = (
   caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ): boolean => {
+  console.log(workingCase.defenderName)
   return (
     policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
-    workingCase.requestSharedWithDefender !== undefined &&
+    (workingCase.defenderName
+      ? workingCase.requestSharedWithDefender !== undefined
+      : true) &&
     validate([
       [workingCase.type, ['empty']],
       ...policeCaseNumbers.map(

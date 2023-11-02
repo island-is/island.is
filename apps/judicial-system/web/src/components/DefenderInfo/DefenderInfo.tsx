@@ -100,18 +100,18 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        <Text variant="h4" marginTop={2} marginBottom={2}>
-          {`${formatMessage(
-            isRestrictionCase(workingCase.type)
-              ? defenderInfo.restrictionCases.sections.defenderRequestAccess
-                  .title
-              : defenderInfo.investigationCases.sections.defenderRequestAccess
-                  .title,
-          )} `}
-          <RequiredStar />
-        </Text>
         {user?.role === UserRole.PROSECUTOR && (
-          <Box>
+          <>
+            <Text variant="h4" marginTop={2} marginBottom={2}>
+              {`${formatMessage(
+                isRestrictionCase(workingCase.type)
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .title
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.title,
+              )} `}
+              <RequiredStar />
+            </Text>
             <Box>
               <RadioButton
                 name="defender-access"
@@ -207,7 +207,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 disabled={!workingCase.defenderName}
               />
             </Box>
-          </Box>
+          </>
         )}
       </BlueBox>
     </>
