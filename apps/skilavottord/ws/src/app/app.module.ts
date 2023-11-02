@@ -23,7 +23,7 @@ const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/skilavottord/api.graphql'
+  : 'apps/skilavottord/ws/src/api.graphql'
 
 @Module({
   imports: [

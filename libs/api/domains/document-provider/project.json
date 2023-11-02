@@ -21,15 +21,14 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/document-provider"]
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/api/domains/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
       },
-      "outputs": [
-        "{workspaceRoot}/libs/api/domains/document-provider/gen/fetch"
-      ]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-documents"],
   "tags": ["lib:api", "scope:api"]
 }
