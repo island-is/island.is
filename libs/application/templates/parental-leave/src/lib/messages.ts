@@ -1926,8 +1926,10 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     draftNotApprovedEmployerDesc: {
       id: 'pl.application:draftFlow.requiresAction.employerDesc',
-      defaultMessage: 'Your employer did not approve your application.',
-      description: 'Your employer did not approve your application.',
+      defaultMessage:
+        'Vinnuveitandi þinn samþykkti ekki valið tímabil en óskar eftir nýju og breyttu tímabili.',
+      description:
+        'Your employer did not approve the selected period and requests that you resubmit an alternative period.',
     },
     draftNotApprovedVMLSTDesc: {
       id: 'pl.application:draftFlow.requiresAction.VMLSTDesc',

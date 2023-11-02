@@ -8,6 +8,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   CaseState,
+  EventLog,
   EventType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -36,6 +37,34 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
   const { formatMessage } = useIntl()
   const router = useRouter()
 
+  const filteredEvents = workingCase?.eventLogs
+    ?.filter(
+      (e) =>
+        e.eventType === EventType.APPEAL_RESULT_ACCESSED &&
+        [
+          UserRole.DEFENDER,
+          UserRole.PROSECUTOR,
+          UserRole.PRISON_SYSTEM_STAFF,
+        ].includes(e.userRole as UserRole),
+    )
+    .reduce((acc, event) => {
+      const userRole = event.userRole as UserRole
+      const existingEventIndex = acc.findIndex((e) => e.userRole === userRole)
+
+      if (existingEventIndex === -1) {
+        acc.push(event)
+      } else if (event.created < acc[existingEventIndex].created) {
+        acc[existingEventIndex] = event
+      }
+
+      return acc
+    }, [] as EventLog[])
+
+  const wasAppealedAfterDeadline =
+    workingCase.appealedDate &&
+    workingCase.appealDeadline &&
+    workingCase.appealedDate > workingCase.appealDeadline
+
   return (
     <>
       <Box marginBottom={5}>
@@ -49,31 +78,29 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Button>
         </Box>
       </Box>
+      {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(strings.appealSentAfterDeadline)}
+            type="warning"
+          />
+        </Box>
+      )}
       {workingCase.appealRulingDecision &&
         workingCase.eventLogs &&
         workingCase.eventLogs.length > 0 && (
           <Box marginBottom={4} marginTop={8}>
-            {workingCase.eventLogs
-              .filter(
-                (e) =>
-                  e.eventType === EventType.APPEAL_RESULT_ACCESSED &&
-                  [
-                    UserRole.DEFENDER,
-                    UserRole.PROSECUTOR,
-                    UserRole.PRISON_SYSTEM_STAFF,
-                  ].includes(e.userRole as UserRole),
-              )
-              .map((event, index) => (
-                <Box marginBottom={2} key={`event${index}`}>
-                  <AlertMessage
-                    message={formatMessage(strings.appealResultOpenedBy, {
-                      userRole: event.userRole as UserRole,
-                      when: formatDate(event.created, 'PPPp'),
-                    })}
-                    type="info"
-                  />
-                </Box>
-              ))}
+            {filteredEvents?.map((event, index) => (
+              <Box marginBottom={2} key={`event${index}`}>
+                <AlertMessage
+                  message={formatMessage(strings.appealResultOpenedBy, {
+                    userRole: event.userRole as UserRole,
+                    when: formatDate(event.created, 'PPPp'),
+                  })}
+                  type="info"
+                />
+              </Box>
+            ))}
           </Box>
         )}
 
