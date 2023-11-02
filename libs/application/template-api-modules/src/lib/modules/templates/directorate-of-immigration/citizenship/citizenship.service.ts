@@ -6,22 +6,18 @@ import {
   ApplicantChildCustodyInformation,
   ApplicationTypes,
   NationalRegistryBirthplace,
+  NationalRegistryIndividual,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
-import * as kennitala from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
   CitizenshipAnswers,
-  SpouseIndividual,
-  CitizenIndividual,
   error as errorMessages,
 } from '@island.is/application/templates/directorate-of-immigration/citizenship'
 import {
   ApplicantResidenceConditionViewModel,
   CountryOfResidenceViewModel,
   DirectorateOfImmigrationClient,
-  OptionSetItem,
-  ResidenceAbroadViewModel,
-  TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { YES } from '@island.is/application/core'
@@ -44,14 +40,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     )
   }
 
-  async getCountries(): Promise<OptionSetItem[]> {
-    return this.directorateOfImmigrationClient.getCountries()
-  }
-
-  async getTravelDocumentTypes(): Promise<OptionSetItem[]> {
-    return this.directorateOfImmigrationClient.getTravelDocumentTypes()
-  }
-
   async getCurrentCountryOfResidenceList({
     auth,
   }: TemplateApiModuleActionProps): Promise<CountryOfResidenceViewModel[]> {
@@ -60,99 +48,12 @@ export class CitizenshipService extends BaseTemplateApiService {
     )
   }
 
-  async getCurrentStayAbroadList({
+  async getResidenceInIcelandLastChangeDate({
     auth,
-  }: TemplateApiModuleActionProps): Promise<ResidenceAbroadViewModel[]> {
-    return this.directorateOfImmigrationClient.getCurrentStayAbroadList(auth)
-  }
-
-  async getCurrentPassportItem({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<
-    TravelDocumentViewModel | undefined
-  > {
-    return this.directorateOfImmigrationClient.getCurrentPassportItem(auth)
-  }
-
-  async getNationalRegistryIndividual({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<CitizenIndividual | null> {
-    const individual = await this.getIndividualDetails(auth.nationalId, true)
-    if (individual)
-      individual.residenceInIcelandLastChangeDate =
-        await this.getResidenceInIcelandLastChangeDate(auth.nationalId)
-    return individual
-  }
-
-  private async getIndividualDetails(
-    nationalId: string,
-    isApplicant: boolean,
-  ): Promise<CitizenIndividual | null> {
-    // get basic information about indiviual
-    const person = await this.nationalRegistryApi.getIndividual(nationalId)
-
-    // get information about indiviual citizenship
-    const citizenship = await this.nationalRegistryApi.getCitizenship(
-      nationalId,
-    )
-
-    // dont allow user to continue if already has icelandic citizenship
-    const citizenshipIceland = 'IS'
-    if (citizenship?.countryCode === citizenshipIceland && isApplicant) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.alreadyIcelandicCitizen,
-          summary: errorMessages.alreadyIcelandicCitizen,
-        },
-        404,
-      )
-    }
-
-    // get marital title
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      nationalId,
-    )
-    const genderCodeValue =
-      person && cohabitationInfo
-        ? await this.nationalRegistryApi.getCohabitionCodeValue(
-            cohabitationInfo?.cohabitationCode,
-            person?.genderCode,
-          )
-        : null
-
-    return (
-      person && {
-        nationalId: person.nationalId,
-        givenName: person.givenName,
-        familyName: person.familyName,
-        fullName: person.name,
-        age: kennitala.info(person.nationalId).age,
-        citizenship: citizenship && {
-          code: citizenship.countryCode,
-          name: citizenship.countryName,
-        },
-        address: person.legalDomicile && {
-          streetAddress: person.legalDomicile.streetAddress,
-          postalCode: person.legalDomicile.postalCode,
-          locality: person.legalDomicile.locality,
-          city: person.legalDomicile.locality,
-          municipalityCode: person.legalDomicile.municipalityNumber,
-        },
-        genderCode: person.genderCode,
-        maritalTitle: {
-          code: genderCodeValue?.code,
-          description: genderCodeValue?.description,
-        },
-      }
-    )
-  }
-
-  private async getResidenceInIcelandLastChangeDate(
-    nationalId: string,
-  ): Promise<Date | null> {
+  }: TemplateApiModuleActionProps): Promise<Date | null> {
     // get residence history
     const residenceHistory = await this.nationalRegistryApi.getResidenceHistory(
-      nationalId,
+      auth.nationalId,
     )
 
     // sort residence history so newest items are first, and if two items have the same date,
@@ -182,47 +83,6 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     return lastChangeDate
-  }
-
-  async getNationalRegistrySpouseDetails({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<SpouseIndividual | null> {
-    const { nationalId } = auth
-
-    // get cohabitation information
-    const cohabitationInfo = await this.nationalRegistryApi.getCohabitationInfo(
-      nationalId,
-    )
-
-    return cohabitationInfo?.spouseNationalId
-      ? {
-          nationalId: cohabitationInfo.spouseNationalId,
-          name: cohabitationInfo.spouseName,
-          maritalStatus: cohabitationInfo.cohabitationCode,
-          lastModified: cohabitationInfo.lastModified,
-          spouseBirthplace: await this.getBirthplace(
-            cohabitationInfo.spouseNationalId,
-          ),
-          spouse: await this.getIndividualDetails(
-            cohabitationInfo.spouseNationalId,
-            false,
-          ),
-        }
-      : null
-  }
-
-  private async getBirthplace(
-    nationalId: string,
-  ): Promise<NationalRegistryBirthplace | null> {
-    const birthplace = await this.nationalRegistryApi.getBirthplace(nationalId)
-
-    return (
-      birthplace && {
-        dateOfBirth: birthplace.birthdate,
-        location: birthplace.locality,
-        municipalityCode: birthplace.municipalityNumber,
-      }
-    )
   }
 
   async validateApplication({
@@ -277,14 +137,16 @@ export class CitizenshipService extends BaseTemplateApiService {
 
     const answers = application.answers as CitizenshipAnswers
     const individual = application.externalData.individual?.data as
-      | CitizenIndividual
+      | NationalRegistryIndividual
       | undefined
+    const residenceInIcelandLastChangeDate = application.externalData
+      .residenceInIcelandLastChangeDate?.data as Date | null
     const nationalRegistryBirthplace = application.externalData
       .nationalRegistryBirthplace?.data as
       | NationalRegistryBirthplace
       | undefined
     const spouseDetails = application.externalData.spouseDetails?.data as
-      | SpouseIndividual
+      | NationalRegistrySpouse
       | undefined
     const childrenCustodyInformation = application.externalData
       .childrenCustodyInformation?.data as
@@ -361,19 +223,17 @@ export class CitizenshipService extends BaseTemplateApiService {
         email: answers.userInformation?.email,
         phone: answers.userInformation?.phone,
         citizenshipCode: individual?.citizenship?.code,
-        residenceInIcelandLastChangeDate:
-          individual?.residenceInIcelandLastChangeDate,
+        residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
         birthCountry: nationalRegistryBirthplace?.location,
         maritalStatusCode: spouseDetails?.maritalStatus,
         dateOfMaritalStatus: spouseDetails?.lastModified,
         spouse: spouseDetails?.nationalId
           ? {
-              nationalId: spouseDetails.nationalId || '',
-              givenName: spouseDetails.spouse?.givenName,
-              familyName: spouseDetails.spouse?.familyName,
-              birthCountry: spouseDetails.spouseBirthplace?.location,
-              citizenshipCode: spouseDetails.spouse?.citizenship?.code,
-              address: spouseDetails.spouse?.address?.streetAddress,
+              nationalId: spouseDetails.nationalId,
+              name: spouseDetails.name,
+              birthCountry: spouseDetails.birthplace?.location,
+              citizenshipCode: spouseDetails.citizenship?.code,
+              address: spouseDetails.address?.streetAddress,
               reasonDifferentAddress: answers.maritalStatus?.explanation,
             }
           : undefined,

@@ -6,11 +6,16 @@ export interface NationalRegistryParameters {
   legalDomicileIceland?: boolean
   ageToValidateError?: ProviderErrorReason
   icelandicCitizenship?: boolean
+  validateAlreadyHasIcelandicCitizenship?: boolean
 }
 
 export interface ChildrenCustodyInformationParameters {
   validateHasChildren?: boolean
   validateHasJointCustody?: boolean
+}
+
+export interface BirthplaceParameters {
+  validateNotEmpty: boolean
 }
 
 export const NationalRegistryUserApi =

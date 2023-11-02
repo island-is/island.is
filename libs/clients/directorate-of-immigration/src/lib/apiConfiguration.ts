@@ -14,7 +14,6 @@ import {
   CriminalRecordApi,
   OptionSetApi,
   ResidenceAbroadApi,
-  StaticDataApi,
   StudyApi,
   TravelDocumentApi,
 } from '../../gen/fetch'
@@ -55,7 +54,6 @@ export const exportedApis = [
   CriminalRecordApi,
   OptionSetApi,
   ResidenceAbroadApi,
-  StaticDataApi,
   StudyApi,
   TravelDocumentApi,
 ].map((Api) => ({

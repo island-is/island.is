@@ -9,13 +9,15 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
-import { Application } from '@island.is/application/types'
+import {
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import {
   OptionSetItem,
   TravelDocumentViewModel,
 } from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
-import { CitizenIndividual } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -31,7 +33,7 @@ export const PassportSubSection = buildSubSection({
           application.externalData,
           'individual.data',
           '',
-        ) as CitizenIndividual | undefined
+        ) as NationalRegistryIndividual | undefined
 
         return {
           ...supportingDocuments.general.description,

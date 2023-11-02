@@ -14,7 +14,6 @@ import {
   OptionSetItem,
   ResidenceAbroadApi,
   ResidenceAbroadViewModel,
-  StaticDataApi,
   TravelDocumentApi,
   TravelDocumentViewModel,
 } from '../../gen/fetch'
@@ -28,7 +27,6 @@ export class DirectorateOfImmigrationClient {
     private countryOfResidenceApi: CountryOfResidenceApi,
     private optionSetApi: OptionSetApi,
     private residenceAbroadApi: ResidenceAbroadApi,
-    private staticDataApi: StaticDataApi,
     private travelDocumentApi: TravelDocumentApi,
   ) {}
 
@@ -54,10 +52,6 @@ export class DirectorateOfImmigrationClient {
 
   private residenceAbroadApiWithAuth(auth: Auth) {
     return this.residenceAbroadApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private staticDataApiWithAuth(auth: Auth) {
-    return this.staticDataApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private travelDocumentApiWithAuth(auth: Auth) {
@@ -185,9 +179,7 @@ export class DirectorateOfImmigrationClient {
             ? new Date(application.dateOfMaritalStatus).toISOString()
             : undefined,
           spouseSSN: application.spouse?.nationalId,
-          spouseName:
-            application.spouse &&
-            application.spouse.givenName + ' ' + application.spouse.familyName,
+          spouseName: application.spouse && application.spouse.name,
           spouseCountryOfBirth: application.spouse?.birthCountry,
           spouseCitizenship: application.spouse?.citizenshipCode,
           spouseAddress: application.spouse?.address,

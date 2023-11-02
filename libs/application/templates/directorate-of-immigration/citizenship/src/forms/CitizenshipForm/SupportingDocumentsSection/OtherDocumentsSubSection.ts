@@ -8,10 +8,13 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
-import { Answer, Application } from '@island.is/application/types'
+import {
+  Answer,
+  Application,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { Routes } from '../../../lib/constants'
-import { CitizenIndividual } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -28,7 +31,7 @@ export const OtherDocumentsSubSection = buildSubSection({
           application.externalData,
           'individual.data',
           '',
-        ) as CitizenIndividual | undefined
+        ) as NationalRegistryIndividual | undefined
 
         return {
           ...supportingDocuments.general.description,

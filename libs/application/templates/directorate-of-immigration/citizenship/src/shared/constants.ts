@@ -1,16 +1,10 @@
 export enum ApiActions {
   createCharge = 'createCharge',
   getResidenceConditionInfo = 'getResidenceConditionInfo',
-  getCountries = 'getCountries',
-  getTravelDocumentTypes = 'getTravelDocumentTypes',
   getCurrentCountryOfResidenceList = 'getCurrentCountryOfResidenceList',
-  getCurrentStayAbroadList = 'getCurrentStayAbroadList',
-  getCurrentPassportItem = 'getCurrentPassportItem',
-  getNationalRegistryIndividual = 'getNationalRegistryIndividual',
-  getNationalRegistrySpouseDetails = 'getNationalRegistrySpouseDetails',
+  getResidenceInIcelandLastChangeDate = 'getResidenceInIcelandLastChangeDate',
   submitApplication = 'submitApplication',
   validateApplication = 'validateApplication',
-  getBirthplace = 'getBirthplace',
 }
 
 export const MAX_CNT_APPLICANTS = 18
