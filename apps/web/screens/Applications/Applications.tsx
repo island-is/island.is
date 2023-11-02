@@ -62,7 +62,7 @@ interface CategoryProps {
   namespace: ApplicationsTexts
 }
 
-const PERPAGE = 10
+const PERPAGE = 15
 
 const Applications: Screen<CategoryProps> = ({
   page,
