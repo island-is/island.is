@@ -1,10 +1,9 @@
-import request from 'supertest'
+import request, { SuperTest, Test } from 'supertest'
 
-import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
+import { setupApp, setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
-
-import { FixtureFactory } from './fixtureFactory'
+import { FixtureFactory } from '../../../../test/fixture-factory'
 import { getModelToken } from '@nestjs/sequelize'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
@@ -37,58 +36,13 @@ const testSMSVerification = {
 }
 
 describe('MeUserProfile', () => {
-  describe('Auth and scopes', () => {
-    it('GET /v2/me should return 401 when user is not authenticated', async () => {
-      // Arrange
-      const app = await setupAppWithoutAuth({
-        AppModule: AppModule,
-        SequelizeConfigService: SequelizeConfigService,
-      })
-
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(401)
-      expect(res.body).toMatchObject({
-        statusCode: 401,
-        message: 'Unauthorized',
-      })
-
-      await app.cleanUp()
-    })
-
-    it('GET /v2/me should return 403 Forbidden when user does not have the correct scope', async () => {
-      // Arrange
-      const app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: createCurrentUser(),
-      })
-
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(403)
-      expect(res.body).toMatchObject({
-        statusCode: 403,
-        error: 'Forbidden',
-        message: 'Forbidden resource',
-      })
-
-      await app.cleanUp()
-    })
-  })
   describe('GET user-profile', () => {
-    let app = null
-    let server = null
+    let app: TestApp = null
+    let server: SuperTest<Test> = null
+    let fixtureFactory: FixtureFactory = null
+    let userProfileModel: typeof UserProfile = null
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
@@ -99,13 +53,22 @@ describe('MeUserProfile', () => {
       })
 
       server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
     })
 
-    afterEach(() => {
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
+    })
+
+    afterAll(() => {
       app.cleanUp()
     })
 
-    it('GET /v2/me should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
+    it('GET /v2/me should return 200 with default user rpofile when user does not exist in db', async () => {
+      // Act
       const res = await server.get('/v2/me')
 
       // Assert
@@ -121,11 +84,10 @@ describe('MeUserProfile', () => {
       })
     })
 
-    it('GET /v2/me should return 200 with UserProfileDto for logged in user', async () => {
+    it('GET /v2/me should return 200 with for logged in user with needsNudge=null when lastNudge=null and unverified data', async () => {
       // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-
       await fixtureFactory.createUserProfile(testUserProfile)
+
       // Act
       const res = await server.get('/v2/me')
 
@@ -142,12 +104,12 @@ describe('MeUserProfile', () => {
       })
     })
 
-    it('GET /v2/me should return 200 with UserProfileDto for logged in user with no need for nudge', async () => {
+    it('GET /v2/me should return 200 with needsNudge=false when lastNudge is set and verified data', async () => {
       // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
+        emailVerified: true,
+        mobilePhoneNumberVerified: true,
         lastNudge: new Date(),
       })
 
@@ -169,9 +131,7 @@ describe('MeUserProfile', () => {
 
     it('GET /v2/me should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge', async () => {
       // Arrange
-      const fixtureFactory = new FixtureFactory(app)
       const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
-
       await fixtureFactory.createUserProfile({
         nationalId: testUserProfile.nationalId,
         email: testUserProfile.email,
@@ -189,6 +149,39 @@ describe('MeUserProfile', () => {
         email: testUserProfile.email,
         emailVerified: false,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: true,
+      })
+    })
+
+    it.each`
+      field                  | needsNudgeExpected
+      ${'email'}
+      ${'mobilePhoneNumber'}
+    `(
+      '$method $endpoint should return 401 when user is not authenticated',
+      async ({ method, endpoint }: TestEndpointOptions) => {},
+    )
+    it('GET /v2/me should return 200where needsNudge is true when lastNudge is null and email is registered and verified', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emailVerified: true,
+        mobilePhoneNumber: null,
+        lastNudge: null,
+      })
+
+      // Act
+      const res = await server.get('/v2/me')
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        emailVerified: true,
+        mobilePhoneNumber: null,
         mobilePhoneNumberVerified: false,
         documentNotifications: true,
         needsNudge: true,

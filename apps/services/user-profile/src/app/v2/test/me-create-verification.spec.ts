@@ -5,7 +5,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp } from '@island.is/testing/nest'
 
-import { FixtureFactory } from './fixtureFactory'
+import { FixtureFactory } from '../../../../test/fixture-factory'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { AppModule } from '../../app.module'
