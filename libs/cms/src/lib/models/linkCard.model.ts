@@ -13,8 +13,8 @@ export class LinkCard {
   @Field()
   body!: string
 
-  @Field({ nullable: true })
-  linkUrl?: string
+  @Field()
+  linkUrl!: string
 
   @Field({ nullable: true })
   linkText?: string
@@ -25,6 +25,6 @@ export const mapLinkCard = ({ sys, fields }: ICard): SystemMetadata<LinkCard> =>
   id: sys.id,
   title: fields?.title ?? '',
   body: fields?.body ?? '',
-  linkUrl: fields?.link ?? '',
+  linkUrl: fields?.linkUrl,
   linkText: fields?.linkText ?? '',
 })
