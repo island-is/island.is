@@ -5,11 +5,12 @@ import {
   amountFormat,
 } from '@island.is/service-portal/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
-import { DetailedSchedule, PaymentSchedule } from '@island.is/api/schema'
+import { DetailedSchedule } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetPaymentScheduleByIdLazyQuery } from './FinanceScheduleTable.generated'
+import { PaymentSchedule } from '@island.is/service-portal/graphql'
 
 interface Props {
   paymentSchedule: PaymentSchedule
