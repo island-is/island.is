@@ -107,7 +107,7 @@ yarn start api
 If you change a GraphQL schema, you need to update the generated TypeScript types which are used by resolvers and client applications:
 
 ```bash
-yarn nx run api:codegen/frontend-client
+yarn nx run api-schema:codegen/frontend-client
 ```
 
 ### Tests

@@ -104,7 +104,7 @@ follow these steps:
 
    1. `yarn nx run api:contentful-types` Generates Contentful types in the API.
 
-   2. `yarn nx run api:codegen/frontend-client --skip-nx-cache` Generates types in API based on models.
+   2. `yarn nx run api-schema:codegen/frontend-client --skip-nx-cache` Generates types in API based on models.
 
    3. `yarn nx run web:codegen/frontend-client --skip-nx-cache` Generates types in the web project based on queries
 
