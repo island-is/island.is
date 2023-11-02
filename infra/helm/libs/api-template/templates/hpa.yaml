@@ -1,4 +1,5 @@
 {{- if .Values.enabled }}
+{{- $appName := include "api-template.name" . -}
 {{- $fullName := include "api-template.fullname" . -}}
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
@@ -13,7 +14,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "api-template.fullname" . }}
+    name: {{ $appName }}
   minReplicas: {{ .Values.hpa.scaling.replicas.min }}
   maxReplicas: {{ .Values.hpa.scaling.replicas.max }}
   behavior:
@@ -37,7 +38,7 @@ spec:
         name: nginx_ingress_controller_requests_rate
         selector:
           matchLabels:
-             ingress: "{{ $fullName }}-{{ $name }}"
+             ingress: "{{ $appName }}"
       target:
         type: AverageValue
         averageValue: {{ $.Values.hpa.scaling.metric.nginxRequestsIrate }}
