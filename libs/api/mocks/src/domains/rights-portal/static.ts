@@ -1,4 +1,4 @@
-export const getPaymentOverviewStatus = {
+export const getPaymentOverviewServiceTypes = {
   items: [
     { code: 'ALL', name: 'Allir reikningar' },
     { code: 'HTM', name: 'Hjálpartækja- og næringarreikningar' },
@@ -15,7 +15,7 @@ export const getPaymentOverviewStatus = {
   errors: [],
 }
 
-export const getPaymentOverviewBills = {
+export const getPaymentOverview = {
   items: [
     {
       "credit": 0,
@@ -125,7 +125,7 @@ export const getCopaymentPeriods = {
   errors: [],
 }
 
-export const getCopaymentPeriodBills = {
+export const getCopaymentBills = {
   items: [
     {
       id: 1,
