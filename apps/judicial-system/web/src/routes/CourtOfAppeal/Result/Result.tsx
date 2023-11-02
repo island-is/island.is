@@ -16,13 +16,13 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -36,7 +36,6 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   return (
     <>
       <AlertBanner variant="warning" title={title} description={description} />
-
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -44,8 +43,7 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseOverviewHeader />
-
+          <CaseTitleInfoAndTags />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
