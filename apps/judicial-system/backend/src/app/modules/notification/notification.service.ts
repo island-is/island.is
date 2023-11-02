@@ -178,7 +178,9 @@ export class NotificationService {
       return { address: mobileNumbers, success: true }
     }
 
-    smsText = `${smsText} ${this.formatMessage(notifications.smsTail)}`
+    smsText = smsText.match(/rettarvorslugatt.island.is/g)
+      ? smsText
+      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
 
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
@@ -208,6 +210,10 @@ export class NotificationService {
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
 
+      html = html.match(/<a/g)
+        ? html
+        : `${html} ${this.formatMessage(notifications.emailTail)}`
+
       await this.emailService.sendEmail({
         from: {
           name: this.config.email.fromName,
@@ -225,10 +231,10 @@ export class NotificationService {
         ],
         cc:
           recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
-        subject: subject,
+        subject,
         text: stripHtmlTags(html),
         html: html,
-        attachments: attachments,
+        attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
