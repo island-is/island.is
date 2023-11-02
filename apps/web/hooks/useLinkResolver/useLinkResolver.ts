@@ -40,8 +40,8 @@ export const routesTemplate = {
     en: '',
   },
   applications: {
-    is: '/umsokn',
-    en: '/en/applications',
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
   },
   page: {
     is: '/stafraent-island',
