@@ -33,6 +33,7 @@ interface Props {
   itemNumber: number
   addDataToCountryList: (field: string, value: string, index: number) => void
   showItemTitle: boolean
+  readOnly?: boolean
 }
 
 export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -43,6 +44,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   itemNumber,
   showItemTitle,
   addDataToCountryList,
+  readOnly,
   ...props
 }) => {
   const { setValue } = useFormContext()
@@ -78,6 +80,22 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
     setValue(wasRemovedField, repeaterField.wasRemoved)
   }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
+  useEffect(() => {
+    setValue(countryField, repeaterField.countryId)
+  }, [repeaterField.countryId, setValue, countryField])
+
+  useEffect(() => {
+    setValue(dateToField, repeaterField.dateTo)
+  }, [repeaterField.dateTo, setValue, dateToField])
+
+  useEffect(() => {
+    setValue(dateFromField, repeaterField.dateFrom)
+  }, [repeaterField.dateFrom, setValue, dateFromField])
+
+  useEffect(() => {
+    setValue(purposeField, repeaterField.purpose)
+  }, [repeaterField.purpose, setValue, purposeField])
+
   return (
     <Box
       position="relative"
@@ -102,7 +120,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           />
         )}
 
-        {itemNumber > 0 && (
+        {itemNumber > 0 && !readOnly && (
           <Button
             variant="text"
             size="small"
@@ -123,6 +141,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           component: FieldComponents.SELECT,
           children: undefined,
           type: FieldTypes.SELECT,
+          disabled: readOnly,
           required: repeaterField.wasRemoved === 'true' ? false : true,
           onSelect: (value) =>
             addDataToCountryList('countryId', value.value as string, index),
@@ -140,6 +159,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           <Column>
             <DatePickerController
               id={dateFromField}
+              disabled={readOnly}
               label={formatMessage(
                 information.labels.staysAbroad.dateFromLabel,
               )}
@@ -153,6 +173,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           <Column>
             <DatePickerController
               id={dateToField}
+              disabled={readOnly}
               label={formatMessage(information.labels.staysAbroad.dateToLabel)}
               error={errors && getErrorViaPath(errors, dateToField)}
               onChange={(value) =>
@@ -172,6 +193,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         onChange={(value) =>
           addDataToCountryList('purpose', value.target.value as string, index)
         }
+        disabled={readOnly}
         required
       />
     </Box>

@@ -13,33 +13,67 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
+import { CountryOfResidenceViewModel } from '@island.is/clients/directorate-of-immigration'
+
+interface ExtendedCountryProps extends CountryOfResidence {
+  readOnly?: boolean
+}
 
 export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
   const { application, errors } = props
 
   const { formatMessage } = useLocale()
 
+  const preRegisteredCountries = getValueViaPath(
+    application.externalData,
+    'currentCountryOfResidenceList.data',
+    [],
+  ) as CountryOfResidenceViewModel[]
+
   const [hasLivedAbroad, setHasLivedAbroad] = useState<string>(
     getValueViaPath(
       application.answers,
       'countriesOfResidence.hasLivedAbroad',
-      '',
+      preRegisteredCountries.length > 0 ? YES : '',
     ) as string,
   )
 
   const [selectedCountries, setSelectedCountries] = useState<
-    CountryOfResidence[]
+    ExtendedCountryProps[]
   >(
     getValueViaPath(
       application.answers,
       'countriesOfResidence.selectedAbroadCountries',
       [],
-    ) as CountryOfResidence[],
+    ) as ExtendedCountryProps[],
   )
 
-  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
-    selectedCountries.filter((x) => x.wasRemoved !== 'true'),
-  )
+  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState<
+    Array<ExtendedCountryProps>
+  >([])
+
+  useEffect(() => {
+    const notDuplicateAnswers = selectedCountries.filter(
+      (x) =>
+        preRegisteredCountries.findIndex(
+          (y) => y.countryId === parseInt(x.countryId),
+        ) === -1,
+    )
+
+    const combinedLists = [
+      ...preRegisteredCountries
+        .filter((x) => !!x.countryId)
+        .map((i) => {
+          return {
+            countryId: i.countryId?.toString(),
+            wasRemoved: 'false',
+            readOnly: true,
+          } as ExtendedCountryProps
+        }),
+      ...notDuplicateAnswers,
+    ]
+    setSelectedCountries(combinedLists)
+  }, [])
 
   useEffect(() => {
     setFilteredSelectedCountries(
@@ -96,7 +130,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
     if (value === NO) {
       handleRemoveAll()
-    } else {
+    } else if (preRegisteredCountries.length === 0) {
       handleAdd()
     }
   }
@@ -117,6 +151,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
         onSelect={(value) => {
           handleLiveAbroadChange(value)
         }}
+        disabled={preRegisteredCountries.length > 0}
         error={
           errors &&
           getErrorViaPath(errors, 'countriesOfResidence.hasLivedAbroad')
@@ -159,6 +194,7 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
               handleRemove={handleRemove}
               itemNumber={position}
               addCountryToList={addCountryToList}
+              readOnly={field.readOnly}
               {...props}
             />
           )

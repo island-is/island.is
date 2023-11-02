@@ -10,7 +10,10 @@ import {
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
+import {
+  OptionSetItem,
+  TravelDocumentViewModel,
+} from '@island.is/clients/directorate-of-immigration'
 import { Routes } from '../../../lib/constants'
 import { CitizenIndividual } from '../../../shared'
 
@@ -48,18 +51,45 @@ export const PassportSubSection = buildSubSection({
           title: supportingDocuments.labels.passport.publishDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const passport = getValueViaPath(
+              application.externalData,
+              'currentPassportItem.data',
+              undefined,
+            ) as TravelDocumentViewModel | undefined
+
+            return passport?.dateOfIssue
+          },
         }),
         buildDateField({
           id: `${Routes.PASSPORT}.expirationDate`,
           title: supportingDocuments.labels.passport.expirationDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const passport = getValueViaPath(
+              application.externalData,
+              'currentPassportItem.data',
+              undefined,
+            ) as TravelDocumentViewModel | undefined
+
+            return passport?.dateOfExpiry
+          },
         }),
         buildTextField({
           id: `${Routes.PASSPORT}.passportNumber`,
           title: supportingDocuments.labels.passport.passportNumber,
           placeholder: supportingDocuments.labels.passport.numberPlaceholder,
           width: 'half',
+          defaultValue: (application: Application) => {
+            const passport = getValueViaPath(
+              application.externalData,
+              'currentPassportItem.data',
+              undefined,
+            ) as TravelDocumentViewModel | undefined
+
+            return passport?.travelDocumentNo
+          },
         }),
         buildSelectField({
           id: `${Routes.PASSPORT}.passportTypeId`,
@@ -78,6 +108,15 @@ export const PassportSubSection = buildSubSection({
               label: name || '',
             }))
           },
+          defaultValue: (application: Application) => {
+            const passport = getValueViaPath(
+              application.externalData,
+              'currentPassportItem.data',
+              undefined,
+            ) as TravelDocumentViewModel | undefined
+
+            return passport?.travelDocumentTypeId?.toString()
+          },
         }),
         buildSelectField({
           id: `${Routes.PASSPORT}.countryOfIssuerId`,
@@ -95,6 +134,15 @@ export const PassportSubSection = buildSubSection({
               value: id?.toString() || '',
               label: name || '',
             }))
+          },
+          defaultValue: (application: Application) => {
+            const passport = getValueViaPath(
+              application.externalData,
+              'currentPassportItem.data',
+              undefined,
+            ) as TravelDocumentViewModel | undefined
+
+            return passport?.issuingCountryId?.toString()
           },
         }),
         buildFileUploadField({
