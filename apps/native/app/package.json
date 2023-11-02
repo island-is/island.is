@@ -21,7 +21,7 @@
     "nx:build": "yarn run -T nx run native-app:build"
   },
   "dependencies": {
-    "@apollo/client": "3.7.7",
+    "@apollo/client": "3.8.6",
     "@datadog/mobile-react-native": "1.3.0",
     "@formatjs/intl-datetimeformat": "4.2.4",
     "@formatjs/intl-getcanonicallocales": "1.7.3",
