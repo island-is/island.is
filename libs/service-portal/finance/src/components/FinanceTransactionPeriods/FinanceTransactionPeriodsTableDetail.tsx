@@ -93,6 +93,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
         typeId,
         period: period.period,
         subject: subject.chargeItemSubject,
+        year: financeTransactionPeriodsState.year ?? '',
       })
     } else if (!selected && selectedPeriods.find(findPeriod)) {
       selectedPeriods = selectedPeriods.filter(

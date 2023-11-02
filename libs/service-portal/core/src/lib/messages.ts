@@ -97,6 +97,10 @@ export const m = defineMessages({
     id: 'service.portal:period',
     defaultMessage: 'Tímabil',
   },
+  selectedPeriods: {
+    id: 'service.portal:selected-periods',
+    defaultMessage: 'Valin tímabil',
+  },
   lastMovement: {
     id: 'service.portal:last-movement',
     defaultMessage: 'Síðasta hreyfing',
@@ -109,6 +113,10 @@ export const m = defineMessages({
     id: 'service.portal:status',
     defaultMessage: 'Staða',
   },
+  statusTotal: {
+    id: 'service.portal:status-total',
+    defaultMessage: 'Uppsöfnuð staða',
+  },
   total: {
     id: 'service.portal:total',
     defaultMessage: 'Samtals',
@@ -120,6 +128,10 @@ export const m = defineMessages({
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
+  },
+  dateShort: {
+    id: 'service.portal:date-short',
+    defaultMessage: 'Dags.',
   },
   transactionType: {
     id: 'service.portal:transaction-type',

@@ -1,4 +1,4 @@
-import { Table as T } from '@island.is/island-ui/core'
+import { Box, Button, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'

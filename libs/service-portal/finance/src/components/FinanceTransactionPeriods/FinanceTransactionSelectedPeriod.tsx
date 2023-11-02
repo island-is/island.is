@@ -1,0 +1,145 @@
+import {
+  Box,
+  Text,
+  Table as T,
+  AlertBanner,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import { dateFormat } from '@island.is/shared/constants'
+import { useLocale } from '@island.is/localization'
+import {
+  ExpandHeader,
+  ExpandRow,
+  m,
+  periodFormat,
+} from '@island.is/service-portal/core'
+import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
+import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
+import format from 'date-fns/format'
+import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
+
+export default function FinanceTransactionSelectedPeriod({
+  period,
+}: {
+  period: SelectedPeriod
+}) {
+  const { formatMessage } = useLocale()
+
+  const { data, loading, error, called } = useGetChargeTypePeriodSubjectQuery({
+    variables: {
+      input: {
+        year: period.year,
+        period: period.period,
+        subject: period.subject,
+        typeId: period.typeId,
+      },
+    },
+  })
+
+  return (
+    <Box paddingBottom={4}>
+      <Box paddingBottom={2}>
+        <Text fontWeight="semiBold" variant="medium" as="span">
+          {formatMessage(m.feeBase)}:{' '}
+        </Text>
+        <Text variant="small" as="span">
+          {period.subject} -{' '}
+        </Text>
+        <Text variant="small" as="span">
+          {formatMessage(m.period)}:{' '}
+        </Text>
+        <Text fontWeight="semiBold" variant="small" as="span">
+          {periodFormat(period.period)}
+        </Text>
+      </Box>
+
+      {error && (
+        <AlertBanner
+          description={formatMessage(m.errorFetch)}
+          variant="error"
+        />
+      )}
+      {(loading || !called) &&
+        !data?.getChargeTypePeriodSubject.records?.length &&
+        !error && (
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={5} />
+          </Box>
+        )}
+      {!data?.getChargeTypePeriodSubject.records?.length &&
+        called &&
+        !loading &&
+        !error && (
+          <AlertBanner
+            description={formatMessage(m.noResultsTryAgain)}
+            variant="warning"
+          />
+        )}
+      {data?.getChargeTypePeriodSubject.records?.length ? (
+        <T.Table>
+          <ExpandHeader
+            data={[
+              { value: '', printHidden: true },
+              { value: formatMessage(m.dateShort) },
+              { value: formatMessage(m.feeItem) },
+              { value: formatMessage(m.recordCategory) },
+              { value: formatMessage(m.amount), align: 'right' },
+            ]}
+          />
+          <T.Body>
+            {data.getChargeTypePeriodSubject.records.map((record) => (
+              <ExpandRow
+                key={`${record.category}-${record.chargeItemSubject}-${record.createTime}`}
+                data={[
+                  {
+                    value: format(new Date(record.createDate), dateFormat.is),
+                  },
+                  { value: record.chargeItemSubject },
+                  { value: record.category },
+                  { value: record.amount, align: 'right' },
+                ]}
+              >
+                <FinanceTransactionsDetail
+                  data={[
+                    {
+                      title: formatMessage(m.effectiveDate),
+                      value: format(new Date(record.valueDate), dateFormat.is),
+                    },
+                    {
+                      title: formatMessage(m.performingOrganization),
+                      value: record.performingOrganization,
+                    },
+                    {
+                      title: formatMessage(m.guardian),
+                      value: record.collectingOrganization,
+                    },
+                    {
+                      title: formatMessage(m.recordCategory),
+                      value: record.category,
+                    },
+                    {
+                      title: formatMessage(m.recordAction),
+                      value: record.subCategory,
+                    },
+                    ...(record.actionCategory
+                      ? [
+                          {
+                            title: formatMessage(m.actionCategory),
+                            value: record.actionCategory,
+                          },
+                        ]
+                      : []),
+                    {
+                      title: formatMessage(m.reference),
+                      value: record.reference,
+                    },
+                  ]}
+                />
+              </ExpandRow>
+            ))}
+          </T.Body>
+        </T.Table>
+      ) : null}
+    </Box>
+  )
+}

@@ -21,8 +21,10 @@ const FinanceTransactionPeriods = () => {
           <FinanceIntro
             text={formatMessage({
               id: 'sp.finance-transaction-periods:intro',
-              defaultMessage:
-                'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+              defaultMessage: `Hér sérð þú þær hreyfingar sem tilheyra ákveðnum reikningi eða álagningu.
+                Þeir gjaldflokkar sem birtast hér að neðan eru þeir gjaldflokkar sem hafa haft hreyfingu síðustu 12 mánuði.
+                Veldu gjaldflokk með því að smella á hann og síðan þann gjaldgrunn og tímabil sem við á.\n\n
+                Ef þú vilt annað tímabil eða gjaldflokka geturðu valið það með því að opna síuna.`,
             })}
           />
 

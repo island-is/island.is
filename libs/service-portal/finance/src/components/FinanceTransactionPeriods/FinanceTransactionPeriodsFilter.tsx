@@ -9,6 +9,7 @@ import {
   Hidden,
   SkeletonLoader,
   Stack,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m, Filter } from '@island.is/service-portal/core'
@@ -25,6 +26,7 @@ import {
   ChargeTypesByYear,
   ChargeTypesDetailsByYear,
 } from './FinanceTransactionPeriodsTypes'
+import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
 
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()
@@ -45,13 +47,18 @@ const FinanceTransactionPeriodsFilter = () => {
   const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[]>([])
 
+  const [selectedPeriodsActive, setSelectedPeriodsActive] = useState(false)
+
   const { data: assessmentYearsData, error: assessmentYearsError } =
     useGetAssessmentYearsQuery()
 
-  const [getChargeTypesByYear] = useGetChargeTypesByYearLazyQuery()
+  const [getChargeTypesByYear, { data: chargeTypesData }] =
+    useGetChargeTypesByYearLazyQuery()
+
   const [
     getChargeTypesDetailsByYear,
     {
+      data: chargeTypesDetailsData,
       loading: chargeTypesDetailsLoading,
       called: chargeTypesDetailsCalled,
       error: chargeTypesDetailsError,
@@ -78,13 +85,13 @@ const FinanceTransactionPeriodsFilter = () => {
   }, [assessmentYears])
 
   useEffect(() => {
+    setSelectedPeriodsActive(false)
+    setFinanceTransactionPeriodsState({ selectedPeriods: [] })
+
     if (financeTransactionPeriodsState.year) {
       getChargeTypesByYear({
         variables: {
           input: { year: financeTransactionPeriodsState.year },
-        },
-        onCompleted: (data) => {
-          setChargeTypes(data.getChargeTypesByYear)
         },
       })
 
@@ -95,16 +102,19 @@ const FinanceTransactionPeriodsFilter = () => {
             typeId: activeChargeType,
           },
         },
-        onCompleted: (data) => {
-          setChargeTypeDetails(data.getChargeTypesDetailsByYear)
-        },
       })
-    } else {
-      setChargeTypes(undefined)
-      setChargeTypeDetails(undefined)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [financeTransactionPeriodsState.year, activeChargeType])
+
+  useEffect(() => {
+    setChargeTypes(chargeTypesData?.getChargeTypesByYear)
+    setChargeTypeDetails(chargeTypesDetailsData?.getChargeTypesDetailsByYear)
+  }, [chargeTypesData, chargeTypesDetailsData])
+
+  useEffect(() => {
+    setSelectedPeriodsActive(false)
+  }, [financeTransactionPeriodsState.selectedPeriods])
 
   function clearFilter() {
     setDropdownSelect([])
@@ -230,6 +240,50 @@ const FinanceTransactionPeriodsFilter = () => {
           <FinanceTransactionPeriodsTable records={recordsDataArray} />
         ) : null}
       </Box>
+
+      {chargeTypeDetails?.chargeType?.length ? (
+        <Box paddingTop={2}>
+          <Box justifyContent="flexEnd" display="flex">
+            <Button
+              disabled={
+                !financeTransactionPeriodsState.selectedPeriods?.length ||
+                selectedPeriodsActive
+              }
+              colorScheme="default"
+              icon="playCircle"
+              iconType="filled"
+              onClick={() => setSelectedPeriodsActive(true)}
+              preTextIconType="filled"
+              size="default"
+              type="button"
+              variant="utility"
+            >
+              Birta valin tímabil
+            </Button>
+          </Box>
+
+          {selectedPeriodsActive && (
+            <Box>
+              <Text
+                as="h2"
+                fontWeight="semiBold"
+                variant="h3"
+                paddingBottom={2}
+              >
+                {formatMessage(m.selectedPeriods)}
+              </Text>
+              {financeTransactionPeriodsState.selectedPeriods?.map((period) => {
+                return (
+                  <FinanceTransactionSelectedPeriod
+                    key={`${period.period}-${period.subject}-${period.typeId}`}
+                    period={period}
+                  />
+                )
+              })}
+            </Box>
+          )}
+        </Box>
+      ) : null}
     </Stack>
   )
 }
