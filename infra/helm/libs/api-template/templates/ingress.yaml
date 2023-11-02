@@ -1,5 +1,6 @@
 {{- if .Values.enabled }}
 {{- $fullName := include "api-template.fullname" . -}}
+{{- $appName := include "api-template.name" . -}}
 {{- $labels := include "api-template.labels" . -}}
 {{- $svcPort := $.Values.service.port -}}
 {{- range $name, $ingress := omit .Values.ingress "behindCloudfront" }}
@@ -38,7 +39,7 @@ spec:
           - pathType: Prefix
             backend:
               service:
-                name: {{ $name }}
+                name: {{ appName }}
                 port:
                   number: {{ $svcPort }}
           {{- if eq (kindOf .) "map" }}
