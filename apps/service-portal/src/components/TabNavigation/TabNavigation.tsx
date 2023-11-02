@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { Box, Button, FocusableBox, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -17,8 +17,15 @@ interface Props {
 
 export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const { formatMessage } = useLocale()
+  const [activeItem, setActiveItem] = useState<
+    PortalNavigationItem | undefined
+  >()
   const navigate = useNavigate()
   const { width } = useWindowSize()
+
+  useEffect(() => {
+    setActiveItem(items.filter((item) => item.active)?.[0] ?? undefined)
+  }, [items])
 
   const tabChangeHandler = (id?: string) => {
     if (id && id !== pathname) {
@@ -27,7 +34,6 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   }
 
   const isMobile = width < theme.breakpoints.md
-  const activeItem = items.filter((item) => item.active)?.[0]
   return (
     <>
       <Box className={styles.tabList}>
