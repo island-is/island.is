@@ -3,7 +3,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import * as types from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
-import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
+import { LinkCardSection, mapLinkCardSection } from './linkCardSection.model'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
 
@@ -36,8 +36,8 @@ export class OpenDataPage {
   @CacheField(() => [GraphCard])
   graphCards?: Array<GraphCard>
 
-  @CacheField(() => LinkCardSlice)
-  externalLinkCardSelection?: LinkCardSlice | null
+  @CacheField(() => LinkCardSection)
+  externalLinkCardSelection?: LinkCardSection | null
 
   @Field()
   externalLinkSectionTitle?: string
@@ -67,7 +67,7 @@ export const mapOpenDataPage = ({
   ),
   chartSectionTitle: fields.chartSectionTitle ?? '',
   externalLinkCardSelection: fields.externalLinkCardSelection
-    ? mapLinkCardSlice(fields.externalLinkCardSelection)
+    ? mapLinkCardSection(fields.externalLinkCardSelection)
     : null,
   graphCards: (fields.graphCards ?? []).map(mapGraphCard),
   externalLinkSectionTitle: fields.externalLinkSectionTitle ?? '',

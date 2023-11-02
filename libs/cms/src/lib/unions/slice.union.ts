@@ -48,7 +48,7 @@ import { mapTimelineSlice, TimelineSlice } from '../models/timelineSlice.model'
 import { HeadingSlice, mapHeadingSlice } from '../models/headingSlice.model'
 import { mapStorySlice, StorySlice } from '../models/storySlice.model'
 import { LinkCard, mapLinkCard } from '../models/linkCard.model'
-import { LinkCardSlice, mapLinkCardSlice } from '../models/linkCardSlice.model'
+import { LinkCardSection, mapLinkCardSection } from '../models/linkCardSection.model'
 import {
   LatestNewsSlice,
   mapLatestNewsSlice,
@@ -160,7 +160,7 @@ export const SliceUnion = createUnionType({
     TimelineSlice,
     HeadingSlice,
     LinkCard,
-    LinkCardSlice,
+    LinkCardSection,
     StorySlice,
     LogoListSlice,
     LatestNewsSlice,
@@ -212,7 +212,7 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'card':
       return mapLinkCard(slice as ICard)
     case 'cardSection':
-      return mapLinkCardSlice(slice as ICardSection)
+      return mapLinkCardSection(slice as ICardSection)
     case 'storySection':
       return mapStorySlice(slice as IStorySection)
     case 'logoListSlice':
