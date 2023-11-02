@@ -92,7 +92,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
             : undefined,
           {
             label: getLabel('applyForNewCard', locale, label),
-            value: 'https://island.is/umsoknir/evropska-sjukratryggingakortid',
+            value: '/umsoknir/evropska-sjukratryggingakortid',
           },
         ].filter(isDefined),
       },
