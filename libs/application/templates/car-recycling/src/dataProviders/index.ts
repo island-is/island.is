@@ -5,3 +5,8 @@ export {
   UserProfileApi,
   NationalRegistrySpouseApi,
 } from '@island.is/application/types'
+
+export const CurrentVehiclesApi = defineTemplateApi({
+  action: 'getCurrentVehiclesWithOwnerchangeChecks',
+  externalDataId: 'currentVehicleList',
+})

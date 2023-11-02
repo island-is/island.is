@@ -20,7 +20,7 @@ interface VMSTError {
 export class CarRecyclingService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private recylingFundService: RecyclingFundClientService,
+    private recyclingFundService: RecyclingFundClientService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
   }
@@ -40,19 +40,15 @@ export class CarRecyclingService extends BaseTemplateApiService {
     params = undefined,
     auth,
   }: TemplateApiModuleActionProps) {
-    console.log('?????????????   getVehicles ?????????????????????')
-
     try {
-      const response = await this.recylingFundService.getVehicles(auth)
+      const response = await this.recyclingFundService.getVehicles(auth)
 
       if (!response) {
-        throw new Error(
-          `Failed to send the parental leave application, no response.id from VMST API: ${response}`,
-        )
+        throw new Error(`Failed to get vehicles from: ${response}`)
       }
       return response
     } catch (e) {
-      this.logger.error('Failed to send the parental leave application', e)
+      this.logger.error('Failed to vehicles', e)
       throw this.parseErrors(e)
     }
   }

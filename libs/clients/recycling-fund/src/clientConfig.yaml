@@ -2,41 +2,32 @@ x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v12.0.0.0))
 openapi: 3.0.0
 info:
   title: Car recycling - Skilavottord
-  version: 1.0.0
+  version: 0.0.5
 servers:
   - url: 'localhost:3339'
 paths:
-  '/app/skilavottord/api/graphql/skilavottordVehicles':
-    get:
+  '/app/skilavottord/api/graphql':
+    post:
       tags:
-        - GetVehicles
-      operationId: Application_GetVehicles
+        - RecyclingFundGraphQLClient
+      operationId: RecyclingFund_Query
+      requestBody: 
+        x-name: GraphQL
+        content:
+          application/json:
+            schema:
+              type: object
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/VehicleInformationResponse'
-
-  '/app/skilavottord/api/graphql/getBK':
-    get:
-      tags:
-        - Get BK
-      operationId: Application_GETBK
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Bkfoo'
+                type: array
+                items:
+                  type: string
 components:
   schemas:
-    Bkfoo:
-      type: string
-      example: true
-      description: Hello from the Oddur side
     VehicleInformationResponse:
       type: array
       additionalProperties: false

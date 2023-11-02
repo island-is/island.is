@@ -1,15 +1,21 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { GetVehiclesApi, Vehicles } from '../../gen/fetch'
+import { RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 
 @Injectable()
 export class RecyclingFundClientService {
-  constructor(private readonly getVehiclesApi: GetVehiclesApi) {}
+  constructor(
+    private readonly recyclingFundGraphQLClientApi: RecyclingFundGraphQLClientApi,
+  ) {}
 
-  private getVehiclesAPIWithAuth = (user: User) =>
-    this.getVehiclesApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private getRecyclingFundGraphQLClient = (user: User) =>
+    this.recyclingFundGraphQLClientApi.withMiddleware(
+      new AuthMiddleware(user as Auth),
+    )
 
-  async getVehicles(user: User): Promise<Array<Vehicles>> {
-    return await this.getVehiclesAPIWithAuth(user).applicationGetVehicles()
+  async getVehicles(user: User): Promise<any> {
+    return await this.getRecyclingFundGraphQLClient(user).recyclingFundQuery({
+      body: { query: '{skilavottordVehicles{ permno }}' },
+    })
   }
 }

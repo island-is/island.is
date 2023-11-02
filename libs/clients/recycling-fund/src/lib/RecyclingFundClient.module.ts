@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { Configuration, GetVehiclesApi } from '../../gen/fetch'
+import { Configuration, RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { RecyclingFundClientService } from './RecyclingFundClient.service'
 
@@ -32,7 +32,7 @@ export class RecyclingFundClientModule {
       fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
     })
 
-    const exportedApis = [GetVehiclesApi]
+    const exportedApis = [RecyclingFundGraphQLClientApi]
 
     return {
       module: RecyclingFundClientModule,

@@ -7,6 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import {
+  CurrentVehiclesApi,
   Form,
   FormModes,
   NationalRegistryUserApi,
@@ -44,7 +45,15 @@ export const Prerequisites: Form = buildForm({
               },
             ],
           }),
-          dataProviders: [],
+          dataProviders: [
+            /*  buildDataProviderItem({
+              provider: CurrentVehiclesApi,
+              title:
+                'parentalLeaveFormMessages.shared.childrenInformationTitle',
+              subTitle:
+                'parentalLeaveFormMessages.shared.childrenInformationSubTitle',
+            }),*/
+          ],
         }),
       ],
     }),
