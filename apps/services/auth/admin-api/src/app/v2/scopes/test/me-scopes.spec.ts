@@ -66,6 +66,8 @@ const createMockedApiScopes = (
           },
         ],
         domainName: TENANT_ID,
+        customDelegationOnlyFor:
+          i === 0 ? [AuthDelegationType.ProcurationHolder] : undefined,
         ...scope,
       } as AdminScopeDTO),
   )
@@ -276,6 +278,7 @@ const createTestCases: Record<string, CreateTestCase> = {
           ...expectedCreateOutput,
           grantToAuthenticatedUser: true,
           grantToLegalGuardians: true,
+          customDelegationOnlyFor: [AuthDelegationType.ProcurationHolder],
         },
       },
     },
@@ -324,6 +327,22 @@ const createTestCases: Record<string, CreateTestCase> = {
       status: 400,
       body: {
         detail: ['property enabled should not exist'],
+      },
+    },
+  },
+  'should return bad request for illegal value in customDelegationOnlyFor': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    input: {
+      ...createInput,
+      customDelegationOnlyFor: [AuthDelegationType.LegalGuardian] as any,
+    },
+    expected: {
+      status: 400,
+      body: {
+        detail: [
+          'each value in customDelegationOnlyFor must be one of the following values: ProcurationHolder, Custom',
+        ],
       },
     },
   },
@@ -382,6 +401,7 @@ const inputPatch = {
   grantToAuthenticatedUser: true,
   grantToLegalGuardians: true,
   grantToProcuringHolders: true,
+  customDelegationOnlyFor: [AuthDelegationType.ProcurationHolder],
   allowExplicitDelegationGrant: true,
   isAccessControlled: true,
 }
@@ -659,6 +679,7 @@ describe('MeScopesController', () => {
           })
         } else {
           // Assert response
+          console.log(response.body)
           expect(response.body).toMatchObject(testCase.expected.body)
         }
       })

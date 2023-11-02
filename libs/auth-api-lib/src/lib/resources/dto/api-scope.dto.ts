@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
+import { IsString, IsNotEmpty } from 'class-validator'
+
 import { ApiScopeBaseDTO } from './base/api-scope-base.dto'
 
 export class ApiScopeDTO extends ApiScopeBaseDTO {

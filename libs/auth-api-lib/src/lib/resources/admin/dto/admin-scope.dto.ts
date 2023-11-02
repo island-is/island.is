@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ApiScopeBaseDTO } from '../../dto/base/api-scope-base.dto'
 import { TranslatedValueDto } from '../../../translation/dto/translated-value.dto'
+import { ApiScopeBaseDTO } from '../../dto/base/api-scope-base.dto'
 
 export class AdminScopeDTO extends ApiScopeBaseDTO {
   @ApiProperty({
@@ -33,7 +33,4 @@ export class AdminScopeDTO extends ApiScopeBaseDTO {
     ],
   })
   description!: TranslatedValueDto[]
-
-  @ApiProperty({ type: String, example: '@island.is' })
-  domainName!: string
 }

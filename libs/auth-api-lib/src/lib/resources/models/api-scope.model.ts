@@ -13,6 +13,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
+import { AuthDelegationType } from '@island.is/shared/types'
+
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
 import { ApiScopeDTO } from '../dto/api-scope.dto'
@@ -20,6 +22,7 @@ import { ApiScopeGroup } from './api-scope-group.model'
 import { ApiScopeUserAccess } from './api-scope-user-access.model'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { Domain } from './domain.model'
+import { CustomDelegationOnlyForDelegationType } from '../types'
 
 interface ModelAttributes {
   name: string
@@ -177,8 +180,30 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    description: 'Allow custom delegations for this scope',
+  })
   allowExplicitDelegationGrant!: boolean
+
+  /**
+   * This property adds extra conditions to custom delegation grants. It is an array of
+   * delegation types which can grant the scope to other users.
+   *
+   *   - ProcurationHolder: "Company owners" can grant this scope to other users on behalf of their company.
+   *   - Custom: Custom delegatee can grant this scope to other users on behalf of the original delegator.
+   *
+   *   Note: To enable access control users of companies to grant scopes both 'ProcurationHolder' and 'Custom' must be set.
+   *
+   *   In all cases, the active user still needs to have this scope and the
+   *   @see {AuthScope.delegations} scope in their access token.
+   */
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    defaultValue: null,
+    values: Object.values(CustomDelegationOnlyForDelegationType),
+  })
+  customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType[]
 
   @Column({
     type: DataType.BOOLEAN,
@@ -271,6 +296,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
       grantToProcuringHolders: this.grantToProcuringHolders,
       grantToPersonalRepresentatives: this.grantToPersonalRepresentatives,
       allowExplicitDelegationGrant: this.allowExplicitDelegationGrant,
+      customDelegationOnlyFor: this.customDelegationOnlyFor,
       automaticDelegationGrant: this.automaticDelegationGrant,
       alsoForDelegatedUser: this.alsoForDelegatedUser,
       required: this.required,
