@@ -104,4 +104,11 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   mobileStatus?: string
+
+  @Column({
+    type: 'TIMESTAMP WITH TIME ZONE',
+    allowNull: true,
+  })
+  @ApiProperty()
+  lastNudge?: Date
 }

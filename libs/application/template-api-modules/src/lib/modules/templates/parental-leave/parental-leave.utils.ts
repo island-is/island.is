@@ -256,7 +256,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
+        return 'FO-FÓ'
       } else {
         return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
@@ -266,7 +266,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-Æ' : 'M-Æ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-Æ' : 'M-Æ'
+        return 'FO-Æ'
       } else {
         return applicantIsMale(application) ? 'F-Æ' : 'FO-Æ'
       }

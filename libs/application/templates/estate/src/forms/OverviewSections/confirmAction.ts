@@ -33,7 +33,7 @@ export const overviewConfirmAction = [
           ],
   }),
   buildCheckboxField({
-    id: 'confirmAction',
+    id: 'confirmActionUndividedEstate',
     title: '',
     backgroundColor: 'blue',
     defaultValue: [],

@@ -17,18 +17,6 @@ export const messages = defineMessages({
     id: 'sp.health:choose-medicine-tabs',
     defaultMessage: 'Veldu flokk',
   },
-  month: {
-    id: 'service.portal:month',
-    defaultMessage: 'Mánuður',
-  },
-  dateOfOnvoiceShort: {
-    id: 'service.portal:date-of-invoice',
-    defaultMessage: 'Dags. reiknings',
-  },
-  totalPrice: {
-    id: 'service.portal:total-price',
-    defaultMessage: 'Heildarverð',
-  },
   typeofService: {
     id: 'sp.health:typeof-service',
     defaultMessage: 'Tegund þjónustu',

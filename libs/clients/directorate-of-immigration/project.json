@@ -29,7 +29,17 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://utl-umsokn.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10011/UTL-Protected/getOpenAPI?serviceCode=Utl-Umsokn-v1 -H 'Accept: application/json' > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/Applicant/NewItems\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/Application/NewItems\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/ApplicationAttachment/NewItems/{applicationId}\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/CountryOfResidence/NewItems\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/CriminalRecord/NewItems\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/Employer/NewItems/{applicationId}\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/ResidenceAbroad/NewItems/{applicationId}\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/Study/NewItems\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.paths.\"/api/TravelDocument/NewItems/{applicationId}\".post.requestBody.required = true' src/clientConfig.json) > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/directorate-of-immigration"
