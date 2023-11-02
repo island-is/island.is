@@ -11,9 +11,7 @@ import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Injectable()
 export class DrugService {
-  constructor(
-    private api: DrugApi,
-  ) {}
+  constructor(private api: DrugApi) {}
 
   async getPeriods(user: User) {
     return await this.api

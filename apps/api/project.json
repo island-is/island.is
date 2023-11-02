@@ -80,7 +80,11 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start api"],
+        "commands": [
+          "./scripts/run-xroad-proxy.sh",
+          "./scripts/run-soffia-proxy.sh",
+          "yarn start api"
+        ],
         "parallel": true
       }
     },

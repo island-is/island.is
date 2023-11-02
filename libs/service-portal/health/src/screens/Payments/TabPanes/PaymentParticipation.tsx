@@ -22,7 +22,9 @@ import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
 
 export const PaymentPartication = () => {
-  const [startDate, setStartDate] = useState<Date>(sub  (new Date(), { months: 1 }))
+  const [startDate, setStartDate] = useState<Date>(
+    sub(new Date(), { months: 1 }),
+  )
   const [endDate, setEndDate] = useState<Date>(new Date())
   const intl = useIntl()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number>(1)
@@ -38,8 +40,8 @@ export const PaymentPartication = () => {
       input: {
         dateTo: endDate.toString(),
         dateFrom: startDate.toString(),
-      }
-    }
+      },
+    },
   })
 
   const {

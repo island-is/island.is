@@ -1,5 +1,5 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { PaymentOverviewBill } from "./paymentOverviewBill.model"
+import { ObjectType, Field } from '@nestjs/graphql'
+import { PaymentOverviewBill } from './paymentOverviewBill.model'
 
 @ObjectType('RightsPortalPaymentOverview')
 export class PaymentOverview {
