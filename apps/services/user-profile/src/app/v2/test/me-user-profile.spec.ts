@@ -11,6 +11,8 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
 import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { EmailVerification } from '../../user-profile/emailVerification.model'
 
 const testUserProfile = {
   nationalId: '1234567890',
@@ -330,7 +332,6 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        statusCode: 400,
         message: 'Email code is not a match. 3 tries remaining.',
       })
 
@@ -353,7 +354,6 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        statusCode: 400,
         message: 'SMS code is not a match. 3 tries remaining.',
       })
 
@@ -391,8 +391,55 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        statusCode: 400,
         message: 'Mobile phone number verification code is required',
+      })
+    })
+
+    it('PATCH /v2/me should return 400 when to many failed sms attempts have occurred', async () => {
+      // Arrange
+      const verificationModel = app.get(getModelToken(SmsVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      verification.tries = 3
+      await verification.save()
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: '000',
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        message:
+          'Too many failed SMS verifications. Please restart verification.',
+      })
+    })
+
+    it('PATCH /v2/me should return 400 when to many failed email attempts have occurred', async () => {
+      // Arrange
+      const verificationModel = app.get(getModelToken(EmailVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      verification.tries = 3
+      await verification.save()
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: '000',
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        message:
+          'Too many failed email verifications. Please restart verification.',
       })
     })
 

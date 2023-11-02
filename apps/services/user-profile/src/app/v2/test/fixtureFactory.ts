@@ -36,7 +36,7 @@ export class FixtureFactory {
     })
   }
 
-  async createEmailVerification({ nationalId, email, hash }) {
+  async createEmailVerification({ nationalId, email, hash, tries = 0 }) {
     const verificationModel = this.get(EmailVerification)
 
     return await verificationModel.create<EmailVerification>({
@@ -44,11 +44,16 @@ export class FixtureFactory {
       email,
       hash,
       confirmed: false,
-      tries: 0,
+      tries: tries,
     })
   }
 
-  async createSmsVerification({ nationalId, mobilePhoneNumber, smsCode }) {
+  async createSmsVerification({
+    nationalId,
+    mobilePhoneNumber,
+    smsCode,
+    tries = 0,
+  }) {
     const verificationModel = this.get(SmsVerification)
 
     return await verificationModel.create<SmsVerification>({
@@ -56,7 +61,7 @@ export class FixtureFactory {
       mobilePhoneNumber,
       smsCode,
       confirmed: false,
-      tries: 0,
+      tries: tries,
     })
   }
 }

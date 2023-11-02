@@ -117,7 +117,6 @@ export class UserProfileService {
           throw new BadRequestException({
             message,
             remainingAttempts,
-            statusCode: 400,
           })
         }
       })
