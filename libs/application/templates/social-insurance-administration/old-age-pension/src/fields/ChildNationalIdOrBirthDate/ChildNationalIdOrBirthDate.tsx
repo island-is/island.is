@@ -190,8 +190,7 @@ const ChildNationalIdOrBirthDate: FC<FieldBaseProps> = ({
               <AlertMessage
                 type="warning"
                 title={formatMessage(
-                  oldAgePensionFormMessage.connectedApplications
-                    .childPensionNameAlertTitle,
+                  oldAgePensionFormMessage.shared.alertTitle,
                 )}
                 message={formatMessage(
                   oldAgePensionFormMessage.connectedApplications

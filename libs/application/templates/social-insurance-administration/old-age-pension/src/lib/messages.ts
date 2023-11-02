@@ -28,6 +28,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    alertTitle: {
+      id: 'oap.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention'
+    }
   }),
 
   pre: defineMessages({
@@ -238,11 +243,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Greiðsluupplýsingar',
       description: 'Payment information',
     },
-    alertTitle: {
-      id: 'oap.application:payment.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
-    },
     alertMessage: {
       id: 'oap.application:payment.alert.message',
       defaultMessage:
@@ -316,11 +316,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage:
         'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
       description: 'description',
-    },
-    onePaymentPerYearAlertTitle: {
-      id: 'oap.application:one.payment.per.year.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
     onePaymentPerYearAlertDescription: {
       id: 'oap.application:one.payment.per.year.alert.description',
@@ -482,11 +477,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:connected.applications.child.pension.birth.date.placeholder',
       defaultMessage: 'Veldu fæðingardag',
       description: 'Choose date of birth',
-    },
-    childPensionNameAlertTitle: {
-      id: 'oap.application:connected.applications.child.pension.name.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
     childPensionNameAlertMessage: {
       id: 'oap.application:connected.applications.child.pension.name.alert.message',
@@ -787,11 +777,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:period.desember',
       defaultMessage: 'Desember',
       description: 'December',
-    },
-    periodAlertTitle: {
-      id: 'oap.application:period.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
     },
     periodAlertMessage: {
       id: 'oap.application:period.alert.message',

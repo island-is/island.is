@@ -253,7 +253,7 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alert',
-                  title: oldAgePensionFormMessage.payment.alertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message: oldAgePensionFormMessage.payment.alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -535,7 +535,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'period.alert',
-                  title: oldAgePensionFormMessage.period.periodAlertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message: oldAgePensionFormMessage.period.periodAlertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'warning',
@@ -650,8 +650,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'onePaymentPerYear.alert',
                   title:
-                    oldAgePensionFormMessage.onePaymentPerYear
-                      .onePaymentPerYearAlertTitle,
+                    oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearAlertDescription,
