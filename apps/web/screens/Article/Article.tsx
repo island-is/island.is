@@ -47,7 +47,6 @@ import {
   QueryGetSingleArticleArgs,
   Organization,
   Stepper as StepperSchema,
-  LinkCard,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
@@ -478,9 +477,6 @@ const ArticleScreen: Screen<ArticleProps> = ({
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
                 Form: (form) => <Form form={form} namespace={namespace} />,
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore make web strict
-                LinkCard: (card: LinkCard) => <p>{card.title}</p>,
               },
             },
             activeLocale,
