@@ -119,6 +119,16 @@ export const PermissionAccessControl = () => {
             })
           }}
           {...commonProps}
+          children={
+            <Checkbox
+              label={formatMessage(m.onlyForCompanies)}
+              subLabel={formatMessage(m.onlyForCompaniesDescription)}
+              name="onlyFoCompanies"
+              checked={false}
+              onChange={(e) => {}}
+              {...commonProps}
+            />
+          }
         />
         <Checkbox
           label={formatMessage(m.grantToPersonalRepresentatives)}

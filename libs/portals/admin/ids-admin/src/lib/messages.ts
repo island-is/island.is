@@ -794,6 +794,15 @@ export const m = defineMessages({
     defaultMessage:
       'Should users be able to grant other users custom delegation for this permission.',
   },
+  onlyForCompanies: {
+    id: 'ap.ids-admin:only-for-companies',
+    defaultMessage: 'Only for companies',
+  },
+  onlyForCompaniesDescription: {
+    id: 'ap.ids-admin:only-for-companies-description',
+    defaultMessage:
+      'Should only companies be able to grant other users delegation for this permission.',
+  },
   grantToPersonalRepresentatives: {
     id: 'ap.ids-admin:grant-to-personal-representatives',
     defaultMessage: 'Personal representatives',
