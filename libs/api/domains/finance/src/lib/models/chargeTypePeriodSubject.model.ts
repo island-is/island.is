@@ -56,11 +56,11 @@ export class ChargeTypePeriodSubjectData {
 
 @ObjectType('FinanceChargeTypePeriodSubjectModel')
 export class ChargeTypePeriodSubjectModel {
-  @Field()
-  message!: string
+  @Field({ nullable: true })
+  message?: string
 
-  @Field()
-  nextKey!: string
+  @Field({ nullable: true })
+  nextKey?: string
 
   @Field()
   more!: boolean
