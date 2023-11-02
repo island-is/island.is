@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   AlertBanner,
   Box,
@@ -30,6 +30,7 @@ import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod
 
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()
+  const selectedPeriodsRef = useRef<HTMLElement>(null)
 
   const { financeTransactionPeriodsState, setFinanceTransactionPeriodsState } =
     useFinanceTransactionPeriodsState()
@@ -252,7 +253,15 @@ const FinanceTransactionPeriodsFilter = () => {
               colorScheme="default"
               icon="playCircle"
               iconType="filled"
-              onClick={() => setSelectedPeriodsActive(true)}
+              onClick={() => {
+                setSelectedPeriodsActive(true)
+                setTimeout(() => {
+                  selectedPeriodsRef.current?.scrollIntoView({
+                    block: 'start',
+                    behavior: 'smooth',
+                  })
+                }, 250)
+              }}
               preTextIconType="filled"
               size="default"
               type="button"
@@ -263,7 +272,7 @@ const FinanceTransactionPeriodsFilter = () => {
           </Box>
 
           {selectedPeriodsActive && (
-            <Box>
+            <Box ref={selectedPeriodsRef}>
               <Text
                 as="h2"
                 fontWeight="semiBold"

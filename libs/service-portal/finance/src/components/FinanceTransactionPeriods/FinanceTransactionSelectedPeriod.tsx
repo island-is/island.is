@@ -63,7 +63,7 @@ export default function FinanceTransactionSelectedPeriod({
         !data?.getChargeTypePeriodSubject.records?.length &&
         !error && (
           <Box padding={3}>
-            <SkeletonLoader space={1} height={40} repeat={5} />
+            <SkeletonLoader space={1} height={40} repeat={4} />
           </Box>
         )}
       {!data?.getChargeTypePeriodSubject.records?.length &&
@@ -94,7 +94,7 @@ export default function FinanceTransactionSelectedPeriod({
                   {
                     value: format(new Date(record.createDate), dateFormat.is),
                   },
-                  { value: record.chargeItemSubject },
+                  { value: record.itemCode },
                   { value: record.category },
                   { value: record.amount, align: 'right' },
                 ]}
