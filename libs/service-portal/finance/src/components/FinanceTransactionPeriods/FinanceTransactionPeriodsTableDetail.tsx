@@ -19,16 +19,18 @@ import {
   ChargeItemSubject,
   ChargeItemSubjects,
   ChargeItemSubjectsPeriod,
+  SelectedPeriod,
 } from './FinanceTransactionPeriodsTypes'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 
 interface Props {
+  typeId: string
   data: ChargeItemSubjects
 }
 
 const ITEMS_ON_PAGE = 5
 
-const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
+const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
   const { formatMessage } = useLocale()
   const { financeTransactionPeriodsState, setFinanceTransactionPeriodsState } =
     useFinanceTransactionPeriodsState()
@@ -78,7 +80,32 @@ const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
     period: ChargeItemSubjectsPeriod,
     selected: boolean,
   ) => {
-    console.log({ period, selected })
+    let selectedPeriods = [
+      ...(financeTransactionPeriodsState.selectedPeriods ?? []),
+    ]
+    const findPeriod = (p: SelectedPeriod) =>
+      typeId === p.typeId &&
+      p.period === period.period &&
+      p.subject === subject.chargeItemSubject
+
+    if (selected && !selectedPeriods.find(findPeriod)) {
+      selectedPeriods.push({
+        typeId,
+        period: period.period,
+        subject: subject.chargeItemSubject,
+      })
+    } else if (!selected && selectedPeriods.find(findPeriod)) {
+      selectedPeriods = selectedPeriods.filter(
+        (p) =>
+          !(
+            typeId === p.typeId &&
+            p.period === period.period &&
+            p.subject === subject.chargeItemSubject
+          ),
+      )
+    }
+
+    setFinanceTransactionPeriodsState({ selectedPeriods })
   }
 
   return (
@@ -147,7 +174,7 @@ const FinanceTransactionPeriodsTableDetail = ({ data }: Props) => {
                   <T.Row key={`${period.period}-${i}-${period.lastMoveDate}`}>
                     <T.Data>
                       <Checkbox
-                        label="Velja tímabil"
+                        // TODO: Needs aria-label instead of label, not supported by Checkbox component
                         onChange={(e) => {
                           setActivePeriods(item, period, e.target.checked)
                         }}

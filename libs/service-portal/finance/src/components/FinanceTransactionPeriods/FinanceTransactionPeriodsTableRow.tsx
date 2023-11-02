@@ -46,7 +46,10 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
       error={error}
     >
       {chargeItemSubjects.length ? (
-        <FinanceTransactionPeriodsTableDetail data={chargeItemSubjects} />
+        <FinanceTransactionPeriodsTableDetail
+          data={chargeItemSubjects}
+          typeId={record.ID}
+        />
       ) : null}
     </ExpandRow>
   )

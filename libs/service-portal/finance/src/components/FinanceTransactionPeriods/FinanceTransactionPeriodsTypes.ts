@@ -19,3 +19,9 @@ export type ChargeTypes = ChargeTypesDetailsByYear['chargeType']
 
 export type ChargeTypesByYear =
   GetChargeTypesByYearQuery['getChargeTypesByYear']
+
+export type SelectedPeriod = {
+  typeId: string
+  period: string
+  subject: string
+}
