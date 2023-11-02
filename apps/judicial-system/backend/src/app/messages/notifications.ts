@@ -34,6 +34,11 @@ export const notifications = {
     description:
       'Notaður sem texti í sms-i til þess að tilgreina hver er sækjandi í málinu',
   }),
+  smsTail: defineMessage({
+    id: 'judicial.system.backend:notifications.sms_tail',
+    defaultMessage: 'Sjá nánar á http://rettarvorslugatt.island.is.',
+    description: 'Notaður sem texti í sms-i til þess að tilgreina slóð á RVG',
+  }),
   readyForCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',

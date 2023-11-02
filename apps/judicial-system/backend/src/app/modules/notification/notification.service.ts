@@ -178,6 +178,8 @@ export class NotificationService {
       return { address: mobileNumbers, success: true }
     }
 
+    smsText = `${smsText} ${this.formatMessage(notifications.smsTail)}`
+
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
       .then(() => ({ address: mobileNumbers, success: true }))
