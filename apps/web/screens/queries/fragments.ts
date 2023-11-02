@@ -97,15 +97,21 @@ export const slices = gql`
     }
   }
 
-  fragment LinkCardFields on LinkCardSlice {
+  fragment LinkCardFields on LinkCard {
+    __typename
+    id
+    title
+    body
+    linkUrl
+    linkText
+  }
+
+  fragment LinkCardSectionFields on LinkCardSection {
     __typename
     id
     title
     cards {
-      title
-      body
-      link
-      linkText
+      ...LinkCardFields
     }
   }
 
@@ -719,6 +725,7 @@ export const slices = gql`
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
+    ...LinkCardSectionFields
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
