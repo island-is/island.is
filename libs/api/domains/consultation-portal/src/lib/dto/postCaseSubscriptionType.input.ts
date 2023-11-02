@@ -1,6 +1,6 @@
 import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { PostCaseSubscriptionCommand } from '../models/postCaseSubscriptionsCommand.model'
+import { PostCaseSubscriptionCommand } from '../models/postCaseSubscriptionCommand.model'
 
 @InputType('ConsultationPortalPostCaseSubscriptionTypeInput')
 @FeatureFlag(Features.consultationPortalApplication)

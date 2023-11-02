@@ -1,6 +1,8 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize'
+import { uuid } from 'uuidv4'
 
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseFileCategory,
@@ -8,15 +10,14 @@ import {
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-import { MessageService, MessageType } from '@island.is/judicial-system/message'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: Case

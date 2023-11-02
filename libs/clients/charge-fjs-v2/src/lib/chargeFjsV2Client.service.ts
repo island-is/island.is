@@ -1,31 +1,48 @@
 import { Injectable } from '@nestjs/common'
-import { DefaultApi } from '../../gen/fetch'
+import {
+  ChargeStatusByRequestIDrequestIDGETResponse,
+  DefaultApi,
+  ChargeStatusResultStatusEnum,
+} from '../../gen/fetch'
 import { Catalog, Charge, ChargeResponse } from './chargeFjsV2Client.types'
 
 @Injectable()
 export class ChargeFjsV2ClientService {
   constructor(private api: DefaultApi) {}
 
-  async getChargeStatus(chargeId: string): Promise<string> {
-    const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
-      requestID: chargeId,
-    })
+  async getChargeStatus(
+    chargeId: string,
+  ): Promise<ChargeStatusByRequestIDrequestIDGETResponse | null> {
+    try {
+      const response = await this.api.chargeStatusByRequestIDrequestIDGET4({
+        requestID: chargeId,
+      })
 
-    return response.statusResult?.status
+      return response
+    } catch (e) {
+      if (e.status === 404) {
+        return null
+      }
+      throw e
+    }
   }
 
-  async deleteCharge(chargeId: string): Promise<string> {
-    const response = await this.api.chargerequestIDDELETE2({
-      requestID: chargeId,
-    })
+  async deleteCharge(chargeId: string): Promise<string | undefined> {
+    const response = await this.getChargeStatus(chargeId)
 
-    if (!response.receptionID) {
-      throw new Error(
-        `DELETE chargerequestIDDELETE2 was not successful, response was: ${response.error?.code}`,
-      )
+    if (!response) {
+      return undefined
     }
 
-    return response.receptionID
+    // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
+    if (
+      response.statusResult.status !== ChargeStatusResultStatusEnum.Cancelled
+    ) {
+      const response = await this.api.chargerequestIDDELETE2({
+        requestID: chargeId,
+      })
+      return response.receptionID
+    }
   }
 
   async createCharge(upcomingPayment: Charge): Promise<ChargeResponse> {

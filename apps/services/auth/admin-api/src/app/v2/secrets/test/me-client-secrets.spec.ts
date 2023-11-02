@@ -55,6 +55,9 @@ const secrets = [
       'U2FsdGVkX18CfF8ReTFiO97OYKfFs/TEIFpVFLedKawf2WHnc/uXMjMhR4A1zsja',
     type: 'SharedSecret',
     value: 'DY5f1A0iSam7QpraBhn6/O9bRVo1j/l08L44d9D6LQk=',
+    decryptedValue: 'existing-secret-1',
+    // Controlling the created date to make this the newer secret
+    created: new Date('2023-05-01T13:37:01.000Z'),
   },
   {
     clientId: 'client-1',
@@ -62,6 +65,9 @@ const secrets = [
       'U2FsdGVkX19WWRmJPXjqSTxe7nt1YAE7Z+mvZqIREiw5XOKhHYudeI6IFCG4wkNg',
     type: 'SharedSecret',
     value: '/MRMQaBOT7xRlRJMw7AkjkKhhTPwxTqjDQkJngtHloo=',
+    decryptedValue: 'existing-secret-2',
+    // This is the older secret
+    created: new Date('2023-05-01T13:37:00.000Z'),
   },
 ]
 
@@ -104,8 +110,8 @@ const testCases: Record<string, TestCase> = {
       expected: {
         status: 200,
         result: [
-          { decryptedValue: 'existing-secret-1' },
-          { decryptedValue: 'existing-secret-2' },
+          { decryptedValue: secrets[0].decryptedValue },
+          { decryptedValue: secrets[1].decryptedValue },
         ],
       },
     },
@@ -153,8 +159,8 @@ const testCases: Record<string, TestCase> = {
       expected: {
         status: 200,
         result: [
-          { decryptedValue: 'existing-secret-1' },
-          { decryptedValue: 'existing-secret-2' },
+          { decryptedValue: secrets[0].decryptedValue },
+          { decryptedValue: secrets[1].decryptedValue },
         ],
       },
     },
@@ -218,11 +224,10 @@ describe('MeClientSecretsController', () => {
       })
 
       beforeEach(async () => {
-        await Promise.all(
-          secrets.map(async (secret: { encryptedValue: string }) =>
-            fixtureFactory.createSecret(secret),
-          ),
-        )
+        // Make secret creation sequential to have deterministic order in tests
+        for (const secret of secrets) {
+          await fixtureFactory.createSecret(secret)
+        }
       })
 
       afterEach(async () => {

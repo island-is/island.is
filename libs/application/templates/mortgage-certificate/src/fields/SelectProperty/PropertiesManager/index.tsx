@@ -6,7 +6,7 @@ import { RegisteredProperties } from '../RegisteredProperties'
 import { SearchProperties } from '../SearchProperties'
 import { PropertyDetail } from '@island.is/api/schema'
 
-export const PropertiesManager: FC<FieldBaseProps> = ({
+export const PropertiesManager: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {
@@ -14,9 +14,11 @@ export const PropertiesManager: FC<FieldBaseProps> = ({
   const { id } = field
   const { setValue } = useFormContext()
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   let selectedPropertyNumber = getValueViaPath(
     application.answers,

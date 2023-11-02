@@ -7,7 +7,9 @@ import { formatText } from '@island.is/application/core'
 import { institutionApplicationMessages as m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 
-const ConfirmationScreen: FC<FieldBaseProps> = ({ application }) => {
+const ConfirmationScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   return (

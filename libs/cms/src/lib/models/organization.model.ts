@@ -1,4 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
+import { CacheField } from '@island.is/nest/graphql'
 import { IOrganization } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { OrganizationTag, mapOrganizationTag } from './organizationTag.model'
@@ -23,16 +25,19 @@ export class Organization {
   @Field()
   slug!: string
 
-  @Field(() => [OrganizationTag])
+  @CacheField(() => [OrganizationTag])
   tag?: Array<OrganizationTag>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   logo?: Image | null
 
   @Field({ nullable: true })
   link?: string
 
-  @Field(() => [FooterItem])
+  @CacheField(() => GraphQLJSON, { nullable: true })
+  footerConfig?: { background?: string; textColor?: string } | null
+
+  @CacheField(() => [FooterItem])
   footerItems?: Array<FooterItem>
 
   @Field()
@@ -50,13 +55,13 @@ export class Organization {
   @Field(() => Number, { nullable: true })
   serviceWebPopularQuestionCount?: number
 
-  @Field(() => Namespace, { nullable: true })
+  @CacheField(() => Namespace, { nullable: true })
   namespace!: Namespace | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   serviceWebFeaturedImage!: Image | null
 
-  @Field(() => [GenericTag])
+  @CacheField(() => [GenericTag])
   publishedMaterialSearchFilterGenericTags!: GenericTag[]
 
   @Field(() => Boolean, { nullable: true })
@@ -64,6 +69,12 @@ export class Organization {
 
   @Field(() => Boolean, { nullable: true })
   hasALandingPage?: boolean
+
+  @Field({ nullable: true })
+  trackingDomain?: string
+
+  @Field({ nullable: true })
+  referenceIdentifier?: string
 }
 
 export const mapOrganization = ({
@@ -79,6 +90,7 @@ export const mapOrganization = ({
     tag: (fields.tag ?? []).map(mapOrganizationTag),
     logo: fields.logo ? mapImage(fields.logo) : null,
     link: fields.link ?? '',
+    footerConfig: fields.footerConfig,
     footerItems: (fields.footerItems ?? []).map(mapFooterItem),
     phone: fields.phone ?? '',
     email: fields.email ?? '',
@@ -89,10 +101,13 @@ export const mapOrganization = ({
     serviceWebFeaturedImage: fields.serviceWebFeaturedImage
       ? mapImage(fields.serviceWebFeaturedImage)
       : null,
-    publishedMaterialSearchFilterGenericTags: fields.publishedMaterialSearchFilterGenericTags
-      ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
-      : [],
+    publishedMaterialSearchFilterGenericTags:
+      fields.publishedMaterialSearchFilterGenericTags
+        ? fields.publishedMaterialSearchFilterGenericTags.map(mapGenericTag)
+        : [],
     showsUpOnTheOrganizationsPage: fields.showsUpOnTheOrganizationsPage ?? true,
     hasALandingPage: fields.hasALandingPage ?? true,
+    trackingDomain: fields.trackingDomain ?? '',
+    referenceIdentifier: fields.referenceIdentifier,
   }
 }

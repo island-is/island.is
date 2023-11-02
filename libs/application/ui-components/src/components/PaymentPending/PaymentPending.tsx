@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react'
+import React, { FC, useEffect, useRef } from 'react'
 import { coreErrorMessages, coreMessages } from '@island.is/application/core'
 import {
   Application,
@@ -7,8 +7,9 @@ import {
 } from '@island.is/application/types'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useSubmitApplication, usePaymentStatus, useMsg } from './hooks'
-import { getRedirectUrl, isComingFromRedirect } from './util'
+import { getRedirectStatus, getRedirectUrl, isComingFromRedirect } from './util'
 import { Company } from './assets'
+import { useSearchParams } from 'react-router-dom'
 
 export interface PaymentPendingProps {
   application: Application
@@ -16,16 +17,14 @@ export interface PaymentPendingProps {
   refetch: FieldBaseProps['refetch']
 }
 
-export const PaymentPending: FC<PaymentPendingProps> = ({
-  application,
-  refetch,
-  targetEvent,
-}) => {
+export const PaymentPending: FC<
+  React.PropsWithChildren<PaymentPendingProps>
+> = ({ application, refetch, targetEvent }) => {
   const msg = useMsg(application)
-
   const { paymentStatus, stopPolling, pollingError } = usePaymentStatus(
     application.id,
   )
+  const [searchParams, setSearchParams] = useSearchParams()
 
   const shouldRedirect = !isComingFromRedirect() && paymentStatus.paymentUrl
 
@@ -35,20 +34,48 @@ export const PaymentPending: FC<PaymentPendingProps> = ({
     event: targetEvent,
   })
 
+  const [submitCancelApplication, { error: submitCancelError }] =
+    useSubmitApplication({
+      application,
+      refetch,
+      event: DefaultEvents.ABORT,
+    })
+  const hasSubmitted = useRef(false)
   // automatically go to done state if payment has been fulfilled
   useEffect(() => {
+    const removeCancelledFromURL = () => {
+      setSearchParams((params) => {
+        params.delete('cancelled')
+        return params
+      })
+    }
+
+    if (hasSubmitted.current) return
+    if (getRedirectStatus() === 'cancelled') {
+      stopPolling()
+      submitCancelApplication().then(() => {
+        removeCancelledFromURL()
+      })
+      hasSubmitted.current = true
+    }
+
     if (!paymentStatus.fulfilled) {
       if (shouldRedirect) {
         window.document.location.href = getRedirectUrl(paymentStatus.paymentUrl)
       }
-
       return
     }
-
     stopPolling()
-
     submitApplication()
-  }, [submitApplication, paymentStatus, stopPolling, shouldRedirect])
+    hasSubmitted.current = true
+  }, [
+    submitCancelApplication,
+    submitApplication,
+    paymentStatus,
+    stopPolling,
+    shouldRedirect,
+    setSearchParams,
+  ])
 
   if (pollingError) {
     return <Text>{msg(coreErrorMessages.paymentStatusError)}</Text>

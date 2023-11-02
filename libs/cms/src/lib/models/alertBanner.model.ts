@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IAlertBanner } from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 
@@ -22,7 +23,7 @@ export class AlertBanner {
   @Field({ nullable: true })
   linkTitle?: string
 
-  @Field(() => ReferenceLink, { nullable: true })
+  @CacheField(() => ReferenceLink, { nullable: true })
   link?: ReferenceLink | null
 
   @Field()

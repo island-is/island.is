@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-transfer-of-vehicle-ownership
 
 This library was generated with [Nx](https://nx.dev).

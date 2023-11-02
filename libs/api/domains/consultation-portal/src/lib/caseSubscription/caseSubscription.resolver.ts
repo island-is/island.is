@@ -12,41 +12,44 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PostCaseSubscriptionTypeInput } from '../dto/postCaseSubscriptionType.input'
+import { GetCaseInput } from '../dto/case.input'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.samradsgatt)
 @FeatureFlag(Features.consultationPortalApplication)
+@Audit({ namespace: '@island.is/samradsgatt' })
 export class CaseSubscriptionResolver {
   constructor(private caseSubscriptionService: CaseSubscriptionService) {}
 
   @Mutation(() => Boolean!, {
     nullable: true,
-    name: 'consultationPortalPostSubscriptionType',
+    name: 'consultationPortalDeleteSubscriptionType',
   })
   async deleteCaseSubscription(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
     @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
   ): Promise<void> {
     const response = await this.caseSubscriptionService.deleteCaseSubscription(
       user,
-      caseId,
+      input,
     )
     return response
   }
 
-  @Query(() => [CaseSubscriptionResult], {
+  @Query(() => CaseSubscriptionResult, {
     name: 'consultationPortalSubscriptionType',
   })
   async getCaseSubscriptionType(
+    @Args('input', { type: () => GetCaseInput }) input: GetCaseInput,
     @CurrentUser() user: User,
-    @Args('caseId') caseId: number,
   ): Promise<CaseSubscriptionResult> {
-    return this.caseSubscriptionService.getCaseSubscriptionType(user, caseId)
+    return this.caseSubscriptionService.getCaseSubscriptionType(user, input)
   }
 
   @Mutation(() => Boolean!, {
@@ -58,10 +61,8 @@ export class CaseSubscriptionResolver {
     input: PostCaseSubscriptionTypeInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    const response = await this.caseSubscriptionService.postCaseSubscriptionType(
-      user,
-      input,
-    )
+    const response =
+      await this.caseSubscriptionService.postCaseSubscriptionType(user, input)
     return response
   }
 }

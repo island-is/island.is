@@ -7,7 +7,7 @@ interface Props {
   title?: string
 }
 
-const DetailHeader: FC<Props> = ({ title }) => {
+const DetailHeader: FC<React.PropsWithChildren<Props>> = ({ title }) => {
   const { formatMessage } = useLocale()
   return (
     <Hidden print={true}>
@@ -15,7 +15,6 @@ const DetailHeader: FC<Props> = ({ title }) => {
         <Text variant="h3" marginBottom={5}>
           {title}
         </Text>
-
         <Button
           colorScheme="default"
           icon="print"

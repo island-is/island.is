@@ -9,7 +9,10 @@ interface Props {
   helpDesk: Helpdesk
   organisationId: string
 }
-export const UserHelpForm: FC<Props> = ({ helpDesk, organisationId }) => {
+export const UserHelpForm: FC<React.PropsWithChildren<Props>> = ({
+  helpDesk,
+  organisationId,
+}) => {
   const {
     handleSubmit,
     control,

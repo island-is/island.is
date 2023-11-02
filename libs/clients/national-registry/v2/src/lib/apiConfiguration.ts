@@ -11,7 +11,9 @@ import { getCache } from './cache'
 
 export const ApiConfiguration = {
   provide: 'NationalRegistryClientApiConfiguration',
-  useFactory: (
+  // Necessary because of cache-manager.
+  // eslint-disable-next-line local-rules/no-async-module-init
+  useFactory: async (
     config: ConfigType<typeof NationalRegistryClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
@@ -19,7 +21,8 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-national-registry-v2',
-        cache: getCache(config),
+        organizationSlug: 'thjodskra-islands',
+        cache: await getCache(config),
         timeout: config.fetchTimeout,
         autoAuth: idsClientConfig.isConfigured
           ? {

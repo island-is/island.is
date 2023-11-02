@@ -109,9 +109,8 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ): Promise<{ success: boolean }> {
     const api = await this.create()
-    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
-      { bookId, id },
-    )
+    const lesson: PracticalDrivingLesson[] =
+      await this.getPracticalDrivingLessons({ bookId, id })
     if (lesson[0].teacherNationalId === user.nationalId) {
       try {
         await api.apiTeacherUpdatePracticalDrivingLessonIdPut({
@@ -137,9 +136,8 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ) {
     const api = await this.create()
-    const lesson: PracticalDrivingLesson[] = await this.getPracticalDrivingLessons(
-      { bookId, id },
-    )
+    const lesson: PracticalDrivingLesson[] =
+      await this.getPracticalDrivingLessons({ bookId, id })
     if (lesson[0].teacherNationalId === user.nationalId) {
       try {
         await api.apiTeacherDeletePracticalDrivingLessonIdDelete({ id, reason })
@@ -178,12 +176,11 @@ export class DrivingLicenseBookClientApiFactory {
     user: User,
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.create()
-    const {
-      data,
-    } = await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
-      teacherSsn: user.nationalId,
-      showExpired: false,
-    })
+    const { data } =
+      await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
+        teacherSsn: user.nationalId,
+        showExpired: false,
+      })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)
       throw new NotFoundException(
@@ -227,14 +224,20 @@ export class DrivingLicenseBookClientApiFactory {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
       ssn: nationalId,
-      showInactiveBooks: true,
+      showInactiveBooks: false,
     })
     if (data?.books) {
-      const book = data.books
-        .filter((item) => item.status !== 9)
-        .reduce((a, b) =>
+      const filteredBooks = data.books.filter((item) => item.status !== 9)
+
+      const book = filteredBooks.reduce(
+        (a, b) =>
           new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
-        )
+        {},
+      )
+
+      if (!book) {
+        return null
+      }
 
       return getStudentAndBookMapper(data, book)
     }
@@ -373,8 +376,10 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
 
-    const activeBook = data?.books?.reduce((a, b) =>
-      new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+    const activeBook = data?.books?.reduce(
+      (a, b) =>
+        new Date(a.createdOn ?? '') > new Date(b.createdOn ?? '') ? a : b,
+      {},
     )
 
     if (!activeBook?.id || !activeBook?.createdOn) {

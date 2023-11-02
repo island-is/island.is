@@ -12,7 +12,7 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { S3 } from 'aws-sdk'
 import type { Locale } from '@island.is/shared/types'
@@ -215,16 +215,16 @@ describe('AccidentNotificationService', () => {
       jest
         .spyOn(s3Service, 'getFilecontentAsBase64')
         .mockResolvedValueOnce(
-          (Buffer.from('some content', 'utf-8') as unknown) as string,
+          Buffer.from('some content', 'utf-8') as unknown as string,
         )
         .mockResolvedValueOnce(
-          (Buffer.from('some dsfsf', 'utf-8') as unknown) as string,
+          Buffer.from('some dsfsf', 'utf-8') as unknown as string,
         ) //reset resolved value to return same values again for the next request 2 times each with the same content
         .mockResolvedValueOnce(
-          (Buffer.from('some content', 'utf-8') as unknown) as string,
+          Buffer.from('some content', 'utf-8') as unknown as string,
         )
         .mockResolvedValueOnce(
-          (Buffer.from('some dsfsf', 'utf-8') as unknown) as string,
+          Buffer.from('some dsfsf', 'utf-8') as unknown as string,
         )
       const send = jest.spyOn(documentApi, 'documentDocumentAttachment')
       const res = await accidentNotificationService.addAdditionalAttachment(

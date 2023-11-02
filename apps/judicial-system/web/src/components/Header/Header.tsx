@@ -1,38 +1,41 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import Link from 'next/link'
 import getConfig from 'next/config'
+import Link from 'next/link'
 
 import {
-  Text,
   Box,
-  UserMenu,
-  Icon,
+  Button,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Button,
   Hidden,
-  Logo,
+  Icon,
   Inline,
+  Logo,
+  Text,
+  UserMenu,
 } from '@island.is/island-ui/core'
-import { api } from '@island.is/judicial-system-web/src/services'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  InstitutionType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 
-import { UserContext } from '../UserProvider/UserProvider'
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { useGetLawyer } from '../../utils/hooks'
+import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
+import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
-const LogoIcon: React.FC = () => (
+const LogoIcon: React.FC<React.PropsWithChildren<unknown>> = () => (
   <>
     <Hidden above="sm">
       <Logo width={40} iconOnly />
@@ -43,7 +46,9 @@ const LogoIcon: React.FC = () => (
   </>
 )
 
-const Container: React.FC = ({ children }) => {
+const Container: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
@@ -64,57 +69,56 @@ const Container: React.FC = ({ children }) => {
   )
 }
 
-const HeaderContainer: React.FC = () => {
+const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
 
   const logoHref =
     !user || !isAuthenticated
       ? '/'
-      : user.role === UserRole.Defender
-      ? '#' // Defenders should never be able to navigate anywhere from the logo
-      : user.role === UserRole.Admin
+      : user.role === UserRole.DEFENDER
+      ? constants.DEFENDER_CASES_ROUTE
+      : user.role === UserRole.ADMIN
       ? constants.USERS_ROUTE
+      : user.institution?.type === InstitutionType.COURT_OF_APPEALS
+      ? constants.COURT_OF_APPEAL_CASES_ROUTE
       : constants.CASES_ROUTE
 
-  const handleLogout = async () => {
-    await api.logout()
-    window.location.assign('/')
+  const handleLogout = () => {
+    api.logout()
   }
 
   const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, user?.role === UserRole.Defender) ?? {}
+    useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
 
   return (
     <Container>
-      <Link href={logoHref}>
-        <a href={logoHref} tabIndex={0}>
-          <Inline alignY="center">
-            <LogoIcon />
-            <Box
-              display="flex"
-              className={styles.infoContainer}
-              alignItems="center"
-              height="full"
-              marginLeft={[1, 1, 2, 4]}
-              marginRight="auto"
-            >
-              <Box marginLeft={[1, 1, 2, 4]}>
-                <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
-                <Hidden above="sm">
-                  <Text fontWeight="light" variant={'eyebrow'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-                <Hidden below="md">
-                  <Text fontWeight="light" variant={'default'}>
-                    {'Réttarvörslugátt'}
-                  </Text>
-                </Hidden>
-              </Box>
+      <Link href={logoHref} tabIndex={0}>
+        <Inline alignY="center">
+          <LogoIcon />
+          <Box
+            display="flex"
+            className={styles.infoContainer}
+            alignItems="center"
+            height="full"
+            marginLeft={[1, 1, 2, 4]}
+            marginRight="auto"
+          >
+            <Box marginLeft={[1, 1, 2, 4]}>
+              <Text variant="eyebrow">{'Dómsmálaráðuneytið'}</Text>
+              <Hidden above="sm">
+                <Text fontWeight="light" variant={'eyebrow'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
+              <Hidden below="md">
+                <Text fontWeight="light" variant={'default'}>
+                  {'Réttarvörslugátt'}
+                </Text>
+              </Hidden>
             </Box>
-          </Inline>
-        </a>
+          </Box>
+        </Inline>
       </Link>
       <Inline alignY="center" space={2}>
         {user && (
@@ -127,7 +131,7 @@ const HeaderContainer: React.FC = () => {
                   window.open(constants.FEEDBACK_FORM_URL, '_blank')
                 }
               >
-                {formatMessage(header.headerFeedbackButtonLabel)}
+                {formatMessage(header.feedbackButtonLabel)}
               </Button>
             </Hidden>
             <UserMenu
@@ -144,7 +148,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? formatMessage(header.defender)
                               : user.title,
                           )}
@@ -153,7 +157,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? practice
                               : user.institution?.name,
                           )}
@@ -162,7 +166,7 @@ const HeaderContainer: React.FC = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {formatPhoneNumber(
-                            user.role === UserRole.Defender
+                            user.role === UserRole.DEFENDER
                               ? phoneNr
                               : user.mobileNumber,
                           )}
@@ -170,7 +174,7 @@ const HeaderContainer: React.FC = () => {
                       </Box>
                       <Box>
                         <Text>
-                          {user.role === UserRole.Defender ? email : user.email}
+                          {user.role === UserRole.DEFENDER ? email : user.email}
                         </Text>
                       </Box>
                     </Box>
@@ -184,13 +188,13 @@ const HeaderContainer: React.FC = () => {
                       />
                     </Box>
                     <Box>
-                      {user.role === UserRole.Defender ? (
+                      {user.role === UserRole.DEFENDER ? (
                         <Text>
-                          {formatMessage(header.headerTipDisclaimerDefenders)}
+                          {formatMessage(header.tipDisclaimerDefenders)}
                         </Text>
                       ) : (
                         <MarkdownWrapper
-                          markdown={formatMessage(header.headerTipDisclaimer, {
+                          markdown={formatMessage(header.tipDisclaimer, {
                             linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
                             linkEnd: '</a>',
                           })}

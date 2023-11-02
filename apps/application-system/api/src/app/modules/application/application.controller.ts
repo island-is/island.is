@@ -45,7 +45,7 @@ import {
   ApplicationContext,
   ApplicationStateSchema,
 } from '@island.is/application/types'
-import type { Unwrap, Locale } from '@island.is/shared/types'
+import type { Locale } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -82,11 +82,7 @@ import { UploadSignedFileResponseDto } from './dto/uploadSignedFile.response.dto
 import { AssignApplicationDto } from './dto/assignApplication.dto'
 import { verifyToken } from './utils/tokenUtils'
 import { getApplicationLifecycle } from './utils/application'
-import {
-  DecodedAssignmentToken,
-  StateChangeResult,
-  TemplateAPIModuleActionResult,
-} from './types'
+import { DecodedAssignmentToken } from './types'
 import { ApplicationAccessService } from './tools/applicationAccess.service'
 import { CurrentLocale } from './utils/currentLocale'
 import { Application } from '@island.is/application/api/core'
@@ -102,6 +98,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
+import { ApplicationActionService } from './application-action.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -128,6 +125,7 @@ export class ApplicationController {
     private applicationChargeService: ApplicationChargeService,
     private readonly historyService: HistoryService,
     private readonly templateApiActionRunner: TemplateApiActionRunner,
+    private readonly applicationActionService: ApplicationActionService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -141,10 +139,8 @@ export class ApplicationController {
     @Param('id', new ParseUUIDPipe()) id: string,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     await this.validationService.validateThatApplicationIsReady(
       existingApplication as BaseApplication,
@@ -178,6 +174,13 @@ export class ApplicationController {
     description:
       'To filter applications by status. Comma-separated for multiple values.',
   })
+  @ApiQuery({
+    name: 'scopeCheck',
+    required: false,
+    type: 'boolean',
+    description:
+      'To check if the user has access to the application. Used for service portal not applications. Defaults to false.',
+  })
   @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
   @UseInterceptors(ApplicationSerializer)
   @Audit<ApplicationResponseDto[]>({
@@ -188,21 +191,49 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @Query('typeId') typeId?: string,
     @Query('status') status?: string,
+    @Query('scopeCheck') scopeCheck?: boolean,
   ): Promise<ApplicationResponseDto[]> {
-    if (nationalId !== user.nationalId) {
-      this.logger.debug('User is not authorized to get applications')
-      throw new UnauthorizedException()
-    }
-
-    this.logger.debug(`Getting applications with status ${status}`)
-    const applications = await this.applicationService.findAllByNationalIdAndFilters(
+    this.verifyUserAccess(nationalId, user)
+    const applications = await this.fetchApplications(
       nationalId,
       typeId,
       status,
       user.actor?.nationalId,
     )
+    return this.filterApplicationsByAccess(
+      applications,
+      user,
+      scopeCheck ?? false,
+    )
+  }
 
-    // keep all templates that have been fetched in order to avoid fetching them again
+  private verifyUserAccess(nationalId: string, user: User): void {
+    if (nationalId !== user.nationalId) {
+      this.logger.debug('User is not authorized to get applications')
+      throw new UnauthorizedException()
+    }
+  }
+
+  private async fetchApplications(
+    nationalId: string,
+    typeId?: string,
+    status?: string,
+    actorNationalId?: string,
+  ): Promise<Application[]> {
+    this.logger.debug(`Getting applications with status ${status}`)
+    return this.applicationService.findAllByNationalIdAndFilters(
+      nationalId,
+      typeId,
+      status,
+      actorNationalId,
+    )
+  }
+
+  private async filterApplicationsByAccess(
+    applications: Application[],
+    user: User,
+    scopeCheck: boolean,
+  ): Promise<ApplicationResponseDto[]> {
     const templates: Partial<
       Record<
         ApplicationTypes,
@@ -213,63 +244,91 @@ export class ApplicationController {
         >
       >
     > = {}
-    const templateTypeToIsReady: Partial<Record<ApplicationTypes, boolean>> = {}
+    const hasAccessCache: Record<string, boolean> = {}
+
     const filteredApplications: Application[] = []
+
     for (const application of applications) {
-      const typeId = application.typeId
-      const isTemplateTypeReady = templateTypeToIsReady[typeId]
-      // We've already checked an application with this type and it is ready
-      // now we just need to check if it should be displayed for the user
+      const template = await this.getOrFetchTemplate(
+        application.typeId,
+        templates,
+      )
+      const hasAccess = await this.hasUserAccessToApplication(
+        application as BaseApplication,
+        template,
+        user,
+        scopeCheck,
+        hasAccessCache,
+      )
+
       if (
-        isTemplateTypeReady &&
-        templates[typeId] !== undefined &&
-        (await this.applicationAccessService.shouldShowApplicationOnOverview(
+        hasAccess &&
+        this.applicationAccessService.evaluateIfRoleShouldBeListed(
           application as BaseApplication,
           user,
-          templates[typeId],
-        ))
+          template,
+        )
       ) {
         filteredApplications.push(application)
-        continue
-      } else if (isTemplateTypeReady === false) {
-        // We've already checked an application with this type
-        // and it is NOT ready so we will skip it
-        continue
       }
+    }
 
+    return filteredApplications
+  }
+
+  private async getOrFetchTemplate(
+    typeId: ApplicationTypes,
+    cache: Record<
+      string,
+      ApplicationTemplate<
+        ApplicationContext,
+        ApplicationStateSchema<EventObject>,
+        EventObject
+      >
+    >,
+  ): Promise<
+    ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >
+  > {
+    if (!cache[typeId]) {
       try {
-        const applicationTemplate = await getApplicationTemplateByTypeId(typeId)
-        // Add template to avoid fetching it again for the same types
-        templates[typeId] = applicationTemplate
-
-        if (
-          await this.validationService.isTemplateReady(
-            applicationTemplate,
-            user,
-          )
-        ) {
-          templateTypeToIsReady[typeId] = true
-          if (
-            await this.applicationAccessService.shouldShowApplicationOnOverview(
-              application as BaseApplication,
-              user,
-              applicationTemplate,
-            )
-          ) {
-            filteredApplications.push(application)
-          }
-        } else {
-          templateTypeToIsReady[typeId] = false
-        }
+        cache[typeId] = await getApplicationTemplateByTypeId(typeId)
       } catch (e) {
-        this.logger.error(
+        this.logger.info(
           `Could not get application template for type ${typeId}`,
           e,
         )
       }
     }
+    return cache[typeId]
+  }
 
-    return filteredApplications
+  private async hasUserAccessToApplication(
+    application: BaseApplication,
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    user: User,
+    scopeCheck: boolean,
+    cache: Record<string, boolean>,
+  ): Promise<boolean> {
+    if (cache[application.typeId] !== undefined) {
+      return cache[application.typeId]
+    }
+
+    const hasAccess = await this.applicationAccessService.hasAccessToTemplate(
+      template,
+      user,
+      scopeCheck,
+    )
+    cache[application.typeId] = hasAccess
+
+    return hasAccess
   }
 
   @Scopes(ApplicationScope.write)
@@ -291,8 +350,6 @@ export class ApplicationController {
         `No application template exists for type: ${typeId}`,
       )
     }
-
-    // TODO: verify template is ready from https://github.com/island-is/island.is/pull/3297
 
     // TODO: initial state should be required
     const initialState =
@@ -332,16 +389,18 @@ export class ApplicationController {
 
     // Make sure the application has the correct lifecycle values persisted to database.
     // Requires an application object that is created in the previous step.
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateApplicationState(
-      createdApplication.id,
-      createdApplication.state,
-      createdApplication.answers as FormValue,
-      createdApplication.assignees,
-      createdApplication.status,
-      getApplicationLifecycle(createdApplication as BaseApplication, template),
-    )
+    const { updatedApplication } =
+      await this.applicationService.updateApplicationState(
+        createdApplication.id,
+        createdApplication.state,
+        createdApplication.answers as FormValue,
+        createdApplication.assignees,
+        createdApplication.status,
+        getApplicationLifecycle(
+          createdApplication as BaseApplication,
+          template,
+        ),
+      )
 
     this.auditService.audit({
       auth: user,
@@ -372,15 +431,15 @@ export class ApplicationController {
     ).getOnEntryStateAPIAction(updatedApplication.state)
 
     if (onEnterStateAction) {
-      const {
-        updatedApplication: withUpdatedExternalData,
-      } = await this.performActionOnApplication(
-        actionDto,
-        template,
-        user,
-        onEnterStateAction,
-        locale,
-      )
+      const { updatedApplication: withUpdatedExternalData } =
+        await this.applicationActionService.performActionOnApplication(
+          actionDto,
+          template,
+          user,
+          onEnterStateAction,
+          locale,
+          'SUBMIT',
+        )
 
       //Programmers responsible for handling failure status
       updatedApplication.externalData = withUpdatedExternalData.externalData
@@ -469,7 +528,7 @@ export class ApplicationController {
       hasError,
       error,
       application: updatedApplication,
-    } = await this.changeState(
+    } = await this.applicationActionService.changeState(
       mergedApplication,
       template,
       DefaultEvents.ASSIGN,
@@ -511,11 +570,10 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-      { shouldThrowIfPruned: true },
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
+        shouldThrowIfPruned: true,
+      })
     const namespaces = await getApplicationTranslationNamespaces(
       existingApplication as BaseApplication,
     )
@@ -579,10 +637,8 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
@@ -669,11 +725,10 @@ export class ApplicationController {
     @CurrentUser() user: User,
     @CurrentLocale() locale: Locale,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-      { shouldThrowIfPruned: true },
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user, {
+        shouldThrowIfPruned: true,
+      })
     const templateId = existingApplication.typeId as ApplicationTypes
     const template = await getApplicationTemplateByTypeId(templateId)
 
@@ -690,13 +745,14 @@ export class ApplicationController {
     )
     const intl = await this.intlService.useIntl(namespaces, locale)
 
-    const permittedAnswers = await this.validationService.validateIncomingAnswers(
-      existingApplication as BaseApplication,
-      newAnswers,
-      user.nationalId,
-      false,
-      intl.formatMessage,
-    )
+    const permittedAnswers =
+      await this.validationService.validateIncomingAnswers(
+        existingApplication as BaseApplication,
+        newAnswers,
+        user.nationalId,
+        false,
+        intl.formatMessage,
+      )
 
     await this.validationService.validateApplicationSchema(
       existingApplication as BaseApplication,
@@ -720,7 +776,7 @@ export class ApplicationController {
       hasError,
       error,
       application: updatedApplication,
-    } = await this.changeState(
+    } = await this.applicationActionService.changeState(
       mergedApplication,
       template,
       updateApplicationStateDto.event,
@@ -752,183 +808,6 @@ export class ApplicationController {
     return existingApplication
   }
 
-  async performActionOnApplication(
-    application: BaseApplication,
-    template: Unwrap<typeof getApplicationTemplateByTypeId>,
-    auth: User,
-    apis: TemplateApi | TemplateApi[],
-    locale: Locale,
-  ): Promise<TemplateAPIModuleActionResult> {
-    if (!Array.isArray(apis)) {
-      apis = [apis]
-    }
-
-    this.logger.debug(
-      `Performing actions ${apis
-        .map((api) => api.action)
-        .join(', ')} on ${JSON.stringify(template.name)}`,
-    )
-    const namespaces = await getApplicationTranslationNamespaces(application)
-    const intl = await this.intlService.useIntl(namespaces, locale)
-
-    const updatedApplication = await this.templateApiActionRunner.run(
-      application,
-      apis,
-      auth,
-      locale,
-      intl.formatMessage,
-    )
-
-    for (const api of apis) {
-      const result =
-        updatedApplication.externalData[api.externalDataId || api.action]
-
-      this.logger.debug(
-        `Performing action ${api.action} on ${JSON.stringify(
-          template.name,
-        )} ended with ${result.status}`,
-      )
-
-      if (result.status === 'failure' && api.throwOnError) {
-        return {
-          updatedApplication,
-          hasError: true,
-          error: result.reason,
-        }
-      }
-    }
-
-    this.logger.debug(
-      `Updated external data for application with ID ${updatedApplication.id}`,
-    )
-
-    return {
-      updatedApplication,
-      hasError: false,
-    }
-  }
-
-  private async changeState(
-    application: BaseApplication,
-    template: Unwrap<typeof getApplicationTemplateByTypeId>,
-    event: string,
-    auth: User,
-    locale: Locale,
-  ): Promise<StateChangeResult> {
-    const helper = new ApplicationTemplateHelper(application, template)
-    const onExitStateAction = helper.getOnExitStateAPIAction(application.state)
-    let updatedApplication: BaseApplication = application
-
-    await this.applicationService.clearNonces(updatedApplication.id)
-    if (onExitStateAction) {
-      const {
-        hasError,
-        error,
-        updatedApplication: withUpdatedExternalData,
-      } = await this.performActionOnApplication(
-        updatedApplication,
-        template,
-        auth,
-        onExitStateAction,
-        locale,
-      )
-      updatedApplication = withUpdatedExternalData
-
-      if (hasError) {
-        return {
-          hasChanged: false,
-          application: updatedApplication,
-          error,
-          hasError: true,
-        }
-      }
-    }
-
-    const [
-      hasChanged,
-      newState,
-      withUpdatedState,
-    ] = new ApplicationTemplateHelper(updatedApplication, template).changeState(
-      event,
-    )
-    updatedApplication = {
-      ...updatedApplication,
-      answers: withUpdatedState.answers,
-      assignees: withUpdatedState.assignees,
-      state: withUpdatedState.state,
-    }
-
-    if (!hasChanged) {
-      return {
-        hasChanged: false,
-        hasError: false,
-        application: updatedApplication,
-      }
-    }
-
-    const onEnterStateAction = new ApplicationTemplateHelper(
-      updatedApplication,
-      template,
-    ).getOnEntryStateAPIAction(newState)
-
-    if (onEnterStateAction) {
-      const {
-        hasError,
-        error,
-        updatedApplication: withUpdatedExternalData,
-      } = await this.performActionOnApplication(
-        updatedApplication,
-        template,
-        auth,
-        onEnterStateAction,
-        locale,
-      )
-      updatedApplication = withUpdatedExternalData
-
-      if (hasError) {
-        return {
-          hasError: true,
-          hasChanged: false,
-          error: error,
-          application,
-        }
-      }
-    }
-
-    const status = new ApplicationTemplateHelper(
-      updatedApplication,
-      template,
-    ).getApplicationStatus()
-
-    try {
-      const update = await this.applicationService.updateApplicationState(
-        application.id,
-        newState,
-        updatedApplication.answers,
-        updatedApplication.assignees,
-        status,
-        getApplicationLifecycle(updatedApplication, template),
-      )
-
-      updatedApplication = update.updatedApplication as BaseApplication
-      await this.historyService.saveStateTransition(application.id, newState)
-    } catch (e) {
-      this.logger.error(e)
-      return {
-        hasChanged: false,
-        hasError: true,
-        application,
-        error: 'Could not update application',
-      }
-    }
-
-    return {
-      hasChanged: true,
-      application: updatedApplication,
-      hasError: false,
-    }
-  }
-
   @Scopes(ApplicationScope.write)
   @Put('applications/:id/attachments')
   @ApiParam({
@@ -947,14 +826,13 @@ export class ApplicationController {
   ): Promise<ApplicationResponseDto> {
     const { key, url } = input
 
-    const {
-      updatedApplication,
-    } = await this.applicationService.updateAttachment(
-      id,
-      user.nationalId,
-      key,
-      url,
-    )
+    const { updatedApplication } =
+      await this.applicationService.updateAttachment(
+        id,
+        user.nationalId,
+        key,
+        url,
+      )
 
     await this.uploadQueue.add('upload', {
       applicationId: updatedApplication.id,
@@ -990,10 +868,8 @@ export class ApplicationController {
     @Body() input: DeleteAttachmentDto,
     @CurrentUser() user: User,
   ): Promise<ApplicationResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
     const { key } = input
 
     const { updatedApplication } = await this.applicationService.update(
@@ -1030,10 +906,8 @@ export class ApplicationController {
     @Body() input: GeneratePdfDto,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
     const url = await this.fileService.generatePdf(
       existingApplication,
       input.type,
@@ -1065,17 +939,13 @@ export class ApplicationController {
     @Body() input: RequestFileSignatureDto,
     @CurrentUser() user: User,
   ): Promise<RequestFileSignatureResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
-    const {
-      controlCode,
-      documentToken,
-    } = await this.fileService.requestFileSignature(
-      existingApplication,
-      input.type,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
+    const { controlCode, documentToken } =
+      await this.fileService.requestFileSignature(
+        existingApplication,
+        input.type,
+      )
 
     this.auditService.audit({
       auth: user,
@@ -1102,10 +972,8 @@ export class ApplicationController {
     @Body() input: UploadSignedFileDto,
     @CurrentUser() user: User,
   ): Promise<UploadSignedFileResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     await this.fileService.uploadSignedFile(
       existingApplication,
@@ -1140,10 +1008,8 @@ export class ApplicationController {
     @Param('pdfType') type: PdfTypes,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
     const url = await this.fileService.getPresignedUrl(
       existingApplication,
       type,
@@ -1185,10 +1051,8 @@ export class ApplicationController {
     @Param('attachmentKey') attachmentKey: string,
     @CurrentUser() user: User,
   ): Promise<PresignedUrlResponseDto> {
-    const existingApplication = await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )
+    const existingApplication =
+      await this.applicationAccessService.findOneByIdAndNationalId(id, user)
 
     if (!existingApplication.attachments) {
       throw new NotFoundException('Attachments not found')
@@ -1217,10 +1081,11 @@ export class ApplicationController {
     @CurrentUser() user: User,
   ) {
     const { nationalId } = user
-    const existingApplication = (await this.applicationAccessService.findOneByIdAndNationalId(
-      id,
-      user,
-    )) as BaseApplication
+    const existingApplication =
+      (await this.applicationAccessService.findOneByIdAndNationalId(
+        id,
+        user,
+      )) as BaseApplication
     const canDelete = await this.applicationAccessService.canDeleteApplication(
       existingApplication,
       nationalId,

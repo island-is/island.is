@@ -10,11 +10,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { Screen } from '../../types'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
@@ -26,6 +22,7 @@ import {
   Form,
   TabSectionSlice,
   Webreader,
+  OneColumnTextSlice,
 } from '@island.is/web/components'
 import {
   Box,
@@ -41,43 +38,46 @@ import { ProjectWrapper } from './components/ProjectWrapper'
 import { Locale } from 'locale'
 import { ProjectFooter } from './components/ProjectFooter'
 import { webRichText } from '@island.is/web/utils/richText'
+import { TOC } from './ProjectTableOfContents'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
   namespace: Record<string, string>
+  projectNamespace: Record<string, string>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   stepOptionsFromNamespace: { data: Record<string, any>[]; slug: string }[]
   stepperNamespace: Record<string, string>
   locale: Locale
 }
-
 const ProjectPage: Screen<PageProps> = ({
   projectPage,
   namespace,
+  projectNamespace,
   stepperNamespace,
   stepOptionsFromNamespace,
   locale,
 }) => {
-  const { value: isWebReaderEnabledForProjectPages } = useFeatureFlag(
-    'isWebReaderEnabledForProjectPages',
-    false,
-  )
   const n = useNamespace(namespace)
+  const p = useNamespace(projectNamespace)
+
   const router = useRouter()
 
   const subpage = useMemo(
     () =>
-      projectPage.projectSubpages.find((x) => {
+      projectPage?.projectSubpages.find((x) => {
         return x.slug === router.query.subSlug
       }),
-    [router.query.subSlug, projectPage.projectSubpages],
+    [router.query.subSlug, projectPage?.projectSubpages],
   )
 
-  useContentfulId(projectPage.id, subpage?.id)
+  useContentfulId(projectPage?.id, subpage?.id)
 
   const baseRouterPath = router.asPath.split('?')[0].split('#')[0]
 
-  const navigationTitle = n('navigationTitle', 'Efnisyfirlit')
+  const navigationTitle = p(
+    'navigationTitle',
+    n('navigationTitle', 'Efnisyfirlit'),
+  )
 
   const renderSlicesAsTabs = subpage?.renderSlicesAsTabs ?? false
 
@@ -118,49 +118,81 @@ const ProjectPage: Screen<PageProps> = ({
           typename: 'homepage',
         },
         {
-          title: projectPage.title,
-          href: linkResolver('projectpage', [projectPage.slug], locale).href,
+          title: projectPage?.title ?? '',
+          href: linkResolver('projectpage', [projectPage?.slug ?? ''], locale)
+            .href,
           typename: 'projectpage',
         },
       ]
 
+  const bottomSlices =
+    (!subpage ? projectPage?.bottomSlices : subpage.bottomSlices) ?? []
+
+  const shouldDisplayWebReader =
+    projectNamespace?.shouldDisplayWebReader ?? true
+
   return (
     <>
       <HeadWithSocialSharing
-        title={`${projectPage.title} | Ísland.is`}
-        description={projectPage.featuredDescription || projectPage.intro}
-        imageUrl={projectPage.featuredImage?.url}
-        imageContentType={projectPage.featuredImage?.contentType}
-        imageWidth={projectPage.featuredImage?.width?.toString()}
-        imageHeight={projectPage.featuredImage?.height?.toString()}
+        title={`${projectPage?.title} | Ísland.is`}
+        description={projectPage?.featuredDescription || projectPage?.intro}
+        imageUrl={projectPage?.featuredImage?.url}
+        imageContentType={projectPage?.featuredImage?.contentType}
+        imageWidth={projectPage?.featuredImage?.width?.toString()}
+        imageHeight={projectPage?.featuredImage?.height?.toString()}
       />
       <ProjectWrapper
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         projectPage={projectPage}
         breadcrumbItems={breadCrumbs}
         sidebarNavigationTitle={navigationTitle}
-        withSidebar={projectPage.sidebar}
+        withSidebar={projectPage?.sidebar}
       >
-        {!subpage && isWebReaderEnabledForProjectPages && (
-          <Webreader marginTop={0} readId={null} readClass="rs_read" />
+        {!subpage && shouldDisplayWebReader && (
+          <Webreader
+            marginTop={0}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         )}
         {!!subpage && (
-          <Box marginBottom={1}>
+          <Box marginBottom={1} className="rs_read">
             <Text as="h1" variant="h1">
               {subpage.title}
             </Text>
-            {isWebReaderEnabledForProjectPages && (
-              <Webreader readId={null} readClass="rs_read" />
+            {shouldDisplayWebReader && (
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             )}
-            {subpage.content &&
-              webRichText(subpage.content as SliceType[], {
-                renderComponent: {
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              })}
+            {subpage.showTableOfContents && (
+              <Box className="rs_read">
+                <TOC slices={subpage.slices} title={navigationTitle} />
+              </Box>
+            )}
+            {subpage.content && (
+              <Box className="rs_read">
+                {webRichText(subpage.content as SliceType[], {
+                  renderComponent: {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    Form: (slice) => (
+                      <Form form={slice} namespace={namespace} />
+                    ),
+                  },
+                })}
+              </Box>
+            )}
           </Box>
         )}
         {renderSlicesAsTabs && !!subpage && subpage.slices.length > 1 && (
-          <Box marginBottom={2}>
+          <Box marginBottom={2} className="rs_read">
             <TableOfContents
               tableOfContentsTitle={n('tableOfContentsTitle', 'Undirkaflar')}
               headings={subpage.slices.map((slice) => ({
@@ -183,25 +215,34 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {renderSlicesAsTabs && selectedSliceTab && (
-          <Text paddingTop={4} as="h2" variant="h2">
-            {selectedSliceTab.title}
-          </Text>
+          <Box className="rs_read">
+            <Text paddingTop={4} as="h2" variant="h2">
+              {selectedSliceTab.title}
+            </Text>
+          </Box>
         )}
-        {content &&
-          webRichText(content, {
-            renderComponent: {
-              Form: (slice) => <Form form={slice} namespace={namespace} />,
-              TabSection: (slice) => (
-                <TabSectionSlice
-                  slice={slice}
-                  contentColumnProps={{ span: '1/1' }}
-                  contentPaddingTop={0}
-                />
-              ),
-            },
-          })}
-        {!subpage && projectPage.stepper && (
-          <Box marginTop={6}>
+        {content && (
+          <Box className="rs_read">
+            {webRichText(content, {
+              renderComponent: {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                Form: (slice) => <Form form={slice} namespace={namespace} />,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                TabSection: (slice) => (
+                  <TabSectionSlice
+                    slice={slice}
+                    contentColumnProps={{ span: '1/1' }}
+                    contentPaddingTop={0}
+                  />
+                ),
+              },
+            })}
+          </Box>
+        )}
+        {!subpage && projectPage?.stepper && (
+          <Box marginTop={6} className="rs_read">
             <Stepper
               scrollUpWhenNextStepAppears={false}
               stepper={projectPage.stepper}
@@ -211,50 +252,78 @@ const ProjectPage: Screen<PageProps> = ({
           </Box>
         )}
         {!renderSlicesAsTabs &&
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           (subpage ?? projectPage).slices.map((slice) =>
             slice.__typename === 'OneColumnText' ? (
-              <Box marginTop={6}>
+              <Box marginTop={6} className="rs_read">
                 <SliceMachine
                   key={slice.id}
                   slice={slice}
                   namespace={namespace}
                   fullWidth={true}
-                  slug={projectPage.slug}
+                  slug={projectPage?.slug}
                 />
               </Box>
             ) : (
-              <SliceMachine
-                key={slice.id}
-                slice={slice}
-                namespace={namespace}
-                fullWidth={true}
-                slug={projectPage.slug}
-              />
+              <Box className="rs_read">
+                <SliceMachine
+                  key={slice.id}
+                  slice={slice}
+                  namespace={namespace}
+                  fullWidth={true}
+                  slug={projectPage?.slug}
+                />
+              </Box>
             ),
           )}
       </ProjectWrapper>
-      {!subpage &&
-        projectPage.bottomSlices.map((slice) => {
+
+      {bottomSlices.map((slice, index) => {
+        if (
+          slice.__typename === 'OneColumnText' &&
+          index === bottomSlices.length - 1
+        ) {
           return (
-            <SliceMachine
-              key={slice.id}
-              slice={slice}
-              namespace={namespace}
-              slug={projectPage.slug}
-              fullWidth={true}
-              params={{
-                linkType: 'projectnews',
-                overview: 'projectnewsoverview',
-              }}
-            />
+            <Box paddingBottom={6} paddingTop={2}>
+              <OneColumnTextSlice slice={slice} />
+            </Box>
           )
-        })}
-      <ProjectFooter projectPage={projectPage} />
+        }
+        return (
+          <SliceMachine
+            key={slice.id}
+            slice={slice}
+            namespace={namespace}
+            slug={projectPage?.slug}
+            fullWidth={true}
+            params={{
+              linkType: 'projectnews',
+              overview: 'projectnewsoverview',
+              containerPaddingBottom: 0,
+              containerPaddingTop: 0,
+              contentPaddingTop: 0,
+              contentPaddingBottom: 0,
+            }}
+            wrapWithGridContainer={
+              slice.__typename === 'ConnectedComponent' ||
+              slice.__typename === 'TabSection' ||
+              slice.__typename === 'PowerBiSlice'
+            }
+          />
+        )
+      })}
+      <ProjectFooter
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        projectPage={projectPage}
+        namespace={projectNamespace}
+      />
     </>
   )
 }
 
-ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getProjectPage },
@@ -282,7 +351,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -297,7 +366,7 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -311,23 +380,27 @@ ProjectPage.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'Project page not found')
   }
 
-  let stepOptionsFromNamespace = []
+  let stepOptionsFromNamespace: any = []
 
   if (getProjectPage.stepper) {
-    stepOptionsFromNamespace = await stepperUtils.getStepOptionsFromUIConfiguration(
-      getProjectPage.stepper as StepperSchema,
-      apolloClient,
-    )
+    stepOptionsFromNamespace =
+      await stepperUtils.getStepOptionsFromUIConfiguration(
+        getProjectPage.stepper as StepperSchema,
+        apolloClient,
+      )
   }
+
+  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')
 
   return {
     projectPage: getProjectPage,
     stepOptionsFromNamespace,
     namespace,
+    projectNamespace,
     stepperNamespace,
     showSearchInHeader: false,
     locale: locale as Locale,
-    ...getThemeConfig(getProjectPage.theme),
+    ...getThemeConfig(getProjectPage),
   }
 }
 

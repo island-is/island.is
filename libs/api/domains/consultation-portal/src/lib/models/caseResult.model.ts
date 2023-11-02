@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { DocumentInfoResult } from './documentInfoResult.model'
 import { CaseStakeholderResult } from './caseStakeholderResult.model'
+import { RelatedCaseResult } from './relatedCaseResult.model'
 
 @ObjectType('ConsultationPortalCaseResult')
 export class CaseResult {
@@ -52,8 +53,23 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   summaryText?: string | null
 
+  @Field(() => String, { nullable: true })
+  summaryLink?: string | null
+
+  @Field(() => String, { nullable: true })
+  summaryDocumentId?: string | null
+
   @Field(() => Number, { nullable: true })
   adviceCount?: number
+
+  @Field(() => Number, { nullable: true })
+  advicePublishTypeId?: number
+
+  @Field(() => String, { nullable: true })
+  advicePublishTypeName?: string | null
+
+  @Field(() => Boolean, { nullable: true })
+  allowUsersToSendPrivateAdvices?: boolean
 
   @Field(() => Date, { nullable: true })
   created?: Date
@@ -64,9 +80,18 @@ export class CaseResult {
   @Field(() => String, { nullable: true })
   oldInstitutionName?: string | null
 
+  @Field(() => String, { nullable: true })
+  extraStakeholderList?: string | null
+
   @Field(() => [CaseStakeholderResult], { nullable: true })
   stakeholders?: CaseStakeholderResult[] | null
 
   @Field(() => [DocumentInfoResult], { nullable: true })
   documents?: DocumentInfoResult[] | null
+
+  @Field(() => [DocumentInfoResult], { nullable: true })
+  additionalDocuments?: DocumentInfoResult[] | null
+
+  @Field(() => [RelatedCaseResult], { nullable: true })
+  relatedCases?: RelatedCaseResult[] | null
 }

@@ -61,7 +61,6 @@ export const renderHelmServices = async (
 
 export const renderHelmJobForFeature = async (
   env: EnvironmentConfig,
-  habitat: ServiceBuilder<any>[],
   image: string,
   services: ServiceBuilder<any>[],
 ) => {

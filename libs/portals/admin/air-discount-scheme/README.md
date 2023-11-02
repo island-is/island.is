@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Portals Admin Air Discount Scheme
 
 This library was generated with [Nx](https://nx.dev).

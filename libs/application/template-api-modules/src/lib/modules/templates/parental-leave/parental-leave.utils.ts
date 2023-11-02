@@ -85,11 +85,8 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const {
-    applicantEmail,
-    employers,
-    employerNationalRegistryId,
-  } = getApplicationAnswers(application.answers)
+  const { applicantEmail, employers, employerNationalRegistryId } =
+    getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -147,10 +144,8 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const {
-    privatePensionFundPercentage,
-    applicationType,
-  } = getApplicationAnswers(application.answers)
+  const { privatePensionFundPercentage, applicationType } =
+    getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
     applicationType === PARENTAL_LEAVE
       ? Number(privatePensionFundPercentage) || 0
@@ -261,7 +256,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
+        return 'FO-FÓ'
       } else {
         return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
@@ -271,7 +266,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-Æ' : 'M-Æ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-Æ' : 'M-Æ'
+        return 'FO-Æ'
       } else {
         return applicantIsMale(application) ? 'F-Æ' : 'FO-Æ'
       }
@@ -351,7 +346,13 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
-  type?: 'period' | 'documentPeriod' | 'document' | undefined,
+  type?:
+    | 'period'
+    | 'documentPeriod'
+    | 'document'
+    | 'empper'
+    | 'employer'
+    | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -390,11 +391,17 @@ export const transformApplicationToParentalLeaveDTO = (
     applicant: application.applicant,
     otherParentId: getOtherParentId(application),
     expectedDateOfBirth: isFosterCareOrAdoption
-      ? ''
+      ? isDateInTheFuture(selectedChild.dateOfBirth!)
+        ? selectedChild.dateOfBirth!
+        : ''
       : selectedChild.expectedDateOfBirth,
     // TODO: get true date of birth, not expected
     // will get it from a new Þjóðskrá API (returns children in custody of a national registry id)
-    dateOfBirth: isFosterCareOrAdoption ? selectedChild.dateOfBirth! : '',
+    dateOfBirth: isFosterCareOrAdoption
+      ? isDateInTheFuture(selectedChild.dateOfBirth!)
+        ? ''
+        : selectedChild.dateOfBirth!
+      : '',
     adoptionDate: isFosterCareOrAdoption ? selectedChild.adoptionDate : '',
     email,
     phoneNumber,
@@ -466,4 +473,10 @@ export const createAssignTokenWithoutNonce = (
   )
 
   return token
+}
+
+export const isDateInTheFuture = (date: string) => {
+  const now = new Date().toISOString()
+  if (date > now) return true
+  return false
 }

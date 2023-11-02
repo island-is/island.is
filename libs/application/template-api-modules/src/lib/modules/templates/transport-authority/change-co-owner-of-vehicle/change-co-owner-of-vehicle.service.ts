@@ -2,14 +2,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import {
   applicationCheck,
   ChangeCoOwnerOfVehicleAnswers,
-  getChargeItemCodes,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
 import {
   OwnerChangeValidation,
@@ -29,7 +25,7 @@ import {
 } from './change-co-owner-of-vehicle.utils'
 import {
   ChargeFjsV2ClientService,
-  getChargeId,
+  getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
@@ -45,6 +41,7 @@ import {
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -74,6 +71,17 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       showOperated: false,
     })
 
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.vehiclesEmptyListOwner,
+          summary: coreErrorMessages.vehiclesEmptyListOwner,
+        },
+        400,
+      )
+    }
+
     return await Promise.all(
       result?.map(async (vehicle) => {
         let validation: OwnerChangeValidation | undefined
@@ -82,16 +90,18 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Only validate if fewer than 5 items
         if (result.length <= 5) {
           // Get debt status
-          debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-            auth,
-            vehicle.permno || '',
-          )
+          debtStatus =
+            await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+              auth,
+              vehicle.permno || '',
+            )
 
           // Get validation
-          validation = await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-            auth,
-            vehicle.permno || '',
-          )
+          validation =
+            await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
+              auth,
+              vehicle.permno || '',
+            )
         }
 
         return {
@@ -125,10 +135,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       permno,
     )
 
-    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
-      auth,
-      permno,
-    )
+    const currentOwnerChange =
+      await this.vehicleOwnerChangeClient.getNewestOwnerChange(auth, permno)
 
     const filteredOldCoOwners = answers?.ownerCoOwners?.filter(
       ({ wasRemoved }) => wasRemoved !== 'true',
@@ -141,9 +149,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
-    const result = await this.vehicleOwnerChangeClient.validateAllForOwnerChange(
-      auth,
-      {
+    const result =
+      await this.vehicleOwnerChangeClient.validateAllForOwnerChange(auth, {
         permno: permno,
         seller: {
           ssn: ownerSsn,
@@ -169,8 +176,7 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
           ssn: x.nationalId!,
           email: x.email!,
         })),
-      },
-    )
+      })
 
     // If we get any error messages, we will just throw an error with a default title
     // We will fetch these error messages again through graphql in the template, to be able
@@ -183,29 +189,6 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         },
         400,
       )
-    }
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as ChangeCoOwnerOfVehicleAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      if (chargeItemCodes?.length <= 0) {
-        throw new Error('Það var hvorki bætt við né eytt meðeiganda')
-      }
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
     }
   }
 
@@ -227,12 +210,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const payment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const payment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
     if (!payment?.fulfilled) {
       throw new Error(
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
@@ -286,16 +265,9 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // 1. Delete charge so that the seller gets reimburshed
-    const chargeId = getChargeId(application)
+    const chargeId = getPaymentIdFromExternalData(application)
     if (chargeId) {
-      const status = await this.chargeFjsV2ClientService.getChargeStatus(
-        chargeId,
-      )
-
-      // Make sure charge has not been deleted yet (will otherwise end in error here and wont continue)
-      if (status !== 'cancelled') {
-        await this.chargeFjsV2ClientService.deleteCharge(chargeId)
-      }
+      await this.chargeFjsV2ClientService.deleteCharge(chargeId)
     }
 
     // 2. Notify everyone in the process that the application has been withdrawn
@@ -363,12 +335,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
     }
 
     // 1b. Make sure payment is fulfilled (has been paid)
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -407,10 +375,8 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
       ...(filteredNewCoOwners ? filteredNewCoOwners : []),
     ]
 
-    const currentOwnerChange = await this.vehicleOwnerChangeClient.getNewestOwnerChange(
-      auth,
-      permno,
-    )
+    const currentOwnerChange =
+      await this.vehicleOwnerChangeClient.getNewestOwnerChange(auth, permno)
 
     const currentOperators = await this.vehicleOperatorsClient.getOperators(
       auth,

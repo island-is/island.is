@@ -1,43 +1,51 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseOrigin,
   CaseState,
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
+  CaseType,
   User as TUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { DefendantService } from '../../../defendant'
+import { include, order } from '../../case.service'
 import { CreateCaseDto } from '../../dto/createCase.dto'
 import { Case } from '../../models/case.model'
-import { include, order } from '../../case.service'
 
 interface Then {
   result: Case
   error: Error
 }
 
-type GivenWhenThen = (user: TUser, caseToCreate: CreateCaseDto) => Promise<Then>
+type GivenWhenThen = (type: CaseType) => Promise<Then>
 
 describe('CaseController - Create', () => {
+  const userId = uuid()
+  const courtId = uuid()
+  const user = {
+    id: userId,
+    role: UserRole.PROSECUTOR,
+    institution: { defaultCourtId: courtId },
+  } as TUser
+  const createProperties = {
+    property1: uuid(),
+    property2: uuid(),
+    property3: uuid(),
+  }
+
   let mockDefendantService: DefendantService
   let mockCaseModel: typeof Case
   let transaction: Transaction
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { defendantService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
 
     mockDefendantService = defendantService
     mockCaseModel = caseModel
@@ -47,12 +55,19 @@ describe('CaseController - Create', () => {
     mockTransaction.mockImplementationOnce(
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
+    const mockCreate = mockCaseModel.create as jest.Mock
+    mockCreate.mockRejectedValue(new Error('Some error'))
+    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    mockFindOne.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (user: TUser, caseToCreate: CreateCaseDto) => {
+    givenWhenThen = async (type: CaseType) => {
       const then = {} as Then
 
       try {
-        then.result = await caseController.create(user, caseToCreate)
+        then.result = await caseController.create(user, {
+          ...createProperties,
+          type,
+        } as unknown as CreateCaseDto)
       } catch (error) {
         then.error = error as Error
       }
@@ -61,71 +76,61 @@ describe('CaseController - Create', () => {
     }
   })
 
-  describe.each([...restrictionCases, ...investigationCases])(
-    '%s case created',
-    (type) => {
-      const userId = uuid()
-      const courtId = uuid()
-      const user = {
-        id: userId,
-        role: UserRole.PROSECUTOR,
-        institution: { defaultCourtId: courtId },
-      } as TUser
-      const caseToCreate = {
-        type,
-        description: 'Some details',
-        policeCaseNumbers: ['007-2021-777'],
-        defenderName: 'John John',
-        defenderNationalId: '0000000009',
-        defenderEmail: 'john@dummy.is',
-        defenderPhoneNumber: '1234567',
-        sendRequestToDefender: false,
-        leadInvestigator: 'The Boss',
-      }
-
-      beforeEach(async () => {
-        await givenWhenThen(user, caseToCreate)
-      })
-
-      it('should create a case', () => {
-        expect(mockCaseModel.create).toHaveBeenCalledWith(
-          {
-            ...caseToCreate,
-            origin: CaseOrigin.RVG,
-            creatingProsecutorId: userId,
-            prosecutorId: userId,
-            courtId,
-          },
-          { transaction },
-        )
-      })
-    },
-  )
-
-  describe.each(indictmentCases)('%s case created', (type) => {
-    const userId = uuid()
-    const courtId = uuid()
-    const user = {
-      id: userId,
-      role: UserRole.PROSECUTOR,
-      institution: { defaultCourtId: courtId },
-    } as TUser
-    const caseToCreate = {
-      type,
-      description: 'Some details',
-      policeCaseNumbers: ['007-2021-777'],
-      sendRequestToDefender: false,
-      leadInvestigator: 'The Boss',
-    }
+  describe('case created', () => {
+    const caseId = uuid()
+    const createdCase = { id: caseId }
+    const returnedCase = { id: uuid() }
+    let then: Then
 
     beforeEach(async () => {
-      await givenWhenThen(user, caseToCreate)
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(createdCase)
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(returnedCase)
+
+      then = await givenWhenThen(CaseType.CUSTODY)
     })
 
     it('should create a case', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
-          ...caseToCreate,
+          ...createProperties,
+          type: CaseType.CUSTODY,
+          origin: CaseOrigin.RVG,
+          creatingProsecutorId: userId,
+          prosecutorId: userId,
+          courtId,
+        },
+        { transaction },
+      )
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
+        caseId,
+        {},
+        transaction,
+      )
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        include,
+        order,
+        where: {
+          id: caseId,
+          isArchived: false,
+          state: { [Op.not]: CaseState.DELETED },
+        },
+      })
+      expect(then.result).toBe(returnedCase)
+    })
+  })
+
+  describe('indictment case created', () => {
+    beforeEach(async () => {
+      await givenWhenThen(CaseType.INDICTMENT)
+    })
+
+    it('should create a case', () => {
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        {
+          ...createProperties,
+          type: CaseType.INDICTMENT,
           state: CaseState.DRAFT,
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
@@ -137,86 +142,11 @@ describe('CaseController - Create', () => {
     })
   })
 
-  describe('defendant created', () => {
-    const userId = uuid()
-    const user = { id: userId } as TUser
-    const caseToCreate = {} as CreateCaseDto
-    const caseId = uuid()
-    const createdCase = { id: caseId } as Case
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-
-      await givenWhenThen(user, caseToCreate)
-    })
-
-    it('should create a defendant', () => {
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
-        caseId,
-        {},
-        transaction,
-      )
-    })
-  })
-
-  describe('case lookup', () => {
-    const user = {} as TUser
-    const caseToCreate = {} as CreateCaseDto
-    const caseId = uuid()
-    const createdCase = { id: caseId } as Case
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-
-      await givenWhenThen(user, caseToCreate)
-    })
-
-    it('should lookup the newly created case', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include,
-        order,
-        where: {
-          id: caseId,
-          isArchived: false,
-          state: { [Op.not]: CaseState.DELETED },
-        },
-      })
-    })
-  })
-
-  describe('case returned', () => {
-    const user = {} as TUser
-    const caseToCreate = {} as CreateCaseDto
-    const createdCase = {} as Case
-    const returnedCase = {} as Case
-    let then: Then
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockResolvedValueOnce(returnedCase)
-
-      then = await givenWhenThen(user, caseToCreate)
-    })
-
-    it('should return case', () => {
-      expect(then.result).toBe(returnedCase)
-    })
-  })
-
   describe('case creation fails', () => {
-    const user = {} as TUser
-    const caseToCreate = {} as CreateCaseDto
     let then: Then
 
     beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockRejectedValueOnce(new Error('Some error'))
-
-      then = await givenWhenThen(user, caseToCreate)
+      then = await givenWhenThen(CaseType.TELECOMMUNICATIONS)
     })
 
     it('should throw Error', () => {
@@ -226,18 +156,18 @@ describe('CaseController - Create', () => {
   })
 
   describe('defendant creation fails', () => {
-    const user = {} as TUser
-    const caseToCreate = {} as CreateCaseDto
-    const createdCase = {} as Case
     let then: Then
 
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      mockCreate.mockResolvedValueOnce({})
+      const mockDefendantCreate =
+        mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
-      then = await givenWhenThen(user, caseToCreate)
+      then = await givenWhenThen(
+        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+      )
     })
 
     it('should throw Error', () => {
@@ -247,18 +177,13 @@ describe('CaseController - Create', () => {
   })
 
   describe('case lookup fails', () => {
-    const user = {} as TUser
-    const caseToCreate = {} as CreateCaseDto
-    const createdCase = {} as Case
     let then: Then
 
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(createdCase)
-      const mockFindOne = mockCaseModel.findOne as jest.Mock
-      mockFindOne.mockRejectedValueOnce(new Error('Some error'))
+      mockCreate.mockResolvedValueOnce({})
 
-      then = await givenWhenThen(user, caseToCreate)
+      then = await givenWhenThen(CaseType.TRAVEL_BAN)
     })
 
     it('should throw Error', () => {

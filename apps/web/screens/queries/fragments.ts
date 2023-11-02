@@ -77,6 +77,7 @@ export const slices = gql`
       genericTags {
         id
         title
+        slug
       }
     }
     readMoreText
@@ -208,6 +209,24 @@ export const slices = gql`
     }
     html {
       ...HtmlFields
+    }
+  }
+
+  fragment SectionWithVideoFields on SectionWithVideo {
+    __typename
+    id
+    title
+    showTitle
+    showDividerOnTop
+    video {
+      ...EmbeddedVideoFields
+    }
+    html {
+      ...HtmlFields
+    }
+    link {
+      text
+      url
     }
   }
 
@@ -488,6 +507,7 @@ export const slices = gql`
     id
     title
     intro
+    defaultFieldNamespace
     fields {
       title
       name
@@ -553,6 +573,7 @@ export const slices = gql`
       title
       shortTitle
       slug
+      pageType
       tinyThumbnail {
         url
         title
@@ -589,6 +610,10 @@ export const slices = gql`
     workspaceId
     reportId
     owner
+    powerBiEmbedPropsFromServer {
+      accessToken
+      embedUrl
+    }
   }
 
   fragment TableSliceFields on TableSlice {
@@ -614,6 +639,15 @@ export const slices = gql`
       informationText
     }
     translations
+  }
+
+  fragment SliceDropdownFields on SliceDropdown {
+    __typename
+    id
+    dropdownLabel
+    slices {
+      ...OneColumnTextFields
+    }
   }
 
   fragment FeaturedSupportQNAsFields on FeaturedSupportQNAs {
@@ -672,6 +706,12 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -687,6 +727,7 @@ export const slices = gql`
     ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
     ...ContactUsFields
@@ -708,6 +749,8 @@ export const slices = gql`
     ...PowerBiSliceFields
     ...TableSliceFields
     ...EmailSignupFields
+    ...SliceDropdownFields
+    ...EmbedFields
   }
 
   fragment AllSlices on Slice {
@@ -759,6 +802,17 @@ const nestedContainerFields = `
       }
       body {
         ...AllSlices
+      }
+    }
+  }
+  ... on SliceDropdown {
+    ...SliceDropdownFields
+    slices {
+      ... on OneColumnText {
+        ...OneColumnTextFields
+        content {
+          ...AllSlices
+        }
       }
     }
   }

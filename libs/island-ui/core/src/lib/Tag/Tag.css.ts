@@ -14,10 +14,6 @@ export const container = style({
   border: '1px solid transparent',
 })
 
-export const truncate = style({
-  whiteSpace: 'nowrap',
-})
-
 export const hyphenate = style({
   padding: '4px 8px',
   minHeight: 32,
@@ -64,6 +60,10 @@ export const variants = styleVariants({
   dark: {
     color: theme.color.dark400,
     backgroundColor: theme.color.dark200,
+  },
+  yellow: {
+    backgroundColor: theme.color.yellow400,
+    color: theme.color.dark400,
   },
   disabled: {
     backgroundColor: theme.color.dark100,

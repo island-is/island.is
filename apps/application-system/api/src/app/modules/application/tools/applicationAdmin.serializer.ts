@@ -38,7 +38,8 @@ import {
 
 @Injectable()
 export class ApplicationAdminSerializer
-  implements NestInterceptor<Application, Promise<unknown>> {
+  implements NestInterceptor<Application, Promise<unknown>>
+{
   constructor(
     private intlService: IntlService,
     private historyService: HistoryService,
@@ -118,6 +119,7 @@ export class ApplicationAdminSerializer
           application,
           userRole,
           intl.formatMessage,
+          nationalId,
         )
       : undefined
 

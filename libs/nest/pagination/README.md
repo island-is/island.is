@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Pagination" -->
-
 # Nest Sequelize Cursor Pagination
 
 Based on this https://github.com/Kaltsoon/sequelize-cursor-pagination with inspiration from here https://medium.com/swlh/how-to-implement-cursor-pagination-like-a-pro-513140b65f32

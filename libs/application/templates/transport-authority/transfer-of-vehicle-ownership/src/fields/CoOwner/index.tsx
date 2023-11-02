@@ -17,7 +17,7 @@ import { information } from '../../lib/messages'
 import { VehiclesCurrentVehicle } from '../../shared'
 import { getSelectedVehicle } from '../../utils'
 
-export const CoOwner: FC<FieldBaseProps> = (props) => {
+export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application, field, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()

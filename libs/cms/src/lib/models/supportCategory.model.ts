@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ISupportCategory } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
@@ -14,7 +15,7 @@ export class SupportCategory {
   @Field({ nullable: true })
   description?: string
 
-  @Field(() => Organization, { nullable: true })
+  @CacheField(() => Organization, { nullable: true })
   organization?: Organization | null
 
   @Field({ nullable: true })

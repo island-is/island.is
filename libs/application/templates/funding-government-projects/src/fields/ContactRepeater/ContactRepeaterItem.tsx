@@ -18,7 +18,7 @@ interface Props {
   errors: RecordObject<unknown> | undefined
 }
 
-export const ContactRepeaterItem: FC<Props> = ({
+export const ContactRepeaterItem: FC<React.PropsWithChildren<Props>> = ({
   id,
   application,
   field,

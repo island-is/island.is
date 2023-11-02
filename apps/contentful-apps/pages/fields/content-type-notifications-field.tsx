@@ -2,9 +2,13 @@ import { useEffect, useState } from 'react'
 import { Note, Paragraph } from '@contentful/f36-components'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
-import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
+import {
+  CONTENTFUL_ENVIRONMENT,
+  CONTENTFUL_SPACE,
+  DEFAULT_LOCALE,
+} from '../../constants'
 
-const ConentTypeNotificationsField = () => {
+const ContentTypeNotificationsField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 
@@ -18,7 +22,7 @@ const ConentTypeNotificationsField = () => {
         spaceId: CONTENTFUL_SPACE,
       })
       const messageFromServer =
-        data.fields?.fields?.['is-IS']?.[sdk.contentType.sys.id]
+        data.fields?.fields?.[DEFAULT_LOCALE]?.[sdk.contentType.sys.id]
       if (messageFromServer) setMessage(messageFromServer)
     }
     fetchMessage()
@@ -33,4 +37,4 @@ const ConentTypeNotificationsField = () => {
   )
 }
 
-export default ConentTypeNotificationsField
+export default ContentTypeNotificationsField

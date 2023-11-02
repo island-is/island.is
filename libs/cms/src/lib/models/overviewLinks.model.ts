@@ -1,18 +1,20 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IOverviewLinks } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { IntroLinkImage, mapIntroLinkImage } from './introLinkImage.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class OverviewLinks {
   @Field(() => ID)
   id!: string
 
-  @Field(() => [IntroLinkImage])
+  @CacheField(() => [IntroLinkImage])
   overviewLinks!: Array<IntroLinkImage>
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link!: Link | null
 
   @Field(() => Boolean, { nullable: true })

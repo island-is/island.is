@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  LicensePlateRenewalAnswers,
-} from '@island.is/application/templates/transport-authority/license-plate-renewal'
+import { ApplicationTypes } from '@island.is/application/types'
+import { LicensePlateRenewalAnswers } from '@island.is/application/templates/transport-authority/license-plate-renewal'
 import {
   PlateOwnership,
   PlateOwnershipValidation,
@@ -32,16 +26,28 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       auth,
     )
 
+    // Validate that user has at least 1 plate ownership
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: error.plateOwnershipEmptyList,
+          summary: error.plateOwnershipEmptyList,
+        },
+        400,
+      )
+    }
+
     return await Promise.all(
       result.map(async (item: PlateOwnership) => {
         let validation: PlateOwnershipValidation | undefined
 
         // Only validate if fewer than 5 items
         if (result.length <= 5) {
-          validation = await this.vehiclePlateRenewalClient.validatePlateOwnership(
-            auth,
-            item.regno,
-          )
+          validation =
+            await this.vehiclePlateRenewalClient.validatePlateOwnership(
+              auth,
+              item.regno,
+            )
         }
 
         return {
@@ -82,25 +88,6 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
     }
   }
 
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as LicensePlateRenewalAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickPlate?.regno }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async submitApplication({
     application,
     auth,
@@ -114,12 +101,8 @@ export class LicensePlateRenewalService extends BaseTemplateApiService {
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(

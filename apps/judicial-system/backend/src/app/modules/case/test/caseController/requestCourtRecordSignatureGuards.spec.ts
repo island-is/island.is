@@ -6,10 +6,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { CaseWriteGuard } from '../../guards/caseWrite.guard'
-import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { CaseController } from '../../case.controller'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
+import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { CaseWriteGuard } from '../../guards/caseWrite.guard'
 
 describe('CaseController - Request court record signature guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,7 +33,7 @@ describe('CaseController - Request court record signature guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -45,7 +45,7 @@ describe('CaseController - Request court record signature guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -57,7 +57,7 @@ describe('CaseController - Request court record signature guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
+    it('should have CaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -69,7 +69,7 @@ describe('CaseController - Request court record signature guards', () => {
       guard = guards[3]
     })
 
-    it('should have CaseTypeGuard as quard 4', () => {
+    it('should have CaseTypeGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -84,7 +84,7 @@ describe('CaseController - Request court record signature guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseWriteGuard as quard 5', () => {
+    it('should have CaseWriteGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })

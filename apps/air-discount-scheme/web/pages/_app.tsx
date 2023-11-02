@@ -87,7 +87,6 @@ SupportApplication.getInitialProps = async (appContext) => {
       pageProps: pageProps,
       apolloState: apolloState,
       session: session,
-      router: router,
       isAuthenticated: isAuthenticated(appContext.ctx),
     },
   }

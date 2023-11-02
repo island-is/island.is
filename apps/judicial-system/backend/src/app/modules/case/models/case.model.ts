@@ -13,29 +13,31 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseType,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseOrigin,
-  SubpoenaType,
-  CaseAppealState,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
+  CaseState,
+  CaseType,
+  CourtDocument,
+  RequestSharedWithDefender,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
-import { IndictmentCount } from '../../indictment-count'
 
 @Table({
   tableName: 'case',
@@ -76,6 +78,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseOrigin),
   })
+  @ApiProperty({ enum: CaseOrigin })
   origin!: CaseOrigin
 
   /**********
@@ -86,6 +89,7 @@ export class Case extends Model {
     allowNull: false,
     values: Object.values(CaseType),
   })
+  @ApiProperty({ enum: CaseType })
   type!: CaseType
 
   /**********
@@ -178,15 +182,16 @@ export class Case extends Model {
   defenderPhoneNumber?: string
 
   /**********
-   * Indicates whether the prosecutor's request should be sent to the accused's defender
-   * when a court date has been assigned to the case - optional
+   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
+   * defender - optional
    **********/
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
   })
-  @ApiPropertyOptional()
-  sendRequestToDefender?: boolean
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -
@@ -745,7 +750,7 @@ export class Case extends Model {
   prosecutorPostponedAppealDate?: Date
 
   /**********
-   * The date and time of the judge's ruling signature
+   * The date and time of the judge's ruling (when the csae is completed)
    **********/
   @Column({
     type: DataType.DATE,
@@ -753,6 +758,16 @@ export class Case extends Model {
   })
   @ApiPropertyOptional()
   rulingDate?: Date
+
+  /**********
+   * The date and time of the judge's ruling signature
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  rulingSignatureDate?: Date
 
   /**********
    * The date and time of the judge's inital ruling signature - used for extended cases
@@ -909,18 +924,7 @@ export class Case extends Model {
     allowNull: true,
   })
   @ApiPropertyOptional()
-  seenByDefender?: Date
-
-  /**********
-   * A indictment subpeona type. Either ARREST_SUMMONS or ABSENCE_SUMMONS
-   **********/
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(SubpoenaType),
-  })
-  @ApiPropertyOptional({ enum: SubpoenaType })
-  subpoenaType?: SubpoenaType
+  openedByDefender?: Date
 
   /**********
    * Indicates whether the defendant waives her right to counsel
@@ -980,4 +984,144 @@ export class Case extends Model {
   })
   @ApiProperty({ enum: CaseAppealState })
   appealState?: CaseAppealState
+
+  /**********
+   * The date and time when the prosecutor appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  prosecutorStatementDate?: Date
+
+  /**********
+   * The date and time when the defendant appeal statement was sent
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  defendantStatementDate?: Date
+
+  /**********
+   * The time and date that the court marked an appeal as received
+   **********/
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealReceivedByCourtDate?: Date
+
+  /**********
+   * The appeal conclusion
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealConclusion?: string
+
+  /**********
+   * The case appeal ruling decision
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CaseAppealRulingDecision),
+  })
+  @ApiProperty({ enum: CaseAppealRulingDecision })
+  appealRulingDecision?: CaseAppealRulingDecision
+
+  /**********
+   * The appeal case number assigned in the court of appeals
+   **********/
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealCaseNumber?: string
+
+  /**********
+   * The surrogate key of the assistant assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealAssistantId?: string
+
+  /**********
+   * The assistant assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealAssistantId')
+  @ApiPropertyOptional({ type: User })
+  appealAssistant?: User
+
+  /**********
+   * The surrogate key of the first judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge1Id?: string
+
+  /**********
+   * The first judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge1Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge1?: User
+
+  /**********
+   * The surrogate key of the second judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge2Id?: string
+
+  /**********
+   * The second judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge2Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge2?: User
+
+  /**********
+   * The surrogate key of the third judge assigned to the appeal case
+   **********/
+  @ForeignKey(() => User)
+  @Column({
+    type: DataType.UUID,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealJudge3Id?: string
+
+  /**********
+   * The third judge assigned to the appeal case
+   **********/
+  @BelongsTo(() => User, 'appealJudge3Id')
+  @ApiPropertyOptional({ type: User })
+  appealJudge3?: User
+
+  /**********
+   * The case's event logs
+   **********/
+  @HasMany(() => EventLog, 'caseId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }

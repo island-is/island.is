@@ -5,7 +5,7 @@ import PassportLicense from '../PassportLicense/PassportLicense'
 import { IdentityDocumentModel } from '@island.is/api/schema'
 import SingleLicenseCard from '../SingleLicenseCard/SingleLicenseCard'
 import { m } from '../../lib/messages'
-import { applyPassport, passportLogo } from '../../lib/constants'
+import { passportLogo } from '../../lib/constants'
 import { capitalizeEveryWord } from '../../utils/capitalize'
 
 interface Props {
@@ -15,7 +15,12 @@ interface Props {
   title?: string | null
 }
 
-const LicenseCards: FC<Props> = ({ passportData, name, noPassport, title }) => {
+const LicenseCards: FC<React.PropsWithChildren<Props>> = ({
+  passportData,
+  name,
+  noPassport,
+  title,
+}) => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   return (
@@ -26,7 +31,7 @@ const LicenseCards: FC<Props> = ({ passportData, name, noPassport, title }) => {
             <SingleLicenseCard
               title={title || formatMessage(m.passportCardTitle)}
               subtitle={formatMessage(m.noValidPassport)}
-              link={applyPassport}
+              link={formatMessage(m.applyPassportUrl)}
               img={passportLogo}
               linkText={formatMessage(m.applyFor)}
               background="blue100"

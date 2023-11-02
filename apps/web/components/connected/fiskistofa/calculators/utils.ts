@@ -19,9 +19,10 @@ export interface YearOption {
 export const getYearOptions = () => {
   const years: YearOption[] = []
 
-  const currentYear = getCurrentYear()
+  const today = new Date()
+  const currentYear = today.getFullYear()
 
-  for (let year = 2001; year < currentYear; year += 1) {
+  for (let year = 2001; year <= currentYear; year += 1) {
     const yearString = String(year)
     years.push({
       label: yearString,

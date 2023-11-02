@@ -60,7 +60,7 @@ describe('Mortgage certificate Application Template', () => {
         MortgageCertificateTemplate,
       )
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.PAYMENT,
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(States.PAYMENT)

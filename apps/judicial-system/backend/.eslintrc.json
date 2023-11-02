@@ -1,10 +1,62 @@
 {
   "extends": "../../../.eslintrc.json",
-  "rules": {},
+  "rules": {
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [
+          // External imports come first.
+          ["^\\w", "@(?!nestjs|island\\.is)"],
+          // Then nestjs packages.
+          ["^@nestjs"],
+          // Then island.is packages.
+          ["^@island\\.is/(?!judicial-system)"],
+          // Then judicial-system packages.
+          ["^@island\\.is/judicial-system"],
+          // Then all other imports in this order: "../", "./"
+          [
+            "^\\.\\.(?!/?$)",
+            "^\\.\\./?$",
+            "^\\./(?=.*/)(?!/?$)",
+            "^\\.(?!/?$)",
+            "^\\./?$"
+          ]
+        ]
+      }
+    ]
+  },
+  "plugins": ["simple-import-sort"],
   "ignorePatterns": ["!**/*"],
   "overrides": [
-    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
-    { "files": ["*.ts", "*.tsx"], "rules": {} },
-    { "files": ["*.js", "*.jsx"], "rules": {} }
+    {
+      "files": ["*.spec.ts"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // External imports come first.
+              ["^\\w", "@(?!nestjs|island\\.is)"],
+              // Then nestjs packages.
+              ["^@nestjs"],
+              // Then island.is packages.
+              ["^@island\\.is/(?!judicial-system)"],
+              // Then judicial-system packages.
+              ["^@island\\.is/judicial-system"],
+              // Then all testing modules.
+              ["^.*createTesting.*Module$"],
+              // Then all other imports in this order: "../", "./"
+              [
+                "^\\.\\.(?!/?$)",
+                "^\\.\\./?$",
+                "^\\./(?=.*/)(?!/?$)",
+                "^\\.(?!/?$)",
+                "^\\./?$"
+              ]
+            ]
+          }
+        ]
+      }
+    }
   ]
 }

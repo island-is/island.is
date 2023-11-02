@@ -1,0 +1,5 @@
+mutation PublishClient($input: AuthAdminPublishClientInput!) {
+  publishAuthAdminClient(input: $input) {
+    environment
+  }
+}

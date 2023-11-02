@@ -1,7 +1,5 @@
-import { caching } from 'cache-manager'
-import redisStore from 'cache-manager-ioredis'
 import { ConfigType } from '@island.is/nest/config'
-import { createRedisCluster } from '@island.is/cache'
+import { createRedisCacheManager } from '@island.is/cache'
 import {
   buildCacheControl,
   CacheConfig,
@@ -29,21 +27,18 @@ function overrideCacheControl(request: Request) {
   return buildCacheControl({ maxAge: 60 * 10 })
 }
 
-export const getCache = (
+export const getCache = async (
   config: ConfigType<typeof NationalRegistryClientConfig>,
-): CacheConfig | undefined => {
+): Promise<CacheConfig | undefined> => {
   if (config.redis.nodes.length === 0) {
     return undefined
   }
-  const cacheManager = caching({
-    store: redisStore,
+  const cacheManager = await createRedisCacheManager({
+    name: 'clients-national-registry-v2',
+    nodes: config.redis.nodes,
+    ssl: config.redis.ssl,
+    noPrefix: true,
     ttl: 0,
-    redisInstance: createRedisCluster({
-      name: 'clients-national-registry-v2',
-      nodes: config.redis.nodes,
-      ssl: config.redis.ssl,
-      noPrefix: true,
-    }),
   })
 
   return {

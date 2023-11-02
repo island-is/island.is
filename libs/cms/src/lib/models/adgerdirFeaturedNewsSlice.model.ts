@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IVidspyrnaFeaturedNews } from '../generated/contentfulTypes'
 import { News, mapNews } from './news.model'
 
@@ -14,7 +15,7 @@ export class AdgerdirFeaturedNewsSlice {
   @Field()
   title?: string
 
-  @Field(() => [News])
+  @CacheField(() => [News])
   featured!: News[]
 }
 

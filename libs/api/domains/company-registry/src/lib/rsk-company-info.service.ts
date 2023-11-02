@@ -5,13 +5,17 @@ import { RskCompanySearchItems } from './models/rskCompanySearchItems.model'
 import { decodeBase64, toBase64 } from './rsk-company-info.utils'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { User } from '@island.is/auth-nest-tools'
+import { RskCompanyRelatedParty } from './models/rskCompanyRelatedParty.model'
 
 @Injectable()
 export class RskCompanyInfoService {
   constructor(
-    private companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
+    private readonly companyRegistryClient: CompanyRegistryClientService,
+    private readonly rskRelationshipsClient: RskRelationshipsClient,
   ) {}
 
   async getCompanyInformationWithExtra(
@@ -53,5 +57,27 @@ export class RskCompanyInfoService {
         hasNextPage: searchResults.hasMore,
       },
     }
+  }
+
+  /**
+   * Search for legal entities by name or national id
+   */
+  async getLegalEntityRelationships(
+    user: User,
+    nationalId: string,
+  ): Promise<RskCompanyRelatedParty[] | null> {
+    const legalEntityRelationships =
+      await this.rskRelationshipsClient.getLegalEntityRelationships(
+        user,
+        nationalId,
+      )
+
+    if (!legalEntityRelationships?.relationships) return null
+
+    return legalEntityRelationships.relationships.map((t) => ({
+      name: t.name ?? '',
+      nationalId: t.nationalId ?? '',
+      type: t.type ?? '',
+    }))
   }
 }

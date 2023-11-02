@@ -41,7 +41,7 @@ type FieldProps = FieldBaseProps & {
 }
 type ScreenProps = RepeaterProps & FieldProps
 
-const PeriodsRepeater: FC<ScreenProps> = ({
+const PeriodsRepeater: FC<React.PropsWithChildren<ScreenProps>> = ({
   application,
   expandRepeater,
   field,
@@ -53,10 +53,11 @@ const PeriodsRepeater: FC<ScreenProps> = ({
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const editable =
     application.state === States.DRAFT ||
-    application.state === States.EDIT_OR_ADD_PERIODS
+    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
   // Need to be consider again when applicant could change basic information
-  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+  const shouldCall =
+    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
   const showDescription = field?.props?.showDescription ?? true
   const dob = getExpectedDateOfBirthOrAdoptionDate(application)

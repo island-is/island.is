@@ -11,18 +11,13 @@ import {
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
 import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
-import {
-  Application,
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import {
   Identity,
   UserProfile,
   SubmitRequestToSyslumennResult,
   ValidateMortgageCertificateResult,
 } from './types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
@@ -35,23 +30,6 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     super(ApplicationTypes.MORTGAGE_CERTIFICATE)
   }
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        id,
-        InstitutionNationalIds.SYSLUMENN,
-        [ChargeItemCode.MORTGAGE_CERTIFICATE],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
@@ -62,12 +40,8 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       }
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (isPayment?.fulfilled) {
       return {
@@ -90,10 +64,11 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     }
 
     return {
-      validation: await this.mortgageCertificateService.validateMortgageCertificate(
-        propertyNumber,
-        isFromSearch,
-      ),
+      validation:
+        await this.mortgageCertificateService.validateMortgageCertificate(
+          propertyNumber,
+          isFromSearch,
+        ),
       propertyDetails: await this.syslumennService.getPropertyDetails(
         propertyNumber,
       ),
@@ -106,9 +81,10 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const { propertyNumber } = application.answers.selectProperty as {
       propertyNumber: string
     }
-    const document = await this.mortgageCertificateService.getMortgageCertificate(
-      propertyNumber,
-    )
+    const document =
+      await this.mortgageCertificateService.getMortgageCertificate(
+        propertyNumber,
+      )
 
     // Call sýslumaður to get the document sealed before handing it over to the user
     const sealedDocumentResponse = await this.syslumennService.sealDocument(
@@ -173,7 +149,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })
@@ -215,7 +191,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennSubmitRequestErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })

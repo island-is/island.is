@@ -26,7 +26,7 @@ describe('InternalFileController - Deliver case file to court guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have CaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -38,7 +38,7 @@ describe('InternalFileController - Deliver case file to court guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseFileExistsGuard as quard 2', () => {
+    it('should have CaseFileExistsGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })

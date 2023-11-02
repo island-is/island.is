@@ -1,20 +1,26 @@
 import {
-  CaseType,
-  Institution,
-  User,
-  UserRole,
-  IndictmentCount,
-  SessionArrangements,
-  CaseOrigin,
-  CaseAppealState,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import {
   Case,
   CaseListEntry,
   CreateCase,
   SubstanceMap,
   UpdateCase,
 } from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseLegalProvisions,
+  CaseOrigin,
+  CaseType,
+  Defendant,
+  IndictmentCount,
+  Institution,
+  RequestSharedWithDefender,
+  SessionArrangements,
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 export enum AppealDecisionRole {
   PROSECUTOR = 'PROSECUTOR',
@@ -42,7 +48,7 @@ export enum LoginErrorCodes {
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = 'defendant' | 'createdAt'
+export type sortableTableColumn = 'defendant' | 'createdAt' | 'courtDate'
 
 export interface SortConfig {
   column: sortableTableColumn
@@ -234,6 +240,13 @@ export interface TempCase
     | 'sessionArrangements'
     | 'appealState'
     | 'appealedByRole'
+    | 'appealRulingDecision'
+    | 'defendants'
+    | 'requestedCustodyRestrictions'
+    | 'legalProvisions'
+    | 'accusedAppealDecision'
+    | 'prosecutorAppealDecision'
+    | 'requestSharedWithDefender'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -246,25 +259,50 @@ export interface TempCase
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
   appealedByRole?: UserRole
+  appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  legalProvisions?: CaseLegalProvisions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TempUpdateCase
   extends Omit<
     UpdateCase,
-    'courtDocuments' | 'type' | 'sessionArrangements' | 'appealState'
+    | 'courtDocuments'
+    | 'type'
+    | 'sessionArrangements'
+    | 'appealState'
+    | 'appealRulingDecision'
+    | 'defendants'
+    | 'requestSharedWithDefender'
   > {
   courtDocuments?: CourtDocument[]
   type?: CaseType
   sessionArrangements?: SessionArrangements
   appealState?: CaseAppealState
+  appealRulingDecision?: CaseAppealRulingDecision
+  defendants?: Defendant[]
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
-export interface TempCreateCase extends Omit<CreateCase, 'type'> {
+export interface TempCreateCase
+  extends Omit<CreateCase, 'type' | 'requestSharedWithDefender'> {
   type: CaseType
+  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
-export interface TempCaseListEntry extends Omit<CaseListEntry, 'type'> {
+export interface TempCaseListEntry
+  extends Omit<
+    CaseListEntry,
+    'type' | 'appealState' | 'appealCaseNumber' | 'appealRulingDecision'
+  > {
   type: CaseType
+  appealState?: CaseAppealState
+  appealCaseNumber?: string
+  appealRulingDecision?: CaseAppealRulingDecision
 }
 
 export interface CourtDocument {

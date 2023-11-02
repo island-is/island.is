@@ -1,19 +1,22 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
-  InternalServerErrorException,
   ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
 } from '@nestjs/common'
 
 import {
-  completedCaseStates,
-  User,
-  UserRole,
   CaseFileCategory,
-  restrictionCases,
-  investigationCases,
+  completedCaseStates,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   indictmentCases,
+  investigationCases,
+  isDefenceUser,
+  isPrisonSystemUser,
+  restrictionCases,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case'
@@ -42,30 +45,29 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       throw new InternalServerErrorException('Missing case file')
     }
 
-    if (
-      user.role === UserRole.DEFENDER &&
-      completedCaseStates.includes(theCase.state) &&
-      caseFile.category
-    ) {
-      if (
-        [...restrictionCases, ...investigationCases].includes(theCase.type) &&
-        [
-          CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-          CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-        ].includes(caseFile.category)
-      ) {
-        return true
-      }
+    if (completedCaseStates.includes(theCase.state) && caseFile.category) {
+      if (isDefenceUser(user)) {
+        if (
+          [...restrictionCases, ...investigationCases].includes(theCase.type) &&
+          defenderCaseFileCategoriesForRestrictionAndInvestigationCases.includes(
+            caseFile.category,
+          )
+        ) {
+          return true
+        }
 
-      if (
-        indictmentCases.includes(theCase.type) &&
-        caseFile.category === CaseFileCategory.RULING
-      ) {
-        return true
+        if (
+          indictmentCases.includes(theCase.type) &&
+          defenderCaseFileCategoriesForIndictmentCases.includes(
+            caseFile.category,
+          )
+        ) {
+          return true
+        }
+      } else if (isPrisonSystemUser(user)) {
+        if (caseFile.category === CaseFileCategory.APPEAL_RULING) {
+          return true
+        }
       }
     }
 

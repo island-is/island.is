@@ -4,7 +4,6 @@ export interface PlateOwnership {
   endDate: Date
   nationalId: string
   name: string
-  permno: string
 }
 
 export interface PlateOwnershipValidation {

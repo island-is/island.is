@@ -1,5 +1,6 @@
 {
-  "root": "apps/judicial-system/backend",
+  "name": "judicial-system-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/backend/src",
   "projectType": "application",
   "prefix": "judicial-system-backend",
@@ -40,14 +41,14 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "judicial-system-backend:build",
         "runtimeArgs": ["--no-experimental-fetch", "--trace-deprecation"]
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/judicial-system/backend/**/*.{ts,tsx,js,jsx}"
@@ -55,50 +56,54 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/backend/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/backend/jest.config.ts",
+        "logHeapUsage": true,
+        "passWithNoTests": true,
+        "workerIdleMemoryLimit": "1028"
       },
-      "outputs": ["coverage/apps/judicial-system/backend"]
+      "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/judicial-system/backend"
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/judicial-system/backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/backend/tsconfig.app.json apps/judicial-system/backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/judicial-system/backend/src/openapi.yaml"
+      ]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/judicial-system/backend"
       }
     },
     "migrate/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate:undo",
         "cwd": "apps/judicial-system/backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/judicial-system/backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
         "cwd": "apps/judicial-system/backend"
@@ -106,7 +111,7 @@
     },
     "docker-express": {},
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
       }

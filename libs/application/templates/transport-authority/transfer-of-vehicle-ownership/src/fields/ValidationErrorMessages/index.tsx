@@ -9,7 +9,9 @@ import { TransferOfVehicleOwnershipAnswers } from '../..'
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { applicationCheck, payment } from '../../lib/messages'
 
-export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
+export const ValidationErrorMessages: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = (props) => {
   const { application, setFieldLoadingState } = props
 
   const { formatMessage } = useLocale()
@@ -29,6 +31,7 @@ export const ValidationErrorMessages: FC<FieldBaseProps> = (props) => {
           vehicle: {
             date: answers?.vehicle?.date,
             salePrice: answers?.vehicle?.salePrice,
+            mileage: answers?.vehicle?.mileage,
           },
           seller: {
             email: answers?.seller?.email,

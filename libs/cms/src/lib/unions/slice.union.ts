@@ -37,6 +37,9 @@ import {
   ITableSlice,
   IEmailSignup,
   IFeaturedSupportQnAs,
+  ISliceDropdown,
+  ISectionWithVideo,
+  IEmbed,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -102,6 +105,12 @@ import {
   FeaturedSupportQNAs,
   mapFeaturedSupportQNAs,
 } from '../models/featuredSupportQNAs.model'
+import { mapSliceDropdown, SliceDropdown } from '../models/sliceDropdown.model'
+import {
+  SectionWithVideo,
+  mapSectionWithVideo,
+} from '../models/sectionWithVideo.model'
+import { Embed, mapEmbed } from '../models/embed.model'
 
 type SliceTypes =
   | ITimeline
@@ -117,6 +126,7 @@ type SliceTypes =
   | ISliceConnectedComponent
   | IEmbeddedVideo
   | ISectionWithImage
+  | ISectionWithVideo
   | ITabSection
   | ITeamList
   | IContactUs
@@ -138,6 +148,8 @@ type SliceTypes =
   | ITableSlice
   | IEmailSignup
   | IFeaturedSupportQnAs
+  | ISliceDropdown
+  | IEmbed
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -155,6 +167,7 @@ export const SliceUnion = createUnionType({
     ConnectedComponent,
     EmbeddedVideo,
     SectionWithImage,
+    SectionWithVideo,
     TabSection,
     TeamList,
     ContactUs,
@@ -179,6 +192,8 @@ export const SliceUnion = createUnionType({
     TableSlice,
     EmailSignup,
     FeaturedSupportQNAs,
+    SliceDropdown,
+    Embed,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -212,6 +227,8 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmbeddedVideo(slice as IEmbeddedVideo)
     case 'sectionWithImage':
       return mapSectionWithImage(slice as ISectionWithImage)
+    case 'sectionWithVideo':
+      return mapSectionWithVideo(slice as ISectionWithVideo)
     case 'tabSection':
       return mapTabSection(slice as ITabSection)
     case 'teamList':
@@ -254,6 +271,10 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmailSignup(slice as IEmailSignup)
     case 'featuredSupportQNAs':
       return mapFeaturedSupportQNAs(slice as IFeaturedSupportQnAs)
+    case 'sliceDropdown':
+      return mapSliceDropdown(slice as ISliceDropdown)
+    case 'embed':
+      return mapEmbed(slice as IEmbed)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
@@ -294,7 +315,7 @@ export const mapDocument = (
         slices.push(safelyMapSliceUnion(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        if (block.data.target.fields?.file) {
+        if (block.data.target?.fields?.file) {
           block.data.target.fields.file.details?.image
             ? slices.push(mapImage(block.data.target))
             : slices.push(mapAsset(block.data.target))

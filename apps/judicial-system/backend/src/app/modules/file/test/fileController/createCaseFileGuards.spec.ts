@@ -27,7 +27,7 @@ describe('FileController - Create case file guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -39,7 +39,7 @@ describe('FileController - Create case file guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseExistsGuard as quard 2', () => {
+    it('should have CaseExistsGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -51,7 +51,7 @@ describe('FileController - Create case file guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseWriteGuard as quard 3', () => {
+    it('should have CaseWriteGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })

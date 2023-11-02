@@ -52,6 +52,7 @@ async function ensureIDSsession(
   phoneNumber: string,
   authUrlPrefix: string,
   delegation?: string,
+  authTrigger: ((page: Page) => Promise<string>) | string = homeUrl,
 ) {
   if (typeof idsLoginOn === 'object' && idsLoginOn.nextAuth) {
     const idsSessionValidation = await page.request.get(
@@ -60,8 +61,9 @@ async function ensureIDSsession(
     const sessionObject = await idsSessionValidation.json()
     if (!sessionObject.expires) {
       const idsPage = await context.newPage()
-      await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
+      if (typeof authTrigger === 'string') await idsPage.goto(authTrigger)
+      else authTrigger = await authTrigger(idsPage)
+      await idsLogin(idsPage, phoneNumber, authTrigger, delegation)
       await idsPage.close()
     } else {
       debug(`IDS(next-auth) session exists`)
@@ -78,13 +80,11 @@ async function ensureIDSsession(
       )
     }
     const sessionObject = JSON.parse(sessionMatch[1])
-    if (
-      sessionObject.status === 'No Session' ||
-      sessionObject.expiresIn < 5 * 60
-    ) {
+    if (sessionObject.status === 'No Session' || sessionObject.isExpired) {
       const idsPage = await context.newPage()
-      await idsPage.goto(homeUrl)
-      await idsLogin(idsPage, phoneNumber, homeUrl, delegation)
+      if (typeof authTrigger === 'string') await idsPage.goto(authTrigger)
+      else authTrigger = await authTrigger(idsPage)
+      await idsLogin(idsPage, phoneNumber, authTrigger, delegation)
       await idsPage.close()
     } else {
       debug(`IDS session exists`)
@@ -100,6 +100,7 @@ export async function session({
   idsLoginOn = true,
   delegation = '',
   storageState = `playwright-sessions-${homeUrl}-${phoneNumber}`,
+  authTrigger = homeUrl,
 }: {
   browser: Browser
   homeUrl?: string
@@ -114,6 +115,7 @@ export async function session({
       }
   delegation?: string
   storageState?: string
+  authTrigger?: string | ((page: Page) => Promise<string>)
 }) {
   // Browser context storage
   // default: sessions/phone x delegation/url
@@ -136,12 +138,14 @@ export async function session({
       homeUrl,
       phoneNumber,
       authUrlPrefix,
+      delegation,
+      authTrigger,
     )
   }
   await page.close()
   const sessionValidationPage = await context.newPage()
   const sessionValidation = await sessionValidationPage.goto(homeUrl, {
-    waitUntil: 'networkidle',
+    waitUntil: 'domcontentloaded',
   })
   await expect(sessionValidation?.url()).toMatch(homeUrl)
   await sessionValidationPage.context().storageState({ path: storageStatePath })

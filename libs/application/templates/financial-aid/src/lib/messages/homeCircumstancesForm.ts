@@ -15,15 +15,13 @@ export const homeCircumstancesForm = {
   }),
   circumstances: defineMessages({
     withParents: {
-      id:
-        'fa.application:section.homeCircumstancesForm.circumstances.withParents',
+      id: 'fa.application:section.homeCircumstancesForm.circumstances.withParents',
       defaultMessage: 'Ég bý hjá foreldrum',
       description:
         'Home circumstances form circumstances if applicant is living with parents',
     },
     withOthers: {
-      id:
-        'fa.application:section.homeCircumstancesForm.circumstances.withOthers',
+      id: 'fa.application:section.homeCircumstancesForm.circumstances.withOthers',
       defaultMessage: 'Ég bý eða leigi hjá öðrum án leigusamnings',
       description:
         'Home circumstances form circumstances if applicant lives with others',
@@ -35,15 +33,13 @@ export const homeCircumstancesForm = {
         'Home circumstances form circumstances if applicant has its own place',
     },
     registeredLease: {
-      id:
-        'fa.application:section.homeCircumstancesForm.circumstances.registeredLease',
+      id: 'fa.application:section.homeCircumstancesForm.circumstances.registeredLease',
       defaultMessage: 'Ég leigi með þinglýstan leigusamning',
       description:
         'Home circumstances form circumstances if applicant has registered lease',
     },
     unregisteredLease: {
-      id:
-        'fa.application:section.homeCircumstancesForm.circumstances.unregisteredLease',
+      id: 'fa.application:section.homeCircumstancesForm.circumstances.unregisteredLease',
       defaultMessage: 'Ég leigi með óþinglýstan leigusamning',
       description:
         'Home circumstances form circumstances if applicant has unregistered lease',

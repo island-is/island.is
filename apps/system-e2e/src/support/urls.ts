@@ -27,6 +27,31 @@ export const getEnvironmentBaseUrl = (authority: string) => {
   return `https://${prefix}${authority}`
 }
 const localUrl = `http://${BaseAuthority.local}:${process.env.PORT ?? 4200}`
+// This set of query params is used to hide the onboarding modal as well as force locale to Icelandic.
+// Useful if you need to test something that is using icelandic labels for example.
+const icelandicAndNoPopup = {
+  locale: 'is',
+  hide_onboarding_modal: 'true',
+}
+const addQueryParameters = (
+  url: string,
+  parameters: Record<string, string>,
+): string => {
+  const urlObject = new URL(url, 'http://dummyurl.com')
+
+  // Check if each parameter already exists in the URL's query string
+  for (const [key, value] of Object.entries(parameters)) {
+    if (!urlObject.searchParams.has(key)) {
+      urlObject.searchParams.set(key, value)
+    }
+  }
+
+  return urlObject.toString().replace(/^http:\/\/dummyurl\.com/, '')
+}
+
+export const icelandicAndNoPopupUrl = (url: string) =>
+  addQueryParameters(url, icelandicAndNoPopup)
+
 const envs: {
   [envName in TestEnvironment]: {
     authUrl: string

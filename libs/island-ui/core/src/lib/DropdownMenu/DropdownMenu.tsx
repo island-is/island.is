@@ -38,8 +38,10 @@ export interface DropdownMenuProps {
    * Utility button icon
    */
   icon?: ButtonProps['icon']
+  iconType?: ButtonProps['iconType']
   disclosure?: ReactElement
   menuClassName?: string
+  fixed?: boolean
   openOnHover?: boolean
 }
 
@@ -48,11 +50,18 @@ export const DropdownMenu = ({
   items,
   title,
   icon,
+  iconType,
   disclosure,
   menuClassName,
+  fixed = false,
   openOnHover = false,
 }: DropdownMenuProps) => {
-  const menu = useMenuState({ placement: 'bottom', gutter: 8 })
+  const menu = useMenuState({
+    placement: 'bottom',
+    gutter: 8,
+    unstable_fixed: fixed,
+  })
+
   const hoverProps = useMenuHoverProps(menu, openOnHover)
   const menuBoxStyle = useBoxStyles({
     component: 'div',
@@ -85,6 +94,7 @@ export const DropdownMenu = ({
           as={Button}
           variant="utility"
           icon={icon}
+          iconType={iconType}
           {...menu}
           {...hoverProps}
         >

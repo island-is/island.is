@@ -3,26 +3,63 @@ import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
 } from '../../ChatPanel'
-import { onDirectorateOfImmigrationChatLoad } from '../../ChatPanel/WatsonChatPanel'
 
-export const liveChatIncConfig: Record<string, LiveChatIncChatPanelProps> = {
-  // HSN - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
-  EM4Y0gF4OoGhH9ZY0Dxl6: {
-    license: 15092154,
-    version: '2.0',
+export const liveChatIncConfig: Record<
+  Locale,
+  Record<string, LiveChatIncChatPanelProps>
+> = {
+  is: {
+    // HSN - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+    EM4Y0gF4OoGhH9ZY0Dxl6: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HSU - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
+    '1UDhUhE8pzwnl0UxuzRUMk': {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HVE - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
+    Un4jJk0rPybt9fu8gk94m: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // Samgöngustofa - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+    },
   },
-  // HSU - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
-  '1UDhUhE8pzwnl0UxuzRUMk': {
-    license: 15092154,
-    version: '2.0',
-  },
-  // HVE - Organization
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
-  Un4jJk0rPybt9fu8gk94m: {
-    license: 15092154,
-    version: '2.0',
+  en: {
+    // HSN - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/EM4Y0gF4OoGhH9ZY0Dxl6
+    EM4Y0gF4OoGhH9ZY0Dxl6: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HSU - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/1UDhUhE8pzwnl0UxuzRUMk
+    '1UDhUhE8pzwnl0UxuzRUMk': {
+      license: 15092154,
+      version: '2.0',
+    },
+    // HVE - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Un4jJk0rPybt9fu8gk94m
+    Un4jJk0rPybt9fu8gk94m: {
+      license: 15092154,
+      version: '2.0',
+    },
+    // Samgöngustofa - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
+    '6IZT17s7stKJAmtPutjpD7': {
+      license: 13270509,
+      version: '2.0',
+      group: 1,
+    },
   },
 }
 
@@ -40,9 +77,17 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
-      onLoad(instance) {
-        onDirectorateOfImmigrationChatLoad(instance)
-      },
+    },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
     },
   },
   is: {
@@ -87,9 +132,17 @@ export const watsonConfig: Record<
       showLauncher: false,
       carbonTheme: 'g10',
       namespaceKey: 'default',
-      onLoad(instance) {
-        onDirectorateOfImmigrationChatLoad(instance)
-      },
+    },
+
+    // Sjúkratryggingar - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/3pZwAagW0UY26giHaxHthe
+    '3pZwAagW0UY26giHaxHthe': {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
     },
   },
 }

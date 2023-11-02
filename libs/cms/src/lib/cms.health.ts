@@ -3,7 +3,7 @@ import {
   HealthIndicator,
   HealthIndicatorResult,
   HealthCheckError,
-  DNSHealthIndicator,
+  HttpHealthIndicator,
   HealthCheckService,
 } from '@nestjs/terminus'
 import dns from 'dns'
@@ -13,7 +13,7 @@ import { environment } from './environments'
 @Injectable()
 export class CmsHealthIndicator extends HealthIndicator {
   constructor(
-    private dns: DNSHealthIndicator,
+    private dns: HttpHealthIndicator,
     private health: HealthCheckService,
   ) {
     super()
@@ -46,8 +46,10 @@ export class CmsHealthIndicator extends HealthIndicator {
     }
 
     const response = await this.health.check(
-      Object.entries(requiredUrls).map(([key, url]) => () =>
-        this.canUrlBeResolved(key, url),
+      Object.entries(requiredUrls).map(
+        ([key, url]) =>
+          () =>
+            this.canUrlBeResolved(key, url),
       ),
     )
 

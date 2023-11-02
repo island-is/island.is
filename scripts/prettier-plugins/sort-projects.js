@@ -14,16 +14,6 @@ const editStringJSON = (text, handler) => {
   return JSON.stringify(outJson, null, '  ')
 }
 
-const sortWorkspace = (text) => {
-  return editStringJSON(text, (json) => {
-    if (json.projects) {
-      json.projects = sortObjectByKey(json.projects)
-    }
-
-    return json
-  })
-}
-
 const sortNx = (text) => {
   return editStringJSON(text, (json) => {
     if (json.projects) {
@@ -55,9 +45,6 @@ exports.parsers = {
       const fileName = options.filepath && basename(options.filepath)
 
       switch (fileName) {
-        case 'workspace.json':
-          return sortWorkspace(text)
-
         case 'tsconfig.base.json':
           return sortTsConfig(text)
 

@@ -1,5 +1,5 @@
-import { SQSClient } from '@aws-sdk/client-sqs'
 import { uuid } from 'uuidv4'
+import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { Test } from '@nestjs/testing'
 
@@ -34,9 +34,9 @@ export const createTestingMessageModule = async () => {
     }
   }
 
-  sqs = ({
+  sqs = {
     send: mockSend,
-  } as unknown) as SQSClient
+  } as unknown as SQSClient
 
   const messageModule = await Test.createTestingModule({
     imports: [ConfigModule.forRoot({ load: [messageModuleConfig] })],

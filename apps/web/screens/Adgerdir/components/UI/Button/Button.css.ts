@@ -383,13 +383,15 @@ export const icon = style({
     [`${isEmpty} &, ${circle} &`]: {
       marginLeft: 0,
     },
-    [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]: {
-      width: 16,
-      height: 16,
-    },
-    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]: {
-      marginLeft: 8,
-    },
+    [`${size.small} &, ${variants.utility} &, ${size.textSmall} &, ${circleSizes.small} &`]:
+      {
+        width: 16,
+        height: 16,
+      },
+    [`${variants.utility}:not(${isEmpty}) &, ${variants.text}:not(${isEmpty}) &`]:
+      {
+        marginLeft: 8,
+      },
     [`${variants.text}${size.textSmall}:not(${isEmpty}) &`]: {
       marginLeft: 4,
     },

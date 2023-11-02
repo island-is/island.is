@@ -1,24 +1,26 @@
 import CryptoJS from 'crypto-js'
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
+
 import { CaseState, UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { uuidFactory } from '../../../../factories'
 import { Defendant, DefendantService } from '../../../defendant'
+import { CaseFile, FileService } from '../../../file'
 import {
   IndictmentCount,
   IndictmentCountService,
 } from '../../../indictment-count'
-import { CaseFile, FileService } from '../../../file'
+import { caseModuleConfig } from '../../case.config'
+import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
-import { caseModuleConfig } from '../../case.config'
-import { oldFilter } from '../../filters/case.filters'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -100,7 +102,7 @@ describe('InternalCaseController - Archive', () => {
         ],
         where: {
           isArchived: false,
-          [Op.or]: [{ state: CaseState.DELETED }, oldFilter],
+          [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
         },
       })
     })
@@ -186,6 +188,7 @@ describe('InternalCaseController - Archive', () => {
           legalArguments: 'original_legal_arguments2',
         },
       ],
+      appealConclusion: 'original_appeal_conclusion',
       isArchived: false,
     }
     const archive = JSON.stringify({
@@ -220,6 +223,7 @@ describe('InternalCaseController - Archive', () => {
       caseModifiedExplanation: 'original_caseModifiedExplanation',
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
+      appealConclusion: 'original_appeal_conclusion',
       defendants: [
         {
           nationalId: 'original_nationalId1',
@@ -278,7 +282,7 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted defendant one properties', () => {
-      expect(mockDefendantService.update).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId1,
         { nationalId: '', name: '', address: '' },
@@ -287,7 +291,7 @@ describe('InternalCaseController - Archive', () => {
     })
 
     it('should clear encrypted defendant two properties', () => {
-      expect(mockDefendantService.update).toHaveBeenCalledWith(
+      expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId2,
         { nationalId: '', name: '', address: '' },
@@ -390,6 +394,7 @@ describe('InternalCaseController - Archive', () => {
           caseResentExplanation: '',
           crimeScenes: null,
           indictmentIntroduction: '',
+          appealConclusion: '',
           isArchived: true,
         },
         { where: { id: caseId }, transaction },

@@ -1,44 +1,55 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { customZodError } from './utils/customZodError'
 import { EstateTypes, YES, NO } from './constants'
-
-const isValidPhoneNumber = (phoneNumber: string) => {
-  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
-}
-
-const checkIfFilledOut = (arr: Array<string | undefined>) => {
-  if (arr.every((v) => v === '')) {
-    return true
-  } else if (arr.every((v) => v !== '')) {
-    return true
-  } else {
-    return false
-  }
-}
+import * as kennitala from 'kennitala'
+import {
+  customZodError,
+  isValidEmail,
+  isValidPhoneNumber,
+  isValidString,
+} from './utils'
 
 const asset = z
   .object({
-    assetNumber: z.string().optional(),
-    description: z.string().optional(),
+    assetNumber: z.string(),
+    description: z.string(),
+    marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    dummy: z.boolean().optional(),
     share: z.number().optional(),
   })
   .refine(
-    ({ assetNumber, description }) => {
-      return checkIfFilledOut([assetNumber, description])
+    ({ enabled, marketValue }) => {
+      return enabled ? marketValue !== '' : true
     },
     {
-      params: m.fillOutRates,
+      path: ['marketValue'],
+    },
+  )
+  .refine(
+    ({ enabled, assetNumber }) => {
+      return enabled ? isValidString(assetNumber) : true
+    },
+    {
       path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ enabled, description }) => {
+      return enabled ? isValidString(description) : true
+    },
+    {
+      path: ['description'],
     },
   )
   .array()
   .optional()
+
+const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const estateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -55,9 +66,9 @@ export const estateSchema = z.object({
   }),
 
   selectedEstate: z.enum([
-    EstateTypes.divisionOfEstate,
+    EstateTypes.officialDivision,
     EstateTypes.estateWithoutAssets,
-    EstateTypes.permitToPostponeEstateDivision,
+    EstateTypes.permitForUndividedEstate,
     EstateTypes.divisionOfEstateByHeirs,
   ]),
 
@@ -67,14 +78,79 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
+        relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
-        dateOfBirth: z.string().min(1).optional(),
+        dateOfBirth: z.string().optional(),
         initial: z.boolean(),
         enabled: z.boolean(),
-        dummy: z.boolean().optional(),
+        phone: z.string(),
+        email: z.string(),
+        // Málsvari
+        advocate: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
       })
+      .refine(
+        ({ nationalId, advocate }) => {
+          return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .refine(
+        ({ foreignCitizenship, nationalId }) => {
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+
+      /* Validating email and phone depending on whether the field is enabled */
+      .refine(
+        ({ enabled, phone }) => {
+          return enabled ? isValidPhoneNumber(phone) : true
+        },
+        {
+          path: ['phone'],
+        },
+      )
+      .refine(
+        ({ enabled, email }) => {
+          return enabled ? isValidEmail(email) : true
+        },
+        {
+          path: ['email'],
+        },
+      )
+
+      /* phone and email validation for advocates */
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidPhoneNumber(advocate.phone) : true
+        },
+        {
+          path: ['advocate', 'phone'],
+        },
+      )
+      .refine(
+        ({ enabled, advocate }) => {
+          return enabled && advocate ? isValidEmail(advocate.email) : true
+        },
+        {
+          path: ['advocate', 'email'],
+        },
+      )
       .array()
       .optional(),
     assets: asset,
@@ -83,26 +159,62 @@ export const estateSchema = z.object({
     ships: asset,
     guns: asset,
     knowledgeOfOtherWills: z.enum([YES, NO]).optional(),
+    addressOfDeceased: z.string().optional(),
     caseNumber: z.string().min(1).optional(),
     dateOfDeath: z.date().optional(),
     nameOfDeceased: z.string().min(1).optional(),
     nationalIdOfDeceased: z.string().optional(),
     districtCommissionerHasWill: z.boolean().optional(),
+    testament: z
+      .object({
+        wills: z.enum([YES, NO]),
+        agreement: z.enum([YES, NO]),
+        dividedEstate: z.enum([YES, NO]).optional(),
+        additionalInfo: z.string().optional(),
+      })
+      .optional(),
   }),
+
+  // is: Maki hins látna
+  deceasedWithUndividedEstate: z
+    .object({
+      selection: z.enum([YES, NO]),
+      spouse: z
+        .object({
+          name: z.string().optional(),
+          nationalId: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ selection, spouse }) => {
+        return selection === YES ? !!spouse?.nationalId : true
+      },
+      {
+        path: ['spouse', 'nationalId'],
+      },
+    ),
 
   // is: Innbú
   inventory: z
     .object({
-      info: z.string().optional(),
-      value: z.string().optional(),
+      info: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ info, value }) => {
-        return checkIfFilledOut([info, value])
+        return info !== '' ? value !== '' : true
       },
       {
-        params: m.fillOutRates,
         path: ['value'],
+      },
+    )
+    .refine(
+      ({ info, value }) => {
+        return value !== '' ? isValidString(info) : true
+      },
+      {
+        path: ['info'],
       },
     )
     .optional(),
@@ -110,16 +222,23 @@ export const estateSchema = z.object({
   // is: Innistæður í bönkum
   bankAccounts: z
     .object({
-      accountNumber: z.string().optional(),
-      balance: z.string().optional(),
+      accountNumber: z.string(),
+      balance: z.string(),
     })
     .refine(
       ({ accountNumber, balance }) => {
-        return checkIfFilledOut([accountNumber, balance])
+        return accountNumber !== '' ? isValidString(balance) : true
       },
       {
-        params: m.fillOutRates,
         path: ['balance'],
+      },
+    )
+    .refine(
+      ({ accountNumber, balance }) => {
+        return balance !== '' ? accountNumber !== '' : true
+      },
+      {
+        path: ['accountNumber'],
       },
     )
     .array()
@@ -128,16 +247,23 @@ export const estateSchema = z.object({
   // is: Verðbréf og kröfur
   claims: z
     .object({
-      publisher: z.string().optional(),
-      value: z.string().optional(),
+      publisher: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ publisher, value }) => {
-        return checkIfFilledOut([publisher, value])
+        return publisher !== '' ? isValidString(value) : true
       },
       {
-        params: m.fillOutRates,
         path: ['value'],
+      },
+    )
+    .refine(
+      ({ publisher, value }) => {
+        return value !== '' ? isValidString(publisher) : true
+      },
+      {
+        path: ['publisher'],
       },
     )
     .array()
@@ -146,19 +272,51 @@ export const estateSchema = z.object({
   // is: Hlutabréf
   stocks: z
     .object({
-      organization: z.string().optional(),
-      nationalId: z.string().optional(),
-      faceValue: z.string().optional(),
-      rateOfExchange: z.string().optional(),
+      organization: z.string(),
+      nationalId: z.string(),
+      faceValue: z.string(),
+      rateOfExchange: z.string(),
       value: z.string().optional(),
     })
+    /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
-      ({ organization, nationalId, value }) => {
-        return checkIfFilledOut([organization, nationalId, value])
+      ({ organization, nationalId, faceValue, rateOfExchange }) => {
+        return organization !== '' || faceValue !== '' || rateOfExchange !== ''
+          ? nationalId && kennitala.isValid(nationalId)
+          : true
       },
       {
-        params: m.fillOutRates,
-        path: ['value'],
+        path: ['nationalId'],
+      },
+    )
+    .refine(
+      ({ organization, nationalId, faceValue, rateOfExchange }) => {
+        return nationalId !== '' || faceValue !== '' || rateOfExchange !== ''
+          ? isValidString(organization)
+          : true
+      },
+      {
+        path: ['organization'],
+      },
+    )
+    .refine(
+      ({ organization, nationalId, faceValue, rateOfExchange }) => {
+        return organization !== '' || nationalId !== '' || rateOfExchange !== ''
+          ? faceValue !== ''
+          : true
+      },
+      {
+        path: ['faceValue'],
+      },
+    )
+    .refine(
+      ({ organization, nationalId, faceValue, rateOfExchange }) => {
+        return nationalId !== '' || faceValue !== '' || organization !== ''
+          ? rateOfExchange !== ''
+          : true
+      },
+      {
+        path: ['rateOfExchange'],
       },
     )
     .array()
@@ -167,16 +325,23 @@ export const estateSchema = z.object({
   // is: Peningar og bankahólf
   moneyAndDeposit: z
     .object({
-      info: z.string().optional(),
-      value: z.string().optional(),
+      info: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ info, value }) => {
-        return checkIfFilledOut([info, value])
+        return info !== '' ? value !== '' : true
       },
       {
-        params: m.fillOutRates,
         path: ['value'],
+      },
+    )
+    .refine(
+      ({ info, value }) => {
+        return value !== '' ? isValidString(info) : true
+      },
+      {
+        path: ['info'],
       },
     )
     .optional(),
@@ -184,16 +349,23 @@ export const estateSchema = z.object({
   // is: Aðrar eignir
   otherAssets: z
     .object({
-      info: z.string().optional(),
-      value: z.string().optional(),
+      info: z.string(),
+      value: z.string(),
     })
     .refine(
       ({ info, value }) => {
-        return checkIfFilledOut([info, value])
+        return info !== '' ? value !== '' : true
       },
       {
-        params: m.fillOutRates,
         path: ['value'],
+      },
+    )
+    .refine(
+      ({ info, value }) => {
+        return value !== '' ? isValidString(info) : true
+      },
+      {
+        path: ['info'],
       },
     )
     .optional(),
@@ -204,13 +376,36 @@ export const estateSchema = z.object({
       creditorName: z.string().optional(),
       nationalId: z.string().optional(),
       balance: z.string().optional(),
+      loanIdentity: z.string().optional(),
     })
     .refine(
-      ({ creditorName, nationalId, balance }) => {
-        return checkIfFilledOut([creditorName, nationalId, balance])
+      ({ nationalId }) => {
+        return nationalId === ''
+          ? true
+          : nationalId && kennitala.isValid(nationalId)
       },
       {
-        params: m.fillOutRates,
+        params: m.errorNationalIdIncorrect,
+        path: ['nationalId'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || balance !== ''
+          ? isValidString(loanIdentity)
+          : true
+      },
+      {
+        path: ['loanIdentity'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
+          ? isValidString(balance)
+          : true
+      },
+      {
         path: ['balance'],
       },
     )
@@ -221,45 +416,76 @@ export const estateSchema = z.object({
   // is: Umboðsmaður
   representative: z
     .object({
-      representativeName: z.string().min(1).optional(),
-      representativeNationalId: z.string().length(10).optional(),
-      representativePhoneNumber: z
-        .string()
-        .refine((v) => isValidPhoneNumber(v), {
-          params: m.errorPhoneNumber,
-        })
-        .optional(),
-      representativeEmail: customZodError(
-        z.string().email(),
-        m.errorEmail,
-      ).optional(),
+      name: z.string().or(z.undefined()),
+      nationalId: z.string().or(z.undefined()),
+      phone: z.string(),
+      email: z.string(),
     })
+    /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
-      ({
-        representativeName,
-        representativeNationalId,
-        representativePhoneNumber,
-        representativeEmail,
-      }) => {
-        return checkIfFilledOut([
-          representativeName,
-          representativeNationalId,
-          representativePhoneNumber,
-          representativeEmail,
-        ])
+      ({ name, nationalId, phone, email }) => {
+        return name !== '' || nationalId !== '' || phone !== ''
+          ? isValidEmail(email)
+          : true
       },
       {
-        params: m.fillOutRates,
-        path: ['balance'],
+        path: ['email'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        return name !== '' || nationalId !== '' || email !== ''
+          ? isValidPhoneNumber(phone)
+          : true
+      },
+      {
+        path: ['phone'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        return name !== '' || phone !== '' || email !== ''
+          ? nationalId && kennitala.isPerson(nationalId)
+          : true
+      },
+      {
+        path: ['nationalId'],
+      },
+    )
+    .refine(
+      ({ name, nationalId, phone, email }) => {
+        return phone !== '' || email !== '' || nationalId !== ''
+          ? isValidString(name)
+          : true
+      },
+      {
+        path: ['name'],
       },
     )
     .optional(),
+  estateAttachments: z.object({
+    attached: z.object({
+      file: z.array(fileSchema),
+    }),
+  }),
 
-  // is: Heimild til setu í óskiptu búi skv. erfðaskrá
-  undividedEstateResidencePermission: z.enum([YES, NO]),
+  // is: Eignalaust bú
+  estateWithoutAssets: z
+    .object({
+      estateAssetsExist: z.enum([YES, NO]),
+      estateDebtsExist: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ estateAssetsExist, estateDebtsExist }) => {
+        return estateAssetsExist === YES
+          ? estateDebtsExist === YES || estateDebtsExist === NO
+          : true
+      },
+      {
+        path: ['estateDebtsExist'],
+      },
+    ),
 
-  // is: Hefur umsækjandi forræði á búi?
-  applicantHasLegalCustodyOverEstate: z.enum([YES, NO]),
-
-  readTerms: z.array(z.enum([YES])).length(1),
+  confirmAction: z.array(z.enum([YES])).length(1),
+  confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
 })

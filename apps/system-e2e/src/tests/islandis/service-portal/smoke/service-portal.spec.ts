@@ -1,7 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
+import { messages as m } from '@island.is/service-portal/documents/messages'
+import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
+import { label } from '../../../../support/i18n'
 import { helpers } from '../../../../support/locator-helpers'
+import { disableI18n } from '../../../../support/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -19,23 +22,37 @@ test.describe('Service portal', () => {
   test.afterAll(async () => {
     await context.close()
   })
+  const servicePortalHome = icelandicAndNoPopupUrl('/minarsidur')
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
-    await expect(findByRole('link', 'Pósthólf')).toBeVisible()
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
+    await expect(findByRole('link', 'Pósthólf').first()).toBeVisible()
   })
   test('should have user Gervimaður Afríka logged in', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await expect(findByRole('heading', 'Gervimaður Afríka')).toBeVisible()
   })
   test('should have Pósthólf', async () => {
     const page = await context.newPage()
+    await disableI18n(page)
     const { findByRole } = helpers(page)
-    await page.goto('/minarsidur')
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
     await findByRole('link', 'Pósthólf').click()
-    await expect(page.locator('text=Hér getur þú fundið skjöl')).toBeVisible()
+    await expect(page.getByText(label(m.pickDocument))).toBeVisible()
+  })
+  test('should change language', async () => {
+    const page = await context.newPage()
+    const { findByTestId } = helpers(page)
+    await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
+
+    const languageButton = findByTestId('language-switcher-button')
+    await languageButton.click()
+    const greeting = findByTestId('greeting')
+
+    await expect(languageButton).toContainText('IS')
+    await expect(greeting).toContainText(/(?:day|evening)/)
   })
 })

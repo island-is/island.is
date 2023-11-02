@@ -2,6 +2,10 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import { Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { NotificationType } from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
   CourtCaseInfo,
@@ -13,47 +17,24 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  SelectSubpoenaType,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import { Box } from '@island.is/island-ui/core'
-import {
-  NotificationType,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import * as constants from '@island.is/judicial-system/consts'
-import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
 
-const Subpoena: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const { formatMessage } = useIntl()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    courtDateHasChanged,
-  } = useCourtArrangements(workingCase)
+  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
+    useCourtArrangements(workingCase)
   const { setAndSendCaseToServer, sendNotification } = useCase()
-
-  const handleSubpoenaTypeChange = (subpoenaType: SubpoenaType) => {
-    setAndSendCaseToServer(
-      [{ subpoenaType, force: true }],
-      workingCase,
-      setWorkingCase,
-    )
-  }
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
@@ -105,16 +86,6 @@ const Subpoena: React.FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.selectSubpoenaTypeHeading)}
-            required
-          />
-          <SelectSubpoenaType
-            workingCase={workingCase}
-            onChange={handleSubpoenaTypeChange}
-          />
-        </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
             title={formatMessage(strings.courtArrangementsHeading)}
@@ -133,9 +104,7 @@ const Subpoena: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
-            handleNavigationTo(
-              constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
-            )
+            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }
           nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}

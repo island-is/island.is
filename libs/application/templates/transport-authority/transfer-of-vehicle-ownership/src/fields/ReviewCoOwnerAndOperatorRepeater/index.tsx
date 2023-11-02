@@ -17,7 +17,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const ReviewCoOwnerAndOperatorRepeater: FC<
-  FieldBaseProps & ReviewScreenProps
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({
   setStep,
   setCoOwnersAndOperators,
@@ -34,9 +34,8 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
     string | undefined
   >(undefined)
   const [identicalError, setIdenticalError] = useState<boolean>(false)
-  const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] = useState<
-    CoOwnerAndOperator[]
-  >(coOwnersAndOperators)
+  const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] =
+    useState<CoOwnerAndOperator[]>(coOwnersAndOperators)
 
   const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',

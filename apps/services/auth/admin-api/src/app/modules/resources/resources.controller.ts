@@ -2,7 +2,7 @@ import {
   ApiResource,
   ApiScope,
   ApiScopeUserClaim,
-  ApiScopesDTO,
+  ApiScopeDTO,
   IdentityResource,
   IdentityResourcesDTO,
   ResourcesService,
@@ -284,9 +284,8 @@ export class ResourcesController {
   async getIdentityResourceByName(
     @Param('id') name: string,
   ): Promise<IdentityResource> {
-    const identityResource = await this.resourcesService.getIdentityResourceByName(
-      name,
-    )
+    const identityResource =
+      await this.resourcesService.getIdentityResourceByName(name)
     if (!identityResource) {
       throw new NoContentException()
     }
@@ -435,7 +434,7 @@ export class ResourcesController {
   @Audit<ApiScope>({
     resources: (scope) => scope.name,
   })
-  async createApiScope(@Body() apiScope: ApiScopesDTO): Promise<ApiScope> {
+  async createApiScope(@Body() apiScope: ApiScopeDTO): Promise<ApiScope> {
     return this.resourcesService.createApiScope(apiScope)
   }
 
@@ -457,7 +456,7 @@ export class ResourcesController {
   @Put('api-scope/:name')
   @ApiOkResponse({ type: ApiScope })
   async updateApiScope(
-    @Body() apiScope: ApiScopesDTO,
+    @Body() apiScope: ApiScopeDTO,
     @Param('name') name: string,
     @CurrentUser() user: User,
   ): Promise<ApiScope> {
@@ -799,9 +798,8 @@ export class ResourcesController {
       throw new BadRequestException('scopeName must be provided')
     }
 
-    const apiResourceScope = await this.resourcesService.findApiResourceScopeByScopeName(
-      scopeName,
-    )
+    const apiResourceScope =
+      await this.resourcesService.findApiResourceScopeByScopeName(scopeName)
     if (!apiResourceScope) {
       throw new NoContentException()
     }

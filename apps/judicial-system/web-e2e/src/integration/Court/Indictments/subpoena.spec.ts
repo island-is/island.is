@@ -1,13 +1,21 @@
-import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
-  INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE,
+  CaseState,
+  CaseType,
+  IndictmentSubtype,
+  UserRole,
+} from '@island.is/judicial-system/types'
+import {
+  INDICTMENTS_DEFENDER_ROUTE,
   INDICTMENTS_SUBPOENA_ROUTE,
 } from '@island.is/judicial-system/consts'
 
 import { makeCourt, intercept, mockCase } from '../../../utils'
 
 describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
-  const caseData = mockCase(CaseType.MAJOR_ASSAULT)
+  const caseData = mockCase(
+    CaseType.INDICTMENT,
+    IndictmentSubtype.MAJOR_ASSAULT,
+  )
 
   beforeEach(() => {
     const caseDataAddition = {
@@ -24,14 +32,8 @@ describe(`${INDICTMENTS_SUBPOENA_ROUTE}/:id`, () => {
   })
 
   it('should enable continue button when required fields are valid', () => {
-    cy.getByTestid('continueButton').should('not.be.enabled')
-    cy.get('#subpoenaTypeAbsenceSummons').click()
-    cy.getByTestid('continueButton').should('be.enabled')
     cy.getByTestid('continueButton').click()
     cy.getByTestid('modalPrimaryButton').click()
-    cy.url().should(
-      'include',
-      `${INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${caseData.id}`,
-    )
+    cy.url().should('include', `${INDICTMENTS_DEFENDER_ROUTE}/${caseData.id}`)
   })
 })

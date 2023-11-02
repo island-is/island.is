@@ -9,6 +9,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock .yarnrc.yml ./
+ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
@@ -25,9 +26,7 @@ ADD . .
 FROM src as builder
 ARG APP
 ARG APP_DIST_HOME
-ARG GEOIP_LICENSE_KEY
 ENV APP=${APP}
-ENV GEOIP_LICENSE_KEY=${GEOIP_LICENSE_KEY}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -124,7 +123,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -136,21 +135,17 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-RUN yarn set version berry
+ADD .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
-ENV PLAYWRIGHT_BROWSER=webkit
+ENV PLAYWRIGHT_BROWSER=chromium
 RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
 ENTRYPOINT ["./entrypoint.sh"]
-
-
-
-
-
-
 
 
 FROM playwright-base as output-local
@@ -166,3 +161,6 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
+
+FROM output-base as output-native
+RUN echo "not-implemented"

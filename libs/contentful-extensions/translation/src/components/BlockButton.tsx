@@ -44,7 +44,10 @@ const toggleBlock = (editor: Editor, format: string) => {
   }
 }
 
-export const BlockButton: FC<BlockButtonProps> = ({ format, icon }) => {
+export const BlockButton: FC<React.PropsWithChildren<BlockButtonProps>> = ({
+  format,
+  icon,
+}) => {
   const editor = useSlate()
 
   return (

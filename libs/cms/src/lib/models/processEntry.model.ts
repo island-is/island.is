@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IProcessEntry } from '../generated/contentfulTypes'
 import { SystemMetadata } from '@island.is/shared/types'
+import { getRelativeUrl } from './utils'
 
 const AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME =
   process.env.AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME
@@ -30,7 +31,7 @@ export const mapProcessEntry = ({
   let processLink = ''
 
   if ((fields.processLink ?? []).length > 0) {
-    processLink = fields.processLink as string
+    processLink = getRelativeUrl(fields.processLink as string)
   } else if (fields.processAsset?.fields?.file?.url) {
     let prefix = ''
     if (fields.processAsset.fields.file.url.startsWith('//')) {

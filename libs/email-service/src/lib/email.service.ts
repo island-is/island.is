@@ -1,13 +1,13 @@
-import nodemailer from 'nodemailer'
 import { SES } from 'aws-sdk'
+import nodemailer from 'nodemailer'
 
 import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Message } from '../types'
 import { AdapterService } from '../tools/adapter.service'
+import { Message } from '../types'
 
 export const EMAIL_OPTIONS = 'EMAIL_OPTIONS'
 
@@ -83,10 +83,8 @@ export class EmailService {
       const transporter = nodemailer.createTransport(transport)
 
       if (message.template) {
-        const {
-          html,
-          attachments,
-        } = await this.adapterService.buildCustomTemplate(message.template)
+        const { html, attachments } =
+          await this.adapterService.buildCustomTemplate(message.template)
 
         message.html = html
         message.attachments = (message.attachments ?? []).concat(attachments)

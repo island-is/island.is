@@ -30,7 +30,7 @@ interface FormStepperProps {
   screen: FormScreen
 }
 
-const FormStepper: FC<FormStepperProps> = ({
+const FormStepper: FC<React.PropsWithChildren<FormStepperProps>> = ({
   application,
   form,
   mode,
@@ -39,15 +39,6 @@ const FormStepper: FC<FormStepperProps> = ({
   screen,
 }) => {
   const { formatMessage } = useLocale()
-
-  const progressTheme: Record<FormModes, FormStepperThemes> = {
-    [FormModes.NOT_STARTED]: FormStepperThemes.PURPLE,
-    [FormModes.DRAFT]: FormStepperThemes.PURPLE,
-    [FormModes.APPROVED]: FormStepperThemes.GREEN,
-    [FormModes.IN_PROGRESS]: FormStepperThemes.BLUE,
-    [FormModes.REJECTED]: FormStepperThemes.RED,
-    [FormModes.COMPLETED]: FormStepperThemes.GREEN,
-  }
 
   // Cannot infers type because of circular loop
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +54,7 @@ const FormStepper: FC<FormStepperProps> = ({
     children: section.children.map((child) => formattedChildren(child)),
   }))
 
-  const ProgressTag: FC = () => {
+  const ProgressTag: FC<React.PropsWithChildren<unknown>> = () => {
     switch (mode) {
       case FormModes.IN_PROGRESS:
         return (
@@ -107,7 +98,6 @@ const FormStepper: FC<FormStepperProps> = ({
 
   return (
     <CoreFormStepper
-      theme={progressTheme[mode]}
       formName={formatMessage(form.title)}
       formIcon={form.icon}
       sections={formattedSections}

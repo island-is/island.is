@@ -3,31 +3,6 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
-  AccordionListItem,
-  CaseFilesAccordionItem,
-  CommentsAccordionItem,
-  FormContentContainer,
-  FormContext,
-  FormFooter,
-  InfoCard,
-  PageLayout,
-  PdfButton,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  core,
-  icCourtOverview,
-  requestCourtDate,
-  ruling,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
-import {
   Accordion,
   AccordionItem,
   AlertMessage,
@@ -35,17 +10,44 @@ import {
   Button,
   Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  core,
+  icCourtOverview,
+  requestCourtDate,
+  ruling,
+  titles,
+} from '@island.is/judicial-system-web/messages'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFilesAccordionItem,
+  CaseResentExplanation,
+  CommentsAccordionItem,
+  CourtCaseInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   UploadState,
   useCourtUpload,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCourtUpload'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
-import * as constants from '@island.is/judicial-system/consts'
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { DraftConclusionModal } from '../../components'
 
@@ -101,26 +103,26 @@ const Overview = () => {
       />
       <FormContentContainer>
         {workingCase.caseResentExplanation && (
-          <Box marginBottom={workingCase.seenByDefender ? 3 : 5}>
+          <Box marginBottom={workingCase.openedByDefender ? 3 : 5}>
             <CaseResentExplanation
               explanation={workingCase.caseResentExplanation}
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
               title={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.title,
+                icCourtOverview.sections.openedByDefenderAlert.title,
               )}
               message={formatMessage(
-                icCourtOverview.sections.seenByDefenderAlert.text,
+                icCourtOverview.sections.openedByDefenderAlert.text,
                 {
-                  when: formatDate(workingCase.seenByDefender, 'PPPp'),
+                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
                 },
               )}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
@@ -129,6 +131,8 @@ const Overview = () => {
             Yfirlit kröfu um rannsóknarheimild
           </Text>
         </Box>
+        <CourtCaseInfo workingCase={workingCase} />
+
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -208,7 +212,7 @@ const Overview = () => {
               <AccordionItem
                 labelVariant="h3"
                 id="id_1"
-                label="Lagaákvæði sem brot varða við"
+                label={formatMessage(lawsBrokenAccordion.heading)}
               >
                 <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
               </AccordionItem>

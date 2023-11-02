@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { Html, mapHtml } from './html.model'
 import { IFrontpageSlider } from '../generated/contentfulTypes'
 import { Asset } from './asset.model'
@@ -11,7 +12,7 @@ export class FrontpageSlider {
   @Field()
   subtitle!: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   intro?: Html | null
 
   @Field()
@@ -20,7 +21,7 @@ export class FrontpageSlider {
   @Field({ nullable: true })
   link?: string
 
-  @Field(() => Asset, { nullable: true })
+  @CacheField(() => Asset, { nullable: true })
   animationJsonAsset?: Asset | null
 }
 

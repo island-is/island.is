@@ -1,34 +1,35 @@
-import { Gender, CaseState } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { CaseState } from '@island.is/judicial-system/types'
+import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
 import {
+  CaseOrigin,
+  CaseType,
+  Gender,
   InstitutionType,
   User,
   UserRole,
-  CaseType,
-  CaseOrigin,
-  CurrentUserQueryDocument,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 export const mockCourt = {
   id: 'court_id',
-  type: InstitutionType.Court,
+  type: InstitutionType.DISTRICT_COURT,
   name: 'Héraðsdómur Reykjavíkur',
 }
 
-export const mockHighCourt = {
-  id: 'high_court_id',
-  type: InstitutionType.HighCourt,
+export const mockCourtOfAppeals = {
+  id: 'court_of_appeals_id',
+  type: InstitutionType.COURT_OF_APPEALS,
   name: 'Landsréttur',
 }
 
 export const mockPrison = {
   id: 'prison_id',
-  type: InstitutionType.Prison,
+  type: InstitutionType.PRISON,
   name: 'Stóra Hraun',
 }
 
 export const mockProsecutor = {
-  role: UserRole.Prosecutor,
+  role: UserRole.PROSECUTOR,
   name: 'Batman Robinson',
   title: 'saksóknari',
   institution: {
@@ -39,23 +40,23 @@ export const mockProsecutor = {
 
 export const mockJudge = {
   id: 'judge_1',
-  role: UserRole.Judge,
+  role: UserRole.JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
 } as User
 
-export const mockHighCourtUser = {
+export const mockCourtOfAppealsUser = {
   id: 'hc_1',
-  role: UserRole.Judge,
+  role: UserRole.JUDGE,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
-  institution: mockHighCourt,
+  institution: mockCourtOfAppeals,
 } as User
 
 export const mockPrisonUser = {
   id: 'hc_1',
-  role: UserRole.Staff,
+  role: UserRole.PRISON_SYSTEM_STAFF,
   name: 'Finnur fangavörður',
   title: 'fangavörður',
   institution: mockPrison,
@@ -64,7 +65,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -74,14 +75,14 @@ export const mockJudgeQuery = [
   },
 ]
 
-export const mockHighCourtQuery = [
+export const mockCourtOfAppealsQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
-        currentUser: mockHighCourtUser,
+        currentUser: mockCourtOfAppealsUser,
       },
     },
   },
@@ -90,7 +91,7 @@ export const mockHighCourtQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -103,7 +104,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: CurrentUserQueryDocument,
+      query: GetCurrentUserDocument,
     },
     result: {
       data: {
@@ -119,7 +120,7 @@ export const mockCase = (caseType: CaseType): Case => {
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:51:39.466Z',
     state: CaseState.DRAFT,
-    origin: CaseOrigin.Rvg,
+    origin: CaseOrigin.RVG,
     type: caseType,
     policeCaseNumbers: ['007-2021-202000'],
     defendants: [

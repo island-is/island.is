@@ -48,8 +48,10 @@ const buildPaymentPlanStep = (index: PaymentPlanBuildIndex): CustomField =>
     condition: (_formValue, externalData) => {
       return (
         index <
-        (((externalData as PaymentPlanExternalData).paymentPlanPrerequisites
-          ?.data?.debts as PaymentScheduleDebts[])?.length || 0)
+        ((
+          (externalData as PaymentPlanExternalData).paymentPlanPrerequisites
+            ?.data?.debts as PaymentScheduleDebts[]
+        )?.length || 0)
       )
     },
   })
@@ -81,7 +83,7 @@ export const PaymentPlanForm: Form = buildForm({
     buildSection({
       id: 'info',
       title: section.info,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'employer',

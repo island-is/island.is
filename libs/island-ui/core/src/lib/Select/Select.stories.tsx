@@ -2,6 +2,7 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
+import { Option, SelectProps } from './Select.types'
 
 export default {
   title: 'Form/Select',
@@ -9,7 +10,7 @@ export default {
   parameters: withFigma('Select'),
 }
 
-const Template = (args) => <Select {...args} />
+const Template = (args: SelectProps<Option<string>>) => <Select {...args} />
 
 export const Default = Template.bind({})
 Default.args = {
@@ -31,12 +32,12 @@ Default.args = {
     },
   ],
   noOptionsMessage: 'Enginn valmöguleiki',
-}
+} as SelectProps<Option<string>>
 
 export const WithLabelAbove = Template.bind({})
 WithLabelAbove.args = {
   name: 'select2',
-  label: 'Tegund valmöguleiga',
+  label: 'Tegund valmöguleika',
   placeholder: 'Veldu tegund',
   options: [
     {
@@ -54,7 +55,17 @@ WithLabelAbove.args = {
   ],
   size: 'xs',
   noOptionsMessage: 'Enginn valmöguleiki',
-}
+} as SelectProps<Option<string>>
+
+export const NoOption = Template.bind({})
+NoOption.args = {
+  name: 'select2',
+  label: 'Tegund valmöguleika',
+  placeholder: 'Veldu tegund',
+  options: [],
+  size: 'xs',
+  noOptionsMessage: 'Enginn valmöguleiki',
+} as SelectProps<Option<string>>
 
 export const Disabled = Template.bind({})
 Disabled.args = {
@@ -76,8 +87,62 @@ Disabled.args = {
     },
   ],
   noOptionsMessage: 'Enginn valmöguleiki',
-  disabled: true,
-}
+  isDisabled: true,
+} as SelectProps<Option<string>>
+
+export const Creatable = Template.bind({})
+Creatable.args = {
+  name: 'creatableSelect',
+  label: 'Color',
+  placeholder: 'Choose a color',
+  isCreatable: true,
+  options: [
+    {
+      label: 'Yellow',
+      value: 'yellow',
+    },
+    {
+      label: 'Red',
+      value: 'red',
+    },
+    {
+      label: 'Green',
+      value: 'green',
+    },
+    {
+      label: 'Blue',
+      value: 'blue',
+    },
+  ],
+} as SelectProps<Option<string>>
+
+export const Clearable = Template.bind({})
+Clearable.args = {
+  name: 'clearableSelect',
+  label: 'Color',
+  placeholder: 'Choose a color',
+  isClearable: true,
+  onChange: (option) =>
+    console.log(`Selected value changed: ${option}`, { option }),
+  options: [
+    {
+      label: 'Yellow',
+      value: 'yellow',
+    },
+    {
+      label: 'Red',
+      value: 'red',
+    },
+    {
+      label: 'Green',
+      value: 'green',
+    },
+    {
+      label: 'Blue',
+      value: 'blue',
+    },
+  ],
+} as SelectProps<Option<string>>
 
 export const TempTest = () => (
   <div style={{ height: 900 }}>

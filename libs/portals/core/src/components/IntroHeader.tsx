@@ -18,22 +18,26 @@ export interface IntroHeaderProps {
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
+  buttonGroup?: React.ReactNode
+  isSubheading?: boolean
 }
 
 export const IntroHeader = ({
   title,
   intro,
   img,
+  buttonGroup,
   hideImgPrint = false,
   marginBottom = 6,
   children,
+  isSubheading = false,
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <GridRow marginBottom={marginBottom}>
       <GridColumn span={['8/8', '5/8']}>
-        <Text variant="h3" as="h1">
+        <Text variant={isSubheading ? 'h5' : 'h3'} as="h1">
           {formatMessage(title)}
         </Text>
         {intro && (
@@ -41,6 +45,7 @@ export const IntroHeader = ({
             {formatMessage(intro)}
           </Text>
         )}
+        {buttonGroup && buttonGroup}
       </GridColumn>
       {img && (
         <GridColumn span={['8/8', '3/8']}>

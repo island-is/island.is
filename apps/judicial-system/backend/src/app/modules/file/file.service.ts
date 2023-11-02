@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
@@ -11,27 +11,27 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
 import { AwsS3Service } from '../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../court'
 import { Case } from '../case'
+import { CourtDocumentFolder, CourtService } from '../court'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
-import { PresignedPost } from './models/presignedPost.model'
 import { DeleteFileResponse } from './models/deleteFile.response'
-import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
-import { SignedUrl } from './models/signedUrl.model'
 import { CaseFile } from './models/file.model'
+import { PresignedPost } from './models/presignedPost.model'
+import { SignedUrl } from './models/signedUrl.model'
+import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 
 // Files are stored in AWS S3 under a key which has the following formats:
 // uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
@@ -50,24 +50,8 @@ export class FileService {
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly intlService: IntlService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
-  }
 
   private async deleteFileFromDatabase(
     fileId: string,
@@ -132,16 +116,19 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case undefined:
+      case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
         break
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
       case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
       case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+      case CaseFileCategory.APPEAL_RULING:
         courtDocumentFolder = CourtDocumentFolder.APPEAL_DOCUMENTS
         break
       default:
-        courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS
+        throw new BadRequestException(`Invalid file category ${file.category}`)
     }
 
     return courtDocumentFolder
@@ -152,6 +139,7 @@ export class FileService {
     theCase: Case,
     user: User,
   ): Promise<string> {
+    // Serialise all uploads in this process
     await this.throttle.catch((reason) => {
       this.logger.info('Previous upload failed', { reason })
     })
@@ -219,15 +207,18 @@ export class FileService {
       )
     }
 
+    const fileName = createFile.key.slice(
+      isIndictmentCase(theCase.type)
+        ? INDICTMENT_NAME_BEGINS_INDEX
+        : NAME_BEGINS_INDEX,
+    )
+
     return this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
-      name: createFile.key.slice(
-        isIndictmentCase(theCase.type)
-          ? INDICTMENT_NAME_BEGINS_INDEX
-          : NAME_BEGINS_INDEX,
-      ),
+      name: fileName,
+      userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
     })
   }
 
@@ -267,8 +258,6 @@ export class FileService {
     theCase: Case,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
-    await this.refreshFormatMessage()
-
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }

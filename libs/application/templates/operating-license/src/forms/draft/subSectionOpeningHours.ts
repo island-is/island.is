@@ -3,12 +3,11 @@ import {
   buildSubSection,
   buildTextField,
   buildKeyValueField,
-  buildCheckboxField,
   buildDescriptionField,
   hasYes,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, OpeningHours, Operation, YES } from '../../lib/constants'
+import { Operation } from '../../lib/constants'
 import { displayOpeningHours } from '../../lib/utils'
 
 export const subSectionOpeningHours = buildSubSection({
@@ -26,18 +25,12 @@ export const subSectionOpeningHours = buildSubSection({
           title: m.openingHoursAlcohol,
           space: 'gutter',
           titleVariant: 'h3',
-        }),
-        buildDescriptionField({
-          id: 'overview.space',
-          title: '',
-          description: '',
-          space: 'gutter',
+          marginBottom: 'gutter',
         }),
         buildKeyValueField({
           label: '',
           value: m.weekdays,
         }),
-
         buildTextField({
           id: 'openingHours.alcohol.weekdays.from',
           title: m.from,
@@ -55,7 +48,6 @@ export const subSectionOpeningHours = buildSubSection({
         buildDescriptionField({
           id: 'overview.space1',
           title: '',
-          description: '',
           space: 'gutter',
         }),
         buildKeyValueField({
@@ -79,22 +71,14 @@ export const subSectionOpeningHours = buildSubSection({
         buildDescriptionField({
           id: 'overview.space2',
           title: '',
-          description: '',
           space: 'gutter',
         }),
         buildDescriptionField({
           id: 'outside.servingHours',
           title: m.openingHoursOutsideTitle,
           space: 'gutter',
+          marginBottom: 'gutter',
           titleVariant: 'h3',
-          condition: (answers) =>
-            hasYes((answers.applicationInfo as Operation)?.willServe) || false,
-        }),
-        buildDescriptionField({
-          id: 'overview.space3',
-          title: '',
-          description: '',
-          space: 'gutter',
           condition: (answers) =>
             hasYes((answers.applicationInfo as Operation)?.willServe) || false,
         }),

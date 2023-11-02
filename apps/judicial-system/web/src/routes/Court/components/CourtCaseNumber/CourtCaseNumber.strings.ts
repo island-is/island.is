@@ -28,8 +28,8 @@ export const courtCaseNumber = defineMessages({
       'Notaður sem texti í "málsnúmer héraðsdóms" innnsláttarsvæði á yfirlits skrefi dómara í öllum málstegundum.',
   },
   placeholder: {
-    id: 'judicial.system.core:court_case_number.placeholder',
-    defaultMessage: '{isIndictment, select, true {S} other {R}}-X/ÁÁÁÁ',
+    id: 'judicial.system.core:court_case_number.placeholder_v1',
+    defaultMessage: '{isIndictment, select, true {S} other {R}}-X/{year}',
     description:
       'Notaður sem skýritexti í "málsnúmer héraðsdóms" innsláttarsvæði á yfirlits skrefi dómara í öllum málstegundum.',
   },

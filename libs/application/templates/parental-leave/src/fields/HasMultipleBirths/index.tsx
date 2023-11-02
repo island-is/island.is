@@ -14,7 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { NO, YES, NO_MULTIPLE_BIRTHS } from '../../constants'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 
-export const HasMultipleBirths: FC<FieldBaseProps> = ({
+export const HasMultipleBirths: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   field,
 }) => {

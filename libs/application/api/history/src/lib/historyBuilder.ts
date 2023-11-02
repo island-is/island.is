@@ -1,7 +1,6 @@
 import {
   ApplicationContext,
   ApplicationStateSchema,
-  ApplicationTypes,
   FormatMessage,
 } from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
@@ -15,7 +14,7 @@ export class HistoryBuilder {
   async buildApplicationHistory<
     TContext extends ApplicationContext,
     TStateSchema extends ApplicationStateSchema<TEvents>,
-    TEvents extends EventObject
+    TEvents extends EventObject,
   >(
     history: History[],
     formatMessage: FormatMessage,
@@ -24,31 +23,15 @@ export class HistoryBuilder {
     const result = []
 
     for (const entry of history) {
-      const { entryTimestamp, exitTimestamp, stateKey } = entry
+      const { entryTimestamp, stateKey, exitEvent } = entry
 
-      const entryLogPromise = await templateHelper.getHistoryLog(
-        'entry',
-        stateKey,
-      )
+      if (!exitEvent) continue
 
-      const exitLogPromise = exitTimestamp
-        ? await templateHelper.getHistoryLog('exit', stateKey)
-        : undefined
-
-      const [entryLog, exitLog] = await Promise.all([
-        entryLogPromise,
-        exitLogPromise,
-      ])
+      const entryLog = templateHelper.getHistoryLogs(stateKey, exitEvent)
 
       if (entryLog) {
         result.push(
           new HistoryResponseDto(entryTimestamp, entryLog, formatMessage),
-        )
-      }
-
-      if (exitLog && exitTimestamp) {
-        result.push(
-          new HistoryResponseDto(exitTimestamp, exitLog, formatMessage),
         )
       }
     }

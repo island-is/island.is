@@ -1,4 +1,4 @@
-import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
+import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import _uniq from 'lodash/uniq'
@@ -6,17 +6,12 @@ import _uniq from 'lodash/uniq'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  Gender,
   CaseType,
-  isRestrictionCase,
-  isIndictmentCase,
+  Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
   if (typeof date === 'string' || date instanceof String) {
@@ -81,10 +76,8 @@ export const formatPhoneNumber = (phoneNumber?: string) => {
 
   const value = phoneNumber.replace('-', '')
 
-  const splitAt = (index: number) => (x: string) => [
-    x.slice(0, index),
-    x.slice(index),
-  ]
+  const splitAt = (index: number) => (x: string) =>
+    [x.slice(0, index), x.slice(index)]
   if (value.length > 3) return splitAt(3)(value).join('-')
   return value
 }
@@ -111,6 +104,7 @@ export const caseTypes: CaseTypes = {
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
+  PAROLE_REVOCATION: 'rof á reynslulausn',
   TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
   TRACKING_EQUIPMENT: 'eftirfararbúnaður',
   PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
@@ -279,8 +273,8 @@ export function formatRequestCaseType(type: string): string {
 }
 
 export const formatDOB = (
-  nationalId?: string,
-  noNationalId?: boolean,
+  nationalId?: string | null,
+  noNationalId?: boolean | null,
   fallback = '-',
 ) => {
   if (!nationalId) {
@@ -308,17 +302,6 @@ export const displayFirstPlusRemaining = (
   }
 
   return `${list[0]} +${list.length - 1}`
-}
-
-export const formatDefenderRoute = (
-  baseUrl: string,
-  type: string,
-  id: string,
-) => {
-  const caseType = type as CaseType
-  return `${baseUrl}${
-    isIndictmentCase(caseType) ? DEFENDER_INDICTMENT_ROUTE : DEFENDER_ROUTE
-  }/${id}`
 }
 
 export const splitStringByComma = (str?: string): string[] => {
@@ -351,4 +334,8 @@ export const readableIndictmentSubtypes = (
   }
 
   return _uniq(returnValue)
+}
+
+export const sanitize = (str: string) => {
+  return str.replace('"', '')
 }

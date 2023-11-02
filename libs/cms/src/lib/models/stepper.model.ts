@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IStepper } from '../generated/contentfulTypes'
 import { SystemMetadata } from 'api-cms-domain'
@@ -12,7 +13,7 @@ export class Stepper {
   @Field()
   title?: string
 
-  @Field(() => [Step], { nullable: true })
+  @CacheField(() => [Step], { nullable: true })
   steps?: Array<Step>
 
   @Field({ nullable: true })

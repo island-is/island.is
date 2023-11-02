@@ -1,19 +1,20 @@
 {
-  "root": "libs/clients/identity",
+  "name": "clients-identity",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/identity/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/identity/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/identity"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/identity"],
       "options": {
-        "jestConfig": "libs/clients/identity/jest.config.js",
+        "jestConfig": "libs/clients/identity/jest.config.ts",
         "passWithNoTests": true
       }
     }

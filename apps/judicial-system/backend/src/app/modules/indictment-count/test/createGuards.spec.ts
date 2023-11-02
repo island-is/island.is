@@ -25,7 +25,7 @@ describe('IndictmentCountController - Create guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have CaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -37,7 +37,7 @@ describe('IndictmentCountController - Create guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseWriteGuard as quard 2', () => {
+    it('should have CaseWriteGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseWriteGuard)
     })
   })

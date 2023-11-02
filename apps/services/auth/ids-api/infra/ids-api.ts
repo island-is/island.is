@@ -1,11 +1,11 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { json } from '../../../../../infra/src/dsl/dsl'
+import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'servicesauth',
   name: 'servicesauth',
   passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
+  extensions: ['uuid-ossp'],
 }
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
@@ -57,6 +57,17 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
           'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      XROAD_RSK_PROCURING_REDIS_NODES: {
+        dev: json([
+          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        ]),
+        staging: json([
+          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+        ]),
+        prod: json([
+          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+        ]),
+      },
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
@@ -68,10 +79,18 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         dev: '10001',
         staging: '6503760649',
       },
+      NOVA_ACCEPT_UNAUTHORIZED: {
+        dev: 'true',
+        staging: 'false',
+        prod: 'false',
+      },
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
+      NOVA_URL: '/k8s/services-auth/NOVA_URL',
+      NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
+      NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
     })
     .xroad(Base, Client, RskProcuring)
     .readiness('/liveness')
@@ -94,11 +113,11 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
     .resources({
       limits: {
         cpu: '800m',
-        memory: '512Mi',
+        memory: '768Mi',
       },
       requests: {
-        cpu: '100m',
-        memory: '256Mi',
+        cpu: '400m',
+        memory: '512Mi',
       },
     })
     .replicaCount({

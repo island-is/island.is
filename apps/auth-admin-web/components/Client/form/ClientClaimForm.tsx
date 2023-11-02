@@ -18,7 +18,9 @@ interface Props {
   handleChanges?: () => void
 }
 
-const ClientClaimForm: React.FC<Props> = (props: Props) => {
+const ClientClaimForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<ClientClaimDTO>()
   const { isSubmitting, errors } = formState
   const [modalIsOpen, setIsOpen] = useState(false)

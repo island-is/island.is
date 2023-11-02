@@ -21,10 +21,12 @@ export const PdfConstants = {
 
 export const BucketTypePrefix: KeyMapping<PdfTypes, string> = {
   ChildrenResidenceChange: 'children-residence-change',
+  ChildrenResidenceChangeV2: 'children-residence-change',
 }
 
 export const DokobitFileName: KeyMapping<PdfTypes, string> = {
   ChildrenResidenceChange: 'Logheimilisbreyting-barns.pdf',
+  ChildrenResidenceChangeV2: 'Logheimilisbreyting-barns.pdf',
 }
 
 export const DokobitErrorCodes = {

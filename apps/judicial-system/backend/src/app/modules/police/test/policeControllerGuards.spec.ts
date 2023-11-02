@@ -2,12 +2,12 @@ import { CanActivate } from '@nestjs/common'
 
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
-import { PoliceController } from '../police.controller'
 import {
   CaseExistsGuard,
   CaseNotCompletedGuard,
   CaseReadGuard,
 } from '../../case'
+import { PoliceController } from '../police.controller'
 
 describe('PoliceController - guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -28,7 +28,7 @@ describe('PoliceController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })
@@ -40,7 +40,7 @@ describe('PoliceController - guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have RolesGuard as quard 2', () => {
+    it('should have RolesGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -52,7 +52,7 @@ describe('PoliceController - guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseExistsGuard as quard 3', () => {
+    it('should have CaseExistsGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -64,7 +64,7 @@ describe('PoliceController - guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseReadGuard as quard 4', () => {
+    it('should have CaseReadGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseReadGuard)
     })
   })
@@ -76,7 +76,7 @@ describe('PoliceController - guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have CaseNotCompletedGuard as quard 5', () => {
+    it('should have CaseNotCompletedGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(CaseNotCompletedGuard)
     })
   })

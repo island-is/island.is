@@ -1,4 +1,4 @@
-import { DEFENDER_ROUTE } from '@island.is/judicial-system/consts'
+import { DEFENDER_INDICTMENT_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseFileCategory,
@@ -37,7 +37,7 @@ describe('Indictment case overview for defenders', () => {
 
       cy.stubAPIResponses()
       intercept(caseDataAddition)
-      cy.visit(`${DEFENDER_ROUTE}/akaera/test_id`)
+      cy.visit(`${DEFENDER_INDICTMENT_ROUTE}/test_id`)
     })
 
     it('should list all case files, including COURT_RECORD and RULING', () => {
@@ -79,7 +79,7 @@ describe('Indictment case overview for defenders', () => {
 
       cy.stubAPIResponses()
       intercept(caseDataAddition)
-      cy.visit(`${DEFENDER_ROUTE}/akaera/test_id`)
+      cy.visit(`${DEFENDER_INDICTMENT_ROUTE}/test_id`)
     })
 
     it('should not list casefiles with category COURT_RECORD or RULING', () => {

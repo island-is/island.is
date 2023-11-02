@@ -1,11 +1,13 @@
 import React, { useCallback, useContext, useState } from 'react'
-import router from 'next/router'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
 import { applyCase } from 'beygla'
+import { AnimatePresence, motion } from 'framer-motion'
+import router from 'next/router'
 
-import { Box, Input, Button, Checkbox } from '@island.is/island-ui/core'
-
+import { Box, Button, Checkbox, Input } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
+import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -17,8 +19,8 @@ import {
   PdfButton,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempIndictmentCount as TIndictmentCount } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -28,18 +30,15 @@ import {
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 import useIndictmentCounts, {
   UpdateIndictmentCount,
 } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
-import { IndictmentCountOffense } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isTrafficViolationStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { IndictmentCount } from './IndictmentCount'
 import { indictment as strings } from './Indictment.strings'
 
-const Indictment: React.FC = () => {
+const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -78,9 +77,9 @@ const Indictment: React.FC = () => {
       const requestDriversLicenseSuspension = indictmentCounts?.some((count) =>
         count.offenses?.some((offense) =>
           [
-            IndictmentCountOffense.DrunkDriving,
-            IndictmentCountOffense.IllegalDrugsDriving,
-            IndictmentCountOffense.PrescriptionDrugsDriving,
+            IndictmentCountOffense.DRUNK_DRIVING,
+            IndictmentCountOffense.ILLEGAL_DRUGS_DRIVING,
+            IndictmentCountOffense.PRESCRIPTION_DRUGS_DRIVING,
           ].includes(offense),
         ),
       )
@@ -213,18 +212,20 @@ const Indictment: React.FC = () => {
         `\n\n${formatMessage(strings.indictmentIntroductionAutofillCourt, {
           court: workingCase.court?.name?.replace('dómur', 'dómi'),
         })}`,
-        `\n\n\n          ${formatMessage(
-          strings.indictmentIntroductionAutofillDefendant,
-          {
-            defendantName: workingCase.defendants[0].name
-              ? applyCase('þgf', workingCase.defendants[0].name)
-              : 'Ekki skráð',
-            defendantNationalId: workingCase.defendants[0].nationalId
-              ? formatNationalId(workingCase.defendants[0].nationalId)
-              : 'Ekki skráð',
-          },
-        )}`,
-        `\n          ${workingCase.defendants[0].address}`,
+        `\n\n${workingCase.defendants.map((defendant) => {
+          return `\n          ${formatMessage(
+            strings.indictmentIntroductionAutofillDefendant,
+            {
+              defendantName: defendant.name
+                ? applyCase('þgf', defendant.name)
+                : 'Ekki skráð',
+              defendantNationalId: defendant.nationalId
+                ? formatNationalId(defendant.nationalId)
+                : 'Ekki skráð',
+            },
+          )}\n          ${defendant.address}`
+        })}
+        `,
       ]
     }
 
@@ -357,7 +358,11 @@ const Indictment: React.FC = () => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestDriversLicenseSuspension: !workingCase.requestDriversLicenseSuspension,
+                        requestDriversLicenseSuspension:
+                          !workingCase.requestDriversLicenseSuspension,
+                        demands: !workingCase.requestDriversLicenseSuspension
+                          ? formatMessage(strings.demandsAutofillWithSuspension)
+                          : formatMessage(strings.demandsAutofill),
                         force: true,
                       },
                     ],

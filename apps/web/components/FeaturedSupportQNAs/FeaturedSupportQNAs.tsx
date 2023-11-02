@@ -7,13 +7,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FeaturedSupportQnAs as FeaturedSupportQNAsSchema } from '@island.is/web/graphql/schema'
-import { linkResolver } from '@island.is/web/hooks'
+import { useLinkResolver } from '@island.is/web/hooks'
 
 interface FeaturedSupportQNAsProps {
   slice: FeaturedSupportQNAsSchema
 }
 
 const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
+  const { linkResolver } = useLinkResolver()
   return (
     <Box background="blueberry100" borderRadius="large" padding={4}>
       <Inline flexWrap="nowrap" alignY="center" justifyContent="spaceBetween">
@@ -52,8 +53,8 @@ const FeaturedSupportQNAs = ({ slice }: FeaturedSupportQNAsProps) => {
               <LinkV2
                 href={
                   linkResolver('supportqna', [
-                    qna.organization.slug,
-                    qna.category.slug,
+                    qna.organization?.slug ?? '',
+                    qna.category?.slug ?? '',
                     qna.slug,
                   ]).href
                 }

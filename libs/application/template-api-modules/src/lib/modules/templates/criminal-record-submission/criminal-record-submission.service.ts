@@ -13,10 +13,8 @@ import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNo
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
-  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { NationalRegistry, UserProfile } from './types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { info } from 'kennitala'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -32,23 +30,6 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
     super(ApplicationTypes.CRIMINAL_RECORD)
   }
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        id,
-        InstitutionNationalIds.SYSLUMENN,
-        [ChargeItemCode.CRIMINAL_RECORD],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
-  }
-
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
@@ -59,12 +40,8 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       }
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (isPayment?.fulfilled) {
       return {
@@ -144,7 +121,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
       .catch(async () => {
         await this.sharedTemplateAPIService.sendEmail(
           generateSyslumennNotifyErrorEmail,
-          (application as unknown) as Application,
+          application as unknown as Application,
         )
         return undefined
       })

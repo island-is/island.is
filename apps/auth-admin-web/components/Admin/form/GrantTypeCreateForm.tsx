@@ -20,7 +20,9 @@ interface FormOutput {
   grantType: GrantTypeDTO
 }
 
-const GrantTypeCreateForm: React.FC<Props> = (props: Props) => {
+const GrantTypeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props: Props,
+) => {
   const { register, handleSubmit, formState } = useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)

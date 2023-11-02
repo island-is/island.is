@@ -55,6 +55,15 @@ export const client = new ApolloClient({
           },
         },
       },
+      AuthAdminClientEnvironment: {
+        fields: {
+          secrets: {
+            merge(_, incoming) {
+              return incoming
+            },
+          },
+        },
+      },
     },
   }),
 })

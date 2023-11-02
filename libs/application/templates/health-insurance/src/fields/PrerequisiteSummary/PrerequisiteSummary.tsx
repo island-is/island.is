@@ -9,7 +9,9 @@ import {
 } from '../../healthInsuranceUtils'
 import { useLocale } from '@island.is/localization'
 
-const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
+const PrerequisiteSummary: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
   const externalData = application.externalData
 
@@ -49,7 +51,7 @@ const PrerequisiteSummary: FC<FieldBaseProps> = ({ application }) => {
             ? requiresActionTagString
             : completeTagString,
         }
-      case 'healthInsurance':
+      case 'isHealthInsured':
         return {
           prerequisiteMet: !hasHealthInsuranceCheck,
           title: formatMessage(m.prerequisiteHealthInsuranceTitle),

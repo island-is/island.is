@@ -17,4 +17,9 @@ export class GetOrganizationsInput {
   @IsArray()
   @IsOptional()
   organizationTitles?: string[]
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
+  @IsOptional()
+  referenceIdentifiers?: string[]
 }

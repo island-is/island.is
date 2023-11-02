@@ -3,9 +3,9 @@ import { CanActivate } from '@nestjs/common'
 import { RolesGuard } from '@island.is/judicial-system/auth'
 
 import { CaseExistsGuard, CaseReadGuard } from '../../../case'
+import { FileController } from '../../file.controller'
 import { CaseFileExistsGuard } from '../../guards/caseFileExists.guard'
 import { ViewCaseFileGuard } from '../../guards/viewCaseFile.guard'
-import { FileController } from '../../file.controller'
 
 describe('FileController - Get case file signed url guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,7 +29,7 @@ describe('FileController - Get case file signed url guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have RolesGuard as quard 1', () => {
+    it('should have RolesGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(RolesGuard)
     })
   })
@@ -41,7 +41,7 @@ describe('FileController - Get case file signed url guards', () => {
       guard = new guards[1]()
     })
 
-    it('should have CaseExistsGuard as quard 2', () => {
+    it('should have CaseExistsGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -53,7 +53,7 @@ describe('FileController - Get case file signed url guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseReadGuard as quard 3', () => {
+    it('should have CaseReadGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseReadGuard)
     })
   })
@@ -65,7 +65,7 @@ describe('FileController - Get case file signed url guards', () => {
       guard = new guards[3]()
     })
 
-    it('should have CaseFileExistsGuard as quard 4', () => {
+    it('should have CaseFileExistsGuard as guard 4', () => {
       expect(guard).toBeInstanceOf(CaseFileExistsGuard)
     })
   })
@@ -77,7 +77,7 @@ describe('FileController - Get case file signed url guards', () => {
       guard = new guards[4]()
     })
 
-    it('should have ViewCaseFileGuard as quard 5', () => {
+    it('should have ViewCaseFileGuard as guard 5', () => {
       expect(guard).toBeInstanceOf(ViewCaseFileGuard)
     })
   })

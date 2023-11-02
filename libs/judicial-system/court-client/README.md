@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # judicial-system-court-client
 
 This library was is for integrating with the Icelandic Court System Auður.

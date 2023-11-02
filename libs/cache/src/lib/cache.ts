@@ -1,7 +1,12 @@
-import Redis, { ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
-import { RedisClusterCache } from 'apollo-server-cache-redis'
+import { KeyvAdapter } from '@apollo/utils.keyvadapter'
+import KeyvRedis from '@keyv/redis'
+import { caching } from 'cache-manager'
+import type { Config } from 'cache-manager'
+import { redisInsStore } from 'cache-manager-ioredis-yet'
+import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 
 import { logger } from '@island.is/logging'
+import Keyv from 'keyv'
 
 type Options = {
   name: string
@@ -13,9 +18,9 @@ type Options = {
 const DEFAULT_PORT = 6379
 
 class Cache {
-  private client: Redis.Cluster
+  private client: Cluster
 
-  constructor(client: Redis.Cluster) {
+  constructor(client: Cluster) {
     this.client = client
   }
 
@@ -47,12 +52,12 @@ class Cache {
     return this.client.hgetall(key)
   }
 
-  expire(key: string, seconds: number): Promise<Redis.BooleanResponse> {
+  expire(key: string, seconds: number): Promise<number> {
     return this.client.expire(key, seconds)
   }
 
   async ping(): Promise<boolean> {
-    return (await this.client.ping()) === 'pong'
+    return (await this.client.ping()) === 'PONG'
   }
 }
 
@@ -105,14 +110,21 @@ const getRedisClusterOptions = (
 export const createCache = (options: Options) =>
   new Cache(createRedisCluster(options))
 
-export const createApolloCache = (options: Options) => {
-  const nodes = parseNodes(options.nodes)
-  logger.info(`Making caching connection with nodes: `, nodes)
-  return new RedisClusterCache(nodes, getRedisClusterOptions(options))
+export const createRedisApolloCache = (options: Options) => {
+  return new KeyvAdapter(
+    new Keyv({ store: new KeyvRedis(createRedisCluster(options)) }),
+    {
+      disableBatchReads: true,
+    },
+  )
 }
 
 export const createRedisCluster = (options: Options) => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
-  return new Redis.Cluster(nodes, getRedisClusterOptions(options))
+  return new Cluster(nodes, getRedisClusterOptions(options))
+}
+
+export const createRedisCacheManager = (options: Options & Config) => {
+  return caching(() => redisInsStore(createRedisCluster(options), options))
 }

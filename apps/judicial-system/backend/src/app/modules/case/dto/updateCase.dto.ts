@@ -1,29 +1,30 @@
 import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsUUID,
-  IsBoolean,
-  IsObject,
   ArrayMinSize,
   IsArray,
+  IsBoolean,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseAppealDecision,
-  CaseDecision,
-  SessionArrangements,
-  CourtDocument,
-  SubpoenaType,
-  CaseType,
-} from '@island.is/judicial-system/types'
 import type {
-  IndictmentSubtypeMap,
   CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseLegalProvisions,
+  CaseType,
+  CourtDocument,
+  RequestSharedWithDefender,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -70,9 +71,9 @@ export class UpdateCaseDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly sendRequestToDefender?: boolean
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsBoolean()
@@ -310,16 +311,6 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedPostponedAppealDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly prosecutorPostponedAppealDate?: Date
-
-  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
@@ -345,11 +336,6 @@ export class UpdateCaseDto {
   readonly caseResentExplanation?: string
 
   @IsOptional()
-  @IsEnum(SubpoenaType)
-  @ApiPropertyOptional({ enum: SubpoenaType })
-  readonly subpoenaType?: SubpoenaType
-
-  @IsOptional()
   @IsBoolean()
   @ApiPropertyOptional()
   readonly defendantWaivesRightToCounsel?: boolean
@@ -368,4 +354,49 @@ export class UpdateCaseDto {
   @IsBoolean()
   @ApiPropertyOptional()
   readonly requestDriversLicenseSuspension?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly prosecutorStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly defendantStatementDate?: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealCaseNumber?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealAssistantId?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge1Id?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge2Id?: string
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional()
+  readonly appealJudge3Id?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsEnum(CaseAppealRulingDecision)
+  @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

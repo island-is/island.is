@@ -1,0 +1,21 @@
+query GetTherapies {
+  rightsPortalPaginatedTherapies {
+    data {
+      id
+      name
+      periods {
+        from
+        to
+        sessions {
+          available
+          used
+        }
+      }
+      postStation
+      state {
+        code
+        display
+      }
+    }
+  }
+}

@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -28,7 +31,6 @@ const PSignTemplate: ApplicationTemplate<
   type: ApplicationTypes.P_SIGN,
   name: 'Stæðiskort',
   dataSchema: dataSchema,
-  readyForProduction: true,
   allowedDelegations: [{ type: AuthDelegationType.LegalGuardian }],
   stateMachineConfig: {
     initial: States.DRAFT,
@@ -37,9 +39,6 @@ const PSignTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: {
             shouldBeListed: true,
@@ -99,6 +98,14 @@ const PSignTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -110,7 +117,6 @@ const PSignTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
-
           roles: [
             {
               id: Roles.APPLICANT,
@@ -123,6 +129,13 @@ const PSignTemplate: ApplicationTemplate<
               read: 'all',
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

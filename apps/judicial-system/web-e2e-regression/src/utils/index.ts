@@ -3,6 +3,7 @@ import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import {
   CaseTransition,
   CaseType,
+  RequestSharedWithDefender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
@@ -43,7 +44,7 @@ export const loginAndCreateCase = (
             defenderNationalId: '0000000000',
             defenderEmail: 'ivaro@kolibri.is',
             defenderPhoneNumber: '0000000',
-            sendRequestToDefender: false,
+            requestSharedWithDefender: RequestSharedWithDefender.COURT_DATE,
             leadInvestigator: 'asd',
           },
         },
@@ -63,7 +64,7 @@ export const transitionCase = (caseId: string, transition: CaseTransition) => {
   return cy.wrap(
     client.mutate({
       mutation: gql`
-        mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+        mutation TransitionCase($input: TransitionCaseInput!) {
           transitionCase(input: $input) {
             state
           }
@@ -84,7 +85,7 @@ export const updateCase = (caseId: string, update: UpdateCase) => {
   return cy.wrap(
     client.mutate({
       mutation: gql`
-        mutation UpdateCaseMutation($input: UpdateCaseInput!) {
+        mutation UpdateCase($input: UpdateCaseInput!) {
           updateCase(input: $input) {
             id
           }
@@ -104,7 +105,7 @@ export const updateCase = (caseId: string, update: UpdateCase) => {
 export const deleteCase = (caseId: string) => {
   client.mutate({
     mutation: gql`
-      mutation TransitionCaseMutation($input: TransitionCaseInput!) {
+      mutation TransitionCase($input: TransitionCaseInput!) {
         transitionCase(input: $input) {
           state
         }

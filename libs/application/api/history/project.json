@@ -1,19 +1,20 @@
 {
-  "root": "libs/application/api/history",
+  "name": "application-api-history",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/api/history/src",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/application/api/history/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/api/history"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/application/api/history"],
       "options": {
-        "jestConfig": "libs/application/api/history/jest.config.js",
+        "jestConfig": "libs/application/api/history/jest.config.ts",
         "passWithNoTests": true
       }
     }

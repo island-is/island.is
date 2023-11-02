@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IEnhancedAsset } from '../generated/contentfulTypes'
 import { Asset, mapAsset } from './asset.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
@@ -12,16 +13,16 @@ export class EnhancedAsset {
   @Field()
   title!: string
 
-  @Field(() => Asset, { nullable: true })
+  @CacheField(() => Asset, { nullable: true })
   file!: Asset | null
 
-  @Field(() => [GenericTag])
+  @CacheField(() => [GenericTag])
   genericTags!: GenericTag[]
 
   @Field(() => String, { nullable: true })
   releaseDate!: string | null
 
-  @Field(() => Organization)
+  @CacheField(() => Organization)
   organization!: Organization | null
 
   @Field()

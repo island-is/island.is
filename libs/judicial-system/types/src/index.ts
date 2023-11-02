@@ -17,6 +17,8 @@ export type {
   SendNotification,
   SendNotificationResponse,
 } from './lib/notification'
+export type { EventLog } from './lib/eventLog'
+export { EventType } from './lib/eventLog'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -36,12 +38,20 @@ export type {
 
 export {
   UserRole,
-  isExtendedCourtRole,
-  extendedCourtRoles,
-  isCourtRole,
-  courtRoles,
-  isProsecutionRole,
   prosecutionRoles,
+  isProsecutionRole,
+  isProsecutionUser,
+  courtRoles,
+  isCourtRole,
+  extendedCourtRoles,
+  isExtendedCourtRole,
+  isDistrictCourtUser,
+  appealsCourtRoles,
+  isAppealsCourtUser,
+  prisonSystemRoles,
+  isPrisonSystemUser,
+  defenceRoles,
+  isDefenceUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -55,6 +65,8 @@ export {
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
+  CaseAppealRulingDecision,
+  RequestSharedWithDefender,
   SessionArrangements,
   restrictionCases,
   investigationCases,
@@ -65,9 +77,12 @@ export {
   isAcceptingCaseDecision,
   completedCaseStates,
   hasCaseBeenAppealed,
-  SubpoenaType,
   CaseAppealState,
   getAppealInfo,
+  getStatementDeadline,
+  getAppealedDate,
+  defenderAccessCaseFileCategoriesForIndictmentCases as defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases as defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from './lib/case'
 export type {
   Case,
@@ -93,6 +108,9 @@ export {
   Substance,
   offenseSubstances,
 } from './lib/indictmentCount'
+
+export { type LawyerFull, type Lawyer, mapToLawyer } from './lib/defender'
+
 export type { SubstanceMap } from './lib/indictmentCount'
 
 export type { CourtDocument } from './lib/courtDocument'

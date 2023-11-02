@@ -1,0 +1,8 @@
+query SearchCompanies($input: RskCompanyInfoSearchInput!) {
+  companyRegistryCompanies(input: $input) {
+    data {
+      name
+      nationalId
+    }
+  }
+}

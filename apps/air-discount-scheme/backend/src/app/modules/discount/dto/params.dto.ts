@@ -25,4 +25,7 @@ export class CreateExplicitDiscountCodeParams {
 
   @IsString()
   readonly comment!: string
+
+  @IsNumber()
+  readonly numberOfDaysUntilExpiration!: number
 }

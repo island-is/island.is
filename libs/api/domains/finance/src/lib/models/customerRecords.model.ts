@@ -3,6 +3,6 @@ import { CustomerRecordsItem } from './customerRecordsItem.model'
 
 @ObjectType()
 export class CustomerRecords {
-  @Field(() => [CustomerRecordsItem])
-  records!: CustomerRecordsItem[]
+  @Field(() => [CustomerRecordsItem], { nullable: true })
+  records?: CustomerRecordsItem[]
 }

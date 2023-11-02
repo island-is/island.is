@@ -22,15 +22,15 @@ import { GET_REAL_ESTATE_ADDRESS } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
+import { error as errorMsg } from '../../lib/error'
 
-export const PropertyRepeater: FC<FieldBaseProps> = ({
+export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,
 }) => {
   const { formatMessage } = useLocale()
   const { id, title } = field
-
   const { fields, append, remove } = useFieldArray({
     name: `${id}`,
   })
@@ -105,23 +105,28 @@ const PropertyItem = ({
   const addressField = `${fieldIndex}.address`
   const spaceNumberField = `${fieldIndex}.spaceNumber`
   const customerCountField = `${fieldIndex}.customerCount`
+
   const propertyNumberInput = useWatch({
     name: propertyNumberField,
     defaultValue: '',
   })
-
   const address = useWatch({ name: addressField, defaultValue: '' })
+  const spaceNumber = useWatch({ name: spaceNumberField })
+  const customerCount = useWatch({ name: customerCountField })
+
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: _queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
-    onCompleted: (data) => {
-      setValue(addressField, data.getRealEstateAddress[0].name ?? '')
-    },
-  })
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
+      onCompleted: (data) => {
+        setValue(
+          addressField,
+          data.getRealEstateAddress[0]?.name ??
+            formatMessage(m.propertyNameNotFound),
+        )
+      },
+    })
 
   useEffect(() => {
     // According to Skra.is:
@@ -138,7 +143,6 @@ const PropertyItem = ({
       setValue(addressField, '')
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
-
   const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
@@ -174,8 +178,11 @@ const PropertyItem = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.propertyNumber}
+            loading={queryLoading}
             error={
-              error?.assetNumber || hasPropertyNumberButEmptyAddress
+              hasPropertyNumberButEmptyAddress && !queryLoading
+                ? formatMessage(errorMsg.missingAddressForPropertyNumber)
+                : !propertyNumberInput
                 ? error
                 : undefined
             }
@@ -201,6 +208,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
+            error={(error && !spaceNumber) ?? error}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -211,6 +219,7 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.customerCount?.toString()}
+            error={(error && !customerCount) ?? error}
           />
         </GridColumn>
       </GridRow>

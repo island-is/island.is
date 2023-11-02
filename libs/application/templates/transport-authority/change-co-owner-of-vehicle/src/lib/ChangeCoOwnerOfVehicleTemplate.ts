@@ -8,14 +8,17 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  PendingAction,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
-import { Features } from '@island.is/feature-flags'
 import {
   ApiActions,
   OwnerCoOwnersInformation,
@@ -32,6 +35,11 @@ import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getExtraData } from '../utils/getChargeItemCodes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -53,6 +61,26 @@ const determineMessageFromApplicationAnswers = (application: Application) => {
   }
 }
 
+const reviewStatePendingAction = (
+  application: Application,
+  role: string,
+  nationalId: string,
+): PendingAction => {
+  if (nationalId && !hasReviewerApproved(nationalId, application.answers)) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
+  }
+}
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -68,10 +96,13 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicleDelegations,
+    },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
-  featureFlag: Features.transportAuthorityChangeCoOwnerOfVehicle,
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -84,6 +115,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -94,10 +131,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/ChangeCoOwnerOfVehicleForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.ChangeCoOwnerOfVehicleForm),
+                import('../forms/ChangeCoOwnerOfVehicleForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.ChangeCoOwnerOfVehicleForm),
                 ),
               actions: [
                 {
@@ -121,43 +157,18 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-          },
-          progress: 0.5,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: getChargeItemCodes,
+        extraData: getExtraData,
+        submitTarget: States.REVIEW,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.REVIEW },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
-
+        ],
+      }),
       [States.REVIEW]: {
         entry: 'assignUsers',
         meta: {
@@ -168,6 +179,21 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.APPROVE,
+                logMessage: applicationMessage.historyLogApprovedByReviewer,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+            pendingAction: reviewStatePendingAction,
           },
           progress: 0.6,
           lifecycle: {
@@ -181,8 +207,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
+                import('../forms/ReviewSeller').then((module) =>
+                  Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
                 answers: [],
@@ -257,6 +283,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: corePendingActionMessages.applicationReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

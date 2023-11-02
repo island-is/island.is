@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import { useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
-import { ValueType } from 'react-select'
+import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -12,21 +11,20 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
-import { titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
+import { Loading } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   Institution,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  InstitutionsQuery,
+  UsersQuery,
+} from '@island.is/judicial-system-web/src/utils/mutations'
 
 import * as styles from './Users.css'
 
@@ -37,7 +35,7 @@ interface InstitutionData {
   institutions: Institution[]
 }
 
-export const Users: React.FC = () => {
+export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
@@ -46,13 +44,11 @@ export const Users: React.FC = () => {
     errorPolicy: 'all',
   })
 
-  const {
-    data: rawInstitutions,
-    loading: loadingInstitutions,
-  } = useQuery<InstitutionData>(InstitutionsQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
+  const { data: rawInstitutions, loading: loadingInstitutions } =
+    useQuery<InstitutionData>(InstitutionsQuery, {
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
 
   const users = data?.users.filter((u) => {
     return selectedInstitution
@@ -66,17 +62,17 @@ export const Users: React.FC = () => {
 
   const userRoleToString = (userRole: UserRole) => {
     switch (userRole) {
-      case UserRole.Prosecutor:
+      case UserRole.PROSECUTOR:
         return 'Saksóknari'
-      case UserRole.Representative:
+      case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.Judge:
+      case UserRole.JUDGE:
         return 'Dómari'
-      case UserRole.Registrar:
+      case UserRole.REGISTRAR:
         return 'Dómritari'
-      case UserRole.Assistant:
+      case UserRole.ASSISTANT:
         return 'Aðstoðarmaður dómara'
-      case UserRole.Staff:
+      case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
     }
   }
@@ -112,11 +108,9 @@ export const Users: React.FC = () => {
               }) || []
             }
             placeholder="Veldu stofnun"
-            disabled={loadingInstitutions}
-            onChange={(selectedOption: ValueType<ReactSelectOption>) =>
-              setSelectedInstitution(
-                (selectedOption as ReactSelectOption).value.toString(),
-              )
+            isDisabled={loadingInstitutions}
+            onChange={(selectedOption) =>
+              setSelectedInstitution(selectedOption?.value)
             }
           />
         </Box>
@@ -203,8 +197,8 @@ export const Users: React.FC = () => {
       {error && (
         <div data-testid="users-error">
           <AlertMessage
-            title="Ekki tókst að sækja gögn úr gagnagrunni"
-            message="Ekki tókst að ná sambandi við gagnagrunn. Málið hefur verið skráð og viðeigandi aðilar látnir vita. Vinsamlega reynið aftur síðar."
+            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
             type="error"
           />
         </div>

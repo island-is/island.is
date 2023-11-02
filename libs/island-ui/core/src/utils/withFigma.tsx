@@ -31,7 +31,9 @@ const A = styled.a(() => ({
   textDecoration: 'none',
 }))
 
-export const DescriptionFigma: FC<{ name: string }> = ({ name }) => (
+export const DescriptionFigma: FC<
+  React.PropsWithChildren<{ name: string }>
+> = ({ name }) => (
   <P>
     <Markdown
       options={{

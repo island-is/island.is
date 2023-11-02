@@ -19,12 +19,14 @@ import { UserService } from './user.service'
 import { UserEmailResult } from '../models/userEmailResult.model'
 import { UserSubscriptionsAggregate } from '../models/userSubscriptionsAggregate.model'
 import { PostEmailCommand } from '../models/postEmailCommand.model'
-import { UserSubscriptionsCommand } from '../models/userSubscriptionsCommand.model'
+import { PostSubscriptionTypeInput } from '../dto/postSubscriptionType.input'
+import { Audit } from '@island.is/nest/audit'
 
 @Resolver()
 @UseGuards(FeatureFlagGuard, IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.samradsgatt)
 @FeatureFlag(Features.consultationPortalApplication)
+@Audit({ namespace: '@island.is/samradsgatt' })
 export class UserResolver {
   constructor(private userService: UserService) {}
 
@@ -76,13 +78,10 @@ export class UserResolver {
   })
   async postUserSubscriptions(
     @CurrentUser() user: User,
-    @Args('userSubscriptionsCommand')
-    userSubscriptionsCommand: UserSubscriptionsCommand,
+    @Args('input', { type: () => PostSubscriptionTypeInput })
+    input: PostSubscriptionTypeInput,
   ): Promise<void> {
-    const response = await this.userService.postUserSubscriptions(
-      user,
-      userSubscriptionsCommand,
-    )
+    const response = await this.userService.postUserSubscriptions(user, input)
     return response
   }
 }

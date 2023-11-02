@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'service.portal:more',
     defaultMessage: 'Meira',
   },
+  seeDetails: {
+    id: 'service.portal:see-details',
+    defaultMessage: 'Skoða nánar',
+  },
   cost: {
     id: 'service.portal:cost',
     defaultMessage: 'Kostnaður',
@@ -32,6 +36,10 @@ export const m = defineMessages({
   interest: {
     id: 'service.portal:interest',
     defaultMessage: 'Vextir',
+  },
+  refundDate: {
+    id: 'service.portal:refund-date',
+    defaultMessage: 'Dags. endurgreiðslu',
   },
   finalDueDate: {
     id: 'service.portal:final-due-date',
@@ -129,9 +137,17 @@ export const m = defineMessages({
     id: 'service.portal:date-from',
     defaultMessage: 'Dagsetning frá',
   },
+  dateFromShort: {
+    id: 'service.portal:date-from-short',
+    defaultMessage: 'Dags. frá',
+  },
   dateTo: {
     id: 'service.portal:date-to',
     defaultMessage: 'Dagsetning til',
+  },
+  dateToShort: {
+    id: 'service.portal:date-to-short',
+    defaultMessage: 'Dags. til',
   },
   selectForResults: {
     id: 'service.portal:select-for-results',
@@ -149,9 +165,17 @@ export const m = defineMessages({
     id: 'service.portal:more-options',
     defaultMessage: 'Fleiri möguleikar',
   },
+  get: {
+    id: 'service.portal:get',
+    defaultMessage: 'Sækja',
+  },
   getAsCsv: {
     id: 'service.portal:get-as-csv',
     defaultMessage: 'Sækja CSV',
+  },
+  getDocument: {
+    id: 'service.portal:get-document',
+    defaultMessage: 'Sækja skjal',
   },
   getAsExcel: {
     id: 'service.portal:get-as-excel',
@@ -198,9 +222,21 @@ export const m = defineMessages({
     id: 'service.portal:fetching',
     defaultMessage: 'Sæki',
   },
+  assets: {
+    id: 'service.portal:assets',
+    defaultMessage: 'Eignir',
+  },
+  assetsDescription: {
+    id: 'service.portal:assets-description',
+    defaultMessage: 'Þínar fasteignir, ökutæki, hugverk og fleira.',
+  },
   realEstate: {
     id: 'service.portal:real-estate',
     defaultMessage: 'Fasteignir',
+  },
+  myRealEstate: {
+    id: 'service.portal:my-real-estate',
+    defaultMessage: 'Mínar fasteignir',
   },
   realEstateDescription: {
     id: 'service.portal:real-estate-description',
@@ -336,6 +372,10 @@ export const m = defineMessages({
     id: 'service.portal:documents',
     defaultMessage: 'Pósthólf',
   },
+  openDocuments: {
+    id: 'service.portal:open-documents',
+    defaultMessage: 'Opna pósthólf',
+  },
   documentsDescription: {
     id: 'service.portal:documents-description',
     defaultMessage: 'Erindi til þín frá opinberum aðilum',
@@ -343,6 +383,10 @@ export const m = defineMessages({
   applications: {
     id: 'service.portal:applications',
     defaultMessage: 'Umsóknir',
+  },
+  myApplications: {
+    id: 'service.portal:my-applications',
+    defaultMessage: 'Mínar umsóknir',
   },
   applicationsDescription: {
     id: 'service.portal:applications-description',
@@ -379,6 +423,10 @@ export const m = defineMessages({
   myRegistration: {
     id: 'service.portal:my-registration',
     defaultMessage: 'Mín skráning',
+  },
+  registrationHistory: {
+    id: 'service.portal:registration-history',
+    defaultMessage: 'Skráningarsaga',
   },
   baseInfo: {
     id: 'service.portal:base-info',
@@ -417,6 +465,10 @@ export const m = defineMessages({
     id: 'service.portal:educationLicense',
     defaultMessage: 'Starfsleyfi',
   },
+  myEducationLicense: {
+    id: 'service.portal:my-education-license',
+    defaultMessage: 'Mín starfsleyfi',
+  },
   educationLicenseDescription: {
     id: 'service.portal:educationLicense-description',
     defaultMessage: 'Hér munu birtast starfsleyfi sem þú hefur fengið',
@@ -424,6 +476,10 @@ export const m = defineMessages({
   education: {
     id: 'service.portal:education',
     defaultMessage: 'Menntun',
+  },
+  myEducation: {
+    id: 'service.portal:my-education',
+    defaultMessage: 'Mín menntun',
   },
   educationDescription: {
     id: 'service.portal:education-description',
@@ -440,6 +496,14 @@ export const m = defineMessages({
   educationFramhskoli: {
     id: 'service.portal:education-framhskoli',
     defaultMessage: 'Framhaldsskóli',
+  },
+  educationFramhskoliGraduation: {
+    id: 'service.portal:education-framhskoli-graduation',
+    defaultMessage: 'Útskriftir',
+  },
+  educationFramhskoliCareer: {
+    id: 'service.portal:education-framhskoli-career',
+    defaultMessage: 'Námsferill',
   },
   educationHaskoli: {
     id: 'service.portal:education-haskoli',
@@ -465,9 +529,27 @@ export const m = defineMessages({
     id: 'service.portal:licenses-description',
     defaultMessage: 'Upplýsingar um skírteini og réttindi sem þeim fylgja',
   },
+  occupationalLicenses: {
+    id: 'service.portal:occupational-licenses',
+    defaultMessage: 'Mín starfsleyfi',
+  },
+  occupationalLicensesDescription: {
+    id: 'service.portal:occupational-licenses-description',
+    defaultMessage:
+      'Hér er markmiðið að þú getir fundið yfirlit yfir leyfisbréf og vottorð til starfsréttinda. Unnið er að því að koma öllum leyfisbréfum og vottorðum um starfsréttindi á einn stað.',
+  },
+  occupationalLicensesNavIntro: {
+    id: 'service.portal:occupational-licenses-nav-intro',
+    defaultMessage: 'Hér er munu birtast starfsleyfi sem þú hefur fengið.',
+  },
   finance: {
     id: 'service.portal:finance',
     defaultMessage: 'Fjármál',
+  },
+  financeHeading: {
+    id: 'service.portal:finance-heading',
+    defaultMessage:
+      'Hér sérðu yfirlit yfir allt sem tengist þínum fjármálum við ríkissjóð og aðrar ríkisreknar stofnanir.',
   },
   financeDescription: {
     id: 'service.portal:finance-description',
@@ -491,7 +573,7 @@ export const m = defineMessages({
   },
   financeEmployeeClaims: {
     id: 'service.portal:finance-employee-claims',
-    defaultMessage: 'Laungreiðendakröfur',
+    defaultMessage: 'Launagreiðendakröfur',
   },
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
@@ -530,6 +612,10 @@ export const m = defineMessages({
     id: 'service.portal:delegation',
     defaultMessage: 'Mín réttindi',
   },
+  occupationaLicenses: {
+    id: 'service.portal:occupational-license',
+    defaultMessage: 'Starfsleyfi',
+  },
   parentalLeave: {
     id: 'service.portal:parentalLeave',
     defaultMessage: 'Fæðingarorlof',
@@ -540,11 +626,15 @@ export const m = defineMessages({
   },
   adrLicense: {
     id: 'service.portal:adr-license',
-    defaultMessage: 'Ökuréttindi',
+    defaultMessage: 'ADR réttindi',
   },
   machineLicense: {
     id: 'service.portal:machine-license',
     defaultMessage: 'Vinnuvélaréttindi',
+  },
+  firearmLicense: {
+    id: 'service.portal:firearm-license',
+    defaultMessage: 'Skotvopnaleyfi',
   },
   notFound: {
     id: 'service.portal:not-found',
@@ -662,6 +752,10 @@ export const m = defineMessages({
     id: 'service.portal:go-back',
     defaultMessage: 'Til baka',
   },
+  goBackToDashboard: {
+    id: 'service.portal:go-back-to-dashboard',
+    defaultMessage: 'Til baka í yfirlit',
+  },
   viewDetail: {
     id: 'service.portal:view-detail',
     defaultMessage: 'Skoða nánar',
@@ -669,6 +763,10 @@ export const m = defineMessages({
   noDataFound: {
     id: 'service.portal:no-data-found',
     defaultMessage: 'Engin gögn fundust fyrir þig',
+  },
+  noData: {
+    id: 'service.portal:no-data-found-simple',
+    defaultMessage: 'Engin gögn fundust',
   },
   noDataFoundDetail: {
     id: 'service.portal:no-data-found-detail',
@@ -691,6 +789,10 @@ export const m = defineMessages({
     id: 'service.portal:code-confirmation',
     defaultMessage: 'Staðfesta',
   },
+  number: {
+    id: 'service.portal:number',
+    defaultMessage: 'Númer',
+  },
   telNumber: {
     id: 'service.portal:tel',
     defaultMessage: 'Símanúmer',
@@ -706,6 +808,10 @@ export const m = defineMessages({
   refuseEmailTitle: {
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',
+  },
+  requestPaperMailTitle: {
+    id: 'service.portal:req-paper-mail-title',
+    defaultMessage: 'Bréfpóstur',
   },
   nextStep: {
     id: 'service.portal:next-step',
@@ -793,6 +899,10 @@ export const m = defineMessages({
     id: 'service.portal:license-title',
     defaultMessage: 'Skírteini',
   },
+  myLicenses: {
+    id: 'service.portal:my-licenses',
+    defaultMessage: 'Mín skírteini',
+  },
   yourLicenses: {
     id: 'service.portal:your-licenses',
     defaultMessage: 'Þín skírteini',
@@ -841,6 +951,10 @@ export const m = defineMessages({
     id: 'service.portal:close-filter',
     defaultMessage: 'Loka síu',
   },
+  filterBy: {
+    id: 'service.portal:filter-by',
+    defaultMessage: 'Sía eftir',
+  },
   clearSelected: {
     id: 'service.portal:clear-selected',
     defaultMessage: 'Hreinsa val',
@@ -881,13 +995,196 @@ export const m = defineMessages({
     defaultMessage: 'Endurnýja',
     description: 'Renew',
   },
+  frontpage: {
+    id: 'service.portal:frontpage',
+    defaultMessage: 'Forsíða',
+    description: 'Frontpage',
+  },
+  serviceProvider: {
+    id: 'service.portal:service-provider',
+    defaultMessage: 'Þjónustuaðili',
+    description: 'Service provider',
+  },
+  tableOfContents: {
+    id: 'service.portal:table-of-contents',
+    defaultMessage: 'Efnisyfirlit',
+    description: 'Table of contents',
+  },
+  myCategories: {
+    id: 'service.portal:my-categories',
+    defaultMessage: 'Mínir flokkar',
+    description: 'My categories',
+  },
+  transports: {
+    id: 'service.portal:transports',
+    defaultMessage: 'Samgöngur',
+    description: 'Transports',
+  },
+  download: {
+    id: 'service.portal:download',
+    defaultMessage: 'Niðurhala',
+  },
   airDiscount: {
     id: 'service.portal:air-discount',
     defaultMessage: 'Loftbrú',
     description: 'Airfare discount',
   },
+  airDiscountDescription: {
+    id: 'service.portal:air-discount-description',
+    defaultMessage: 'Lægri flug­fargjöld fyrir íbúa lands­byggð­arinnar',
+    description: 'Airfare discount',
+  },
   sessions: {
     id: 'service.portal:sessions',
     defaultMessage: 'Notkun',
+  },
+  therapies: {
+    id: 'service.portal:therapies',
+    defaultMessage: 'Þjálfun',
+  },
+  aidsAndNutrition: {
+    id: 'service.portal:aids-and-nutrition',
+    defaultMessage: 'Hjálpartæki og næring',
+  },
+  dentist: {
+    id: 'service.portal:dentist',
+    defaultMessage: 'Tannlæknir',
+  },
+  dentists: {
+    id: 'service.portal:dentists',
+    defaultMessage: 'Tannlæknar',
+  },
+  healthCenter: {
+    id: 'service.portal:health-center',
+    defaultMessage: 'Heilsugæsla',
+  },
+  workMachines: {
+    id: 'service.portal:work-machines',
+    defaultMessage: 'Vinnuvélar',
+  },
+  workMachineDetail: {
+    id: 'service.portal:work-machine-detail',
+    defaultMessage: 'Nánar um vinnuvél',
+  },
+  health: {
+    id: 'service.portal:health',
+    defaultMessage: 'Heilsa',
+  },
+  healthDescription: {
+    id: 'service.portal:health-description',
+    defaultMessage: 'Hér eru heilsugögn um þig',
+  },
+  financeBreakdown: {
+    id: 'service.portal:finance-detail-breakdown',
+    defaultMessage: 'Sundurliðun',
+  },
+  tjodskraTooltip: {
+    id: 'service.portal:tjodskra-tooltip',
+    defaultMessage:
+      'Þjóðskrá Íslands hefur umsjón með gögnum um þig og fjölskyldu þína.',
+  },
+  userProfileTooltip: {
+    id: 'service.portal:userprofile-tooltip',
+    defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
+  },
+  healthTooltip: {
+    id: 'service.portal:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
+  },
+  universityOfIcelandTooltip: {
+    id: 'service.portal:uni-iceland-tooltip',
+    defaultMessage:
+      'Háskóli Íslands hefur umsjón með gögnum um brautskráningar úr Háskóla Íslands.',
+  },
+  airDiscountTooltip: {
+    id: 'service.portal:air-discount-tooltip',
+    defaultMessage: 'Vegagerðin hefur umsjón með gögnum Loftbrúar.',
+  },
+  realEstateTooltip: {
+    id: 'service.portal:real-estate-tooltip',
+    defaultMessage:
+      'Húsnæðis- og mannvirkjastofnun hefur umsjón með gögnum um fasteignir.',
+  },
+  vehiclesTooltip: {
+    id: 'service.portal:vehicles-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökutæki.',
+  },
+  drivingLessonTooltip: {
+    id: 'service.portal:driving-lessons-tooltip',
+    defaultMessage: 'Samgöngustofa hefur umsjón með gögnum um ökukennslu.',
+  },
+  licensesTooltip: {
+    id: 'service.portal:licenses-tooltip',
+    defaultMessage: 'Útgefandi hvers skírteinis hefur umsjón með gögnum þess.',
+  },
+  mmsTooltip: {
+    id: 'service.portal:mms-tooltip',
+    defaultMessage: 'Menntamálastofnun hefur umsjón með gögnum um grunnskóla.',
+  },
+  occupationalLicenseTooltip: {
+    id: 'service.portal:occupational-license-tooltip',
+    defaultMessage:
+      'Ýmsir þjónustuaðilar sjá um hvert starfsleyfi fyrir sig, veldu þitt starfsleyfi til að sjá þjónustuaðila þess.',
+  },
+  workmachineTooltip: {
+    id: 'service.portal:workmachine-tooltip',
+    defaultMessage: 'Vinnueftirlitið hefur umsjón með gögnum um vinnuvélar.',
+  },
+  financeTooltip: {
+    id: 'service.portal:finance-tooltip',
+    defaultMessage: 'Fjársýslan hefur umsjón með gögnum um fjármál.',
+  },
+  consent: {
+    id: 'service.portal:consent',
+    defaultMessage: 'Gagnaöflun',
+  },
+  postcode: {
+    id: 'service.portal:postcode',
+    defaultMessage: 'Póstfang',
+  },
+  emptyDocumentsList: {
+    id: 'service.portal:empty-documents-list',
+    defaultMessage: 'Engin skjöl fundust',
+  },
+  addFavorite: {
+    id: 'service.portal:add-favorite',
+    defaultMessage: 'Stjörnumerkja',
+  },
+  removeFavorite: {
+    id: 'service.portal:remove-favorite',
+    defaultMessage: 'Ekki stjörnumerkja',
+  },
+  addToStorage: {
+    id: 'service.portal:add-to-storage',
+    defaultMessage: 'Setja í geymslu',
+  },
+  removeFromStorage: {
+    id: 'service.portal:remove-from-storage',
+    defaultMessage: 'Flytja í pósthólf',
+  },
+  openDocumentAriaLabel: {
+    id: 'service.portal:open-document',
+    defaultMessage: 'Opna {subject}',
+  },
+  activeDocumentOpenAriaLabel: {
+    id: 'service.portal:active-document-open',
+    defaultMessage: '{subject} opið',
+  },
+  closeActiveDocument: {
+    id: 'service.portal:close-active-document',
+    defaultMessage: 'Loka skjali',
+  },
+  month: {
+    id: 'service.portal:month',
+    defaultMessage: 'Mánuður',
+  },
+  dateOfInvoiceShort: {
+    id: 'service.portal:date-of-invoice',
+    defaultMessage: 'Dags. reiknings',
+  },
+  totalPrice: {
+    id: 'service.portal:total-price',
+    defaultMessage: 'Heildarverð',
   },
 })

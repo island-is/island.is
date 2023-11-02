@@ -29,7 +29,7 @@ interface Props {
 }
 
 export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
-  Props & FieldBaseProps
+  React.PropsWithChildren<Props & FieldBaseProps>
 > = ({
   id,
   index,
@@ -109,6 +109,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
         onNameChange={setName}
         nameDefaultValue={name}
         errorMessage={errorMessage}
+        disabled={repeaterField.approved}
       />
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

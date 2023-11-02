@@ -19,7 +19,11 @@ interface Props extends FieldBaseProps {
   field: SelectField
 }
 
-export const SelectFormField: FC<Props> = ({ application, error, field }) => {
+export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
+  application,
+  error,
+  field,
+}) => {
   const {
     id,
     title,

@@ -5,10 +5,10 @@ import {
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
-import { InternalCaseController } from '../../internalCase.controller'
+import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
+import { InternalCaseController } from '../../internalCase.controller'
 
 describe('InternalCaseController - Deliver case to police guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -32,7 +32,7 @@ describe('InternalCaseController - Deliver case to police guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have CaseExistsGuard as quard 1', () => {
+    it('should have CaseExistsGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(CaseExistsGuard)
     })
   })
@@ -44,7 +44,7 @@ describe('InternalCaseController - Deliver case to police guards', () => {
       guard = guards[1]
     })
 
-    it('should have CaseTypeGuard as quard 2', () => {
+    it('should have CaseTypeGuard as guard 2', () => {
       expect(guard).toBeInstanceOf(CaseTypeGuard)
       expect(guard).toEqual({
         allowedCaseTypes: [...restrictionCases, ...investigationCases],
@@ -59,7 +59,7 @@ describe('InternalCaseController - Deliver case to police guards', () => {
       guard = new guards[2]()
     })
 
-    it('should have CaseCompletedGuard as quard 3', () => {
+    it('should have CaseCompletedGuard as guard 3', () => {
       expect(guard).toBeInstanceOf(CaseCompletedGuard)
     })
   })

@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from 'react'
 import cn from 'classnames'
+import { useUpdateEffect } from 'react-use'
 import {
   useDialogState,
   Dialog as BaseDialog,
@@ -101,6 +102,10 @@ export type ModalBaseProps = {
    * When enabled, user can't scroll on body when the dialog is visible. This option doesn't work if the dialog isn't modal.
    */
   preventBodyScroll?: boolean
+
+  children?:
+    | React.ReactNode
+    | ((props: { closeModal: () => void }) => React.ReactNode)
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({
@@ -141,7 +146,7 @@ export const ModalBase: FC<ModalBaseProps> = ({
     }
   }, [isVisible])
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     onVisibilityChange && onVisibilityChange(modal.visible)
   }, [modal.visible])
 

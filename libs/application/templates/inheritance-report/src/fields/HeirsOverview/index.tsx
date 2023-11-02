@@ -6,7 +6,9 @@ import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 
-export const HeirsOverview: FC<FieldBaseProps> = ({ application }) => {
+export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const heirs = (application.answers as InheritanceReport).heirs?.data
   const { formatMessage } = useLocale()
 
@@ -16,7 +18,7 @@ export const HeirsOverview: FC<FieldBaseProps> = ({ application }) => {
         return (
           <Box key={index}>
             <Text marginBottom={2} variant="h4">
-              {formatMessage(m.heir) + ' ' + (index + 1)}
+              {formatMessage(m.heir)}
             </Text>
             <Box display="flex" marginBottom={2}>
               <Box width="half">

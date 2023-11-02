@@ -1,0 +1,118 @@
+diff --git a/src/utils/walk-packages.js b/src/utils/walk-packages.js
+index 2f7a2134f6b5cf174d1bbf6a4214c42c1c056177..6ea1bc89626e7d0d38edd86ed161ced440667951 100644
+--- a/src/utils/walk-packages.js
++++ b/src/utils/walk-packages.js
+@@ -4,72 +4,71 @@ exports.copyPackages = exports.getPackagesToCopy = void 0;
+ const tslib_1 = require("tslib");
+ const fs_extra_1 = require("fs-extra");
+ const recursive_copy_1 = tslib_1.__importDefault(require("recursive-copy"));
+-function getPackagesToCopy(rootDirectory, external = []) {
++
++function readNodeModules(pkgDir) {
+     return tslib_1.__awaiter(this, void 0, void 0, function* () {
+-        const modules = new Map();
+-        const cwd = `${rootDirectory}/node_modules`;
+-        const dirs = (yield (0, fs_extra_1.readdir)(cwd).catch((err) => console.error(err))) || [];
++        const nodeModulesDir = `${pkgDir}/node_modules`;
++        if (!(0, fs_extra_1.existsSync)(nodeModulesDir))
++          return [];
++        const dirs = (yield (0, fs_extra_1.readdir)(nodeModulesDir).catch((err) => console.error(err))) || [];
+         // Break out the @ package directories as well
+         for (let i = 0; i < dirs.length; i++) {
+             const name = dirs[i];
+             if (name.startsWith('@')) {
+-                const subDirs = (yield (0, fs_extra_1.readdir)(`${cwd}/${name}`).catch((err) => console.error(err))) ||
++                const subDirs = (yield (0, fs_extra_1.readdir)(`${nodeModulesDir}/${name}`).catch((err) => console.error(err))) ||
+                     [];
+                 dirs.splice(i, 1, ...subDirs.map((dir) => `${name}/${dir}`));
+                 i += subDirs.length - 1;
+             }
+         }
+-        const processPackage = (path, external = false, top = false) => tslib_1.__awaiter(this, void 0, void 0, function* () {
++        return dirs;
++    });
++}
++
++function getPackagesToCopy(rootDirectory, external = []) {
++    return tslib_1.__awaiter(this, void 0, void 0, function* () {
++        const isModuleExternal = new Map();
++        const dirs = yield readNodeModules(rootDirectory);
++        const processPackage = (path, embeddedDirs = []) => tslib_1.__awaiter(this, void 0, void 0, function* () {
+             const packagePath = `${path}/package.json`;
+             if (!(0, fs_extra_1.existsSync)(packagePath))
+                 return;
+             const pkg = (yield (0, fs_extra_1.readJson)(packagePath).catch((err) => console.error(err))) || {};
+-            const allDeps = Object.keys(Object.assign({}, pkg.dependencies || {}, pkg.optionalDependencies || {}));
++            const allDeps = Object.keys(Object.assign({}, pkg.dependencies || {}, pkg.peerDependencies || {}, pkg.optionalDependencies || {}));
++            const currentEmbeddedDirs = yield readNodeModules(path);
++            embeddedDirs = embeddedDirs.concat(currentEmbeddedDirs);
+             for (let i = 0; i < allDeps.length; i++) {
+                 const name = allDeps[i];
+-                const module = modules.get(name);
+-                let alreadyExternal = false;
+-                if (module) {
+-                    alreadyExternal = module.external;
+-                    module.external = alreadyExternal || external;
+-                    module.path = [...module.path, packagePath];
+-                    modules.set(name, module);
+-                }
+-                else {
+-                    modules.set(name, { external, top, path: [packagePath] });
+-                }
++                const alreadyExternal = isModuleExternal.get(name);
++
+                 // Will only process a module in the package.json if it is at the top
+                 //  and there is no instance in a sub directory of node_modules
+                 //  Also, only runs if a package hasn't already been flagged for external but it should be
+                 const subModule = rootDirectory + '/node_modules/' + name;
+-                const embeddedModule = path + '/node_modules/' + name;
+-                if (!(0, fs_extra_1.existsSync)(embeddedModule) &&
++                const isEmbedded = embeddedDirs.includes(name);
++                if (!isEmbedded &&
+                     (0, fs_extra_1.existsSync)(subModule) &&
+-                    !alreadyExternal &&
+-                    external) {
+-                    yield processPackage(`${subModule}`, external);
++                    !alreadyExternal) {
++                    isModuleExternal.set(name, true)
++                    yield processPackage(`${subModule}`);
+                 }
+             }
++            for (let i = 0; i < currentEmbeddedDirs.length; i++) {
++                yield processPackage(`${path}/node_modules/${currentEmbeddedDirs[i]}`, embeddedDirs);
++            }
+         });
+         for (let i = 0; i < dirs.length; i++) {
+             const item = dirs[i];
+-            const data = {
+-                external: Boolean(external.find((search) => search === item)),
+-                top: true,
+-                path: [],
+-            };
+-            const current = modules.get(item);
+-            if (current) {
+-                modules.set(item, Object.assign(Object.assign({}, current), { external: current.external || data.external, top: true }));
+-            }
+-            else {
+-                modules.set(item, data);
++            const isExternal = isModuleExternal.get(item) || Boolean(external.find((search) => search === item));
++            isModuleExternal.set(item, isExternal);
++
++            if (isExternal) {
++              yield processPackage(`${rootDirectory}/node_modules/${item}`);
+             }
+-            yield processPackage(`${cwd}/${item}`, data.external);
+         }
+         const final = [];
+-        modules.forEach((value, key) => {
+-            if (value.external) {
++        isModuleExternal.forEach((isExternal, key) => {
++            if (isExternal) {
+                 final.push(key);
+             }
+         });
+@@ -95,3 +94,4 @@ function copyPackages(projectRoot, destPath, modules = []) {
+ }
+ exports.copyPackages = copyPackages;
+ //# sourceMappingURL=walk-packages.js.map
++

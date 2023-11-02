@@ -216,6 +216,7 @@ export class TranslationService {
   async findTranslationMap(
     className: string,
     keys: string[],
+    useMaster?: boolean,
   ): Promise<Map<string, Map<string, Map<string, string>>>>
   /**
    * Returns a map of translations for a given set of class instances for specific language.
@@ -223,11 +224,13 @@ export class TranslationService {
   async findTranslationMap(
     className: string,
     keys: string[],
+    useMaster: boolean,
     language: string,
   ): Promise<Map<string, Map<string, string>>>
   async findTranslationMap(
     className: string,
     keys: string[],
+    useMaster = false,
     language?: string,
   ): Promise<
     | Map<string, Map<string, string>>
@@ -238,6 +241,7 @@ export class TranslationService {
     }
 
     const translations = await this.translationModel.findAll({
+      useMaster,
       where: {
         ...(language && { language }),
         className,

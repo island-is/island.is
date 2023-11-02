@@ -1,12 +1,12 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 
+import { CaseDecision } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RestrctionTags from './RestrictionTags'
 
@@ -16,7 +16,7 @@ const renderRestrictionTags = (workingCase: Case) =>
 describe('<RestrictionTags />', () => {
   const selector = { selector: 'span' }
   test('should not render for investication cases', () => {
-    const theCase = { type: CaseType.BodySearch } as Case
+    const theCase = { type: CaseType.BODY_SEARCH } as Case
     const result = renderRestrictionTags(theCase)
 
     expect(result.container).toBeEmptyDOMElement()
@@ -44,7 +44,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.MEDIA,
@@ -63,7 +63,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted travel ban cases', () => {
     const theCase = {
-      type: CaseType.TravelBan,
+      type: CaseType.TRAVEL_BAN,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -90,7 +90,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted custody cases', () => {
     const theCase = {
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,
@@ -119,7 +119,7 @@ describe('<RestrictionTags />', () => {
 
   test('should render tags for accepted admission cases', () => {
     const theCase = {
-      type: CaseType.AdmissionToFacility,
+      type: CaseType.ADMISSION_TO_FACILITY,
       decision: CaseDecision.ACCEPTING,
       requestedCustodyRestrictions: [
         CaseCustodyRestrictions.ALTERNATIVE_TRAVEL_BAN_REQUIRE_NOTIFICATION,

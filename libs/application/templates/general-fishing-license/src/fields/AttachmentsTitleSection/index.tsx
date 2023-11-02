@@ -6,7 +6,9 @@ import { ATTACHMENT_INFO_FIELD_ID } from '../../utils/fields'
 import { useLocale } from '@island.is/localization'
 import { fishingLicenseFurtherInformation } from '../../lib/messages'
 
-export const AttachmentsTitleSection: FC<FieldBaseProps> = () => {
+export const AttachmentsTitleSection: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { getValues } = useFormContext()
   const description = getValues(ATTACHMENT_INFO_FIELD_ID)
   const { formatMessage } = useLocale()

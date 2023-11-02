@@ -1,0 +1,27 @@
+query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  getOrganizations {
+    items {
+      id
+      title
+      slug
+      logo {
+        id
+        url
+        title
+      }
+    }
+  }
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+    history {
+      dateFrom
+      dateTo
+      healthCenterName
+      doctor
+    }
+    canRegister
+  }
+}

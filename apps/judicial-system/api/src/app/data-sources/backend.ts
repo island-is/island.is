@@ -1,40 +1,40 @@
-import { Request } from 'express'
-
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
+import { Request } from 'express'
 
 import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
+
 import type {
   Case,
+  CaseFile,
+  CaseListEntry,
   CreateCase,
+  CreateDefendant,
   CreateFile,
   CreatePresignedPost,
+  CreateUser,
+  Defendant,
+  DeleteDefendantResponse,
   DeleteFileResponse,
-  CaseFile,
-  UpdateFile,
+  Institution,
+  Notification,
+  PoliceCaseFile,
   PresignedPost,
   RequestSignatureResponse,
+  SendNotification,
+  SendNotificationResponse,
   SignatureConfirmationResponse,
   SignedUrl,
   TransitionCase,
   UpdateCase,
-  Institution,
-  User,
-  CreateUser,
-  UpdateUser,
-  Notification,
-  SendNotification,
-  SendNotificationResponse,
-  UploadFileToCourtResponse,
-  PoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-  UploadPoliceCaseFile,
-  CreateDefendant,
-  Defendant,
   UpdateDefendant,
-  DeleteDefendantResponse,
-  CaseListEntry,
+  UpdateFile,
+  UpdateUser,
+  UploadFileToCourtResponse,
+  UploadPoliceCaseFile,
+  UploadPoliceCaseFileResponse,
+  User,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
@@ -46,6 +46,7 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
+import { PoliceCaseInfo } from '../modules/police'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -229,6 +230,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${caseId}/policeFiles`)
   }
 
+  getPoliceCaseInfo(caseId: string): Promise<PoliceCaseInfo[]> {
+    return this.get(`case/${caseId}/policeCaseInfo`)
+  }
+
   uploadPoliceFile(
     caseId: string,
     uploadPoliceCaseFile: UploadPoliceCaseFile,
@@ -292,6 +297,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`case/${id}/limitedAccess`)
   }
 
+  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
+    return this.patch(`case/${id}/limitedAccess`, updateCase)
+  }
+
   limitedAccessTransitionCase(
     id: string,
     transitionCase: TransitionCase,
@@ -325,6 +334,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     id: string,
   ): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
+  }
+
+  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
+    return this.get(`case/${caseId}/limitedAccess/files/all`)
   }
 }
 

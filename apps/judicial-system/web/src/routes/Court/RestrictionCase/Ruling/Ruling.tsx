@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useState } from 'react'
-import { useIntl, IntlShape } from 'react-intl'
-import { useRouter } from 'next/router'
+import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
+import { useRouter } from 'next/router'
 
 import {
   Accordion,
@@ -12,47 +12,48 @@ import {
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
-import {
-  FormFooter,
-  PageLayout,
-  PoliceRequestAccordionItem,
-  BlueBox,
-  CourtCaseInfo,
-  FormContentContainer,
-  CaseFileList,
-  Decision,
-  RulingInput,
-  PdfButton,
-  FormContext,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  CaseDecision,
-  completedCaseStates,
-  Defendant,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { core, titles, ruling } from '@island.is/judicial-system-web/messages'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CaseFileList,
+  CourtCaseInfo,
+  Decision,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  PageLayout,
+  PdfButton,
+  PoliceRequestAccordionItem,
+  RulingInput,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  useCase,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import useDeb from '@island.is/judicial-system-web/src/utils/hooks/useDeb'
+import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcRuling as m } from './Ruling.strings'
 
@@ -102,7 +103,7 @@ export function getConclusionAutofill(
           decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
         caseType:
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TravelBan
+            ? CaseType.TRAVEL_BAN
             : workingCase.type,
         validToDate: `${formatDate(validToDate, 'PPPPp')
           ?.replace('dagur,', 'dagsins')
@@ -115,7 +116,7 @@ export function getConclusionAutofill(
       })
 }
 
-export const Ruling: React.FC = () => {
+export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -124,22 +125,14 @@ export const Ruling: React.FC = () => {
     isCaseUpToDate,
   } = useContext(FormContext)
 
-  const [
-    introductionErrorMessage,
-    setIntroductionErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtCaseFactsErrorMessage,
-    setCourtCaseFactsErrorMessage,
-  ] = useState<string>('')
-  const [
-    courtLegalArgumentsErrorMessage,
-    setCourtLegalArgumentsErrorMessage,
-  ] = useState<string>('')
-  const [
-    prosecutorDemandsErrorMessage,
-    setProsecutorDemandsMessage,
-  ] = useState<string>('')
+  const [introductionErrorMessage, setIntroductionErrorMessage] =
+    useState<string>('')
+  const [courtCaseFactsErrorMessage, setCourtCaseFactsErrorMessage] =
+    useState<string>('')
+  const [courtLegalArgumentsErrorMessage, setCourtLegalArgumentsErrorMessage] =
+    useState<string>('')
+  const [prosecutorDemandsErrorMessage, setProsecutorDemandsMessage] =
+    useState<string>('')
 
   const router = useRouter()
 
@@ -209,6 +202,8 @@ export const Ruling: React.FC = () => {
     [router, workingCase.id],
   )
   const stepIsValid = isRulingValidRC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -231,20 +226,17 @@ export const Ruling: React.FC = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   user &&
                   (user.id === workingCase.judge?.id ||
                     user.id === workingCase.registrar?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>
@@ -546,7 +538,7 @@ export const Ruling: React.FC = () => {
                         caseType:
                           workingCase.decision ===
                           CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TravelBan
+                            ? CaseType.TRAVEL_BAN
                             : workingCase.type,
                       },
                     ),
@@ -565,7 +557,7 @@ export const Ruling: React.FC = () => {
                           caseType:
                             workingCase.decision ===
                             CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TravelBan
+                              ? CaseType.TRAVEL_BAN
                               : workingCase.type,
                         },
                       ),
@@ -623,8 +615,8 @@ export const Ruling: React.FC = () => {
               />
             </Box>
           )}
-        {(workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) &&
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
           isAcceptingCaseDecision(workingCase.decision) && (
             <Box component="section" marginBottom={5}>
               <Box marginBottom={2}>

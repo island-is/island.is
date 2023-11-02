@@ -26,7 +26,7 @@ import {
 export class ApplicationTemplateHelper<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 > {
   private readonly application: Application
   private template: ApplicationTemplate<TContext, TStateSchema, TEvents>
@@ -58,9 +58,8 @@ export class ApplicationTemplateHelper<
 
   getApplicationStatus(): ApplicationStatus {
     const { state } = this.application
-    const applicationTemplateState = this.template.stateMachineConfig.states[
-      state
-    ]
+    const applicationTemplateState =
+      this.template.stateMachineConfig.states[state]
     if (applicationTemplateState.meta?.status) {
       return applicationTemplateState.meta.status as ApplicationStatus
     } else {
@@ -68,15 +67,13 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getApplicationActionCardMeta(
-    stateKey: string = this.application.state,
-  ): {
+  getApplicationActionCardMeta(stateKey: string = this.application.state): {
     title?: StaticText
     description?: StaticText
     tag: { variant?: string; label?: StaticText }
   } {
-    const actionCard = this.template.stateMachineConfig.states[stateKey]?.meta
-      ?.actionCard
+    const actionCard =
+      this.template.stateMachineConfig.states[stateKey]?.meta?.actionCard
 
     return {
       title: actionCard?.title,
@@ -162,9 +159,10 @@ export class ApplicationTemplateHelper<
     ]
   }
 
-  getReadableAnswersAndExternalData(
-    role: ApplicationRole,
-  ): { answers: FormValue; externalData: ExternalData } {
+  getReadableAnswersAndExternalData(role: ApplicationRole): {
+    answers: FormValue
+    externalData: ExternalData
+  } {
     const returnValue: { answers: FormValue; externalData: ExternalData } = {
       answers: {},
       externalData: {},
@@ -264,6 +262,7 @@ export class ApplicationTemplateHelper<
     application: Application,
     currentRole: ApplicationRole,
     formatMessage: FormatMessage,
+    nationalId: string,
     stateKey: string = this.application.state,
   ): PendingAction {
     const stateInfo = this.getApplicationStateInformation(stateKey)
@@ -277,7 +276,7 @@ export class ApplicationTemplateHelper<
     }
 
     if (typeof pendingAction === 'function') {
-      const action = pendingAction(application, currentRole)
+      const action = pendingAction(application, currentRole, nationalId)
       return {
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,
@@ -295,14 +294,21 @@ export class ApplicationTemplateHelper<
     }
   }
 
-  getHistoryLog(
-    transition: 'exit' | 'entry',
+  getHistoryLogs(
     stateKey: string = this.application.state,
+    event: Event<TEvents>,
   ): StaticText | undefined {
     const stateInfo = this.getApplicationStateInformation(stateKey)
 
-    return transition === 'entry'
-      ? stateInfo?.actionCard?.onEntryHistoryLog
-      : stateInfo?.actionCard?.onExitHistoryLog
+    const historyLogs = stateInfo?.actionCard?.historyLogs
+
+    if (Array.isArray(historyLogs)) {
+      return historyLogs?.find((historyLog) => historyLog.onEvent === event)
+        ?.logMessage
+    } else {
+      return historyLogs?.onEvent === event
+        ? historyLogs?.logMessage
+        : undefined
+    }
   }
 }

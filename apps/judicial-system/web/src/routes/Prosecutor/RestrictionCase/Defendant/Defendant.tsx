@@ -2,6 +2,13 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  accused as m,
+  core,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   DefenderInfo,
   FormContentContainer,
@@ -9,30 +16,24 @@ import {
   FormFooter,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  CaseOrigin,
+  CaseType,
+  Defendant as TDefendant,
+  UpdateDefendantInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  validateAndSendToServer,
+  validateAndSet,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useInstitution,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useDefendants from '@island.is/judicial-system-web/src/utils/hooks/useDefendants'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  accused as m,
-  core,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
-import {
-  validateAndSendToServer,
-  validateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { UpdateDefendant } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { isDefendantStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import {
-  CaseType,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
 
 import {
   DefendantInfo,
@@ -40,34 +41,27 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-export const Defendant: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
-  const [
-    leadInvestigatorErrorMessage,
-    setLeadInvestigatorErrorMessage,
-  ] = useState<string>('')
+export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
+  const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
+    useState<string>('')
   const { createCase, isCreatingCase, updateCase } = useCase()
   const { updateDefendant } = useDefendants()
   const { loading: institutionLoading } = useInstitution()
   const { formatMessage } = useIntl()
-  const { clientPoliceNumbers, setClientPoliceNumbers } = usePoliceCaseNumbers(
-    workingCase,
-  )
+  const { clientPoliceNumbers, setClientPoliceNumbers } =
+    usePoliceCaseNumbers(workingCase)
   const router = useRouter()
 
   const updateDefendantState = useCallback(
-    (defendantId: string, update: UpdateDefendant) => {
+    (update: UpdateDefendantInput) => {
       setWorkingCase((theCase: Case) => {
         if (!theCase.defendants) {
           return theCase
         }
         const indexOfDefendantToUpdate = theCase.defendants.findIndex(
-          (defendant) => defendant.id === defendantId,
+          (defendant) => defendant.id === update.defendantId,
         )
 
         const newDefendants = [...theCase.defendants]
@@ -75,7 +69,7 @@ export const Defendant: React.FC = () => {
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
-        }
+        } as TDefendant
 
         return { ...theCase, defendants: newDefendants }
       })
@@ -84,14 +78,14 @@ export const Defendant: React.FC = () => {
   )
 
   const handleUpdateDefendant = useCallback(
-    async (defendantId: string, updatedDefendant: UpdateDefendant) => {
-      updateDefendantState(defendantId, updatedDefendant)
+    async (updatedDefendant: UpdateDefendantInput) => {
+      updateDefendantState(updatedDefendant)
 
-      if (defendantId) {
-        updateDefendant(workingCase.id, defendantId, updatedDefendant)
+      if (updatedDefendant.defendantId) {
+        updateDefendant(updatedDefendant)
       }
     },
-    [workingCase.id, updateDefendantState, updateDefendant],
+    [updateDefendantState, updateDefendant],
   )
 
   const handleNavigationTo = useCallback(
@@ -106,7 +100,9 @@ export const Defendant: React.FC = () => {
           workingCase.defendants &&
           workingCase.defendants.length > 0
         ) {
-          await updateDefendant(createdCase.id, createdCase.defendants[0].id, {
+          await updateDefendant({
+            caseId: createdCase.id,
+            defendantId: createdCase.defendants[0].id,
             gender: workingCase.defendants[0].gender,
             name: workingCase.defendants[0].name,
             address: workingCase.defendants[0].address,
@@ -167,7 +163,7 @@ export const Defendant: React.FC = () => {
                   setWorkingCase={setWorkingCase}
                   onChange={handleUpdateDefendant}
                   updateDefendantState={updateDefendantState}
-                  nationalIdImmutable={workingCase.origin === CaseOrigin.Loke}
+                  nationalIdImmutable={workingCase.origin === CaseOrigin.LOKE}
                 />
               </Box>
             )}
@@ -177,7 +173,7 @@ export const Defendant: React.FC = () => {
                 setWorkingCase={setWorkingCase}
               />
             </Box>
-            {workingCase.type !== CaseType.TravelBan && (
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
               <Box component="section" marginBottom={10}>
                 <Box
                   display="flex"

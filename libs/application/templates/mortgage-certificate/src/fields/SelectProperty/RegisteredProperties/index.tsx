@@ -12,13 +12,15 @@ interface RegisteredPropertiesProps {
 }
 
 export const RegisteredProperties: FC<
-  FieldBaseProps & RegisteredPropertiesProps
+  React.PropsWithChildren<FieldBaseProps & RegisteredPropertiesProps>
 > = ({ application, field, selectHandler, selectedPropertyNumber }) => {
   const { externalData } = application
 
-  const { properties } = externalData.nationalRegistryRealEstate?.data as {
+  const nationalRegistryRealEstateData = externalData.nationalRegistryRealEstate
+    ?.data as {
     properties: [PropertyDetail]
-  }
+  } | null
+  const properties = nationalRegistryRealEstateData?.properties
 
   const { formatMessage } = useLocale()
 

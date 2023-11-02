@@ -10,17 +10,16 @@ import { theme } from '@island.is/island-ui/theme'
 import * as styles from './HeilbrigdisstofnunSudurlandsHeader.css'
 
 const backgroundUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/2DIzJE5MwzegOM0t8vkHE0/61eb1814a2cd8b8f944891aa052fbae9/HSU-header6-new.png'
+  'https://images.ctfassets.net/8k0h54kbe6bj/7uF5wmEGTFORa6H4ypK8UQ/e9ad36a47ecc8a2c5776a02e2251a751/HSU_bakgrunnur.png'
 const illustrationUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/34nqJlLErUCqldBNTxZdoN/48e70eb37cfa6bc3608c509b9e5c0916/hsu-header-image.jpg'
+  'https://images.ctfassets.net/8k0h54kbe6bj/sSSuQeq3oIx9hOrKRvfzm/447c7e6811c3fa9e9d548ecd4b6d7985/vector-myndir-hsu.svg'
 
 const getDefaultStyle = (width: number) => {
-  if (width >= theme.breakpoints.xl) {
+  if (width > theme.breakpoints.xl) {
     return {
+      background: `url(${illustrationUrl}) right -28% no-repeat, url(${backgroundUrl})`,
       backgroundRepeat: 'no-repeat, no-repeat',
-      backgroundPosition: 'bottom right',
-      backgroundSize: 'contain, cover',
-      backgroundImage: `url(${illustrationUrl}), url(${backgroundUrl})`,
+      backgroundSize: '700px, cover',
     }
   }
   return {
@@ -34,9 +33,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
-  organizationPage,
-}) => {
+const HeilbrigdisstofnunSudurlandsHeader: React.FC<
+  React.PropsWithChildren<HeaderProps>
+> = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
 
   const namespace = useMemo(
@@ -58,7 +57,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -74,7 +73,7 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={
@@ -90,7 +89,11 @@ const HeilbrigdisstofnunSudurlandsHeader: React.FC<HeaderProps> = ({
               </Link>
             </Hidden>
           )}
-          <Box marginTop={[2, 2, 6]} textAlign={['center', 'center', 'left']}>
+          <Box
+            className={styles.title}
+            marginTop={[2, 2, 6]}
+            textAlign={['center', 'center', 'left']}
+          >
             <Link
               href={
                 linkResolver('organizationpage', [organizationPage.slug]).href

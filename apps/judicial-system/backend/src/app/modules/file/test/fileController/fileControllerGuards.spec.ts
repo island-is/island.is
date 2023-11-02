@@ -23,7 +23,7 @@ describe('FileController - guards', () => {
       guard = new guards[0]()
     })
 
-    it('should have JwtAuthGuard as quard 1', () => {
+    it('should have JwtAuthGuard as guard 1', () => {
       expect(guard).toBeInstanceOf(JwtAuthGuard)
     })
   })

@@ -179,6 +179,8 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             inputColor = 'white'
           } else if (colorScheme === 'blueberry') {
             inputColor = 'blueberry'
+          } else if (colorScheme === 'dark') {
+            inputColor = 'dark'
           }
 
           return (
@@ -256,6 +258,7 @@ const createFilterFunction = (
 const getIconColor = (
   whiteColorScheme: boolean,
   blueberryColorScheme: boolean,
+  darkColorScheme: boolean,
 ) => {
   if (whiteColorScheme) {
     return 'white'
@@ -263,12 +266,15 @@ const getIconColor = (
   if (blueberryColorScheme) {
     return 'blueberry600'
   }
+  if (darkColorScheme) {
+    return 'dark400'
+  }
   return 'blue400'
 }
 
 export interface AsyncSearchInputProps {
   hasFocus: boolean
-  rootProps: HTMLProps<HTMLDivElement>
+  rootProps?: HTMLProps<HTMLDivElement>
   inputProps: InputProps
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>
   menuProps?: Partial<MenuProps>
@@ -320,7 +326,13 @@ export const AsyncSearchInput = forwardRef<
       ? false
       : colorSchemeContext === 'blueberry'
 
-    const iconColor = getIconColor(whiteColorScheme, blueberryColorScheme)
+    const darkColorScheme = skipContext ? false : colorSchemeContext === 'dark'
+
+    const iconColor = getIconColor(
+      whiteColorScheme,
+      blueberryColorScheme,
+      darkColorScheme,
+    )
 
     let inputColor: InputProps['color'] | undefined = undefined
 
@@ -328,6 +340,8 @@ export const AsyncSearchInput = forwardRef<
       inputColor = 'white'
     } else if (blueberryColorScheme) {
       inputColor = 'blueberry'
+    } else if (darkColorScheme) {
+      inputColor = 'dark'
     }
 
     return (
@@ -353,7 +367,7 @@ export const AsyncSearchInput = forwardRef<
             <button
               className={cn(styles.icon, styles.iconSizes[size], {
                 [styles.transparentBackground]:
-                  whiteColorScheme || blueberryColorScheme,
+                  whiteColorScheme || blueberryColorScheme || darkColorScheme,
                 [styles.focusable]: value,
               })}
               tabIndex={value ? 0 : -1}

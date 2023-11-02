@@ -1,32 +1,7 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
-import {
-  ProsecutorCaseInfo,
-  FormContentContainer,
-  FormFooter,
-  PageLayout,
-  ParentCaseFiles,
-  FormContext,
-  MarkdownWrapper,
-  SectionHeading,
-} from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { errors } from '@island.is/judicial-system-web/messages'
-import {
-  useCase,
-  useDeb,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   Box,
   ContentBlock,
@@ -34,59 +9,54 @@ import {
   InputFileUpload,
   Text,
   Tooltip,
-  UploadFile,
 } from '@island.is/island-ui/core'
-import {
-  mapCaseFileToUploadFile,
-  removeTabsValidateAndSet,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import {
-  CaseFileState,
-  isRestrictionCase,
-  PoliceCaseFile,
-} from '@island.is/judicial-system/types'
-import { PoliceCaseFilesQuery } from '@island.is/judicial-system-web/graphql'
-import {
-  GetPoliceCaseFilesQuery,
-  CaseOrigin,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import * as constants from '@island.is/judicial-system/consts'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
+import { errors } from '@island.is/judicial-system-web/messages'
+import {
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  MarkdownWrapper,
+  PageLayout,
+  ParentCaseFiles,
+  ProsecutorCaseInfo,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
+import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
+import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  TUploadFile,
+  useCase,
+  useDeb,
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { PoliceCaseFileCheck, PoliceCaseFiles } from '../../components'
+import {
+  mapPoliceCaseFileToPoliceCaseFileCheck,
+  PoliceCaseFileCheck,
+  PoliceCaseFiles,
+  PoliceCaseFilesData,
+} from '../../components'
+import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
-export interface PoliceCaseFilesData {
-  files: PoliceCaseFile[]
-  isLoading: boolean
-  hasError: boolean
-  errorCode?: string
-}
-
-export const mapPoliceCaseFileToPoliceCaseFileCheck = (
-  file: PoliceCaseFile,
-): PoliceCaseFileCheck => ({
-  id: file.id,
-  name: file.name,
-  policeCaseNumber: file.policeCaseNumber,
-  checked: false,
-})
-
-export const CaseFiles: React.FC = () => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useQuery<GetPoliceCaseFilesQuery>(PoliceCaseFilesQuery, {
+  } = useGetPoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
+    skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
-    skip: workingCase.origin !== CaseOrigin.Loke,
+    errorPolicy: 'all',
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
@@ -94,34 +64,35 @@ export const CaseFiles: React.FC = () => {
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
-  const [filesInRVG, setFilesInRVG] = useState<UploadFile[]>(
-    workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [],
-  )
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
-
   const {
-    upload,
-    uploadPoliceCaseFile,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFile,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
+    useS3Upload(workingCase.id)
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
 
   useEffect(() => {
-    if (workingCase.origin !== CaseOrigin.Loke) {
+    if (workingCase.origin !== CaseOrigin.LOKE) {
       setPoliceCaseFiles({
         files: [],
         isLoading: false,
         hasError: false,
       })
-    } else if (policeData && policeData.policeCaseFiles) {
+    } else if (policeDataError) {
       setPoliceCaseFiles({
-        files: policeData.policeCaseFiles,
+        files: [],
         isLoading: false,
-        hasError: false,
+        hasError: true,
+        errorCode: policeDataError?.graphQLErrors[0]?.extensions
+          ?.code as string,
       })
     } else if (policeDataLoading) {
       setPoliceCaseFiles({
@@ -134,138 +105,87 @@ export const CaseFiles: React.FC = () => {
       })
     } else {
       setPoliceCaseFiles({
-        files:
-          policeData && policeData.policeCaseFiles
-            ? policeData.policeCaseFiles
-            : [],
+        files: policeData?.policeCaseFiles ?? [],
         isLoading: false,
-        hasError: true,
-        errorCode: policeDataError?.graphQLErrors[0]?.extensions
-          ?.code as string,
+        hasError: false,
       })
     }
-  }, [
-    policeData,
-    policeDataError,
-    policeDataLoading,
-    setPoliceCaseFiles,
-    workingCase.origin,
-    workingCase.caseFiles,
-  ])
+  }, [policeData, policeDataError, policeDataLoading, workingCase.origin])
 
   useEffect(() => {
     setPoliceCaseFileList(
       policeCaseFiles?.files
         .filter(
-          (f) =>
+          (policeFile) =>
             !workingCase.caseFiles?.some(
-              (caseFile) => caseFile.name === f.name,
+              (file) => !file.category && file.policeFileId === policeFile.id,
             ),
         )
         .map(mapPoliceCaseFileToPoliceCaseFileCheck) || [],
     )
-
-    setFilesInRVG(workingCase.caseFiles?.map(mapCaseFileToUploadFile) || [])
   }, [policeCaseFiles, workingCase.caseFiles])
 
   const uploadErrorMessage = useMemo(() => {
-    if (filesInRVG.some((file) => file.status === 'error')) {
+    if (uploadFiles.some((file) => file.status === 'error')) {
       return formatMessage(errors.general)
     } else {
       return undefined
     }
-  }, [filesInRVG, formatMessage])
+  }, [uploadFiles, formatMessage])
 
-  const stepIsValid = !isUploading
+  const stepIsValid = !isUploading && allFilesUploaded
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
-  const handleUIUpdate = useCallback(
-    (displayFile: UploadFile, newId?: string) => {
-      setFilesInRVG((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
-  )
+  const uploadPoliceCaseFileCallback = (file: TUploadFile, newId?: string) => {
+    if (newId) {
+      addUploadFile({ ...file, id: newId })
+    }
 
-  const uploadPoliceCaseFileCallback = useCallback(
-    (file: UploadFile, id?: string) => {
-      setFilesInRVG((previous) => [...previous, { ...file, id: id ?? file.id }])
-    },
-    [],
-  )
+    setPoliceCaseFileList((previous) =>
+      newId
+        ? previous.filter((p) => p.id !== file.id)
+        : previous.map((p) =>
+            p.id === file.id ? { ...p, checked: false } : p,
+          ),
+    )
+  }
 
-  const handleUpload = useCallback(
-    async (files: File[]) => {
-      const filesWithId: Array<[File, string]> = files.map((file) => [
-        file,
-        uuid(),
-      ])
+  const handlePoliceCaseFileUpload = async (selectedFiles: Item[]) => {
+    const filesToUpload = policeCaseFileList
+      .filter((p) => selectedFiles.some((f) => f.id === p.id))
+      .map((f) => ({
+        id: f.id,
+        name: f.name,
+        type: 'application/pdf',
+        policeFileId: f.id,
+      }))
 
-      setIsUploading(true)
-
-      setFilesInRVG((previous) => [
-        ...filesWithId.map(
-          ([file, id]): UploadFile => ({
-            status: 'uploading',
-            percent: 1,
-            name: file.name,
-            id: id,
-            type: file.type,
-          }),
-        ),
-        ...(previous || []),
-      ])
-
-      await upload(filesWithId, handleUIUpdate)
-
-      setIsUploading(false)
-    },
-    [handleUIUpdate, upload],
-  )
-
-  const handlePoliceCaseFileUpload = useCallback(async () => {
-    const filesToUpload = policeCaseFileList.filter((p) => p.checked)
+    if (filesToUpload.length === 0) {
+      return
+    }
 
     setIsUploading(true)
 
-    filesToUpload.forEach(async (f, index) => {
-      const fileToUpload = {
-        id: f.id,
-        type: 'application/pdf',
-        name: f.name,
-        status: 'done',
-        state: CaseFileState.STORED_IN_RVG,
-      } as UploadFile
+    await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-      await uploadPoliceCaseFile(fileToUpload, uploadPoliceCaseFileCallback)
+    setIsUploading(false)
+  }
 
-      setPoliceCaseFileList((previous) => previous.filter((p) => p.id !== f.id))
+  const removeFileCB = (file: TUploadFile) => {
+    const policeCaseFile = policeCaseFiles?.files.find(
+      (f) => f.id === file.policeFileId,
+    )
 
-      if (index === filesToUpload.length - 1) {
-        setIsUploading(false)
-      }
-    })
-  }, [policeCaseFileList, uploadPoliceCaseFile, uploadPoliceCaseFileCallback])
+    if (policeCaseFile) {
+      setPoliceCaseFileList((previous) => [
+        mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
+        ...previous,
+      ])
+    }
 
-  const removeFileCB = useCallback(
-    (file: UploadFile) => {
-      const policeCaseFile = policeCaseFiles?.files.find(
-        (f) => f.name === file.name,
-      )
-
-      if (policeCaseFile) {
-        setPoliceCaseFileList((previous) => [
-          mapPoliceCaseFileToPoliceCaseFileCheck(policeCaseFile),
-          ...previous,
-        ])
-      }
-
-      setFilesInRVG((previous) => previous.filter((f) => f.id !== file.id))
-    },
-    [policeCaseFiles?.files],
-  )
+    removeUploadFile(file)
+  }
 
   return (
     <PageLayout
@@ -301,9 +221,7 @@ export const CaseFiles: React.FC = () => {
         />
         <PoliceCaseFiles
           onUpload={handlePoliceCaseFileUpload}
-          isUploading={isUploading}
           policeCaseFileList={policeCaseFileList}
-          setPoliceCaseFileList={setPoliceCaseFileList}
           policeCaseFiles={policeCaseFiles}
         />
         <Box marginBottom={3}>
@@ -317,12 +235,14 @@ export const CaseFiles: React.FC = () => {
             <InputFileUpload
               name="fileUpload"
               accept={Object.values(fileExtensionWhitelist)}
-              fileList={filesInRVG}
+              fileList={uploadFiles.filter((file) => !file.category)}
               header={formatMessage(strings.filesLabel)}
               buttonLabel={formatMessage(strings.filesButtonLabel)}
-              onChange={handleUpload}
+              onChange={(files) =>
+                handleUpload(addUploadFiles(files), updateUploadFile)
+              }
               onRemove={(file) => handleRemove(file, removeFileCB)}
-              onRetry={(file) => handleRetry(file, handleUIUpdate)}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploading}
               showFileSize

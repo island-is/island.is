@@ -7,7 +7,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClientConfig } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -21,6 +21,7 @@ import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { DomainsModule } from './domains/domains.module'
+import { ScopesModule } from './scopes/scopes.module'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { DomainsModule } from './domains/domains.module'
     ClientsModule,
     DelegationsModule,
     DomainsModule,
+    ScopesModule,
     ProblemModule,
     ConfigModule.forRoot({
       isGlobal: true,
@@ -40,7 +42,7 @@ import { DomainsModule } from './domains/domains.module'
         FeatureFlagConfig,
         IdsClientConfig,
         NationalRegistryClientConfig,
-        RskProcuringClientConfig,
+        RskRelationshipsClientConfig,
         XRoadConfig,
       ],
     }),

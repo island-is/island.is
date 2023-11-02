@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
 import { DetailedSchedule, PaymentSchedule } from '@island.is/api/schema'
+import { m } from '../../lib/messages'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
@@ -30,11 +31,11 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
-  const [
-    getPaymentScheduleById,
-    { loading, error, ...detailsQuery },
-  ] = useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
+const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
+  paymentSchedule,
+}) => {
+  const [getPaymentScheduleById, { loading, error, ...detailsQuery }] =
+    useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 
@@ -45,10 +46,7 @@ const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
   const getType = (type: string) => {
     switch (type) {
       case 'S':
-        return formatMessage({
-          id: 'sp.finance-schedule:status-valid',
-          defaultMessage: 'Í gildi',
-        })
+        return formatMessage(m.financeStatusValid)
       case 'E':
         return formatMessage({
           id: 'sp.finance-schedule:status-invalid',

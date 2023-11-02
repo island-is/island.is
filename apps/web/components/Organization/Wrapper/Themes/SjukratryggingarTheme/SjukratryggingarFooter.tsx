@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode, useContext } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import {
@@ -6,23 +6,28 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LinkV2,
   Text,
 } from '@island.is/island-ui/core'
 import { SliceType } from '@island.is/island-ui/contentful'
 import { webRichText } from '@island.is/web/utils/richText'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { GlobalContext } from '@island.is/web/context'
 import * as styles from './SjukratryggingarFooter.css'
 
 interface FooterProps {
   footerItems: Array<FooterItem>
   namespace: Record<string, string>
+  organizationSlug: string
 }
 
-const SjukratryggingarFooter: React.FC<FooterProps> = ({
-  footerItems,
-  namespace,
-}) => {
+const SjukratryggingarFooter: React.FC<
+  React.PropsWithChildren<FooterProps>
+> = ({ footerItems, namespace, organizationSlug }) => {
   const n = useNamespace(namespace)
+  const { isServiceWeb } = useContext(GlobalContext)
+  const { linkResolver } = useLinkResolver()
+
   return (
     <footer aria-labelledby="organizationFooterTitle">
       <Box className={styles.footerBg} color="white" paddingTop={5}>
@@ -49,18 +54,93 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
               </Box>
             </Box>
             <GridRow>
-              {footerItems.slice(0, 4).map((item, index) => (
-                <GridColumn
-                  span={['12/12', '12/12', '6/12', '3/12']}
-                  key={`footer-main-row-column-${index}`}
-                >
-                  <Box>
-                    <Box marginBottom={2}>
-                      {webRichText(item.content as SliceType[])}
+              {isServiceWeb && (
+                <>
+                  <GridColumn span={['0', '0', '3/12', '3/12']}></GridColumn>
+                  <GridColumn
+                    paddingBottom={[3, 3, 0]}
+                    span={['1/1', '5/12', '5/12', '4/12']}
+                  >
+                    <Box>
+                      <Text fontWeight="semiBold">
+                        {n(
+                          'serviceWebFooterFirstColumnTitle',
+                          'Þjónustuver og símatími',
+                        )}
+                      </Text>
+                      <Box>
+                        <Box
+                          display={['block', 'block', 'block', 'flex']}
+                          justifyContent="spaceBetween"
+                        >
+                          <Text>
+                            {n(
+                              'serviceWebFooterMondayToThursdayTitle',
+                              'Mánudaga - fimmtudaga:',
+                            )}
+                          </Text>
+                          <Text>
+                            {n(
+                              'serviceWebFooterMondayToThursdayOpeningHours',
+                              '10:00 - 15:00',
+                            )}
+                          </Text>
+                        </Box>
+                        <Box
+                          display={['block', 'block', 'block', 'flex']}
+                          justifyContent="spaceBetween"
+                        >
+                          <Text>
+                            {n('serviceWebFooterFridayTitle', 'Föstudaga:')}
+                          </Text>
+                          <Text>
+                            {n(
+                              'serviceWebFooterFridayOpeningHours',
+                              '08:00 - 13:00',
+                            )}
+                          </Text>
+                        </Box>
+                      </Box>
                     </Box>
-                  </Box>
-                </GridColumn>
-              ))}
+                  </GridColumn>
+                  <GridColumn
+                    paddingBottom={[3, 3, 0]}
+                    offset={['0', '0', '0', '1/12']}
+                    span={['1/1', '5/12', '4/12', '3/12']}
+                  >
+                    <Box>
+                      <Text fontWeight="semiBold">
+                        {n('serviceWebFooterTelephone', 'Sími: 515 0000')}
+                      </Text>
+                      <LinkV2
+                        underlineVisibility="always"
+                        underline="small"
+                        className={styles.link}
+                        href={n(
+                          'serviceWebFooterContactLinkHref',
+                          linkResolver('servicewebcontact', [organizationSlug])
+                            .href,
+                        )}
+                      >
+                        {n('serviceWebFooterContactLinkTitle', 'Hafðu samband')}
+                      </LinkV2>
+                    </Box>
+                  </GridColumn>
+                </>
+              )}
+              {!isServiceWeb &&
+                footerItems.slice(0, 4).map((item, index) => (
+                  <GridColumn
+                    span={['12/12', '12/12', '6/12', '3/12']}
+                    key={`footer-main-row-column-${index}`}
+                  >
+                    <Box>
+                      <Box marginBottom={2}>
+                        {webRichText(item.content as SliceType[])}
+                      </Box>
+                    </Box>
+                  </GridColumn>
+                ))}
             </GridRow>
           </Box>
           <Box
@@ -92,10 +172,15 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
                 >
                   <Box>
                     {webRichText(
-                      (footerItems?.[4].content ?? []) as SliceType[],
+                      (footerItems?.[4]?.[
+                        isServiceWeb ? 'serviceWebContent' : 'content'
+                      ] ?? []) as SliceType[],
                       {
                         renderNode: {
-                          [BLOCKS.PARAGRAPH]: (_node, children) => (
+                          [BLOCKS.PARAGRAPH]: (
+                            _node: never,
+                            children: ReactNode,
+                          ) => (
                             <Text variant="small" color="dark400" marginY={1}>
                               {children}
                             </Text>
@@ -112,15 +197,23 @@ const SjukratryggingarFooter: React.FC<FooterProps> = ({
                     key={`footer-secondary-row-column-${index}`}
                   >
                     <Box>
-                      {webRichText(item.content as SliceType[], {
-                        renderNode: {
-                          [BLOCKS.PARAGRAPH]: (_node, children) => (
-                            <Text variant="small" color="dark400" marginY={1}>
-                              {children}
-                            </Text>
-                          ),
+                      {webRichText(
+                        item[
+                          isServiceWeb ? 'serviceWebContent' : 'content'
+                        ] as SliceType[],
+                        {
+                          renderNode: {
+                            [BLOCKS.PARAGRAPH]: (
+                              _node: never,
+                              children: ReactNode,
+                            ) => (
+                              <Text variant="small" color="dark400" marginY={1}>
+                                {children}
+                              </Text>
+                            ),
+                          },
                         },
-                      })}
+                      )}
                     </Box>
                   </GridColumn>
                 ))}

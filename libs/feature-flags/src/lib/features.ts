@@ -6,53 +6,47 @@ export enum Features {
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
   accidentNotification = 'isAccidentNotificationEnabled',
-  announcementOfDeath = 'isAnnouncementOfDeathEnabled',
-  noDebtCertificate = 'applicationTemplateNoDebtCertificateEnabled',
-  drivingInstructorRegistrations = 'isDrivingInstructorRegistrationsEnabled',
-  drivingSchoolConfirmations = 'isDrivingSchoolConfirmationsEnabled',
-  generalPetition = 'isGeneralPetitionEnabled',
+  europeanHealthInsuranceCard = 'isEuropeanHealthInsuranceCardApplicationEnabled',
   passportApplication = 'isPassportApplicationEnabled',
+  passportAnnulmentApplication = 'isPassportAnnulmentApplicationEnabled',
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
-  operatingLicense = 'isApplicationOperatingLicenseEnabled',
-  marriageConditions = 'isMarriageConditionsApplicationEnabled',
-  estateApplication = 'isEstateApplicationEnabled',
-  drivingLicenseDuplicate = 'isDrivingLicenseDuplicateEnabled',
-  transportAuthorityAnonymityInVehicleRegistry = 'isTransportAuthorityAnonymityInVehicleRegistryEnabled',
-  transportAuthorityChangeCoOwnerOfVehicle = 'isTransportAuthorityChangeCoOwnerOfVehicleEnabled',
-  transportAuthorityChangeOperatorOfVehicle = 'isTransportAuthorityChangeOperatorOfVehicleEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
   transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
-  transportAuthorityOrderVehicleLicensePlate = 'isTransportAuthorityOrderVehicleLicensePlateEnabled',
-  transportAuthorityOrderVehicleRegistrationCertificate = 'isTransportAuthorityOrderVehicleRegistrationCertificateEnabled',
-  transportAuthorityTransferOfVehicleOwnership = 'isTransportAuthorityTransferOfVehicleOwnershipEnabled',
-  transportAuthorityLicensePlateRenewal = 'isTransportAuthorityLicensePlateRenewalEnabled',
-  drivingLicenseBookUpdateInstructor = 'isDrivingLicenseBookUpdateInstructorEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
+  childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
 
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
-  servicePortalDrivingLessonsBookModule = 'isServicePortalDrivingLessonsBookModuleEnabled',
-  servicePortalAirDiscountModule = 'isServicePortalAirDiscountModuleEnabled',
-  servicePortalEducationGraduation = 'isServicePortalEducationGratuationModuleEnabled',
-  sessionHistory = 'sessionHistory',
+  servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
+  servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
+  servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
+  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
+  servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+  servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
+  servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
+  servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
+
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
+  //License service new drivers license client enabled
+  licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
   // Application delegation flags
-  transportAuthorityTransferOfVehicleOwnershipDelegations = 'applicationTransportAuthorityTransferOfVehicleOwnershipDelegations',
-  transportAuthorityChangeCoOwnerOfVehicleDelegations = 'applicationTransportAuthorityChangeCoOwnerOfVehicleDelegations',
-  transportAuthorityChangeOperatorOfVehicleDelegations = 'applicationTransportAuthorityChangeOperatorOfVehicleDelegations',
-  transportAuthorityOrderVehicleLicensePlateDelegations = 'applicationTransportAuthorityOrderVehicleLicensePlateDelegations',
-  transportAuthorityOrderVehicleRegistrationCertificateDelegations = 'applicationTransportAuthorityOrderVehicleRegistrationCertificateDelegations',
-  transportAuthorityLicensePlateRenewalDelegations = 'applicationTransportAuthorityLicensePlateRenewalDelegations',
-  mortgageCertificateDelegations = 'applicationMortgageCertificateDelegations',
+  isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
+  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',
+
+  // Search indexer
+  shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
 }
 
 export enum ServerSideFeature {

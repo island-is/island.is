@@ -3,6 +3,7 @@ import richTextEditor from './widgets/richTextEditor'
 import singleLine from './widgets/singleLine'
 import multipleLine from './widgets/multipleLine'
 import markdownEditor from './widgets/markdownEditor'
+import { DEFAULT_LOCALE } from '../../../constants'
 
 interface WidgetActions {
   extractText: (value: string) => string[]
@@ -16,14 +17,17 @@ function isFieldOk(field: any) {
   if (!field.locales) {
     return false
   }
-  if (!field.locales.includes('en') || !field.locales.includes('is-IS')) {
+  if (
+    !field.locales.includes('en') ||
+    !field.locales.includes(DEFAULT_LOCALE)
+  ) {
     return false
   }
 
   return true
 }
 
-function extractField(field: any, eInterface: any, locale = 'is-IS') {
+function extractField(field: any, eInterface: any, locale = DEFAULT_LOCALE) {
   if (isFieldOk(field)) {
     const { widgetId } = eInterface.controls.filter(
       (a: any) => a['fieldId'] === field.id,
@@ -61,7 +65,7 @@ async function populateField(field: any, eInterface: any, texts: string[]) {
     } else {
       // We still need to get the iceValue for those
       // widgets that rely on a scaffold (see RichText)
-      const iceValue = field.getValue('is-IS')
+      const iceValue = field.getValue(DEFAULT_LOCALE)
       if (!iceValue) {
         return
       }

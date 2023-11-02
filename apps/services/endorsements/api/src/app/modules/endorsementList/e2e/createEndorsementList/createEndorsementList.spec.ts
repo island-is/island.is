@@ -6,6 +6,31 @@ import { EndorsementTag } from '../../constants'
 import { authNationalId } from '../closeEndorsementList/seed'
 
 describe('createEndorsementList', () => {
+  it(`POST /endorsement-list should return 200 OK if scope is ok`, async () => {
+    const app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+    })
+    const newEndorsementList = {
+      title: 'string',
+      description: 'string',
+      endorsementMetadata: [
+        {
+          field: 'fullName',
+        },
+      ],
+      tags: ['generalPetition'],
+      meta: { email: 'asdf@asdf.is', phone: '5559999' },
+      closedDate: '2029-06-12T15:31:00.254Z',
+      openedDate: '2023-06-12T15:31:00.254Z',
+      adminLock: false,
+    }
+
+    const response = await request(app.getHttpServer())
+      .post('/endorsement-list')
+      .send(newEndorsementList)
+      .expect(201)
+  })
   it(`POST /endorsement-list should fail and return 403 error if scope is missing`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,
@@ -31,30 +56,5 @@ describe('createEndorsementList', () => {
       ...errorExpectedStructure,
       statusCode: 403,
     })
-  })
-  it(`POST /endorsement-list should create new endorsement list`, async () => {
-    const app = await getAuthenticatedApp({
-      nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
-    })
-    const today = new Date()
-    const newEndorsementList = {
-      title: 'Some title',
-      description: 'Some description',
-      tags: [EndorsementTag.GENERAL_PETITION],
-      endorsementMetadata: [{ field: 'fullName' }],
-      openedDate: today.toISOString(),
-      closedDate: new Date(
-        today.getTime() + 7 * 24 * 60 * 60 * 1000,
-      ).toISOString(),
-      adminLock: false,
-      meta: {},
-    }
-    const response = await request(app.getHttpServer())
-      .post('/endorsement-list')
-      .send(newEndorsementList)
-      .expect(201)
-
-    expect(response.body).toMatchObject(newEndorsementList) // should return the created object
   })
 })

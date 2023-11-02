@@ -1,55 +1,47 @@
-import React, { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   Box,
   Hidden,
   Button,
   Logo,
   FocusableBox,
-  Icon,
+  GridColumn,
+  GridContainer,
+  GridRow,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.css'
 import { ServicePortalPath } from '@island.is/service-portal/core'
-import { UserLanguageSwitcher } from '@island.is/shared/components'
 import { useLocale } from '@island.is/localization'
-import { UserMenu } from '@island.is/shared/components'
+import { UserLanguageSwitcher, UserMenu } from '@island.is/shared/components'
 import { m } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { useAuth } from '@island.is/auth/react'
+import { useListDocuments } from '@island.is/service-portal/graphql'
+import cn from 'classnames'
+import { theme } from '@island.is/island-ui/theme'
+import { useWindowSize } from 'react-use'
 import { PortalPageLoader } from '@island.is/portals/core'
+import { useAuth } from '@island.is/auth/react'
+import Sidemenu from '../Sidemenu/Sidemenu'
 
 interface Props {
   position: number
-  mobileMenuOpen: boolean
-  setMobileMenuOpen: (set: boolean) => void
+  sideMenuOpen: boolean
+  setSideMenuOpen: (set: boolean) => void
 }
-export const Header = ({
-  position,
-  mobileMenuOpen,
-  setMobileMenuOpen,
-}: Props) => {
+export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const { formatMessage } = useLocale()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { unreadCounter } = useListDocuments()
+  const { width } = useWindowSize()
+  const ref = useRef<HTMLButtonElement>(null)
+  const isMobile = width < theme.breakpoints.md
   const { userInfo: user } = useAuth()
+  const badgeActive: keyof typeof styles.badge =
+    unreadCounter > 0 ? 'active' : 'inactive'
 
-  const closeButton = (userMenu: boolean) => {
-    return (
-      <FocusableBox
-        display="flex"
-        alignItems="center"
-        component="button"
-        onClick={
-          userMenu
-            ? () => setUserMenuOpen(false)
-            : () => setMobileMenuOpen(false)
-        }
-        padding={1}
-        borderRadius="circle"
-        background="blue100"
-        className={styles.closeButton}
-      >
-        <Icon icon="close" color="blue400" />
-      </FocusableBox>
-    )
+  const closeUserMenu = (state: boolean) => {
+    setSideMenuOpen(false)
+    setUserMenuOpen(state)
   }
 
   return (
@@ -57,71 +49,104 @@ export const Header = ({
       <PortalPageLoader />
       {/*  Inline style to dynamicly change position of header because of alert banners */}
       <header className={styles.header} style={{ top: position }}>
-        <Box width="full">
-          <Box
-            display="flex"
-            justifyContent={['spaceBetween', 'spaceBetween', 'flexEnd']}
-            alignItems="center"
-            width="full"
-            background="white"
-            paddingX={[3, 3, 3, 3, 6]}
-          >
-            <Hidden above="sm">
-              <Link to={ServicePortalPath.MinarSidurRoot}>
-                <FocusableBox component="div">
-                  <Logo width={40} iconOnly />
-                </FocusableBox>
-              </Link>
-            </Hidden>
-            <Hidden print>
-              <Box
-                display="flex"
-                alignItems="center"
-                flexWrap="nowrap"
-                marginLeft={1}
-              >
-                <UserMenu
-                  fullscreen
-                  setUserMenuOpen={setUserMenuOpen}
-                  userMenuOpen={userMenuOpen}
-                />
+        <GridContainer>
+          <GridRow>
+            <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
+              <PortalPageLoader />
 
-                {userMenuOpen && (
-                  <Hidden above="md">
-                    <Box display="flex" flexDirection="row" alignItems="center">
+              <Box width="full">
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  alignItems="center"
+                  width="full"
+                >
+                  <Link to={ServicePortalPath.MinarSidurRoot}>
+                    <FocusableBox component="div">
+                      <Hidden above="sm">
+                        <Logo
+                          width={40}
+                          height={40}
+                          iconOnly
+                          id="header-mobile"
+                        />
+                      </Hidden>
+                      <Hidden below="md">
+                        <Logo width={136} height={22} id="header" />
+                      </Hidden>
+                    </FocusableBox>
+                  </Link>
+                  <Hidden print>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      flexWrap="nowrap"
+                      marginLeft={[1, 1, 2]}
+                    >
+                      <Hidden below="md">
+                        <Box marginRight={[1, 1, 2]} position="relative">
+                          <Link to={ServicePortalPath.ElectronicDocumentsRoot}>
+                            <Button
+                              variant="utility"
+                              colorScheme="white"
+                              size="small"
+                              icon="mail"
+                              iconType="outline"
+                              type="span"
+                              unfocusable
+                            >
+                              {!isMobile && formatMessage(m.documents)}
+                            </Button>
+                          </Link>
+                          <Box
+                            borderRadius="circle"
+                            className={cn(styles.badge[badgeActive])}
+                          />
+                        </Box>
+                      </Hidden>
+
                       {user && <UserLanguageSwitcher user={user} />}
-                      {closeButton(true)}
-                    </Box>
-                  </Hidden>
-                )}
-                {!userMenuOpen && (
-                  <Hidden above="sm">
-                    {!mobileMenuOpen ? (
-                      <Box marginLeft={[1, 2]}>
+                      {/* Display X icon instead of dots if open in mobile*/}
+
+                      <Box marginRight={[1, 1, 2]}>
                         <Button
                           variant="utility"
-                          icon="menu"
-                          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                          colorScheme="white"
+                          icon={sideMenuOpen && isMobile ? 'close' : 'dots'}
+                          onClick={() => {
+                            sideMenuOpen && isMobile
+                              ? setSideMenuOpen(false)
+                              : setSideMenuOpen(true)
+                            setUserMenuOpen(false)
+                          }}
+                          ref={ref}
                         >
-                          {formatMessage(m.menu)}
+                          {formatMessage(m.overview)}
                         </Button>
                       </Box>
-                    ) : (
-                      <Box
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                      >
-                        {user && <UserLanguageSwitcher user={user} />}
-                        {closeButton(false)}
-                      </Box>
-                    )}
+
+                      <Sidemenu
+                        setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
+                        sideMenuOpen={sideMenuOpen}
+                        rightPosition={
+                          window.outerWidth -
+                          (ref.current?.getBoundingClientRect().right ?? 0)
+                        }
+                      />
+
+                      {/* Display X button instead if open in mobile*/}
+                      <UserMenu
+                        setUserMenuOpen={closeUserMenu}
+                        showLanguageSwitcher={false}
+                        userMenuOpen={userMenuOpen}
+                      />
+                    </Box>
                   </Hidden>
-                )}
+                </Box>
               </Box>
-            </Hidden>
-          </Box>
-        </Box>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </header>
     </div>
   )

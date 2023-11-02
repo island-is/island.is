@@ -24,6 +24,8 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
+import { getScaledValue } from '../utils/scale-value'
+
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
@@ -56,9 +58,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
+        serviceDef.resources.limits.memory,
+      )}`,
     },
     secrets: {},
     healthCheck: {
@@ -253,6 +255,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     : { type: 'error', errors: allErrors }
 }
 
+export const getPostgresExtensions = (extensions: string[] | undefined) =>
+  extensions ? extensions.join(',') : ''
+
 export const resolveDbHost = (
   service: ServiceDefinitionForEnv,
   env: EnvironmentConfig,
@@ -297,6 +302,11 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = postgres.username ?? postgresIdentifier(serviceDef.name)
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  if (serviceDef.initContainers?.postgres?.extensions) {
+    env['DB_EXTENSIONS'] = getPostgresExtensions(
+      serviceDef.initContainers.postgres.extensions,
+    )
+  }
   try {
     const { reader, writer } = resolveDbHost(service, envConf, postgres.host)
     env['DB_HOST'] = writer
@@ -316,9 +326,8 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ) {
-  const hosts = (typeof ingressConf.host === 'string'
-    ? [ingressConf.host]
-    : ingressConf.host
+  const hosts = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)
@@ -327,6 +336,8 @@ function serializeIngress(
 
   return {
     annotations: {
+      'nginx.ingress.kubernetes.io/service-upstream':
+        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       'kubernetes.io/ingress.class':
         ingressConf.public ?? true
           ? 'nginx-external-alb'
@@ -346,6 +357,7 @@ function serializeVolumes(
     name?: string
     size: string
     accessModes: AccessModes
+    useExisting?: boolean
     mountPath: string
     storageClass?: string
   }[],
@@ -364,6 +376,7 @@ function serializeVolumes(
   const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
     name: volume.name ?? `${service.name}`,
     size: volume.size,
+    useExisting: volume.useExisting ?? false,
     mountPath: volume.mountPath,
     storageClass: 'efs-csi',
     accessModes: mapping[volume.accessModes],
@@ -375,6 +388,7 @@ function serializeVolumes(
 function serializeContainerRuns(
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -384,6 +398,7 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',

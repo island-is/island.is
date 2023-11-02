@@ -20,7 +20,9 @@ import {
 import { applicant } from '../lib/messages'
 import { info } from 'kennitala'
 
-export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
+export const PickDeliveryMethod: FC<React.PropsWithChildren<FieldBaseProps>> = (
+  props,
+) => {
   const { formatMessage } = useLocale()
   const { application, errors, setFieldLoadingState } = props
   const { setValue } = useFormContext()
@@ -68,11 +70,13 @@ export const PickDeliveryMethod: FC<FieldBaseProps> = (props) => {
   )
 
   const refetchTachoNet = () => {
-    const fullNameParts = (getValueViaPath(
-      application.externalData,
-      'nationalRegistry.data.fullName',
-      '',
-    ) as string).split(' ')
+    const fullNameParts = (
+      getValueViaPath(
+        application.externalData,
+        'nationalRegistry.data.fullName',
+        '',
+      ) as string
+    ).split(' ')
     const firstName = fullNameParts[0]
     const lastName =
       fullNameParts.length > 1

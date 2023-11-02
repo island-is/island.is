@@ -14,28 +14,30 @@ import 'cypress-file-upload'
 
 const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
   if (graphqlRequest.body.hasOwnProperty('query')) {
-    if (graphqlRequest.body.query.includes('TransitionCaseMutation')) {
+    if (graphqlRequest.body.query.includes('TransitionCase')) {
       return {
         fixture: 'transitionCaseMutationResponse',
       }
-    } else if (graphqlRequest.body.query.includes('SendNotificationMutation')) {
+    } else if (graphqlRequest.body.query.includes('SendNotification')) {
       return {
         fixture: 'sendNotificationMutationResponse',
       }
-    } else if (graphqlRequest.body.query.includes('CurrentUserQuery')) {
+    } else if (graphqlRequest.body.query.includes('CurrentUser')) {
       if (
         graphqlRequest.headers.cookie.includes(UserRole.JUDGE) ||
         graphqlRequest.headers.cookie.includes(UserRole.REGISTRAR)
       ) {
         return { fixture: 'judgeUser' }
-      } else if (graphqlRequest.headers.cookie.includes(UserRole.STAFF)) {
-        return { fixture: 'staffUser' }
+      } else if (
+        graphqlRequest.headers.cookie.includes(UserRole.PRISON_SYSTEM_STAFF)
+      ) {
+        return { fixture: 'prisonSystemStaffUser' }
       } else if (graphqlRequest.headers.referer.includes('/domur')) {
         return { fixture: 'judgeUser' }
       } else {
         return { fixture: 'prosecutorUser' }
       }
-    } else if (graphqlRequest.body.query.includes('UsersQuery')) {
+    } else if (graphqlRequest.body.query.includes('Users')) {
       if (graphqlRequest.headers.referer.includes('/domur')) {
         return {
           fixture: 'judgeUsers',
@@ -45,23 +47,21 @@ const getFixtureFor = (graphqlRequest: CyHttpMessages.IncomingHttpRequest) => {
           fixture: 'prosecutorUsers',
         }
       }
-    } else if (graphqlRequest.body.query.includes('UpdateCaseMutation')) {
+    } else if (graphqlRequest.body.query.includes('UpdateCase')) {
       graphqlRequest.alias = 'gqlUpdateCaseMutatation'
 
       return { fixture: 'updateCaseMutationResponse' }
-    } else if (
-      graphqlRequest.body.query.includes('RequestRulingSignatureMutation')
-    ) {
+    } else if (graphqlRequest.body.query.includes('RequestRulingSignature')) {
       graphqlRequest.alias = 'gqlRequsestSignatureMutation'
 
       return { fixture: 'requestRulingSignatureMutationResponse' }
     } else if (
-      graphqlRequest.body.query.includes('RulingSignatureConfirmationQuery')
+      graphqlRequest.body.query.includes('RulingSignatureConfirmation')
     ) {
       graphqlRequest.alias = 'gqlSignatureConfirmationResponse'
 
       return { fixture: 'rulingSignatureConfirmationResponse' }
-    } else if (graphqlRequest.body.query.includes('InstitutionsQuery')) {
+    } else if (graphqlRequest.body.query.includes('Institutions')) {
       graphqlRequest.alias = 'gqlInstitutionsQuery'
 
       return { fixture: 'institutionsQueryResponse' }

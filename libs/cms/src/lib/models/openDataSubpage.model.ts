@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import * as types from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import * as types from '../generated/contentfulTypes'
 import { GraphCard, mapGraphCard } from './graphCard.model'
 import { StatisticsCard, mapStatisticsCard } from './statisticsCard.model'
 import { Image, mapImage } from './image.model'
@@ -19,13 +20,13 @@ export class OpenDataSubpage {
   @Field()
   fundDescription!: string
 
-  @Field(() => [StatisticsCard])
+  @CacheField(() => [StatisticsCard])
   statisticsCards?: Array<StatisticsCard>
 
-  @Field(() => [GraphCard])
+  @CacheField(() => [GraphCard])
   graphCards?: Array<GraphCard>
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   organizationLogo?: Image | null
 }
 

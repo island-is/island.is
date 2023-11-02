@@ -1,24 +1,25 @@
 {
-  "root": "libs/shared/components",
+  "name": "shared-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/components/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/shared/components/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/shared/components"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/shared/components"],
       "options": {
-        "jestConfig": "libs/shared/components/jest.config.js",
+        "jestConfig": "libs/shared/components/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config libs/shared/components/codegen.yml"

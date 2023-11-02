@@ -15,7 +15,7 @@ A new library providing an createEnhancedFetch function.
 - Includes circuit breaker logic. By default, if more than 50% of at least 10 requests from the last 10 seconds are misbehaving, we'll open the circuit. All future requests will be stopped to lower pressure on the remote server. Every 30 seconds we'll allow one request through. If it's successful, we'll close the circuit and let requests flow through again.
 - Includes response cache logic built on top of standard cache-control semantics. By default nothing is cached.
 - Supports our `User` and `Auth` objects. Adds authorization header to the request.
-- Includes request timeout logic. By default, throws an error if there is no response in 10 seconds.
+- Includes request timeout logic. By default, throws an error if there is no response in 20 seconds.
 - Throws an error for non-200 responses. The error object includes details from the response, including a problem property if the response implements the Problem Spec.
 - Logs circuit breaker events and information about failing requests.
 - Optionally opens the circuit for 400 responses.
@@ -164,7 +164,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
-    cacheManager: caching({ store: 'memory', ttl: 0 }),
+    cacheManager: await caching('memory', { ttl: 0 }),
   },
   autoAuth: {
     issuer: 'https://your-idp',
@@ -192,7 +192,7 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 const enhancedFetch = createEnhancedFetch({
   name: 'my-fetch',
   cache: {
-    cacheManager: caching({ store: 'memory', ttl: 0 }),
+    cacheManager: await caching('memory', { ttl: 0 }),
   },
 })
 ```

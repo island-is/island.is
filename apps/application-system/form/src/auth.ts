@@ -10,6 +10,7 @@ import {
   MunicipalitiesFinancialAidScope,
 } from '@island.is/auth/scopes'
 
+// Are users mocked?
 const userMocked = process.env.API_MOCKS === 'true'
 
 if (userMocked) {
@@ -42,6 +43,7 @@ if (userMocked) {
       MunicipalitiesFinancialAidScope.write,
       MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
+      ApiScope.samgongustofaVehicles,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

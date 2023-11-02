@@ -49,11 +49,12 @@ interface OrganizationNewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   organizationPage,
   newsList,
@@ -70,7 +71,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
   const { getMonthByIndex } = useDateUtils()
   useContentfulId(organizationPage.id)
   useLocalLinkTypeResolver()
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespaceStrict(namespace)
 
   const newsOverviewUrl = linkResolver(
@@ -134,7 +136,8 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
       value: month,
     })),
   ]
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -152,28 +155,38 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
 
   return (
     <OrganizationWrapper
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       pageTitle={newsTitle}
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={breadCrumbs}
       navigationData={{
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
       }}
       sidebarContent={
         <NewsListSidebar
           months={months}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           namespace={namespace}
           newsOverviewUrl={newsOverviewUrl}
           selectedMonth={selectedMonth}
           selectedTag={selectedTag}
           selectedYear={selectedYear}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           title={newsTitle}
           yearOptions={yearOptions}
         />
       }
     >
       <NewsList
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         namespace={namespace}
         newsItemLinkType="organizationnews"
         newsOverviewUrl={newsOverviewUrl}
@@ -186,37 +199,48 @@ const OrganizationNewsList: Screen<OrganizationNewsListProps> = ({
         total={total}
         yearOptions={yearOptions}
         monthOptions={monthOptions}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         title={newsTitle}
         newsPerPage={PERPAGE}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        newsTags={organizationPage.secondaryNewsTags}
       />
     </OrganizationWrapper>
   )
 }
 
-const createDatesMap = (datesList) => {
-  return datesList.reduce((datesMap, date) => {
-    const [year, month] = date.split('-')
-    if (datesMap[year]) {
-      datesMap[year].push(parseInt(month)) // we can assume each month only appears once
-    } else {
-      datesMap[year] = [parseInt(month)]
-    }
-    return datesMap
-  }, {})
+const createDatesMap = (datesList: string[]) => {
+  return datesList.reduce(
+    (datesMap: Record<string, number[]>, date: string) => {
+      const [year, month] = date.split('-')
+      if (datesMap[year]) {
+        datesMap[year].push(parseInt(month)) // we can assume each month only appears once
+      } else {
+        datesMap[year] = [parseInt(month)]
+      }
+      return datesMap
+    },
+    {},
+  )
 }
 
 const getIntParam = (s: string | string[]) => {
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
-
-OrganizationNewsList.getInitialProps = async ({
-  apolloClient,
-  query,
-  locale,
-}) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+OrganizationNewsList.getProps = async ({ apolloClient, query, locale }) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const year = getIntParam(query.y)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const month = year && getIntParam(query.m)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const selectedPage = getIntParam(query.page) ?? 1
 
   const organizationPage = (
@@ -240,7 +264,12 @@ OrganizationNewsList.getInitialProps = async ({
     )
   }
 
-  const tag = (query.tag as string) ?? organizationPage?.newsTag?.slug ?? ''
+  const newsTags = query.tag
+    ? Array.isArray(query.tag)
+      ? query.tag
+      : [query.tag]
+    : []
+  const organizationSlug = organizationPage.organization?.slug
 
   const [
     {
@@ -259,7 +288,8 @@ OrganizationNewsList.getInitialProps = async ({
       variables: {
         input: {
           lang: locale as Locale,
-          tag,
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -272,7 +302,8 @@ OrganizationNewsList.getInitialProps = async ({
           page: selectedPage,
           year,
           month,
-          tags: [tag],
+          tags: newsTags,
+          organization: organizationSlug,
         },
       },
     }),
@@ -300,10 +331,11 @@ OrganizationNewsList.getInitialProps = async ({
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
-      }),
+      .then((variables) =>
+        variables.data.getNamespace?.fields
+          ? JSON.parse(variables.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   const genericTag = genericTagResponse?.data?.getGenericTagBySlug
@@ -333,23 +365,25 @@ OrganizationNewsList.getInitialProps = async ({
     }
 
     for (const lang of Object.keys(slugs)) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       languageToggleQueryParams[lang as Locale] = { tag: slugs[lang] }
     }
   }
 
   return {
     organizationPage,
-    newsList: organizationPage?.newsTag ? newsList : [],
+    newsList: newsList ?? [],
     total,
     selectedYear: year,
     selectedMonth: month,
-    selectedTag: tag,
+    selectedTag: newsTags,
     datesMap: createDatesMap(newsDatesList),
     selectedPage,
     namespace,
     locale: locale as Locale,
     languageToggleQueryParams,
-    ...getThemeConfig(organizationPage.theme, organizationPage.slug),
+    ...getThemeConfig(organizationPage?.theme, organizationPage?.organization),
   }
 }
 

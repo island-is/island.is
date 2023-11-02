@@ -132,3 +132,20 @@ export const Avatar = () => (
     }}
   />
 )
+
+export const Destructive = () => (
+  <ActionCard
+    heading="Delete application in staging environment"
+    headingVariant="h4"
+    text="Delete application in staging environment"
+    backgroundColor="red"
+    cta={{
+      label: 'Delete',
+      buttonType: {
+        variant: 'primary',
+        colorScheme: 'destructive',
+      },
+      icon: undefined,
+    }}
+  />
+)

@@ -9,21 +9,50 @@ import {
   Stack,
   Box,
   Text,
+  Select,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
-import { useCreateExplicitDiscountCodeMutation } from './CreateDiscount.generated'
+import {
+  CreateExplicitDiscountCodeMutation,
+  useCreateExplicitDiscountCodeMutation,
+} from './CreateDiscount.generated'
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 
-const AdminCreateDiscount = () => {
-  const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
+enum TypeOptionsValue {
+  Normal,
+  Connecting,
+}
 
+const AdminCreateDiscount = () => {
+  const options = [
+    {
+      label: '24 tímar',
+      value: '1',
+    },
+    {
+      label: '14 dagar',
+      value: '14',
+    },
+  ]
+
+  const typeOptions = [
+    { label: 'Venjulegt flug', value: TypeOptionsValue.Normal },
+    {
+      label: 'Tengiflug',
+      value: TypeOptionsValue.Connecting,
+    },
+  ]
+
+  const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
-
-  const [discountCode, setDiscountCode] = useState('')
-
+  const [length, setLength] = useState(options[0])
+  const [typeOfFlight, setTypeOfFlight] = useState(typeOptions[0])
+  const [discountCode, setDiscountCode] = useState<
+    CreateExplicitDiscountCodeMutation | undefined | null
+  >(null)
   const [showModal, setShowModal] = useState(false)
 
   return (
@@ -44,9 +73,42 @@ const AdminCreateDiscount = () => {
                 Handvirkir kóðar
               </Text>
 
-              {discountCode.length > 0 ? (
+              {discountCode ? (
                 <>
-                  <Text variant="h2">Kóði: {discountCode}</Text>
+                  {typeOfFlight.value === TypeOptionsValue.Connecting ? (
+                    <>
+                      <Text variant="h2" marginBottom={1}>
+                        Tengiflugs kóðar
+                      </Text>
+                      {discountCode?.createAirDiscountSchemeExplicitDiscountCode.connectionDiscountCodes.map(
+                        (item) => (
+                          <>
+                            <Text variant="h3">Tengiflug - kóði</Text>
+                            <Text>
+                              Kóði: <strong>{item.code}</strong>
+                            </Text>
+                            <Text>Flug: {item.flightDesc}</Text>
+                          </>
+                        ),
+                      )}
+                      {discountCode.createAirDiscountSchemeExplicitDiscountCode
+                        .connectionDiscountCodes.length === 0 && (
+                        <Text>
+                          Engir kóðar fundust, athugaðu að fyrst þarf að nota
+                          venjulegan kóða áður en tengiflugskóðinn birtist.
+                        </Text>
+                      )}
+                    </>
+                  ) : (
+                    <Text variant="h2">
+                      Venjulegur kóði:{' '}
+                      {
+                        discountCode
+                          ?.createAirDiscountSchemeExplicitDiscountCode
+                          .discountCode
+                      }
+                    </Text>
+                  )}
                   <Text>
                     Umsýsluviðmótið geymir þessa kóða ekki. Þeir munu birtast í
                     viðmóti viðkomandi kennitöluhafa.
@@ -57,7 +119,7 @@ const AdminCreateDiscount = () => {
                       setNationalId('')
                       setPostalcode('')
                       setComment('')
-                      setDiscountCode('')
+                      setDiscountCode(null)
                     }}
                   >
                     Búa til nýjan kóða
@@ -95,6 +157,32 @@ const AdminCreateDiscount = () => {
                       setComment(e.target.value)
                     }}
                   />
+                  <Select
+                    name="length"
+                    label="Tegund kóða"
+                    required
+                    onChange={(opt) => {
+                      setTypeOfFlight(
+                        typeOptions.find((item) => item.value === opt?.value) ??
+                          typeOptions[0],
+                      )
+                    }}
+                    value={typeOfFlight}
+                    options={typeOptions}
+                  />
+                  <Select
+                    name="length"
+                    label="Tímalengd"
+                    required
+                    onChange={(opt) => {
+                      setLength(
+                        options.find((item) => item.value === opt?.value) ??
+                          options[0],
+                      )
+                    }}
+                    value={length}
+                    options={options}
+                  />
 
                   <Button
                     disabled={[nationalId, postalcode, comment].some(
@@ -114,7 +202,7 @@ const AdminCreateDiscount = () => {
         show={showModal}
         onCancel={() => setShowModal(false)}
         onContinue={() => {
-          setDiscountCode('...bíðið andartak')
+          setDiscountCode(null)
           setShowModal(false)
           createExplicitDiscountCode({
             variables: {
@@ -122,13 +210,11 @@ const AdminCreateDiscount = () => {
                 nationalId: nationalId.replace('-', ''),
                 postalcode: parseInt(postalcode, 10),
                 comment,
+                numberOfDaysUntilExpiration: parseInt(length.value, 10),
               },
             },
           }).then((data) => {
-            setDiscountCode(
-              data.data?.createAirDiscountSchemeExplicitDiscountCode
-                .discountCode ?? '',
-            )
+            setDiscountCode(data.data ?? undefined)
           })
         }}
         t={{

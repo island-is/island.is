@@ -1,11 +1,12 @@
 {
-  "root": "libs/service-portal/eligibility",
+  "name": "service-portal-eligibility",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/eligibility/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/service-portal/eligibility/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/eligibility/jest.config.js",
+        "jestConfig": "libs/service-portal/eligibility/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/eligibility"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/eligibility"]
     }
   },
   "tags": ["lib:portals-mypages", "scope:portals-mypages"]

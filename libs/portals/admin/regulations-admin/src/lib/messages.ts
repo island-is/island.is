@@ -583,6 +583,24 @@ export const homeMessages = defineMessages({
     id: 'ap.regulations-admin:idealpublishdate-today',
     defaultMessage: 'Í dag',
   },
+  noDataTitle: {
+    id: 'ap.regulations-admin:no-data-title',
+    defaultMessage: 'Engar reglugerðir í vinnslu til birtingar',
+  },
+  noDataText: {
+    id: 'ap.regulations-admin:no-data-text',
+    defaultMessage:
+      'Í augnablikinu eru engar reglugerðir í vinnslu hér. Veldu "Skrá reglugerð" hér að oftan til að byrja skráningu. Ef þú telur að um villu sé að ræða skal hafa samband við ritstjóra.',
+  },
+  errorTitle: {
+    id: 'ap.regulations-admin:error-title',
+    defaultMessage: 'Villa í þjónustu',
+  },
+  errorText: {
+    id: 'ap.regulations-admin:error-text',
+    defaultMessage:
+      'Villa kom upp í þjónustu. Vinsamlegast hafið samband við ritstjóra.',
+  },
 })
 
 export const ministryMessages = defineMessages({
@@ -600,27 +618,25 @@ export const ministryMessages = defineMessages({
   },
 })
 
-export const statusMsgs: Record<
-  DraftingStatus,
-  MessageDescriptor
-> = defineMessages({
-  draft: {
-    id: 'ap.regulations-admin:status-draft',
-    defaultMessage: 'Drög',
-  },
-  proposal: {
-    id: 'ap.regulations-admin:status-proposal',
-    defaultMessage: 'Tilbúið í yfirlestur',
-  },
-  shipped: {
-    id: 'ap.regulations-admin:status-shipped',
-    defaultMessage: 'Bíður birtingar',
-  },
-  published: {
-    id: 'ap.regulations-admin:status-published',
-    defaultMessage: 'Birt',
-  },
-})
+export const statusMsgs: Record<DraftingStatus, MessageDescriptor> =
+  defineMessages({
+    draft: {
+      id: 'ap.regulations-admin:status-draft',
+      defaultMessage: 'Drög',
+    },
+    proposal: {
+      id: 'ap.regulations-admin:status-proposal',
+      defaultMessage: 'Tilbúið í yfirlestur',
+    },
+    shipped: {
+      id: 'ap.regulations-admin:status-shipped',
+      defaultMessage: 'Bíður birtingar',
+    },
+    published: {
+      id: 'ap.regulations-admin:status-published',
+      defaultMessage: 'Birt',
+    },
+  })
 
 export const buttonsMsgs = defineMessages({
   continue: {

@@ -11,8 +11,6 @@ global:
     NO_UPDATE_NOTIFIER: 'true'
     PORT: '3333'
     name: 'prod'
-  image:
-    tag: 'latest_master'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
@@ -23,13 +21,16 @@ judicial-system-api:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    AUTH_AUDIENCE: 'rettarvorslugatt.island.is'
+    AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web'
+    AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://rettarvorslugatt.island.is'
+    AUTH_IDS_REDIRECT_URI: 'https://rettarvorslugatt.island.is/api/auth/callback/identity-server'
+    AUTH_IDS_SCOPE: 'openid profile'
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'INDICTMENTS, INDICTMENT_ROUTE, APPEAL_TO_COURT_OF_APPEALS'
-    NODE_OPTIONS: '--max-old-space-size=208'
-    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=rettarvorslugatt.prod'
+    HIDDEN_FEATURES: ''
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -59,6 +60,7 @@ judicial-system-api:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'rettarvorslugatt.island.is'
           paths:
@@ -76,16 +78,18 @@ judicial-system-api:
     min: 3
   resources:
     limits:
+      cpu: '350m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
+    AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -97,8 +101,9 @@ judicial-system-api:
 judicial-system-backend:
   enabled: true
   env:
-    BLOCKED_API_INTEGRATION: 'COURT_LITIGANT'
+    BLOCKED_API_INTEGRATION: ''
     CLIENT_URL: 'https://rettarvorslugatt.island.is'
+    CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'judicial_system'
@@ -106,7 +111,8 @@ judicial-system-backend:
     DB_USER: 'judicial_system'
     DOKOBIT_URL: 'https://ws.dokobit.com'
     EMAIL_REGION: 'eu-west-1'
-    NODE_OPTIONS: '--max-old-space-size=464'
+    NODE_OPTIONS: '--max-old-space-size=921'
+    NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-prod-upload-judicial-system'
     S3_REGION: 'eu-west-1'
@@ -181,10 +187,10 @@ judicial-system-backend:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '1024Mi'
     requests:
       cpu: '100m'
-      memory: '256Mi'
+      memory: '512Mi'
   secrets:
     ADMIN_USERS: '/k8s/judicial-system/ADMIN_USERS'
     ARCHIVE_ENCRYPTION_KEY: '/k8s/judicial-system/ARCHIVE_ENCRYPTION_KEY'
@@ -192,7 +198,10 @@ judicial-system-backend:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN'
+    COURTS_ASSISTANT_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_ASSISTANT_MOBILE_NUMBERS'
+    COURTS_EMAILS: '/k8s/judicial-system/COURTS_EMAILS'
     COURTS_MOBILE_NUMBERS: '/k8s/judicial-system/COURTS_MOBILE_NUMBERS'
+    COURT_ROBOT_EMAIL: '/k8s/judicial-system/COURT_ROBOT_EMAIL'
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
     DOKOBIT_ACCESS_TOKEN: '/k8s/judicial-system/DOKOBIT_ACCESS_TOKEN'
     EMAIL_FROM: '/k8s/judicial-system/EMAIL_FROM'
@@ -228,7 +237,7 @@ judicial-system-message-handler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
     SQS_QUEUE_NAME: 'sqs-judicial-system'
@@ -290,7 +299,7 @@ judicial-system-scheduler:
   enabled: true
   env:
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
@@ -340,7 +349,7 @@ judicial-system-web:
   env:
     API_URL: 'https://rettarvorslugatt.island.is'
     INTERNAL_API_URL: 'http://web-judicial-system-api'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -370,6 +379,7 @@ judicial-system-web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'rettarvorslugatt.island.is'
           paths:
@@ -402,7 +412,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
     BACKEND_URL: 'http://web-judicial-system-backend'
-    NODE_OPTIONS: '--max-old-space-size=208'
+    NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -430,6 +440,7 @@ judicial-system-xrd-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'judicial-system-xrd-api.internal.island.is'
           paths:

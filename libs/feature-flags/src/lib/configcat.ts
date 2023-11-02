@@ -1,50 +1,53 @@
 import {
+  IAutoPollOptions,
+  DataGovernance,
+  IConfigCatClient,
+  PollingMode,
+} from 'configcat-common'
+import {
   FeatureFlagClient,
   FeatureFlagUser,
+  SettingValue,
+  SettingTypeOf,
+  ConfigCatModule,
   FeatureFlagClientProps,
 } from './types'
-import { createClient, IJSAutoPollOptions, DataGovernance } from 'configcat-js'
+import { SDK_KEY_ERROR } from './constants'
 
-export class Client implements FeatureFlagClient {
-  private configcat: ReturnType<typeof createClient>
+export const createFeatureFlagClient = (
+  config: FeatureFlagClientProps,
+  moduleProvider: ConfigCatModule,
+): FeatureFlagClient => {
+  const resolvedSdkKey = config.sdkKey || process.env.CONFIGCAT_SDK_KEY
 
-  constructor(config: FeatureFlagClientProps) {
-    const resolvedSdkKey = config.sdkKey ?? process.env.CONFIGCAT_SDK_KEY
-    if (!resolvedSdkKey) {
-      throw new Error(
-        'Trying to initialize configcat client without CONFIGCAT_SDK_KEY environment variable',
-      )
-    }
-    const ccConfig: IJSAutoPollOptions = {
-      dataGovernance: DataGovernance.EuOnly,
-    }
-    if (typeof window === 'undefined') {
-      this.configcat = eval('require')('configcat-node').createClient(
-        resolvedSdkKey,
-        ccConfig,
-      )
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      this.configcat = require('configcat-js').createClient(
-        resolvedSdkKey,
-        ccConfig,
-      )
-    }
+  if (!resolvedSdkKey) {
+    throw new Error(SDK_KEY_ERROR)
   }
 
-  dispose() {
-    this.configcat.dispose()
+  const ccConfig: IAutoPollOptions = {
+    dataGovernance: DataGovernance.EuOnly,
   }
 
-  async getValue(
-    key: string,
-    defaultValue: boolean | string,
-    user: FeatureFlagUser,
-  ) {
-    return await this.configcat.getValueAsync(
-      key,
-      defaultValue,
-      user ? { identifier: user.id, custom: user.attributes } : undefined,
-    )
+  const client: IConfigCatClient = moduleProvider.getClient(
+    resolvedSdkKey,
+    PollingMode.AutoPoll,
+    ccConfig,
+  )
+
+  return {
+    dispose: () => {
+      client.dispose()
+    },
+    getValue: async <T extends SettingValue>(
+      key: string,
+      defaultValue: T,
+      user?: FeatureFlagUser,
+    ): Promise<SettingTypeOf<T>> => {
+      return await client.getValueAsync(
+        key,
+        defaultValue,
+        user ? { identifier: user.id, custom: user.attributes } : undefined,
+      )
+    },
   }
 }

@@ -1,3 +1,4 @@
+import { getSession } from 'next-auth/client'
 import initApollo from '../../graphql/client'
 import SubscriptionScreen from '../../screens/Subscriptions/Subscriptions'
 import {
@@ -10,8 +11,8 @@ import {
   SubGetCasesQuery,
   SubGetTypesQuery,
 } from '../../graphql/queries.graphql.generated'
-
-const STATUSES_TO_FETCH = [1, 2, 3]
+import { SUB_PAGE_SIZE, SUB_STATUSES_TO_FETCH } from '../../utils/consts/consts'
+import { withApollo } from '../../graphql/withApollo'
 
 interface SubProps {
   cases: CaseForSubscriptions[]
@@ -19,44 +20,55 @@ interface SubProps {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const client = initApollo()
-  try {
-    const [
-      {
-        data: { consultationPortalGetCases },
-      },
-      {
-        data: { consultationPortalAllTypes },
-      },
-    ] = await Promise.all([
-      client.query<SubGetCasesQuery, QueryConsultationPortalGetCasesArgs>({
-        query: SUB_GET_CASES,
-        variables: {
-          input: {
-            caseStatuses: STATUSES_TO_FETCH,
-          },
+  const session = await getSession(ctx)
+  if (session) {
+    const client = initApollo()
+    try {
+      const [
+        {
+          data: { consultationPortalGetCases },
         },
-      }),
-      client.query<SubGetTypesQuery>({
-        query: SUB_GET_TYPES,
-      }),
-    ])
+        {
+          data: { consultationPortalAllTypes },
+        },
+      ] = await Promise.all([
+        client.query<SubGetCasesQuery, QueryConsultationPortalGetCasesArgs>({
+          query: SUB_GET_CASES,
+          variables: {
+            input: {
+              caseStatuses: SUB_STATUSES_TO_FETCH,
+              pageSize: SUB_PAGE_SIZE,
+            },
+          },
+        }),
+        client.query<SubGetTypesQuery>({
+          query: SUB_GET_TYPES,
+        }),
+      ])
+      return {
+        props: {
+          cases: consultationPortalGetCases.cases,
+          types: consultationPortalAllTypes,
+        },
+      }
+    } catch (e) {
+      console.error(e)
+    }
     return {
-      props: {
-        cases: consultationPortalGetCases.cases,
-        types: consultationPortalAllTypes,
+      redirect: {
+        destination: '/500',
       },
     }
-  } catch (e) {
-    console.error(e)
-  }
-  return {
-    redirect: {
-      destination: '/500',
-    },
+  } else {
+    return {
+      props: {
+        cases: [],
+        types: { policyAreas: {}, institutions: {} },
+      },
+    }
   }
 }
 export const Index = ({ cases, types }: SubProps) => {
   return <SubscriptionScreen cases={cases} types={types} />
 }
-export default Index
+export default withApollo(Index)

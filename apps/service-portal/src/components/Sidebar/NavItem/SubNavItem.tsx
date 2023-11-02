@@ -12,7 +12,7 @@ interface Props {
   first?: boolean
 }
 
-const SubNavItemContent: FC<Props> = ({
+const SubNavItemContent: FC<React.PropsWithChildren<Props>> = ({
   active,
   onClick,
   enabled,
@@ -43,7 +43,7 @@ const SubNavItemContent: FC<Props> = ({
   </Box>
 )
 
-const SubNavItem: FC<Props> = (props) => {
+const SubNavItem: FC<React.PropsWithChildren<Props>> = (props) => {
   return props.external ? (
     <a
       href={props.path}

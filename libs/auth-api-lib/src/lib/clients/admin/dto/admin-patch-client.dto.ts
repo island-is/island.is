@@ -155,6 +155,26 @@ export class AdminPatchClientDto {
   @ValidateNested({ each: true })
   @IsArray()
   customClaims?: AdminClientClaimDto[]
+
+  @ApiPropertyOptional({
+    description: 'Scopes to grant to client.',
+  })
+  @IsOptional()
+  @IsArray()
+  addedScopes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Scopes to revoke from client.',
+  })
+  @IsOptional()
+  @IsArray()
+  removedScopes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Contact email for owner',
+  })
+  @IsOptional()
+  contactEmail?: string
 }
 
 export const superUserFields = [

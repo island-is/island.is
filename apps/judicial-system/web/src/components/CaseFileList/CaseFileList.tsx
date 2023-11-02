@@ -9,19 +9,14 @@ import {
   UploadedFile,
   UploadFile,
 } from '@island.is/island-ui/core'
-import {
-  CaseFile as TCaseFile,
-  CaseFileState,
-} from '@island.is/judicial-system/types'
-import {
-  caseFiles as m,
-  core,
-  errors,
-} from '@island.is/judicial-system-web/messages'
-
-import { Modal } from '..'
-import { useFileList } from '../../utils/hooks'
-import { CaseFile, CaseFileStatus } from '../../utils/hooks/useCourtUpload'
+import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
+import { caseFiles as m } from '@island.is/judicial-system-web/messages'
+import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
+import type {
+  CaseFile,
+  CaseFileStatus,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
@@ -29,23 +24,23 @@ interface Props {
   hideIcons?: boolean
   canOpenFiles?: boolean
   handleRetryClick?: (id: string) => void
-  isCaseCompleted: boolean
 }
 
 const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
-  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+  if (status === 'broken') {
+    return { background: 'dark100', border: 'dark200' }
+  }
 
   return { background: 'blue100', border: 'blue300' }
 }
 
-const CaseFileList: React.FC<Props> = (props) => {
+const CaseFileList: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     caseId,
     files,
     hideIcons = true,
     canOpenFiles = true,
     handleRetryClick,
-    isCaseCompleted,
   } = props
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -95,9 +90,7 @@ const CaseFileList: React.FC<Props> = (props) => {
                 file.status !== 'error')
             }
             onOpenFile={
-              canOpenFiles &&
-              file.key &&
-              !(isCaseCompleted && file.state === CaseFileState.STORED_IN_COURT)
+              canOpenFiles && file.key
                 ? (file: UploadFile) => {
                     if (file.id) {
                       onOpen(file.id)
@@ -121,15 +114,7 @@ const CaseFileList: React.FC<Props> = (props) => {
         </Box>
       ))}
       <AnimatePresence>
-        {fileNotFound && (
-          <Modal
-            title={formatMessage(errors.fileNotFoundModalTitle)}
-            text={formatMessage(m.modal.fileNotFound.text)}
-            onClose={() => dismissFileNotFound()}
-            onPrimaryButtonClick={() => dismissFileNotFound()}
-            primaryButtonText={formatMessage(core.closeModal)}
-          />
-        )}
+        {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
     </>
   )

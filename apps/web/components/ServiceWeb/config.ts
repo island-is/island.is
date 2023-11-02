@@ -26,6 +26,13 @@ export const options: Record<BackgroundVariations, Options> = {
     textMode: 'blueberry',
   },
 
+  utlendingastofnun: {
+    textMode: 'light',
+  },
+  'directorate-of-immigration': {
+    textMode: 'light',
+  },
+
   default: {
     textMode: 'dark',
   },
@@ -37,6 +44,12 @@ enum Organization {
 
   /** Sýslumenn */
   DISTRICT_COMMISSIONER = 'kENblMMMvZ3DlyXw1dwxQ',
+
+  /** Sjúkratryggingar */
+  ICELANDIC_HEALTH_INSURANCE = '3pZwAagW0UY26giHaxHthe',
+
+  /** Útlendingastofnun */
+  DIRECTORATE_OF_IMMIGRATION = '77rXck3sISbMsUv7BO1PG2',
 }
 
 export const watsonConfig: Record<
@@ -60,10 +73,42 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
+      integrationID: 'e625e707-c9ce-4048-802c-c12b905c28be',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      region: 'eu-gb',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
       integrationID: '2e32cba8-7379-44e9-b03e-af1ccdbe5982',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    [Organization.ICELANDIC_HEALTH_INSURANCE]: {
+      integrationID: 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    [Organization.DIRECTORATE_OF_IMMIGRATION]: {
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

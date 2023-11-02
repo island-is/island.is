@@ -4,15 +4,15 @@ import { useIntl } from 'react-intl'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { CaseAppealDecision } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { BlueBox } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { appealSections as m } from './AppealSections.strings'
 import * as styles from './AppealSections.css'
@@ -22,18 +22,14 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const AppealSections: React.FC<Props> = (props) => {
+const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
-  const [
-    checkedAccusedRadio,
-    setCheckedAccusedRadio,
-  ] = useState<CaseAppealDecision>()
-  const [
-    checkedProsecutorRadio,
-    setCheckedProsecutorRadio,
-  ] = useState<CaseAppealDecision>()
+  const [checkedAccusedRadio, setCheckedAccusedRadio] =
+    useState<CaseAppealDecision>()
+  const [checkedProsecutorRadio, setCheckedProsecutorRadio] =
+    useState<CaseAppealDecision>()
 
   return (
     <>
@@ -87,7 +83,7 @@ const AppealSections: React.FC<Props> = (props) => {
                       {
                         accusedAppealAnnouncement:
                           workingCase.sessionArrangements ===
-                          SessionArrangements.AllPresentSpokesperson
+                          SessionArrangements.ALL_PRESENT_SPOKESPERSON
                             ? formatMessage(
                                 m.defendantAnnouncementAutofillSpokespersonAppealV2,
                               )

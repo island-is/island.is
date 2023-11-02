@@ -5,6 +5,11 @@ import { APPLICATION_APPLICATIONS } from '../../lib/queries/applicationApplicati
 export const useApplications = () => {
   const { data, loading, error, refetch } = useLocalizedQuery(
     APPLICATION_APPLICATIONS,
+    {
+      variables: {
+        input: { scopeCheck: true },
+      },
+    },
   )
 
   return {

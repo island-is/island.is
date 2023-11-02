@@ -33,7 +33,7 @@ export type ReadWriteValues =
     }
 export interface RoleInState<
   T extends EventObject = AnyEventObject,
-  R = unknown
+  R = unknown,
 > {
   id: ApplicationRole
   read?: ReadWriteValues
@@ -79,9 +79,14 @@ export type PendingAction = {
   content?: StaticText
 }
 
+export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
+  onEvent: Event<T> | string
+  logMessage: StaticText
+}
+
 export interface ApplicationStateMeta<
   T extends EventObject = AnyEventObject,
-  R = unknown
+  R = unknown,
 > {
   name: string
   lifecycle: StateLifeCycle
@@ -90,11 +95,28 @@ export interface ApplicationStateMeta<
     title?: StaticText
     /** @deprecated use pendingAction field instead */
     description?: StaticText
-    onExitHistoryLog?: StaticText
-    onEntryHistoryLog?: StaticText
+    /**
+     * Configures which messages should be displayed to the user when presenting the
+     * application's history.
+     * Each `HistoryEventMessage` object maps an event to its corresponding user-friendly log message.
+     * The `historyLogs` field can either be an array of `HistoryEventMessage` objects
+     * or a single `HistoryEventMessage` object.
+     */
+
+    historyLogs?: HistoryEventMessage[] | HistoryEventMessage
+    /**
+     * Represents an action that is pending or required to be performed
+     * in the current state of the application by a user in a role. The `pendingAction` field
+     * can be either a `PendingAction` object or a function that returns
+     * a `PendingAction` object based on the application and role.
+     */
     pendingAction?:
       | PendingAction
-      | ((application: Application, role: ApplicationRole) => PendingAction)
+      | ((
+          application: Application,
+          role: ApplicationRole,
+          nationalId: string,
+        ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
   }
@@ -120,14 +142,14 @@ export interface ApplicationStateSchema<T extends EventObject = AnyEventObject>
 export type ApplicationStateMachine<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 > = StateMachine<TContext, TStateSchema, TEvents>
 
 // manually overwrites the initial state for the template as well so the interpreter starts in the current application state
 export function createApplicationMachine<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvent>,
-  TEvent extends EventObject = AnyEventObject
+  TEvent extends EventObject = AnyEventObject,
 >(
   application: Application,
   config: StateNodeConfig<TContext, TStateSchema, TEvent>,

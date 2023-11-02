@@ -10,5 +10,5 @@ export class CreateDraftRegulationCancelInput {
   regulation!: RegName
 
   @Field(() => String)
-  date?: ISODate
+  date!: ISODate
 }

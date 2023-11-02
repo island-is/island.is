@@ -10,13 +10,13 @@ export interface DrivingLicenseType {
 export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
 
 export interface NewDrivingLicenseInput {
-  juristictionId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
 }
 
 export interface NewTemporaryDrivingLicenseInput {
-  juristictionId: number
+  jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
   teacherNationalId: string
@@ -43,12 +43,6 @@ export interface StudentQueryInput {
   nationalId: string
 }
 
-export interface Juristiction {
-  id: number
-  name: string
-  zip: number
-}
-
 export enum RequirementKey {
   drivingAssessmentMissing = 'DrivingAssessmentMissing',
   drivingSchoolMissing = 'DrivingSchoolMissing',
@@ -63,11 +57,14 @@ export enum RequirementKey {
   personNotFoundInNationalRegistry = 'PersonNotFoundInNationalRegistry',
   hasDeprivation = 'HasDeprivation',
   hasPoints = 'HasPoints',
+  personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
+  hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
 }
 
 export interface ApplicationEligibilityRequirement {
   key: RequirementKey
   requirementMet: boolean
+  daysOfResidency?: number
 }
 
 export interface ApplicationEligibility {

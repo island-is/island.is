@@ -1,30 +1,30 @@
 import React from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
 import BlueBox from '../BlueBox/BlueBox'
-import { conclusion as strings } from './Conclusion.strings'
 
 interface Props {
+  title: string
   conclusionText?: string
   judgeName?: string
 }
 
-const Conclusion: React.FC<Props> = (props) => {
-  const { formatMessage } = useIntl()
-  const { conclusionText, judgeName } = props
+const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
+  const { conclusionText, judgeName, title } = props
 
   return conclusionText ? (
     <BlueBox>
       <Box marginBottom={2} textAlign="center">
         <Text as="h3" variant="h3">
-          {formatMessage(strings.title)}
+          {title}
         </Text>
       </Box>
       <Box marginBottom={3}>
         <Box marginTop={1}>
-          <Text variant="intro">{conclusionText}</Text>
+          <Text variant="intro" textAlign="justify">
+            {conclusionText}
+          </Text>
         </Box>
       </Box>
       {judgeName ? (

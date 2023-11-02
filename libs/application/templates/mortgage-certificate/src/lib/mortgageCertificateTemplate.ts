@@ -8,9 +8,12 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
@@ -27,8 +30,9 @@ import {
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { ChargeItemCode } from '@island.is/shared/constants'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -48,7 +52,6 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.MORTGAGE_CERTIFICATE,
   name: m.name,
   institution: m.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.MortgageCertificate.translation,
   ],
@@ -56,7 +59,6 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag: Features.mortgageCertificateDelegations,
     },
   ],
   stateMachineConfig: {
@@ -71,6 +73,12 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -127,6 +135,18 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionTryingToSubmitRequestToSyslumennTitle,
+              content:
+                m.pendingActionTryingToSubmitRequestToSyslumennDescription,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSubmittedRequestToSyslumenn,
+                onEvent: MCEvents.PENDING_REJECTED_TRY_AGAIN,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
@@ -162,6 +182,18 @@ const template: ApplicationTemplate<
               label: m.actionCardDraft,
               variant: 'blue',
             },
+            pendingAction: {
+              title: m.pendingActionCheckIfSyslumennHasFixedKMarkingTitle,
+              content:
+                m.pendingActionCheckIfSyslumennHasFixedKMarkingDescription,
+              displayStatus: 'warning',
+            },
+            historyLogs: [
+              {
+                logMessage: m.historyLogSyslumennHasFixedKMarking,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
@@ -224,46 +256,20 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: m.actionCardPayment,
-              variant: 'red',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: [ChargeItemCode.MORTGAGE_CERTIFICATE],
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.PAYMENT]: { target: States.DRAFT },
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-        },
-      },
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
@@ -274,6 +280,10 @@ const template: ApplicationTemplate<
             tag: {
               label: m.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
             },
           },
           onEntry: defineTemplateApi({

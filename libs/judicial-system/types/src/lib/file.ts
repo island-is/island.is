@@ -57,6 +57,7 @@ export enum CaseFileCategory {
   DEFENDANT_APPEAL_STATEMENT = 'DEFENDANT_APPEAL_STATEMENT',
   PROSECUTOR_APPEAL_STATEMENT_CASE_FILE = 'PROSECUTOR_APPEAL_STATEMENT_CASE_FILE',
   DEFENDANT_APPEAL_STATEMENT_CASE_FILE = 'DEFENDANT_APPEAL_STATEMENT_CASE_FILE',
+  APPEAL_RULING = 'APPEAL_RULING',
 }
 
 export interface CaseFile {
@@ -75,6 +76,7 @@ export interface CaseFile {
   chapter?: number
   orderWithinChapter?: number
   displayDate?: string
+  policeFileId?: string
 }
 
 export interface CreateFile {
@@ -83,12 +85,16 @@ export interface CreateFile {
   key: string
   size: number
   policeCaseNumber?: string
+  chapter?: number
+  orderWithinChapter?: number
+  displayDate?: string
+  policeFileId?: string
 }
 
 export interface UpdateFile {
   id: string
-  userGeneratedFilename?: string | null
-  chapter?: number | null
-  orderWithinChapter?: number | null
-  displayDate?: string | null
+  userGeneratedFilename?: string
+  chapter?: number
+  orderWithinChapter?: number
+  displayDate?: string
 }

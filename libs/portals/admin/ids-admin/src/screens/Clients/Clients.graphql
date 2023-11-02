@@ -1,0 +1,19 @@
+# Get Clients by TenantId
+query GetClients($input: AuthAdminClientsInput!) {
+  authAdminClients(input: $input) {
+    data {
+      clientId
+      clientType
+      availableEnvironments
+      defaultEnvironment {
+        id
+        environment
+        clientId
+        displayName {
+          locale
+          value
+        }
+      }
+    }
+  }
+}

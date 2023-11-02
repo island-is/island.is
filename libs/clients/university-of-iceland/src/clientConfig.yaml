@@ -76,6 +76,10 @@ paths:
                         type: string
                         description: Texti fyrir neðan transcript
                         example: 'Ef upplýsingar hér eru ekki réttar...'
+                      unconfirmed_data:
+                        type: string
+                        description: Text when studentFile array is empty
+                        example: 'Engar upplýsingar í boði á PDF formi ...'
         '400':
           description: Bad request. Invalid kennitala
         '404':

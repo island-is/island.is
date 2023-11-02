@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/transport-authority/vehicle-plate-renewal",
+  "name": "clients-transport-authority-vehicle-plate-renewal",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/transport-authority/vehicle-plate-renewal/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,20 +14,20 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/clients/transport-authority/vehicle-plate-renewal"
+        "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-plate-renewal"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-plate-renewal/jest.config.js",
+        "jestConfig": "libs/clients/transport-authority/vehicle-plate-renewal/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-PlateRenewal-V1 -H 'Accept: application/json' > src/clientConfig.json",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Vehicle-PlateOwnership-V1 -H 'Accept: application/json' > src/clientConfig.json",
           "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json"
         ],
         "parallel": false,
@@ -34,7 +35,7 @@
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/transport-authority/vehicle-plate-renewal/gen/fetch -i libs/clients/transport-authority/vehicle-plate-renewal/src/clientConfig.json"

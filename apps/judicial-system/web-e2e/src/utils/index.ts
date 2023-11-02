@@ -18,17 +18,18 @@ import {
 } from '@island.is/judicial-system/types'
 
 export enum Operation {
-  CaseQuery = 'CaseQuery',
-  CaseListQuery = 'CaseListQuery',
-  CurrentUserQuery = 'CurrentUserQuery',
-  UploadFileToCourtMutation = 'UploadFileToCourtMutation',
-  UpdateCaseMutation = 'UpdateCaseMutation',
-  SendNotificationMutation = 'SendNotificationMutation',
-  CreatePresignedPostMutation = 'CreatePresignedPostMutation',
-  CreateFileMutation = 'CreateFileMutation',
-  UpdateDefendantMutation = 'UpdateDefendantMutation',
-  LimitedAccessCaseQuery = 'LimitedAccessCaseQuery',
-  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsersQuery',
+  CaseQuery = 'Case',
+  CaseListQuery = 'CaseList',
+  CurrentUserQuery = 'CurrentUser',
+  UploadFileToCourtMutation = 'UploadFileToCourt',
+  UpdateCaseMutation = 'UpdateCase',
+  SendNotificationMutation = 'SendNotification',
+  CreatePresignedPostMutation = 'CreatePresignedPost',
+  CreateFileMutation = 'CreateFile',
+  UpdateDefendantMutation = 'UpdateDefendant',
+  LimitedAccessCaseQuery = 'LimitedAccessCase',
+  ProsecutorSelectionUsersQuery = 'ProsecutorSelectionUsers',
+  TransitionCaseMutation = 'TransitionCase',
 }
 
 export const intercept = (res: Case, forceFail?: Operation) => {
@@ -92,6 +93,15 @@ export const intercept = (res: Case, forceFail?: Operation) => {
       req.alias = 'gqlProsecutorSelectionUsersQuery'
       req.reply({
         fixture: 'prosecutorUsers',
+      })
+    } else if (hasOperationName(req, Operation.TransitionCaseMutation)) {
+      req.alias = 'TransitionCaseMutation'
+      req.reply({
+        fixture: 'transitionCaseMutationResponse',
+      })
+    } else if (hasOperationName(req, Operation.CaseListQuery)) {
+      req.reply({
+        fixture: 'cases',
       })
     }
   })
@@ -171,7 +181,7 @@ export const makeJudge = (): User => {
       id: '53581d7b-0591-45e5-9cbe-c96b2f82da85',
       created: '',
       modified: '',
-      type: InstitutionType.COURT,
+      type: InstitutionType.DISTRICT_COURT,
       name: 'Dómstóll Testlands',
       active: true,
     },
@@ -220,7 +230,7 @@ export const makeCourt = (): Institution => {
     id: 'd1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf',
     created: '2020-09-16T19:50:08.033Z',
     modified: '2020-09-16T19:50:08.033Z',
-    type: InstitutionType.COURT,
+    type: InstitutionType.DISTRICT_COURT,
     name: 'Héraðsdómur Reykjavíkur',
     active: true,
   }

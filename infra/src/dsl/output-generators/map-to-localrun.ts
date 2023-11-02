@@ -18,6 +18,8 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 import { getSsmParams } from '../adapters/get-ssm-params'
+import { getPostgresExtensions } from './map-to-helm-values'
+import { getScaledValue } from '../utils/scale-value'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce
@@ -38,9 +40,9 @@ const serializeService = async (
   const result: LocalrunService = {
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
+        serviceDef.resources.limits.memory,
+      )}`,
     },
     command: [],
   }
@@ -154,6 +156,11 @@ function serializePostgres(
   const errors: string[] = []
   env['DB_USER'] = 'testdb'
   env['DB_NAME'] = postgres.name ?? postgresIdentifier(serviceDef.name)
+  if (serviceDef.initContainers?.postgres?.extensions) {
+    env['DB_EXTENSIONS'] = getPostgresExtensions(
+      serviceDef.initContainers.postgres.extensions,
+    )
+  }
   try {
     const { reader, writer } = resolveDbHost()
     env['DB_HOST'] = writer

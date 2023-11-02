@@ -25,7 +25,9 @@ export interface ProcessEntryProps {
 }
 
 export const ProcessEntryLinkButton: FC<
-  Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonTypes
+  React.PropsWithChildren<
+    Omit<ProcessEntryProps, 'type'> & ButtonProps & ButtonTypes
+  >
 > = ({
   processTitle,
   buttonText,
@@ -54,7 +56,7 @@ export const ProcessEntryLinkButton: FC<
   )
 }
 
-export const ProcessEntry: FC<ProcessEntryProps> = ({
+export const ProcessEntry: FC<React.PropsWithChildren<ProcessEntryProps>> = ({
   processTitle,
   processLink,
   openLinkInModal,

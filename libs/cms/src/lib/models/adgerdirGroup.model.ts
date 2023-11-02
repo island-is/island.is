@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { AdgerdirPage } from './adgerdirPage.model'
 import { Image } from './image.model'
 
@@ -16,9 +17,9 @@ export class AdgerdirGroup {
   @Field({ nullable: true })
   description!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image
 
-  @Field(() => [AdgerdirPage])
+  @CacheField(() => [AdgerdirPage])
   pages!: AdgerdirPage[]
 }

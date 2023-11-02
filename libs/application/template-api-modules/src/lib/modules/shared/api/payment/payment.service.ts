@@ -64,7 +64,6 @@ export class PaymentService extends BaseTemplateApiService {
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
-
     return response
   }
 
@@ -83,10 +82,27 @@ export class PaymentService extends BaseTemplateApiService {
         {
           title: 'Payment not completed',
           description:
-            'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
+            'Ekki er hægt að halda áfram umsókn af því að ekki hefur tekist að taka við greiðslu.',
         },
         500,
       )
     }
+  }
+
+  async deletePayment({
+    application,
+    auth,
+    params,
+  }: TemplateApiModuleActionProps<CreateChargeParameters>) {
+    const payment = await this.paymentModelService.findPaymentByApplicationId(
+      application.id,
+    )
+
+    if (!payment) {
+      return // No payment found, nothing to do
+    }
+
+    await this.chargeFjsV2ClientService.deleteCharge(payment.id)
+    await this.paymentModelService.delete(application.id, auth)
   }
 }

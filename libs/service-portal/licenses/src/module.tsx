@@ -4,6 +4,7 @@ import { m } from '@island.is/service-portal/core'
 import { PortalModule } from '@island.is/portals/core'
 import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
+import { translationLoader } from './screens/Translation.loader'
 
 const LicensesOverview = lazy(() => import('./screens/LicensesOverview'))
 const LicenseDetail = lazy(() =>
@@ -16,7 +17,7 @@ const PassportDetail = lazy(() =>
 export const licensesModule: PortalModule = {
   name: m.licenseNavTitle,
   enabled: ({ isCompany }) => !isCompany,
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo, ...rest }) => [
     {
       name: defineMessage({
         id: 'sp.license:main-your-licenses',
@@ -24,6 +25,7 @@ export const licensesModule: PortalModule = {
       }),
       path: LicensePaths.LicensesRoot,
       enabled: userInfo.scopes.includes(ApiScope.licenses),
+      loader: translationLoader({ userInfo, ...rest }),
       element: <LicensesOverview />,
     },
     {

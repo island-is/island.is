@@ -46,6 +46,7 @@ import { Screen } from '../../../types'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { Locale } from 'locale'
+import { filterSupportCategories } from './utils'
 
 type FormNamespace = Record<
   string,
@@ -62,7 +63,8 @@ interface ServiceWebFormsPageProps {
   formNamespace: FormNamespace
   locale: Locale
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   syslumenn,
   supportCategories,
@@ -74,13 +76,15 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
   locale,
 }) => {
   const { linkResolver } = useLinkResolver()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [submit, { data, loading, error }] = useMutation<
     ServiceWebFormsMutation,
     ServiceWebFormsMutationVariables
   >(SERVICE_WEB_FORMS_MUTATION)
 
-  useContentfulId(organization.id)
+  useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
 
   const organizationNamespace = useMemo(
@@ -130,9 +134,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
       : ''
   }${headerTitle}`
 
-  const institutionSlugBelongsToMannaudstorg = institutionSlug.includes(
-    'mannaudstorg',
-  )
+  const institutionSlugBelongsToMannaudstorg =
+    institutionSlug.includes('mannaudstorg')
 
   const breadcrumbItems = useMemo(() => {
     const items = []
@@ -146,7 +149,7 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     }
 
     items.push({
-      title: organization.title,
+      title: organization?.title,
       typename: 'serviceweb',
       href: `${linkResolver('serviceweb').href}/${institutionSlug}`,
     })
@@ -159,13 +162,15 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     })
 
     return items
-  }, [institutionSlug, organization.title, linkResolver])
+  }, [institutionSlug, organization?.title, linkResolver])
 
   return (
     <ServiceWebWrapper
       pageTitle={pageTitle}
       headerTitle={headerTitle}
       institutionSlug={institutionSlug}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organization={organization}
       organizationTitle={organizationTitle}
       smallBackground
@@ -178,6 +183,8 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
         <GridContainer>
           <GridRow>
             <GridColumn
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               offset={[null, null, null, '1/12']}
               span={['12/12', '12/12', '12/12', '10/12']}
             >
@@ -186,10 +193,18 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
                   <GridColumn span="12/12" paddingBottom={[2, 2, 4]}>
                     <Box display={['none', 'none', 'block']} printHidden>
                       <Breadcrumbs
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore make web strict
                         items={breadcrumbItems}
                         renderLink={(link, { href }) => {
                           return (
-                            <NextLink href={href} passHref>
+                            <NextLink
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              // @ts-ignore make web strict
+                              href={href}
+                              passHref
+                              legacyBehavior
+                            >
                               {link}
                             </NextLink>
                           )
@@ -297,12 +312,9 @@ const ServiceWebFormsPage: Screen<ServiceWebFormsPageProps> = ({
     </ServiceWebWrapper>
   )
 }
-
-ServiceWebFormsPage.getInitialProps = async ({
-  apolloClient,
-  locale,
-  query,
-}) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+ServiceWebFormsPage.getProps = async ({ apolloClient, locale, query }) => {
   const defaultSlug = locale === 'is' ? 'stafraent-island' : 'digital-iceland'
   const slug = query.slug ? (query.slug as string) : defaultSlug
 
@@ -351,7 +363,7 @@ ServiceWebFormsPage.getInitialProps = async ({
         },
       })
       .then((variables) =>
-        variables.data.getNamespace.fields
+        variables.data.getNamespace?.fields
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
@@ -385,6 +397,16 @@ ServiceWebFormsPage.getInitialProps = async ({
       ),
   ])
 
+  const filteredSupportCategories = filterSupportCategories(
+    supportCategories?.data?.getSupportCategoriesInOrganization,
+    slug,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    organization?.data?.getOrganization,
+    locale,
+    namespace,
+  )
+
   return {
     syslumenn: organizations?.data?.getOrganizations?.items?.filter(
       (x) =>
@@ -392,8 +414,7 @@ ServiceWebFormsPage.getInitialProps = async ({
         x.slug.startsWith('district-commissioner-of'),
     ),
     organization: organization?.data?.getOrganization,
-    supportCategories:
-      supportCategories?.data?.getSupportCategoriesInOrganization,
+    supportCategories: filteredSupportCategories,
     institutionSlug: slug,
     namespace,
     stateEntities,

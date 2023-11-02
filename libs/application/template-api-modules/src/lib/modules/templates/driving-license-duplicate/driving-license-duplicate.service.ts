@@ -3,46 +3,20 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
-const calculateNeedsHealthCert = (healthDeclaration = {}) => {
-  return !!Object.values(healthDeclaration).find((val) => val === 'yes')
-}
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
-export class DrivingLicenseDuplicateService {
+export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly drivingLicenseService: DrivingLicenseService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {}
-
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
-    // TODO: Change to AY116 once its available on dev until then use the regular drivingLicnese code
-    const chargeItemCode = 'AY110'
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      SYSLUMADUR_NATIONAL_ID,
-      [chargeItemCode],
-    )
-
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
+  ) {
+    super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
   }
 
   async submitApplication({
@@ -53,7 +27,6 @@ export class DrivingLicenseDuplicateService {
     orderId?: string
   }> {
     const { answers } = application
-    const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -65,11 +38,24 @@ export class DrivingLicenseDuplicateService {
       }
     }
 
-    // TODO: SUBMIT functionality once the police update their api
-
+    await this.drivingLicenseService
+      .drivingLicenseDuplicateSubmission({
+        districtId: parseInt(answers.district.toString(), 10),
+        token: auth.authorization,
+        // Always true since submission doesn't happen before
+        // user checks the required field which states
+        // that the license is lost or stolen
+        stolenOrLost: true,
+      })
+      .catch((e) => {
+        this.logger.error('Error submitting application', {
+          application: application.id,
+          error: e,
+        })
+        throw Error('Error submitting application to Samgöngustofa')
+      })
     return {
       success: true,
-      orderId: '1234',
     }
   }
 }

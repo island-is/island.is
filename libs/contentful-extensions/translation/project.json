@@ -1,32 +1,36 @@
 {
-  "root": "libs/contentful-extensions/translation",
+  "name": "contentful-translation-extension",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/contentful-extensions/translation/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/contentful-extensions/translation/jest.config.js",
+        "jestConfig": "libs/contentful-extensions/translation/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/contentful-translation-extension"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/contentful-translation-extension"
+      ]
     },
     "serve": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "contentful-extension-scripts start --input libs/contentful-extensions/translation --output dist/contentful-translation-extension --id translation-extension-v2 --name translation-extension-v2 --space-id 8k0h54kbe6bj --field-types Object --mt {args.token}"
       }
     },
     "build": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "outputPath": "dist/contentful-translation-extension",
         "command": "contentful-extension-scripts build --input libs/contentful-extensions/translation --output dist/contentful-translation-extension"
       },
       "configurations": {
         "production": {}
-      }
+      },
+      "outputs": ["{workspaceRoot}/dist/contentful-translation-extension"]
     },
     "docker-static": {}
   },

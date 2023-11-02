@@ -3,10 +3,12 @@ import { uuid } from 'uuidv4'
 import { ForbiddenException } from '@nestjs/common'
 
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
-import { User } from '@island.is/judicial-system/types'
+
+import { User, UserRole } from '@island.is/judicial-system/types'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 interface Then {
   result: SigningServiceResponse
@@ -44,7 +46,7 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned judge', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId, role: UserRole.JUDGE } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: userId, registrarId: uuid() } as Case
     let then: Then
@@ -63,7 +65,7 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned registrar', () => {
     const userId = uuid()
-    const user = { id: userId } as User
+    const user = { id: userId, role: UserRole.REGISTRAR } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: userId } as Case
     let then: Then
@@ -80,8 +82,8 @@ describe('CaseController - Request court record signature', () => {
     })
   })
 
-  describe('the user is not the assigned judge or registrar', () => {
-    const user = { id: uuid() } as User
+  describe('the user is not a judge nor registrar', () => {
+    const user = { id: uuid(), role: UserRole.DEFENDER } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
     let then: Then
@@ -93,7 +95,7 @@ describe('CaseController - Request court record signature', () => {
     it('should throw ForbiddenException', () => {
       expect(then.error).toBeInstanceOf(ForbiddenException)
       expect(then.error.message).toBe(
-        'A court record must be signed by the assigned judge or registrar',
+        'A court record must be a judge or a registrar',
       )
     })
   })

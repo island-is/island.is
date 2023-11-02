@@ -1,26 +1,56 @@
-import { SortOptions } from './enums'
+import { CaseSubscriptionType, SortOptions, SubscriptionType } from './enums'
 
 export interface Case {
   id?: number
   caseNumber?: string
   name?: string
   adviceCount?: number
+  advicePublishTypeId?: number
+  advicePublishTypeName?: string
   shortDescription?: string
+  detailedDescription?: string
   statusName?: string
   institutionName?: string
+  oldInstitutionName?: string
   typeName?: string
   policyAreaName?: string
   processBegins?: string
   processEnds?: string
+  announcementText?: string
   created?: string
+  changed?: string
   summaryDate?: string
+  summaryText?: string
+  summaryLink?: string
+  summaryDocumentId?: string
+  contactName?: string
+  contactEmail?: string
+  documents?: Array<Document>
+  additionalDocuments?: Array<Document>
+  stakeholders?: Array<Stakeholder>
+  extraStakeholderList?: string
+  allowUsersToSendPrivateAdvices?: boolean
+  relatedCases?: Array<RelatedCase>
 }
 
-export interface AdviceDocuments {
+export interface RelatedCase {
+  id?: number
+  caseNumber?: string
+  name?: string
+}
+
+export interface Document {
   id?: string
+  description?: string
+  link?: string
   fileName?: string
   fileType?: string
   size?: number
+}
+
+export interface Stakeholder {
+  name?: string
+  email?: string
 }
 
 export interface UserAdvice {
@@ -31,7 +61,21 @@ export interface UserAdvice {
   content: string
   created: string
   _case: Case
-  adviceDocuments: Array<AdviceDocuments>
+  adviceDocuments: Array<Document>
+  isPrivate?: boolean
+  isHidden?: boolean
+}
+
+export interface AdviceResult {
+  id: string
+  number: number
+  participantName?: string
+  participantEmail?: string
+  content?: string
+  isPrivate?: boolean
+  isHidden?: boolean
+  created?: Date
+  adviceDocuments?: Array<Document>
 }
 
 export interface CaseForSubscriptions {
@@ -40,23 +84,6 @@ export interface CaseForSubscriptions {
   name: string
   institutionName: string
   policyAreaName: string
-}
-
-export interface ArrOfIdAndName {
-  id: string
-  name: string
-}
-
-export interface ArrOfValueAndLabel {
-  value: string
-  label: string
-}
-
-export interface SubscriptionArray {
-  caseIds: Array<number>
-  institutionIds: Array<number>
-  policyAreaIds: Array<number>
-  generalSubscription: string
 }
 
 export interface SortTitle {
@@ -83,15 +110,11 @@ export interface ArrOfTypesForSubscriptions {
   institutions: { [key: string]: string }
 }
 
-export type FilterInputItems = {
+export type FilterInputItem = {
   checked: boolean
   value: string
   label: string
-}
-
-export interface FilterInputIsOpen {
-  items: FilterInputItems
-  isOpen: boolean
+  count?: number | unknown
 }
 
 export type PeriodInput = {
@@ -99,12 +122,17 @@ export type PeriodInput = {
   to?: Date
 }
 
+interface FilterInputItems {
+  items: Array<FilterInputItem>
+  isOpen?: boolean
+}
+
 export interface CaseFilter {
-  caseStatuses?: any
-  caseTypes?: any
+  caseStatuses?: FilterInputItems
+  caseTypes?: FilterInputItems
   period?: PeriodInput
   institutions?: Array<number>
-  sorting?: any
+  sorting?: FilterInputItems
   pageNumber?: number
   pageSize?: number
   policyAreas?: Array<number>
@@ -115,6 +143,8 @@ export interface SEOProps {
   title: string
   url?: string
   image?: string
+  description?: string
+  keywords?: string
 }
 
 export interface FilterGroups {
@@ -124,44 +154,10 @@ export interface FilterGroups {
   Statuses?: { [key: string]: string }
 }
 
-export interface ValueCountPair {
-  value?: string
-  count?: string
-}
-
-export interface AdviceFileRequest {
-  filename?: string
-  base64Document?: string
-}
-
-export interface AdviceRequest {
-  content?: string
-  adviceFiles?: AdviceFileRequest
-}
-
-export interface PostAdviceForm {
-  caseId?: number
-  adviceRequest?: AdviceRequest
-}
-
-export interface FileObject {
-  name: string
-  originalFileObj: File
-  size?: number
-  type?: string
-}
-
 export interface User {
   name?: string
   email?: string
   image?: string
-}
-
-export interface TypeForSubscriptions {
-  id: string
-  type: string
-  name: string
-  nr: any
 }
 
 export interface AdviceFilter {
@@ -169,4 +165,82 @@ export interface AdviceFilter {
   pageNumber?: number
   pageSize?: number
   searchQuery?: string
+}
+
+export interface CasesSubscription {
+  id?: number
+  subscriptionType?: CaseSubscriptionType
+}
+
+export interface CasesSubscriptionData {
+  id?: number | string
+  caseNumber?: string
+  institutionName?: string
+  name?: string
+  policyAreaName?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface InstitutionsSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface PolicyAreasSubscription {
+  id?: number
+  subscriptionType?: SubscriptionType
+}
+
+export interface PolicyAreasSubscriptionData {
+  name?: string
+  id?: string
+  subscriptionType?: SubscriptionType
+  checked?: boolean
+  key?: string
+}
+
+export interface GeneralSubscriptionData {
+  name?: string
+  key?: string
+  checked?: boolean
+  subscriptionType?: SubscriptionType
+}
+
+export interface SubscriptionArray {
+  cases?: Array<CasesSubscriptionData>
+  institutions?: Array<InstitutionsSubscriptionData>
+  policyAreas?: Array<PolicyAreasSubscriptionData>
+  subscribedToAllNewObj?: GeneralSubscriptionData
+  subscribedToAllChangesObj?: GeneralSubscriptionData
+}
+
+export interface SubscriptionTableItem extends CasesSubscriptionData {
+  subscriptionType?: SubscriptionType
+}
+
+export interface Subscription {
+  subscribedToAll?: boolean
+  subscribedToAllType?: SubscriptionType
+  cases?: Array<CasesSubscription>
+  institutions?: Array<InstitutionsSubscription>
+  policyAreas?: Array<PolicyAreasSubscription>
+}
+
+export interface CaseExpressions {
+  isDocumentsNotEmpty: boolean
+  isAdditionalDocumentsNotEmpty: boolean
+  isStatusNameNotPublished: boolean
+  isStatusNameForReview: boolean
+  isStakeholdersNotEmpty: boolean
+  isRelatedCasesNotEmpty: boolean
 }

@@ -18,7 +18,7 @@ import { useLocale } from '@island.is/localization'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 
-export const ComplaintOverview: FC<Props> = ({
+export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   application,
   goToScreen,
   field,

@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IProjectSubpage } from '../generated/contentfulTypes'
 import {
@@ -18,14 +19,20 @@ export class ProjectSubpage {
   @Field()
   slug!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
   @Field(() => Boolean)
   renderSlicesAsTabs: boolean | undefined
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   slices!: Array<typeof SliceUnion | null>
+
+  @Field(() => Boolean)
+  showTableOfContents?: boolean
+
+  @CacheField(() => [SliceUnion], { nullable: true })
+  bottomSlices?: Array<typeof SliceUnion | null> | null
 }
 
 export const mapProjectSubpage = ({
@@ -40,4 +47,8 @@ export const mapProjectSubpage = ({
     : [],
   renderSlicesAsTabs: fields.renderSlicesAsTabs ?? false,
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
+  showTableOfContents: fields.showTableOfContents ?? false,
+  bottomSlices: (fields.bottomSlices ?? [])
+    .map(safelyMapSliceUnion)
+    .filter(Boolean),
 })

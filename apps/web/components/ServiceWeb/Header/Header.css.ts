@@ -46,3 +46,7 @@ export const headerActions = style({
     },
   }),
 })
+
+export const gridContainer = style({
+  zIndex: 1,
+})

@@ -1,0 +1,32 @@
+{
+  "name": "clients-auth-ids-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/auth/ids-api/src",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/auth/ids-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/ids-api"],
+      "options": {
+        "jestConfig": "libs/clients/auth/ids-api/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/auth/ids-api/gen/fetch -i libs/clients/auth/ids-api/src/clientConfig.yaml",
+          "prettier --write libs/clients/auth/ids-api/src/clientConfig.yaml"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client"]
+}

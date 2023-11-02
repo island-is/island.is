@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 import { IErrorPage } from '../generated/contentfulTypes'
 import { Html, mapHtml } from './html.model'
 
@@ -13,7 +14,7 @@ export class ErrorPage {
   @Field()
   title?: string
 
-  @Field(() => Html, { nullable: true })
+  @CacheField(() => Html, { nullable: true })
   description?: Html | null
 }
 export const mapErrorPage = ({ sys, fields }: IErrorPage): ErrorPage => ({

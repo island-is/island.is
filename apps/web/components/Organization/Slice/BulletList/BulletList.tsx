@@ -7,7 +7,9 @@ interface SliceProps {
   slice: BulletListProps
 }
 
-export const BulletListSlice: React.FC<SliceProps> = ({ slice }) => {
+export const BulletListSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   return (
     <section
       key={slice.id}
@@ -16,6 +18,8 @@ export const BulletListSlice: React.FC<SliceProps> = ({ slice }) => {
     >
       <Box paddingBottom={[8, 5, 10]}>
         <BulletList
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           bullets={slice.bullets.map((bullet) => {
             switch (bullet.__typename) {
               case 'IconBullet':

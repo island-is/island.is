@@ -25,7 +25,49 @@ export const GET_ORGANIZATIONS_QUERY = gql`
   }
 `
 
+export const GET_ORGANIZATION_BY_TITLE_QUERY = gql`
+  query GetOrganizationByTitle($input: GetOrganizationByTitleInput!) {
+    getOrganizationByTitle(input: $input) {
+      id
+      slug
+      email
+      phone
+      title
+      hasALandingPage
+      trackingDomain
+      logo {
+        title
+        url
+      }
+      publishedMaterialSearchFilterGenericTags {
+        id
+        title
+        slug
+        genericTagGroup {
+          id
+          title
+          slug
+        }
+      }
+      link
+      tag {
+        id
+        title
+      }
+      description
+      namespace {
+        fields
+      }
+    }
+  }
+`
+
 export const GET_ORGANIZATION_QUERY = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
   query GetOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id
@@ -34,9 +76,24 @@ export const GET_ORGANIZATION_QUERY = gql`
       phone
       title
       hasALandingPage
+      trackingDomain
       logo {
         title
         url
+      }
+      footerConfig
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        serviceWebContent {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
       }
       publishedMaterialSearchFilterGenericTags {
         id
@@ -110,6 +167,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         slug
         email
         phone
+        trackingDomain
         publishedMaterialSearchFilterGenericTags {
           id
           title
@@ -126,6 +184,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         namespace {
           fields
         }
+        footerConfig
         footerItems {
           title
           content {
@@ -146,7 +205,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       bottomSlices {
         ...AllSlices
       }
-      newsTag {
+      secondaryNewsTags {
         id
         title
         slug
@@ -183,6 +242,9 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       id
       title
       slug
+      signLanguageVideo {
+        url
+      }
       description {
         ...AllSlices
         ${nestedFields}

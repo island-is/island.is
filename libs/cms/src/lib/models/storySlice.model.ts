@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IStorySection } from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import { IStorySection } from '../generated/contentfulTypes'
 import { Story, mapStory } from './story.model'
 
 @ObjectType()
@@ -11,7 +12,7 @@ export class StorySlice {
   @Field()
   readMoreText?: string
 
-  @Field(() => [Story])
+  @CacheField(() => [Story])
   stories!: Story[]
 }
 

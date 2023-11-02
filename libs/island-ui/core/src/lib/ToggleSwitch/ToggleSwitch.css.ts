@@ -94,9 +94,10 @@ export const knob = style({
     [`${toggleSwitch}:hover:not(${toggleSwitchDisabled}) > &`]: {
       color: color.dark400,
     },
-    [`${toggleSwitch}${toggleSwitchChecked}:hover:not(${toggleSwitchDisabled}) > &`]: {
-      color: color.blueberry400,
-    },
+    [`${toggleSwitch}${toggleSwitchChecked}:hover:not(${toggleSwitchDisabled}) > &`]:
+      {
+        color: color.blueberry400,
+      },
 
     // Focus
     [`${toggleSwitch}:focus > &, input[type="checkbox"]:focus + &`]: {

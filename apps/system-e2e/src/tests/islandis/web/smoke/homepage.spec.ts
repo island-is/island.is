@@ -1,14 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import {
-  DefaultStub,
-  HttpMethod,
-  Imposter,
-  Mountebank,
-  Proxy,
-  ProxyMode,
-} from '@anev/ts-mountebank'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -54,7 +46,10 @@ test.describe('Front page', () => {
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!, { waitUntil: 'networkidle' })
+        const result = await page.goto(url!)
+        await expect(
+          page.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
         expect(result!.status()).toBe(200)
         await page.close()
       }
@@ -71,9 +66,10 @@ test.describe('Front page', () => {
       )
       for (const url of featuresLinksUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!, {
-          waitUntil: 'networkidle',
-        })
+        const result = await page.goto(url!)
+        await expect(
+          page.getByRole('link', { name: 'island.is logo' }),
+        ).toBeVisible()
         expect(result!.status()).toBe(200)
         await page.close()
       }
@@ -93,7 +89,7 @@ test.describe('Front page', () => {
         const result = await page.goto(url!)
         expect(result?.url()).not.toBe(home)
         await page.locator('[data-testid="link-back-home"]').click()
-        await page.waitForLoadState('networkidle')
+        await expect(page.locator('data-testid=home-heading')).toBeVisible()
         await expect(page).toHaveURL(home)
         await page.close()
       }
@@ -106,9 +102,8 @@ test.describe('Front page', () => {
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
     const icelandicHeading = await homeHeading.textContent()
     await page.locator('button[data-testid="language-toggler"]:visible').click()
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL('/en')
     await expect(homeHeading).not.toHaveText(icelandicHeading!)
+    await expect(page).toHaveURL('/en')
   })
 
   test('should toggle mega-menu @lang:is', async () => {
@@ -120,5 +115,28 @@ test.describe('Front page', () => {
     await expect(
       page.locator('[data-testid="mega-menu-link"] > a'),
     ).toHaveCountGreaterThan(18)
+  })
+
+  test('burger menu should open and close', async () => {
+    // Arrange
+    const page = await context.newPage()
+    page.goto('/')
+    await page.getByRole('button', { name: 'Valmynd' }).click()
+
+    // Act
+    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
+    await expect(
+      page.getByRole('paragraph').filter({ hasText: 'Þjónustuflokkar' }),
+    ).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).toBeVisible()
+    // Heading is "visible" behind menu
+    // await expect(page.getByTestId('home-heading')).not.toBeVisible()
+    await page
+      .getByRole('dialog', { name: 'Menu' })
+      .getByRole('button')
+      .getByTestId('icon-close')
+      .click()
+    await expect(page.getByTestId('home-heading')).toBeVisible()
+    await expect(page.getByRole('dialog', { name: 'Menu' })).not.toBeVisible()
   })
 })

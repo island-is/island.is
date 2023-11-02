@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Endorsement System
 
 This library routes requests to the endorsement system app.

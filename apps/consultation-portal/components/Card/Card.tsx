@@ -1,7 +1,7 @@
 import {
   getDateBeginDateEnd,
   getShortDate,
-} from '../../utils/helpers/dateFormatter'
+} from '../../utils/helpers/dateFunctions'
 import {
   Tag,
   Box,
@@ -12,9 +12,9 @@ import {
   FocusableBox,
 } from '@island.is/island-ui/core'
 import { ReactNode } from 'react'
-import getTagVariants from '../../utils/helpers/getTagVariants'
-import EyebrowsWithSeperator from '../EyebrowsWithSeperator/EyebrowsWithSeperator'
-
+import { getTagVariants } from './utils'
+import { Eyebrows } from '../../components'
+import localization from './Card.json'
 import * as styles from './Card.css'
 
 type CardInfo = {
@@ -25,17 +25,18 @@ type CardInfo = {
   processBegins?: string
   processEnds?: string
   eyebrows: Array<string>
+  caseNumber: string
 }
 type CardProps = {
   card: CardInfo
   dropdown?: ReactNode
   showAttachment?: boolean
   frontPage: boolean
-  children: any
+  children: ReactNode
   showPublished?: boolean
 }
 
-export const Card = ({
+const Card = ({
   card,
   showAttachment,
   dropdown,
@@ -43,9 +44,11 @@ export const Card = ({
   showPublished,
   children,
 }: CardProps) => {
+  const loc = localization['card']
+
   const child = (
     <>
-      <Box>
+      <Box dataTestId="front-page-card">
         <Box
           display="flex"
           flexDirection="row"
@@ -55,10 +58,10 @@ export const Card = ({
         >
           <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
           <Text as="p" variant="eyebrow" color="purple400">
-            Nr. S-{card.id}
+            {`${loc.tagText} S-${card.caseNumber}`}
           </Text>
         </Box>
-        <EyebrowsWithSeperator
+        <Eyebrows
           instances={[card.eyebrows[0], card.eyebrows[1]]}
           color="blue600"
           style={styles.seperator}
@@ -77,7 +80,7 @@ export const Card = ({
         </Box>
         <Inline space={1} alignY={'center'}>
           <Text variant="eyebrow" color="dark400">
-            Umsagnarfrestur:
+            {loc.adviceDateText}
           </Text>
           <Text variant="eyebrow" color="blue600">
             {getDateBeginDateEnd(card.processBegins, card.processEnds)}
@@ -90,13 +93,18 @@ export const Card = ({
       </Box>
       <Inline space={1} justifyContent="spaceBetween" alignY="center">
         {showAttachment && <Box>{dropdown}</Box>}
-        <Box>
-          <ArrowLink href={`/mal/${card.id}`}>Skoða mál</ArrowLink>
-        </Box>
+        {frontPage ? (
+          <ArrowLink as="span">{loc.arrowLink.text}</ArrowLink>
+        ) : (
+          <ArrowLink href={`${loc.arrowLink.href}/${card.id}`}>
+            {loc.arrowLink.text}
+          </ArrowLink>
+        )}
+
         {showPublished && (
-          <Text variant="eyebrow" color="purple400">{`Birt: ${getShortDate(
-            card.published,
-          )}`}</Text>
+          <Text variant="eyebrow" color="purple400">{`${
+            loc.publishedText
+          }: ${getShortDate(card.published)}`}</Text>
         )}
       </Inline>
     </>
@@ -104,7 +112,7 @@ export const Card = ({
 
   return frontPage ? (
     <FocusableBox
-      href={`/mal/${card.id}`}
+      href={`${loc.arrowLink.href}/${card.id}`}
       position="relative"
       height="full"
       width="full"

@@ -1,4 +1,11 @@
-import React, { FC, useState, useEffect, ReactNode, createContext } from 'react'
+import React, {
+  FC,
+  useState,
+  useEffect,
+  ReactNode,
+  createContext,
+  ReactElement,
+} from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import { useMenuState, Menu, MenuButton, MenuStateReturn } from 'reakit/Menu'
@@ -10,6 +17,7 @@ import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { Icon } from '../IconRC/Icon'
 
 import * as styles from './Navigation.css'
+import { IconProps } from '../IconRC/types'
 
 type NavigationContextProps = {
   baseId: string
@@ -67,6 +75,7 @@ interface MobileNavigationDialogProps {
   colorScheme: keyof typeof styles.colorScheme
   items: NavigationItem[]
   renderLink: NavigationTreeProps['renderLink']
+  asSpan?: NavigationTreeProps['asSpan']
   isVisible: boolean
   onClick: () => void
   menuState: MenuStateReturn
@@ -77,14 +86,18 @@ interface NavigationTreeProps {
   level?: Level
   colorScheme?: keyof typeof styles.colorScheme
   expand?: boolean
-  renderLink?: (link: ReactNode, item?: NavigationItem) => ReactNode
+  expandOnActivation?: boolean
+  renderLink?: (link: ReactElement, item?: NavigationItem) => ReactNode
   menuState: MenuStateReturn
   linkOnClick?: () => void
   id?: string
   labelId?: string
+  asSpan?: boolean
 }
 export interface NavigationProps {
   title: string
+  titleIcon?: Pick<IconProps, 'icon' | 'type'>
+
   label?: string
   activeItemTitle?: string
   colorScheme?: keyof typeof styles.colorScheme
@@ -92,6 +105,10 @@ export interface NavigationProps {
    * Keep all child menu items expanded
    */
   expand?: boolean
+  /**
+   * Expand on link activation when link has sub items.
+   */
+  expandOnActivation?: boolean
   /**
    * Only a single acccordion can be expanded at a time
    */
@@ -104,6 +121,10 @@ export interface NavigationProps {
    * Render function for all links, useful for wrapping framework specific routing links
    */
   renderLink?: NavigationTreeProps['renderLink']
+  /**
+   * Wrap the link in a <span> instead of a <a> for passing in framework specific routing links
+   */
+  asSpan?: NavigationTreeProps['asSpan']
   titleProps?: NavigationItem
 }
 
@@ -122,9 +143,11 @@ const defaultLinkRender: NavigationTreeProps['renderLink'] = (link) => link
 const toggleId = (arr: Array<string> = [], id: string, single = false) =>
   arr.includes(id) ? arr.filter((i) => i !== id) : [...(single ? [] : arr), id]
 
-export const Navigation: FC<NavigationProps> = ({
+export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
   title = 'Efnisyfirlit',
   titleLink,
+  titleIcon,
+
   activeItemTitle,
   label,
   colorScheme = 'blue',
@@ -135,6 +158,8 @@ export const Navigation: FC<NavigationProps> = ({
   items,
   titleProps,
   baseId,
+  asSpan,
+  expandOnActivation,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [activeAccordions, setActiveAccordions] = useState<Array<string>>([])
@@ -163,43 +188,51 @@ export const Navigation: FC<NavigationProps> = ({
   const Title: MobileNavigationDialogProps['Title'] = titleLinkProps ? (
     renderLink(
       <FocusableBox
-        component="a"
-        href={titleLink?.href}
+        component={asSpan ? 'span' : 'a'}
+        href={asSpan ? undefined : titleLink?.href}
         borderRadius="large"
         className={styles.link}
         {...basePadding}
       >
-        {({
-          isFocused,
-          isHovered,
-        }: {
-          isFocused: boolean
-          isHovered: boolean
-        }) => {
+        {({ isFocused, isHovered }) => {
           const textColor =
             titleLink?.active || isFocused || isHovered ? activeColor : color
 
           return (
-            <Text as="span" variant="h4" color={textColor}>
-              {title}
-            </Text>
+            <>
+              <Text as="span" variant="h4" color={textColor}>
+                {title}
+              </Text>
+              <Text
+                as="span"
+                variant="h4"
+                color={titleLink?.active ? activeColor : color}
+              >
+                {title}
+              </Text>
+            </>
           )
         }}
-        <Text
-          as="span"
-          variant="h4"
-          color={titleLink?.active ? activeColor : color}
-        >
-          {title}
-        </Text>
       </FocusableBox>,
       titleProps,
     )
   ) : (
     <Box {...basePadding}>
-      <Text as="span" variant="h4" color={color}>
-        {title}
-      </Text>
+      <Box display="flex" flexDirection="row" alignItems="center">
+        {titleIcon && (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            marginRight={1}
+          >
+            <Icon icon={titleIcon.icon} type="outline" color={color} />
+          </Box>
+        )}
+        <Text as="span" variant="h4" color={color}>
+          {title}
+        </Text>
+      </Box>
     </Box>
   )
 
@@ -222,6 +255,7 @@ export const Navigation: FC<NavigationProps> = ({
           >
             <MobileButton
               title={activeItemTitle ?? title}
+              titleIcon={titleIcon}
               colorScheme={colorScheme}
               aria-expanded={!mobileMenuOpen}
             />
@@ -266,10 +300,12 @@ export const Navigation: FC<NavigationProps> = ({
           <NavigationTree
             id="desktop"
             items={items}
+            asSpan={asSpan}
             colorScheme={colorScheme}
             renderLink={renderLink}
             menuState={menu}
             expand={expand}
+            expandOnActivation={expandOnActivation}
           />
         </Box>
       )}
@@ -284,6 +320,7 @@ const MobileNavigationDialog = ({
   renderLink,
   onClick,
   menuState,
+  asSpan,
 }: MobileNavigationDialogProps) => {
   return (
     <Box
@@ -323,6 +360,7 @@ const MobileNavigationDialog = ({
       <NavigationTree
         id="mobile"
         items={items}
+        asSpan={asSpan}
         colorScheme={colorScheme}
         renderLink={renderLink}
         menuState={menuState}
@@ -333,10 +371,11 @@ const MobileNavigationDialog = ({
 }
 interface MobileButtonProps {
   title: string
+  titleIcon?: Pick<IconProps, 'icon' | 'type'>
   colorScheme: keyof typeof styles.colorScheme
 }
 
-const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
+const MobileButton = ({ title, colorScheme, titleIcon }: MobileButtonProps) => {
   return (
     <Box
       component="span"
@@ -346,13 +385,30 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
       paddingX={2}
       paddingY={1}
     >
-      <Text
-        as="span"
-        variant="h5"
-        color={colorSchemeColors[colorScheme]['activeColor']}
-      >
-        {title}
-      </Text>
+      <Box display="flex" flexDirection="row">
+        {titleIcon && (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            marginRight={1}
+            id="mobile-title-icon"
+          >
+            <Icon
+              icon={titleIcon.icon}
+              type="outline"
+              color={colorSchemeColors[colorScheme]['activeColor']}
+            />
+          </Box>
+        )}
+        <Text
+          as="span"
+          variant="h5"
+          color={colorSchemeColors[colorScheme]['activeColor']}
+        >
+          {title}
+        </Text>
+      </Box>
 
       <Box
         component="span"
@@ -377,7 +433,9 @@ const MobileButton = ({ title, colorScheme }: MobileButtonProps) => {
   )
 }
 
-export const NavigationTree: FC<NavigationTreeProps> = ({
+export const NavigationTree: FC<
+  React.PropsWithChildren<NavigationTreeProps>
+> = ({
   items,
   level = 1,
   colorScheme = 'blue',
@@ -387,6 +445,8 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
   linkOnClick,
   id = '',
   labelId = '',
+  asSpan,
+  expandOnActivation,
 }: NavigationTreeProps) => {
   return (
     <NavigationContext.Consumer>
@@ -427,6 +487,7 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
                 id="accordion"
                 items={items}
                 level={nextLevel}
+                asSpan={asSpan}
                 colorScheme={colorScheme}
                 expand={expand}
                 renderLink={renderLink}
@@ -437,24 +498,26 @@ export const NavigationTree: FC<NavigationTreeProps> = ({
 
             return (
               <li key={index} className={styles.listItem}>
+                {/*Note: Need to review usage (e.g. PortalNavigation) if we change the rendered element to something other than FocusableBox.*/}
                 {renderLink(
                   <FocusableBox
-                    component="a"
-                    href={href}
+                    component={asSpan ? 'span' : 'a'}
+                    href={asSpan ? undefined : href}
                     borderRadius="large"
                     paddingLeft={isChildren ? 2 : 3}
                     paddingRight={2}
                     paddingY={isChildren ? 'smallGutter' : 1}
                     className={styles.link}
-                    onClick={linkOnClick}
+                    onClick={() => {
+                      if (linkOnClick) {
+                        linkOnClick()
+                      }
+                      if (isAccordion && expandOnActivation) {
+                        toggleAccordion(accordionId)
+                      }
+                    }}
                   >
-                    {({
-                      isFocused,
-                      isHovered,
-                    }: {
-                      isFocused: boolean
-                      isHovered: boolean
-                    }) => {
+                    {({ isFocused, isHovered }) => {
                       const textColor =
                         active || isFocused || isHovered
                           ? colorSchemeColors[colorScheme]['activeColor']

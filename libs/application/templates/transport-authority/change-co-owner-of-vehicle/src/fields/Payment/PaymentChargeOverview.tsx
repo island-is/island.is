@@ -6,12 +6,12 @@ import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodes } from '../../utils'
 import { ChangeCoOwnerOfVehicle } from '../../lib/dataSchema'
 
-export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentChargeOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
-  const chargeItemCodes = getChargeItemCodes(
-    application.answers as ChangeCoOwnerOfVehicle,
-  )
+  const chargeItemCodes = getChargeItemCodes(application)
   const { externalData } = application
   const allItems = externalData?.payment?.data as [
     {

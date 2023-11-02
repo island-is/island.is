@@ -175,4 +175,10 @@ export const m = defineMessages({
       'Staðfesting á skuldleysi fékkst ekki úr gagnagrunni Fjársýslu ríkisins',
     description: '',
   },
+  pendingActionApplicationCompletedTitle: {
+    id: 'ndc.application:pendingActionApplicationCompletedTitle',
+    defaultMessage:
+      'Umsókn þín hefur verið móttekin og er vottorðið aðgengilegt í stafrænu pósthólfi á Ísland.is.',
+    description: 'Title of pending action',
+  },
 })

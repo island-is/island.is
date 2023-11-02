@@ -18,13 +18,26 @@ type Notifier = {
   relation: string
 }
 
+type Advocate = {
+  name?: string
+  address?: string
+  nationalId?: string
+  email?: string
+  phone?: string
+}
+
 type EstateMember = {
   name: string
   ssn?: string
+  nationalId?: string
   relation?: string
+  relationWithApplicant?: string
   dateOfBirth?: string
-  foreignCitizenShip?: 'yes' | 'no'
-}
+  foreignCitizenship?: string | string[]
+  phone?: string
+  email?: string
+  advocate?: Advocate
+} & SystemMetadata
 
 type Representative = {
   name: string
@@ -36,7 +49,9 @@ type Representative = {
 type AssetFrame = {
   assetNumber?: string
   description?: string
-}
+  marketValue?: string | number
+  share?: string | number
+} & SystemMetadata
 
 type BankAccount = {
   accountNumber?: string
@@ -46,6 +61,7 @@ type BankAccount = {
 type Stock = {
   organization?: string
   ssn?: string
+  nationalId?: string
   faceValue?: string | number
   rateOfExchange?: string | number
   value?: string | number
@@ -54,7 +70,9 @@ type Stock = {
 type Debt = {
   creditorName?: string
   ssn?: string
+  nationalId?: string
   balance?: string | number
+  loanIdentity?: string
 }
 
 type InfoValueField = {
@@ -62,24 +80,44 @@ type InfoValueField = {
   value?: string
 }
 
-export interface UploadData {
-  [key: string]:
-    | string
-    | Notifier
-    | EstateMember[]
-    | AssetFrame[]
-    | number
-    | BankAccount[]
-    | Stock[]
-    | Debt[]
-    | Representative
-    | 'Yes'
-    | 'No'
-    | InfoValueField
-  //caseNumber: string
+type Claim = {
+  publisher?: string
+  value?: string | number
+}
+
+type Deceased = {
+  name: string
+  ssn: string
+  dateOfDeath: string
+  address: string
+}
+
+type SpouseField = {
+  spouse: {
+    name: string
+    nationalId: string
+  }
+  selection: string
+}
+
+type EstateWithoutAssetsInfo = {
+  estateAssetsExist?: string
+  estateDebtsExist?: string
+}
+
+type SystemMetadata = {
+  enabled?: boolean
+}
+
+export type UploadData = {
+  applicationType: string
+  deceased: Deceased
+  claims: Claim[]
+  caseNumber: string
   notifier: Notifier
   estateMembers: EstateMember[]
   assets: AssetFrame[]
+  guns: AssetFrame[]
   vehicles: AssetFrame[]
   inventory: InfoValueField
   bankAccounts: BankAccount[]
@@ -87,4 +125,11 @@ export interface UploadData {
   moneyAndDeposit: InfoValueField
   otherAssets: InfoValueField
   debts: Debt[]
+  representative?: Representative
+  districtCommissionerHasWill: string
+  settlement: string
+  remarksOnTestament: string
+  dividedEstate: string
+  deceasedWithUndividedEstate?: SpouseField
+  estateWithoutAssetsInfo: EstateWithoutAssetsInfo
 }

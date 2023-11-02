@@ -7,18 +7,24 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/estate'),
   [ApplicationTypes.PARENTAL_LEAVE]: () =>
     import('@island.is/application/templates/parental-leave'),
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: () =>
+    import('@island.is/application/templates/driving-learners-permit'),
   [ApplicationTypes.DRIVING_LICENSE]: () =>
     import('@island.is/application/templates/driving-license'),
   [ApplicationTypes.DRIVING_ASSESSMENT_APPROVAL]: () =>
     import('@island.is/application/templates/driving-assessment-approval'),
   [ApplicationTypes.PASSPORT]: () =>
     import('@island.is/application/templates/passport'),
+  [ApplicationTypes.PASSPORT_ANNULMENT]: () =>
+    import('@island.is/application/templates/passport-annulment'),
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
     import('@island.is/application/templates/health-insurance'),
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: () =>
     import('@island.is/application/templates/children-residence-change'),
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: () =>
+    import('@island.is/application/templates/children-residence-change-v2'),
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: () =>
     import('@island.is/application/templates/data-protection-complaint'),
   [ApplicationTypes.LOGIN_SERVICE]: () =>
@@ -111,6 +117,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: () =>
     import('@island.is/application/templates/alcohol-tax-redemption'),
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
+    import('@island.is/application/templates/european-health-insurance-card'),
 }
 
 export default templates

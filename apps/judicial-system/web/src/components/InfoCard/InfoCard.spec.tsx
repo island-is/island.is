@@ -1,11 +1,11 @@
 import React from 'react'
-import { render, screen } from '@testing-library/react'
 import { MockedProvider } from '@apollo/client/testing'
+import { render, screen } from '@testing-library/react'
 
+import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import InfoCard from './InfoCard'
-import { SessionArrangements } from '../../graphql/schema'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {
@@ -18,7 +18,7 @@ describe('InfoCard', () => {
             defenders={[
               {
                 name: 'Joe',
-                sessionArrangement: SessionArrangements.AllPresent,
+                sessionArrangement: SessionArrangements.ALL_PRESENT,
               },
             ]}
           />
@@ -41,7 +41,7 @@ describe('InfoCard', () => {
               {
                 name: 'Joe',
                 phoneNumber: '555-5555',
-                sessionArrangement: SessionArrangements.AllPresent,
+                sessionArrangement: SessionArrangements.ALL_PRESENT,
               },
             ]}
           />
@@ -65,7 +65,7 @@ describe('InfoCard', () => {
                 name: 'Joe',
                 email: 'joe@joe.is',
                 phoneNumber: '455-5544',
-                sessionArrangement: SessionArrangements.AllPresent,
+                sessionArrangement: SessionArrangements.ALL_PRESENT,
               },
             ]}
           />
@@ -89,7 +89,7 @@ describe('InfoCard', () => {
                 name: 'Joe',
                 email: 'joe@joe.is',
                 phoneNumber: '455-5544',
-                sessionArrangement: SessionArrangements.AllPresent,
+                sessionArrangement: SessionArrangements.ALL_PRESENT,
               },
               {
                 name: 'Melissa',
@@ -122,7 +122,7 @@ describe('InfoCard', () => {
                 defenderNationalId: '',
                 email: '',
                 phoneNumber: '',
-                sessionArrangement: SessionArrangements.AllPresent,
+                sessionArrangement: SessionArrangements.ALL_PRESENT,
               },
             ]}
           />

@@ -29,7 +29,6 @@ export interface DrivingLicenseFakeData {
   useFakeData?: YesOrNo
   qualityPhoto?: YesOrNo
   currentLicense?: FakeCurrentLicense
-  healthRemarks?: YesOrNo
+  remarks?: YesOrNo
+  howManyDaysHaveYouLivedInIceland: string | number
 }
-
-export const SYSLUMADUR_NATIONAL_ID = '6509142520'

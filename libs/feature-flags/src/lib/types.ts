@@ -1,3 +1,10 @@
+import type {
+  SettingValue,
+  SettingTypeOf,
+  IAutoPollOptions,
+  IConfigCatClient,
+  PollingMode,
+} from 'configcat-common'
 import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
@@ -6,13 +13,12 @@ export interface FeatureFlagUser {
 }
 
 export interface FeatureFlagClient {
-  getValue(
+  dispose: () => void
+  getValue: <T extends SettingValue>(
     key: string,
-    defaultValue: boolean | string,
+    defaultValue: T,
     user?: FeatureFlagUser,
-  ): Promise<boolean | string>
-
-  dispose(): void
+  ) => Promise<SettingTypeOf<T>>
 }
 
 export interface FeatureFlagClientProps {
@@ -22,4 +28,14 @@ export interface FeatureFlagClientProps {
 /// This is an interface to query the status of feature flags specific to the server side
 export interface ServerSideFeatureClientType {
   isOn(feature: ServerSideFeature): boolean
+}
+
+export type { SettingTypeOf, SettingValue }
+
+export interface ConfigCatModule {
+  getClient: (
+    sdkKey: string,
+    pollingMode: PollingMode,
+    config: IAutoPollOptions,
+  ) => IConfigCatClient
 }

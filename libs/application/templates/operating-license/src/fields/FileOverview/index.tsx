@@ -12,10 +12,9 @@ export const FileOverview = ({ application }: FileOverviewData) => {
   return (
     <Box>
       {AttachmentProps.map((a) => {
-        const attachment = (getValueViaPath(
-          application.answers,
-          a.id,
-        ) as FileSchema[])[0]
+        const attachment = (
+          getValueViaPath(application.answers, a.id) as FileSchema[]
+        )[0]
         if (!attachment) {
           return
         }

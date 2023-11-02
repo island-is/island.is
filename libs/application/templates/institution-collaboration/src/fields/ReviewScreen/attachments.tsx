@@ -15,7 +15,9 @@ interface Props {
   application: Application
 }
 
-export const Attachments: FC<Props> = ({ application }) => {
+export const Attachments: FC<React.PropsWithChildren<Props>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
   const attachments = getValueViaPath(

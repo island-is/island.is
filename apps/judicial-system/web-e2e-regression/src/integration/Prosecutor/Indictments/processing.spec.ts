@@ -20,7 +20,7 @@ describe(CREATE_INDICTMENT_ROUTE, () => {
     ).as('getPersonByNationalId')
 
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (req.body.query.includes('ProsecutorSelectionUsersQuery')) {
+      if (req.body.query.includes('ProsecutorSelectionUsers')) {
         req.alias = 'gqlProsecutorSelectionUsersQuery'
       }
     })

@@ -1,6 +1,8 @@
 name: 'Unit Test'
 description: 'Run unit tests'
 inputs:
+  dd-api-key:
+    required: true
   aws-access-key-id:
     required: true
   aws-secret-access-key:
@@ -41,7 +43,7 @@ runs:
       shell: bash
       env:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-        NODE_OPTIONS: --max-old-space-size=4096
+        DD_API_KEY: ${{ inputs.dd-api-key }}
 
     - name: Cached codecov uploader
       id: codecov-cache

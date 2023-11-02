@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { createClient, EntryCollection, ContentfulClientApi } from 'contentful'
+import {
+  createClient,
+  EntryCollection,
+  ContentfulClientApi,
+  ClientLogLevel,
+} from 'contentful'
+import Agent, { HttpsAgent } from 'agentkeepalive'
 import { logger } from '@island.is/logging'
+import { AGENT_DEFAULTS } from '@island.is/shared/constants'
 
 const space = '8k0h54kbe6bj'
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
@@ -31,17 +38,33 @@ export class ContentfulRepository {
       )
     }
 
-    if (this.client) {
-      return this.client
+    if (!this.client) {
+      this.client = createClient({
+        space,
+        accessToken,
+        httpAgent: new Agent(AGENT_DEFAULTS),
+        httpsAgent: new HttpsAgent(AGENT_DEFAULTS),
+        environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
+        host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
+        removeUnresolved: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        logHandler(level: ClientLogLevel, data: any) {
+          switch (level) {
+            case 'error':
+              logger.error(`Contentful API: ${level} - ${data}`)
+              break
+            case 'warning':
+              logger.warn(`Contentful API: ${level} - ${data}`)
+              break
+            case 'info':
+            default:
+              logger.info(`Contentful API: ${level} - ${data}`)
+          }
+        },
+      })
     }
 
-    return createClient({
-      space,
-      accessToken,
-      environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-      host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
-      removeUnresolved: true,
-    })
+    return this.client
   }
 
   async getLocales() {

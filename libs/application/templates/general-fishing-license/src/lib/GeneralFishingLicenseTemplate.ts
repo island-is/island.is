@@ -8,6 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
@@ -20,7 +21,16 @@ import {
   ShipRegistryApi,
   IdentityApi,
 } from '../dataProviders'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  DefaultStateLifeCycle,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { gflPendingActionMessages } from './messages/actionCards'
+import { Features } from '@island.is/feature-flags'
+import { buildPaymentState } from '@island.is/application/utils'
+import { GeneralFishingLicenseAnswers } from '..'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -35,6 +45,28 @@ const pruneAtMidnight = () => {
   }
 }
 
+const getCodes = (application: Application) => {
+  const answers = application.answers as GeneralFishingLicenseAnswers
+  const chargeItemCode = getValueViaPath(
+    answers,
+    'fishingLicense.chargeType',
+  ) as string
+
+  if (!chargeItemCode) {
+    throw new Error('Vörunúmer fyrir FJS vantar.')
+  }
+
+  // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
+  const strandveidileyfi =
+    chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL
+      ? ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL
+      : false
+
+  return strandveidileyfi
+    ? [chargeItemCode, strandveidileyfi]
+    : [chargeItemCode]
+}
+
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -43,12 +75,18 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_FISHING_LICENSE,
   name: application.general.name,
   institution: application.general.institutionName,
-  readyForProduction: true,
   translationNamespaces: [
     ApplicationConfigurations.GeneralFishingLicense.translation,
   ],
   dataSchema: GeneralFishingLicenseSchema,
-  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
+  allowedDelegations: [
+    { type: AuthDelegationType.ProcurationHolder },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.isFishingLicenceCustomDelegationEnabled,
+    },
+  ],
+  requiredScopes: ['@island.is/fishing-license'],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -99,13 +137,21 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.3,
           lifecycle: pruneAtMidnight(),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: async () =>
-                await import(
-                  '../forms/GeneralFishingLicenseForm/index'
-                ).then((val) => Promise.resolve(val.GeneralFishingLicenseForm)),
+                await import('../forms/GeneralFishingLicenseForm/index').then(
+                  (val) => Promise.resolve(val.GeneralFishingLicenseForm),
+                ),
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -126,54 +172,24 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            description: application.labels.actionCardPayment,
-          },
-          progress: 0.9,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/GeneralFishingLicensePaymentForm').then(
-                  (val) => val.GeneralFishingLicensePaymentForm,
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.FISKISTOFA,
+        chargeItemCodes: getCodes,
+        submitTarget: States.SUBMITTED,
+      }),
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,
           status: 'completed',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: gflPendingActionMessages.applicationrReceivedTitle,
+              content: gflPendingActionMessages.applicationrReceivedContent,
+              displayStatus: 'success',
+            },
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
           }),
@@ -181,10 +197,9 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/GeneralFishingLicenseSubmittedForm'
-                ).then((val) =>
-                  Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
+                import('../forms/GeneralFishingLicenseSubmittedForm').then(
+                  (val) =>
+                    Promise.resolve(val.GeneralFishingLicenseSubmittedForm),
                 ),
             },
           ],

@@ -20,15 +20,9 @@ interface AccessControlCreateProps
   roles: Option[]
 }
 
-export const AccessControlCreate: FC<AccessControlCreateProps> = ({
-  title,
-  text,
-  show,
-  onCancel,
-  onSubmit,
-  recyclingPartners,
-  roles,
-}) => {
+export const AccessControlCreate: FC<
+  React.PropsWithChildren<AccessControlCreateProps>
+> = ({ title, text, show, onCancel, onSubmit, recyclingPartners, roles }) => {
   const {
     control,
     handleSubmit,

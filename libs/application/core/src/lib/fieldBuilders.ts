@@ -36,6 +36,7 @@ import {
 
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -326,10 +327,15 @@ export function buildFileUploadField(
   return {
     ...extractCommonFields(data),
     children: undefined,
-    introduction,
-    uploadHeader,
-    uploadDescription,
-    uploadButtonLabel,
+    introduction: introduction,
+    uploadHeader:
+      uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
+    uploadDescription:
+      uploadDescription ||
+      coreDefaultFieldMessages.defaultFileUploadDescription,
+    uploadButtonLabel:
+      uploadButtonLabel ||
+      coreDefaultFieldMessages.defaultFileUploadButtonLabel,
     uploadMultiple,
     uploadAccept:
       uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
@@ -496,15 +502,28 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const { id, title, message, alertType } = data
+  const {
+    id,
+    title,
+    message,
+    alertType,
+    condition,
+    marginTop,
+    marginBottom,
+    links,
+  } = data
   return {
     children: undefined,
     id,
     title,
     message,
     alertType,
+    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
+    marginTop,
+    marginBottom,
+    links,
   }
 }
 

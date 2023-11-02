@@ -5,8 +5,8 @@ import {
   Param,
   Patch,
   Post,
-  Req,
   UseGuards,
+  Delete,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -28,6 +28,8 @@ import { idsAdminScopes } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 
+import { ClientSecretsService } from '../secrets/client-secrets.service'
+
 const namespace = '@island.is/auth/admin-api/v2/clients'
 
 @UseGuards(IdsUserGuard, ScopesGuard, MeTenantGuard)
@@ -41,8 +43,9 @@ const namespace = '@island.is/auth/admin-api/v2/clients'
 @Audit({ namespace })
 export class MeClientsController {
   constructor(
-    private readonly clientsService: AdminClientsService,
     private readonly auditService: AuditService,
+    private readonly clientsService: AdminClientsService,
+    private readonly clientsSecretsService: ClientSecretsService,
   ) {}
 
   @Get()
@@ -71,8 +74,13 @@ export class MeClientsController {
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Param('clientId') clientId: string,
+    @Param('includeArchived') includeArchived?: boolean,
   ): Promise<AdminClientDto> {
-    return this.clientsService.findByTenantIdAndClientId(tenantId, clientId)
+    return this.clientsService.findByTenantIdAndClientId(
+      tenantId,
+      clientId,
+      includeArchived,
+    )
   }
 
   @Post()
@@ -82,13 +90,18 @@ export class MeClientsController {
   })
   @Audit<AdminClientDto>({
     resources: (client) => client.clientId,
+    alsoLog: true,
   })
-  create(
+  async create(
     @CurrentUser() user: User,
     @Param('tenantId') tenantId: string,
     @Body() input: AdminCreateClientDto,
   ): Promise<AdminClientDto> {
-    return this.clientsService.create(input, user, tenantId)
+    const client = await this.clientsService.create(input, user, tenantId)
+
+    await this.clientsSecretsService.create(tenantId, client.clientId)
+
+    return client
   }
 
   @Patch(':clientId')
@@ -108,11 +121,35 @@ export class MeClientsController {
         auth: user,
         action: 'update',
         resources: (client) => client.clientId,
+        alsoLog: true,
         meta: {
           fields: Object.keys(input),
         },
       },
       this.clientsService.update(user, tenantId, clientId, input),
+    )
+  }
+
+  @Delete(':clientId')
+  @Documentation({
+    description: 'Delete a client.',
+    response: { status: 204 },
+  })
+  async delete(
+    @CurrentUser() user: User,
+    @Param('clientId') clientId: string,
+    @Param('tenantId') tenantId: string,
+  ): Promise<void> {
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'delete',
+        resources: clientId,
+        alsoLog: true,
+        meta: { tenantId },
+      },
+      this.clientsService.delete(clientId, tenantId),
     )
   }
 }

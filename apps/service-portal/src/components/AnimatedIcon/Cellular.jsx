@@ -653,8 +653,7 @@ export default function Cellular() {
                 ],
               },
             },
-            s:
-              'MDVA1MjgySzI5NXmI3Yzc5Njg3DYjcwNzY3NVgYyOTQxM2QzNzXM3TTMzMjk2YVjcwNzk2YzZhWN2I3MDc2NzUJyOTQxMzgzMzYI5NzA3YjZjNNzk2ODdiNzA3WNjc1N2EyOTQPxMzgzMzI5NmNQ3MDczVDczRVTI5UTQxUDM4KMzMyOTY4NzMH3YjZjNzk3NTPY4N2I2YzI5NVDE2ZDY4NzM3DYTZjMzMyOTdRhNzc2YzZjNmHIyOTQxMzg4NCA|',
+            s: 'MDVA1MjgySzI5NXmI3Yzc5Njg3DYjcwNzY3NVgYyOTQxM2QzNzXM3TTMzMjk2YVjcwNzk2YzZhWN2I3MDc2NzUJyOTQxMzgzMzYI5NzA3YjZjNNzk2ODdiNzA3WNjc1N2EyOTQPxMzgzMzI5NmNQ3MDczVDczRVTI5UTQxUDM4KMzMyOTY4NzMH3YjZjNzk3NTPY4N2I2YzI5NVDE2ZDY4NzM3DYTZjMzMyOTdRhNzc2YzZjNmHIyOTQxMzg4NCA|',
           },
         ],
         options:

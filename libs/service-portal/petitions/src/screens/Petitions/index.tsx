@@ -11,6 +11,8 @@ import { ServicePortalPath } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import {
+  Endorsement,
+  EndorsementList,
   PaginatedEndorsementListResponse as OwnedLists,
   PaginatedEndorsementResponse as SignedLists,
 } from '../../types/schema'
@@ -30,23 +32,27 @@ const Petitions = () => {
       new Date(list.endorsementList?.openedDate) <= new Date() &&
       new Date() <= new Date(list.endorsementList?.closedDate)
     )
-  })
-  const openOwnedLists = (ownedLists as OwnedLists)?.data?.filter((list) => {
-    return (
-      new Date(list.openedDate) <= new Date() &&
-      new Date() <= new Date(list?.closedDate)
-    )
-  })
+  }) as Endorsement[]
+  const openOwnedLists = (ownedLists as unknown as OwnedLists)?.data?.filter(
+    (list) => {
+      return (
+        new Date(list.openedDate) <= new Date() &&
+        new Date() <= new Date(list?.closedDate)
+      )
+    },
+  ) as EndorsementList[]
 
   //Closed lists
   const closedSignedLists = (signedLists as SignedLists)?.data?.filter(
     (list) => {
       return new Date() >= new Date(list.endorsementList?.closedDate)
     },
-  )
-  const closedOwnedLists = (ownedLists as OwnedLists)?.data?.filter((list) => {
-    return new Date() >= new Date(list?.closedDate)
-  })
+  ) as Endorsement[]
+  const closedOwnedLists = (ownedLists as unknown as OwnedLists)?.data?.filter(
+    (list) => {
+      return new Date() >= new Date(list?.closedDate)
+    },
+  ) as EndorsementList[]
 
   return (
     <>
@@ -61,6 +67,8 @@ const Petitions = () => {
             paddingTop={[2]}
           >
             <Button
+              icon="open"
+              iconType="outline"
               onClick={() =>
                 window.open(
                   `${document.location.origin}/umsoknir/undirskriftalisti/`,
@@ -89,7 +97,7 @@ const Petitions = () => {
                         {formatMessage(m.myLists)}
                       </Text>
                       <Stack space={3}>
-                        {openOwnedLists.map((list: any) => {
+                        {openOwnedLists.map((list) => {
                           return (
                             <ActionCard
                               key={list.id}
@@ -124,7 +132,7 @@ const Petitions = () => {
                         {formatMessage(m.signedLists)}
                       </Text>
                       <Stack space={4}>
-                        {openSignedLists.map((list: any) => {
+                        {openSignedLists.map((list) => {
                           return (
                             <ActionCard
                               key={list.id}
@@ -133,9 +141,9 @@ const Petitions = () => {
                               text={
                                 formatMessage(m.listPeriod) +
                                 ' ' +
-                                formatDate(list.endorsementList.openedDate) +
+                                formatDate(list.endorsementList?.openedDate) +
                                 ' - ' +
-                                formatDate(list.endorsementList.closedDate)
+                                formatDate(list.endorsementList?.closedDate)
                               }
                               cta={{
                                 label: formatMessage(m.viewList),
@@ -143,7 +151,7 @@ const Petitions = () => {
                                 icon: 'arrowForward',
                                 url: ServicePortalPath.PetitionList.replace(
                                   ':listId',
-                                  list.endorsementList?.id,
+                                  list.endorsementList?.id as string,
                                 ),
                               }}
                             />
@@ -165,7 +173,7 @@ const Petitions = () => {
                         {formatMessage(m.myLists)}
                       </Text>
                       <Stack space={3}>
-                        {closedOwnedLists.map((list: any) => {
+                        {closedOwnedLists.map((list) => {
                           return (
                             <ActionCard
                               key={list.id}
@@ -200,7 +208,7 @@ const Petitions = () => {
                         {formatMessage(m.signedLists)}
                       </Text>
                       <Stack space={4}>
-                        {closedSignedLists.map((list: any) => {
+                        {closedSignedLists.map((list) => {
                           return (
                             <ActionCard
                               key={list.id}
@@ -209,9 +217,9 @@ const Petitions = () => {
                               text={
                                 formatMessage(m.listPeriod) +
                                 ' ' +
-                                formatDate(list.endorsementList.openedDate) +
+                                formatDate(list.endorsementList?.openedDate) +
                                 ' - ' +
-                                formatDate(list.endorsementList.closedDate)
+                                formatDate(list.endorsementList?.closedDate)
                               }
                               cta={{
                                 label: formatMessage(m.viewList),
@@ -219,7 +227,7 @@ const Petitions = () => {
                                 icon: 'arrowForward',
                                 url: ServicePortalPath.PetitionList.replace(
                                   ':listId',
-                                  list.endorsementList?.id,
+                                  list.endorsementList?.id as string,
                                 ),
                               }}
                             />

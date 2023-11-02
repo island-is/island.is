@@ -1,5 +1,5 @@
 import { ServiceDefinitionForEnv } from '../types/input-types'
-import { resolveDbHost } from './map-to-helm-values'
+import { getPostgresExtensions, resolveDbHost } from './map-to-helm-values'
 import { FeatureKubeJob } from '../types/output-types'
 import { resolveWithMaxLength } from './serialization-helpers'
 import { EnvironmentConfig } from '../types/charts'
@@ -23,6 +23,9 @@ export const generateJobsForFeature = async (
         .filter((id) => id)
         .map((info) => {
           const host = resolveDbHost(service, env, info?.host)
+          const extensions = getPostgresExtensions(
+            service.initContainers?.postgres?.extensions,
+          )
           return {
             command: ['/app/create-db.sh'],
             image,
@@ -56,6 +59,10 @@ export const generateJobsForFeature = async (
               {
                 name: 'DB_PASSWORD_KEY',
                 value: info!.passwordSecret!,
+              },
+              {
+                name: 'DB_EXTENSIONS',
+                value: extensions,
               },
             ],
           }

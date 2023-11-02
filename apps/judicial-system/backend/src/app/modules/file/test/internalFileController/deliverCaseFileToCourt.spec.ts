@@ -10,11 +10,12 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingFileModule } from '../createTestingFileModule'
+
 import { AwsS3Service } from '../../../aws-s3'
-import { CourtDocumentFolder, CourtService } from '../../../court'
 import { Case } from '../../../case'
-import { CaseFile } from '../../models/file.model'
+import { CourtDocumentFolder, CourtService } from '../../../court'
 import { DeliverResponse } from '../../models/deliver.response'
+import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
@@ -38,12 +39,8 @@ describe('InternalFileController - Deliver case file to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      courtService,
-      fileModel,
-      internalFileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, courtService, fileModel, internalFileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockCourtService = courtService
@@ -137,20 +134,21 @@ describe('InternalFileController - Deliver case file to court', () => {
   })
 
   each`
-    caseFileCategory                                      | courtDocumentFolder
-    ${CaseFileCategory.COURT_RECORD}                      | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.RULING}                            | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.COVER_LETTER}                      | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.INDICTMENT}                        | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.CRIMINAL_RECORD}                   | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.COST_BREAKDOWN}                    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
-    ${CaseFileCategory.CASE_FILE}                         | ${CourtDocumentFolder.CASE_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}           | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE} | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}            | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
-    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}  | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    caseFileCategory                                          | courtDocumentFolder
+    ${CaseFileCategory.COURT_RECORD}                          | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.RULING}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
+    ${CaseFileCategory.COVER_LETTER}                          | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.INDICTMENT}                            | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CRIMINAL_RECORD}                       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.COST_BREAKDOWN}                        | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
+    ${CaseFileCategory.CASE_FILE}                             | ${CourtDocumentFolder.CASE_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF}               | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE}     | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF}                | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE}      | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
+    ${CaseFileCategory.APPEAL_RULING}                         | ${CourtDocumentFolder.APPEAL_DOCUMENTS}
     `.describe(
-    'indictment file upload to court',
+    'indictment $caseFileCategory file upload to court folder $courtDocumentFolder',
     ({ caseFileCategory, courtDocumentFolder }) => {
       const caseId = uuid()
       const courtId = uuid()

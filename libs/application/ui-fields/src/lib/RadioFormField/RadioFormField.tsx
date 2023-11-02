@@ -20,7 +20,7 @@ interface Props extends FieldBaseProps {
   field: RadioField
 }
 
-export const RadioFormField: FC<Props> = ({
+export const RadioFormField: FC<React.PropsWithChildren<Props>> = ({
   showFieldName = false,
   field,
   error,
@@ -78,9 +78,7 @@ export const RadioFormField: FC<Props> = ({
           defaultValue={
             ((getValueViaPath(application.answers, id) as string[]) ??
               getDefaultValue(field, application)) ||
-            required
-              ? ''
-              : undefined
+            (required ? '' : undefined)
           }
           options={finalOptions.map(({ label, subLabel, tooltip, ...o }) => ({
             ...o,

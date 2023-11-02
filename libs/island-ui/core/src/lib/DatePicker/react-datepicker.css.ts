@@ -145,7 +145,7 @@ globalStyle(`${root} .react-datepicker__triangle`, {
 })
 
 globalStyle(`${root} .react-datepicker-popper`, {
-  zIndex: '1',
+  zIndex: '3',
 })
 globalStyle(`${root} .react-datepicker-popper[data-placement^=bottom]`, {
   paddingTop: '10px',
@@ -828,7 +828,7 @@ globalStyle(
     width: '3rem',
     lineHeight: '3rem',
     '@media': {
-      "(max-width: '400px), (max-height: '550px)": {
+      '(max-width: 400px), (max-height: 550px)': {
         width: '2rem',
         lineHeight: '2rem',
       },

@@ -1,15 +1,11 @@
 import { useAuth } from '@island.is/auth/react'
-import {
-  AlertMessage,
-  Box,
-  toast,
-  useBreakpoint,
-} from '@island.is/island-ui/core'
+import { Box, toast, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useEffect, useState } from 'react'
 import { DelegationsFormFooter } from '../../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../../IdentityCard/IdentityCard'
 import { AccessListContainer } from '../AccessList/AccessListContainer/AccessListContainer'
 import { useAuthScopeTreeLazyQuery } from '../AccessList/AccessListContainer/AccessListContainer.generated'
@@ -37,10 +33,8 @@ export const AccessDeleteModal = ({
   const { md } = useBreakpoint()
   const [error, setError] = useState(false)
   const [deleteAuthDelegation, { loading }] = useDeleteAuthDelegationMutation()
-  const [
-    getAuthScopeTree,
-    { data: scopeTreeData, loading: scopeTreeLoading },
-  ] = useAuthScopeTreeLazyQuery()
+  const [getAuthScopeTree, { data: scopeTreeData, loading: scopeTreeLoading }] =
+    useAuthScopeTreeLazyQuery()
 
   useEffect(() => {
     if (delegation) {
@@ -89,17 +83,20 @@ export const AccessDeleteModal = ({
   const fromNationalId = userInfo?.profile.nationalId
 
   const { showShadow, pxProps } = useDynamicShadow({
-    rootMargin: '-128px',
+    rootMargin: md ? '-128px' : '-104px',
     isDisabled: !rest.isVisible,
   })
 
   return (
     <Modal
-      id={`access-delete-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-delete-modal"
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessRemoveModalTitle)}
+      label={formatMessage(m.accessRemoveModalTitle)}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
       {...rest}
     >
       <Box
@@ -109,9 +106,7 @@ export const AccessDeleteModal = ({
         rowGap={3}
       >
         {error && (
-          <Box paddingBottom={3}>
-            <AlertMessage message={formatMessage(m.deleteError)} type="error" />
-          </Box>
+          <Problem message={formatMessage(m.deleteError)} size="small" />
         )}
         <Box
           width="full"
@@ -156,11 +151,11 @@ export const AccessDeleteModal = ({
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md && showShadow}
+          showShadow={showShadow}
           confirmButtonColorScheme="destructive"
           onCancel={onClose}
           onConfirm={onDeleteHandler}
-          containerPaddingBottom={[3, 3, 6]}
+          containerPaddingBottom={[3, 3, 4]}
           confirmLabel={formatMessage(m.deleteAccess)}
         />
       </Box>

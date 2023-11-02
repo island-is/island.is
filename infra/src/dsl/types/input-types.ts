@@ -23,12 +23,14 @@ export type PostgresInfo = {
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 export type PostgresInfoForEnv = {
   host?: string
   name?: string
   username?: string
   passwordSecret?: string
+  extensions?: string[]
 }
 
 export type RedisInfo = {
@@ -140,6 +142,7 @@ export interface IngressForEnv {
   host: string | string[]
   paths: string[]
   public?: boolean
+  serviceUpstream?: boolean
   extraAnnotations?: { [idx: string]: string | null }
 }
 
@@ -147,6 +150,7 @@ export type PersistentVolumeClaim = {
   name?: string
   size: '1Gi' | '5Gi' | '10Gi' | string
   accessModes: AccessModes
+  useExisting?: boolean
   mountPath: string
   /**
    * Sets the storageClass, leave empty if storageClass means little to you(defaults to efs-csi),
@@ -183,6 +187,7 @@ export type InitContainers = {
   features: Partial<Features>
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -195,6 +200,7 @@ export type InitContainersForEnv = {
   features: Partial<Features>
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources

@@ -14,9 +14,9 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   DistrictsApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
-import { Features } from '@island.is/feature-flags'
 import { getSpouseNationalId } from './utils'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -24,6 +24,8 @@ import {
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
+import { coreHistoryMessages } from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const pruneAfter = (time: number) => {
   return {
@@ -41,8 +43,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  readyForProduction: true,
-  featureFlag: Features.marriageConditions,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -50,9 +50,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: pruneAfter(twoDays),
           roles: [
@@ -89,44 +86,24 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               delete: true,
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          progress: 0.9,
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/payment').then((val) =>
-                  Promise.resolve(val.getPayment()),
-                ),
-              actions: [
-                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.SPOUSE_CONFIRM },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: ['AY129'],
+        submitTarget: States.SPOUSE_CONFIRM,
+      }),
       [States.SPOUSE_CONFIRM]: {
         entry: 'assignToSpouse',
         meta: {
@@ -174,6 +151,19 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.confirmedBySpouse2,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: m.waitingForConfirmationSpouse2Title,
+              content: m.waitingForConfirmationSpouse2Description,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -185,11 +175,6 @@ const MarriageConditionsTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          actionCard: {
-            tag: {
-              label: m.actionCardDoneTag,
-            },
-          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
@@ -215,6 +200,13 @@ const MarriageConditionsTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

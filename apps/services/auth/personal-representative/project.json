@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/auth/personal-representative",
+  "name": "services-auth-personal-representative",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/personal-representative/src",
   "projectType": "application",
   "prefix": "personal-representative",
@@ -22,13 +23,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-auth-personal-representative:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/auth/personal-representative/**/*.{ts,tsx,js,jsx}"
@@ -36,19 +37,24 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/auth/personal-representative"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/services/auth/personal-representative"
+      ],
       "options": {
-        "jestConfig": "apps/services/auth/personal-representative/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/auth/personal-representative/jest.config.ts",
+        "passWithNoTests": true,
+        "runInBand": true
       }
     },
     "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/auth/personal-representative/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/personal-representative/tsconfig.app.json apps/services/auth/personal-representative/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": [
+        "{workspaceRoot}/apps/services/auth/personal-representative/src/openapi.yaml"
+      ]
     },
     "docker-express": {}
   },

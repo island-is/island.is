@@ -1,10 +1,10 @@
+import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
   Inject,
   Body,
   Get,
   Param,
   Query,
-  CacheInterceptor,
   UseInterceptors,
   BadRequestException,
   Version,

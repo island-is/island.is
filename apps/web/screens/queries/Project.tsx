@@ -24,6 +24,14 @@ export const GET_PROJECT_PAGE_QUERY = gql`
           url
         }
       }
+      secondarySidebar {
+        name
+        childrenLinks {
+          text
+          url
+        }
+      }
+      footerConfig
       footerItems {
         title
         content {
@@ -81,6 +89,12 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         }
         renderSlicesAsTabs
         slices {
+          ...AllSlices
+          ...NestedOneColumnTextFields
+          ${nestedFields}
+        }
+        showTableOfContents
+        bottomSlices {
           ...AllSlices
           ...NestedOneColumnTextFields
           ${nestedFields}

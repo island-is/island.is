@@ -17,13 +17,55 @@ import { useNamespace } from '@island.is/web/hooks'
 const DEFAULT_PAGE_SIZE = 5
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
 
+type Broker = Query['getBrokers'][number]
+
 interface BrokersListProps {
   slice: ConnectedComponent
 }
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const BrokersList: FC<BrokersListProps> = ({ slice }) => {
+const getSortedAndFilteredBrokers = (
+  brokers: Query['getBrokers'],
+  searchTerms: string[],
+): Query['getBrokers'] => {
+  const fullSearchString: string = searchTerms.join(' ')
+  const brokersStartingWithFullSearchString: Query['getBrokers'] = []
+  const brokersContainingAllTerm: Query['getBrokers'] = []
+
+  const startsWithFullSearchString = (broker: Broker): boolean => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    return (
+      broker.name?.trim().toLowerCase().startsWith(fullSearchString) ||
+      broker.nationalId?.trim().toLowerCase().startsWith(fullSearchString)
+    )
+  }
+
+  const containsAllTerms = (broker: Broker): boolean => {
+    return searchTerms.every(
+      (searchTerm) =>
+        broker.name?.trim().toLowerCase().includes(searchTerm) ||
+        broker.nationalId?.trim().toLowerCase().includes(searchTerm),
+    )
+  }
+
+  // Categorize the brokers into two arrays based on the matching criteria
+  for (const broker of brokers) {
+    if (startsWithFullSearchString(broker)) {
+      brokersStartingWithFullSearchString.push(broker)
+    } else if (containsAllTerms(broker)) {
+      brokersContainingAllTerm.push(broker)
+    }
+  }
+
+  // Concatenate the arrays with, starting with the brokers that start with the full search string.
+  return brokersStartingWithFullSearchString.concat(brokersContainingAllTerm)
+}
+
+const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
+  slice,
+}) => {
   const n = useNamespace(slice.json ?? {})
 
   const [listState, setListState] = useState<ListState>('loading')
@@ -64,13 +106,7 @@ const BrokersList: FC<BrokersListProps> = ({ slice }) => {
     },
   })
 
-  const filteredBrokers = brokers.filter((broker) => {
-    return searchTerms.every(
-      (searchTerm) =>
-        broker.name?.trim().toLowerCase().includes(searchTerm) ||
-        broker.nationalId?.trim().toLowerCase().includes(searchTerm),
-    )
-  })
+  const filteredBrokers = getSortedAndFilteredBrokers(brokers, searchTerms)
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
 

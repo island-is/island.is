@@ -25,7 +25,10 @@ export const toggleMark = (editor: Editor, format: string) => {
   }
 }
 
-export const MarkButton: FC<MarkButtonProps> = ({ format, icon }) => {
+export const MarkButton: FC<React.PropsWithChildren<MarkButtonProps>> = ({
+  format,
+  icon,
+}) => {
   const editor = useSlate()
 
   return (

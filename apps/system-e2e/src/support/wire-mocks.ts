@@ -32,7 +32,7 @@ const getServiceMock = (envVariableRef: ValueSource) => {
   serializeValueSource(
     envVariableRef,
     resolver,
-    ({} as unknown) as ServiceDefinitionForEnv,
+    {} as unknown as ServiceDefinitionForEnv,
     Envs.dev01,
   )
   const ports = Object.values(resolver.ports)
@@ -92,12 +92,12 @@ export const addStub = async (key: keyof typeof mockedServices, stub: Stub) => {
   mockedServices[key].imposter.withStub(stub)
   await mb.createImposter(mockedServices[key].imposter)
 }
-export const wildcard = async () => {
+export const wildcard = async (target: string) => {
   mockedServices.xroad.imposter.withStub(
     new Stub()
       .withPredicate(new FlexiPredicate())
       .withProxy(
-        new Proxy('http://host.docker.internal:8081').withMode(
+        new Proxy(target.replace('localhost', 'host.docker.internal')).withMode(
           ProxyMode.ProxyAlways,
         ),
       ),

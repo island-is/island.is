@@ -68,9 +68,9 @@ module.exports = {
     const flight_legs = []
     for (let i = 0; i < 100; i++) {
       const nationalId =
-        i < 2
+        i < 4
           ? specific_test_users[0]
-          : i < 4
+          : i < 14
           ? specific_test_users[1]
           : faker.phone.phoneNumber('##########')
       const pairingLeg = Math.round(Math.random() * (pairings[0].length - 1))

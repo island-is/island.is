@@ -12,16 +12,16 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
+  PassportsApi,
 } from '@island.is/application/types'
 import { ChildsPersonalInfo } from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsOverview } from './overviewSection/childsOverview'
 import {
-  IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
+  UserInfoApi,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 
 export const ParentB: Form = buildForm({
@@ -41,10 +41,12 @@ export const ParentB: Form = buildForm({
           description: (application: Application) => ({
             ...m.parentBIntroText,
             values: {
-              childsName: (application.answers
-                .childsPersonalInfo as ChildsPersonalInfo)?.name,
-              guardianName: (application.answers
-                .childsPersonalInfo as ChildsPersonalInfo)?.guardian1.name,
+              childsName: (
+                application.answers.childsPersonalInfo as ChildsPersonalInfo
+              )?.name,
+              guardianName: (
+                application.answers.childsPersonalInfo as ChildsPersonalInfo
+              )?.guardian1.name,
             },
           }),
           children: [
@@ -66,17 +68,17 @@ export const ParentB: Form = buildForm({
           checkboxLabel: m.dataCollectionCheckboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUserParentB,
               title: m.dataCollectionNationalRegistryTitle,
               subTitle: m.dataCollectionNationalRegistrySubtitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: UserInfoApi,
               title: m.dataCollectionUserProfileTitle,
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),

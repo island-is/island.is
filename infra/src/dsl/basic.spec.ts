@@ -103,12 +103,12 @@ describe('Basic serialization', () => {
       DB_NAME: 'api',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=464',
+      NODE_OPTIONS: '--max-old-space-size=460',
       SERVERSIDE_FEATURES_ON: '',
     })
   })
 
-  it('secretes', () => {
+  it('secrets', () => {
     expect(result.serviceDef[0].secrets).toEqual({
       SECRET: '/path',
       DB_PASS: '/k8s/api/DB_PASSWORD',
@@ -134,6 +134,7 @@ describe('Basic serialization', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
           {

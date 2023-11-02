@@ -23,7 +23,7 @@ import {
 import ExpandableLine from './ExpandableLine'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import { GenericLicenseDataField, Query } from '@island.is/api/schema'
@@ -41,6 +41,11 @@ const dataFragment = gql`
     name
     label
     value
+    link {
+      __typename
+      label
+      value
+    }
     hideFromServicePortal
     fields {
       type
@@ -135,6 +140,14 @@ const DataFields = ({
                 <UserInfoLine
                   title={field.name ?? ''}
                   label={field.label ?? ''}
+                  editLink={
+                    field.link
+                      ? {
+                          url: field.link.value,
+                          title: field.link.label ?? undefined,
+                        }
+                      : undefined
+                  }
                   renderContent={
                     field.value &&
                     (field.label?.toLowerCase().includes('gildir til') ||
@@ -202,8 +215,6 @@ const DataFields = ({
                     )
                     .join(' ')}
                   paddingY={3}
-                  labelColumnSpan={['1/1', '6/12']}
-                  valueColumnSpan={['1/1', '6/12']}
                 />
                 <Divider />
               </>
@@ -297,6 +308,7 @@ const DataFields = ({
                           cursor="pointer"
                           className={className}
                           onClick={() => setPage(page)}
+                          component="button"
                         >
                           {children}
                         </Box>
@@ -322,21 +334,23 @@ const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
+  const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
   const { type } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
 
-  const { data, loading: queryLoading, error } = useQuery<Query>(
-    GenericLicenseQuery,
-    {
-      variables: {
-        locale,
-        input: {
-          licenseType: licenseType,
-        },
+  const {
+    data,
+    loading: queryLoading,
+    error,
+  } = useQuery<Query>(GenericLicenseQuery, {
+    variables: {
+      locale,
+      input: {
+        licenseType: licenseType,
       },
     },
-  )
+  })
 
   const { genericLicense = null } = data ?? {}
 

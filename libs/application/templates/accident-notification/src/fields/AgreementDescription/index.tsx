@@ -4,7 +4,9 @@ import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { externalData } from '../../lib/messages'
 
-export const AgreementDescription: FC<FieldBaseProps> = () => {
+export const AgreementDescription: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = () => {
   const { formatMessage } = useLocale()
 
   return (

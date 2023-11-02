@@ -8,6 +8,7 @@ import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
 import { Icon as IconType, Type } from '../IconRC/iconMap'
+import { TestSupport } from '@island.is/island-ui/utils'
 
 // TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
 
@@ -74,7 +75,10 @@ export interface ButtonProps {
   truncate?: boolean
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps & ButtonTypes>(
+export const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonProps & ButtonTypes & TestSupport
+>(
   (
     {
       variant = 'primary',

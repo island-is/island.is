@@ -1,0 +1,44 @@
+{
+  "name": "clients-rights-portal",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/icelandic-health-insurance/rights-portal/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/icelandic-health-insurance/rights-portal/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/icelandic-health-insurance/rights-portal"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/icelandic-health-insurance/rights-portal/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/icelandic-health-insurance/rights-portal/gen/fetch -i libs/clients/icelandic-health-insurance/rights-portal/src/clientConfig.json"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/icelandic-health-insurance/rights-portal"
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

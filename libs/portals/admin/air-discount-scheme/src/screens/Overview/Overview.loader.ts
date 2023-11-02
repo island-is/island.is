@@ -2,6 +2,7 @@ import { z } from 'zod'
 import startOfMonth from 'date-fns/startOfMonth'
 import endOfDay from 'date-fns/endOfDay'
 import parseDate from 'date-fns/parse'
+import startOfDay from 'date-fns/startOfDay'
 import { validateSearchParams } from '@island.is/react-spa/shared'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { isValidDate } from '@island.is/shared/utils'
@@ -18,12 +19,12 @@ import {
 
 const TODAY = new Date()
 
-export const transformDate = (val: string) => {
-  if (isValidDate(new Date(val))) {
-    return val
+export const transformDate = (val: string, start: boolean) => {
+  if (isValidDate(new Date(val)) && val.indexOf('.') === 2) {
+    const value = parseDate(val, 'dd.MM.yyyy', new Date())
+    return start ? startOfDay(value) : endOfDay(value)
   }
-
-  return parseDate(val, 'dd.mm.yyyy', endOfDay(new Date()))
+  return val
 }
 
 const schema = z.object({
@@ -47,11 +48,11 @@ const schema = z.object({
     .object({
       from: z
         .string()
-        .transform(transformDate)
+        .transform((val) => transformDate(val, true))
         .default(startOfMonth(TODAY).toISOString()),
       to: z
         .string()
-        .transform(transformDate)
+        .transform((val) => transformDate(val, false))
         .default(endOfDay(TODAY).toISOString()),
     })
     .default({}),

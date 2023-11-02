@@ -1,24 +1,7 @@
-import { DynamicModule, Global } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 
-import {
-  AuditTrailOptions,
-  AuditTrailService,
-  AUDIT_TRAIL_OPTIONS,
-} from './auditTrail.service'
+import { AuditTrailService } from './auditTrail.service'
 
 @Global()
-export class AuditTrailModule {
-  static register(options: AuditTrailOptions): DynamicModule {
-    return {
-      module: AuditTrailModule,
-      providers: [
-        {
-          provide: AUDIT_TRAIL_OPTIONS,
-          useFactory: () => options,
-        },
-        AuditTrailService,
-      ],
-      exports: [AuditTrailService],
-    }
-  }
-}
+@Module({ providers: [AuditTrailService], exports: [AuditTrailService] })
+export class AuditTrailModule {}

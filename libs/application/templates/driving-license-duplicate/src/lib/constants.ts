@@ -11,6 +11,7 @@ export enum States {
   PAYMENT = 'payment',
   DECLINED = 'declined',
 }
+
 export enum Roles {
   APPLICANT = 'applicant',
   ACTOR = 'actor',
@@ -18,13 +19,9 @@ export enum Roles {
 
 export const YES = 'yes'
 export const NO = 'no'
+export const IGNORE = 'IgnoreQualityPhotoAndSignature'
 
 type YesOrNo = 'yes' | 'no'
-
-export interface PSignFakeData {
-  useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
-}
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
@@ -34,4 +31,12 @@ export enum ApiActions {
 export type SubmitResponse = {
   success: boolean
   orderId?: string
+}
+
+export type DrivingLicenseDuplicateFakeData = {
+  useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
+  currentLicense: 'none' | 'B-full' | 'B-temp'
+  licenseIssuedDate?: string
+  hasQualityPhoto: YesOrNo
+  hasQualitySignature: YesOrNo
 }

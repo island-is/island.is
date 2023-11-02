@@ -85,7 +85,7 @@ export const DataProtectionComplaintSchema = z.object({
       OnBehalf.ORGANIZATION_OR_INSTITUTION,
     ]),
   }),
-  applicant: applicantInformationSchema,
+  applicant: applicantInformationSchema(),
   organizationOrInstitution: z.object({
     name: z.string().refine((x) => !!x, { params: error.required }),
     nationalId: z.string().refine((x) => (x ? kennitala.isCompany(x) : false), {

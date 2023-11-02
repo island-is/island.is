@@ -6,6 +6,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import FinanceScheduleTableRow from './FinanceScheduleTableRow'
+import { m } from '../../lib/messages'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
@@ -17,7 +18,9 @@ const compare = function (a: any, b: any) {
   if (a < b) return -1
   return 0
 }
-const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
+const FinanceScheduleTable: FC<React.PropsWithChildren<Props>> = ({
+  recordsArray,
+}) => {
   useNamespaces('sp.finance-schedule')
 
   const [page, setPage] = useState(1)
@@ -51,10 +54,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
               value: '',
             },
             {
-              value: formatMessage({
-                id: 'sp.finance-schedule:created-date',
-                defaultMessage: 'Stofndagur',
-              }),
+              value: formatMessage(m.createdDate),
             },
             {
               value: formatMessage({
@@ -79,8 +79,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                   <Tooltip
                     placement="top"
                     text={formatMessage({
-                      id:
-                        'sp.finance-schedule:amount-left-without-interest-info',
+                      id: 'sp.finance-schedule:amount-left-without-interest-info',
                       defaultMessage:
                         'Eftirstöðvar án vaxta innihalda þó vexti fram að þeim degi sem greiðsluáætlunin er gerð ef gjöld bera vexti.',
                     })}
@@ -129,6 +128,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 cursor="pointer"
                 className={className}
                 onClick={() => setPage(page)}
+                component="button"
               >
                 {children}
               </Box>

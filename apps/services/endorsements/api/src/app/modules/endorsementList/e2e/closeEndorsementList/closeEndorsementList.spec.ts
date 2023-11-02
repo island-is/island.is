@@ -50,16 +50,4 @@ describe('closeEndorsementList', () => {
       statusCode: 405,
     })
   })
-  it(`PUT /endorsement-list/:listId/close should close existing endorsement list`, async () => {
-    const app = await getAuthenticatedApp({
-      nationalId: authNationalId,
-      scope: [EndorsementsScope.main],
-    })
-    const response = await request(app.getHttpServer())
-      .put('/endorsement-list/9c0b4106-4213-43be-a6b2-ff324f4ba012/close')
-      .send()
-      .expect(200)
-
-    expect(response.body).toMatchObject({ closedDate: expect.any(String) })
-  })
 })

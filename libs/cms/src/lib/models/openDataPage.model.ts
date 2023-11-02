@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IOpenDataPage } from '../generated/contentfulTypes'
-import * as types from '../generated/contentfulTypes'
+import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
+import * as types from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { LinkCardSlice, mapLinkCardSlice } from './linkCardSlice.model'
 import { GraphCard, mapGraphCard } from './graphCard.model'
@@ -18,7 +18,7 @@ export class OpenDataPage {
   @Field()
   pageDescription!: string
 
-  @Field(() => GraphCard)
+  @CacheField(() => GraphCard)
   pageHeaderGraph?: GraphCard | null
 
   @Field()
@@ -27,16 +27,16 @@ export class OpenDataPage {
   @Field()
   linkTitle?: string
 
-  @Field(() => [StatisticsCard])
+  @CacheField(() => [StatisticsCard])
   statisticsCardsSection?: Array<StatisticsCard>
 
   @Field()
   chartSectionTitle?: string
 
-  @Field(() => [GraphCard])
+  @CacheField(() => [GraphCard])
   graphCards?: Array<GraphCard>
 
-  @Field(() => LinkCardSlice)
+  @CacheField(() => LinkCardSlice)
   externalLinkCardSelection?: LinkCardSlice | null
 
   @Field()
@@ -45,7 +45,7 @@ export class OpenDataPage {
   @Field()
   externalLinkSectionDescription?: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   externalLinkSectionImage?: Image | null
 }
 

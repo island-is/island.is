@@ -1,0 +1,13 @@
+mutation CreateAuthAdminScope($input: CreateScopeInput!) {
+  createAuthAdminScope(input: $input) {
+    scopeName
+    environment
+  }
+}
+
+query GetScopeAvailability($input: ScopeInput!) {
+  authAdminScope(input: $input) {
+    scopeName
+    availableEnvironments
+  }
+}

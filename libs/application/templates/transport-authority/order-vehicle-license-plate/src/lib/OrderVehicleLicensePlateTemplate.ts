@@ -8,15 +8,17 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { OrderVehicleLicensePlateSchema } from './dataSchema'
 import {
@@ -26,6 +28,10 @@ import {
   PlateTypesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes, getExtraData } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -54,11 +60,13 @@ const template: ApplicationTemplate<
   allowedDelegations: [
     {
       type: AuthDelegationType.ProcurationHolder,
-      featureFlag:
-        Features.transportAuthorityOrderVehicleLicensePlateDelegations,
+    },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
-  featureFlag: Features.transportAuthorityOrderVehicleLicensePlate,
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -71,6 +79,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
@@ -78,10 +92,9 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import(
-                  '../forms/OrderVehicleLicensePlateForm/index'
-                ).then((module) =>
-                  Promise.resolve(module.OrderVehicleLicensePlateForm),
+                import('../forms/OrderVehicleLicensePlateForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.OrderVehicleLicensePlateForm),
                 ),
               actions: [
                 {
@@ -105,42 +118,18 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: getChargeItemCodes,
+        extraData: getExtraData,
+        submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
@@ -151,6 +140,10 @@ const template: ApplicationTemplate<
             tag: {
               label: applicationMessage.actionCardDone,
               variant: 'blueberry',
+            },
+            pendingAction: {
+              title: applicationMessage.pendingActionOrderReceivedTitle,
+              displayStatus: 'success',
             },
           },
           roles: [

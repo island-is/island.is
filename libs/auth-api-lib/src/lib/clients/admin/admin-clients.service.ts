@@ -10,12 +10,21 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { NoContentException } from '@island.is/nest/problem'
+import { validateClientId } from '@island.is/auth/shared'
 
+import { ApiScope } from '../../resources/models/api-scope.model'
 import { Domain } from '../../resources/models/domain.model'
 import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
-import { ClientType, GrantTypeEnum, RefreshTokenExpiration } from '../../types'
+import {
+  ClientType,
+  GrantTypeEnum,
+  RefreshTokenExpiration,
+  translateRefreshTokenExpiration,
+} from '../../types'
+import { ClientsService } from '../clients.service'
 import { Client } from '../models/client.model'
+import { ClientAllowedScope } from '../models/client-allowed-scope.model'
 import { ClientClaim } from '../models/client-claim.model'
 import { ClientGrantType } from '../models/client-grant-type.model'
 import { ClientRedirectUri } from '../models/client-redirect-uri.model'
@@ -27,6 +36,8 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { AdminClientClaimDto } from './dto/admin-client-claim.dto'
+import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
+import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -59,7 +70,13 @@ export class AdminClientsService {
     private clientClaimModel: typeof ClientClaim,
     @InjectModel(ClientGrantType)
     private readonly clientGrantType: typeof ClientGrantType,
+    @InjectModel(ClientAllowedScope)
+    private readonly clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(ApiScope)
+    private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
+    private readonly clientsService: ClientsService,
+    private readonly adminTranslationService: AdminTranslationService,
     private sequelize: Sequelize,
   ) {}
 
@@ -67,6 +84,7 @@ export class AdminClientsService {
     const clients = await this.clientModel.findAll({
       where: {
         domainName: tenantId,
+        archived: null,
       },
       include: this.clientInclude(),
     })
@@ -84,11 +102,16 @@ export class AdminClientsService {
   async findByTenantIdAndClientId(
     tenantId: string,
     clientId: string,
+    includeArchived = false,
+    useMaster = false,
   ): Promise<AdminClientDto> {
     const client = await this.clientModel.findOne({
+      useMaster,
       where: {
         clientId,
         domainName: tenantId,
+        enabled: true,
+        ...(!includeArchived && { archived: null }),
       },
       include: this.clientInclude(),
     })
@@ -99,6 +122,7 @@ export class AdminClientsService {
     const clientTranslation = await this.translationService.findTranslationMap(
       'client',
       [client.clientId],
+      useMaster,
     )
 
     return this.formatClient(client, clientTranslation.get(client.clientId))
@@ -110,6 +134,7 @@ export class AdminClientsService {
     tenantId: string,
   ): Promise<AdminClientDto> {
     const tenant = await this.domainModel.findOne({
+      useMaster: true,
       where: {
         name: tenantId,
       },
@@ -118,24 +143,111 @@ export class AdminClientsService {
       throw new NoContentException()
     }
 
-    // validate that client id starts with the tenant id
-    if (!clientDto.clientId.startsWith(`${tenantId}/`)) {
+    const existingClient = await this.clientModel.findOne({
+      useMaster: true,
+      where: {
+        clientId: clientDto.clientId,
+        domainName: tenantId,
+      },
+    })
+
+    if (existingClient) {
+      throw new BadRequestException('Client already exists')
+    }
+
+    if (
+      !validateClientId({
+        prefix: tenantId,
+        value: clientDto.clientId,
+      })
+    ) {
       throw new BadRequestException('Invalid client id')
     }
 
-    const client = await this.clientModel.create({
-      clientId: clientDto.clientId,
-      clientType: clientDto.clientType,
-      domainName: tenantId,
-      nationalId: tenant.nationalId,
-      clientName: clientDto.clientName,
-      ...this.defaultClientAttributes(clientDto.clientType),
+    const {
+      customClaims,
+      displayName,
+      redirectUris,
+      postLogoutRedirectUris,
+      supportTokenExchange,
+      refreshTokenExpiration,
+      addedScopes,
+      removedScopes,
+      ...clientAttributes
+    } = clientDto
+
+    const { clientId } = await this.sequelize.transaction(
+      async (transaction) => {
+        const client = await this.clientModel.create(
+          {
+            clientId: clientDto.clientId,
+            clientType: clientDto.clientType,
+            domainName: tenantId,
+            nationalId: tenant.nationalId,
+            clientName: clientDto.clientName,
+            contactEmail: clientDto.contactEmail,
+            ...this.defaultClientAttributes(clientDto.clientType),
+          },
+          { transaction },
+        )
+
+        await this.updateConnectionsForClient(transaction, {
+          clientId: client.clientId,
+          tenantId,
+          displayName,
+          refreshTokenExpiration,
+          clientAttributes,
+          redirectUris,
+          postLogoutRedirectUris,
+          customClaims,
+          supportTokenExchange,
+          addedScopes,
+          removedScopes,
+        })
+
+        await this.clientGrantType.create(this.defaultClientGrantType(client), {
+          transaction,
+        })
+        await this.clientAllowedScope.bulkCreate(
+          this.defaultClientScopes(client),
+          {
+            transaction,
+          },
+        )
+
+        return client
+      },
+    )
+
+    return this.findByTenantIdAndClientId(tenantId, clientId, false, true)
+  }
+
+  async delete(clientId: string, tenantId: string) {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+      },
     })
 
-    // TODO: Add client type specific openid profile identity resources
-    await this.clientGrantType.create(this.defaultClientGrantTypes(client))
+    if (!client || client.archived) {
+      return
+    }
 
-    return this.findByTenantIdAndClientId(tenantId, client.clientId)
+    await this.clientModel.update(
+      {
+        archived: Date.now(),
+        enabled: false,
+      },
+      {
+        where: {
+          clientId,
+          domainName: tenantId,
+        },
+      },
+    )
+
+    return
   }
 
   async update(
@@ -157,8 +269,8 @@ export class AdminClientsService {
     if (!client) {
       throw new NoContentException()
     }
-
-    if (!this.validateUserUpdateAccess(user, input)) {
+    const isValid = await this.validateUserUpdateAccess(user, input, tenantId)
+    if (!isValid) {
       throw new ForbiddenException(
         'User does not have access to update admin controlled fields.',
       )
@@ -171,74 +283,25 @@ export class AdminClientsService {
       postLogoutRedirectUris,
       supportTokenExchange,
       refreshTokenExpiration,
+      addedScopes,
+      removedScopes,
       ...clientAttributes
     } = input
 
     await this.sequelize.transaction(async (transaction) => {
-      if (Object.keys(clientAttributes).length > 0) {
-        // Update includes client base attributes
-        await this.clientModel.update(
-          {
-            ...clientAttributes,
-            refreshTokenExpiration:
-              refreshTokenExpiration === RefreshTokenExpiration.Sliding ? 0 : 1,
-          },
-          {
-            where: {
-              clientId,
-            },
-            transaction,
-          },
-        )
-      }
-
-      if (displayName && displayName.length > 0) {
-        await this.updateDisplayName(clientId, displayName, transaction)
-      }
-
-      if (redirectUris && redirectUris.length > 0) {
-        await this.updateClientUris(
-          ClientRedirectUri,
-          clientId,
-          redirectUris,
-          transaction,
-        )
-      }
-
-      if (postLogoutRedirectUris && postLogoutRedirectUris.length > 0) {
-        await this.updateClientUris(
-          ClientPostLogoutRedirectUri,
-          clientId,
-          postLogoutRedirectUris,
-          transaction,
-        )
-      }
-
-      if (customClaims && customClaims.length > 0) {
-        await this.updateCustomClaims(clientId, customClaims, transaction)
-      }
-
-      // Checking if the value is true and boolean to avoid undefined
-      if (supportTokenExchange === true) {
-        await this.clientGrantType.upsert(
-          {
-            clientId,
-            grantType: GrantTypeEnum.TokenExchange,
-          },
-          { transaction, fields: ['grant_type'] },
-        )
-      }
-
-      // Checking if the value is false and boolean to avoid undefined
-      if (supportTokenExchange === false) {
-        await this.clientGrantType.destroy({
-          where: {
-            clientId,
-            grantType: GrantTypeEnum.TokenExchange,
-          },
-          transaction,
-        })
-      }
+      await this.updateConnectionsForClient(transaction, {
+        clientId,
+        tenantId,
+        displayName,
+        refreshTokenExpiration,
+        clientAttributes,
+        redirectUris,
+        postLogoutRedirectUris,
+        customClaims,
+        supportTokenExchange,
+        addedScopes,
+        removedScopes,
+      })
     })
 
     return this.findByTenantIdAndClientId(tenantId, clientId)
@@ -302,6 +365,113 @@ export class AdminClientsService {
     })
   }
 
+  private async updateConnectionsForClient(
+    transaction: Transaction,
+    data: {
+      clientId: string
+      tenantId?: string
+      displayName?: TranslatedValueDto[]
+      refreshTokenExpiration?: RefreshTokenExpiration
+      clientAttributes?: Omit<
+        AdminPatchClientDto,
+        | 'customClaims'
+        | 'displayName'
+        | 'redirectUris'
+        | 'postLogoutRedirectUris'
+        | 'supportTokenExchange'
+        | 'refreshTokenExpiration'
+      >
+      redirectUris?: string[]
+      postLogoutRedirectUris?: string[]
+      customClaims?: AdminClientClaimDto[]
+      supportTokenExchange?: boolean
+      addedScopes?: string[]
+      removedScopes?: string[]
+    },
+  ) {
+    if (Object.keys(data.clientAttributes as object).length > 0) {
+      // Update includes client base attributes
+      await this.clientModel.update(
+        {
+          ...data.clientAttributes,
+          refreshTokenExpiration: translateRefreshTokenExpiration(
+            data.refreshTokenExpiration,
+          ),
+        },
+        {
+          where: {
+            clientId: data.clientId,
+          },
+          transaction,
+        },
+      )
+    }
+
+    if (data.displayName && data.displayName.length > 0) {
+      await this.updateDisplayName(data.clientId, data.displayName, transaction)
+    }
+
+    if (data.redirectUris && data.redirectUris.length > 0) {
+      await this.updateClientUris(
+        ClientRedirectUri,
+        data.clientId,
+        data.redirectUris,
+        transaction,
+      )
+    }
+
+    if (data.postLogoutRedirectUris && data.postLogoutRedirectUris.length > 0) {
+      await this.updateClientUris(
+        ClientPostLogoutRedirectUri,
+        data.clientId,
+        data.postLogoutRedirectUris,
+        transaction,
+      )
+    }
+
+    if (data.customClaims) {
+      await this.updateCustomClaims(
+        data.clientId,
+        data.customClaims,
+        transaction,
+      )
+    }
+
+    if (
+      (data.addedScopes && data.addedScopes.length > 0) ||
+      (data.removedScopes && data.removedScopes.length > 0)
+    ) {
+      await this.updateClientAllowedScopes({
+        addedScopes: data.addedScopes,
+        removedScopes: data.removedScopes,
+        transaction,
+        clientId: data.clientId,
+      })
+    }
+
+    // Checking if the value is true and boolean to avoid undefined
+    if (data.supportTokenExchange === true) {
+      await this.clientGrantType.upsert(
+        {
+          clientId: data.clientId,
+          grantType: GrantTypeEnum.TokenExchange,
+        },
+        { transaction, fields: ['grant_type'] },
+      )
+    }
+
+    // Checking if the value is false and boolean to avoid undefined
+    if (data.supportTokenExchange === false) {
+      await this.clientGrantType.destroy({
+        where: {
+          clientId: data.clientId,
+          grantType: GrantTypeEnum.TokenExchange,
+        },
+        transaction,
+      })
+    }
+  }
+
   private defaultClientAttributes(clientType: ClientType) {
     switch (clientType) {
       case ClientType.web:
@@ -332,7 +502,11 @@ export class AdminClientsService {
       clientId: client.clientId,
       clientType: client.clientType,
       tenantId: client.domainName ?? '',
-      displayName: this.formatDisplayName(client.clientName, translations),
+      displayName: this.adminTranslationService.createTranslatedValueDTOs({
+        key: 'clientName',
+        defaultValueIS: client.clientName ?? '',
+        translations,
+      }),
       absoluteRefreshTokenLifetime: client.absoluteRefreshTokenLifetime,
       slidingRefreshTokenLifetime: client.slidingRefreshTokenLifetime,
       refreshTokenExpiration:
@@ -364,29 +538,9 @@ export class AdminClientsService {
     }
   }
 
-  private formatDisplayName(
-    clientName?: string,
-    translations?: Map<string, Map<string, string>>,
-  ): TranslatedValueDto[] {
-    const displayNames = [{ locale: 'is', value: clientName ?? '' }]
-
-    for (const [locale, translation] of translations?.entries() ?? []) {
-      displayNames.push({
-        locale,
-        value: translation.get('clientName') ?? '',
-      })
-    }
-
-    return displayNames
-  }
-
-  private defaultClientGrantTypes(client: Client) {
+  private defaultClientGrantType(client: Client) {
     switch (client.clientType) {
       case ClientType.web:
-        return {
-          clientId: client.clientId,
-          grantType: 'authorization_code',
-        }
       case ClientType.native:
         return {
           clientId: client.clientId,
@@ -398,6 +552,26 @@ export class AdminClientsService {
           grantType: 'client_credentials',
         }
     }
+  }
+
+  private defaultClientScopes(client: Client) {
+    const scopes = [
+      {
+        clientId: client.clientId,
+        scopeName: 'openid',
+      },
+    ]
+
+    switch (client.clientType) {
+      case ClientType.web:
+      case ClientType.native:
+        scopes.push({
+          clientId: client.clientId,
+          scopeName: 'profile',
+        })
+    }
+
+    return scopes
   }
 
   private clientInclude(): Includeable[] {
@@ -414,7 +588,11 @@ export class AdminClientsService {
    * If the user is a superuser, they can update all fields.
    * If the user is not a superuser, they can only update non-admin fields.
    */
-  private validateUserUpdateAccess(user: User, input: AdminPatchClientDto) {
+  private async validateUserUpdateAccess(
+    user: User,
+    input: AdminPatchClientDto,
+    tenantId: string,
+  ) {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
     const updatedFields = Object.keys(input)
@@ -430,6 +608,18 @@ export class AdminClientsService {
     if (superUserUpdatedFields.length > 0 && isSuperUser) {
       // There are some superuser fields to update and the user has the superuser scope
       return true
+    }
+
+    if (input.addedScopes && input.addedScopes.length > 0) {
+      const verifiedScopes = await this.verifyScopeNames({
+        isSuperUser,
+        scopeNames: input.addedScopes,
+        tenantId,
+      })
+
+      if (verifiedScopes) {
+        return true
+      }
     }
 
     // There are some superuser fields to update and the user does not have the superuser scope
@@ -468,6 +658,114 @@ export class AdminClientsService {
           })
         }
       }),
+    )
+  }
+
+  /**
+   * Verifies that the scopes exist and are enabled for the tenant.
+   * @returns true if all scopes exist, are enabled and have the same tenant, false otherwise.
+   */
+  private async verifyScopeNames({
+    isSuperUser,
+    scopeNames,
+    tenantId,
+  }: {
+    isSuperUser: boolean
+    scopeNames: string[]
+    tenantId: string
+  }): Promise<boolean> {
+    const scopes = await this.apiScopeModel.findAndCountAll({
+      where: {
+        name: {
+          [Op.in]: scopeNames,
+        },
+        archived: null,
+        ...(isSuperUser ? {} : { domainName: tenantId }),
+      },
+    })
+
+    return scopes.count === scopeNames.length
+  }
+
+  private async updateClientAllowedScopes({
+    addedScopes,
+    removedScopes,
+    clientId,
+    transaction,
+  }: {
+    addedScopes?: string[]
+    removedScopes?: string[]
+    clientId: string
+    transaction: Transaction
+  }): Promise<void> {
+    if (removedScopes) {
+      await this.clientsService.removeAllowedScopes(removedScopes, clientId, {
+        transaction,
+      })
+    }
+
+    if (addedScopes) {
+      await this.clientsService.addAllowedScopes(addedScopes, clientId, {
+        transaction,
+        ignoreDuplicates: true,
+      })
+    }
+  }
+
+  async findAllowedScopes({
+    clientId,
+    tenantId,
+  }: {
+    clientId: string
+    tenantId: string
+  }): Promise<AdminScopeDTO[]> {
+    const client = await this.clientModel.findOne({
+      where: {
+        clientId,
+        domainName: tenantId,
+        enabled: true,
+      },
+      include: {
+        model: ClientAllowedScope,
+        as: 'allowedScopes',
+        where: {
+          scopeName: {
+            [Op.notIn]: Sequelize.literal(
+              `(SELECT name FROM identity_resource)`,
+            ),
+          },
+        },
+        required: false,
+      },
+    })
+
+    if (!client) {
+      throw new NoContentException()
+    } else if (!client?.allowedScopes?.length) {
+      return []
+    }
+
+    const scopeNames = client.allowedScopes.map((scope) => scope.scopeName)
+
+    const apiScopes = await this.apiScopeModel.findAll({
+      where: {
+        name: {
+          [Op.in]: scopeNames,
+        },
+        enabled: true,
+      },
+    })
+
+    const translations =
+      await this.adminTranslationService.getApiScopeTranslations(
+        apiScopes.map(({ name }) => name),
+      )
+
+    return apiScopes.map((apiScope) =>
+      this.adminTranslationService.mapApiScopeToAdminScopeDTO(
+        apiScope,
+        translations,
+      ),
     )
   }
 }

@@ -65,25 +65,27 @@ export function validateAnswers({
   return undefined
 }
 
-export const buildValidationError = (
-  path: string,
-  index?: number,
-): ((
-  message: StaticText,
-  field?: string,
-  values?: RecordObject<unknown>,
-) => AnswerValidationError) => (message, field, values) => {
-  if (field && isNumber(index)) {
+export const buildValidationError =
+  (
+    path: string,
+    index?: number,
+  ): ((
+    message: StaticText,
+    field?: string,
+    values?: RecordObject<unknown>,
+  ) => AnswerValidationError) =>
+  (message, field, values) => {
+    if (field && isNumber(index)) {
+      return {
+        message,
+        path: `${path}[${index}].${field}`,
+        values,
+      }
+    }
+
     return {
       message,
-      path: `${path}[${index}].${field}`,
+      path,
       values,
     }
   }
-
-  return {
-    message,
-    path,
-    values,
-  }
-}

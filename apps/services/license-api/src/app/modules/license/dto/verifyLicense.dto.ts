@@ -13,6 +13,10 @@ export class VerifyLicenseRequest {
   @IsJSON()
   //Dont really need to verify, the proper service destination shall do that. Just need to check which type to know where to send
   readonly barcodeData!: string
+  @IsOptional()
+  @ApiProperty({ description: 'Optional request id for logging purposes' })
+  @IsString()
+  readonly requestId?: string
 }
 
 class PassIdentity {

@@ -2,11 +2,12 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+
 import { Case } from '../models/case.model'
 import { CaseListEntry } from '../models/caseListEntry.response'
 
@@ -19,10 +20,12 @@ export class CaseListInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((cases: Case[]) => {
         return cases.map((theCase) => {
+          // WARNING: Be careful when adding to this list. No sensitive information should be returned.
+          // If you need to add sensitive information, then you should consider adding a new endpoint
+          // for defenders and other user roles that are not allowed to see sensitive information.
           return {
             id: theCase.id,
             created: theCase.created,
-            courtDate: theCase.courtDate,
             policeCaseNumbers: theCase.policeCaseNumbers,
             state: theCase.state,
             type: theCase.type,
@@ -30,8 +33,10 @@ export class CaseListInterceptor implements NestInterceptor {
             courtCaseNumber: theCase.courtCaseNumber,
             decision: theCase.decision,
             validToDate: theCase.validToDate,
+            courtDate: theCase.courtDate,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
+            rulingSignatureDate: theCase.rulingSignatureDate,
             courtEndTime: theCase.courtEndTime,
             prosecutorAppealDecision: theCase.prosecutorAppealDecision,
             accusedAppealDecision: theCase.accusedAppealDecision,
@@ -43,6 +48,9 @@ export class CaseListInterceptor implements NestInterceptor {
             registrar: theCase.registrar,
             creatingProsecutor: theCase.creatingProsecutor,
             parentCaseId: theCase.parentCaseId,
+            appealState: theCase.appealState,
+            appealCaseNumber: theCase.appealCaseNumber,
+            appealRulingDecision: theCase.appealRulingDecision,
           }
         })
       }),

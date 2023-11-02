@@ -112,8 +112,6 @@ You can serve this service locally by running:
 yarn start judicial-system-api
 ```
 
-You can enable communication with the court system via xRoad by providing appropriate values for the environment variables specified in the `xRoad` and `courtClientOptions` sections in `environment.ts`.
-
 To get latest texts from Contentful you need to provide an appropriate value for the environment variable `CONTENTFUL_ACCESS_TOKEN`.
 
 ### Graphql playground

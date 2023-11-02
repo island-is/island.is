@@ -30,7 +30,9 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
   const { data, datakeys } = graphData
   const parsedData = JSON.parse(data)
   const parsedDatakeys = JSON.parse(datakeys)
-  const stackIds = parsedDatakeys.bars.map((e) => e.stackId)
+  const stackIds = parsedDatakeys.bars.map(
+    (e: { stackId: number }) => e.stackId,
+  )
   const shouldStack = new Set(stackIds).size !== stackIds.length
   return (
     <Box width="full" height="full">
@@ -61,8 +63,15 @@ export const SimpleBarChart = ({ graphData }: GraphProps) => {
           />
           <YAxis stroke="#CCDFFF" tick={<CustomizedAxisTick />} />
           <Tooltip content={<CustomTooltip />} />
-          <Legend iconType="circle" align="right" content={RenderLegend} />
-          {parsedDatakeys.bars.map((item, index) => (
+          <Legend
+            iconType="circle"
+            align="right"
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            content={RenderLegend}
+          />
+          {parsedDatakeys.bars.map((item: any, index: number) => (
+            //TODO: Better way to fix implicit any type?
             <Bar
               key={index}
               dataKey={item.datakey}

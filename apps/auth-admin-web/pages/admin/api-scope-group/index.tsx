@@ -6,7 +6,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import ApiScopeGroupCreateForm from './../../../components/Resource/forms/ApiScopeGroupCreateForm'
 import { ApiScopeGroup } from './../../../entities/models/api-scope-group.model'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const initialApiScopeGroup = useMemo(() => {
     const scopeGroup = new ApiScopeGroup()

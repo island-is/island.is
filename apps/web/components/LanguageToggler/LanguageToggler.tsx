@@ -38,9 +38,8 @@ export const LanguageToggler = ({
   const client = useApolloClient()
   const Router = useRouter()
   const [showDialog, setShowDialog] = useState<boolean>(false)
-  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } = useContext(
-    GlobalContext,
-  )
+  const { contentfulIds, resolveLinkTypeLocally, globalNamespace } =
+    useContext(GlobalContext)
   const { activeLocale, locale, t } = useI18n()
   const gn = useNamespace(globalNamespace)
   const otherLanguage = (activeLocale === 'en' ? 'is' : 'en') as Locale
@@ -54,6 +53,8 @@ export const LanguageToggler = ({
     const pathWithoutQueryParams = Router.asPath.split('?')[0]
 
     if (!contentfulIds?.length) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       const { type } = typeResolver(pathWithoutQueryParams, true)
       const pagePath = linkResolver(type, [], otherLanguage).href
 
@@ -75,10 +76,13 @@ export const LanguageToggler = ({
 
     // We need to have a special case for subArticles since they've got a url field instead of a slug field
     if (secondContentSlug?.type === 'subArticle') {
-      const urls = secondContentSlug.url[otherLanguage].split('/')
+      const urls = secondContentSlug?.url?.[otherLanguage].split('/')
 
       // Show dialog when either there is no title or there aren't at least 2 urls (for example, a valid url would be on the format: 'parental-leave/payments')
-      if (!secondContentSlug?.title?.[otherLanguage] || urls.length < 2) {
+      if (
+        !secondContentSlug?.title?.[otherLanguage] ||
+        (urls && urls.length < 2)
+      ) {
         return setShowDialog(true)
       }
       return goToOtherLanguagePage(
@@ -97,8 +101,12 @@ export const LanguageToggler = ({
         break
       }
       slugs.push(slug)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       title = res.data?.getContentSlug?.title
       type = res.data?.getContentSlug?.type as LinkType
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
@@ -116,6 +124,8 @@ export const LanguageToggler = ({
       type &&
       slugs.every((s) => s?.[otherLanguage]) &&
       title?.[otherLanguage] &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       (otherLanguage === 'is' || (activeTranslations?.[otherLanguage] ?? true))
     ) {
       const queryParamsString = new URLSearchParams(
@@ -136,7 +146,7 @@ export const LanguageToggler = ({
     setShowDialog(true)
   }
 
-  const goToOtherLanguagePage = (path) => {
+  const goToOtherLanguagePage = (path: string) => {
     locale(t.otherLanguageCode)
     Router.push(path)
   }
@@ -195,7 +205,9 @@ type ButtonElementProps = {
   onClick: () => void
 }
 
-const ButtonElement: FC<ButtonElementProps & ButtonProps> = ({
+const ButtonElement: FC<
+  React.PropsWithChildren<ButtonElementProps & ButtonProps>
+> = ({
   buttonColorScheme = 'default',
   otherLanguage,
   otherLanguageAria,

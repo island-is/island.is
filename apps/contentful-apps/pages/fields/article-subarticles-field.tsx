@@ -5,18 +5,34 @@ import {
   CombinedLinkActions,
   MultipleEntryReferenceEditor,
 } from '@contentful/field-editor-reference'
+import { DEFAULT_LOCALE } from '../../constants'
 
 const ArticleSubArticlesField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 
   useEffect(() => {
-    sdk.window.startAutoResizer()
-  }, [sdk.window])
+    const unregister = sdk.field.onValueChanged((items) => {
+      if (items?.length > 1) {
+        sdk.window.startAutoResizer()
+      } else {
+        if (!items?.length) {
+          sdk.window.stopAutoResizer()
+          sdk.window.updateHeight(210)
+        } else {
+          sdk.window.stopAutoResizer()
+          sdk.window.updateHeight(300)
+        }
+      }
+    })
+
+    return () => {
+      unregister()
+    }
+  }, [sdk.field, sdk.window])
 
   return (
     <MultipleEntryReferenceEditor
-      css={{ overflow: 'hidden' }}
       hasCardEditActions={false}
       viewType="link"
       sdk={sdk}
@@ -41,7 +57,7 @@ const ArticleSubArticlesField = () => {
                 {
                   fields: {
                     parent: {
-                      'is-IS': {
+                      [DEFAULT_LOCALE]: {
                         sys: { id: sdk.entry.getSys().id, linkType: 'Entry' },
                       },
                     },

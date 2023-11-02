@@ -244,17 +244,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseAdviceCommand"
+                "$ref": "#/components/schemas/PostCaseAdviceCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseAdviceCommand"
+                "$ref": "#/components/schemas/PostCaseAdviceCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CaseAdviceCommand"
+                "$ref": "#/components/schemas/PostCaseAdviceCommand"
               }
             }
           }
@@ -564,17 +564,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+                "$ref": "#/components/schemas/PostUserSubscriptionsCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+                "$ref": "#/components/schemas/PostUserSubscriptionsCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UserSubscriptionsCommand"
+                "$ref": "#/components/schemas/PostUserSubscriptionsCommand"
               }
             }
           }
@@ -666,6 +666,12 @@
             "type": "string",
             "nullable": true
           },
+          "isPrivate": {
+            "type": "boolean"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
           "created": {
             "type": "string",
             "format": "date-time"
@@ -707,23 +713,6 @@
           "caseTypes": {
             "type": "object",
             "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CaseAdviceCommand": {
-        "type": "object",
-        "properties": {
-          "content": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileUrls": {
-            "type": "array",
-            "items": {
               "type": "string"
             },
             "nullable": true
@@ -853,9 +842,29 @@
             "type": "string",
             "nullable": true
           },
+          "summaryLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "summaryDocumentId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
           "adviceCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "advicePublishTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "allowUsersToSendPrivateAdvices": {
+            "type": "boolean"
+          },
+          "advicePublishTypeName": {
+            "type": "string",
+            "nullable": true
           },
           "created": {
             "type": "string",
@@ -866,6 +875,10 @@
             "format": "date-time"
           },
           "oldInstitutionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "extraStakeholderList": {
             "type": "string",
             "nullable": true
           },
@@ -880,6 +893,20 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          },
+          "additionalDocuments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentInfoResult"
+            },
+            "nullable": true
+          },
+          "relatedCases": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RelatedCaseResult"
             },
             "nullable": true
           }
@@ -965,6 +992,14 @@
             "type": "string",
             "format": "uuid"
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "link": {
+            "type": "string",
+            "nullable": true
+          },
           "fileName": {
             "type": "string",
             "nullable": true
@@ -976,6 +1011,26 @@
           "size": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostCaseAdviceCommand": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "privateAdvice": {
+            "type": "boolean"
+          },
+          "fileUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -993,6 +1048,57 @@
         "type": "object",
         "properties": {
           "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PostUserSubscriptionsCommand": {
+        "type": "object",
+        "properties": {
+          "subscribeToAll": {
+            "type": "boolean"
+          },
+          "subscribeToAllType": {
+            "$ref": "#/components/schemas/SubscriptionType"
+          },
+          "caseIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CaseSubscriptionCommand"
+            },
+            "nullable": true
+          },
+          "institutionIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionCommand"
+            },
+            "nullable": true
+          },
+          "policyAreaIds": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SubscriptionCommand"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RelatedCaseResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "caseNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
             "type": "string",
             "nullable": true
           }
@@ -1174,8 +1280,8 @@
           "subscribedToAll": {
             "type": "boolean"
           },
-          "subscribedToAllNew": {
-            "type": "boolean"
+          "subscribedToAllType": {
+            "$ref": "#/components/schemas/SubscriptionType"
           },
           "cases": {
             "type": "array",
@@ -1195,40 +1301,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/UserSubscriptionResult"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "UserSubscriptionsCommand": {
-        "type": "object",
-        "properties": {
-          "subscribeToAll": {
-            "type": "boolean"
-          },
-          "subscribeToAllType": {
-            "type": "string",
-            "nullable": true
-          },
-          "caseIds": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CaseSubscriptionCommand"
-            },
-            "nullable": true
-          },
-          "institutionIds": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubscriptionCommand"
-            },
-            "nullable": true
-          },
-          "policyAreaIds": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SubscriptionCommand"
             },
             "nullable": true
           }

@@ -1,13 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+import { SortField } from '@island.is/content-search-toolkit'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 import { IFeaturedArticles } from '../generated/contentfulTypes'
 
-import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { ArticleReference, mapArticleReference } from './articleReference'
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
-import { SortField } from '@island.is/content-search-toolkit'
 import { GetArticlesInput } from '../dto/getArticles.input'
 import { Article } from './article.model'
 
@@ -19,10 +20,10 @@ export class FeaturedArticles {
   @Field()
   title!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 
-  @Field(() => [ArticleReference])
+  @CacheField(() => [ArticleReference])
   articles?: Array<ArticleReference>
 
   @Field({ nullable: true })
@@ -31,10 +32,10 @@ export class FeaturedArticles {
   @Field()
   sortBy?: 'popularity' | 'importance'
 
-  @Field(() => [Article])
+  @CacheField(() => [Article])
   resolvedArticles!: GetArticlesInput
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link?: Link | null
 
   @Field(() => Boolean, { nullable: true })

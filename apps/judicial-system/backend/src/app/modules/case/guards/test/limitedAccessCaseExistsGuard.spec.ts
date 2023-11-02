@@ -1,5 +1,5 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
+import { uuid } from 'uuidv4'
 
 import {
   BadRequestException,
@@ -10,8 +10,9 @@ import {
 import { CaseState } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../../test/createTestingCaseModule'
-import { Case } from '../../models/case.model'
+
 import { attributes, include, order } from '../../limitedAccessCase.service'
+import { Case } from '../../models/case.model'
 import { LimitedAccessCaseExistsGuard } from '../limitedAccessCaseExists.guard'
 
 interface Then {
@@ -27,10 +28,8 @@ describe('Restricted Case Exists Guard', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      caseModel,
-      limitedAccessCaseService,
-    } = await createTestingCaseModule()
+    const { caseModel, limitedAccessCaseService } =
+      await createTestingCaseModule()
 
     mockCaseModel = caseModel
 
@@ -39,9 +38,9 @@ describe('Restricted Case Exists Guard', () => {
       const then = {} as Then
 
       try {
-        then.result = await guard.canActivate(({
+        then.result = await guard.canActivate({
           switchToHttp: () => ({ getRequest: mockRequest }),
-        } as unknown) as ExecutionContext)
+        } as unknown as ExecutionContext)
       } catch (error) {
         then.error = error as Error
       }

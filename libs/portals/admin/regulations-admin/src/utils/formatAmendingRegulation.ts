@@ -242,7 +242,25 @@ export const formatAmendingRegBody = (
         oldText = oldTextElement.textContent || ''
 
         newTextElement.querySelectorAll('del').forEach((e) => e.remove())
-        newText = newTextElement.textContent || ''
+
+        if (isGreinTitle) {
+          const tempElement = newTextElement
+
+          // Select all <ins> elements within the temporary element
+          const insElements = tempElement.querySelectorAll('ins')
+
+          // Iterate through each <ins> element and insert a space before and after its content
+          insElements.forEach((insElement) => {
+            const content = insElement.textContent
+            insElement.textContent = ` ${content}<br />`
+          })
+
+          // Retrieve the modified text content from the temporary element
+          const modifiedTextContent = tempElement?.textContent?.trim()
+          newText = modifiedTextContent ?? ''
+        } else {
+          newText = newTextElement.textContent || ''
+        }
       }
 
       const isDeleted = newText === '' || newText === null
@@ -259,10 +277,12 @@ export const formatAmendingRegBody = (
       } else if (isDeleted) {
         if (isMalsgrein) {
           // Paragraph was deleted
-          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
+          pushHtml =
+            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
         } else if (isGreinTitle) {
           // Title was deleted
-          pushHtml = `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
+          pushHtml =
+            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} fellur brott</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was deleted
           pushHtml = `<p>${
@@ -270,19 +290,22 @@ export const formatAmendingRegBody = (
           } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} falla brott</p>` as HTMLText
         } else {
           // We don't know what you deleted, but there was a deletion, and here's the deletelog:
-          pushHtml = `<p>Texti í ${grein}. gr. ${regNameDisplay} fellur brott:</p><p>${oldText}</p>` as HTMLText
+          pushHtml =
+            `<p>Texti í ${grein}. gr. ${regNameDisplay} fellur brott:</p><p>${oldText}</p>` as HTMLText
         }
       } else if (isAddition) {
         if (isMalsgrein) {
           // Paragraph was added
-          pushHtml = `<p>Á eftir ${
-            malsgrein - 1
-          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            malsgrein > 1
+              ? (`<p>Á eftir ${
+                  malsgrein - 1
+                }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
+              : (`<p>1. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
         } else if (isGreinTitle) {
           // Title was added
-          pushHtml = `<p>Á eftir ${
-            malsgrein - 1
-          }. mgr. ${grein}. gr. ${regNameDisplay} kemur ný fyrirsögn sem orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was added
 
@@ -302,23 +325,28 @@ export const formatAmendingRegBody = (
           } eftir ${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} er bætt við:</p>${newLiTextBody}` as HTMLText
         } else {
           // We don't know what you added, but there was an addition, and here's the additionlog:
-          pushHtml = `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            `<p>Eftirfarandi texta ${regNameDisplay} var bætt við:</p><p>${newText}</p>` as HTMLText
         }
       } else {
         if (isGreinTitle) {
           // Title was changed
-          pushHtml = `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            `<p>Fyrirsögn ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isMalsgrein) {
           // Paragraph was changed
-          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+          pushHtml =
+            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
         } else if (isStaflidur || isTolulidur) {
           // List was changed
-          pushHtml = `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
+          pushHtml =
+            `<p>${malsgrein}. mgr. ${grein}. gr. ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
         } else {
           // We don't know what you changed, but there was a change, and here's the changelog:
-          pushHtml = `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p><p>${
-            oldText ? `Í stað ${oldText} kemur ` : ''
-          }${newText}</p>` as HTMLText
+          pushHtml =
+            `<p>Eftirfarandi breytingar ${regNameDisplay} áttu sér stað:</p><p>${
+              oldText ? `Í stað ${oldText} kemur ` : ''
+            }${newText}</p>` as HTMLText
         }
       }
       additionArray.push(pushHtml)

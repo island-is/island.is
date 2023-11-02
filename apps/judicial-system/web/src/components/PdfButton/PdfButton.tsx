@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
 
+import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PdfButton.css'
 
 interface Props {
@@ -10,21 +11,18 @@ interface Props {
   title: string
   pdfType?:
     | 'ruling'
-    | 'caseFiles'
+    | 'caseFilesRecord'
     | 'courtRecord'
     | 'request'
     | 'custodyNotice'
-    | 'limitedAccess/ruling'
-    | 'limitedAccess/courtRecord'
-    | 'limitedAccess/request'
     | 'indictment'
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType is caseFiles
+  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
 }
 
-const PdfButton: React.FC<Props> = ({
+const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   caseId,
   title,
   pdfType,
@@ -34,10 +32,14 @@ const PdfButton: React.FC<Props> = ({
   handleClick, // Overwrites the default onClick handler
   policeCaseNumber,
 }) => {
+  const { limitedAccess } = useContext(UserContext)
+
   const handlePdfClick = async () => {
-    const newPdfType =
-      pdfType === 'caseFiles' ? `${pdfType}/${policeCaseNumber}` : pdfType
-    const url = `${api.apiUrl}/api/case/${caseId}/${newPdfType}`
+    const prefix = limitedAccess ? 'limitedAccess/' : ''
+    const postfix = pdfType?.endsWith('caseFilesRecord')
+      ? `/${policeCaseNumber}`
+      : ''
+    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}`
 
     window.open(url, '_blank')
   }
@@ -57,12 +59,28 @@ const PdfButton: React.FC<Props> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={styles.pdfRow}
-      onClick={handleClick ? handleClick : pdfType ? handlePdfClick : undefined}
+      className={`${styles.pdfRow} ${
+        disabled ? styles.disabled : styles.cursor
+      }`}
+      onClick={() => {
+        if (disabled) {
+          return
+        }
+
+        if (handleClick) {
+          return handleClick()
+        }
+
+        if (pdfType) {
+          return handlePdfClick()
+        }
+      }}
     >
-      <Text color="blue400" variant="h4">
-        {title}
-      </Text>
+      <span className={styles.fileNameContainer}>
+        <Text color="blue400" variant="h4">
+          {title}
+        </Text>
+      </span>
       {children}
     </Box>
   )

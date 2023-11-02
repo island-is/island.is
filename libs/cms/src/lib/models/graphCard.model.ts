@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { SystemMetadata } from 'api-cms-domain'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { IGraphCard } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 
@@ -29,7 +31,7 @@ export class GraphCard {
   @Field()
   displayAsCard!: boolean
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   organizationLogo?: Image | null
 }
 

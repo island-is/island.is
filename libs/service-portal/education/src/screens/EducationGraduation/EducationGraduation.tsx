@@ -9,6 +9,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  UNI_HI_ID,
   m,
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
@@ -81,6 +82,8 @@ export const EducationGraduation = () => {
             'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
           description: 'education graduation intro',
         })}
+        serviceProviderID={UNI_HI_ID}
+        serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       {loading && !error && <CardLoader />}
       {!loading && !error && studentInfo.length === 0 && (
@@ -100,9 +103,8 @@ export const EducationGraduation = () => {
               <ActionCard
                 key={`education-graduation-${index}`}
                 heading={item.institution?.displayName}
-                text={
-                  item.faculty + ' - ' + item.studyProgram + ' ' + item.degree
-                }
+                text={item.faculty}
+                subText={`${item.studyProgram} ${item.degree}`}
                 cta={{
                   label: defineMessage({
                     id: 'sp.education-graduation:details',
@@ -123,6 +125,7 @@ export const EducationGraduation = () => {
                         url: getOrganizationLogoUrl(
                           item.institution.displayName,
                           organizations,
+                          120,
                         ),
                       }
                     : undefined

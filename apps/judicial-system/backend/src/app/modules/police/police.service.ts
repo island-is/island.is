@@ -1,7 +1,8 @@
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
+import { z } from 'zod'
 
 import {
   BadGatewayException,
@@ -11,34 +12,66 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
-  IndictmentSubtype,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
+import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
+
+function getChapter(category?: string): number | undefined {
+  if (!category) {
+    return undefined
+  }
+
+  const chapter = /^([0-9]+)\..*$/.exec(category) // Matches the first number in a string
+
+  if (!chapter || +chapter[1] < 1) {
+    return undefined
+  }
+
+  return +chapter[1] - 1
+}
 
 @Injectable()
 export class PoliceService {
   private xRoadPath: string
   private agent: Agent
-
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
+
+  private policeCaseFileStructure = z.object({
+    rvMalSkjolMals_ID: z.number(),
+    heitiSkjals: z.string(),
+    malsnumer: z.string(),
+    domsSkjalsFlokkun: z.optional(z.string()),
+    dagsStofnad: z.optional(z.string()),
+  })
+  private readonly crimeSceneStructure = z.object({
+    vettvangur: z.optional(z.string()),
+    brotFra: z.optional(z.string()),
+    upprunalegtMalsnumer: z.string(),
+  })
+  private responseStructure = z.object({
+    malsnumer: z.string(),
+    skjol: z.optional(z.array(this.policeCaseFileStructure)),
+    malseinings: z.optional(z.array(this.crimeSceneStructure)),
+  })
 
   constructor(
     @Inject(policeModuleConfig.KEY)
@@ -63,7 +96,7 @@ export class PoliceService {
 
   private async fetchPoliceDocumentApi(url: string): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police document API not available'
+      throw new ServiceUnavailableException('Police document API not available')
     }
 
     return fetch(url, {
@@ -80,7 +113,7 @@ export class PoliceService {
     requestInit: RequestInit,
   ): Promise<Response> {
     if (!this.config.policeCaseApiAvailable) {
-      throw 'Police case API not available'
+      throw new ServiceUnavailableException('Police case API not available')
     }
 
     return fetch(url, requestInit)
@@ -97,7 +130,7 @@ export class PoliceService {
     })
 
     const pdf = await this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
+      `${this.xRoadPath}/V2/GetPDFDocumentByID/${uploadPoliceCaseFile.id}`,
     )
       .then(async (res) => {
         if (res.ok) {
@@ -160,25 +193,33 @@ export class PoliceService {
     user: User,
   ): Promise<PoliceCaseFile[]> {
     return this.fetchPoliceDocumentApi(
-      `${this.xRoadPath}/GetDocumentListById/${caseId}`,
+      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
       .then(async (res: Response) => {
         if (res.ok) {
-          const response = await res.json()
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
 
-          return response.map(
-            (file: {
-              rvMalSkjolMals_ID: string
-              heitiSkjals: string
-              malsnumer: string
-            }) => ({
-              id: file.rvMalSkjolMals_ID,
-              name: file.heitiSkjals.endsWith('.pdf')
-                ? file.heitiSkjals
-                : `${file.heitiSkjals}.pdf`,
-              policeCaseNumber: file.malsnumer,
-            }),
-          )
+          this.responseStructure.parse(response)
+
+          const files: PoliceCaseFile[] = []
+
+          response.skjol?.forEach((file) => {
+            const id = file.rvMalSkjolMals_ID.toString()
+            if (!files.find((item) => item.id === id)) {
+              files.push({
+                id,
+                name: file.heitiSkjals.endsWith('.pdf')
+                  ? file.heitiSkjals
+                  : `${file.heitiSkjals}.pdf`,
+                policeCaseNumber: file.malsnumer,
+                chapter: getChapter(file.domsSkjalsFlokkun),
+                displayDate: file.dagsStofnad,
+              })
+            }
+          })
+
+          return files
         }
 
         const reason = await res.text()
@@ -222,6 +263,99 @@ export class PoliceService {
       })
   }
 
+  async getPoliceCaseInfo(
+    caseId: string,
+    user: User,
+  ): Promise<PoliceCaseInfo[]> {
+    return this.fetchPoliceDocumentApi(
+      `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
+    )
+      .then(async (res: Response) => {
+        if (res.ok) {
+          const response: z.infer<typeof this.responseStructure> =
+            await res.json()
+
+          this.responseStructure.parse(response)
+
+          const cases: PoliceCaseInfo[] = [
+            { policeCaseNumber: response.malsnumer },
+          ]
+
+          response.skjol?.forEach((info: { malsnumer: string }) => {
+            if (
+              !cases.find((item) => item.policeCaseNumber === info.malsnumer)
+            ) {
+              cases.push({ policeCaseNumber: info.malsnumer })
+            }
+          })
+
+          response.malseinings?.forEach(
+            (info: {
+              upprunalegtMalsnumer: string
+              vettvangur?: string
+              brotFra?: string
+            }) => {
+              const policeCaseNumber = info.upprunalegtMalsnumer
+              const place = info.vettvangur
+              const date = info.brotFra ? new Date(info.brotFra) : undefined
+
+              const foundCase = cases.find(
+                (item) => item.policeCaseNumber === policeCaseNumber,
+              )
+
+              if (!foundCase) {
+                cases.push({ policeCaseNumber, place, date })
+              } else if (date && (!foundCase.date || date > foundCase.date)) {
+                foundCase.place = place
+                foundCase.date = date
+              }
+            },
+          )
+
+          return cases
+        }
+
+        const reason = await res.text()
+
+        // The police system does not provide a structured error response.
+        // When a police case does not exist, a stack trace is returned.
+        throw new NotFoundException({
+          message: `Police case info for case ${caseId} does not exist`,
+          detail: reason,
+        })
+      })
+      .catch((reason) => {
+        if (reason instanceof NotFoundException) {
+          throw reason
+        }
+
+        if (reason instanceof ServiceUnavailableException) {
+          // Act as if the case does not exist
+          throw new NotFoundException({
+            ...reason,
+            message: `Police case info for case ${caseId} does not exist`,
+            detail: reason.message,
+          })
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to get police case info',
+          {
+            caseId,
+            actor: user.name,
+            institution: user.institution?.name,
+          },
+          reason,
+        )
+
+        throw new BadGatewayException({
+          ...reason,
+          message: `Failed to get police case info for case ${caseId}`,
+          detail: reason.message,
+        })
+      })
+  }
+
   async uploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
@@ -241,35 +375,63 @@ export class PoliceService {
   async updatePoliceCase(
     user: User,
     caseId: string,
-    caseType: CaseType | IndictmentSubtype,
+    caseType: CaseType,
     caseState: CaseState,
-    courtRecordPdf: string,
     policeCaseNumber: string,
-    defendantNationalIds?: string[],
-    caseConclusion?: string,
+    defendantNationalId: string,
+    validToDate: Date,
+    caseConclusion: string,
+    requestPdf?: string,
+    courtRecordPdf?: string,
+    rulingPdf?: string,
+    custodyNoticePdf?: string,
+    appealRuling?: string[],
   ): Promise<boolean> {
-    return this.fetchPoliceCaseApi(`${this.xRoadPath}/UpdateRVCase/${caseId}`, {
-      method: 'PUT',
-      headers: {
-        accept: '*/*',
-        'Content-Type': 'application/json',
-        'X-Road-Client': this.config.clientId,
-        'X-API-KEY': this.config.policeApiKey,
-      },
-      agent: this.agent,
-      body: JSON.stringify({
-        rvMal_ID: caseId,
-        caseNumber: policeCaseNumber,
-        ssn:
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0].replace('-', '')
-            : '',
-        type: caseType,
-        courtVerdict: caseState,
-        courtVerdictString: caseConclusion,
-        courtDocument: Base64.btoa(courtRecordPdf),
-      }),
-    } as RequestInit)
+    return this.fetchPoliceCaseApi(
+      `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
+      {
+        method: 'PUT',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          rvMal_ID: caseId,
+          caseNumber: policeCaseNumber,
+          ssn: defendantNationalId,
+          type: caseType,
+          courtVerdict: caseState,
+          expiringDate: validToDate?.toISOString(),
+          courtVerdictString: caseConclusion,
+          courtDocuments: [
+            ...(requestPdf
+              ? [{ type: 'RVKR', courtDocument: Base64.btoa(requestPdf) }]
+              : []),
+            ...(courtRecordPdf
+              ? [{ type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) }]
+              : []),
+            ...(rulingPdf
+              ? [{ type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) }]
+              : []),
+            ...(custodyNoticePdf
+              ? [
+                  {
+                    type: 'RVVI',
+                    courtDocument: Base64.btoa(custodyNoticePdf),
+                  },
+                ]
+              : []),
+            ...(appealRuling?.map((ruling) => ({
+              type: 'RVUL',
+              courtDocument: Base64.btoa(ruling),
+            })) ?? []),
+          ],
+        }),
+      } as RequestInit,
+    )
       .then(async (res) => {
         if (res.ok) {
           return true

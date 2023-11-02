@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client'
+import isEqual from 'lodash/isEqual'
 import {
   Box,
   Button,
@@ -11,7 +12,7 @@ import {
   Inline,
   LoadingDots,
   NavigationItem,
-  Option,
+  StringOption as Option,
   Select,
   Text,
 } from '@island.is/island-ui/core'
@@ -20,6 +21,7 @@ import {
   getThemeConfig,
   OrganizationWrapper,
   Webreader,
+  FilterTag,
 } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -31,11 +33,7 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetPublishedMaterialArgs,
 } from '@island.is/web/graphql/schema'
-import {
-  linkResolver,
-  useFeatureFlag,
-  useNamespace,
-} from '@island.is/web/hooks'
+import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
@@ -43,7 +41,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Screen } from '../../../types'
 import {
@@ -52,15 +50,13 @@ import {
   GET_ORGANIZATION_QUERY,
 } from '../../queries'
 import { GET_PUBLISHED_MATERIAL_QUERY } from '../../queries/PublishedMaterial'
-import FilterTag from './components/FilterTag/FilterTag'
 import { PublishedMaterialItem } from './components/PublishedMaterialItem'
 import {
   getFilterCategories,
-  getFilterTags,
+  extractFilterTags,
   getGenericTagGroupHierarchy,
   getInitialParameters,
 } from './utils'
-import { ValueType } from 'react-select'
 import * as styles from './PublishedMaterial.css'
 
 const ASSETS_PER_PAGE = 20
@@ -77,13 +73,11 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   genericTagFilters,
   namespace,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const router = useRouter()
   const { width } = useWindowSize()
   const [searchValue, setSearchValue] = useState('')
+  const filterValuesHaveBeenInitialized = useRef(false)
+  const initialFilterParametersValueHasBeenSet = useRef(false)
 
   const n = useNamespace(namespace)
 
@@ -116,15 +110,16 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     ]
   }, [])
 
-  const [selectedOrderOption, setSelectedOrderOption] = useState<
-    ValueType<Option>
-  >(orderByOptions?.[0])
+  const [selectedOrderOption, setSelectedOrderOption] = useState<Option>(
+    orderByOptions?.[0],
+  )
 
-  useContentfulId(organizationPage.id)
+  useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
   const { activeLocale } = useI18n()
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -140,7 +135,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 
   const organizationSlug =
-    organizationPage.organization?.slug ?? (router.query.slug as string) ?? ''
+    organizationPage?.organization?.slug ?? (router.query.slug as string) ?? ''
 
   // The page number is 1-based meaning that page 1 is the first page
   const [page, setPage] = useState(1)
@@ -177,6 +172,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
 
   useEffect(() => {
     if (data?.getPublishedMaterial)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       setPublishedMaterial(data.getPublishedMaterial)
   }, [data?.getPublishedMaterial])
 
@@ -186,7 +183,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   }))
 
   useEffect(() => {
-    setParameters(getInitialParameters(initialFilterCategories))
+    if (!initialFilterParametersValueHasBeenSet.current) {
+      setParameters(getInitialParameters(initialFilterCategories))
+    }
   }, [initialFilterCategories])
 
   const loadMore = () => {
@@ -235,6 +234,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           input: {
             lang: activeLocale,
             organizationSlug,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             tags: selectedCategories,
             page: 1,
             searchString: searchValue,
@@ -245,6 +246,72 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         },
       })
       setIsTyping(false)
+
+      const updatedQueryParams = { ...router.query }
+
+      // Update search input state and query params
+      if (!searchValue) {
+        if (filterValuesHaveBeenInitialized.current) {
+          delete updatedQueryParams['q']
+        } else if (updatedQueryParams['q']) {
+          setSearchValue(updatedQueryParams['q'] as string)
+        }
+      } else {
+        updatedQueryParams['q'] = searchValue
+      }
+
+      // Update order dropdown state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.order) {
+          const newOrder = orderByOptions.find(
+            (o) => o.value === updatedQueryParams.order,
+          )
+          if (newOrder) setSelectedOrderOption(newOrder)
+        }
+      } else {
+        if (
+          !(
+            selectedOrderOption?.value === orderByOptions[0].value &&
+            !updatedQueryParams.order
+          )
+        ) {
+          updatedQueryParams.order = selectedOrderOption.value as string
+        }
+      }
+
+      // Update filter categories state and query params
+      if (!filterValuesHaveBeenInitialized.current) {
+        if (updatedQueryParams.filters) {
+          try {
+            const updatedFilters = JSON.parse(
+              updatedQueryParams.filters as string,
+            )
+            setParameters(updatedFilters)
+            initialFilterParametersValueHasBeenSet.current = true
+          } catch (_) {
+            delete updatedQueryParams.filters
+          }
+        }
+      } else {
+        if (Object.values(parameters).every((value) => !value?.length)) {
+          delete updatedQueryParams.filters
+        } else {
+          updatedQueryParams.filters = JSON.stringify(parameters)
+        }
+      }
+
+      filterValuesHaveBeenInitialized.current = true
+
+      if (!isEqual(router.query, updatedQueryParams)) {
+        router.replace(
+          {
+            pathname: router.pathname,
+            query: updatedQueryParams,
+          },
+          undefined,
+          { scroll: false, shallow: true },
+        )
+      }
     },
     DEBOUNCE_TIME_IN_MS,
     [parameters, activeLocale, searchValue, selectedOrderOption],
@@ -258,11 +325,13 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
     (publishedMaterial?.total ?? page * ASSETS_PER_PAGE) -
     page * ASSETS_PER_PAGE
 
-  const selectedFilters = getFilterTags(filterCategories)
+  const selectedFilters = extractFilterTags(filterCategories)
 
   return (
     <OrganizationWrapper
       pageTitle={pageTitle}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
       showReadSpeaker={false}
       breadcrumbItems={[
@@ -271,8 +340,9 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           href: linkResolver('homepage').href,
         },
         {
-          title: organizationPage.title,
-          href: linkResolver('organizationpage', [organizationPage.slug]).href,
+          title: organizationPage?.title ?? '',
+          href: linkResolver('organizationpage', [organizationPage?.slug ?? ''])
+            .href,
         },
       ]}
       navigationData={{
@@ -284,17 +354,15 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
         <GridColumn span="12/12">
           <GridRow>
             <GridColumn span={['12/12', '12/12', '6/12', '6/12', '8/12']}>
-              <Text
-                variant="h1"
-                as="h1"
-                marginBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}
-                marginTop={1}
-              >
+              <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
                 {pageTitle}
               </Text>
-              {isWebReaderEnabledForOrganizationPages && (
-                <Webreader readId={null} readClass="rs_read" />
-              )}
+              <Webreader
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                readId={null}
+                readClass="rs_read"
+              />
             </GridColumn>
           </GridRow>
           <GridRow>
@@ -357,8 +425,10 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
                 size="xs"
                 options={orderByOptions}
                 value={selectedOrderOption}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 onChange={(option) => {
-                  setSelectedOrderOption(option)
+                  setSelectedOrderOption(option as Option)
                 }}
               />
             </Box>
@@ -400,6 +470,8 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
           {(publishedMaterial?.items ?? []).map((item, index) => {
             return (
               <GridRow
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 key={`${item.id}-${index}`}
                 marginTop={2}
                 marginBottom={2}
@@ -421,7 +493,7 @@ const PublishedMaterial: Screen<PublishedMaterialProps> = ({
   )
 }
 
-PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
+PublishedMaterial.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getOrganizationPage },
@@ -475,7 +547,10 @@ PublishedMaterial.getInitialProps = async ({ apolloClient, locale, query }) => {
       (getOrganization ?? getOrganizationPage?.organization)
         ?.publishedMaterialSearchFilterGenericTags ?? [],
     namespace,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganization ?? getOrganizationPage?.organization,
+    ),
   }
 }
 

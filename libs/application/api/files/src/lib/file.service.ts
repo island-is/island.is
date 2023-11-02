@@ -135,6 +135,7 @@ export class FileService {
 
   private async createFile(application: Application, pdfType: PdfTypes) {
     switch (pdfType) {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE_V2:
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         return await generateResidenceChangePdf(application as CRCApplication)
       }
@@ -172,6 +173,7 @@ export class FileService {
     pdfType: PdfTypes,
   ) => {
     switch (pdfType) {
+      case PdfTypes.CHILDREN_RESIDENCE_CHANGE_V2:
       case PdfTypes.CHILDREN_RESIDENCE_CHANGE: {
         const { answers, externalData, state } = application as CRCApplication
         const { nationalRegistry } = externalData

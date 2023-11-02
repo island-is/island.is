@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 import { IEventSlice } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
@@ -20,10 +21,10 @@ export class EventSlice {
   @Field()
   date!: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link!: Link | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   backgroundImage!: Image | null
 }
 

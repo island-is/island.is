@@ -1,71 +1,67 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 
 import {
-  Box,
-  Text,
   Accordion,
   AccordionItem,
   AlertMessage,
+  Box,
+  Text,
 } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  NotificationType,
   CaseState,
   CaseTransition,
-  completedCaseStates,
+  NotificationType,
 } from '@island.is/judicial-system/types'
-import { formatDate, capitalize } from '@island.is/judicial-system/formatters'
-import {
-  FormFooter,
-  Modal,
-  InfoCard,
-  PageLayout,
-  PdfButton,
-  FormContentContainer,
-  CaseFileList,
-  ProsecutorCaseInfo,
-  AccordionListItem,
-  CaseResubmitModal,
-  FormContext,
-  UserContext,
-} from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   core,
+  errors,
   laws,
   rcOverview as m,
   requestCourtDate,
   restrictionsV2,
   titles,
-  errors,
 } from '@island.is/judicial-system-web/messages'
-import CommentsAccordionItem from '@island.is/judicial-system-web/src/components/AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFileList,
+  CaseResubmitModal,
+  CommentsAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  Modal,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  ProsecutorCaseInfo,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
-import type { CaseLegalProvisions } from '@island.is/judicial-system/types'
-import * as constants from '@island.is/judicial-system/consts'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as styles from './Overview.css'
-import { CopyLinkForDefenderButton } from '../../components'
 
-export const Overview: React.FC = () => {
+export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
   const [modalText, setModalText] = useState('')
-  const {
-    workingCase,
-    setWorkingCase,
-    isLoadingWorkingCase,
-    caseNotFound,
-  } = useContext(FormContext)
+  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const router = useRouter()
   const {
     transitionCase,
+    isTransitioningCase,
     sendNotification,
     isSendingNotification,
     sendNotificationError,
@@ -112,6 +108,9 @@ export const Overview: React.FC = () => {
     setModal('caseSubmittedModal')
   }
 
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -124,7 +123,7 @@ export const Overview: React.FC = () => {
       <FormContentContainer>
         {workingCase.state === CaseState.RECEIVED && (
           <Box
-            marginBottom={workingCase.seenByDefender ? 3 : 5}
+            marginBottom={workingCase.openedByDefender ? 3 : 5}
             data-testid="rc-overview-info-panel"
           >
             <AlertMessage
@@ -134,15 +133,15 @@ export const Overview: React.FC = () => {
             />
           </Box>
         )}
-        {workingCase.seenByDefender && (
+        {workingCase.openedByDefender && (
           <Box marginBottom={5}>
             <AlertMessage
-              title={formatMessage(m.seenByDefenderAlert.title)}
-              message={formatMessage(m.seenByDefenderAlert.text, {
-                when: formatDate(workingCase.seenByDefender, 'PPPp'),
+              title={formatMessage(m.openedByDefenderAlert.title)}
+              message={formatMessage(m.openedByDefenderAlert.text, {
+                when: formatDate(workingCase.openedByDefender, 'PPPp'),
               })}
               type="info"
-              testid="alertMessageSeenByDefender"
+              testid="alertMessageOpenedByDefender"
             />
           </Box>
         )}
@@ -286,7 +285,7 @@ export const Overview: React.FC = () => {
             <AccordionItem
               labelVariant="h3"
               id="id_1"
-              label="Lagaákvæði sem brot varða við"
+              label={formatMessage(lawsBrokenAccordion.heading)}
             >
               <Text whiteSpace="breakSpaces">{workingCase.lawsBroken}</Text>
             </AccordionItem>
@@ -349,19 +348,11 @@ export const Overview: React.FC = () => {
             </AccordionItem>
             <AccordionItem
               id="id_6"
-              label={`Rannsóknargögn ${`(${
-                workingCase.caseFiles ? workingCase.caseFiles.length : 0
-              })`}`}
+              label={`Rannsóknargögn ${`(${caseFiles.length})`}`}
               labelVariant="h3"
             >
               <Box marginY={3}>
-                <CaseFileList
-                  caseId={workingCase.id}
-                  files={workingCase.caseFiles ?? []}
-                  isCaseCompleted={completedCaseStates.includes(
-                    workingCase.state,
-                  )}
-                />
+                <CaseFileList caseId={workingCase.id} files={caseFiles} />
               </Box>
             </AccordionItem>
             {(workingCase.comments ||
@@ -384,26 +375,13 @@ export const Overview: React.FC = () => {
             title={formatMessage(core.pdfButtonRequest)}
             pdfType="request"
           />
-          {workingCase.defenderNationalId && (
-            <Box marginTop={3}>
-              <CopyLinkForDefenderButton
-                caseId={workingCase.id}
-                type={workingCase.type}
-                disabled={
-                  workingCase.state !== CaseState.RECEIVED ||
-                  !workingCase.courtDate
-                }
-              >
-                {formatMessage(m.sections.copyLinkForDefenderButton)}
-              </CopyLinkForDefenderButton>
-            </Box>
-          )}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.RESTRICTION_CASE_CASE_FILES_ROUTE}/${workingCase.id}`}
+          nextIsDisabled={workingCase.state === CaseState.NEW}
           nextButtonText={
             workingCase.state === CaseState.NEW ||
             workingCase.state === CaseState.DRAFT
@@ -411,7 +389,8 @@ export const Overview: React.FC = () => {
               : 'Endursenda kröfu á héraðsdóm'
           }
           nextIsLoading={
-            workingCase.state !== CaseState.RECEIVED && isSendingNotification
+            workingCase.state !== CaseState.RECEIVED &&
+            (isTransitioningCase || isSendingNotification)
           }
           onNextButtonClick={
             workingCase.state === CaseState.RECEIVED
@@ -428,7 +407,7 @@ export const Overview: React.FC = () => {
             workingCase={workingCase}
             isLoading={isSendingNotification}
             onClose={() => setModal('noModal')}
-            onContinue={(explaination) => handleNextButtonClick(explaination)}
+            onContinue={(explanation) => handleNextButtonClick(explanation)}
           />
         )}
       </AnimatePresence>

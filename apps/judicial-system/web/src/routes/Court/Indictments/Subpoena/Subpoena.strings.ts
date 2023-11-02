@@ -7,12 +7,6 @@ export const subpoena = defineMessages({
     description:
       'Notaður sem titill á síðu á Fyrirkall skrefi í dómaraflæði í ákærum.',
   },
-  selectSubpoenaTypeHeading: {
-    id: 'judicial.system.core:subpoena.select_subpoena_type_heading',
-    defaultMessage: 'Tegund fyrirkalls',
-    description:
-      'Notaður sem titill fyrir Tegund fyrirkalls hluta á Fyrirkalls skjá í dómaraflæði í ákærum.',
-  },
   courtArrangementsHeading: {
     id: 'judicial.system.core:subpoena.court_arrangements_heading',
     defaultMessage: 'Staður og stund þingfestingar',

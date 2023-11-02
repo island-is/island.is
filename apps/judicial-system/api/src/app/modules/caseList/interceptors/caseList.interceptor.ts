@@ -2,11 +2,13 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common'
+
+import { getAppealedDate } from '@island.is/judicial-system/types'
 
 import { CaseListEntry } from '../models/caseList.model'
 
@@ -24,6 +26,10 @@ export class CaseListInterceptor implements NestInterceptor {
             isValidToDateInThePast: theCase.validToDate
               ? Date.now() > new Date(theCase.validToDate).getTime()
               : theCase.isValidToDateInThePast,
+            appealedDate: getAppealedDate(
+              theCase.prosecutorPostponedAppealDate,
+              theCase.accusedPostponedAppealDate,
+            ),
           }
         })
       }),

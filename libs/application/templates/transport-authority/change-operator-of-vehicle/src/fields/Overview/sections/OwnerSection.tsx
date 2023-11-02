@@ -10,10 +10,9 @@ import { ReviewGroup } from '@island.is/application/ui-components'
 import { formatPhoneNumber } from '../../../utils'
 import kennitala from 'kennitala'
 
-export const OwnerSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  reviewerNationalId = '',
-}) => {
+export const OwnerSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ application, reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
   const isOwner =

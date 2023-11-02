@@ -1,25 +1,26 @@
+import { setLineCap } from 'pdf-lib'
 import PDFDocument from 'pdfkit'
-import streamBuffers from 'stream-buffers'
 
 import { FormatMessage } from '@island.is/cms-translations'
+
 import {
   capitalize,
   formatDate,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 
-import { Case } from '../modules/case'
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
+import { Case } from '../modules/case'
 import {
   addEmptyLines,
   addGiganticHeading,
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
+  addNormalText,
   setTitle,
 } from './pdfHelpers'
-import { setLineCap } from 'pdf-lib'
 
 // Credit: https://stackoverflow.com/a/41358305
 function roman(num: number) {
@@ -65,7 +66,9 @@ export const createIndictment = async (
     bufferPages: true,
   })
 
-  const stream = doc.pipe(new streamBuffers.WritableStreamBuffer())
+  const sinc: Buffer[] = []
+
+  doc.on('data', (chunk) => sinc.push(chunk))
 
   const title = formatMessage(indictment.title)
   const heading = formatMessage(indictment.heading)
@@ -74,7 +77,7 @@ export const createIndictment = async (
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
-  setLineCap(4)
+  setLineCap(2)
   addNormalPlusText(doc, theCase.indictmentIntroduction || '')
 
   const hasManyCounts =
@@ -93,13 +96,13 @@ export const createIndictment = async (
     }
     addEmptyLines(doc)
     addNormalPlusJustifiedText(doc, count.legalArguments || '')
-    addNormalPlusText(doc, `M: ${count.policeCaseNumber || ''}`)
+    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
   })
 
   addEmptyLines(doc, 2)
   addNormalPlusJustifiedText(doc, theCase.demands || '')
   addEmptyLines(doc, 2)
-  addNormalPlusText(
+  addNormalPlusCenteredText(
     doc,
     formatMessage(
       indictment.signature,
@@ -115,9 +118,7 @@ export const createIndictment = async (
 
   doc.end()
 
-  return new Promise<Buffer>(function (resolve) {
-    stream.on('finish', () => {
-      resolve(stream.getContents() as Buffer)
-    })
-  })
+  return new Promise<Buffer>((resolve) =>
+    doc.on('end', () => resolve(Buffer.concat(sinc))),
+  )
 }

@@ -1,0 +1,5 @@
+mutation DeleteIndictmentCount($input: DeleteIndictmentCountInput!) {
+  deleteIndictmentCount(input: $input) {
+    deleted
+  }
+}

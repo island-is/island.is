@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
 
 import { ClientType } from '../../../types'
+import { AdminPatchClientDto } from './admin-patch-client.dto'
 
 type CreateClientType = Extract<
   ClientType,
@@ -14,7 +15,7 @@ const CreateClientType = {
   [ClientType.web]: ClientType.web,
 }
 
-export class AdminCreateClientDto {
+export class AdminCreateClientDto extends AdminPatchClientDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({

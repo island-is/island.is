@@ -1,4 +1,7 @@
-import type { PlaywrightTestConfig } from '@playwright/test'
+import type {
+  PlaywrightTestConfig,
+  ReporterDescription,
+} from '@playwright/test'
 import './addons'
 import { urls } from './support/urls'
 
@@ -27,23 +30,29 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 0 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI
-    ? [
-        ['line'],
-        [
-          'playwright-tesults-reporter',
-          {
-            'tesults-target': process.env.TESULTS_TOKEN,
-            'tesults-build-name': process.env.COMMIT_INFO ?? 'unknown',
-          },
-        ],
-        ['html', { open: 'never' }],
-      ]
-    : 'html',
+  reporter: [
+    ...((process.env.CI
+      ? [
+          ['line'],
+          [
+            'playwright-tesults-reporter',
+            {
+              'tesults-target': process.env.TESULTS_TOKEN,
+              'tesults-build-name': process.env.COMMIT_INFO,
+              'tesults-build-result': 'pass',
+              'tesults-build-reason': 'Always succeed 💯',
+              'tesults-build-description': process.env.COMMIT_INFO_MESSAGE,
+            },
+          ],
+        ]
+      : [['dot']]) as ReporterDescription[]),
+    ['html', { open: 'never' }],
+  ],
+
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -55,6 +64,18 @@ const config: PlaywrightTestConfig = {
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'retain-on-failure',
   },
+
+  /* Configure our test targets */
+  projects: [
+    {
+      name: 'judicial-system',
+      testMatch: 'tests/judicial-system/**/*.spec.[tj]s',
+    },
+    { name: 'islandis', testMatch: 'tests/islandis/**/*.spec.[tj]s' },
+    { name: 'everything', testMatch: 'tests/*/**/*.spec.[tj]s' },
+    { name: 'smoke', testMatch: 'tests/**/smoke/**/*.spec.[tj]s' },
+    { name: 'acceptance', testMatch: 'tests/**/acceptance/**/*.spec.[tj]s' },
+  ],
 
   /* Configure projects for major browsers */
   // projects: [

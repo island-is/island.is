@@ -10,6 +10,7 @@ import {
   buildSubmitField,
   buildTextField,
   buildSelectField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -39,7 +40,7 @@ export const HealthInsuranceForm: Form = buildForm({
     buildSection({
       id: 'applicantInfoSection',
       title: m.applicantInfoSection,
-      children: [applicantInformationMultiField],
+      children: [applicantInformationMultiField()],
     }),
     buildSection({
       id: 'statusAndChildrenSection',
@@ -175,17 +176,22 @@ export const HealthInsuranceForm: Form = buildForm({
               backgroundColor: 'blue',
               required: true,
             }),
-            buildCustomField({
+            buildAlertMessageField({
               id: 'waitingPeriodInfo',
-              title: '',
-              component: 'FormerCountryErrorMessage',
+              title: m.waitingPeriodTitle,
+              message: m.waitingPeriodDescription,
+              alertType: 'error',
               condition: (answers: FormValue) => {
-                const formerCountry = (answers as {
-                  formerInsurance: { country: string }
-                })?.formerInsurance?.country
-                const citizenship = (answers as {
-                  citizenship: string
-                })?.citizenship
+                const formerCountry = (
+                  answers as {
+                    formerInsurance: { country: string }
+                  }
+                )?.formerInsurance?.country
+                const citizenship = (
+                  answers as {
+                    citizenship: string
+                  }
+                )?.citizenship
                 return (
                   !!formerCountry &&
                   requireWaitingPeriod(formerCountry, citizenship)
@@ -201,9 +207,11 @@ export const HealthInsuranceForm: Form = buildForm({
               uploadDescription: m.fileUploadDescription,
               uploadButtonLabel: m.fileUploadButton,
               condition: (answers: FormValue) => {
-                const formerCountry = (answers as {
-                  formerInsurance: { country: string }
-                })?.formerInsurance?.country
+                const formerCountry = (
+                  answers as {
+                    formerInsurance: { country: string }
+                  }
+                )?.formerInsurance?.country
                 return requireConfirmationOfResidency(formerCountry)
               },
             }),
@@ -217,12 +225,16 @@ export const HealthInsuranceForm: Form = buildForm({
               description: m.formerInsuranceEntitlement,
               tooltip: m.formerInsuranceEntitlementTooltip,
               condition: (answers: FormValue) => {
-                const formerCountry = (answers as {
-                  formerInsurance: { country: string }
-                })?.formerInsurance?.country
-                const citizenship = (answers as {
-                  citizenship: string
-                })?.citizenship
+                const formerCountry = (
+                  answers as {
+                    formerInsurance: { country: string }
+                  }
+                )?.formerInsurance?.country
+                const citizenship = (
+                  answers as {
+                    citizenship: string
+                  }
+                )?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -236,12 +248,16 @@ export const HealthInsuranceForm: Form = buildForm({
                 { label: m.yesOptionLabel, value: YES },
               ],
               condition: (answers: FormValue) => {
-                const formerCountry = (answers as {
-                  formerInsurance: { country: string }
-                })?.formerInsurance?.country
-                const citizenship = (answers as {
-                  citizenship: string
-                }).citizenship
+                const formerCountry = (
+                  answers as {
+                    formerInsurance: { country: string }
+                  }
+                )?.formerInsurance?.country
+                const citizenship = (
+                  answers as {
+                    citizenship: string
+                  }
+                ).citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),
@@ -253,12 +269,16 @@ export const HealthInsuranceForm: Form = buildForm({
               rows: 4,
               backgroundColor: 'blue',
               condition: (answers: FormValue) => {
-                const formerCountry = (answers as {
-                  formerInsurance: { country: string }
-                })?.formerInsurance?.country
-                const citizenship = (answers as {
-                  citizenship: string
-                })?.citizenship
+                const formerCountry = (
+                  answers as {
+                    formerInsurance: { country: string }
+                  }
+                )?.formerInsurance?.country
+                const citizenship = (
+                  answers as {
+                    citizenship: string
+                  }
+                )?.citizenship
                 return !requireWaitingPeriod(formerCountry, citizenship)
               },
             }),

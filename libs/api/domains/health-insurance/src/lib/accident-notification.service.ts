@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { DocumentApi } from '@island.is/clients/health-insurance-v2'
+import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import {
   HealthInsuranceAccidentNotificationAttachmentTypes as AttachmentTypes,
   HealthInsuranceAccidentNotificationConfirmationTypes as ConfirmationTypes,
@@ -64,9 +64,10 @@ export class AccidentNotificationService {
     ihiDocumentID: number,
   ): Promise<AccidentNotificationStatus | null> {
     this.logger.log('starting call to get accident', ihiDocumentID)
-    const accidentStatus = await this.accidentNotificationApi.documentGetAccidentStatus(
-      { ihiDocumentID: ihiDocumentID },
-    )
+    const accidentStatus =
+      await this.accidentNotificationApi.documentGetAccidentStatus({
+        ihiDocumentID: ihiDocumentID,
+      })
     if (!accidentStatus) return null
     return {
       numberIHI: accidentStatus.numberIHI,

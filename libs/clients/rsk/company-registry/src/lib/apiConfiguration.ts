@@ -3,15 +3,15 @@ import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 
 import { Configuration } from './gen/fetch'
 import { CompanyRegistryConfig } from './company-registry.config'
-import { caching } from 'cache-manager'
-import redisStore from 'cache-manager-ioredis'
-import { createRedisCluster } from '@island.is/cache'
+import { createRedisCacheManager } from '@island.is/cache'
 
 const registryEndpoint = /\d{10}$/
 
 export const ApiConfiguration = {
   provide: 'CompanyRegistryClientApiConfiguration',
-  useFactory: (
+  // Necessary because of cache-manager.
+  // eslint-disable-next-line local-rules/no-async-module-init
+  useFactory: async (
     config: ConfigType<typeof CompanyRegistryConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
   ) => {
@@ -19,15 +19,12 @@ export const ApiConfiguration = {
       config.redis.nodes.length === 0
         ? undefined
         : {
-            cacheManager: caching({
-              store: redisStore,
+            cacheManager: await createRedisCacheManager({
+              name: 'clients-company-registry',
+              nodes: config.redis.nodes,
+              ssl: config.redis.ssl,
+              noPrefix: true,
               ttl: 0,
-              redisInstance: createRedisCluster({
-                name: 'clients-company-registry',
-                nodes: config.redis.nodes,
-                ssl: config.redis.ssl,
-                noPrefix: true,
-              }),
             }),
             overrideCacheControl: (request: Request) => {
               // Only cache company lookups. Not search.
@@ -40,6 +37,7 @@ export const ApiConfiguration = {
     return new Configuration({
       fetchApi: createEnhancedFetch({
         name: 'clients-rsk-company-info',
+        organizationSlug: 'skatturinn',
         logErrorResponseBody: true,
         cache,
       }),

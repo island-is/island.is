@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import {
   ArrowLink,
   Box,
@@ -35,7 +35,7 @@ import {
 } from '@island.is/web/components'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { SliceType } from '@island.is/island-ui/contentful'
-import { useFeatureFlag, useNamespace } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   GetApiCatalogueInput,
   QueryGetApiCatalogueArgs,
@@ -71,22 +71,25 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   filterContent,
   navigationLinks,
 }) => {
-  const { value: isWebReaderEnabledForOrganizationPages } = useFeatureFlag(
-    'isWebReaderEnabledForOrganizationPages',
-    false,
-  )
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
   const Router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const sn = useNamespace(staticContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const fn = useNamespace(filterContent)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const nn = useNamespace(navigationLinks)
   const { linkResolver } = useLinkResolver()
-  useContentfulId(organizationPage.id, subpage.id)
+  useContentfulId(organizationPage?.id, subpage?.id)
 
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
@@ -96,7 +99,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       return
     }
 
-    const nextCursor = data?.getApiCatalogue?.pageInfo.nextCursor
+    const nextCursor = data?.getApiCatalogue?.pageInfo?.nextCursor
     const param = { ...parameters, cursor: nextCursor }
     fetchMore({
       variables: { input: param },
@@ -210,8 +213,9 @@ const ApiCatalogue: Screen<HomestayProps> = ({
       ],
     },
   ]
-
-  const navList: NavigationItem[] = organizationPage.menuLinks.map(
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
       href: primaryLink?.url,
@@ -229,9 +233,13 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   return (
     <>
       <OrganizationWrapper
-        pageTitle={subpage.title}
+        pageTitle={subpage?.title ?? ''}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         organizationPage={organizationPage}
-        pageFeaturedImage={subpage.featuredImage}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        pageFeaturedImage={subpage?.featuredImage}
         showReadSpeaker={false}
         breadcrumbItems={[
           {
@@ -239,9 +247,10 @@ const ApiCatalogue: Screen<HomestayProps> = ({
             href: linkResolver('homepage').href,
           },
           {
-            title: organizationPage.title,
-            href: linkResolver('organizationpage', [organizationPage.slug])
-              .href,
+            title: organizationPage?.title ?? '',
+            href: linkResolver('organizationpage', [
+              organizationPage?.slug ?? '',
+            ]).href,
           },
         ]}
         navigationData={{
@@ -250,17 +259,22 @@ const ApiCatalogue: Screen<HomestayProps> = ({
         }}
         showSecondaryMenu={false}
       >
-        <Box paddingBottom={isWebReaderEnabledForOrganizationPages ? 0 : 4}>
+        <Box paddingBottom={0}>
           <Text variant="h1" as="h2">
-            {subpage.title}
+            {subpage?.title}
           </Text>
-          {isWebReaderEnabledForOrganizationPages && (
-            <Webreader readId={null} readClass="rs_read" />
-          )}
+          <Webreader
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            readId={null}
+            readClass="rs_read"
+          />
         </Box>
-        {webRichText(subpage.description as SliceType[], {
+        {webRichText(subpage?.description as SliceType[], {
           renderNode: {
-            [INLINES.HYPERLINK]: (node, children) => (
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            [INLINES.HYPERLINK]: (node, children: ReactNode) => (
               <ArrowLink href={node.data.uri}>{children}</ArrowLink>
             ),
           },
@@ -290,6 +304,8 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                   })
                 }
                 inputPlaceholder={fn('search')}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 inputValue={parameters.query}
                 onInputChange={(value) =>
                   setParameters({ ...parameters, query: value })
@@ -307,10 +323,12 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                     [categoryId]: [],
                   })
                 }
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 categories={filterCategories}
               />
             </Box>
-            {(error || data?.getApiCatalogue?.services.length < 1) && (
+            {(error || (data?.getApiCatalogue?.services?.length ?? 0) < 1) && (
               <GridContainer>
                 {error ? (
                   <Text>{sn('errorHeading')}</Text>
@@ -321,10 +339,12 @@ const ApiCatalogue: Screen<HomestayProps> = ({
                 )}
               </GridContainer>
             )}
-            {data?.getApiCatalogue?.services.length > 0 && (
+            {(data?.getApiCatalogue?.services.length || 0) > 0 && (
               <GridContainer>
                 <ServiceList
                   baseUrl={linkResolver('apicataloguepage').href + '/'}
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   services={data?.getApiCatalogue?.services}
                   tagDisplayNames={filterContent}
                 />
@@ -344,7 +364,7 @@ const ApiCatalogue: Screen<HomestayProps> = ({
   )
 }
 
-ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
+ApiCatalogue.getProps = async ({ apolloClient, locale }) => {
   const organizationSlug =
     locale === 'en' ? 'digital-iceland' : 'stafraent-island'
 
@@ -388,7 +408,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -399,7 +423,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -410,7 +438,11 @@ ApiCatalogue.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((res) => JSON.parse(res.data.getNamespace.fields)),
+      .then((res) =>
+        res.data.getNamespace?.fields
+          ? JSON.parse(res.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   if (!getOrganizationSubpage) {

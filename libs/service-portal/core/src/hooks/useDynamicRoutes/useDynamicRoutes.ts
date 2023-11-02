@@ -4,8 +4,6 @@ import { useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { ServicePortalPath } from '../../lib/navigation/paths'
 import uniq from 'lodash/uniq'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
 import { PortalNavigationItem, useNavigation } from '@island.is/portals/core'
 
 export const GET_TAPS_QUERY = gql`
@@ -34,30 +32,6 @@ export const GET_DRIVING_LICENSE_BOOK_QUERY = gql`
  */
 export const useDynamicRoutes = () => {
   const [activeDynamicRoutes, setActiveDynamicRoutes] = useState<string[]>([])
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [
-    drivingLessonsFlagEnabled,
-    setDrivingLessonsFlagEnabled,
-  ] = useState<boolean>(false)
-  const [
-    educationGraduationFlagEnabled,
-    setEducationGraduationFlagEnabled,
-  ] = useState<boolean>(false)
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.servicePortalDrivingLessonsBookModule,
-        false,
-      )
-      const eduFfEnabled = await featureFlagClient.getValue(
-        Features.servicePortalEducationGraduation,
-        false,
-      )
-      setDrivingLessonsFlagEnabled(ffEnabled as boolean)
-      setEducationGraduationFlagEnabled(eduFfEnabled as boolean)
-    }
-    isFlagEnabled()
-  }, [])
 
   const { data, loading } = useQuery<Query>(GET_TAPS_QUERY)
 
@@ -92,18 +66,8 @@ export const useDynamicRoutes = () => {
      * Tabs control for driving lessons.
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
-    if (drivingLessonsFlagEnabled && licenseBookData?.book?.id) {
-      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
-    }
-
-    /**
-     * service-portal/education
-     * Tabs control for education graduation (brautskráning)
-     */
-
-    if (educationGraduationFlagEnabled) {
-      dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduation)
-      dynamicPathArray.push(ServicePortalPath.EducationHaskoliGraduationDetail)
+    if (licenseBookData?.book?.id) {
+      dynamicPathArray.push(ServicePortalPath.EducationDrivingLessons)
     }
 
     // Combine routes, no duplicates.
@@ -116,5 +80,6 @@ export const useDynamicRoutes = () => {
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
   const navigation = useNavigation(nav, activeDynamicRoutes)
+
   return navigation
 }

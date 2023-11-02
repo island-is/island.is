@@ -3,14 +3,9 @@ import { themeUtils } from '@island.is/island-ui/theme'
 
 export const headerBg = style({
   zIndex: -1,
-  ...themeUtils.responsiveStyle({
-    xs: {
-      height: 280,
-    },
-    md: {
-      height: 385 - 130,
-    },
-  }),
+  height: 385,
+  marginTop: -130,
+  paddingTop: 130,
 })
 
 export const iconCircle = style({
@@ -66,6 +61,14 @@ export const navigation = style({
       paddingLeft: 24,
       paddingRight: 24,
       paddingTop: 32,
+    },
+  }),
+})
+
+export const title = style({
+  ...themeUtils.responsiveStyle({
+    xl: {
+      marginLeft: -185,
     },
   }),
 })

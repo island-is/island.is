@@ -19,7 +19,9 @@ interface HeaderProps {
   organizationPage: OrganizationPage
 }
 
-const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
+const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+  organizationPage,
+}) => {
   const { linkResolver } = useLinkResolver()
 
   const imageProvided = !!organizationPage.defaultHeaderImage?.url
@@ -43,7 +45,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                 >
                   <img
                     className={styles.logo}
-                    src={organizationPage.organization.logo.url}
+                    src={organizationPage.organization?.logo?.url}
                     alt=""
                   />
                 </Box>
@@ -56,6 +58,8 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
         <div
           className={styles.textContainer}
           style={{
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             background: getBackgroundStyle(organizationPage),
           }}
         >
@@ -75,7 +79,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
                   >
                     <img
                       className={styles.logo}
-                      src={organizationPage.organization.logo.url}
+                      src={organizationPage.organization?.logo?.url}
                       alt=""
                     />
                   </Box>
@@ -95,7 +99,7 @@ const DefaultHeader: React.FC<HeaderProps> = ({ organizationPage }) => {
         {imageProvided && (
           <img
             className={styles.headerImage}
-            src={organizationPage.defaultHeaderImage.url}
+            src={organizationPage.defaultHeaderImage?.url}
             alt="header"
           ></img>
         )}

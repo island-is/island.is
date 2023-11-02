@@ -7,6 +7,8 @@ import {
   Input,
   toast,
   Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -18,11 +20,11 @@ import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
-import { useNavigate } from 'react-router-dom'
 
-const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
+const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
 
   const listId = (application.externalData?.createEndorsementList.data as any)
     .id
@@ -66,14 +68,21 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.petitionSigned)}
           </Text>
-
-          <Box marginY={5} display="flex" justifyContent="center">
+          <Box
+            paddingTop={[5, 10]}
+            paddingBottom={10}
+            display="flex"
+            justifyContent="center"
+            height="full"
+          >
             <Illustration />
           </Box>
           <Box position="absolute" bottom={0} right={0}>
             <Button
               icon="arrowForward"
-              onClick={() => navigate('/../minarsidur/min-gogn/listar')}
+              onClick={() =>
+                window.open('/minarsidur/min-gogn/listar', '_blank')
+              }
             >
               {formatMessage(m.backtoSP)}
             </Button>
@@ -90,7 +99,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{petitionList?.description}</Text>
               </Box>
 
-              <Box display={'flex'}>
+              <Box display={['block', 'flex']}>
                 <Box width="half">
                   <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
                   {petitionList && petitionList.closedDate && (
@@ -99,33 +108,42 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     </Text>
                   )}
                 </Box>
-                <Box width="half">
+                <Box width="half" marginTop={[2, 0]}>
                   <Text variant="h4">{formatMessage(m.listOwner)}</Text>
                   <Text>{petitionList.ownerName}</Text>
                 </Box>
               </Box>
 
-              <Box marginTop={4}>
-                <Box width="half" marginBottom={2}>
-                  <Input
-                    label={formatMessage(m.name)}
-                    name={formatMessage(m.name)}
-                    value={userData?.nationalRegistryUser?.fullName}
-                    readOnly
-                  />
-                </Box>
-                <CheckboxController
-                  id="showName"
-                  large={false}
-                  onSelect={() => setShowName(!showName)}
-                  options={[
-                    {
-                      value: YES,
-                      label: formatMessage(m.hideNameLabel),
-                    },
-                  ]}
-                />
-              </Box>
+              <GridRow>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Box marginTop={[0, 4]}>
+                    <Box marginBottom={2}>
+                      <Input
+                        label={formatMessage(m.name)}
+                        name={formatMessage(m.name)}
+                        value={userData?.nationalRegistryUser?.fullName}
+                        readOnly
+                      />
+                    </Box>
+                    <Box marginTop={[0, 6]}>
+                      <CheckboxController
+                        id="showName"
+                        large={false}
+                        onSelect={() => setShowName(!showName)}
+                        options={[
+                          {
+                            value: YES,
+                            label: formatMessage(m.hideNameLabel),
+                          },
+                        ]}
+                      />
+                      <Text variant="eyebrow">
+                        {formatMessage(m.hideNameText)}
+                      </Text>
+                    </Box>
+                  </Box>
+                </GridColumn>
+              </GridRow>
 
               <Box marginTop={5}>
                 <CheckboxController

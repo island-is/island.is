@@ -40,6 +40,7 @@ import {
   mapAlcoholLicence,
   cleanPropertyNumber,
   mapTemporaryEventLicence,
+  mapMasterLicence,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -47,8 +48,8 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
-  TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
+  VedbondTegundAndlags,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -69,6 +70,7 @@ export class SyslumennService {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
@@ -103,11 +105,11 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     const homestays = year
-      ? await api.virkarHeimagistingarGet({
+      ? await api.virkarHeimagistingarGet2({
           audkenni: id,
-          ar: year ? JSON.stringify(year) : null,
+          ar: JSON.stringify(year),
         })
-      : await api.virkarHeimagistingarGetAll({
+      : await api.virkarHeimagistingarGet({
           audkenni: id,
         })
 
@@ -326,7 +328,11 @@ export class SyslumennService {
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
-    return await this.getAsset(realEstateId, AssetType.RealEstate, mapAssetName)
+    return await this.getAsset(
+      realEstateId.toUpperCase(),
+      AssetType.RealEstate,
+      mapAssetName,
+    )
   }
 
   async getVehicleType(vehicleId: string): Promise<Array<AssetName>> {
@@ -342,7 +348,7 @@ export class SyslumennService {
       skilabod: {
         audkenni: id,
         fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
     const contentBase64 = res.vedbandayfirlitPDFSkra || ''
@@ -392,7 +398,7 @@ export class SyslumennService {
       skilabod: {
         audkenni: id,
         fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: TegundAndlags.NUMBER_0, // 0 = Real estate
+        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
       },
     })
     if (res.length > 0) {
@@ -468,5 +474,15 @@ export class SyslumennService {
       },
     })
     return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
+  async getMasterLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.meistaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapMasterLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
 }

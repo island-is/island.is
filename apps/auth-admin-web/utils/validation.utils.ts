@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-escape */
 class ValidationUtils {
-  public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+  public static emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]+$/
 
   public static identifierPattern = /^[a-zA-Z0-9_.-]*$/
 
@@ -146,4 +146,5 @@ class ValidationUtils {
     return regex.test(input)
   }
 }
+
 export default ValidationUtils

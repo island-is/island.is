@@ -100,6 +100,12 @@ export const core = defineMessages({
     defaultMessage: 'varnaraðil{suffix}',
     description: 'Notað fyrir orðið varnaraðili í öllum flæðum.',
   },
+  sessionArrangementsNonePresent: {
+    id: 'judicial.system.core:session_arrangements_none_present',
+    defaultMessage:
+      'Með heimild í 1. mgr. 104. gr. laga nr. 88/2008 voru hvorki varnaraðili né sóknaraðili kvaddir til þinghaldsins.',
+    description: 'Notað fyrir þingbók undir mættir eru.',
+  },
   indictmentDefendant: {
     id: 'judicial.system.core:indictment_defendant_v2',
     defaultMessage:
@@ -281,5 +287,20 @@ export const core = defineMessages({
     id: 'judicial.system.core:upload_box_description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
     description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
+  appealCaseNumberHeading: {
+    id: 'judicial.system.core:appeal_case_number_heading',
+    defaultMessage: 'Málsnúmer Landsréttar',
+    description: 'Titill á málsnúmeri á skráningarsíðu Landsréttar',
+  },
+  appealAssistantHeading: {
+    id: 'judicial.system.core:appeal_assistant_heading',
+    defaultMessage: 'Aðstoðarmaður',
+    description: 'Titill á aðstoðrarmanni á skráningarsíðu Landsréttar',
+  },
+  appealJudgesHeading: {
+    id: 'judicial.system.core:appeal_judges_heading',
+    defaultMessage: 'Dómarar',
+    description: 'Titill dómara á skráningarsíðu Landsréttar',
   },
 })

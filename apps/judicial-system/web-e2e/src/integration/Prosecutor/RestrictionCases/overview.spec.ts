@@ -6,10 +6,7 @@ import {
   CaseType,
   Defendant,
 } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_ROUTE,
-  RESTRICTION_CASE_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { RESTRICTION_CASE_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 
 import {
   makeCourt,
@@ -26,7 +23,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const defenderPhoneNumber = faker.phone.phoneNumber()
   const caseDataAddition: Case = {
     ...caseData,
-    seenByDefender: '2020-09-16T19:50:08.033Z',
+    openedByDefender: '2020-09-16T19:50:08.033Z',
     defendants: [
       {
         name: 'Donald Duck',
@@ -63,18 +60,6 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       it('should have a info panel about how to resend a case', () => {
         cy.getByTestid('rc-overview-info-panel').should('exist')
       })
-
-      it('should have a button that copies link to case for defender', () => {
-        cy.getByTestid('copyLinkToCase').click()
-        cy.window()
-          .its('navigator.clipboard')
-          .invoke('readText')
-          .then((data) => data)
-          .should(
-            'equal',
-            `${window.location.origin}${DEFENDER_ROUTE}/${caseData.id}`,
-          )
-      })
     })
 
     describe('Cases with status DRAFT', () => {
@@ -83,7 +68,7 @@ describe(`${RESTRICTION_CASE_OVERVIEW_ROUTE}/:id`, () => {
       })
 
       it('should let the user know if the assigned defender has viewed the case', () => {
-        cy.getByTestid('alertMessageSeenByDefender').should(
+        cy.getByTestid('alertMessageOpenedByDefender').should(
           'not.match',
           ':empty',
         )

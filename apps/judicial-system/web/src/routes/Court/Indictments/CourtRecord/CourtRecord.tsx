@@ -1,13 +1,19 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
+import {
+  AlertMessage,
+  Box,
+  InputFileUpload,
+  toast,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseFileCategory,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
+import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -19,67 +25,32 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { FormContext } from '@island.is/judicial-system-web/src/components/FormProvider/FormProvider'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  AlertMessage,
-  Box,
-  InputFileUpload,
-  toast,
-  UploadFile,
-} from '@island.is/island-ui/core'
-import {
-  TUploadFile,
   useCase,
   useS3Upload,
+  useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseFileCategory,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
-import {
-  mapCaseFileToUploadFile,
-  stepValidationsType,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { courtRecord as m } from './CourtRecord.strings'
 
-const CourtRecord: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+const CourtRecord: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const [displayFiles, setDisplayFiles] = useState<TUploadFile[]>([])
 
   const { formatMessage } = useIntl()
   const { transitionCase } = useCase()
 
   const {
-    handleChange,
-    handleRemove,
-    handleRetry,
-    generateSingleFileUpdate,
-  } = useS3Upload(workingCase.id)
-
-  useEffect(() => {
-    if (workingCase.caseFiles) {
-      setDisplayFiles(workingCase.caseFiles.map(mapCaseFileToUploadFile))
-    }
-  }, [workingCase.caseFiles])
-
-  const allFilesUploaded = useMemo(() => {
-    return displayFiles.every(
-      (file) => file.status === 'done' || file.status === 'error',
-    )
-  }, [displayFiles])
-
-  const handleUIUpdate = useCallback(
-    (displayFile: TUploadFile, newId?: string) => {
-      setDisplayFiles((previous) =>
-        generateSingleFileUpdate(previous, displayFile, newId),
-      )
-    },
-    [generateSingleFileUpdate],
+    uploadFiles,
+    allFilesUploaded,
+    addUploadFiles,
+    updateUploadFile,
+    removeUploadFile,
+  } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
   )
 
   const handleNavigationTo = useCallback(
@@ -97,12 +68,6 @@ const CourtRecord: React.FC = () => {
     },
     [transitionCase, workingCase, formatMessage],
   )
-
-  const removeFileCB = useCallback((file: UploadFile) => {
-    setDisplayFiles((previous) =>
-      previous.filter((caseFile) => caseFile.id !== file.id),
-    )
-  }, [])
 
   return (
     <PageLayout
@@ -125,7 +90,7 @@ const CourtRecord: React.FC = () => {
         <Box component="section" marginBottom={5}>
           <SectionHeading title={formatMessage(m.courtRecordTitle)} />
           <InputFileUpload
-            fileList={displayFiles.filter(
+            fileList={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.COURT_RECORD,
             )}
             accept="application/pdf"
@@ -135,21 +100,19 @@ const CourtRecord: React.FC = () => {
             })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) => {
-              handleChange(
-                files,
-                CaseFileCategory.COURT_RECORD,
-                setDisplayFiles,
-                handleUIUpdate,
+              handleUpload(
+                addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                updateUploadFile,
               )
             }}
-            onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRemove={(file) => handleRemove(file, removeUploadFile)}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading title={formatMessage(m.rulingTitle)} />
           <InputFileUpload
-            fileList={displayFiles.filter(
+            fileList={uploadFiles.filter(
               (file) => file.category === CaseFileCategory.RULING,
             )}
             accept="application/pdf"
@@ -159,22 +122,20 @@ const CourtRecord: React.FC = () => {
             })}
             buttonLabel={formatMessage(m.uploadButtonText)}
             onChange={(files) =>
-              handleChange(
-                files,
-                CaseFileCategory.RULING,
-                setDisplayFiles,
-                handleUIUpdate,
+              handleUpload(
+                addUploadFiles(files, CaseFileCategory.RULING),
+                updateUploadFile,
               )
             }
-            onRemove={(file) => handleRemove(file, removeFileCB)}
-            onRetry={(file) => handleRetry(file, handleUIUpdate)}
+            onRemove={(file) => handleRemove(file, removeUploadFile)}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.INDICTMENTS_PROSECUTOR_AND_DEFENDER_ROUTE}/${workingCase.id}`}
+          previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE)
           }

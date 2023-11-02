@@ -1,0 +1,78 @@
+{
+  "home": {
+    "seo": {
+      "title": "Öll mál",
+      "description": "Samráðsgátt greiðir leið hagsmunaaðila, almennings og félagasamtaka að opinberum samráðsferlum sem mögulegt er að taka þátt í.",
+      "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
+    }
+  },
+  "heroBanner": {
+    "statisticBox": {
+      "label": "Til umsagnar",
+      "text": "mál"
+    },
+    "arrowLink": {
+      "internalLink": {
+        "text": "Lesa meira",
+        "href": "/um"
+      },
+      "externalLink": {
+        "text": "Skoða þingmálaskrá ríkisstjórnar",
+        "href": "https://www.stjornarradid.is/rikisstjorn/thingmalaskra/"
+      }
+    },
+    "introText": "Markmið Samráðsgáttarinnar er að auka gagnsæi og möguleika almennings og hagsmunaaðila á þátttöku í stefnumótun, reglusetningu og ákvarðanatöku opinberra aðila. Hér er á einum stað hægt að finna öll mál ráðuneyta sem birt hafa verið til samráðs við almenning. Öllum er frjálst að senda inn umsögn eða ábendingu."
+  },
+  "mobileFilter": {
+    "categories": {
+      "sortingLabel": "Röðun",
+      "statusLabel": "Staða máls",
+      "typeLabel": "Tegund máls"
+    },
+    "filter": {
+      "labelClearAll": "Hreinsa allar síur",
+      "labelClear": "Hreinsa síu",
+      "labelOpen": "Opna síu",
+      "labelClose": "Loka síu",
+      "labelTitle": "Sía",
+      "labelResult": "Sýna niðurstöður",
+      "inputPlaceholder": "Sía eftir leitarorði",
+      "multiChoiceLabelClear": "Hreinsa val",
+      "datePickerFromLabel": "Frá",
+      "datePickerToLabel": "Til",
+      "datePickerPlaceholder": "Veldu dagsetningu",
+      "clearDateButtonLabel": "Hreinsa val"
+    }
+  },
+  "filter": {
+    "filter": {
+      "sortBoxTitle": "Röðun",
+      "statusBoxTitle": "Staða máls",
+      "typeBoxTitle": "Tegund máls",
+      "datePickerFromLabel": "Frá",
+      "datePickerToLabel": "Til",
+      "datePickerPlaceholder": "Veldu dagsetningu",
+      "clearButtonLabel": "Hreinsa allar síur"
+    },
+    "filterBox": {
+      "clearCategoryButtonLabel": "Hreinsa síu",
+      "buttonOpen": "Opna",
+      "buttonClose": "Loka"
+    }
+  },
+  "searchAndFilter": {
+    "policyAreaSelect": {
+      "label": "Málefnasvið",
+      "noOptions": "Ekkert málefnasvið",
+      "placeholder": "Veldu málefnasvið"
+    },
+    "institutionSelect": {
+      "label": "Stofnun",
+      "noOptions": "Enginn stofnun",
+      "placeholder": "Veldu stofnun"
+    }
+  },
+  "card": {
+    "eyebrowText": "Umsagnir"
+  }
+}

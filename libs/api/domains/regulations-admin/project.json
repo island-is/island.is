@@ -1,22 +1,23 @@
 {
-  "root": "libs/api/domains/regulations-admin",
+  "name": "api-domains-regulations-admin",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/regulations-admin/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/api/domains/regulations-admin/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/regulations-admin/jest.config.js",
+        "jestConfig": "libs/api/domains/regulations-admin/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/api/domains/regulations-admin"]
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/regulations-admin"]
     }
   },
   "tags": ["lib:api", "scope:api"]

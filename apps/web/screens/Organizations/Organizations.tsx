@@ -23,8 +23,8 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetOrganizationTagsArgs,
-  QueryGetOrganizationArgs,
-} from '@island.is/api/schema'
+  QueryGetOrganizationsArgs,
+} from '@island.is/web/graphql/schema'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
@@ -72,10 +72,13 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   const { width } = useWindowSize()
   useEffect(() => {
     if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
+      setIsMobile(true)
+      return
     }
     setIsMobile(false)
   }, [width])
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const [page, setPage] = useState<number>(1)
   const { linkResolver } = useLinkResolver()
@@ -94,10 +97,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
     [],
   )
 
-  const [
-    selectedTitleSortOption,
-    setSelectedTitleSortOption,
-  ] = useState<TitleSortOption>(titleSortOptions[0])
+  const [selectedTitleSortOption, setSelectedTitleSortOption] =
+    useState<TitleSortOption>(titleSortOptions[0])
 
   const organizationsItems = useMemo(() => {
     const items = [...organizations.items]
@@ -110,7 +111,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   }, [organizations, selectedTitleSortOption])
 
   const tagsItems = useMemo(
-    () => tags.items.filter((x) => x.title).sort(sortAlpha('title')),
+    () => tags?.items.filter((x) => x.title).sort(sortAlpha('title')),
     [tags],
   )
 
@@ -119,6 +120,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       id: 'raduneyti',
       label: n('ministries', 'Ráðuneyti'),
       selected: filter.raduneyti,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       filters: tagsItems.map((f) => ({
         value: f.title,
         label: f.title,
@@ -192,7 +195,11 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   ]}
                   renderLink={(link) => {
                     return (
-                      <NextLink {...linkResolver('homepage')} passHref>
+                      <NextLink
+                        {...linkResolver('homepage')}
+                        passHref
+                        legacyBehavior
+                      >
                         {link}
                       </NextLink>
                     )
@@ -226,6 +233,8 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                   label={n('orderBy', 'Raða eftir')}
                   name="sort-option-select"
                   size="xs"
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   onChange={(option) => {
                     setSelectedTitleSortOption(option as TitleSortOption)
                   }}
@@ -251,8 +260,12 @@ const OrganizationPage: Screen<OrganizationProps> = ({
                     paddingBottom={verticalSpacing}
                   >
                     <CategoryCard
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       href={getOrganizationLink(organization, activeLocale)}
                       key={index}
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                      // @ts-ignore make web strict
                       text={organization?.description}
                       heading={organization?.title}
                       hyphenate
@@ -303,7 +316,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   )
 }
 
-OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
+OrganizationPage.getProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { getOrganizations },
@@ -313,7 +326,7 @@ OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetOrganizationArgs>({
+    apolloClient.query<Query, QueryGetOrganizationsArgs>({
       query: GET_ORGANIZATIONS_QUERY,
       variables: {
         input: {
@@ -339,7 +352,11 @@ OrganizationPage.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((content) => JSON.parse(content.data.getNamespace.fields)),
+      .then((content) =>
+        content.data.getNamespace?.fields
+          ? JSON.parse(content.data.getNamespace.fields)
+          : {},
+      ),
   ])
 
   // we assume 404 if no Organization is found

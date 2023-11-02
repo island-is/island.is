@@ -3,6 +3,21 @@ import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
+  Accordion,
+  AccordionItem,
+  Box,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
+import {
   CaseFileList,
   CourtCaseInfo,
   Decision,
@@ -15,33 +30,17 @@ import {
   RulingInput,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  isAcceptingCaseDecision,
-  completedCaseStates,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  Accordion,
-  AccordionItem,
-  Box,
-  Input,
-  Text,
-  Tooltip,
-} from '@island.is/island-ui/core'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
 import { isRulingValidIC } from '@island.is/judicial-system-web/src/utils/validate'
-import * as constants from '@island.is/judicial-system/consts'
 
 import { icRuling as m } from './Ruling.strings'
 
@@ -113,6 +112,8 @@ const Ruling = () => {
     [workingCase.id],
   )
   const stepIsValid = isRulingValidIC(workingCase)
+  const caseFiles =
+    workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   return (
     <PageLayout
@@ -137,21 +138,18 @@ const Ruling = () => {
             <PoliceRequestAccordionItem workingCase={workingCase} />
             <AccordionItem
               id="caseFileList"
-              label={`Rannsóknargögn (${workingCase.caseFiles?.length ?? 0})`}
+              label={`Rannsóknargögn (${caseFiles.length})`}
               labelVariant="h3"
             >
               <CaseFileList
                 caseId={workingCase.id}
-                files={workingCase.caseFiles ?? []}
+                files={caseFiles}
                 canOpenFiles={
                   (workingCase.judge !== null &&
                     workingCase.judge?.id === user?.id) ||
                   (workingCase.registrar !== null &&
                     workingCase.registrar?.id === user?.id)
                 }
-                isCaseCompleted={completedCaseStates.includes(
-                  workingCase.state,
-                )}
               />
             </AccordionItem>
           </Accordion>

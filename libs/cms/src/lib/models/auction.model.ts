@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { IAuction } from '../generated/contentfulTypes'
 import { mapOrganization, Organization } from './organization.model'
@@ -21,10 +22,10 @@ export class Auction {
   @Field()
   type!: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   content?: Array<typeof SliceUnion>
 
-  @Field(() => Organization)
+  @CacheField(() => Organization)
   organization!: Organization | null
 }
 

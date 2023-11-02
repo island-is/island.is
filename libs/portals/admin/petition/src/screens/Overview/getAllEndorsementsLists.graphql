@@ -1,0 +1,22 @@
+query endorsementSystemFindEndorsementLists(
+  $input: PaginatedEndorsementListInput!
+) {
+  endorsementSystemFindEndorsementLists(input: $input) {
+    totalCount
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+    data {
+      id
+      title
+      description
+      closedDate
+      openedDate
+      adminLock
+      owner
+    }
+  }
+}

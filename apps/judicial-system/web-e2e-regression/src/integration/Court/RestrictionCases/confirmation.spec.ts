@@ -15,7 +15,7 @@ describe(RESTRICTION_CASE_CONFIRMATION_ROUTE, () => {
 
   before(() => {
     cy.intercept('POST', '**/api/graphql', (req) => {
-      if (req.body.query.includes('RulingSignatureConfirmationQuery')) {
+      if (req.body.query.includes('RulingSignatureConfirmation')) {
         req.alias = 'gqlRulingSignatureConfirmationQuery'
         req.reply({ fixture: 'rulingSignatureConfirmationResponse' })
       }

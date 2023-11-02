@@ -1,10 +1,10 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 
-import { CaseDecision } from '@island.is/judicial-system/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { CaseDecision } from '@island.is/judicial-system/types'
 import { caseDates } from '@island.is/judicial-system-web/messages'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
@@ -20,13 +20,13 @@ export interface Props {
   }
 }
 
-const CaseDates: React.FC<Props> = (props) => {
+const CaseDates: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase, button } = props
   const { formatMessage } = useIntl()
 
   const isTravelBan =
     workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN ||
-    workingCase.type === CaseType.TravelBan
+    workingCase.type === CaseType.TRAVEL_BAN
 
   return (
     <Box data-testid="caseDates">
@@ -34,7 +34,7 @@ const CaseDates: React.FC<Props> = (props) => {
         {workingCase.isValidToDateInThePast ? (
           <Text variant="h5">
             {formatMessage(caseDates.restrictionExpired, {
-              caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
+              caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
               date: `${formatDate(
                 workingCase.validToDate,
                 'PPP',
@@ -50,7 +50,9 @@ const CaseDates: React.FC<Props> = (props) => {
             <Box>
               <Text variant="h5">
                 {formatMessage(caseDates.restrictionValidTo, {
-                  caseType: isTravelBan ? CaseType.TravelBan : workingCase.type,
+                  caseType: isTravelBan
+                    ? CaseType.TRAVEL_BAN
+                    : workingCase.type,
                   date: `${formatDate(
                     workingCase.validToDate,
                     'PPP',

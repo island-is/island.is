@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class ClientSecretDto {
   @ApiProperty()
@@ -7,6 +7,6 @@ export class ClientSecretDto {
   @ApiProperty()
   clientId!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   decryptedValue?: string
 }

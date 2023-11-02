@@ -6,7 +6,10 @@ import React, {
   useEffect,
 } from 'react'
 import cn from 'classnames'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
+
+import { TestSupport } from '@island.is/island-ui/utils'
+import { Colors } from '@island.is/island-ui/theme'
 
 import { Box } from '../../Box/Box'
 import { Column } from '../../Column/Column'
@@ -19,7 +22,6 @@ import { TextVariants } from '../../Text/Text.css'
 import { AccordionContext } from '../Accordion'
 import { Icon } from '../../IconRC/Icon'
 import * as styles from './AccordionItem.css'
-import { Colors } from '@island.is/island-ui/theme'
 
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
 type ColorVariants = 'blue' | 'red'
@@ -82,7 +84,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     const { toggledId, setToggledId } = useContext(AccordionContext)
     const [expandedFallback, setExpandedFallback] = useState(false)
     let expanded = expandedProp ?? expandedFallback
-    const [height, setHeight] = useState(expanded ? 'auto' : 0)
+    const [height, setHeight] = useState<Height>(expanded ? 'auto' : 0)
 
     if (toggledId && toggledId !== id && expanded) {
       expanded = false
@@ -173,10 +175,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Column>
                 <Column width="content">
                   <span
-                    className={styles.plusIconWrap({
-                      iconVariant,
-                      color: plusColor,
-                    })}
+                    className={cn(
+                      styles.iconWrap,
+                      styles.plusIconWrap({
+                        iconVariant,
+                        color: plusColor,
+                      }),
+                    )}
                   >
                     <span
                       className={cn(styles.icon, styles.removeIcon, {
@@ -219,9 +224,9 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
 
 // ---------------------------------------------------------------------------
 
-export type AccordionCardProps = AccordionItemProps
+export type AccordionCardProps = AccordionItemProps & TestSupport
 
-export const AccordionCard = (props: AccordionCardProps) => {
+export const AccordionCard = ({ dataTestId, ...props }: AccordionCardProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -236,6 +241,7 @@ export const AccordionCard = (props: AccordionCardProps) => {
         [styles.focused]: isFocused,
       })}
       padding={[2, 2, 4]}
+      dataTestId={dataTestId}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
         {props.children}

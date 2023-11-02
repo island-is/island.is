@@ -1,12 +1,15 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   PASSPORT = 'Passport',
+  PASSPORT_ANNULMENT = 'PassportAnnulment',
+  DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
   PARENTAL_LEAVE = 'ParentalLeave',
   DOCUMENT_PROVIDER_ONBOARDING = 'DocumentProviderOnboarding',
   HEALTH_INSURANCE = 'HealthInsurance',
   CHILDREN_RESIDENCE_CHANGE = 'ChildrenResidenceChange',
+  CHILDREN_RESIDENCE_CHANGE_V2 = 'ChildrenResidenceChangeV2',
   DATA_PROTECTION_AUTHORITY_COMPLAINT = 'DataProtectionAuthorityComplaint',
   LOGIN_SERVICE = 'LoginService',
   INHERITANCE_REPORT = 'InheritanceReport',
@@ -43,6 +46,7 @@ export enum ApplicationTypes {
   TRANSFER_OF_VEHICLE_OWNERSHIP = 'TransferOfVehicleOwnership',
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
+  EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
 }
 
 export const ApplicationConfigurations = {
@@ -53,6 +57,14 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
     translation: 'pa.application',
+  },
+  [ApplicationTypes.PASSPORT_ANNULMENT]: {
+    slug: 'tilkynna-vegabref',
+    translation: 'paa.application',
+  },
+  [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
+    slug: 'aefingaakstur',
+    translation: 'dlp.application',
   },
   [ApplicationTypes.DRIVING_LICENSE]: {
     slug: 'okuskirteini',
@@ -76,6 +88,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
     slug: 'breytt-logheimili-barns',
+    translation: 'crc.application',
+  },
+  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
+    slug: 'breytt-logheimili-barns-v2',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
@@ -203,7 +219,7 @@ export const ApplicationConfigurations = {
     translation: 'ta.lpr.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_LICENSE_PLATE]: {
-    slug: 'panta-skraningarmerki',
+    slug: 'panta-numeraplotu',
     translation: 'ta.ovlp.application',
   },
   [ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE]: {
@@ -221,5 +237,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ALCOHOL_TAX_REDEMPTION]: {
     slug: 'endugreidsla-afengisutgjalda',
     translation: 'atr.application',
+  },
+  [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
+    slug: 'evropska-sjukratryggingakortid',
+    translation: 'ehic.application',
   },
 }

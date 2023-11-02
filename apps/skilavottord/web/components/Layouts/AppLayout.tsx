@@ -15,7 +15,9 @@ interface LayoutProps {
   children: ReactNode
 }
 
-export const AppLayout: FC<LayoutProps> = ({ children }) => {
+export const AppLayout: FC<React.PropsWithChildren<LayoutProps>> = ({
+  children,
+}) => {
   const [user, setUser] = useState<SkilavottordUser>()
   const [session] = useSession() as [AuthSession, boolean]
 

@@ -17,6 +17,7 @@ import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
 import * as uuid from 'uuidv4'
 import jwt from 'jsonwebtoken'
+import { coreHistoryMessages } from '@island.is/application/core'
 
 let app: INestApplication
 
@@ -186,12 +187,12 @@ describe('Application system API', () => {
       .get(`/users/${nationalId}/applications`)
       .expect(200)
 
-    expect(historyLog).toBe('Umsókn send inn')
-    expect(listAgain.body[0].actionCard.history).toHaveLength(3)
+    expect(historyLog).toBe(coreHistoryMessages.applicationSent.defaultMessage)
+    expect(listAgain.body[0].actionCard.history).toHaveLength(2)
   })
 
   // This template does not have readyForProduction: false
-  it.skip('should fail when POST-ing an application whose template is not ready for production, on production environment', async () => {
+  it.skip('should succeed when POST-ing an application that has an undefined readyforproduction flag, on production environment', async () => {
     const envBefore = environment.environment
     environment.environment = 'production'
 
@@ -1087,10 +1088,8 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
-    const {
-      token,
-      applicationId,
-    } = await mockExampleApplicationInAssignableState()
+    const { token, applicationId } =
+      await mockExampleApplicationInAssignableState()
 
     await server
       .put(`/applications/${applicationId}/submit`)

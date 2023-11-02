@@ -1,17 +1,24 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type {
+import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
-  CaseListEntry as TCaseListEntry,
   CaseState,
   CaseType,
 } from '@island.is/judicial-system/types'
+
 import { Defendant } from '../../defendant'
 import { User } from '../../user'
 
+registerEnumType(CaseDecision, { name: 'CaseDecision' })
+registerEnumType(CaseAppealDecision, {
+  name: 'CaseAppealDecision',
+})
+
 @ObjectType()
-export class CaseListEntry implements TCaseListEntry {
+export class CaseListEntry {
   @Field(() => ID)
   readonly id!: string
 
@@ -27,7 +34,7 @@ export class CaseListEntry implements TCaseListEntry {
   @Field(() => String)
   readonly state!: CaseState
 
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Field(() => [Defendant], { nullable: true })
@@ -36,7 +43,7 @@ export class CaseListEntry implements TCaseListEntry {
   @Field({ nullable: true })
   readonly courtCaseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseDecision, { nullable: true })
   readonly decision?: CaseDecision
 
   @Field({ nullable: true })
@@ -52,12 +59,15 @@ export class CaseListEntry implements TCaseListEntry {
   readonly rulingDate?: string
 
   @Field({ nullable: true })
+  readonly rulingSignatureDate?: string
+
+  @Field({ nullable: true })
   readonly courtEndTime?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseAppealDecision, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
   @Field({ nullable: true })
@@ -80,4 +90,16 @@ export class CaseListEntry implements TCaseListEntry {
 
   @Field({ nullable: true })
   readonly parentCaseId?: string
+
+  @Field(() => CaseAppealState, { nullable: true })
+  readonly appealState?: CaseAppealState
+
+  @Field(() => String, { nullable: true })
+  readonly appealedDate?: string
+
+  @Field(() => String, { nullable: true })
+  readonly appealCaseNumber?: string
+
+  @Field(() => CaseAppealRulingDecision, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

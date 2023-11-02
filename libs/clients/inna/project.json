@@ -1,0 +1,31 @@
+{
+  "name": "clients-inna",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/inna/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/clients/inna/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/inna"],
+      "options": {
+        "jestConfig": "libs/clients/inna/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "schemas/external-openapi-generator": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/inna/gen/fetch -i libs/clients/inna/src/clientConfig.json"
+        ]
+      }
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

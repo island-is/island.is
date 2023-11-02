@@ -1,7 +1,9 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import GraphQLJSON from 'graphql-type-json'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IForm } from '../generated/contentfulTypes'
 import { FormField, mapFormField } from './formField.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class Form {
@@ -14,7 +16,15 @@ export class Form {
   @Field()
   intro!: string
 
-  @Field(() => [FormField])
+  @CacheField(() => GraphQLJSON, { nullable: true })
+  defaultFieldNamespace?: {
+    nameLabel?: string
+    namePlaceholder?: string
+    emailLabel?: string
+    emailPlaceholder?: string
+  } | null
+
+  @CacheField(() => [FormField])
   fields?: Array<FormField>
 
   @Field()
@@ -26,7 +36,7 @@ export class Form {
   @Field()
   questionsHeadingText?: string
 
-  @Field(() => FormField, { nullable: true })
+  @CacheField(() => FormField, { nullable: true })
   recipientFormFieldDecider?: FormField
 
   @Field(() => [String], { nullable: true })
@@ -42,6 +52,8 @@ export const mapForm = ({ sys, fields }: IForm): SystemMetadata<Form> => {
     id: sys.id,
     title: fields.title ?? '',
     intro: fields.intro ?? '',
+    defaultFieldNamespace:
+      (fields.defaultFieldNamespace as Form['defaultFieldNamespace']) ?? {},
     fields: (fields.fields ?? []).map(mapFormField),
     successText: fields.successText ?? '',
     aboutYouHeadingText: fields.aboutYouHeadingText ?? '',

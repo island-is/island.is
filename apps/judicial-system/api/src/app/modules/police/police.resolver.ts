@@ -1,8 +1,9 @@
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   AuditedAction,
   AuditTrailService,
@@ -15,8 +16,10 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendApi } from '../../data-sources'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
+import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -41,6 +44,23 @@ export class PoliceResolver {
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
       backendApi.getPoliceCaseFiles(input.caseId),
+      input.caseId,
+    )
+  }
+
+  @Query(() => [PoliceCaseInfo], { nullable: true })
+  policeCaseInfo(
+    @Args('input', { type: () => PoliceCaseInfoQueryInput })
+    input: PoliceCaseInfoQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+  ): Promise<PoliceCaseInfo[]> {
+    this.logger.debug(`Getting all police case info for case ${input.caseId}`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_POLICE_CASE_INFO,
+      backendApi.getPoliceCaseInfo(input.caseId),
       input.caseId,
     )
   }

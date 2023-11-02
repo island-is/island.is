@@ -116,10 +116,14 @@ export const UserDropdown = ({
               <UserAvatar username={userName} />
             )}
             <Box marginLeft={1} marginRight={4}>
-              <Text variant="h4" as="h4">
+              <Text translate="no" variant="h4" as="h4">
                 {userName}
               </Text>
-              {isDelegation && <Text variant="small">{actorName}</Text>}
+              {isDelegation && (
+                <Text translate="no" variant="small">
+                  {actorName}
+                </Text>
+              )}
             </Box>
           </Box>
           {showDropdownLanguage && (
@@ -168,7 +172,7 @@ export const UserDropdown = ({
       hideOnEsc={true}
       modalLabel={formatMessage(userMessages.userButtonAria)}
       removeOnClose={true}
-      preventBodyScroll={true}
+      preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {
         if (visibility !== isVisible) {
           onClose()

@@ -15,7 +15,7 @@ export const preexistingComplaint = {
     description: {
       id: `ctao.application:general.preexistingComplaint.description`,
       defaultMessage:
-        'Hefur áður verið kvartað yfir þeim ákvörðunum eða öðru því sem lýst er hér að framan, t.d. með kæru eða öðru málskoti til annars stjórnvalds?',
+        'Hefur þú kvartað yfir þeim ákvörðunum eða öðru því sem lýst er hér að framan, t.d. með kæru eða öðru málskoti til annars stjórnvalds?',
       description:
         'Have there been previous complaints about the decisions or other things described above, e.g. with a complaint or other appeal to another authority?',
     },
@@ -29,9 +29,23 @@ export const preexistingComplaint = {
     description: {
       id: `ctao.application:alertMessage.preexistingComplaint.description`,
       defaultMessage:
-        'Ef skjóta má máli til æðra stjórnvalds er ekki unnt að kvarta til umboðsmanns fyrr en æðra stjórnvald hefur fellt úrskurð sinn í málinu.',
+        'Ef málinu var skotið til annars stjórnvalds, t.d. úrskurðarnefndar eða ráðuneytis, verður niðurstaða þess að liggja fyrir áður en umboðsmaður getur tekið kvörtun til meðferðar. Ef niðurstaða liggur fyrir er þess óskað að afrit af henni fylgi kvörtuninni.',
       description:
         'If a case can be referred to a higher authority, it is not possible to complain to the Ombudsman until a higher authority has given its ruling in the case.',
+    },
+  }),
+  alternativeAlertMessage: defineMessages({
+    title: {
+      id: `ctao.application:alternativeAlertMessage.preexistingComplaint.title`,
+      defaultMessage: 'Athugið',
+      description: 'Notice',
+    },
+    description: {
+      id: `ctao.application:alternativeAlertMessage.preexistingComplaint.description`,
+      defaultMessage:
+        'Til þess að umboðsmaður geti tekið kvörtun til meðferðar verða kæruleiðir innan stjórnsýslunnar að hafa verið nýttar og niðurstaða að liggja fyrir. Stjórnvöld leiðbeina oft um kæruleiðir í niðurlagi ákvarðana sinna.',
+      description:
+        'Prior to submitting this complaint to the Ombudsman, all other appeal options must be exhausted. Higher authorities specify the appeal process in their rulings.',
     },
   }),
 }

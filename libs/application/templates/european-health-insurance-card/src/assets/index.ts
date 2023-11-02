@@ -1,0 +1,1 @@
+export { Sjukra } from './Sjukra'

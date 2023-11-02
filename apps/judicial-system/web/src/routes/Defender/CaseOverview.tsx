@@ -2,122 +2,77 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import {
-  BlueBox,
-  CaseDates,
-  FormContentContainer,
-  FormContext,
-  InfoCard,
-  MarkdownWrapper,
-  PageLayout,
-  PdfButton,
-  RestrictionTags,
-  SignedDocument,
-  PageHeader,
-  Modal,
-} from '@island.is/judicial-system-web/src/components'
-import CaseResentExplanation from '@island.is/judicial-system-web/src/components/CaseResentExplanation/CaseResentExplanation'
-import { core, titles } from '@island.is/judicial-system-web/messages'
-import {
-  CaseAppealDecision,
-  CaseDecision,
-  CaseState,
-  CaseType,
-  completedCaseStates,
-  Feature,
-  isInvestigationCase,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  AlertMessage,
-  Box,
-  Divider,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
   formatDate,
 } from '@island.is/judicial-system/formatters'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  CaseState,
+  completedCaseStates,
+  isInvestigationCase,
+  isRestrictionCase,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
+import {
+  AlertBanner,
+  AppealCaseFilesOverview,
+  CaseDates,
+  CaseResentExplanation,
+  Conclusion,
+  FormContentContainer,
+  FormContext,
+  InfoCard,
+  MarkdownWrapper,
+  Modal,
+  OverviewHeader,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  RestrictionTags,
+  SignedDocument,
+} from '@island.is/judicial-system-web/src/components'
+import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import { defenderCaseOverview as m } from './CaseOverview.strings'
-import { AlertBanner } from '../../components/AlertBanner'
-import useAppealAlertBanner from '../../utils/hooks/useAppealAlertBanner'
+import { api } from '../../services'
+import { conclusion } from '../../components/Conclusion/Conclusion.strings'
+import { strings } from './CaseOverview.strings'
+import * as styles from './CaseOverview.css'
 
-type availableModals = 'NoModal' | 'ConfirmAppealAfterDeadline'
+type availableModals =
+  | 'NoModal'
+  | 'ConfirmAppealAfterDeadline'
+  | 'ConfirmStatementAfterDeadline'
 
-export const CaseOverview: React.FC = () => {
-  const { workingCase, isLoadingWorkingCase, caseNotFound } = useContext(
-    FormContext,
-  )
+export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
+    useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
-  const { title, description, child } = useAppealAlertBanner(workingCase, () =>
-    setModalVisible('ConfirmAppealAfterDeadline'),
+  const { title, description, child } = useAppealAlertBanner(
+    workingCase,
+    () => setModalVisible('ConfirmAppealAfterDeadline'),
+    () => setModalVisible('ConfirmStatementAfterDeadline'),
   )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const titleForCase = (theCase: Case) => {
-    if (theCase.state === CaseState.REJECTED) {
-      return isInvestigationCase(theCase.type)
-        ? formatMessage(m.investigationCaseRejectedTitle)
-        : formatMessage(m.restrictionCaseRejectedTitle)
-    }
-
-    if (theCase.state === CaseState.DISMISSED) {
-      return formatMessage(m.caseDismissedTitle)
-    }
-
-    if (theCase.state === CaseState.ACCEPTED) {
-      if (isInvestigationCase(theCase.type)) {
-        return formatMessage(m.investigationCaseAcceptedTitle)
-      }
-
-      const caseType =
-        theCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-          ? CaseType.TRAVEL_BAN
-          : theCase.type
-
-      if (theCase.isValidToDateInThePast) {
-        return formatMessage(m.restrictionCaseExpiredTitle, { caseType })
-      }
-
-      return formatMessage(m.restrictionCaseActiveTitle, {
-        caseType,
-      })
-    }
-
-    return isInvestigationCase(theCase.type)
-      ? ''
-      : formatMessage(m.restrictionCaseScheduledTitle, {
-          caseType: theCase.type,
-          isExtended: Boolean(theCase.parentCase),
-        })
-  }
-
   const shouldDisplayAlertBanner =
-    workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-    workingCase.hasBeenAppealed
+    completedCaseStates.includes(workingCase.state) &&
+    (workingCase.accusedAppealDecision === CaseAppealDecision.POSTPONE ||
+      workingCase.hasBeenAppealed)
 
   return (
     <>
-      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        shouldDisplayAlertBanner && (
-          <AlertBanner
-            variant="warning"
-            title={title}
-            description={description}
-          >
-            {child}
-          </AlertBanner>
-        )}
+      {shouldDisplayAlertBanner && (
+        <AlertBanner variant="warning" title={title} description={description}>
+          {child}
+        </AlertBanner>
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -136,21 +91,17 @@ export const CaseOverview: React.FC = () => {
           <Box marginBottom={5}>
             <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
               <Box>
-                <Box marginBottom={1} data-testid="caseTitle">
-                  <Text as="h1" variant="h1">
-                    {titleForCase(workingCase)}
-                  </Text>
-                </Box>
+                <OverviewHeader dataTestid="caseTitle" />
                 {completedCaseStates.includes(workingCase.state) && (
                   <Box>
                     <Text variant="h5">
-                      {formatMessage(m.rulingDate, {
-                        courtEndTime: `${formatDate(
-                          workingCase.courtEndTime,
+                      {formatMessage(strings.rulingDate, {
+                        rulingDate: `${formatDate(
+                          workingCase.rulingDate,
                           'PPP',
                         )} kl. ${formatDate(
-                          workingCase.courtEndTime,
-                          TIME_FORMAT,
+                          workingCase.rulingDate,
+                          constants.TIME_FORMAT,
                         )}`,
                       })}
                     </Text>
@@ -174,7 +125,7 @@ export const CaseOverview: React.FC = () => {
               <Box marginBottom={5}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(m.modifiedDatesHeading, {
+                  title={formatMessage(strings.modifiedDatesHeading, {
                     caseType: workingCase.type,
                   })}
                   message={
@@ -197,7 +148,9 @@ export const CaseOverview: React.FC = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -211,10 +164,14 @@ export const CaseOverview: React.FC = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -255,46 +212,76 @@ export const CaseOverview: React.FC = () => {
                   phoneNumber: workingCase.defenderPhoneNumber,
                 },
               ]}
+              courtOfAppealData={
+                workingCase.appealCaseNumber
+                  ? [
+                      {
+                        title: formatMessage(core.appealCaseNumberHeading),
+                        value: workingCase.appealCaseNumber,
+                      },
+                      {
+                        title: formatMessage(core.appealAssistantHeading),
+                        value: workingCase.appealAssistant?.name,
+                      },
+                      {
+                        title: formatMessage(core.appealJudgesHeading),
+                        value: (
+                          <>
+                            {sortByIcelandicAlphabet([
+                              workingCase.appealJudge1?.name || '',
+                              workingCase.appealJudge2?.name || '',
+                              workingCase.appealJudge3?.name || '',
+                            ]).map((judge, index) => (
+                              <Text key={index}>{judge}</Text>
+                            ))}
+                          </>
+                        ),
+                      },
+                    ]
+                  : undefined
+              }
             />
           </Box>
           {completedCaseStates.includes(workingCase.state) && (
             <Box marginBottom={6}>
-              <BlueBox>
-                <Box marginBottom={2} textAlign="center">
-                  <Text as="h3" variant="h3">
-                    {formatMessage(m.conclusionHeading)}
-                  </Text>
-                </Box>
-                <Box marginBottom={3}>
-                  <Box marginTop={1}>
-                    <Text variant="intro">{workingCase.conclusion}</Text>
-                  </Box>
-                </Box>
-                <Box marginBottom={1} textAlign="center">
-                  <Text variant="h4">{workingCase.judge?.name}</Text>
-                </Box>
-              </BlueBox>
+              <Conclusion
+                title={formatMessage(conclusion.title)}
+                conclusionText={workingCase.conclusion}
+                judgeName={workingCase.judge?.name}
+              />
             </Box>
           )}
-          <Box marginBottom={10}>
-            <Text as="h3" variant="h3" marginBottom={3}>
-              {formatMessage(m.documentHeading)}
-            </Text>
-            <Box marginBottom={2}>
-              <Stack space={2} dividers>
+          {workingCase.appealConclusion && (
+            <Box marginBottom={6}>
+              <Conclusion
+                title={formatMessage(conclusion.appealTitle)}
+                conclusionText={workingCase.appealConclusion}
+              />
+            </Box>
+          )}
+          <AppealCaseFilesOverview />
+
+          {(workingCase.requestSharedWithDefender ||
+            completedCaseStates.includes(workingCase.state)) && (
+            <Box marginBottom={10}>
+              <Text as="h3" variant="h3" marginBottom={3}>
+                {formatMessage(strings.documentHeading)}
+              </Text>
+              <Box>
                 <PdfButton
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
+                  pdfType={'request'}
                 />
+
                 {completedCaseStates.includes(workingCase.state) && (
                   <>
                     <PdfButton
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
+                      pdfType={'courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -307,36 +294,73 @@ export const CaseOverview: React.FC = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
+                      pdfType={'ruling'}
                     >
-                      {workingCase.rulingDate ? (
+                      {workingCase.rulingSignatureDate ? (
                         <SignedDocument
                           signatory={workingCase.judge?.name}
-                          signingDate={workingCase.rulingDate}
+                          signingDate={workingCase.rulingSignatureDate}
                         />
                       ) : (
-                        <Text>{formatMessage(m.unsignedRuling)}</Text>
+                        <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
+                    <Box marginTop={7}>
+                      <a
+                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                        download={`mal_${workingCase.courtCaseNumber}`}
+                        className={styles.downloadAllButton}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          icon="download"
+                          iconType="outline"
+                        >
+                          {formatMessage(strings.getAllDocuments)}
+                        </Button>
+                      </a>
+                    </Box>
                   </>
                 )}
-              </Stack>
+              </Box>
             </Box>
-            <Divider />
-          </Box>
+          )}
         </FormContentContainer>
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal
-            title={formatMessage(m.confirmAppealAfterDeadlineModalTitle)}
-            text={formatMessage(m.confirmAppealAfterDeadlineModalText)}
+            title={formatMessage(strings.confirmAppealAfterDeadlineModalTitle)}
+            text={formatMessage(strings.confirmAppealAfterDeadlineModalText)}
             primaryButtonText={formatMessage(
-              m.confirmAppealAfterDeadlineModalPrimaryButtonText,
+              strings.confirmAppealAfterDeadlineModalPrimaryButtonText,
             )}
             secondaryButtonText={formatMessage(
-              m.confirmAppealAfterDeadlineModalSecondaryButtonText,
+              strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
               router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+            }}
+            onSecondaryButtonClick={() => {
+              setModalVisible('NoModal')
+            }}
+          />
+        )}
+        {modalVisible === 'ConfirmStatementAfterDeadline' && (
+          <Modal
+            title={formatMessage(
+              strings.confirmStatementAfterDeadlineModalTitle,
+            )}
+            text={formatMessage(strings.confirmStatementAfterDeadlineModalText)}
+            primaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalPrimaryButtonText,
+            )}
+            secondaryButtonText={formatMessage(
+              strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
+            )}
+            onPrimaryButtonClick={() => {
+              router.push(
+                `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
+              )
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

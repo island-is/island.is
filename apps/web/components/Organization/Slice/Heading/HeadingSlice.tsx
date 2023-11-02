@@ -7,7 +7,9 @@ interface SliceProps {
   slice: HeadlingSliceSchema
 }
 
-export const HeadingSlice: React.FC<SliceProps> = ({ slice }) => {
+export const HeadingSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
+  slice,
+}) => {
   return (
     <section key={slice.id} id={slice.id}>
       <Box paddingTop={[8, 6, 6]} paddingBottom={[4, 5, 5]}>

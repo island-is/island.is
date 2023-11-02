@@ -28,7 +28,7 @@ export const messages = defineMessages({
     defaultMessage: 'Hver afsláttur nemur 40% af flugfargjaldi.',
   },
   discountTextSecond: {
-    id: 'sp.air-discount:discount-text',
+    id: 'sp.air-discount:discount-text-2',
     defaultMessage: 'Kóðinn virkjar afslátt í bókunarvél félagsins.',
   },
   attention: {
@@ -75,10 +75,6 @@ export const messages = defineMessages({
     id: 'sp.air-discount:flight',
     defaultMessage: 'Flugleið',
   },
-  date: {
-    id: 'sp.air-discount:date',
-    defaultMessage: 'Dagsetning',
-  },
   activeConnectionCodes: {
     id: 'sp.air-discount:active-connection-codes',
     defaultMessage: 'Virkir afsláttarkóðar fyrir áframhaldandi flug',
@@ -95,5 +91,9 @@ export const messages = defineMessages({
     id: 'sp.air-discount:no-rights-text',
     defaultMessage:
       'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og á eyjum eiga rétt á Loftbrú (sjá kort á loftbru.is).',
+  },
+  date: {
+    id: 'sp.air-discount:date',
+    defaultMessage: 'Dagsetning',
   },
 })

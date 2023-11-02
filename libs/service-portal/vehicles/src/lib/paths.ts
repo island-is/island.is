@@ -1,8 +1,0 @@
-export enum VehiclePaths {
-  AssetsVehicles = '/okutaeki',
-  AssetsMyVehicles = '/okutaeki/min-okutaeki',
-  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
-  AssetsVehiclesLookup = '/okutaeki/leit',
-  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
-  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
-}

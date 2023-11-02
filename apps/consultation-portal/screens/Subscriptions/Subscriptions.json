@@ -1,0 +1,107 @@
+{
+  "subscriptions": {
+    "postSubsMutationToasts": {
+      "success": "Áskrift skráð",
+      "failure": "Ekki tókst að skrá áskriftir"
+    },
+    "chosenSubscriptions": {
+      "buttonText": "Skrá í áskrift"
+    }
+  },
+  "userSubscriptions": {
+    "postSubsMutationToasts": {
+      "success": "Skráð úr áskrift",
+      "failure": "Ekki tókst að skrá úr áskrift"
+    },
+    "chosenSubscriptions": {
+      "buttonText": "Skrá úr áskrift"
+    }
+  },
+  "chosenSubscriptions": {
+    "eyebrowText": "Valin mál",
+    "cardTitle": "Öll mál",
+    "clearButton": "Hreinsa val"
+  },
+  "emailBox": {
+    "postEmailMutationToasts": {
+      "success": "Netfang hefur verið breytt í",
+      "failure": "Ekki tókst að breyta netfangi"
+    },
+    "loginActionCard": {
+      "heading": "Skrá áskrift",
+      "text": "Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.",
+      "buttonLabel": "Skrá mig inn"
+    },
+    "setEmailActionCard": {
+      "heading": "Skrá netfang",
+      "input": {
+        "label": "Netfang",
+        "placeholder": "nonni@island.is"
+      },
+      "buttonLabel": "Skrá netfang"
+    },
+    "verifiedActionCard": {
+      "text": "Núverandi skráð netfang",
+      "resetButtonLabel": "Breyta netfangi",
+      "mySubscriptionsButton": {
+        "label": "Sjá áskriftir",
+        "href": "/minaraskriftir"
+      }
+    },
+    "notVerifiedActionCard": {
+      "text": "Beðið er eftir staðfestingu fyrir netfangið",
+      "buttonLabel": "Breyta netfangi"
+    }
+  },
+  "subscriptionChoices": {
+    "newLabel": "Einungis ný mál",
+    "allLabel": "Ný mál og breytingar"
+  },
+  "subscriptionSkeleton": {
+    "breadcrumbs": [
+      {
+        "title": "Samráðsgátt",
+        "href": "/samradsgatt"
+      },
+      {
+        "title": "Áskriftir",
+        "href": "/samradsgatt/askriftir"
+      }
+    ],
+    "myBreadcrumbs": [
+      {
+        "title": "Mínar áskriftir",
+        "href": "/samradsgatt/minaraskriftir"
+      }
+    ],
+    "subscriptions": {
+      "title": "Áskriftir",
+      "url": "askriftir",
+      "description": "Samráðsgátt býður upp á vöktun á málum í samráði. Hægt er að vakta mál eftir stofnunum og málaflokkum ásamt því að geta vaktað stakt mál.",
+      "keywords": "vöktun, vakta, póstlisti, samráð, samráðsgátt",
+      "text": "Hér er hægt að skrá sig í áskrift að málum. Við fyrstu innskráningu þarf að skrá netfang og staðfesta. Að því loknu má skrá áskrift með því að haka við einn eða fleiri flokka (mál/stofnanir/málefnasvið), velja um tilkynningar um ný mál eða fleiri atriði og smella á „Skrá í áskrift“.  Kerfið er uppfært einu sinni á sólarhring."
+    },
+    "mySubscriptions": {
+      "title": "Mínar áskriftir",
+      "url": "minaraskriftir",
+      "description": "Mínar áskriftir að málum á Samráðsgátt",
+      "text": "Hér er hægt að halda utan um áskriftir og skrá sig úr áskriftum. Aðeins birtast virk mál. Kerfið er uppfært einu sinni á sólarhring."
+    },
+    "unsubscribeLink": {
+      "text": " Hægt er að afskrá sig hér",
+      "href": "/minaraskriftir"
+    },
+    "tabsLabel": "Veldu tegund áskrifta"
+  },
+  "subscriptionTable": {
+    "mySubscriptionNotFoundText": "Engar áskriftir fundust fyrir",
+    "subscriptionNotFoundText": "Engin gögn fundust fyrir",
+    "clearSearchText": "Prófaðu að fjarlægja úr leit til að sjá fleiri mál."
+  },
+  "subscriptionTableItem": {
+    "allCases": "Öll mál",
+    "caseHref": "/mal/",
+    "infoText": "Opna mál í nýjum glugga",
+    "linkText": "skoða"
+  }
+}

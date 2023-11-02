@@ -1,12 +1,11 @@
+import { CaseController } from '../../case.controller'
 import {
   assistantUpdateRule,
   judgeUpdateRule,
+  prosecutorRepresentativeUpdateRule,
   prosecutorUpdateRule,
   registrarUpdateRule,
-  representativeUpdateRule,
-  staffUpdateRule,
 } from '../../guards/rolesRules'
-import { CaseController } from '../../case.controller'
 
 describe('CaseController - Update rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,16 +15,12 @@ describe('CaseController - Update rules', () => {
     rules = Reflect.getMetadata('roles-rules', CaseController.prototype.update)
   })
 
-  it('should give permission to six roles', () => {
-    expect(rules).toHaveLength(6)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars, assistants and staff', () => {
+  it('should give permission to five roles', () => {
+    expect(rules).toHaveLength(5)
     expect(rules).toContain(prosecutorUpdateRule)
-    expect(rules).toContain(representativeUpdateRule)
+    expect(rules).toContain(prosecutorRepresentativeUpdateRule)
     expect(rules).toContain(judgeUpdateRule)
     expect(rules).toContain(registrarUpdateRule)
     expect(rules).toContain(assistantUpdateRule)
-    expect(rules).toContain(staffUpdateRule)
   })
 })

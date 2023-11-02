@@ -4,7 +4,8 @@ import type { SignatureConfirmationResponse as TSignatureConfirmationResponse } 
 
 @ObjectType()
 export class SignatureConfirmationResponse
-  implements TSignatureConfirmationResponse {
+  implements TSignatureConfirmationResponse
+{
   @Field()
   documentSigned!: boolean
 

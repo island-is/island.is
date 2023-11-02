@@ -1,3 +1,4 @@
+import { Cache as CacheManager } from 'cache-manager'
 import {
   Get,
   HttpCode,
@@ -13,8 +14,8 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
-  CACHE_MANAGER,
 } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import {
   ApiOkResponse,
   ApiBearerAuth,
@@ -76,11 +77,11 @@ export class PublicFlightController {
     flightLegs: FlightLeg[],
   ): Promise<string> {
     const flightLegCount = flightLegs.length
-
-    const connectionDiscountCode = this.discountService.filterConnectionDiscountCodes(
-      discount.connectionDiscountCodes,
-      discountCode,
-    )
+    const connectionDiscountCode =
+      this.discountService.filterConnectionDiscountCodes(
+        discount.connectionDiscountCodes,
+        discountCode,
+      )
 
     if (!connectionDiscountCode) {
       throw new ForbiddenException(
@@ -121,10 +122,11 @@ export class PublicFlightController {
     }
 
     // Validate the first chronological flightLeg of the connection flight
-    let isConnectingFlight = await this.flightService.isFlightLegConnectingFlight(
-      connectingId,
-      incomingLeg as FlightLeg, // must have date, destination and origin
-    )
+    let isConnectingFlight =
+      await this.flightService.isFlightLegConnectingFlight(
+        connectingId,
+        incomingLeg as FlightLeg, // must have date, destination and origin
+      )
 
     // If round-trip
     if (
@@ -202,7 +204,6 @@ export class PublicFlightController {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
-
     if (!discount) {
       throw new BadRequestException('Discount code is invalid')
     }
@@ -248,11 +249,10 @@ export class PublicFlightController {
           'This discount code is only intended for connecting flights',
         )
       }
-      const {
-        unused: flightLegsLeft,
-      } = await this.flightService.countThisYearsFlightLegsByNationalId(
-        discount.nationalId,
-      )
+      const { unused: flightLegsLeft } =
+        await this.flightService.countThisYearsFlightLegsByNationalId(
+          discount.nationalId,
+        )
       if (flightLegsLeft < flight.flightLegs.length) {
         throw new ForbiddenException('Flight leg quota is exceeded')
       }

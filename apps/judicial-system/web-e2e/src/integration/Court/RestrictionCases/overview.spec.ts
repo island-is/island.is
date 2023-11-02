@@ -44,7 +44,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
       defenderEmail,
       defenderPhoneNumber,
       sessionArrangements: SessionArrangements.ALL_PRESENT_SPOKESPERSON,
-      seenByDefender: '2020-09-16T19:50:08.033Z',
+      openedByDefender: '2020-09-16T19:50:08.033Z',
     }
 
     cy.stubAPIResponses()
@@ -53,7 +53,7 @@ describe(`${RESTRICTION_CASE_COURT_OVERVIEW_ROUTE}/:id`, () => {
   })
 
   it('should let the user know if the assigned defender has viewed the case', () => {
-    cy.getByTestid('alertMessageSeenByDefender').should('not.match', ':empty')
+    cy.getByTestid('alertMessageOpenedByDefender').should('not.match', ':empty')
   })
 
   it('should have an overview of the current case', () => {

@@ -8,6 +8,7 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
+  PCard = 'PCard',
 }
 
 /**
@@ -21,6 +22,7 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
+  PCard = 'sýslumenn',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -101,6 +103,8 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  //if any functionality comes attached to said data field, f.x. renewLicense
+  link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }
@@ -128,6 +132,11 @@ export type GenericLicenseUserdata = {
   pkpassStatus: GenericUserLicensePkPassStatus
 }
 
+export type GenericLicenseFetchResult = {
+  data: unknown
+  fetch: GenericLicenseFetch
+}
+
 // Bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
@@ -150,6 +159,7 @@ export type GenericLicenseCached = {
 export type LicenseLabelsObject = {
   [x: string]: string
 }
+
 export type GenericLicenseLabels = {
   labels?: LicenseLabelsObject
 }
@@ -193,6 +203,7 @@ export type PassTemplateIds = {
   adrLicense: string
   machineLicense: string
   disabilityLicense: string
+  drivingLicense: string
 }
 
 export type PkPassVerificationData = {
@@ -253,6 +264,18 @@ export interface GenericLicenseClient<LicenseType> {
     passTemplateId: string,
   ) => Promise<PkPassVerification | null>
 }
+
+export interface GenericLicenseMapper {
+  parsePayload: (
+    payload?: unknown,
+    locale?: Locale,
+    labels?: GenericLicenseLabels,
+  ) => GenericUserLicensePayload | null
+}
+
+export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
+
+export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 
 export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 

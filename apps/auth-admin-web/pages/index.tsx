@@ -7,14 +7,14 @@ import { useSession } from 'next-auth/client'
 import { SessionInfo } from '../entities/common/SessionInfo'
 import LocalizationUtils from '../utils/localization.utils'
 
-const Home: React.FC = () => {
+const Home: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [session, loading] = useSession()
 
   useEffect(() => {
     document.title = LocalizationUtils.getPageTitle()
   }, [])
 
-  if (!isLoggedIn((session as unknown) as SessionInfo, loading)) {
+  if (!isLoggedIn(session as unknown as SessionInfo, loading)) {
     return (
       <ContentWrapper>
         <div className="home__logged-out">
@@ -66,9 +66,7 @@ const Home: React.FC = () => {
               Shortcut to create a client
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client">
-                <a>Create a new client</a>
-              </Link>
+              <Link href="/client">Create a new client</Link>
             </div>
           </div>
           <div className="home__shortcuts__item">
@@ -76,9 +74,7 @@ const Home: React.FC = () => {
               Simplified new Client form
             </div>
             <div className="home__shortcuts__item__link">
-              <Link href="/client-basic">
-                <a>Create a new client</a>
-              </Link>
+              <Link href="/client-basic">Create a new client</Link>
             </div>
           </div>
 
@@ -88,7 +84,7 @@ const Home: React.FC = () => {
             </div>
             <div className="home__shortcuts__item__link">
               <Link href="/resource/api-resource">
-                <a>Create a new API Resource</a>
+                Create a new API Resource
               </Link>
             </div>
           </div>

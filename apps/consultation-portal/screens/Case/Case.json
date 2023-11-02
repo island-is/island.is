@@ -1,0 +1,187 @@
+{
+  "case": {
+    "documentsBox": {
+      "documents": { "title": "Skjöl til samráðs" },
+      "additional": { "title": "Fylgiskjöl" }
+    }
+  },
+  "caseSkeleton": {
+    "seo": {
+      "title": "Mál",
+      "url": "/mal/",
+      "keywords": "Opinbert samráð, lagasetning, frumvarp, reglugerð, stefna, umsögn, umsagnir"
+    },
+    "breadcrumbs": {
+      "parent": { "title": "Öll mál", "href": "/samradsgatt" },
+      "current": { "title": "Mál nr." }
+    }
+  },
+  "renderAdvices": {
+    "advices": {
+      "title": "Innsendar umsagnir"
+    }
+  },
+  "stakeholders": {
+    "title": "Boð um þátttöku",
+    "description": "Allir geta sent inn umsögn og verið áskrifendur að málum í Samráðsgátt. Í þessu máli var boð um þátttöku að auki sent eftirtöldum:",
+    "noList": "Enginn listi skráður"
+  },
+  "relatedCases": {
+    "title": "Tenging við önnur mál",
+    "description": "Mál sem eru tengd þessu máli, t.d. mál hefur verið í gáttinni á fyrra stigi eða málin eru skyld.",
+    "noList": "Engin tenging við önnur mál"
+  },
+  "coordinator": {
+    "title": "Umsjónaraðili",
+    "noCoordinator": "Engin skráður umsjónaraðili."
+  },
+  "timeline": {
+    "title": "Tímalína máls"
+  },
+  "caseStatusCard": {
+    "title": "Niðurstöður",
+    "summaryLinkText": "Skjal að loknu samráði",
+    "summaryDocumentIdText": "Nánar um niðurstöður"
+  },
+  "caseOverview": {
+    "upperInstances": {
+      "case": "Mál nr.",
+      "show": "Birt",
+      "advicesCount": "Fjöldi umsagna"
+    },
+    "shortDescriptionTitle": "Málsefni",
+    "detailedDescriptionTitle": "Nánari upplýsingar"
+  },
+  "caseEmailBox": {
+    "postEmailMutationToasts": {
+      "success": "Nýtt netfang skráð",
+      "failure": "Ekki tókst að skrá inn nýtt netfang"
+    },
+    "postSubscriptionMutationToasts": {
+      "success": "Áskrift tókst fyrir mál",
+      "failure": "Ekki tókst að skrá áskrift fyrir mál"
+    },
+    "deleteCaseSubscriptionMutation": {
+      "successBegin": "Afskráning á áskrift fyrir mál",
+      "successEnd": "tókst",
+      "failure": "Ekki tókst á afskrá áskrift fyrir mál"
+    },
+    "loginCardSkeleton": {
+      "text": "Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.",
+      "button": "Skrá mig inn"
+    },
+    "setEmailCardSkeleton": {
+      "text": "Skráðu netfang hérna. Þú færð svo tölvupóst sem þú þarft að staðfesta.",
+      "input": {
+        "label": "Netfang",
+        "placeholder": "nonni@island.is"
+      },
+      "button": "Skrá netfang"
+    },
+    "notVerifiedCardSkeleton": {
+      "text": "Beðið er eftir staðfestingu fyrir netfangið",
+      "button": "Breyta netfangi"
+    },
+    "subbedCardSkeleton": {
+      "initial": {
+        "text": "Þú ert þegar með áskrift af þessu máli. Þú getur valið um að fjarlægja áskrift.",
+        "buttonRemove": "Fjarlægja áskrift"
+      }
+    },
+    "notSubbedCardSkeleton": {
+      "text": "Tilkynningar um breyttan umsagnarfrest, umsagnarfrest sem er að renna út og birtingu niðurstaðna verða sendar á skráð netfang.",
+      "button": "Skrá í áskrift"
+    },
+    "buttonLabel": "Skrá áskrift að máli"
+  },
+  "adviceList": {
+    "buttonShow": "Sjá allar umsagnir",
+    "buttonHide": "Fela umsagnir",
+    "noAdvices": "Engar umsagnir fundust fyrir þetta mál.",
+    "publishRule": {
+      "general": "",
+      "publishAfter": "",
+      "notPublished": {
+        "present": "",
+        "past": ""
+      }
+    },
+    "publishLaw": {
+      "title": "",
+      "href": ","
+    }
+  },
+  "adviceForm": {
+    "inputFileErrorText": "Skráarnafn má í mesta lagi vera 100 stafbil.",
+    "postAdviceMutationToasts": {
+      "success": "Umsögn send inn",
+      "failure": "Ekki tókst að senda inn umsögn"
+    },
+    "card": {
+      "eyebrowText": "Mál nr.",
+      "forReviewText": "Til umsagnar",
+      "title": "Skrifa umsögn",
+      "description": {
+        "textBefore": "Hér er hægt að senda inn umsögn.",
+        "user": "Umsagnaraðili"
+      }
+    },
+    "input": {
+      "label": "Umsögn",
+      "placeholder": "Hér skal skrifa umsögn",
+      "minLenght": "Texti þarf að vera að minnsta kosti 10 stafbil, texti er núna",
+      "maxLength": "Texti má vera í mesta lagi 290.000 stafbil, texti er núna",
+      "lengthUnit": "stafbil."
+    },
+    "inputFileUpload": {
+      "header": "Dragðu skrár hingað til að hlaða upp",
+      "description": "Hlaðaðu upp skrár sem þu vilt senda með þinni umsögn",
+      "buttonLabel": "Velja skrár til að hlaða upp"
+    },
+    "showUploadButtonLabel": "Hlaða upp viðhengi",
+    "submitAdviceButtonLabel": "Staðfesta umsögn",
+    "allowedFilesText": "Leyfilegar skráarendingar eru .pdf, .doc og .docx. Hámarksstærð skrár er 10 MB. Skráarnafn má í mesta lagi vera 100 stafbil.",
+    "loginActionBox": {
+      "heading": "Senda umsögn",
+      "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
+      "ctaLabel": "Skrá mig inn"
+    },
+    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
+  },
+  "agencyText": {
+    "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
+    "href": "https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf",
+    "textAfter": "sjá nánar hér."
+  },
+  "caseStatusBox": {
+    "Til umsagnar": {
+      "title": "Viltu senda inn umsögn?",
+      "text": "Málið er opið til umsagnar og öllum frjálst að taka þátt.",
+      "textCont": "",
+
+      "buttons": {
+        "sendAdvice": "Senda umsögn"
+      }
+    },
+    "Niðurstöður í vinnslu": {
+      "title": "Í vinnslu",
+      "text": "Umsagnarfrestur er liðinn.",
+      "textCont": "Niðurstöður samráðsins eru væntanlegar."
+    },
+    "Niðurstöður birtar": {
+      "title": "Samráði lokið",
+      "text": "Umsagnarfrestur er liðinn.",
+      "textCont": "Niðurstöður hafa verið birtar og samráði lokið."
+    }
+  },
+  "adviceCard": {
+    "privateContent": "Umsagnaraðili hefur valið að sýna ekki umsögn sína.",
+    "hiddenContent": "Umsögn barst en birtist ekki í gáttinni samkvæmt ákvörðun umsjónaraðila samráðsmáls. Upplýsingalög gilda, sjá nánar í",
+    "hiddenContentLink": "um samráðsgáttina",
+    "hiddenContentHref": "/um"
+  },
+  "caseDocuments": {
+    "linkTitle": "Hlekkur",
+    "documentTitle": "Skjal"
+  }
+}

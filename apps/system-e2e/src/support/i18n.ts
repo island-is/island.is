@@ -5,6 +5,7 @@ const intl = createIntl(
   {
     locale: 'is',
     onError: (err) => {
+      if (err?.code == 'MISSING_TRANSLATION') return
       console.warn(err)
     },
   },

@@ -5,7 +5,7 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DistrictCommissionerAgencies } from '@island.is/api/schema'
+import { Jurisdiction } from '@island.is/clients/driving-license'
 
 export const sectionDelivery = buildSection({
   id: 'delivery',
@@ -13,12 +13,13 @@ export const sectionDelivery = buildSection({
   children: [
     buildMultiField({
       id: 'deliverySection',
-      title: m.deliveryMethodSectionTitle,
+      title: '',
       children: [
         buildDescriptionField({
           id: 'deliveryDescription',
           titleVariant: 'h3',
           title: m.deliveryMethodTitle,
+          marginBottom: 2,
           description: m.deliveryMethodDescription,
         }),
         buildSelectField({
@@ -27,16 +28,15 @@ export const sectionDelivery = buildSection({
           placeholder: m.deliveryMethodOfficeSelectPlaceholder,
           options: ({
             externalData: {
-              districts: { data },
+              jurisdictions: { data },
             },
           }) => {
-            return (data as DistrictCommissionerAgencies[]).map(
-              ({ name, place, address }) => ({
-                value: `${name}, ${place}`,
-                label: `${name}, ${place}`,
-                tooltip: `${address}`,
-              }),
-            )
+            return (data as Jurisdiction[])
+              .map(({ id, zip, name }) => ({
+                value: id.toString(),
+                label: `${zip} ${name}`,
+              }))
+              .sort((a, b) => parseInt(a.label, 10) - parseInt(b.label, 10))
           },
         }),
       ],

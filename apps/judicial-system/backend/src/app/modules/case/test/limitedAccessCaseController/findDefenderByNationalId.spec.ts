@@ -1,19 +1,17 @@
+import { Op } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
-import {
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
-  UserRole,
-} from '@island.is/judicial-system/types'
+import { CaseState, UserRole } from '@island.is/judicial-system/types'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory, uuidFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../factories')
 
@@ -22,23 +20,43 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (caseId: string, theCase: Case, nationalId: string) => Then
+type GivenWhenThen = (nationalId: string) => Promise<Then>
 
 describe('LimitedAccessCaseController - Find defender by national id', () => {
+  const date = randomDate()
+  const defenderId = uuid()
+  const defenderNationalId = '1234567890'
+  const defenderName = 'John Doe'
+  const defenderPhoneNumber = '1234567'
+  const defenderEmail = 'dummy@dummy.dy'
+
+  let mockDefendantService: DefendantService
+  let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { limitedAccessCaseController } = await createTestingCaseModule()
+    const { defendantService, caseModel, limitedAccessCaseController } =
+      await createTestingCaseModule()
 
-    givenWhenThen = (caseId: string, theCase: Case, nationalId: string) => {
+    mockDefendantService = defendantService
+    mockCaseModel = caseModel
+
+    const mockFindLatestDefendantByDefenderNationalId =
+      mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
+    mockFindLatestDefendantByDefenderNationalId.mockResolvedValue(null)
+    const mockFindOne = mockCaseModel.findOne as jest.Mock
+    mockFindOne.mockResolvedValue(null)
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
+    const mockId = uuidFactory as jest.Mock
+    mockId.mockReturnValueOnce(defenderId)
+
+    givenWhenThen = async (nationalId: string) => {
       const then = {} as Then
 
       try {
-        then.result = limitedAccessCaseController.findDefenderByNationalId(
-          caseId,
-          theCase,
-          nationalId,
-        )
+        then.result =
+          await limitedAccessCaseController.findDefenderByNationalId(nationalId)
       } catch (error) {
         then.error = error as Error
       }
@@ -46,114 +64,93 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     }
   })
 
-  describe.each([...restrictionCases, ...investigationCases])(
-    'defender found for %s case',
-    (type) => {
-      const caseId = uuid()
-      const nationalId = '1234567890'
-      const name = 'John Doe'
-      const phoneNumber = '1234567'
-      const email = 'dummy@dummy.dy'
-      const theCase = {
-        id: caseId,
-        type,
-        defenderNationalId: nationalId,
-        defenderName: name,
-        defenderPhoneNumber: phoneNumber,
-        defenderEmail: email,
-      } as Case
-      const date = randomDate()
-      let then: Then
-
-      beforeEach(() => {
-        const mockToday = nowFactory as jest.Mock
-        mockToday.mockReturnValueOnce(date)
-        const mockId = uuidFactory as jest.Mock
-        mockId.mockReturnValueOnce('defender')
-
-        then = givenWhenThen(caseId, theCase, nationalId)
-      })
-
-      it('should return the user', () => {
-        expect(then.result).toEqual({
-          id: 'defender',
-          created: date,
-          modified: date,
-          nationalId,
-          name,
-          title: 'verjandi',
-          mobileNumber: phoneNumber,
-          email,
-          role: UserRole.DEFENDER,
-          active: true,
-        })
-      })
-    },
-  )
-
-  describe.each([...indictmentCases])('defender found for %s case', (type) => {
-    const caseId = uuid()
-    const nationalId = '1234567890'
-    const name = 'John Doe'
-    const phoneNumber = '1234567'
-    const email = 'dummy@dummy.dy'
-    const theCase = {
-      id: caseId,
-      type,
-      defendants: [
-        {
-          defenderNationalId: nationalId,
-          defenderName: name,
-          defenderPhoneNumber: phoneNumber,
-          defenderEmail: email,
-        },
-      ],
-    } as Case
-    const date = randomDate()
+  describe('defender not found', () => {
     let then: Then
 
-    beforeEach(() => {
-      const mockToday = nowFactory as jest.Mock
-      mockToday.mockReturnValueOnce(date)
-      const mockId = uuidFactory as jest.Mock
-      mockId.mockReturnValueOnce('defender')
+    beforeEach(async () => {
+      then = await givenWhenThen(defenderNationalId)
+    })
 
-      then = givenWhenThen(caseId, theCase, nationalId)
+    it('should look for defender', () => {
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        where: {
+          defenderNationalId,
+          state: { [Op.not]: CaseState.DELETED },
+          isArchived: false,
+        },
+        order: [['created', 'DESC']],
+      })
+      expect(
+        mockDefendantService.findLatestDefendantByDefenderNationalId,
+      ).toHaveBeenCalledWith(defenderNationalId)
+    })
+
+    it('should throw an error', () => {
+      expect(then.error).toBeInstanceOf(NotFoundException)
+      expect(then.error.message).toBe(`Defender not found`)
+    })
+  })
+
+  describe('defender found in a case', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce({
+        defenderNationalId,
+        defenderName,
+        defenderPhoneNumber,
+        defenderEmail,
+      })
+
+      then = await givenWhenThen(defenderNationalId)
     })
 
     it('should return the user', () => {
       expect(then.result).toEqual({
-        id: 'defender',
+        id: defenderId,
         created: date,
         modified: date,
-        nationalId,
-        name,
+        nationalId: defenderNationalId,
+        name: defenderName,
         title: 'verjandi',
-        mobileNumber: phoneNumber,
-        email,
+        mobileNumber: defenderPhoneNumber,
+        email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
       })
     })
   })
 
-  describe.each([
-    ...restrictionCases,
-    ...investigationCases,
-    ...indictmentCases,
-  ])('defender not found for %s case', (type) => {
-    const caseId = uuid()
-    const theCase = { id: caseId, type } as Case
-    const nationalId = '1234567890'
+  describe('defender found in a defendant', () => {
     let then: Then
 
-    beforeEach(() => {
-      then = givenWhenThen(caseId, theCase, nationalId)
+    beforeEach(async () => {
+      const mockFindLatestDefendantByDefenderNationalId =
+        mockDefendantService.findLatestDefendantByDefenderNationalId as jest.Mock
+      mockFindLatestDefendantByDefenderNationalId.mockResolvedValueOnce({
+        defenderNationalId,
+        defenderName,
+        defenderPhoneNumber,
+        defenderEmail,
+      })
+
+      then = await givenWhenThen(defenderNationalId)
     })
 
-    it('should throw an error', () => {
-      expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(`Defender not found`)
+    it('should return the user', () => {
+      expect(then.result).toEqual({
+        id: defenderId,
+        created: date,
+        modified: date,
+        nationalId: defenderNationalId,
+        name: defenderName,
+        title: 'verjandi',
+        mobileNumber: defenderPhoneNumber,
+        email: defenderEmail,
+        role: UserRole.DEFENDER,
+        active: true,
+      })
     })
   })
 })

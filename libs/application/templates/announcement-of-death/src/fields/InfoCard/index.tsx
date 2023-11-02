@@ -6,9 +6,7 @@ import { FormatMessage, useLocale } from '@island.is/localization'
 type InfoCardProps = {
   field: {
     props: {
-      cards: (
-        application: Application,
-      ) => {
+      cards: (application: Application) => {
         title?: string
         description?:
           | string
@@ -19,10 +17,9 @@ type InfoCardProps = {
   }
 }
 
-export const InfoCard: FC<FieldBaseProps & InfoCardProps> = ({
-  application,
-  field,
-}) => {
+export const InfoCard: FC<
+  React.PropsWithChildren<FieldBaseProps & InfoCardProps>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
   return (
     <GridRow>

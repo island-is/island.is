@@ -1,0 +1,3223 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "RLS driver licence Rest API",
+    "description": "RESTFul services for driver licences. Programmed in ASP.NET Core 3 API ",
+    "contact": { "name": "TMD", "email": "tmd@tmd.is" },
+    "version": "4.0"
+  },
+  "paths": {
+    "/api/codetables/deprivations": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for types of driver licence deprivations",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegSviptingaDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/categories": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of categories",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/TegundRettindaDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/remarks": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get types of remarks",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TegundAthugasemdaDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/codetables/districts": {
+      "get": {
+        "tags": ["Codetables"],
+        "summary": "Get for all districts",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/EmbaettiDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for person driver licence",
+        "operationId": "GetCurrentLicenseV4",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/DriverLicenseDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Create record of digital licence created",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/{category}/full": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person can apply for full drivers license for a specific category",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "description": "Category to check for (B, C, and so on)",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForLicenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForLicenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/new/{category}": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "category",
+            "in": "path",
+            "description": "Category in license",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostNewFinalLicense" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/new/collaborative": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for new collaborative of old license (Samrit)",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostNewCollaborative" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/deprivation": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for current deprivation",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/DeprivationDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/new/temporary": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Apply for drivers license for a category",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model of application",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostTemporaryLicense" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewTemporaryLicsenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/temporarytestfinished": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Endpoint to tell system that person has finished learning for temporary license and license can be ordered",
+        "description": "Checks\r\n- Does person exist in national registry\r\n- Is the liecense that has not been ordered\r\n- Is person at least 17 years old\r\n- Does he have a deprivation\r\n- Does he have a quality marked picture\r\n- Does he have a quality marked signature",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Post model",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostTeachingDoneForTempLicense"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderTemporaryLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/penaltypoints": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get traffic violation points for person",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/PenaltyPointsDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/all": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get for all persons driver licences",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DriverLicenseWithoutImagesDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DriverLicenseWithoutImagesDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DriverLicenseWithoutImagesDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/hasteachingrights": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person has rights to be a driving instructor",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/temporary": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person can apply for temporary B drivers license",
+        "description": "Checks :\r\n - Is in national registry\r\n - Does not have B category license already\r\n - Has a deprivation exeeding next 30 days\r\n - Is at least 16 years of age",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForTemporaryLicenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForTemporaryLicenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MayApplyForTemporaryLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/hasqualityphoto": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person has quality marked photo",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/hasqualitysignature": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person has quality marked photo",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/getqualityphoto": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get quality marked photo for person",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person id number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          },
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/getqualitysignature": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get quality marked photo for person",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "application/json": {
+                "schema": { "type": "string", "format": "byte" }
+              },
+              "text/json": { "schema": { "type": "string", "format": "byte" } }
+            }
+          },
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/hasfinisheddrivingschool3": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Has person finised driving school 3",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/HasFinishedDrivingSchool3Dto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HasFinishedDrivingSchool3Dto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HasFinishedDrivingSchool3Dto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/drivingassessment": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Create a new driver assessment",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Driver assessment entity",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostNewDrivingAssessment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/drivingassessment": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check if person has driving assessment",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrivingAssessmentDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrivingAssessmentDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrivingAssessmentDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/drivinginstructors": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get driving teacherse",
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InstructorDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{licenseid}/status": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check current license status",
+        "parameters": [
+          {
+            "name": "licenseid",
+            "in": "path",
+            "description": "Driver license number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/LicenseStatusDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/categoryvalid/{category}/{drivinglicenseid}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Check status of license and category",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "category",
+            "in": "path",
+            "description": "Category to check, optional, default B",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "drivinglicenseid",
+            "in": "path",
+            "description": "License id, optional, default persons newest license",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/CategoryValidDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/{SSN}/unfinished/{categoryid}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get latest unfinished/unpublished license with requested categorie and person id",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "categoryid",
+            "in": "path",
+            "description": "License category",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/LatestUnfinishedLicenseDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LatestUnfinishedLicenseDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LatestUnfinishedLicenseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/{SSN}/practicepermit": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Post practice permit",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Social security number of applicant",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information about the practice permit",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostPracticePermit" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/canapplyfor/practicepermit": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Post practice permit",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person's social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information about the practice permit",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostPracticePermit" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/PracticePermitDto" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/applications/{SSN}/renewal65": {
+      "post": {
+        "tags": ["Okuskirteini"],
+        "summary": "Post renewal request for people 65 year old or older",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "requestBody": {
+          "description": "Model with information about the person",
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PostRenewal65AndOver" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Renewal65AndOver" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/temporarylicenses/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of temporary licenses created from year/month",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/temporarylicenses/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of temporary licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TemporaryLicenseStatisticsGroupedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/licenses/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of full licenses created from year/month",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/licenses/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of full licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FullLicenseStatisticsGroupedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/drivingassessments/created/detailed/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a list of driving assessments created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsDetailedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/statistics/drivingassessments/created/grouped/{yearfrom}/{monthfrom}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get a grouped list (year/month/count) of driving ass licenses created",
+        "parameters": [
+          {
+            "name": "yearfrom",
+            "in": "path",
+            "description": "Year from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 2022 }
+          },
+          {
+            "name": "monthfrom",
+            "in": "path",
+            "description": "Month from",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32", "default": 1 }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrivingAssessmentStatisticsGroupedDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/drivinglicense/v4/{SSN}/licenseactions/{licenseid}": {
+      "get": {
+        "tags": ["Okuskirteini"],
+        "summary": "Get all license actions",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person's social security number",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "licenseid",
+            "in": "path",
+            "description": "License id",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": { "type": "string", "default": "4.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedferdDto" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Category id",
+            "format": "int32"
+          },
+          "nr": {
+            "type": "string",
+            "description": "Category",
+            "nullable": true
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Name of category",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "description": "Date published",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "Date of expiry",
+            "format": "date-time"
+          },
+          "validToCode": {
+            "type": "integer",
+            "description": "Valid to code",
+            "format": "int32"
+          },
+          "validToText": {
+            "type": "string",
+            "description": "Valid to text",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comments on category",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for licence category"
+      },
+      "CategoryValidDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category that was checked",
+            "nullable": true
+          },
+          "leicenseId": {
+            "type": "integer",
+            "description": "License id to check on",
+            "format": "int32",
+            "nullable": true
+          },
+          "result": {
+            "type": "integer",
+            "description": "Is the category valid",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for category valid"
+      },
+      "DeprivationDto": {
+        "type": "object",
+        "properties": {
+          "dateFrom": {
+            "type": "string",
+            "description": "Date from on deprevation",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "Date to on deprivation",
+            "format": "date-time",
+            "nullable": true
+          },
+          "licenseLost": {
+            "type": "boolean",
+            "description": "License lost",
+            "nullable": true
+          },
+          "deprivationName": {
+            "type": "string",
+            "description": "Type name of deprevation",
+            "nullable": true
+          },
+          "deprivationType": {
+            "type": "integer",
+            "description": "Type id of deprevation",
+            "format": "int32",
+            "nullable": true
+          },
+          "licenseExpired": {
+            "type": "boolean",
+            "description": "Is the license expired",
+            "nullable": true
+          },
+          "retakeLicense": {
+            "type": "boolean",
+            "description": "Does individual have to retake test to get license",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Revoke entity"
+      },
+      "DriverLicenseDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
+          "temporaryLicense": {
+            "type": "boolean",
+            "description": "Is this license marked as temporary"
+          },
+          "name": { "type": "string", "description": "Name", "nullable": true },
+          "socialSecurityNumber": {
+            "type": "string",
+            "description": "Persond id number",
+            "nullable": true
+          },
+          "birthPlace": {
+            "type": "string",
+            "description": "Birthplace",
+            "nullable": true
+          },
+          "birthPlaceName": {
+            "type": "string",
+            "description": "Birthplace name",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "description": "Date registerd",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateValidTo": {
+            "type": "string",
+            "description": "Expiry date",
+            "format": "date-time"
+          },
+          "publishPlaceNr": {
+            "type": "integer",
+            "description": "Published where",
+            "format": "int32"
+          },
+          "publishPlaceName": {
+            "type": "string",
+            "description": "Published where name",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryDto" },
+            "description": "Category list",
+            "nullable": true
+          },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LicenseCommentsDto" },
+            "description": "Remark list",
+            "nullable": true
+          },
+          "photoId": {
+            "type": "integer",
+            "description": "Image id",
+            "format": "int32",
+            "nullable": true
+          },
+          "signatureId": {
+            "type": "integer",
+            "description": "Signature id",
+            "format": "int32",
+            "nullable": true
+          },
+          "photo": { "$ref": "#/components/schemas/ImageDto" },
+          "signature": { "$ref": "#/components/schemas/ImageDto" },
+          "deprivation": { "$ref": "#/components/schemas/DeprivationDto" }
+        },
+        "additionalProperties": false,
+        "description": "Licence entity"
+      },
+      "DriverLicenseWithoutImagesDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
+          "name": { "type": "string", "description": "Name", "nullable": true },
+          "socialSecurityNumber": {
+            "type": "string",
+            "description": "Persond id number",
+            "nullable": true
+          },
+          "birthPlace": {
+            "type": "string",
+            "description": "Birthplace",
+            "nullable": true
+          },
+          "birthPlaceName": {
+            "type": "string",
+            "description": "Birthplace name",
+            "nullable": true
+          },
+          "publishDate": {
+            "type": "string",
+            "description": "Date registerd",
+            "format": "date-time",
+            "nullable": true
+          },
+          "dateValidTo": {
+            "type": "string",
+            "description": "Expiry date",
+            "format": "date-time"
+          },
+          "publishPlaceNr": {
+            "type": "integer",
+            "description": "Published where",
+            "format": "int32"
+          },
+          "publishPlaceName": {
+            "type": "string",
+            "description": "Published where name",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CategoryDto" },
+            "description": "Category list",
+            "nullable": true
+          },
+          "licenseComments": {
+            "type": "string",
+            "description": "License comments",
+            "nullable": true
+          },
+          "comments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LicenseCommentsDto" },
+            "description": "Remark list",
+            "nullable": true
+          },
+          "deprivation": { "$ref": "#/components/schemas/DeprivationDto" }
+        },
+        "additionalProperties": false,
+        "description": "Licence entity"
+      },
+      "DrivingAssessmentDto": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Person id number",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving teacher person id number",
+            "nullable": true
+          },
+          "dateOfAssessment": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Driving assessment"
+      },
+      "DrivingAssessmentStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "studentSSN": {
+            "type": "string",
+            "description": "Student social security number",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving instructor social security number",
+            "nullable": true
+          },
+          "assessmentDate": {
+            "type": "string",
+            "description": "Date of driving assessment",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer class for driving assessment statistics"
+      },
+      "DrivingAssessmentStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "assessmentYear": {
+            "type": "integer",
+            "description": "Year",
+            "format": "int32"
+          },
+          "assessmentMonth": {
+            "type": "integer",
+            "description": "Month",
+            "format": "int32"
+          },
+          "count": {
+            "type": "integer",
+            "description": "Count",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer class for driving assessment statistics"
+      },
+      "EmbaettiDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "integer",
+            "description": "Distric number",
+            "format": "int32"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "District name",
+            "nullable": true
+          },
+          "heimilisfang": {
+            "type": "string",
+            "description": "District address",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "integer",
+            "description": "District postal code",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for district"
+      },
+      "FullLicenseStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "publishDate": {
+            "type": "string",
+            "description": "Publish date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "employee": {
+            "type": "string",
+            "description": "Employee who created the license",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number of person in question",
+            "nullable": true
+          },
+          "validTo": {
+            "type": "string",
+            "description": "Valid to",
+            "format": "date-time",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origin of creation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about full licenses created"
+      },
+      "FullLicenseStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "publishYear": {
+            "type": "integer",
+            "description": "Year when published",
+            "format": "int32"
+          },
+          "publishMonth": {
+            "type": "integer",
+            "description": "Month when published",
+            "format": "int32"
+          },
+          "originIslandIs": {
+            "type": "integer",
+            "description": "Count when origin is Island.is",
+            "format": "int32"
+          },
+          "originPaper": {
+            "type": "integer",
+            "description": "Count when origin is paper",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about licenses created, grouped by year and month"
+      },
+      "HasFinishedDrivingSchool3Dto": {
+        "type": "object",
+        "properties": {
+          "hasFinishedDrivingSchool3": {
+            "type": "boolean",
+            "description": "Has person finished driving school 3"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for if person has finished driving school 3"
+      },
+      "ImageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Picture id",
+            "format": "int32"
+          },
+          "socialSecurityNumber": {
+            "type": "string",
+            "description": "Person id number",
+            "nullable": true
+          },
+          "dateRegistered": {
+            "type": "string",
+            "description": "Date registered",
+            "format": "date-time"
+          },
+          "image": {
+            "type": "string",
+            "description": "Image",
+            "format": "byte",
+            "nullable": true
+          },
+          "quality": {
+            "type": "integer",
+            "description": "Quality",
+            "format": "int32"
+          },
+          "program": {
+            "type": "integer",
+            "description": "Belongs to what program",
+            "format": "int32"
+          },
+          "type": {
+            "type": "integer",
+            "description": "Type of image",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for picture"
+      },
+      "InstructorDto": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Social security number",
+            "nullable": true
+          },
+          "name": { "type": "string", "description": "Name", "nullable": true },
+          "driverLicenseId": {
+            "type": "integer",
+            "description": "Instructors license id",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Driving instructor data transfer object"
+      },
+      "LatestUnfinishedLicenseDto": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Person social security numer",
+            "nullable": true
+          },
+          "licenseId": {
+            "type": "integer",
+            "description": "License id",
+            "format": "int32",
+            "nullable": true
+          },
+          "categoriesOnLicense": {
+            "type": "string",
+            "description": "List of categories on license",
+            "nullable": true
+          },
+          "temporaryLicense": {
+            "type": "integer",
+            "description": "Is this a temporary license",
+            "format": "int32",
+            "nullable": true
+          },
+          "result": {
+            "type": "integer",
+            "description": "Result",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto Class for latest unfinished/unpublished license"
+      },
+      "LicenseCommentsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Comment id",
+            "format": "int32"
+          },
+          "nr": {
+            "type": "string",
+            "description": "Comment code.",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "description": "Comment on code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for comments on licence"
+      },
+      "LicenseStatusDto": {
+        "type": "object",
+        "properties": {
+          "licenseStatus": {
+            "type": "string",
+            "description": "License status",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for driver license status"
+      },
+      "MayApplyForLicenseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results for person applying for\r\nfull license"
+      },
+      "MayApplyForTemporaryLicenseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results for person applying for\r\ntemporary license"
+      },
+      "MedferdDto": {
+        "type": "object",
+        "properties": {
+          "dagsMedferdar": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "tegundKodi": {
+            "type": "integer",
+            "description": "Code",
+            "format": "int32"
+          },
+          "nrEmbaetti": {
+            "type": "integer",
+            "description": "Where it was done",
+            "format": "int32"
+          },
+          "okuskirteiniId": {
+            "type": "integer",
+            "description": "Id of licence",
+            "format": "int32"
+          },
+          "stStarfsmadur": {
+            "type": "string",
+            "description": "Employee",
+            "nullable": true
+          },
+          "stDags": {
+            "type": "string",
+            "description": "Date",
+            "format": "date-time"
+          },
+          "medferdId": {
+            "type": "integer",
+            "description": "Id of action",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Entity for licence actions"
+      },
+      "NewTemporaryLicsenseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "boolean",
+            "description": "Was application successful"
+          },
+          "driverLicenseId": {
+            "type": "integer",
+            "description": "Driver license id",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "If not successful, this is the error code",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "New temporary license transfer object"
+      },
+      "OrderTemporaryLicenseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "integer",
+            "description": "Was temporary license ordered",
+            "format": "int32"
+          },
+          "driverLicenseIdOrdered": {
+            "type": "integer",
+            "description": "Number of driver license that was ordered",
+            "format": "int32",
+            "nullable": true
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if not successful",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for results when ordering temporary license"
+      },
+      "PenaltyPointsDto": {
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean",
+            "description": "Ok to issue drivers licence"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for penalty points"
+      },
+      "PostNewCollaborative": {
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "type": "string",
+            "description": "Person social security number",
+            "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District applying for licsense",
+            "format": "int32"
+          },
+          "userId": {
+            "type": "string",
+            "description": "User id",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new collaborative\r\nCopies old license, marks old license as lost"
+      },
+      "PostNewDrivingAssessment": {
+        "required": ["dateOfAssessment", "instructorSSN", "ssn"],
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Person id number"
+          },
+          "instructorSSN": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Teacher person id number"
+          },
+          "dateOfAssessment": {
+            "type": "string",
+            "description": "Date of driver assessment",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new driving assessment"
+      },
+      "PostNewFinalLicense": {
+        "required": ["authorityNumber", "personIdNumber"],
+        "type": "object",
+        "properties": {
+          "personIdNumber": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Person id number"
+          },
+          "authorityNumber": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "needsToPresentHealthCertificate": {
+            "type": "integer",
+            "description": "Does person need to present health certificate",
+            "format": "int32"
+          },
+          "bringsNewPhoto": {
+            "type": "integer",
+            "description": "Applicant will bring new photo for license",
+            "format": "int32"
+          },
+          "sendLicenseInMail": {
+            "type": "integer",
+            "description": "Applicant has asked to send license in mail",
+            "format": "int32"
+          },
+          "sendToAddress": {
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model class to post new final license"
+      },
+      "PostPracticePermit": {
+        "required": ["dateFrom", "studentSSN", "userId"],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "minLength": 1,
+            "type": "string",
+            "description": "User asking to post"
+          },
+          "studentSSN": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Social security number of student"
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "Requested from date",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post practice permit"
+      },
+      "PostRenewal65AndOver": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "User id",
+            "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District Id",
+            "format": "int32"
+          },
+          "renewalDate": {
+            "type": "string",
+            "description": "Person social security number",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post renewal request for person 65 year old or older"
+      },
+      "PostTeachingDoneForTempLicense": {
+        "required": ["dateCompleted", "driverLicenseId", "ssn"],
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Social security number"
+          },
+          "driverLicenseId": {
+            "type": "integer",
+            "description": "Driver License id",
+            "format": "int32"
+          },
+          "dateCompleted": {
+            "type": "string",
+            "description": "Date when test was completed",
+            "format": "date-time"
+          },
+          "excemptionFromDrivingSchool3": {
+            "type": "boolean",
+            "description": "Person on exemption from driving school 3",
+            "nullable": true
+          },
+          "onlyAutomaticAuto": {
+            "type": "boolean",
+            "description": "Person has only license for driving automobiles with automatic transmissions",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post that student has completed his lessons\r\nVersion 2"
+      },
+      "PostTemporaryLicense": {
+        "required": [
+          "authority",
+          "bringNewPhoto",
+          "bringsHealthCertificate",
+          "instructorSSN",
+          "sendLicenseInMail",
+          "ssn"
+        ],
+        "type": "object",
+        "properties": {
+          "ssn": {
+            "maxLength": 10,
+            "minLength": 0,
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Social security number"
+          },
+          "authority": {
+            "type": "integer",
+            "description": "Publishing authority",
+            "format": "int32"
+          },
+          "bringsHealthCertificate": {
+            "type": "boolean",
+            "description": "Does person need to present health certificate"
+          },
+          "bringNewPhoto": {
+            "type": "boolean",
+            "description": "Applicant will bring new photo for license"
+          },
+          "sendLicenseInMail": {
+            "type": "boolean",
+            "description": "Applicant has asked to send license in mail"
+          },
+          "sendToAddress": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string",
+            "description": "Address to send license to",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "minLength": 1,
+            "type": "string",
+            "description": "Social security number for driving teachser"
+          },
+          "email": {
+            "type": "string",
+            "description": "Applicant email",
+            "nullable": true
+          },
+          "gsm": {
+            "pattern": "^[0-9]{1,10}$",
+            "type": "string",
+            "description": "Applicant mobile number",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post new temporary license"
+      },
+      "PracticePermitDto": {
+        "type": "object",
+        "properties": {
+          "student": {
+            "type": "string",
+            "description": "The student",
+            "nullable": true
+          },
+          "instructor": {
+            "type": "string",
+            "description": "The instructor",
+            "nullable": true
+          },
+          "isOk": { "type": "boolean", "description": "Is the record OK" },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code, if any",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Practice permit DTO"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "Renewal65AndOver": {
+        "type": "object",
+        "properties": {
+          "licenseId": {
+            "type": "integer",
+            "description": "New license id",
+            "format": "int32",
+            "nullable": true
+          },
+          "isOk": {
+            "type": "boolean",
+            "description": "Did transaction go ok ?"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code returned from system",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "DTO for renewal for people 65 and older"
+      },
+      "TegSviptingaDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Id", "format": "int32" },
+          "heiti": { "type": "string", "description": "Name", "nullable": true }
+        },
+        "additionalProperties": false,
+        "description": "Dto for Tegund sviptinga"
+      },
+      "TegundAthugasemdaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Code for remark",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name for remark",
+            "nullable": true
+          },
+          "giltFyrir": {
+            "type": "string",
+            "description": "It this for a licence or category",
+            "nullable": true
+          },
+          "athugasemd": {
+            "type": "boolean",
+            "description": "Is there a comment on the remark"
+          },
+          "lysing": {
+            "type": "string",
+            "description": "Type of comment",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Types of remarks"
+      },
+      "TegundRettindaDto": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "string",
+            "description": "Type code",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Type name",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for type of categories"
+      },
+      "TemporaryLicenseStatisticsDetailedDto": {
+        "type": "object",
+        "properties": {
+          "publishDate": {
+            "type": "string",
+            "description": "Publish date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "employee": {
+            "type": "string",
+            "description": "Employee who created the license",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Social security number of person in question",
+            "nullable": true
+          },
+          "origin": {
+            "type": "string",
+            "description": "Origin of creation",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about temporary licenses created"
+      },
+      "TemporaryLicenseStatisticsGroupedDto": {
+        "type": "object",
+        "properties": {
+          "publishYear": {
+            "type": "integer",
+            "description": "Year when published",
+            "format": "int32"
+          },
+          "publishMonth": {
+            "type": "integer",
+            "description": "Month when published",
+            "format": "int32"
+          },
+          "originIslandIs": {
+            "type": "integer",
+            "description": "Count when origin is Island.is",
+            "format": "int32"
+          },
+          "originPaper": {
+            "type": "integer",
+            "description": "Count when origin is paper",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for statistics about temporary licenses created, grouped by year and month"
+      }
+    }
+  }
+}

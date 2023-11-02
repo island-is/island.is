@@ -1,13 +1,13 @@
 import { isDefined } from '@island.is/shared/utils'
 import { AuthDelegationScope } from '@island.is/api/schema'
 import { useAuth } from '@island.is/auth/react'
-import { AlertBanner, Box, useBreakpoint } from '@island.is/island-ui/core'
-import { m as coreMessages } from '@island.is/portals/core'
+import { Box, useBreakpoint } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { formatNationalId } from '@island.is/portals/core'
+import { formatNationalId, m as coreMessages } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 import { useState } from 'react'
 import { DelegationsFormFooter } from '../delegations/DelegationsFormFooter'
-import { Modal, ModalProps } from '../Modal/Modal'
+import { Modal, ModalProps } from '@island.is/react/components'
 import { IdentityCard } from '../IdentityCard/IdentityCard'
 import { AccessListContainer } from './AccessList/AccessListContainer/AccessListContainer'
 import { AuthScopeTreeQuery } from './AccessList/AccessListContainer/AccessListContainer.generated'
@@ -42,7 +42,7 @@ export const AccessConfirmModal = ({
   const [error, setError] = useState(formError ?? false)
 
   const { showShadow, pxProps } = useDynamicShadow({
-    rootMargin: '-128px',
+    rootMargin: md ? '-128px' : '-104px',
     isDisabled: !rest.isVisible,
   })
 
@@ -52,7 +52,7 @@ export const AccessConfirmModal = ({
       return
     }
 
-    onConfirm()
+    await onConfirm()
   }
 
   if (isDefined(formError) && formError !== error) {
@@ -66,21 +66,19 @@ export const AccessConfirmModal = ({
 
   return (
     <Modal
-      id={`access-confirm-modal`}
-      label={formatMessage(m.accessControl)}
+      id="access-confirm-modal"
+      label={formatMessage(m.accessConfirmModalTitle)}
+      eyebrow={formatMessage(m.accessControl)}
       title={formatMessage(m.accessConfirmModalTitle)}
       {...rest}
       onClose={onClose}
       noPaddingBottom
+      scrollType="inside"
+      closeButtonLabel={formatMessage(m.closeModal)}
     >
-      <Box marginY={[4, 4, 8]} display="flex" flexDirection="column" rowGap={3}>
+      <Box marginY={[4, 4, 6]} display="flex" flexDirection="column" rowGap={3}>
         {error && (
-          <Box paddingBottom={3}>
-            <AlertBanner
-              description={formatMessage(m.confirmError)}
-              variant="error"
-            />
-          </Box>
+          <Problem message={formatMessage(m.confirmError)} size="small" />
         )}
         <Box
           width="full"
@@ -126,7 +124,7 @@ export const AccessConfirmModal = ({
       <Box position="sticky" bottom={0}>
         <DelegationsFormFooter
           loading={loading}
-          showShadow={md && showShadow}
+          showShadow={showShadow}
           onCancel={onClose}
           onConfirm={onConfirmHandler}
           confirmLabel={formatMessage(coreMessages.codeConfirmation)}

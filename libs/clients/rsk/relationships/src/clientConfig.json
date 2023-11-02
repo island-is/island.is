@@ -1,0 +1,1273 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Relationships - API 1.0.0",
+    "description": "API offers information about relationships between legal entities and individuals.",
+    "contact": {
+      "name": "XROAD Services - Skatturinn",
+      "url": "https://www.rsk.is",
+      "email": "xroad@skattur.is"
+    },
+    "version": "1.0.0",
+    "license": {
+      "name": "Skatturinn",
+      "url": "https://www.rsk.is/api/license"
+    },
+    "x-category": ["personal", "official"],
+    "x-hide-api-catalogue": true,
+    "x-links": [
+      ["documentation", "https://www.rsk.isrelationships/xroad/docs"],
+      ["responsibleParty", "mailto:xroad@skattur.is"],
+      ["bugReport", "https://www.rsk.isrelationships/bugs"],
+      ["featureRequest", "https://www.rsk.isrelationships/features"]
+    ]
+  },
+  "servers": [
+    {
+      "url": "/IS-DEV/GOV/10006/Skatturinn/relationships-v1",
+      "description": "XROAD - Dev server (uses development data)"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "serviceInfo",
+        "summary": "Service Information",
+        "description": "Basic information about this API",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/serviceInfo"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me": {
+      "get": {
+        "operationId": "meLookup",
+        "summary": "Get your relationships",
+        "description": "Information about your own relationships with legal entities.",
+        "security": [
+          {
+            "island.is-auth": ["@rsk.is/prokura"]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer #TOKEN#",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "required": true,
+            "description": "X-Road Service information",
+            "schema": {
+              "type": "string",
+              "example": "/IS-DEV/GOV/10006"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/individual"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4XX"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5XX"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/legalentities": {
+      "get": {
+        "operationId": "legalEntitySearch",
+        "summary": "Search Legal Entities",
+        "description": "Search for relationships between an Legal Entities and Individuals",
+        "security": [
+          {
+            "island.is-auth": ["@rsk.is/prokura:admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Query-Search",
+            "in": "header",
+            "description": "Search String for Service",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minimum": 1,
+              "default": "",
+              "example": "Icelandic"
+            }
+          },
+          {
+            "name": "X-Query-Limit",
+            "in": "header",
+            "description": "Collection result size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10,
+              "example": 5
+            }
+          },
+          {
+            "name": "X-Query-Offset",
+            "in": "header",
+            "description": "Collection result offset",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer #TOKEN#",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "required": true,
+            "description": "X-Road Service information",
+            "schema": {
+              "type": "string",
+              "example": "/IS-DEV/GOV/10006"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/legalEntitySearchResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4XX"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5XX"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/legalentities/.national-id": {
+      "get": {
+        "operationId": "legalEntityLookup",
+        "summary": "Legal Entities Lookup",
+        "description": "Information about a single Leagal Entity relationships",
+        "security": [
+          {
+            "island.is-auth": ["@rsk.is/prokura:admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Param-National-Id",
+            "in": "header",
+            "description": "National ID in legalentity",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "example": "0101303019"
+            },
+            "style": "simple"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer #TOKEN#",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "required": true,
+            "description": "X-Road Service information",
+            "schema": {
+              "type": "string",
+              "example": "/IS-DEV/GOV/10006"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/legalentity"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4XX"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5XX"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individuals": {
+      "get": {
+        "operationId": "individualSearch",
+        "summary": "Search Individuals",
+        "description": "Search for relationships between an Individuals and Legal Entities",
+        "security": [
+          {
+            "island.is-auth": ["@rsk.is/prokura:admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Query-Search",
+            "in": "header",
+            "description": "Search String for Service",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "minimum": 1,
+              "default": "",
+              "example": "Gervimaður Noregur"
+            }
+          },
+          {
+            "name": "X-Query-Limit",
+            "in": "header",
+            "description": "Collection result size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 10,
+              "example": 5
+            }
+          },
+          {
+            "name": "X-Query-Offset",
+            "in": "header",
+            "description": "Collection result offset",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 1,
+              "example": 1
+            }
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer #TOKEN#",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "required": true,
+            "description": "X-Road Service information",
+            "schema": {
+              "type": "string",
+              "example": "/IS-DEV/GOV/10006"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/individualSearchResults"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4XX"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5XX"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individuals/.national-id": {
+      "get": {
+        "operationId": "individualLookup",
+        "summary": "Individual Lookup",
+        "description": "Information about a single Indivduals relationships",
+        "security": [
+          {
+            "island.is-auth": ["@rsk.is/prokura:admin"]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Param-National-Id",
+            "in": "header",
+            "description": "National ID in Iceland for person",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "example": "0101302129"
+            },
+            "style": "simple"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "description": "Bearer #TOKEN#",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Road-Client",
+            "in": "header",
+            "required": true,
+            "description": "X-Road Service information",
+            "schema": {
+              "type": "string",
+              "example": "/IS-DEV/GOV/10006"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "guaranteed": {
+                "description": "Header indicates if the result is cached or a guaranteed answer from service.  Use 0 for the cached reply and 1 for guaranteed reply.  Guaranteed replies are rate limited to 60 calls pr. min pr. IP.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/individual"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/400"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/401"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/404"
+                }
+              }
+            }
+          },
+          "4XX": {
+            "description": "Client Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/4XX"
+                }
+              }
+            }
+          },
+          "5XX": {
+            "description": "Server Errors",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/5XX"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Unexpected Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "linkItem": {
+        "type": "object",
+        "required": ["rel", "href"],
+        "properties": {
+          "rel": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "searchPageInfo": {
+        "type": "object",
+        "properties": {
+          "hasPreviousPage": {
+            "type": "string"
+          },
+          "hasNextPage": {
+            "type": "string"
+          },
+          "startCursor": {
+            "type": "integer"
+          },
+          "endCursor": {
+            "type": "integer"
+          },
+          "totalPages": {
+            "type": "integer"
+          }
+        }
+      },
+      "relationshipItem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/linkItem"
+            }
+          }
+        }
+      },
+      "legalEntitySearchItem": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/relationshipItem"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/linkItem"
+            }
+          }
+        }
+      },
+      "legalEntitySearchResults": {
+        "type": "object",
+        "example": {
+          "legalEntities": [
+            {
+              "nationalId": "4202092820",
+              "name": "Icelandic Offshore ehf",
+              "relationships": [
+                {
+                  "type": "Prókúruhafi",
+                  "nationalId": "0101302129",
+                  "name": "Gervimaður Noregur",
+                  "links": [
+                    {
+                      "rel": "_self",
+                      "href": "./../individuals/0101302129"
+                    }
+                  ]
+                }
+              ],
+              "links": [
+                {
+                  "rel": "_self",
+                  "href": "./../legalentities/4202092820"
+                }
+              ]
+            }
+          ],
+          "pageInfo": {
+            "hasPreviousPage": "false",
+            "hasNextPage": "true",
+            "startCursor": 0,
+            "endCursor": 0,
+            "totalPages": 0
+          },
+          "totalCount": 1
+        },
+        "properties": {
+          "legalEntities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/legalEntitySearchItem"
+            }
+          },
+          "pageInfo": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/searchPageInfo"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "individualSearchItem": {
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/relationshipItem"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/linkItem"
+            }
+          }
+        }
+      },
+      "individualSearchResults": {
+        "type": "object",
+        "example": {
+          "individuals": [
+            {
+              "nationalId": "0101302399",
+              "name": "Gervimaður Færeyjar",
+              "relationships": [
+                {
+                  "type": "Prókúruhafi",
+                  "nationalId": "5005101370",
+                  "name": "65° ARTIC ehf.",
+                  "links": [
+                    {
+                      "rel": "_self",
+                      "href": "./../legalentities/5005101370"
+                    }
+                  ]
+                }
+              ],
+              "links": [
+                {
+                  "rel": "_self",
+                  "href": "./../individuals/0101302399"
+                }
+              ]
+            }
+          ],
+          "pageInfo": {
+            "hasPreviousPage": "false",
+            "hasNextPage": "true",
+            "startCursor": 0,
+            "endCursor": 0,
+            "totalPages": 0
+          },
+          "totalCount": 1
+        },
+        "properties": {
+          "individuals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/individualSearchItem"
+            }
+          },
+          "pageInfo": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/searchPageInfo"
+            }
+          },
+          "totalCount": {
+            "type": "integer"
+          }
+        }
+      },
+      "categoriesItem": {
+        "type": "object",
+        "required": ["type", "system", "id", "name"],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "system": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "vatItem": {
+        "type": "object",
+        "required": ["vatId", "created"],
+        "properties": {
+          "vatId": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "closed": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/categoriesItem"
+            }
+          }
+        }
+      },
+      "addressItem": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "isPostbox": {
+            "type": "string"
+          },
+          "postCode": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "municipalityId": {
+            "type": "string"
+          },
+          "municipality": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "legalentity": {
+        "type": "object",
+        "required": ["nationalId", "name", "created", "stada"],
+        "properties": {
+          "$.id": {
+            "type": "string"
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "created": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "closed": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "vat": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/vatItem"
+            }
+          },
+          "addresses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/addressItem"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/relationshipItem"
+            }
+          },
+          "lastUpdated": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/linkItem"
+            }
+          }
+        }
+      },
+      "individual": {
+        "type": "object",
+        "example": {
+          "nationalId": "0101302129",
+          "name": "Gervimaður Noregur",
+          "relationships": [
+            {
+              "nationalId": "4208160570",
+              "name": "ZZZ2 ehf."
+            },
+            {
+              "nationalId": "4208160490",
+              "name": "ZZZ3 ehf."
+            }
+          ]
+        },
+        "required": ["nationalId", "name"],
+        "properties": {
+          "nationalId": {
+            "type": "string",
+            "pattern": "^\\d{10}$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/relationshipItem"
+            }
+          }
+        }
+      },
+      "serviceInfo": {
+        "type": "object",
+        "example": {
+          "version": "1.0.0",
+          "service": "Service Name - API 1.0.0",
+          "environment": "Environment",
+          "publisher": "Skatturinn",
+          "publisherWebsite": "https://www.rsk.is",
+          "publisherEmail": "api@rsk.is"
+        },
+        "required": ["service", "version", "environment"],
+        "properties": {
+          "service": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "publisher": {
+            "type": "string"
+          },
+          "publisherWebsite": {
+            "type": "string"
+          },
+          "publisherEmail": {
+            "type": "string"
+          }
+        }
+      },
+      "400": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Bad Request",
+          "status": 400,
+          "detail": "Request response status code indicates that the server cannot or will not process the request due to something that is perceived to be a client error (for example, malformed request syntax, invalid request message framing, or deceptive request routing).",
+          "instance": "/:nationalId"
+        },
+        "properties": {
+          "error": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "401": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Unauthorized",
+          "status": 401,
+          "detail": "Unauthorized response status code indicates that the client request has not been completed because it lacks valid authentication credentials for the requested resource.",
+          "instance": "/"
+        },
+        "properties": {
+          "error": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "404": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Not found",
+          "status": 404,
+          "detail": "Information requested was not found.",
+          "instance": "/"
+        },
+        "properties": {
+          "error": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "4XX": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Client Errors",
+          "status": "4XX",
+          "detail": "The 4XX group errors relate to the client or browser.",
+          "instance": "/"
+        },
+        "properties": {
+          "error": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "5XX": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Server Errors",
+          "status": "5XX",
+          "detail": "The 5XX group is for server errors.",
+          "instance": "/"
+        },
+        "properties": {
+          "error": {
+            "type": "object",
+            "items": {
+              "$ref": "#/components/schemas/error"
+            }
+          }
+        }
+      },
+      "error": {
+        "type": "object",
+        "example": {
+          "type": "/error",
+          "title": "Error title",
+          "status": "###",
+          "detail": "Description of error",
+          "instance": "/uri"
+        },
+        "required": ["type", "title", "status"],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "island.is-auth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

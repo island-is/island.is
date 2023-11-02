@@ -9,6 +9,7 @@ import {
   HasQualityPhoto,
   YES,
   DrivingLicense,
+  HasQualitySignature,
 } from './types'
 import {
   DrivingLicenseBookService,
@@ -16,8 +17,8 @@ import {
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
-  Juristiction,
-  Teacher,
+  Jurisdiction,
+  TeacherV4,
 } from '@island.is/clients/driving-license'
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -32,14 +33,14 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     super('DrivingLicenseShared')
   }
 
-  private async hasTeachingRights(nationalId: string): Promise<boolean> {
-    return await this.drivingLicenseService.getIsTeacher({ nationalId })
+  private async hasTeachingRights(token: string): Promise<boolean> {
+    return await this.drivingLicenseService.getIsTeacher({ token })
   }
 
   async getHasTeachingRights({
     auth,
   }: TemplateApiModuleActionProps): Promise<boolean> {
-    const teachingRights = await this.hasTeachingRights(auth.nationalId)
+    const teachingRights = await this.hasTeachingRights(auth.authorization)
     if (teachingRights) {
       return true
     } else {
@@ -99,8 +100,8 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       })
   }
 
-  async teachers(): Promise<Teacher[]> {
-    const teachers = await this.drivingLicenseService.getTeachers()
+  async teachers(): Promise<TeacherV4[]> {
+    const teachers = await this.drivingLicenseService.getTeachersV4()
     if (teachers) {
       return teachers.sort(sortTeachers)
     } else {
@@ -126,19 +127,29 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     if (fakeData?.useFakeData === YES) {
       return {
         currentLicense: fakeData.currentLicense === 'temp' ? 'B' : null,
-        healthRemarks:
-          fakeData.healthRemarks === YES
+        remarks:
+          fakeData.remarks === YES
             ? ['Gervilimur eða gervilimir/stoðtæki fyrir fætur og hendur.']
             : undefined,
       }
     }
 
-    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-      nationalId: auth.nationalId,
-    })
+    let drivingLicense
+    if (params?.useLegacyVersion) {
+      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
+        {
+          nationalId: auth.nationalId,
+          token: auth.authorization,
+        },
+      )
+    } else {
+      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+        token: auth.authorization,
+      })
+    }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
-      (cat) => cat.name === 'B',
+      (cat) => cat.name === 'B' || cat.nr === 'B',
     )
 
     // Validate that user has the necessary categories
@@ -146,7 +157,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       params?.validCategories &&
       (!drivingLicense?.categories ||
         !drivingLicense.categories.some((x) =>
-          params.validCategories?.includes(x.name),
+          params.validCategories?.includes(
+            params?.useLegacyVersion ? x.name : x.nr || '',
+          ),
         ))
     ) {
       throw new TemplateApiError(
@@ -160,10 +173,13 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     return {
       currentLicense: categoryB ? categoryB.name : null,
-      healthRemarks: drivingLicense?.healthRemarks,
+      remarks: drivingLicense?.remarks ?? [],
       categories: drivingLicense?.categories,
       id: drivingLicense?.id,
       birthCountry: drivingLicense?.birthCountry,
+      issued: drivingLicense?.issued,
+      expires: drivingLicense?.expires,
+      publishPlaceName: drivingLicense?.publishPlaceName,
     }
   }
 
@@ -185,22 +201,54 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       return { hasQualityPhoto: hasQualityPhoto === 'yes' }
     }
     const hasQualityPhoto = await this.drivingLicenseService.getHasQualityPhoto(
-      { nationalId: auth.nationalId },
+      { token: auth.authorization },
     )
     return {
       hasQualityPhoto,
     }
   }
 
-  async juristictions(): Promise<Juristiction[]> {
-    return await this.drivingLicenseService.getListOfJuristictions()
+  async qualitySignature({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps): Promise<HasQualitySignature | null> {
+    // If running locally or on dev allow for fake data
+    const useFakeData = getValueViaPath<'yes' | 'no'>(
+      application.answers,
+      'fakeData.useFakeData',
+    )
+
+    if (useFakeData === 'yes') {
+      const hasQualitySignature = getValueViaPath<'yes' | 'no'>(
+        application.answers,
+        'fakeData.qualitySignature',
+      )
+      if (hasQualitySignature === 'yes') {
+        return {
+          hasQualitySignature: true,
+        }
+      } else {
+        return null
+      }
+    }
+    const hasQualitySignature =
+      await this.drivingLicenseService.getHasQualitySignature({
+        token: auth.authorization,
+      })
+    return {
+      hasQualitySignature,
+    }
+  }
+
+  async jurisdictions(): Promise<Jurisdiction[]> {
+    return await this.drivingLicenseService.getListOfJurisdictions()
   }
 
   private async getDrivingAssessment(
-    nationalId: string,
+    token: string,
   ): Promise<StudentAssessment | null> {
     const assessment = await this.drivingLicenseService.getDrivingAssessment({
-      nationalId,
+      token,
     })
 
     if (!assessment) {
@@ -209,11 +257,10 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
 
     let teacherName: string | null
     if (assessment.nationalIdTeacher) {
-      const teacherLicense = await this.drivingLicenseService.getCurrentLicense(
-        {
+      const teacherLicense =
+        await this.drivingLicenseService.legacyGetCurrentLicense({
           nationalId: assessment.nationalIdTeacher,
-        },
-      )
+        })
       teacherName = teacherLicense?.name || null
     } else {
       teacherName = null
@@ -242,6 +289,6 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    return await this.getDrivingAssessment(auth.nationalId)
+    return await this.getDrivingAssessment(auth.authorization)
   }
 }

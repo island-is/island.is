@@ -21,9 +21,12 @@ interface Props {
   nationalIdDefaultValue?: string
   nameDefaultValue?: string
   errorMessage?: string
+  disabled?: boolean
 }
 
-export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
+export const NationalIdWithName: FC<
+  React.PropsWithChildren<Props & FieldBaseProps>
+> = ({
   customId = '',
   customNationalIdLabel = '',
   customNameLabel = '',
@@ -34,6 +37,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
   nationalIdDefaultValue,
   nameDefaultValue,
   errorMessage,
+  disabled,
 }) => {
   const { id } = field
   const usedId = customId.length > 0 ? customId : id
@@ -71,20 +75,18 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
     ? nameDefaultValue
     : getValueViaPath(application.answers, `${usedId}.name`, '')
 
-  const [
-    getIdentity,
-    { data, loading: queryLoading, error: queryError },
-  ] = useLazyQuery<Query, { input: IdentityInput }>(
-    gql`
-      ${IDENTITY_QUERY}
-    `,
-    {
-      onCompleted: (data) => {
-        onNameChange && onNameChange(data.identity?.name ?? '')
-        setValue(nameField, data.identity?.name ?? undefined)
+  const [getIdentity, { data, loading: queryLoading, error: queryError }] =
+    useLazyQuery<Query, { input: IdentityInput }>(
+      gql`
+        ${IDENTITY_QUERY}
+      `,
+      {
+        onCompleted: (data) => {
+          onNameChange && onNameChange(data.identity?.name ?? '')
+          setValue(nameField, data.identity?.name ?? undefined)
+        },
       },
-    },
-  )
+    )
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -120,6 +122,7 @@ export const NationalIdWithName: FC<Props & FieldBaseProps> = ({
             })}
             loading={queryLoading}
             error={nationalIdFieldErrors}
+            disabled={disabled}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>

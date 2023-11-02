@@ -121,9 +121,11 @@ glob
     Object.entries<MessageDict>(f).forEach(
       async ([namespaceId, namespaceMessages]) => {
         const namespace = await getNamespace(namespaceId)
-        const locales = ((await getLocales()) as {
-          items: Record<string, any>[]
-        }).items.map((locale) => ({ id: locale.code }))
+        const locales = (
+          (await getLocales()) as {
+            items: Record<string, any>[]
+          }
+        ).items.map((locale) => ({ id: locale.code }))
 
         // If namespace does exist we update it, else we create it
         if (namespace) {

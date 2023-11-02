@@ -1,21 +1,46 @@
 import {
   defineTemplateApi,
   PaymentCatalogApi,
-} from '@island.is/application/types'
-import { SYSLUMADUR_NATIONAL_ID } from '../lib/constants'
-export {
-  NationalRegistryUserApi,
   UserProfileApi,
-  MockProviderApi,
+  NationalRegistryUserApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
+import { error } from '../lib/error'
+export { MockProviderApi } from '@island.is/application/types'
 
 export const IdentityDocumentApi = defineTemplateApi({
   action: 'identityDocument',
 })
+export const UserInfoApi = UserProfileApi.configure({
+  params: {
+    catchMock: true,
+  },
+})
+
+const defaultParams = {
+  ageToValidate: 18,
+  legalDomicileIceland: true,
+  ageToValidateError: {
+    title: error.invalidAgeTitle,
+    summary: error.invalidAgeDescription,
+  },
+  icelandicCitizenship: true,
+}
+
+export const NationalRegistryUser = NationalRegistryUserApi.configure({
+  params: defaultParams,
+})
+
+export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
+  params: {
+    ...defaultParams,
+    icelandicCitizenship: false,
+  },
+})
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {
-    organizationId: SYSLUMADUR_NATIONAL_ID,
+    organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
 })

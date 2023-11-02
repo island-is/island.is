@@ -1,9 +1,8 @@
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { LicenseService } from '../license.service'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  CLIENT_FACTORY,
-  GenericLicenseClient,
   LicenseId,
   LicenseUpdateType,
   PASS_TEMPLATE_IDS,
@@ -14,16 +13,30 @@ import {
   Pass,
   RevokePassData,
   VerifyPassData,
+  SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
 import { VerifyInputData } from '../dto/verifyLicense.input'
 import {
   BadRequestException,
+  Inject,
+  Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import {
+  BaseLicenseUpdateClient,
+  LicenseUpdateClientService,
+} from '@island.is/clients/license-client'
 
 const licenseIds = Object.values(LicenseId)
 
-class MockLicenseClient implements GenericLicenseClient {
+@Injectable()
+export class MockUpdateClient extends BaseLicenseUpdateClient {
+  constructor(
+    @Inject(LOGGER_PROVIDER) protected logger: Logger,
+    protected smartApi: SmartSolutionsApi,
+  ) {
+    super(logger, smartApi)
+  }
   pushUpdate = (inputData: PassDataInput, nationalId: string) => {
     if (nationalId === 'success') {
       return Promise.resolve<Result<Pass | undefined>>({
@@ -180,20 +193,33 @@ describe('LicenseService', () => {
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
+            debug: () => ({}),
             error: () => ({}),
           })),
+        },
+        {
+          provide: SmartSolutionsApi,
+          useClass: jest.fn(() => ({})),
         },
         {
           provide: PASS_TEMPLATE_IDS,
           useValue: {
             disability: LicenseId.DISABILITY_LICENSE,
             firearm: LicenseId.FIREARM_LICENSE,
+            driving: LicenseId.DRIVING_LICENSE,
           },
         },
         {
-          provide: CLIENT_FACTORY,
-          useFactory: () => async (): Promise<GenericLicenseClient | null> =>
-            new MockLicenseClient(),
+          provide: LicenseUpdateClientService,
+          useFactory: (logger, smart) => ({
+            getLicenseUpdateClientByType:
+              async (): Promise<BaseLicenseUpdateClient | null> =>
+                new MockUpdateClient(logger, smart),
+            getLicenseUpdateClientByPassTemplateId:
+              async (): Promise<BaseLicenseUpdateClient | null> =>
+                new MockUpdateClient(logger, smart),
+          }),
+          inject: [LOGGER_PROVIDER, SmartSolutionsApi],
         },
       ],
     }).compile()
@@ -207,10 +233,7 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'success',
             date: '2022-06-28T15:42:11.665950Z',
@@ -226,10 +249,7 @@ describe('LicenseService', () => {
         //act
         const result = await licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'failure',
             date: '2022-06-28T15:42:11.665950Z',
@@ -245,10 +265,7 @@ describe('LicenseService', () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: '',
             date: '2022-06-28T15:42:11.665950Z',
@@ -265,10 +282,7 @@ describe('LicenseService', () => {
         //act
         const result = licenseService.verifyLicense({
           barcodeData: JSON.stringify({
-            passTemplateId:
-              licenseId === LicenseId.DRIVING_LICENSE
-                ? undefined
-                : licenseId.toString(),
+            passTemplateId: licenseId.toString(),
             passTemplateName: licenseId.toString(),
             code: 'invalid',
             date: '2022-06-28T15:42:11.665950Z',

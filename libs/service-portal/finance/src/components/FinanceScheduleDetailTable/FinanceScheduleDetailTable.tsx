@@ -24,7 +24,9 @@ type DetailData = Array<
   }
 >
 
-const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
+const FinanceScheduleDetailTable: FC<React.PropsWithChildren<Props>> = ({
+  data,
+}) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 

@@ -1,8 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+
 import { ISidebarCard } from '../generated/contentfulTypes'
 import { Link, mapLink } from './link.model'
 import { Image, mapImage } from './image.model'
-import { SystemMetadata } from 'api-cms-domain'
 
 @ObjectType()
 export class SidebarCard {
@@ -18,10 +20,10 @@ export class SidebarCard {
   @Field()
   contentString!: string
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   link!: Link | null
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   image?: Image | null
 }
 

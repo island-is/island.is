@@ -16,10 +16,9 @@ import {
 } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 
-export const CoOwnersSection: FC<FieldBaseProps & ReviewScreenProps> = ({
-  application,
-  reviewerNationalId = '',
-}) => {
+export const CoOwnersSection: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ application, reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
   const ownerCoOwners = getValueViaPath(
     application.answers,

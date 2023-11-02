@@ -4,7 +4,14 @@ import * as kennitala from 'kennitala'
 const UserSchemaBase = z.object({
   nationalId: z
     .string()
-    .refine((x) => x && x.length !== 0 && kennitala.isValid(x)),
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
   name: z.string().min(1),
   email: z.string().min(1),
   phone: z.string().min(1),
@@ -22,7 +29,11 @@ const RemovableUserSchemaBase = z
     ({ nationalId, wasRemoved }) => {
       return (
         wasRemoved === 'true' ||
-        (nationalId && nationalId.length > 0 && kennitala.isValid(nationalId))
+        (nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId) &&
+          (kennitala.isCompany(nationalId) ||
+            kennitala.info(nationalId).age >= 18))
       )
     },
     { path: ['nationalId'] },
@@ -78,8 +89,19 @@ export const TransferOfVehicleOwnershipSchema = z.object({
   vehicle: z.object({
     plate: z.string().min(1),
     type: z.string().min(1),
-    salePrice: z.string().optional(),
+    salePrice: z
+      .string()
+      .optional()
+      .refine(
+        (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
+      ),
     date: z.string().min(1),
+    mileage: z
+      .string()
+      .optional()
+      .refine(
+        (p) => p === undefined || p === '' || parseInt(p?.split(' ')[0]) >= 0,
+      ),
   }),
   seller: UserInformationSchema,
   sellerCoOwner: z.array(UserInformationSchema),

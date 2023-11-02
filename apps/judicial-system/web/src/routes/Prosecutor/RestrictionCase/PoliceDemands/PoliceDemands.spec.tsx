@@ -1,11 +1,11 @@
 import { createIntl } from 'react-intl'
 
+import { CaseDecision } from '@island.is/judicial-system/types'
 import {
-  Defendant,
   CaseCustodyRestrictions,
-  CaseDecision,
-} from '@island.is/judicial-system/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+  CaseType,
+  Defendant,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { DemandsAutofillProps, getDemandsAutofill } from './PoliceDemands'
 
@@ -23,9 +23,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format custody case', () => {
     const props = {
-      caseType: CaseType.Custody,
+      caseType: CaseType.CUSTODY,
       defendant: baseDefendant,
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps
@@ -39,9 +39,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format extended custody case', () => {
     const props = {
-      caseType: CaseType.Custody,
+      caseType: CaseType.CUSTODY,
       defendant: baseDefendant,
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
       parentCaseDecision: CaseDecision.ACCEPTING,
@@ -56,9 +56,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format custody case with isolation', () => {
     const props = {
-      caseType: CaseType.Custody,
+      caseType: CaseType.CUSTODY,
       defendant: baseDefendant,
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
       requestedCustodyRestrictions: [CaseCustodyRestrictions.ISOLATION],
@@ -73,13 +73,13 @@ describe('getDemandsAutofill', () => {
 
   it('should format travel ban case', () => {
     const props = {
-      caseType: CaseType.TravelBan,
+      caseType: CaseType.TRAVEL_BAN,
       defendant: {
         ...baseDefendant,
         noNationalId: true,
         nationalId: '1991-01-01',
       },
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps
@@ -93,9 +93,9 @@ describe('getDemandsAutofill', () => {
 
   it('should format admission to facility case', () => {
     const props = {
-      caseType: CaseType.AdmissionToFacility,
+      caseType: CaseType.ADMISSION_TO_FACILITY,
       defendant: baseDefendant,
-      type: CaseType.Custody,
+      type: CaseType.CUSTODY,
       courtName,
       requestedValidToDate: '2020-01-01',
     } as DemandsAutofillProps

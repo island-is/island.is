@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 
 import { IStep } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()
@@ -18,7 +19,7 @@ export class Step {
   @Field({ nullable: true })
   stepType?: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   subtitle?: Array<typeof SliceUnion>
 
   @Field({ nullable: true })

@@ -1,9 +1,10 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IVidspyrnaPage } from '../generated/contentfulTypes'
 import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
 import { mapProcessEntry, ProcessEntry } from './processEntry.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
-import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class AdgerdirPage {
@@ -19,7 +20,7 @@ export class AdgerdirPage {
   @Field({ nullable: true })
   longDescription?: string
 
-  @Field(() => [SliceUnion])
+  @CacheField(() => [SliceUnion])
   content: Array<typeof SliceUnion> = []
 
   @Field({ nullable: true })
@@ -28,7 +29,7 @@ export class AdgerdirPage {
   @Field()
   slug!: string
 
-  @Field(() => [AdgerdirTag])
+  @CacheField(() => [AdgerdirTag])
   tags!: AdgerdirTag[]
 
   @Field({ nullable: true })
@@ -46,7 +47,7 @@ export class AdgerdirPage {
   @Field({ nullable: true })
   finalCostIsk?: number
 
-  @Field(() => ProcessEntry, { nullable: true })
+  @CacheField(() => ProcessEntry, { nullable: true })
   processEntry?: ProcessEntry | null
 }
 

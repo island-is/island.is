@@ -186,7 +186,6 @@ export const prepareServiceForEnv = (
           env,
           `${serviceDef.name}-initContainers`,
         )
-
         mergeObjects(result.initContainers.envs, featureEnvs)
         addToErrors(featureErrors)
         mergeObjects(result.initContainers.secrets, featureSecrets)
@@ -305,12 +304,9 @@ function addFeaturesConfig(
   env: EnvironmentConfig,
   serviceName: string,
 ) {
-  const activeFeatures = Object.entries(
-    serviceDefFeatures,
-  ).filter(([feature]) => env.featuresOn.includes(feature as FeatureNames)) as [
-    FeatureNames,
-    Feature,
-  ][]
+  const activeFeatures = Object.entries(serviceDefFeatures).filter(
+    ([feature]) => env.featuresOn.includes(feature as FeatureNames),
+  ) as [FeatureNames, Feature][]
   const featureEnvs = activeFeatures.map(([name, v]) => {
     const { envs, errors } = getEnvVariables(v.env, serviceName, env.type)
     return {

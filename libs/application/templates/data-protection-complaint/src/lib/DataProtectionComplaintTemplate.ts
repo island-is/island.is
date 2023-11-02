@@ -17,6 +17,11 @@ import { States } from '../constants'
 
 type DataProtectionComplaintEvent = { type: DefaultEvents.SUBMIT }
 
+export const DefaultSubmitHistoryLog = {
+  onEvent: DefaultEvents.SUBMIT,
+  logMessage: application.applicationSubmitted,
+}
+
 const DataProtectionComplaintTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<DataProtectionComplaintEvent>,
@@ -26,7 +31,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
   name: application.name,
   institution: application.institutionName,
   dataSchema: DataProtectionComplaintSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: 'draft',
     states: {
@@ -39,6 +43,9 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: true,
             whenToPrune: 5 * 60000, //5 minutes
+          },
+          actionCard: {
+            historyLogs: [DefaultSubmitHistoryLog],
           },
           roles: [
             {
@@ -67,9 +74,6 @@ const DataProtectionComplaintTemplate: ApplicationTemplate<
           name: 'Completed',
           status: 'completed',
           progress: 1,
-          actionCard: {
-            onEntryHistoryLog: application.applicationSubmitted,
-          },
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,

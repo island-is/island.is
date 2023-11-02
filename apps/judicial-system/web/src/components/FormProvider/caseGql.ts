@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 const CaseQuery = gql`
-  query CaseQuery($input: CaseQueryInput!) {
+  query Case($input: CaseQueryInput!) {
     case(input: $input) {
       id
       created
@@ -29,7 +29,7 @@ const CaseQuery = gql`
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      sendRequestToDefender
+      requestSharedWithDefender
       isHeightenedSecurityLevel
       court {
         id
@@ -106,6 +106,7 @@ const CaseQuery = gql`
       accusedPostponedAppealDate
       prosecutorPostponedAppealDate
       rulingDate
+      rulingSignatureDate
       judge {
         id
         name
@@ -131,11 +132,11 @@ const CaseQuery = gql`
         ruling
         caseFiles {
           id
-          name
-          size
           created
+          name
           state
           key
+          size
         }
       }
       childCase {
@@ -150,18 +151,20 @@ const CaseQuery = gql`
       }
       caseFiles {
         id
-        name
-        size
         created
         modified
+        name
+        type
+        category
         state
         key
-        category
+        size
         policeCaseNumber
         chapter
         orderWithinChapter
         userGeneratedFilename
         displayDate
+        policeFileId
       }
       isAppealDeadlineExpired
       isAppealGracePeriodExpired
@@ -169,8 +172,7 @@ const CaseQuery = gql`
       rulingModifiedHistory
       caseResentExplanation
       origin
-      seenByDefender
-      subpoenaType
+      openedByDefender
       defendantWaivesRightToCounsel
       crimeScenes
       indictmentIntroduction
@@ -197,7 +199,35 @@ const CaseQuery = gql`
       appealedDate
       appealDeadline
       prosecutorStatementDate
-      defenderStatementDate
+      defendantStatementDate
+      appealReceivedByCourtDate
+      appealConclusion
+      appealRulingDecision
+      appealCaseNumber
+      appealAssistant {
+        id
+        name
+      }
+      appealJudge1 {
+        id
+        name
+      }
+      appealJudge2 {
+        id
+        name
+      }
+      appealJudge3 {
+        id
+        name
+      }
+      eventLogs {
+        id
+        created
+        caseId
+        eventType
+        nationalId
+        userRole
+      }
     }
   }
 `

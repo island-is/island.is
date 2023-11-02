@@ -3,7 +3,6 @@ import {
   Box,
   DatePicker,
   Checkbox,
-  Filter,
   FilterMultiChoice,
   AccordionItem,
   Accordion,
@@ -11,7 +10,7 @@ import {
   Hidden,
   Text,
 } from '@island.is/island-ui/core'
-import { m } from '@island.is/service-portal/core'
+import { m, Filter } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentsFilter.css'
@@ -29,6 +28,8 @@ interface Props {
   debounceChange: (e: any) => void
   handleClearFilters: () => void
   handleShowUnread: (value: boolean) => void
+  handleShowArchived: (value: boolean) => void
+  handleShowBookmarked: (value: boolean) => void
   handleCategoriesChange: (values: string[]) => void
   handleSendersChange: (values: string[]) => void
   handleDateFromChange: (date: Date | null) => void
@@ -44,6 +45,8 @@ const DocumentsFilter = ({
   debounceChange,
   handleClearFilters,
   handleShowUnread,
+  handleShowArchived,
+  handleShowBookmarked,
   handleCategoriesChange,
   handleSendersChange,
   handleDateFromChange,
@@ -93,8 +96,9 @@ const DocumentsFilter = ({
             placeholder={formatMessage(m.searchPlaceholder)}
             name="rafraen-skjol-input"
             size="xs"
-            label={formatMessage(m.searchLabel)}
             onChange={debounceChange}
+            backgroundColor="blue"
+            icon={{ name: 'search' }}
           />
         }
         onFilterClear={handleClearFilters}
@@ -106,12 +110,28 @@ const DocumentsFilter = ({
           paddingX={3}
           className={styles.unreadFilter}
         >
-          <Box paddingY={3}>
+          <Box paddingTop={3}>
             <Checkbox
               id="show-unread"
               label={formatMessage(messages.onlyShowUnread)}
               checked={filterValue.showUnread}
               onChange={(e) => handleShowUnread(e.target.checked)}
+            />
+          </Box>
+          <Box paddingTop={1}>
+            <Checkbox
+              id="show-bookmarked"
+              label={formatMessage(messages.onlyShowBookmarked)}
+              checked={filterValue.bookmarked}
+              onChange={(e) => handleShowBookmarked(e.target.checked)}
+            />
+          </Box>
+          <Box paddingTop={1} paddingBottom={3}>
+            <Checkbox
+              id="show-archived"
+              label={formatMessage(messages.onlyShowArchived)}
+              checked={filterValue.archived}
+              onChange={(e) => handleShowArchived(e.target.checked)}
             />
           </Box>
           <Box
@@ -179,7 +199,7 @@ const DocumentsFilter = ({
                 iconVariant="small"
               >
                 <Box display="flex" flexDirection="column">
-                  <Box className={styles.firstDatePicker}>
+                  <Box>
                     <DatePicker
                       label={formatMessage(m.datepickerFromLabel)}
                       placeholderText={formatMessage(m.datepickLabel)}
@@ -188,9 +208,10 @@ const DocumentsFilter = ({
                       size="xs"
                       selected={filterValue.dateFrom}
                       handleChange={handleDateFromChange}
+                      appearInline
                     />
                   </Box>
-                  <Box marginTop={3} className={styles.secondDatePicker}>
+                  <Box marginTop={3}>
                     <DatePicker
                       label={formatMessage(m.datepickerToLabel)}
                       placeholderText={formatMessage(m.datepickLabel)}
@@ -199,6 +220,7 @@ const DocumentsFilter = ({
                       size="xs"
                       selected={filterValue.dateTo}
                       handleChange={handleDateToChange}
+                      appearInline
                       minDate={filterValue.dateFrom || undefined}
                     />
                   </Box>
@@ -210,31 +232,29 @@ const DocumentsFilter = ({
       </Filter>
       <Hidden print>
         {hasActiveFilters() && (
-          <Box marginTop={4}>
-            <Box
-              display="flex"
-              alignItems="center"
-              justifyContent="spaceBetween"
-            >
-              <DocumentsFilterTags
-                filterValue={filterValue}
-                categories={categoriesAvailable}
-                senders={sendersAvailable}
-                handleCategoriesChange={handleCategoriesChange}
-                handleSendersChange={handleSendersChange}
-                handleDateFromChange={handleDateFromChange}
-                handleDateToChange={handleDateToChange}
-                handleShowUnread={handleShowUnread}
-                handleClearFilters={handleClearFilters}
-              />
+          <Box display="flex" flexDirection="column" marginTop={4}>
+            <DocumentsFilterTags
+              filterValue={filterValue}
+              categories={categoriesAvailable}
+              senders={sendersAvailable}
+              handleCategoriesChange={handleCategoriesChange}
+              handleSendersChange={handleSendersChange}
+              handleDateFromChange={handleDateFromChange}
+              handleDateToChange={handleDateToChange}
+              handleShowUnread={handleShowUnread}
+              handleClearFilters={handleClearFilters}
+              handleShowArchived={handleShowArchived}
+              handleShowBookmarked={handleShowBookmarked}
+            />
 
-              <Text
-                variant="eyebrow"
-                as="h3"
-              >{`${documentsLength} ${formatMessage(
-                documentsFoundText(),
-              )}`}</Text>
-            </Box>
+            <Text
+              variant="eyebrow"
+              as="h3"
+              dataTestId="doc-found-text"
+              marginTop={2}
+            >{`${documentsLength} ${formatMessage(
+              documentsFoundText(),
+            )}`}</Text>
           </Box>
         )}
       </Hidden>

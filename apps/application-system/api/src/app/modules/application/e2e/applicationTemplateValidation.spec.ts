@@ -144,6 +144,28 @@ describe('ApplicationTemplateValidation', () => {
     environment.name = envNameBefore
   })
 
+  it('Should be ready when no featureFlag is supplied and readyForProduction is undefined on prod', async () => {
+    const mockUser = {
+      nationalId: '1234567890',
+      scope: [],
+      authorization: faker.random.word(),
+      client: faker.random.word(),
+    }
+
+    const envBefore = environment.production
+    environment.production = true
+    const envNameBefore = environment.name
+    environment.name = 'production'
+
+    const results = await applicationValidationService.isTemplateReady(
+      {},
+      mockUser,
+    )
+    expect(results).toBe(true)
+    environment.production = envBefore
+    environment.name = envNameBefore
+  })
+
   it('Should be ready when not running on production without a featureFlag and regardless of readyForProduction flag on localhost', async () => {
     const mockUser = {
       nationalId: '1234567890',

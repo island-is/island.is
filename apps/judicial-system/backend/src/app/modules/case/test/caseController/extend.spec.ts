@@ -1,6 +1,6 @@
-import { uuid } from 'uuidv4'
 import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
   CaseCustodyRestrictions,
@@ -13,10 +13,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
+
 import { randomDate, randomEnum } from '../../../../test'
 import { DefendantService } from '../../../defendant'
-import { Case } from '../../models/case.model'
 import { include, order } from '../../case.service'
+import { Case } from '../../models/case.model'
 
 interface Then {
   result: Case
@@ -36,12 +37,8 @@ describe('CaseController - Extend', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      defendantService,
-      sequelize,
-      caseModel,
-      caseController,
-    } = await createTestingCaseModule()
+    const { defendantService, sequelize, caseModel, caseController } =
+      await createTestingCaseModule()
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
@@ -264,13 +261,13 @@ describe('CaseController - Extend', () => {
     })
 
     it('should copy defendants', () => {
-      expect(mockDefendantService.create).toHaveBeenCalledTimes(2)
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(2)
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantOne,
         transaction,
       )
-      expect(mockDefendantService.create).toHaveBeenCalledWith(
+      expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
         defendantTwo,
         transaction,
@@ -358,7 +355,8 @@ describe('CaseController - Extend', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(extendedCase)
-      const mockDefendantCreate = mockDefendantService.create as jest.Mock
+      const mockDefendantCreate =
+        mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase)

@@ -10,10 +10,7 @@ export const RegulationsAdminClientConfig = defineConfig({
   name: 'RegulationsAdminClientConfig',
   schema,
   load: (env) => ({
-    baseApiUrl: env.required(
-      'REGULATIONS_ADMIN_URL',
-      'http://localhost:3333/api',
-    ),
+    baseApiUrl: env.required('REGULATIONS_ADMIN_URL', 'http://localhost:3333'),
     regulationsApiUrl: env.required(
       'REGULATIONS_API_URL',
       'http://localhost:3000/api/v1',

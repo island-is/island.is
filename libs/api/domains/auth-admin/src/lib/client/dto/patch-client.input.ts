@@ -70,4 +70,10 @@ export class PatchClientInput {
 
   @Field(() => [ClientClaim], { nullable: true })
   customClaims?: ClientClaim[]
+
+  @Field(() => [String], { nullable: true })
+  addedScopes?: string[]
+
+  @Field(() => [String], { nullable: true })
+  removedScopes?: string[]
 }

@@ -1,4 +1,5 @@
 import {
+  AccessModes,
   Context,
   EnvironmentVariables,
   ExtraValues,
@@ -14,7 +15,6 @@ import {
   Resources,
   Secrets,
   ServiceDefinition,
-  ValueType,
   XroadConfig,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
@@ -171,7 +171,10 @@ export class ServiceBuilder<ServiceType> {
    */
   initContainer(ic: Optional<InitContainers, 'envs' | 'secrets' | 'features'>) {
     if (ic.postgres) {
-      ic.postgres = this.withDefaults(ic.postgres)
+      ic.postgres = {
+        ...this.withDefaults(ic.postgres),
+        extensions: ic.postgres.extensions,
+      }
     }
     const uniqueNames = new Set(ic.containers.map((c) => c.name))
     if (uniqueNames.size != ic.containers.length) {
@@ -270,6 +273,7 @@ export class ServiceBuilder<ServiceType> {
       passwordSecret:
         pi.passwordSecret ?? `/k8s/${this.serviceDef.name}/DB_PASSWORD`,
       name: pi.name ?? postgresIdentifier(this.serviceDef.name),
+      extensions: this.serviceDef.initContainers?.postgres?.extensions,
     }
   }
 }

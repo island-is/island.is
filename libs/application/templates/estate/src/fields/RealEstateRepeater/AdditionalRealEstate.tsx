@@ -39,33 +39,33 @@ export const AdditionalRealEstate = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
-  const dummyField = `${fieldIndex}.dummy`
   const shareField = `${fieldIndex}.share`
-  const { control, setValue } = useFormContext()
+  const marketValueField = `${fieldIndex}.marketValue`
+
+  const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: SearchForPropertyInput }>(
-    SEARCH_FOR_PROPERTY_QUERY,
-    {
-      onCompleted: (data) => {
-        setValue(
-          addressField,
-          data.searchForProperty?.defaultAddress?.display ?? '',
-        )
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: SearchForPropertyInput }>(
+      SEARCH_FOR_PROPERTY_QUERY,
+      {
+        onCompleted: (data) => {
+          clearErrors(addressField)
+          setValue(
+            addressField,
+            data.searchForProperty?.defaultAddress?.display ?? '',
+          )
+        },
+        fetchPolicy: 'network-only',
       },
-      fetchPolicy: 'network-only',
-    },
-  )
+    )
 
   useEffect(() => {
     // According to Skra.is:
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/[Ff]{0,1}\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
           input: {
@@ -91,20 +91,12 @@ export const AdditionalRealEstate = ({
         render={() => <input type="hidden" />}
       />
       <Controller
-        name={dummyField}
-        control={control}
-        defaultValue={field.dummy || false}
-        render={() => <input type="hidden" />}
-      />
-      <Controller
         name={shareField}
         control={control}
         defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
-      <Text variant="h4">
-        {formatMessage(m.realEstateRepeaterHeader) + ' ' + (index + 1)}
-      </Text>
+      <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
           variant="ghost"
@@ -122,7 +114,9 @@ export const AdditionalRealEstate = ({
             label={formatMessage(m.propertyNumber)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
-            error={error?.assetNumber ?? undefined}
+            error={error?.assetNumber}
+            placeholder="F1234567"
+            required
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2} paddingTop={2}>
@@ -133,6 +127,20 @@ export const AdditionalRealEstate = ({
             loading={queryLoading}
             readOnly
             defaultValue={field.description}
+            error={error?.description}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <InputController
+            id={marketValueField}
+            name={marketValueField}
+            label={formatMessage(m.realEstateValueTitle)}
+            defaultValue={field.marketValue}
+            placeholder={'0 kr.'}
+            error={error?.marketValue}
+            currency
+            size="sm"
+            required
           />
         </GridColumn>
       </GridRow>

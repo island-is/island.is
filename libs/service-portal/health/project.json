@@ -1,27 +1,35 @@
 {
-  "root": "libs/service-portal/health",
+  "name": "service-portal-health",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/health/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/service-portal/health/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/health/jest.config.js",
+        "jestConfig": "libs/service-portal/health/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/service-portal/health"]
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/health"]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/health/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "schemas/codegen": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/health/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/health/codegen.yml"
       }
     }
   },

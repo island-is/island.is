@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ITwoColumnText } from '../generated/contentfulTypes'
 
@@ -14,19 +15,19 @@ export class TwoColumnText {
   @Field({ nullable: true })
   rightTitle?: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   rightContent?: Array<typeof SliceUnion>
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   rightLink?: Link | null
 
   @Field({ nullable: true })
   leftTitle?: string
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   leftContent?: Array<typeof SliceUnion>
 
-  @Field(() => Link, { nullable: true })
+  @CacheField(() => Link, { nullable: true })
   leftLink?: Link | null
 
   @Field(() => Boolean, { nullable: true })

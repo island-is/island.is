@@ -9,7 +9,10 @@ import { useFormContext } from 'react-hook-form'
 
 const df = 'yyyy-MM-dd'
 
-const ConfirmationDate: FC<FieldBaseProps> = ({ field, error }) => {
+const ConfirmationDate: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  field,
+  error,
+}) => {
   const { id } = field
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()

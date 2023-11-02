@@ -1,7 +1,13 @@
 import { Text } from '@island.is/island-ui/core'
+import localization from './EmptyState.json'
 
-const EmptyState = () => {
-  return <Text variant="h4">Engin gögn fundust.</Text>
+interface EmptyStateProps {
+  isCase?: boolean
+}
+
+const EmptyState = ({ isCase = false }: EmptyStateProps) => {
+  const loc = isCase ? localization.caseEmptyState : localization.emptyState
+  return <Text variant="h4">{loc.text}</Text>
 }
 
 export default EmptyState

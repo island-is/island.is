@@ -5,16 +5,17 @@ import { Field, InputType } from '@nestjs/graphql'
 
 import type {
   CaseAppealDecision,
-  CaseLegalProvisions,
+  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
   CaseDecision,
-  UpdateCase,
-  SessionArrangements,
-  CourtDocument,
-  SubpoenaType,
+  CaseLegalProvisions,
   CaseType,
-  IndictmentSubtypeMap,
+  CourtDocument,
   CrimeSceneMap,
+  IndictmentSubtypeMap,
+  RequestSharedWithDefender,
+  SessionArrangements,
+  UpdateCase,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -56,8 +57,8 @@ export class UpdateCaseInput implements UpdateCase {
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly sendRequestToDefender?: boolean
+  @Field(() => String, { nullable: true })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
   @Field({ nullable: true })
@@ -249,14 +250,6 @@ export class UpdateCaseInput implements UpdateCase {
 
   @Allow()
   @Field({ nullable: true })
-  readonly accusedPostponedAppealDate?: string
-
-  @Allow()
-  @Field({ nullable: true })
-  readonly prosecutorPostponedAppealDate?: string
-
-  @Allow()
-  @Field({ nullable: true })
   readonly judgeId?: string
 
   @Allow()
@@ -276,10 +269,6 @@ export class UpdateCaseInput implements UpdateCase {
   readonly caseResentExplanation?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
-
-  @Allow()
   @Field({ nullable: true })
   readonly defendantWaivesRightToCounsel?: boolean
 
@@ -294,4 +283,40 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly requestDriversLicenseSuspension?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly prosecutorStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly defendantStatementDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealCaseNumber?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealAssistantId?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge1Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge2Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealJudge3Id?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealConclusion?: string
+
+  @Allow()
+  @Field(() => String, { nullable: true })
+  readonly appealRulingDecision?: CaseAppealRulingDecision
 }

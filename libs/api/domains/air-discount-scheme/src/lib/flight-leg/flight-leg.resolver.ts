@@ -22,6 +22,7 @@ export class FlightLegResolver {
   @Query(() => [FlightLeg], {
     name: 'airDiscountSchemeUserAndRelationsFlights',
   })
+  @Audit()
   async getFlightLegs(@CurrentUser() user: User): Promise<FlightLeg[]> {
     return this.flightLegService.getThisYearsUserAndRelationsFlightLegs(user)
   }

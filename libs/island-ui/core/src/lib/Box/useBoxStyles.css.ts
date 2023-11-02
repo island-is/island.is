@@ -573,6 +573,7 @@ const overflowRules = {
   scroll: 'scroll',
   visible: 'visible',
   auto: 'auto',
+  initial: 'initial',
 }
 export const overflow = styleVariants(
   mapToStyleProperty(overflowRules, 'overflow'),

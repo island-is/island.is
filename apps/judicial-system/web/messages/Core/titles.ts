@@ -4,44 +4,31 @@ export const titles = {
   prosecutor: {
     investigationCases: {
       defendant: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.defendant',
+        id: 'judicial.system.core:titles.prosecutor.investigation_cases.defendant',
         defaultMessage: 'Rannsóknarheimild - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir varnaraðila skjá hjá saksóknara í rannsóknarheimildum',
       }),
       hearingArrangements: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.hearing_arrangements',
+        id: 'judicial.system.core:titles.prosecutor.investigation_cases.hearing_arrangements',
         defaultMessage: 'Óskir um fyrirtöku - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Óskir um fyrirtöku skjá hjá saksóknara í rannsóknarheimildum',
       }),
       policeDemands: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.police_demands',
+        id: 'judicial.system.core:titles.prosecutor.investigation_cases.police_demands',
         defaultMessage: 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Dómkröfur og lagagrundvöllur skjá hjá saksóknara í rannsóknarheimildum',
       }),
       policeReport: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.police_report',
+        id: 'judicial.system.core:titles.prosecutor.investigation_cases.police_report',
         defaultMessage: 'Greinargerð - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Greinargerð skjá hjá saksóknara í rannsóknarheimildum',
       }),
-      // TODO: Remove caseFiles
-      caseFiles: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.case_files',
-        defaultMessage: 'Rannsóknargögn - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Rannsóknargögn skjá hjá saksóknara í rannsóknarheimildum',
-      }),
       overview: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.investigation_cases.overview',
+        id: 'judicial.system.core:titles.prosecutor.investigation_cases.overview',
         defaultMessage: 'Yfirlit kröfu - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Yfirlit kröfu skjá hjá saksóknara í rannsóknarheimildum',
@@ -49,40 +36,28 @@ export const titles = {
     },
     restrictionCases: {
       defendant: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.restriction_cases.defendant',
+        id: 'judicial.system.core:titles.prosecutor.restriction_cases.defendant',
         defaultMessage: 'Varnaraðili - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir varnaraðila skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
       hearingArrangements: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.restriction_cases.hearing_arrangements',
+        id: 'judicial.system.core:titles.prosecutor.restriction_cases.hearing_arrangements',
         defaultMessage: 'Óskir um fyrirtöku - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Óskir um fyrirtöku skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
       policeDemands: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.restriction_cases.police_demands',
+        id: 'judicial.system.core:titles.prosecutor.restriction_cases.police_demands',
         defaultMessage: 'Dómkröfur og lagagrundvöllur - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Dómkröfur og lagagrundvöllur skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
       policeReport: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.restriction_cases.police_report',
+        id: 'judicial.system.core:titles.prosecutor.restriction_cases.police_report',
         defaultMessage: 'Greinargerð - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Greinargerð skjá hjá saksóknara í gæslu- og farbannsmálum',
-      }),
-      // TODO: Remove caseFiles
-      caseFiles: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.restriction_cases.case_files',
-        defaultMessage: 'Rannsóknargögn - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Rannsóknargögn skjá hjá saksóknara í gæslu- og farbannsmálum',
       }),
       overview: defineMessage({
         id: 'judicial.system.core:titles.prosecutor.restriction_cases.overview',
@@ -123,8 +98,7 @@ export const titles = {
           'Notaður sem titill fyrir Skjalaskrá skjá hjá saksóknara í ákærum',
       }),
       policeCaseFiles: defineMessage({
-        id:
-          'judicial.system.core:titles.prosecutor.indictments.police_case_files',
+        id: 'judicial.system.core:titles.prosecutor.indictments.police_case_files',
         defaultMessage: 'Málsgögn - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Málsgögn skjá hjá saksóknara í ákærum',
@@ -154,8 +128,7 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit kröfu skjá hjá dómstólum í rannsóknarheimildum',
       }),
       hearingArrangements: defineMessage({
-        id:
-          'judicial.system.core:titles.court.investigation_cases.hearing_arrangements',
+        id: 'judicial.system.core:titles.court.investigation_cases.hearing_arrangements',
         defaultMessage: 'Fyrirtaka - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Fyrirtaka skjá hjá dómstólum í rannsóknarheimildum',
@@ -167,8 +140,7 @@ export const titles = {
           'Notaður sem titill fyrir Úrskurður skjá hjá dómstólum í rannsóknarheimildum',
       }),
       courtRecord: defineMessage({
-        id:
-          'judicial.system.core:titles.court.investigation_cases.court_record',
+        id: 'judicial.system.core:titles.court.investigation_cases.court_record',
         defaultMessage: 'Þingbók - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Þingbók skjá hjá dómstólum í rannsóknarheimildum',
@@ -188,8 +160,7 @@ export const titles = {
           'Notaður sem titill fyrir Yfirlit kröfu skjá hjá dómstólum í gæslu- og farbannsmálum',
       }),
       hearingArrangements: defineMessage({
-        id:
-          'judicial.system.core:titles.court.restriction_cases.hearing_arrangements',
+        id: 'judicial.system.core:titles.court.restriction_cases.hearing_arrangements',
         defaultMessage: 'Fyrirtaka - Réttarvörslugátt',
         description:
           'Notaður sem titill fyrir Fyrirtaka skjá hjá dómstólum í gæslu- og farbannsmálum',
@@ -226,12 +197,11 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Fyrirkall skjá hjá dómstólum í ákærum',
       },
-      prosecutorAndDefender: {
-        id:
-          'judicial.system.core:titles.court.indictments.prosecutor_and_defender',
-        defaultMessage: 'Málflytjendur - Réttarvörslugátt',
+      defender: {
+        id: 'judicial.system.core:titles.court.indictments.defender',
+        defaultMessage: 'Verjendur - Réttarvörslugátt',
         description:
-          'Notaður sem titill fyrir Málflytjendur skjá hjá dómstólum í ákærum',
+          'Notaður sem titill fyrir verjenda skjá hjá dómstólum í ákærum',
       },
       courtRecord: {
         id: 'judicial.system.core:titles.court.indictments.court_record',
@@ -246,6 +216,11 @@ export const titles = {
       id: 'judicial.system.core:titles.defender.case_overview',
       defaultMessage: 'Yfirlit - Verjandi - Réttarvörslugátt',
       description: 'Notaður sem titill fyrir Yfirlit máls skjá hjá verjanda',
+    }),
+    cases: defineMessage({
+      id: 'judicial.system.core:titles.defender.cases',
+      defaultMessage: 'Öll mál - Verjandi - Réttarvörslugátt',
+      description: 'Notaður sem titill fyrir öll mál skjá hjá verjanda',
     }),
   },
   shared: {

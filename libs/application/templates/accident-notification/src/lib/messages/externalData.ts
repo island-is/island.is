@@ -141,8 +141,7 @@ export const externalData = {
       description: 'Approval of Municipal Collection Agency',
     },
     description: {
-      id:
-        'an.application:section.externalData.municipalCollectionAgency.description',
+      id: 'an.application:section.externalData.municipalCollectionAgency.description',
       defaultMessage: 'Upplýsingar um stöðu meðlagsgreiðslna.',
       description:
         'Approval of gathering information from Approval of Municipal Collection Agency',
@@ -150,8 +149,7 @@ export const externalData = {
   }),
   extraInformation: defineMessages({
     description: {
-      id:
-        'an.application:section.externalData.extraInformation.descriptionFirstPart',
+      id: 'an.application:section.externalData.extraInformation.descriptionFirstPart',
       defaultMessage:
         'Nánari upplýsingar um vinnslu persónuupplýsinga hjá Sjúkratryggingum Íslands ',
       description: 'Description for link in extrainformation',

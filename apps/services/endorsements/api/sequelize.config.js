@@ -5,6 +5,7 @@ module.exports = {
     password: 'dev_db',
     database: 'dev_db',
     host: 'localhost',
+    port: 5433,
     dialect: 'postgres',
   },
   test: {

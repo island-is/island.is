@@ -1,10 +1,20 @@
 import { z } from 'zod'
 import { m } from './messages'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
 })
+
+const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
+
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+export const isValidEmail = (value: string) => emailRegex.test(value)
 
 export const GeneralPetitionSchema = z.object({
   approveTermsAndConditions: z
@@ -46,6 +56,8 @@ export const GeneralPetitionSchema = z.object({
         path: ['dateTil'],
       },
     ),
+  phone: z.string().refine((v) => isValidPhoneNumber(v)),
+  email: z.string().refine((v) => isValidEmail(v)),
 })
 
 export type File = z.TypeOf<typeof FileSchema>

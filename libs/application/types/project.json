@@ -1,19 +1,20 @@
 {
-  "root": "libs/application/types",
+  "name": "application-types",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/types/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/application/types/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/application/types"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/application/types"],
       "options": {
-        "jestConfig": "libs/application/types/jest.config.js",
+        "jestConfig": "libs/application/types/jest.config.ts",
         "passWithNoTests": true
       }
     }

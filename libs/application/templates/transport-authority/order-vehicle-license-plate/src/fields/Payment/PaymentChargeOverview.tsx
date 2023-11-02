@@ -6,7 +6,9 @@ import { payment } from '../../lib/messages'
 import { formatIsk, getChargeItemCodesWithInfo, PlateType } from '../../utils'
 import { OrderVehicleLicensePlate } from '../../lib/dataSchema'
 
-export const PaymentChargeOverview: FC<FieldBaseProps> = ({ application }) => {
+export const PaymentChargeOverview: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application }) => {
   const { formatMessage } = useLocale()
 
   const chargeItemCodes = getChargeItemCodesWithInfo(

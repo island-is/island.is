@@ -11,6 +11,7 @@ import {
   BadRequestException,
   Query,
 } from '@nestjs/common'
+import { DraftImpact } from '@island.is/regulations/admin'
 import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
@@ -29,6 +30,10 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 import { ShippedSummary, TaskListType } from '@island.is/regulations/admin'
 import { RegQueryName } from '@island.is/regulations'
+import { DraftRegulationShippedModel } from './models/draftRegulationShipped.model'
+import { DraftRegulationTemplate } from './models/draftRegulation.model'
+import { TaskListModel } from './models/taskList.model'
+import { DraftImpactModel } from './models/draftImpacts.model'
 const namespace = `${environment.audit.defaultNamespace}/draft_regulations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -73,14 +78,12 @@ export class DraftRegulationController {
     @Body() draftRegulationToUpdate: UpdateDraftRegulationDto,
     @CurrentUser() user: User,
   ): Promise<DraftRegulationModel> {
-    const {
-      numberOfAffectedRows,
-      updatedDraftRegulation,
-    } = await this.draftRegulationService.update(
-      id,
-      draftRegulationToUpdate,
-      user,
-    )
+    const { numberOfAffectedRows, updatedDraftRegulation } =
+      await this.draftRegulationService.update(
+        id,
+        draftRegulationToUpdate,
+        user,
+      )
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`DraftRegulation ${id} does not exist`)
@@ -112,13 +115,12 @@ export class DraftRegulationController {
 
   @Get('draft_regulations')
   @ApiOkResponse({
-    type: DraftRegulationModel,
-    isArray: true,
+    type: TaskListModel,
     description: 'Gets all DraftRegulations with status draft and proposal',
   })
   async getAll(
     @CurrentUser() user: User,
-    @Query('page') page?: number,
+    @Param('page') page: number,
   ): Promise<TaskListType> {
     // managers can see all, creators can only see their own
     const canManage = user.scope.includes(
@@ -133,7 +135,7 @@ export class DraftRegulationController {
 
   @Get('draft_regulations_shipped')
   @ApiOkResponse({
-    type: DraftRegulationModel,
+    type: DraftRegulationShippedModel,
     isArray: true,
     description: 'Gets all DraftRegulations with status shipped',
   })
@@ -149,7 +151,7 @@ export class DraftRegulationController {
 
   @Get('draft_regulation/:id')
   @ApiOkResponse({
-    type: DraftRegulationModel,
+    type: DraftRegulationTemplate,
     description: 'Gets a DraftRegulation',
   })
   async getById(@Param('id') id: string, @CurrentUser() user: User) {
@@ -165,14 +167,15 @@ export class DraftRegulationController {
   @Get('draft_regulation_impacts/:name')
   @ApiOkResponse({
     description: 'Gets all DraftRegulationImpacts by RegName',
+    isArray: true,
+    type: DraftImpactModel,
   })
   async getImpactsByName(
     @Param('name') name: RegQueryName,
     @CurrentUser() user: User,
-  ) {
-    const draftRegulationImpacts = await this.draftRegulationService.getRegulationImpactsByName(
-      name,
-    )
+  ): Promise<DraftImpact[]> {
+    const draftRegulationImpacts =
+      await this.draftRegulationService.getRegulationImpactsByName(name)
 
     return draftRegulationImpacts
   }

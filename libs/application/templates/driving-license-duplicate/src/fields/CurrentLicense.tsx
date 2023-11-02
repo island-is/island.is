@@ -4,22 +4,38 @@ import { useLocale } from '@island.is/localization'
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { getValueViaPath, formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { CurrentLicenseProviderResult } from '../dataProviders/CurrentLicenseProvider'
+import { DriversLicenseCategory } from '@island.is/clients/driving-license'
 import format from 'date-fns/format'
 import { m } from '../lib/messages'
-import { getApplicationInfo } from '../lib/utils'
 
-export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
+export const CurrentLicense: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
 
-  const currentLicense =
-    getValueViaPath<CurrentLicenseProviderResult>(
-      application.externalData,
-      'currentLicense.data',
-    ) ?? null
+  const fakeLicense = getValueViaPath<string>(
+    application.answers,
+    'fakeData.currentLicense',
+  )
+
+  let currentLicense =
+    getValueViaPath<any>(application.externalData, 'currentLicense.data') ??
+    null
 
   if (!currentLicense || !currentLicense.categories) {
-    throw new Error('no existing license - should not happen')
+    if (!fakeLicense) {
+      throw new Error('no existing license - should not happen')
+    }
+    currentLicense = {
+      categories: [
+        {
+          name: 'Fólksbifreið / Sendibifreið',
+          nr: fakeLicense.split('-')[0],
+          expires: '2065-04-04',
+          validToCode: fakeLicense === 'B-temp' ? 8 : 1,
+        },
+      ],
+    }
   }
 
   return (
@@ -30,63 +46,68 @@ export const CurrentLicense: FC<FieldBaseProps> = ({ application }) => {
         </Text>
       </Box>
       <Box marginBottom={4}>
-        {currentLicense.categories.map((category, index) => {
-          const expires =
-            formatMessage(m.validTag) +
-            ' ' +
-            format(new Date(category.expires), 'dd.MM.yyyy')
-          const messages = getApplicationInfo(category.name)
-          return (
-            <Box
-              key={category.name + JSON.stringify(index)}
-              display="flex"
-              flexDirection="column"
-              borderColor="blue200"
-              borderRadius="large"
-              borderWidth="standard"
-              paddingX={[3, 3, 4]}
-              paddingY={3}
-            >
+        {currentLicense.categories.map(
+          (category: DriversLicenseCategory, index: number) => {
+            const expiresText = category.expires
+              ? format(new Date(category.expires), 'dd.MM.yyyy')
+              : formatMessage(m.noExpirationDate)
+            const expires = `${formatMessage(m.validTag)} ${expiresText}`
+            const isTemporary = category.validToCode === 8
+            return (
               <Box
-                alignItems={['flexStart', 'center']}
+                key={category.name + JSON.stringify(index)}
                 display="flex"
-                flexDirection={['column', 'row']}
+                flexDirection="column"
+                borderColor="blue200"
+                borderRadius="large"
+                borderWidth="standard"
+                paddingX={[3, 3, 4]}
+                paddingY={3}
+                marginY={2}
               >
-                <Box flexDirection="row" width="full">
+                <Box
+                  alignItems={['flexStart', 'center']}
+                  display="flex"
+                  flexDirection={['column', 'row']}
+                >
+                  <Box flexDirection="row" width="full">
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="spaceBetween"
+                      alignItems={['flexStart', 'flexStart', 'flexEnd']}
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="row"
+                        alignItems="center"
+                      >
+                        <Text variant="h3">
+                          {`${category.nr} - ${
+                            isTemporary
+                              ? formatMessage(m.temporaryLicense)
+                              : formatMessage(m.generalLicense)
+                          }`}
+                        </Text>
+                      </Box>
+                    </Box>
+                    <Text paddingTop={1}>{category.name}</Text>
+                  </Box>
                   <Box
                     display="flex"
-                    flexDirection="row"
-                    justifyContent="spaceBetween"
-                    alignItems={['flexStart', 'flexStart', 'flexEnd']}
+                    alignItems={['flexStart', 'flexEnd']}
+                    flexDirection="column"
+                    flexShrink={0}
+                    marginTop={[1, 0]}
+                    marginLeft={[0, 'auto']}
                   >
-                    <Box display="flex" flexDirection="row" alignItems="center">
-                      <Text variant="h3">
-                        {formatText(messages.title, application, formatMessage)}
-                      </Text>
-                    </Box>
+                    <Tag disabled={true}>{expires}</Tag>
                   </Box>
-                  <Text paddingTop={1}>
-                    {formatText(
-                      messages.rightsDescription,
-                      application,
-                      formatMessage,
-                    )}
-                  </Text>
-                </Box>
-                <Box
-                  display="flex"
-                  alignItems={['flexStart', 'flexEnd']}
-                  flexDirection="column"
-                  flexShrink={0}
-                  marginTop={[1, 0]}
-                  marginLeft={[0, 'auto']}
-                >
-                  <Tag disabled={true}>{expires}</Tag>
                 </Box>
               </Box>
-            </Box>
-          )
-        })}
+            )
+          },
+        )}
       </Box>
     </>
   )

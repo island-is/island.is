@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/air-discount-scheme",
+  "name": "clients-air-discount-scheme",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/air-discount-scheme/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
@@ -12,15 +13,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/air-discount-scheme"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/air-discount-scheme"],
       "options": {
-        "jestConfig": "libs/clients/air-discount-scheme/jest.config.js",
+        "jestConfig": "libs/clients/air-discount-scheme/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/air-discount-scheme/gen/fetch -i apps/air-discount-scheme/backend/src/private-openapi.yaml --additional-properties=enumPropertyNaming=original"
       }

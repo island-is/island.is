@@ -4,6 +4,11 @@ import { Logger } from 'winston'
 
 import { DogStatsD } from '@island.is/infra-metrics'
 import { logger as defaultLogger } from '@island.is/logging'
+import {
+  AGENT_DEFAULT_FREE_SOCKET_TIMEOUT,
+  AGENT_DEFAULTS,
+  OrganizationSlugType,
+} from '@island.is/shared/constants'
 
 import { buildFetch } from './buildFetch'
 import { FetchAPI as NodeFetchAPI } from './nodeFetch'
@@ -19,23 +24,37 @@ import { withMetrics } from './withMetrics'
 import { withResponseErrors } from './withResponseErrors'
 import { withTimeout } from './withTimeout'
 
-const DEFAULT_TIMEOUT = 1000 * 10 // seconds
-const DEFAULT_FREE_SOCKET_TIMEOUT = 1000 * 10 // 10 seconds
+const DEFAULT_TIMEOUT = 1000 * 20 // seconds
 
 export interface EnhancedFetchOptions {
-  // The name of this fetch function, used in logs and opossum stats.
+  /**
+   * The name of this fetch function, used in logs and opossum stats.
+   */
   name: string
 
-  // Configure caching.
+  /**
+   * The organization slug used in error logging. This slug matches Contentful's organization content type icelandic "slug" field.
+   */
+  organizationSlug?: OrganizationSlugType
+
+  /**
+   * Configure caching.
+   */
   cache?: CacheConfig
 
-  // Timeout for requests. Defaults to 10000ms. Can be disabled by passing false.
+  /**
+   * Timeout for requests. Defaults to 20000ms. Can be disabled by passing false.
+   */
   timeout?: number | false
 
-  // Disable or configure circuit breaker.
+  /**
+   * Disable or configure circuit breaker.
+   */
   circuitBreaker?: boolean | CircuitBreaker.Options
 
-  // Automatically get access token.
+  /**
+   * Automatically get access token.
+   */
   autoAuth?: AutoAuthOptions
 
   /**
@@ -44,32 +63,47 @@ export interface EnhancedFetchOptions {
    */
   forwardAuthUserAgent?: boolean
 
-  // By default 400 responses are considered warnings and will not open the circuit.
-  // This can be changed by passing `treat400ResponsesAsErrors: true`.
-  // Either way they will be logged and thrown.
+  /**
+   * By default, 400 responses are considered warnings and will not open the circuit.
+   * Either way they will be logged and thrown.
+   */
   treat400ResponsesAsErrors?: boolean
 
-  // If true (default), Enhanced Fetch will log error response bodies.
-  // Should be set to false if error objects may have sensitive information or PII.
+  /**
+   * If true (default), Enhanced Fetch will log error response bodies.
+   * Should be set to false if error objects may have sensitive information or PII.
+   */
   logErrorResponseBody?: boolean
 
-  // Override logger.
+  /**
+   * Override logger.
+   */
   logger?: Logger
 
-  // Override fetch function.
+  /**
+   * Override fetch function.
+   */
   fetch?: NodeFetchAPI
 
-  // Certificate for auth
+  /**
+   * Certificate for auth
+   */
   clientCertificate?: ClientCertificateOptions
 
-  // Override configuration for the http agent. E.g. configure a client certificate.
+  /**
+   * Override configuration for the http agent. E.g. configure a client certificate.
+   */
   agentOptions?: AgentOptions
 
-  // Configures keepAlive for requests. If false, never reuse connections. If true, reuse connection with a maximum
-  // idle timeout of 10 seconds. If number, override the idle connection timeout. Defaults to true.
+  /**
+   * Configures keepAlive for requests. If false, never reuse connections. If true, reuse connection with a maximum
+   * idle timeout of 10 seconds. If number, override the idle connection timeout. Defaults to true.
+   */
   keepAlive?: boolean | number
 
-  // The client used to send metrics.
+  /**
+   * The client used to send metrics.
+   */
   metricsClient?: DogStatsD
 }
 
@@ -83,13 +117,13 @@ export interface EnhancedFetchOptions {
  *   close the circuit and let requests through again.
  *
  * - Includes response cache logic built on top of standard cache-control
- *   semantics. By default nothing is cached.
+ *   semantics. By default, nothing is cached.
  *
  * - Supports our `User` and `Auth` objects. Adds authorization header to the
  *   request.
  *
  * - Includes request timeout logic. By default, throws an error if there is no
- *   response in 10 seconds.
+ *   response in 20 seconds.
  *
  * - Throws an error for non-200 responses. The error object includes details
  *   from the response, including a `problem` property if the response implements
@@ -123,29 +157,37 @@ export const createEnhancedFetch = (
     keepAlive = true,
     cache,
     metricsClient = new DogStatsD({ prefix: `${options.name}.` }),
+    organizationSlug,
   } = options
   const treat400ResponsesAsErrors = options.treat400ResponsesAsErrors === true
   const freeSocketTimeout =
-    typeof keepAlive === 'number' ? keepAlive : DEFAULT_FREE_SOCKET_TIMEOUT
+    typeof keepAlive === 'number'
+      ? keepAlive
+      : AGENT_DEFAULT_FREE_SOCKET_TIMEOUT
   const builder = buildFetch(fetch)
 
   builder.wrap(withAgent, {
     clientCertificate,
     agentOptions: {
+      ...AGENT_DEFAULTS,
+      keepAlive: !!keepAlive,
+      freeSocketTimeout,
       ...agentOptions,
+
       // We disable the timeout handling on the agent, as it is handled in withTimeout to allow for per request overwrite.
       // https://github.com/node-modules/agentkeepalive#new-agentoptions
       timeout: 0,
     },
-    keepAlive: !!keepAlive,
-    freeSocketTimeout,
   })
 
   if (timeout !== false) {
     builder.wrap(withTimeout, { timeout })
   }
 
-  builder.wrap(withResponseErrors, { includeBody: logErrorResponseBody })
+  builder.wrap(withResponseErrors, {
+    includeBody: logErrorResponseBody,
+    organizationSlug,
+  })
 
   if (autoAuth) {
     builder.wrap(withAutoAuth, {
@@ -178,7 +220,10 @@ export const createEnhancedFetch = (
     })
 
     // Need to handle response errors again.
-    builder.wrap(withResponseErrors, { includeBody: logErrorResponseBody })
+    builder.wrap(withResponseErrors, {
+      includeBody: logErrorResponseBody,
+      organizationSlug,
+    })
   }
 
   if (metricsClient) {

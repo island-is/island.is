@@ -1,23 +1,30 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   indictmentCases,
+  InstitutionType,
   investigationCases,
   restrictionCases,
   User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { UserService } from '../../../user'
+import { createTestingCaseModule } from '../createTestingCaseModule'
+
+import { nowFactory } from '../../../../factories'
+import { randomDate } from '../../../../test'
 import { FileService } from '../../../file'
+import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
+
+jest.mock('../../../factories')
 
 interface Then {
   result: Case
@@ -32,6 +39,7 @@ type GivenWhenThen = (
 ) => Promise<Then>
 
 describe('CaseController - Update', () => {
+  const date = randomDate()
   const userId = uuid()
   const user = { id: userId } as User
   const defendantId1 = uuid()
@@ -48,6 +56,8 @@ describe('CaseController - Update', () => {
     policeCaseNumbers,
     caseFiles: [caseFile],
     courtCaseNumber,
+    caseFacts: uuid(),
+    legalArguments: uuid(),
   } as Case
 
   let mockMessageService: MessageService
@@ -78,6 +88,8 @@ describe('CaseController - Update', () => {
       (fn: (transaction: Transaction) => unknown) => fn(transaction),
     )
 
+    const mockToday = nowFactory as jest.Mock
+    mockToday.mockReturnValueOnce(date)
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
     const mockFindOne = mockCaseModel.findOne as jest.Mock
@@ -195,6 +207,27 @@ describe('CaseController - Update', () => {
     })
   })
 
+  describe('case is resent by prosecutor', () => {
+    const caseToUpdate = {
+      caseResentExplanation: 'Endursending',
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update court case facts and court legal arguments', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        {
+          caseResentExplanation: 'Endursending',
+          courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
+          courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
+        },
+        { where: { id: caseId }, transaction },
+      )
+    })
+  })
+
   describe.each([...restrictionCases, ...investigationCases])(
     'court case number updated for %s case',
     (type) => {
@@ -281,6 +314,7 @@ describe('CaseController - Update', () => {
       mockFindById.mockResolvedValueOnce({
         id: prosecutorId,
         role: UserRole.PROSECUTOR,
+        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
       })
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
@@ -371,6 +405,18 @@ describe('CaseController - Update', () => {
             caseId,
           },
           {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId1,
+          },
+          {
+            type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+            user,
+            caseId,
+            defendantId: defendantId2,
+          },
+          {
             type: MessageType.DELIVER_CASE_FILES_RECORD_TO_COURT,
             user,
             caseId,
@@ -425,6 +471,7 @@ describe('CaseController - Update', () => {
       const updatedCase = {
         ...theCase,
         type,
+        origin: CaseOrigin.LOKE,
         caseModifiedExplanation: 'some explanation',
       }
 
@@ -442,12 +489,72 @@ describe('CaseController - Update', () => {
             user,
             caseId,
           },
+          { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
         ])
       })
     },
   )
 
-  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation updated', () => {
+  describe.each(restrictionCases)(
+    'prosecutor statement date is updated for %s case',
+    (type) => {
+      const statementId = uuid()
+      const fileId = uuid()
+      const caseFiles = [
+        {
+          id: statementId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        },
+        {
+          id: fileId,
+          key: uuid(),
+          state: CaseFileState.STORED_IN_RVG,
+          category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        },
+      ]
+      const originalCase = { ...theCase, type, caseFiles } as Case
+      const caseToUdate = { prosecutorStatementDate: new Date() }
+      const updatedCase = {
+        ...theCase,
+        type,
+        prosecutorStatementDate: date,
+        caseFiles,
+      }
+      let then: Then
+
+      beforeEach(async () => {
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(updatedCase)
+
+        then = await givenWhenThen(caseId, user, originalCase, caseToUdate)
+      })
+
+      it('should update the case', () => {
+        expect(mockCaseModel.update).toHaveBeenCalledWith(
+          { prosecutorStatementDate: date },
+          { where: { id: caseId }, transaction },
+        )
+      })
+
+      it('should queue messages', () => {
+        expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+          {
+            type: MessageType.SEND_APPEAL_STATEMENT_NOTIFICATION,
+            user,
+            caseId,
+          },
+        ])
+      })
+
+      it('should return the updated case', () => {
+        expect(then.result).toEqual(updatedCase)
+      })
+    },
+  )
+
+  describe('neither court case number nor defender email nor prosecutorId nor caseModifiedExplanation nor prosecutorStatementDate updated', () => {
     beforeEach(async () => {
       await givenWhenThen(caseId, user, theCase, {})
     })

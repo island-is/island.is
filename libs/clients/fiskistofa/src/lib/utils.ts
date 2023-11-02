@@ -36,7 +36,6 @@ const mapCatchQuotaCategoryForTimePeriod = (
   nextYear: category?.aNaestaAr,
   excessCatch: category?.umframafli,
   unused: category?.onotad,
-  totalCatchQuota: category?.heildarAflaMark,
   quotaShare: category?.hlutdeild,
   nextYearQuota: category?.aNaestaArKvoti,
   nextYearFromQuota: category?.afNaestaAriKvoti,
@@ -44,6 +43,9 @@ const mapCatchQuotaCategoryForTimePeriod = (
   percentNextYearFromQuota: category?.prosentaAfNaestaAriKvoti,
   allocatedCatchQuota: category?.uthlutadAflamarkKvoti,
   codEquivalent: category?.thorskigildi,
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  totalCatchQuota: (category as unknown as any)?.heildarAflamark,
 })
 
 export const mapShipStatusForTimePeriod = (

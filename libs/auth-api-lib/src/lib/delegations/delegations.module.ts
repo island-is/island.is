@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
-import { RskProcuringClientModule } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
@@ -29,7 +29,7 @@ import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.mo
     ResourcesModule,
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
-    RskProcuringClientModule,
+    RskRelationshipsClientModule,
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,

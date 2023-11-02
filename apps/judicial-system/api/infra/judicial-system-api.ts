@@ -7,15 +7,28 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .serviceAccount('judicial-system-api')
     .env({
-      SAML_ENTRY_POINT: {
-        dev: 'https://innskraning.island.is/?id=judicial-system.dev',
-        staging: 'https://innskraning.island.is/?id=judicial-system.staging',
-        prod: 'https://innskraning.island.is/?id=rettarvorslugatt.prod',
+      AUTH_IDS_SCOPE: 'openid profile',
+      AUTH_IDS_CLIENT_ID: '@rettarvorslugatt.island.is/web',
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
       },
-      AUTH_AUDIENCE: {
-        dev: ref((h) => `judicial-system.${h.env.domain}`),
-        staging: ref((h) => `judicial-system.${h.env.domain}`),
-        prod: 'rettarvorslugatt.island.is',
+      AUTH_IDS_REDIRECT_URI: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }judicial-system.dev01.devland.is/api/auth/callback/identity-server`,
+        ),
+        staging:
+          'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server',
+        prod: 'https://rettarvorslugatt.island.is/api/auth/callback/identity-server',
+      },
+      AUTH_IDS_LOGOUT_REDIRECT_URI: {
+        dev: 'https://judicial-system.dev01.devland.is',
+        staging: 'https://judicial-system.staging01.devland.is',
+        prod: 'https://rettarvorslugatt.island.is',
       },
       ALLOW_AUTH_BYPASS: { dev: 'true', staging: 'true', prod: 'false' },
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
@@ -34,14 +47,16 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'INDICTMENTS, INDICTMENT_ROUTE, APPEAL_TO_COURT_OF_APPEALS',
-        prod: 'INDICTMENTS, INDICTMENT_ROUTE, APPEAL_TO_COURT_OF_APPEALS',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
+      AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -67,6 +82,16 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
+      },
+    })
+    .resources({
+      limits: {
+        cpu: '350m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '200m',
+        memory: '256Mi',
       },
     })
     .grantNamespaces('nginx-ingress-external')

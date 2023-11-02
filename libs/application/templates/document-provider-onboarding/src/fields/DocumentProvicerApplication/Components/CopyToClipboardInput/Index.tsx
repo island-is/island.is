@@ -6,10 +6,9 @@ export interface CopyToClipboardInputProps {
   inputValue: string
 }
 
-export const CopyToClipboardInput: FC<CopyToClipboardInputProps> = ({
-  inputLabel,
-  inputValue,
-}) => {
+export const CopyToClipboardInput: FC<
+  React.PropsWithChildren<CopyToClipboardInputProps>
+> = ({ inputLabel, inputValue }) => {
   const copyToClipboard = (inputValue: string) => {
     const el = document.createElement('textarea')
     el.value = inputValue

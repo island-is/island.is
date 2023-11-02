@@ -4,7 +4,10 @@ interface Props {
   title: string
 }
 
-const NotFound: React.FC<Props> = ({ title, children }) => {
+const NotFound: React.FC<React.PropsWithChildren<Props>> = ({
+  title,
+  children,
+}) => {
   return (
     <div className="not-found">
       <h3>{title}</h3>

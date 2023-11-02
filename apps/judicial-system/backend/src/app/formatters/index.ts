@@ -2,7 +2,10 @@ export {
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
 } from './courtRecordPdf'
-export { getCustodyNoticePdfAsBuffer } from './custodyNoticePdf'
+export {
+  getCustodyNoticePdfAsBuffer,
+  getCustodyNoticePdfAsString,
+} from './custodyNoticePdf'
 export {
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
@@ -20,6 +23,8 @@ export {
   formatDefenderResubmittedToCourtEmailNotification,
   formatDefenderAssignedEmailNotification,
   formatCourtIndictmentReadyForCourtEmailNotification,
+  formatDefenderRoute,
+  formatDefenderReadyForCourtEmailNotification,
   stripHtmlTags,
 } from './formatters'
 export { getRequestPdfAsBuffer, getRequestPdfAsString } from './requestPdf'

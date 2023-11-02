@@ -1,9 +1,10 @@
 import { uuid } from 'uuidv4'
 
 import { createTestingFileModule } from '../createTestingFileModule'
+
 import { AwsS3Service } from '../../../aws-s3'
-import { CaseFile } from '../../models/file.model'
 import { DeliverResponse } from '../../models/deliver.response'
+import { CaseFile } from '../../models/file.model'
 
 interface Then {
   result: DeliverResponse
@@ -22,11 +23,8 @@ describe('InternalFileController - Archive case files', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      awsS3Service,
-      fileModel,
-      internalFileController,
-    } = await createTestingFileModule()
+    const { awsS3Service, fileModel, internalFileController } =
+      await createTestingFileModule()
 
     mockAwsS3Service = awsS3Service
     mockFileModel = fileModel

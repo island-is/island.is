@@ -12,7 +12,7 @@ interface QualitySignatureData {
   application: Application
 }
 
-const Signature: FC<QualitySignatureData> = ({
+const Signature: FC<React.PropsWithChildren<QualitySignatureData>> = ({
   qualitySignature,
   application,
 }: QualitySignatureData) => {
@@ -33,7 +33,9 @@ const Signature: FC<QualitySignatureData> = ({
   )
 }
 
-const QualitySignature: FC<FieldBaseProps> = ({ application }) => {
+const QualitySignature: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { qualitySignature } = useQualitySignature(application)
   const img = Signature({ qualitySignature, application })
   return (

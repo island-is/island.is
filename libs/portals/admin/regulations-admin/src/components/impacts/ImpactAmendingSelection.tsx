@@ -13,8 +13,7 @@ import { Query } from '@island.is/api/schema'
 import { useDebounce } from 'react-use'
 import * as s from './Impacts.css'
 
-export type SelRegOption = Option & {
-  value?: DraftImpactName | ''
+export type SelRegOption = Option<DraftImpactName | ''> & {
   type: RegulationType | ''
   migrated?: boolean
 }
@@ -41,7 +40,7 @@ export const ImpactAmendingSelection = ({
     {
       onCompleted: (data) => {
         setResults(
-          (data.getRegulationsSearch?.data as RegulationOptionList) ||
+          (data.getRegulationsOptionSearch as RegulationOptionList) ||
             undefined,
         )
       },

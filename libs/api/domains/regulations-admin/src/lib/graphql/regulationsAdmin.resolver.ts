@@ -9,7 +9,6 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { RegulationsAdminApi } from '../client'
 import { RegulationsAdminClientService } from '@island.is/clients/regulations-admin'
 import { ConfigType } from '@nestjs/config'
 import { RegulationViewTypes } from '@island.is/regulations/web'
@@ -44,7 +43,6 @@ import { CreateDraftRegulationInput } from './dto/createDraftRegulation.input'
 export class RegulationsAdminResolver {
   constructor(
     private regulationsService: RegulationsService,
-    private regulationsAdminApiService: RegulationsAdminApi,
     private regulationsAdminClientService: RegulationsAdminClientService,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
@@ -57,7 +55,7 @@ export class RegulationsAdminResolver {
   ) {
     return await this.regulationsAdminClientService.getDraftRegulation(
       input.draftId,
-      user.authorization,
+      user,
     )
   }
 
@@ -67,18 +65,16 @@ export class RegulationsAdminResolver {
     @CurrentUser() user: User,
   ) {
     return ensureRegName(input.regulation)
-      ? await this.regulationsAdminApiService.getImpactsByName(
+      ? await this.regulationsAdminClientService.getImpactsByName(
           input.regulation,
-          user.authorization,
+          user,
         )
       : null
   }
 
   @Query(() => [DraftRegulationShippedModel])
-  async getShippedRegulations(@CurrentUser() { authorization }: User) {
-    return await this.regulationsAdminClientService.getShippedRegulations(
-      authorization,
-    )
+  async getShippedRegulations(@CurrentUser() user: User) {
+    return await this.regulationsAdminClientService.getShippedRegulations(user)
   }
 
   @Query(() => graphqlTypeJson)
@@ -87,7 +83,7 @@ export class RegulationsAdminResolver {
     @CurrentUser() user: User,
   ) {
     return await this.regulationsAdminClientService.getDraftRegulations(
-      user.authorization,
+      user,
       input.page,
     )
   }
@@ -95,32 +91,29 @@ export class RegulationsAdminResolver {
   @Mutation(() => graphqlTypeJson)
   async createDraftRegulation(
     @Args('input') input: CreateDraftRegulationInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ) {
-    return this.regulationsAdminApiService.create(authorization, input)
+    return this.regulationsAdminClientService.create(auth, input)
   }
 
   @Mutation(() => graphqlTypeJson)
   async updateDraftRegulationById(
     @Args('input') input: EditDraftRegulationInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ) {
-    return this.regulationsAdminApiService.updateById(
+    return this.regulationsAdminClientService.updateById(
       input.id,
       input.body,
-      authorization,
+      auth,
     )
   }
 
   @Mutation(() => DeleteDraftRegulationModel)
   async deleteDraftRegulation(
     @Args('input') input: DeleteDraftRegulationInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DeleteDraftRegulationModel> {
-    await this.regulationsAdminApiService.deleteById(
-      input.draftId,
-      authorization,
-    )
+    await this.regulationsAdminClientService.deleteById(input.draftId, auth)
 
     return {
       id: input.draftId,
@@ -167,10 +160,11 @@ export class RegulationsAdminResolver {
       return null
     }
 
-    const draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
-      input.draftId,
-      user.authorization,
-    )
+    const draftRegulation =
+      await this.regulationsAdminClientService.getDraftRegulation(
+        input.draftId,
+        user,
+      )
 
     if (!draftRegulation) {
       return null
@@ -185,33 +179,33 @@ export class RegulationsAdminResolver {
   @Mutation(() => DraftRegulationCancelModel)
   async createDraftRegulationCancel(
     @Args('input') input: CreateDraftRegulationCancelInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DraftRegulationCancelModel> {
-    return await this.regulationsAdminApiService.createDraftRegulationCancel(
+    return await this.regulationsAdminClientService.createDraftRegulationCancel(
       input,
-      authorization,
+      auth,
     )
   }
 
   @Mutation(() => DraftRegulationCancelModel)
   async updateDraftRegulationCancel(
     @Args('input') input: UpdateDraftRegulationCancelInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DraftRegulationCancelModel> {
-    return await this.regulationsAdminApiService.updateDraftRegulationCancel(
+    return await this.regulationsAdminClientService.updateDraftRegulationCancel(
       input,
-      authorization,
+      auth,
     )
   }
 
   @Mutation(() => DeleteDraftRegulationModel)
   async deleteDraftRegulationCancel(
     @Args('input') input: DeleteDraftRegulationCancelInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DeleteDraftRegulationModel> {
-    await this.regulationsAdminApiService.deleteDraftRegulationCancel(
+    await this.regulationsAdminClientService.deleteDraftRegulationCancel(
       input,
-      authorization,
+      auth,
     )
 
     return {
@@ -222,33 +216,35 @@ export class RegulationsAdminResolver {
   @Mutation(() => DraftRegulationChangeModel)
   async createDraftRegulationChange(
     @Args('input') input: CreateDraftRegulationChangeInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DraftRegulationChangeModel> {
-    return await this.regulationsAdminApiService.createDraftRegulationChange(
+    return await this.regulationsAdminClientService.createDraftRegulationChange(
       input,
-      authorization,
+      auth,
     )
   }
 
   @Mutation(() => DraftRegulationChangeModel)
   async updateDraftRegulationChange(
     @Args('input') input: UpdateDraftRegulationChangeInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DraftRegulationChangeModel> {
-    return await this.regulationsAdminApiService.updateDraftRegulationChange(
-      input,
-      authorization,
+    const { id, ...update } = input
+    return await this.regulationsAdminClientService.updateDraftRegulationChange(
+      update,
+      id,
+      auth,
     )
   }
 
   @Mutation(() => DeleteDraftRegulationModel)
   async deleteDraftRegulationChange(
     @Args('input') input: DeleteDraftRegulationChangeInput,
-    @CurrentUser() { authorization }: User,
+    @CurrentUser() auth: User,
   ): Promise<DeleteDraftRegulationModel> {
-    await this.regulationsAdminApiService.deleteDraftRegulationChange(
-      input,
-      authorization,
+    await this.regulationsAdminClientService.deleteDraftRegulationChange(
+      input.id,
+      auth,
     )
 
     return {

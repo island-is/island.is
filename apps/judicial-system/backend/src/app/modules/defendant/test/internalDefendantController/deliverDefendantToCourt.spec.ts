@@ -3,25 +3,19 @@ import { uuid } from 'uuidv4'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import { User } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../../../court'
-import { Case } from '../../../case'
-import { DeliverDefendantToCourtDto } from '../../dto/deliverDefendantToCourt.dto'
-import { DeliverResponse } from '../../models/deliver.response'
-import { Defendant } from '../../models/defendant.model'
 import { createTestingDefendantModule } from '../createTestingDefendantModule'
+
+import { Case } from '../../../case'
+import { CourtService } from '../../../court'
+import { Defendant } from '../../models/defendant.model'
+import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
   result: DeliverResponse
   error: Error
 }
 
-type GivenWhenThen = (
-  caseId: string,
-  defendantId: string,
-  body: DeliverDefendantToCourtDto,
-  theCase: Case,
-  defendant: Defendant,
-) => Promise<Then>
+type GivenWhenThen = (defendant: Defendant) => Promise<Then>
 
 describe('InternalDefendantController - Deliver defendant to court', () => {
   const userId = uuid()
@@ -49,28 +43,26 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      messageService,
-      courtService,
-      internalDefendantController,
-    } = await createTestingDefendantModule()
+    const { messageService, courtService, internalDefendantController } =
+      await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockCourtService = courtService
-    const mockUpdateCaseWithDefendant = mockCourtService.updateCaseWithDefendant as jest.Mock
+    const mockUpdateCaseWithDefendant =
+      mockCourtService.updateCaseWithDefendant as jest.Mock
     mockUpdateCaseWithDefendant.mockRejectedValue(new Error('Some error'))
 
-    givenWhenThen = async (
-      caseId: string,
-      defendantId: string,
-      body: DeliverDefendantToCourtDto,
-      theCase: Case,
-      defendant: Defendant,
-    ) => {
+    givenWhenThen = async (defendant: Defendant) => {
       const then = {} as Then
 
       await internalDefendantController
-        .deliverDefendantToCourt(caseId, defendantId, theCase, defendant, body)
+        .deliverDefendantToCourt(
+          caseId,
+          defendantId,
+          theCase,
+          defendant,
+          deliverDefendantToCourtDto,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -82,16 +74,11 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockUpdateCaseWithDefendant = mockCourtService.updateCaseWithDefendant as jest.Mock
+      const mockUpdateCaseWithDefendant =
+        mockCourtService.updateCaseWithDefendant as jest.Mock
       mockUpdateCaseWithDefendant.mockResolvedValueOnce(uuid())
 
-      then = await givenWhenThen(
-        caseId,
-        defendantId,
-        deliverDefendantToCourtDto,
-        theCase,
-        defendant,
-      )
+      then = await givenWhenThen(defendant)
     })
 
     it('should deliver the defendant', () => {
@@ -107,26 +94,19 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     })
   })
 
-  // TODO: Run test when ready to send notifications
-  describe.skip('no national id', () => {
+  describe('no national id', () => {
     beforeEach(async () => {
-      await givenWhenThen(
-        caseId,
-        defendantId,
-        deliverDefendantToCourtDto,
-        theCase,
-        {
-          ...defendant,
-          noNationalId: true,
-        } as Defendant,
-      )
+      await givenWhenThen({
+        ...defendant,
+        noNationalId: true,
+      } as Defendant)
     })
 
     it('should send email to court', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
-          userId,
+          user,
           caseId,
         },
       ])
@@ -137,13 +117,7 @@ describe('InternalDefendantController - Deliver defendant to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(
-        caseId,
-        defendantId,
-        deliverDefendantToCourtDto,
-        theCase,
-        defendant,
-      )
+      then = await givenWhenThen(defendant)
     })
 
     it('should return a failure response', () => {

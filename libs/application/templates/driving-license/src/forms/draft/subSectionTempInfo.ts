@@ -10,7 +10,7 @@ import {
 import {
   Application,
   NationalRegistryUser,
-  Teacher,
+  TeacherV4,
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
@@ -19,7 +19,7 @@ import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
-  title: m.informationTitle,
+  title: m.informationApplicant,
   condition: isApplicationForCondition(B_TEMP),
   children: [
     buildMultiField({
@@ -61,6 +61,7 @@ export const subSectionTempInfo = buildSubSection({
           id: 'email',
           title: m.informationYourEmail,
           placeholder: 'Netfang',
+          width: 'half',
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile.data as UserProfile
             return data.email
@@ -70,6 +71,7 @@ export const subSectionTempInfo = buildSubSection({
           id: 'phone',
           title: m.informationYourPhone,
           placeholder: 'Símanúmer',
+          width: 'half',
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile.data as UserProfile
             return data.mobilePhoneNumber
@@ -95,7 +97,7 @@ export const subSectionTempInfo = buildSubSection({
               teachers: { data },
             },
           }) => {
-            return (data as Teacher[]).map(({ name, nationalId }) => ({
+            return (data as TeacherV4[]).map(({ name, nationalId }) => ({
               value: nationalId,
               label: name,
             }))

@@ -2,6 +2,19 @@ import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
+import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  CaseDecision,
+  isAcceptingCaseDecision,
+} from '@island.is/judicial-system/types'
+import {
+  core,
+  rcDemands,
+  rcReportForm,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CheckboxList,
@@ -12,27 +25,13 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  useCase,
-  useDeb,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  core,
-  rcDemands,
-  rcReportForm,
-  titles,
-} from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
-  CaseDecision,
+  CaseType,
   Defendant,
   Gender,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
-import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
-import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   setCheckboxAndSendToServer,
@@ -40,20 +39,23 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import {
   autofillEntry,
   formatDateForServer,
 } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  restrictionsCheckboxes,
-  travelBanRestrictionsCheckboxes,
-} from '@island.is/judicial-system-web/src/utils/restrictions'
 import {
   legalProvisions,
   travelBanProvisions,
 } from '@island.is/judicial-system-web/src/utils/laws'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  restrictionsCheckboxes,
+  travelBanRestrictionsCheckboxes,
+} from '@island.is/judicial-system-web/src/utils/restrictions'
+import { isPoliceDemandsStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import * as styles from './PoliceDemands.css'
 
@@ -92,7 +94,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC = () => {
+export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -102,9 +104,8 @@ export const PoliceDemands: React.FC = () => {
   } = useContext(FormContext)
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
-    '',
-  )
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] =
+    useState<string>('')
   const { updateCase, setAndSendCaseToServer } = useCase()
   useDeb(workingCase, [
     'lawsBroken',
@@ -216,7 +217,9 @@ export const PoliceDemands: React.FC = () => {
             )}
           </Box>
           <BlueBox>
-            <Box marginBottom={workingCase.type !== CaseType.TravelBan ? 2 : 0}>
+            <Box
+              marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
+            >
               <DateTime
                 name="reqValidToDate"
                 datepickerLabel={formatMessage(
@@ -242,7 +245,7 @@ export const PoliceDemands: React.FC = () => {
                 blueBox={false}
               />
             </Box>
-            {workingCase.type !== CaseType.TravelBan && (
+            {workingCase.type !== CaseType.TRAVEL_BAN && (
               <div className={styles.grid}>
                 <Checkbox
                   name="isIsolation"
@@ -258,7 +261,8 @@ export const PoliceDemands: React.FC = () => {
                     )
                     onDemandsChange(
                       {
-                        requestedCustodyRestrictions: nextRequestedCustodyRestrictions,
+                        requestedCustodyRestrictions:
+                          nextRequestedCustodyRestrictions,
                         force: true,
                       },
                       workingCase.type,
@@ -278,15 +282,15 @@ export const PoliceDemands: React.FC = () => {
                   label={formatMessage(
                     rcDemands.sections.demands.admissionToAppropriateFacility,
                   )}
-                  checked={workingCase.type === CaseType.AdmissionToFacility}
+                  checked={workingCase.type === CaseType.ADMISSION_TO_FACILITY}
                   onChange={(event) => {
                     if (workingCase.parentCase) {
                       return
                     }
 
                     const nextCaseType = event.target.checked
-                      ? CaseType.AdmissionToFacility
-                      : CaseType.Custody
+                      ? CaseType.ADMISSION_TO_FACILITY
+                      : CaseType.CUSTODY
                     onDemandsChange(
                       {
                         type: nextCaseType,
@@ -370,8 +374,8 @@ export const PoliceDemands: React.FC = () => {
             <Box marginBottom={2}>
               <CheckboxList
                 checkboxes={
-                  workingCase.type === CaseType.Custody ||
-                  workingCase.type === CaseType.AdmissionToFacility
+                  workingCase.type === CaseType.CUSTODY ||
+                  workingCase.type === CaseType.ADMISSION_TO_FACILITY
                     ? legalProvisions
                     : travelBanProvisions
                 }
@@ -421,8 +425,8 @@ export const PoliceDemands: React.FC = () => {
             />
           </BlueBox>
         </Box>
-        {(workingCase.type === CaseType.Custody ||
-          workingCase.type === CaseType.AdmissionToFacility) && (
+        {(workingCase.type === CaseType.CUSTODY ||
+          workingCase.type === CaseType.ADMISSION_TO_FACILITY) && (
           <Box
             component="section"
             marginBottom={10}
@@ -465,7 +469,7 @@ export const PoliceDemands: React.FC = () => {
             </BlueBox>
           </Box>
         )}
-        {workingCase.type === CaseType.TravelBan && (
+        {workingCase.type === CaseType.TRAVEL_BAN && (
           <Box
             component="section"
             marginBottom={4}

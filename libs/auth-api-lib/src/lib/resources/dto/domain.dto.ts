@@ -37,4 +37,10 @@ export class DomainDTO {
     description: 'This key is used to look up the organisation in Contentful.',
   })
   readonly organisationLogoKey!: string
+
+  @IsString()
+  @ApiProperty({
+    example: 'email@island.is',
+  })
+  readonly contactEmail?: string
 }

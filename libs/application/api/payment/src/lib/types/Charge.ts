@@ -18,7 +18,7 @@ export function formatCharge(
 
   const parsedDefinition =
     typeof payment.definition === 'string' // this is a workaround the fact that the definition is stored as a string in the database but as an object in during testing
-      ? JSON.parse((payment.definition as unknown) as string)
+      ? JSON.parse(payment.definition as unknown as string)
       : JSON.parse(JSON.stringify(payment.definition))
 
   const parsedDefinitionCharges = parsedDefinition.charges as [

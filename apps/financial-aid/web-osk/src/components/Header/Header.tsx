@@ -30,6 +30,7 @@ const Header = () => {
                 : Routes.application
             }
             data-testid="link-to-home"
+            legacyBehavior
           >
             <Box
               display="flex"

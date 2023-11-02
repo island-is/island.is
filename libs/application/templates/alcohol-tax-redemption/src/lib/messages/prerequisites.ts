@@ -32,6 +32,19 @@ export const externalData = defineMessages({
     defaultMessage: 'Sótt verður aldur umsækjanda og kennitala.',
     description: 'Title for fetching data',
   },
+  userProfileTitleValidateAgeError: {
+    id: 'atr.application:externalData.userProfileTitle.ValidateAgeError',
+    defaultMessage: 'Leyfilegur aldur til áfengiskaupa er 20 ára og eldri.',
+    description:
+      'Error Title when age restriciton from national registry is not met',
+  },
+  userProfileSubTitleValidateAgeError: {
+    id: 'atr.application:externalData.userProfileSubTitle.ValidateAgeError',
+    defaultMessage:
+      'Leyfilegur aldur þeirra sem kaupa áfengi er 20 ára og eldri og ólíklegt að það komi til með að breytast á næstunni. Ef þú náðir að koma þér framhjá aldurstakmörkunum og kaupa þér áfengi er ekki hægt með góðu móti að endurgreiða þér áfengisgjöldin.',
+    description:
+      'Error message when age restriciton from national registry is not met',
+  },
   rskTitle: {
     id: 'atr.application:externalData.rskTitle',
     defaultMessage: 'Skatturinn',

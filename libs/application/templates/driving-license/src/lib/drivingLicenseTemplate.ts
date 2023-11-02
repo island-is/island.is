@@ -1,6 +1,9 @@
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  coreHistoryMessages,
+  corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -9,7 +12,7 @@ import {
   ApplicationStateSchema,
   DefaultEvents,
   defineTemplateApi,
-  JuristictionApi,
+  JurisdictionApi,
   CurrentLicenseApi,
   DrivingAssessmentApi,
   NationalRegistryUserApi,
@@ -17,6 +20,8 @@ import {
   QualityPhotoApi,
   TeachersApi,
   ExistingApplicationApi,
+  InstitutionNationalIds,
+  Application,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
@@ -29,6 +34,22 @@ import {
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
+
+const getCodes = (application: Application) => {
+  const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    application.answers,
+    'applicationFor',
+    'B-full',
+  )
+
+  const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+
+  if (!chargeItemCode) {
+    throw new Error('No selected charge item code')
+  }
+  return [chargeItemCode]
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -39,7 +60,6 @@ const template: ApplicationTemplate<
   name: m.applicationForDrivingLicense,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
-  readyForProduction: true,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -77,9 +97,13 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
-                CurrentLicenseApi,
+                CurrentLicenseApi.configure({
+                  params: {
+                    useLegacyVersion: true,
+                  },
+                }),
                 DrivingAssessmentApi,
-                JuristictionApi,
+                JurisdictionApi,
                 QualityPhotoApi,
                 ExistingApplicationApi.configure({
                   params: {
@@ -92,6 +116,18 @@ const template: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+              {
+                logMessage: coreHistoryMessages.applicationRejected,
+                onEvent: DefaultEvents.REJECT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
@@ -101,9 +137,6 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: m.applicationForDrivingLicense.defaultMessage,
-          actionCard: {
-            description: m.actionCardDraft,
-          },
           status: 'draft',
           progress: 0.4,
           lifecycle: DefaultStateLifeCycle,
@@ -138,41 +171,10 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            description: m.actionCardPayment,
-          },
-          progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/payment').then((val) => val.payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
@@ -189,6 +191,13 @@ const template: ApplicationTemplate<
               read: 'all',
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
       [States.DECLINED]: {

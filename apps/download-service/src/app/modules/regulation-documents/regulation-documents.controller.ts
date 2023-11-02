@@ -50,12 +50,17 @@ export class RegulationDocumentsController {
     @Res() res: Response,
   ) {
     let draftRegulation: RegulationDraft | null = null
+    const authUser: User = {
+      ...user,
+      authorization: `Bearer ${resource.__accessToken}`,
+    }
 
     try {
-      draftRegulation = await this.regulationsAdminClientService.getDraftRegulation(
-        regulationId,
-        `Bearer ${resource.__accessToken}`,
-      )
+      draftRegulation =
+        await this.regulationsAdminClientService.getDraftRegulation(
+          regulationId,
+          authUser,
+        )
     } catch (e) {
       console.error('unable to get draft regulation', e)
     }
@@ -73,9 +78,8 @@ export class RegulationDocumentsController {
       publishedDate: draftRegulation.idealPublishDate,
     }
 
-    const documentResponse = await this.regulationService.generateDraftRegulationPdf(
-      input,
-    )
+    const documentResponse =
+      await this.regulationService.generateDraftRegulationPdf(input)
 
     if (
       documentResponse.data &&

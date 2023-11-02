@@ -1,11 +1,9 @@
-import { CanActivate } from '@nestjs/common'
-
 import {
   investigationCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
 
-import { CaseTypeGuard } from '../../../case'
+import { CaseTypeGuard, CaseWriteGuard } from '../../../case'
 import { LimitedAccessFileController } from '../../limitedAccessFile.controller'
 
 describe('LimitedAccessFileController - Create presigned post guards', () => {
@@ -19,22 +17,12 @@ describe('LimitedAccessFileController - Create presigned post guards', () => {
     )
   })
 
-  it('should have no guards', () => {
-    expect(guards).toHaveLength(1)
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[0]
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(2)
+    expect(guards[0]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[0]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have CaseTypeGuard as quard 1', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
+    expect(new guards[1]()).toBeInstanceOf(CaseWriteGuard)
   })
 })

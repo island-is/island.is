@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
   buildDataProviderItem,
@@ -99,26 +100,22 @@ export const ComplaintForm: Form = buildForm({
                   required: true,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    component: 'FieldAlertMessage',
-                    id: 'inCourtProceedingsAlert',
-                    title: errorCards.inCourtProceedingsTitle,
-                    description: errorCards.inCourtProceedingsDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (formValue) =>
-                      formValue.inCourtProceedings === YES,
-                  },
-                  {
-                    links: [
-                      {
-                        title: delimitation.links.inCourtProceedingsTitle,
-                        url: delimitation.links.inCourtProceedingsUrl,
-                        isExternal: true,
-                      },
-                    ],
-                  },
-                ),
+                buildAlertMessageField({
+                  id: 'inCourtProceedingsAlert',
+                  title: errorCards.inCourtProceedingsTitle,
+                  message: errorCards.inCourtProceedingsDescription,
+                  alertType: 'info',
+                  doesNotRequireAnswer: true,
+                  links: [
+                    {
+                      title: delimitation.links.inCourtProceedingsTitle,
+                      url: delimitation.links.inCourtProceedingsUrl,
+                      isExternal: true,
+                    },
+                  ],
+                  condition: (formValue) =>
+                    formValue.inCourtProceedings === YES,
+                }),
               ],
             }),
           ],
@@ -139,33 +136,28 @@ export const ComplaintForm: Form = buildForm({
                   required: true,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    component: 'FieldAlertMessage',
-                    id: 'concernsMediaCoverageAlert',
-                    title: errorCards.concernsMediaCoverageTitle,
-                    description: errorCards.concernsMediaCoverageDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (formValue) =>
-                      formValue.concernsMediaCoverage === YES,
-                  },
-                  {
-                    links: [
-                      {
-                        title:
-                          delimitation.links.concernsMediaCoverageFirstTitle,
-                        url: delimitation.links.concernsMediaCoverageFirstUrl,
-                        isExternal: true,
-                      },
-                      {
-                        title:
-                          delimitation.links.concernsMediaCoverageSecondTitle,
-                        url: delimitation.links.concernsMediaCoverageSecondUrl,
-                        isExternal: true,
-                      },
-                    ],
-                  },
-                ),
+                buildAlertMessageField({
+                  id: 'concernsMediaCoverageAlert',
+                  title: errorCards.concernsMediaCoverageTitle,
+                  message: errorCards.concernsMediaCoverageDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (formValue) =>
+                    formValue.concernsMediaCoverage === YES,
+                  links: [
+                    {
+                      title: delimitation.links.concernsMediaCoverageFirstTitle,
+                      url: delimitation.links.concernsMediaCoverageFirstUrl,
+                      isExternal: true,
+                    },
+                    {
+                      title:
+                        delimitation.links.concernsMediaCoverageSecondTitle,
+                      url: delimitation.links.concernsMediaCoverageSecondUrl,
+                      isExternal: true,
+                    },
+                  ],
+                }),
               ],
             }),
           ],
@@ -186,31 +178,27 @@ export const ComplaintForm: Form = buildForm({
                   required: true,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    component: 'FieldAlertMessage',
-                    id: 'concernsBanMarkingAlert',
-                    title: errorCards.concernsBanMarkingTitle,
-                    description: errorCards.concernsBanMarkingDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (formValue) =>
-                      formValue.concernsBanMarking === YES,
-                  },
-                  {
-                    links: [
-                      {
-                        title: delimitation.links.concernsBanMarkingFirstTitle,
-                        url: delimitation.links.concernsBanMarkingFirstUrl,
-                        isExternal: true,
-                      },
-                      {
-                        title: delimitation.links.concernsBanMarkingSecondTitle,
-                        url: delimitation.links.concernsBanMarkingSecondUrl,
-                        isExternal: true,
-                      },
-                    ],
-                  },
-                ),
+                buildAlertMessageField({
+                  id: 'concernsBanMarkingAlert',
+                  title: errorCards.concernsBanMarkingTitle,
+                  message: errorCards.concernsBanMarkingDescription,
+                  alertType: 'info',
+                  doesNotRequireAnswer: true,
+                  condition: (formValue) =>
+                    formValue.concernsBanMarking === YES,
+                  links: [
+                    {
+                      title: delimitation.links.concernsBanMarkingFirstTitle,
+                      url: delimitation.links.concernsBanMarkingFirstUrl,
+                      isExternal: true,
+                    },
+                    {
+                      title: delimitation.links.concernsBanMarkingSecondTitle,
+                      url: delimitation.links.concernsBanMarkingSecondUrl,
+                      isExternal: true,
+                    },
+                  ],
+                }),
               ],
             }),
           ],
@@ -231,25 +219,21 @@ export const ComplaintForm: Form = buildForm({
                   required: true,
                   width: 'half',
                 }),
-                buildCustomField(
-                  {
-                    component: 'FieldAlertMessage',
-                    id: 'concernsLibelAlert',
-                    title: errorCards.concernsLibelTitle,
-                    description: errorCards.concernsLibelDescription,
-                    doesNotRequireAnswer: true,
-                    condition: (formValue) => formValue.concernsLibel === YES,
-                  },
-                  {
-                    links: [
-                      {
-                        title: delimitation.links.concernsLibelTitle,
-                        url: delimitation.links.concernsLibelUrl,
-                        isExternal: true,
-                      },
-                    ],
-                  },
-                ),
+                buildAlertMessageField({
+                  id: 'concernsLibelAlert',
+                  title: errorCards.concernsLibelTitle,
+                  message: errorCards.concernsLibelDescription,
+                  alertType: 'info',
+                  doesNotRequireAnswer: true,
+                  condition: (formValue) => formValue.concernsLibel === YES,
+                  links: [
+                    {
+                      title: delimitation.links.concernsLibelTitle,
+                      url: delimitation.links.concernsLibelUrl,
+                      isExternal: true,
+                    },
+                  ],
+                }),
               ],
             }),
           ],
@@ -321,7 +305,7 @@ export const ComplaintForm: Form = buildForm({
               onBehalf === OnBehalf.OTHERS
             )
           },
-          children: [applicantInformationMultiField],
+          children: [applicantInformationMultiField()],
         }),
         buildSubSection({
           id: 'organizationOrInstitution',
@@ -585,13 +569,13 @@ export const ComplaintForm: Form = buildForm({
                   uploadButtonLabel:
                     complaint.labels.complaintDocumentsButtonLabel,
                 }),
-                buildCustomField({
-                  component: 'FieldAlertMessage',
+                buildAlertMessageField({
                   id: 'complaintDocumentsInfo',
                   doesNotRequireAnswer: true,
                   title:
                     complaint.labels.complaintDocumentsInfoAlertMessageTitle,
-                  description: complaint.labels.complaintDocumentsInfoLabel,
+                  message: complaint.labels.complaintDocumentsInfoLabel,
+                  alertType: 'info',
                 }),
               ],
             }),

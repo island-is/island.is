@@ -15,7 +15,9 @@ interface SliceProps {
   slice: OneColumnText
 }
 
-export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
+export const OneColumnTextSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice }) => {
   const boxProps: BoxProps = slice.dividerOnTop
     ? {
         borderTopWidth: 'standard',
@@ -45,7 +47,7 @@ export const OneColumnTextSlice: React.FC<SliceProps> = ({ slice }) => {
           )}
           {webRichText(slice.content as SliceType[])}
           {slice.link && slice.link.url && (
-            <Link href={slice.link.url}>
+            <Link href={slice.link.url} legacyBehavior>
               <Button
                 icon="arrowForward"
                 iconType="filled"

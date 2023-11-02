@@ -1,4 +1,4 @@
-import { ref, service } from './dsl'
+import { ServiceBuilder, ref, service } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { EnvironmentConfig } from './types/charts'
 import { getFeatureAffectedServices } from './feature-deployments'
@@ -7,28 +7,49 @@ import { getHelmValueFile } from './value-files-generators/helm-value-file'
 import { renderers } from './upstream-dependencies'
 import { generateOutput } from './processing/rendering-pipeline'
 
-const Dev: EnvironmentConfig = {
-  auroraHost: 'a',
-  redisHost: 'b',
-  domain: 'staging01.devland.is',
-  type: 'dev',
-  featuresOn: [],
-  defaultMaxReplicas: 3,
-  defaultMinReplicas: 2,
-  releaseName: 'web',
-  awsAccountId: '111111',
-  awsAccountRegion: 'eu-west-1',
-  feature: 'feature-A',
-  global: {},
+const getEnvironment = (
+  options: EnvironmentConfig = {
+    auroraHost: 'a',
+    redisHost: 'b',
+    domain: 'staging01.devland.is',
+    type: 'dev',
+    featuresOn: [],
+    defaultMaxReplicas: 3,
+    defaultMinReplicas: 2,
+    releaseName: 'web',
+    awsAccountId: '111111',
+    awsAccountRegion: 'eu-west-1',
+    feature: 'feature-A',
+    global: {},
+  },
+) => {
+  return { ...options }
+}
+
+const getValues = async (
+  services: ServiceBuilder<any>[],
+  env: EnvironmentConfig,
+) => {
+  const chart = new Kubernetes(env)
+  const out = await generateOutput({
+    runtime: chart,
+    services: services,
+    outputFormat: renderers.helm,
+    env: env,
+  })
+  const values = getHelmValueFile(chart, out, 'no-mocks', env)
+  return values
 }
 
 describe('Feature-deployment support', () => {
   let values: HelmValueFile
+  let dev: EnvironmentConfig
 
   beforeEach(async () => {
     const dependencyA = service('service-a').namespace('A')
     const dependencyB = service('service-b')
     const dependencyC = service('service-c')
+
     const apiService = service('graphql')
       .env({
         A: ref((h) => `${h.svc(dependencyA)}`),
@@ -43,7 +64,9 @@ describe('Feature-deployment support', () => {
             command: 'node',
           },
         ],
-        postgres: {},
+        postgres: {
+          extensions: ['foo'],
+        },
       })
       .ingress({
         primary: {
@@ -53,20 +76,14 @@ describe('Feature-deployment support', () => {
       })
       .postgres()
 
+    dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(
       [apiService, dependencyA, dependencyB],
       [dependencyA, dependencyC],
       [dependencyC],
-      Dev,
+      dev,
     )
-    const chart1 = new Kubernetes(Dev)
-    const services = await generateOutput({
-      runtime: chart1,
-      services: services1.included,
-      outputFormat: renderers.helm,
-      env: Dev,
-    })
-    values = getHelmValueFile(chart1, services, 'no-mocks', Dev)
+    values = await getValues(services1.included, dev)
   })
 
   it('dynamic service name generation', () => {
@@ -77,9 +94,17 @@ describe('Feature-deployment support', () => {
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=208',
+      NODE_OPTIONS: '--max-old-space-size=230',
       SERVERSIDE_FEATURES_ON: '',
+      DB_EXTENSIONS: 'foo',
     })
+  })
+  it('db extensions are set', () => {
+    expect(values.services.graphql.initContainer?.env).toEqual(
+      expect.objectContaining({
+        DB_EXTENSIONS: 'foo',
+      }),
+    )
   })
 
   it('dynamic secrets path', () => {
@@ -104,10 +129,10 @@ describe('Feature-deployment support', () => {
       'service-a',
     ])
     expect(values.services['graphql'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
     expect(values.services['service-a'].namespace).toEqual(
-      `feature-${Dev.feature}`,
+      `feature-${dev.feature}`,
     )
   })
 
@@ -116,6 +141,7 @@ describe('Feature-deployment support', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [
           {

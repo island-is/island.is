@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/templates/parental-leave",
+  "name": "application-templates-parental-leave",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/parental-leave/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/parental-leave/**/*.{ts,tsx,js,jsx}"
@@ -13,21 +14,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/parental-leave/jest.config.js",
+        "jestConfig": "libs/application/templates/parental-leave/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/templates/parental-leave"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/parental-leave"
+      ]
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/parental-leave/src/lib/messages.ts"
       }
     },
     "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/parental-leave/codegen.yml"
       }

@@ -13,7 +13,7 @@ import { Op, UniqueConstraintError } from 'sequelize'
 import { EndorsementTag } from '../endorsementList/constants'
 import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
-import { NationalRegistryApi } from '@island.is/clients/national-registry-v1'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 interface FindEndorsementInput {
   listId: string
@@ -53,11 +53,11 @@ export class EndorsementService {
     private endorsementModel: typeof Endorsement,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly nationalRegistryApi: NationalRegistryApi,
+    private readonly nationalRegistryApiV2: NationalRegistryClientService,
   ) {}
 
   async findEndorsements({ listId }: FindEndorsementsInput, query: any) {
-    this.logger.debug(`Finding endorsements by list id "${listId}"`)
+    this.logger.info(`Finding endorsements by list id "${listId}"`)
 
     return await paginate({
       Model: this.endorsementModel,
@@ -74,6 +74,9 @@ export class EndorsementService {
     { listId }: FindEndorsementsInput,
     query: any,
   ) {
+    this.logger.info(
+      `Finding GeneralPetitionendorsements by list id "${listId}"`,
+    )
     // check if list exists and belongs to general petitions
     const result = await this.endorsementListModel.findOne({
       where: {
@@ -91,7 +94,7 @@ export class EndorsementService {
     nationalId,
     listId,
   }: FindEndorsementInput) {
-    this.logger.debug(
+    this.logger.info(
       `Finding endorsement in list "${listId}" by nationalId "${nationalId}"`,
     )
 
@@ -106,43 +109,26 @@ export class EndorsementService {
     return { hasEndorsed: true }
   }
 
-  async findUserEndorsementsByTags({
-    nationalId,
-    tags,
-  }: FindUserEndorsementsByTagsInput) {
-    this.logger.debug(
-      `Finding endorsements by tags "${tags.join(
-        ', ',
-      )}" for user "${nationalId}"`,
-    )
-
-    return await this.endorsementModel.findAll({
-      where: { endorser: nationalId },
-      include: [
-        { model: EndorsementList, where: { tags: { [Op.overlap]: tags } } },
-      ],
-    })
-  }
-
   // FIXME: Find a way to combine with create bulk endorsements
   async createEndorsementOnList({
     endorsementList,
     nationalId,
     showName,
   }: EndorsementInput) {
-    this.logger.debug(`Creating resource with nationalId - ${nationalId}`)
+    this.logger.info(`Creating resource with nationalId - ${nationalId}`)
 
     // we don't allow endorsements on closed lists
     if (new Date() >= endorsementList.closedDate) {
       throw new MethodNotAllowedException(['Unable to endorse closed list'])
     }
-    const fullName = showName ? await this.getEndorserInfo(nationalId) : ''
+    const person = await this.nationalRegistryApiV2.getIndividual(nationalId)
     const endorsement = {
       endorser: nationalId,
       endorsementListId: endorsementList.id,
       meta: {
-        fullName: fullName,
-        showName: showName,
+        fullName: person?.fullName,
+        locality: person?.legalDomicile?.locality,
+        showName,
       },
     }
 
@@ -150,6 +136,7 @@ export class EndorsementService {
       // map meaningful sequelize errors to custom errors, else return error
       switch (error.constructor) {
         case UniqueConstraintError: {
+          this.logger.warn('Endorsement already exists in list')
           throw new MethodNotAllowedException([
             'Endorsement already exists in list',
           ])
@@ -165,12 +152,13 @@ export class EndorsementService {
     nationalId,
     endorsementList,
   }: DeleteEndorsementInput) {
-    this.logger.debug(
+    this.logger.info(
       `Removing endorsement from list "${endorsementList.id}" by nationalId "${nationalId}"`,
     )
 
     // we don't allow endorsements on closed lists
     if (new Date() >= endorsementList.closedDate) {
+      this.logger.warn('Unable to remove endorsement form closed list')
       throw new MethodNotAllowedException([
         'Unable to remove endorsement form closed list',
       ])
@@ -189,23 +177,6 @@ export class EndorsementService {
         { listId: endorsementList.id },
       )
       throw new NotFoundException(["This endorsement doesn't exist"])
-    }
-  }
-
-  private async getEndorserInfo(nationalId: string) {
-    this.logger.debug(`Finding fullName of Endorser "${nationalId}" by id`)
-
-    try {
-      return (await this.nationalRegistryApi.getUser(nationalId)).Fulltnafn
-    } catch (e) {
-      if (e instanceof Error) {
-        this.logger.warn(
-          `Occured when fetching endorser name from NationalRegistryApi v1 ${e.message} \n${e.stack}`,
-        )
-        return ''
-      } else {
-        throw e
-      }
     }
   }
 }

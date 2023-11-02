@@ -21,7 +21,9 @@ const getCurrentViewport = () => {
 
 export const ViewportContext = React.createContext<Rect>(getCurrentViewport())
 
-export const ViewportProvider: React.FC = ({ children }) => {
+export const ViewportProvider: React.FC<React.PropsWithChildren<unknown>> = ({
+  children,
+}) => {
   const [state, setState] = React.useState<Rect>(getCurrentViewport())
 
   const handleWindowResize = () => {

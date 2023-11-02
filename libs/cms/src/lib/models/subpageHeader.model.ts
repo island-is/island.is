@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { CacheField } from '@island.is/nest/graphql'
 
 import { ISubpageHeader } from '../generated/contentfulTypes'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -15,10 +16,10 @@ export class SubpageHeader {
   @Field()
   summary!: string
 
-  @Field(() => Image, { nullable: true })
+  @CacheField(() => Image, { nullable: true })
   featuredImage?: Image | null
 
-  @Field(() => [SliceUnion], { nullable: true })
+  @CacheField(() => [SliceUnion], { nullable: true })
   body?: Array<typeof SliceUnion>
 }
 

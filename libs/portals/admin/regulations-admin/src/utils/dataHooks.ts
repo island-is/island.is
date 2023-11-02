@@ -419,8 +419,8 @@ export const useCreateRegulationDraft = () => {
 // ---------------------------------------------------------------------------
 
 export const RegulationSearchListQuery = gql`
-  query RegulationsSearchQuery($input: GetRegulationsSearchInput!) {
-    getRegulationsSearch(input: $input)
+  query RegulationsSearchOptionsQuery($input: GetRegulationsSearchInput!) {
+    getRegulationsOptionSearch(input: $input)
   }
 `
 

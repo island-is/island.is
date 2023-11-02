@@ -29,4 +29,9 @@ export const application = defineMessages({
     description:
       'Description of application state/status when application is processed',
   },
+  pendingActionOrderReceivedTitle: {
+    id: 'ta.ovrc.application:pendingActionOrderReceivedTitle',
+    defaultMessage: 'Pöntun á skráningarskírteini móttekin',
+    description: 'Pending action application completed',
+  },
 })
