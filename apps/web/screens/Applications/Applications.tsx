@@ -75,14 +75,18 @@ const Applications: Screen<CategoryProps> = ({
   const gn = useNamespace(globalNamespace)
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
-  const { organization, category, reset: resetFilters } = useSearchableTagsFilter()
+  const {
+    organization,
+    category,
+    reset: resetFilters,
+  } = useSearchableTagsFilter()
   const { query: searchQuery, reset: resetFilterInput } = useQueryFilter()
 
   const articles = searchResults.items as Article[]
   const nothingFound = searchResults.items.length === 0
   const totalSearchResults = searchResults.total
   const totalPages = Math.ceil(totalSearchResults / PERPAGE)
-  const hasFilters = organization.length || category.length || searchQuery;
+  const hasFilters = organization.length || category.length || searchQuery
 
   const handleCLearAllFilter = () => {
     resetFilterInput()
