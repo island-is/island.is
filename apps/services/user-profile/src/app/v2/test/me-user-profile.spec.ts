@@ -211,6 +211,8 @@ describe('MeUserProfile', () => {
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
         }),
+        // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
+        dbType: 'postgres',
       })
 
       // Arrange
@@ -332,7 +334,7 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message: 'Email code is not a match. 3 tries remaining.',
+        message: 'Email code is not a match. 2 tries remaining.',
       })
 
       // Assert Db records
@@ -342,6 +344,13 @@ describe('MeUserProfile', () => {
       })
 
       expect(userProfile.email).toBe(testUserProfile.email)
+
+      const verificationModel = app.get(getModelToken(EmailVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(verification.tries).toBe(1)
     })
 
     it('PATCH /v2/me should return 400 when mobile verification code is incorrect', async () => {
@@ -354,7 +363,7 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message: 'SMS code is not a match. 3 tries remaining.',
+        message: 'SMS code is not a match. 2 tries remaining.',
       })
 
       // Assert Db records
@@ -366,6 +375,13 @@ describe('MeUserProfile', () => {
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
+
+      const verificationModel = app.get(getModelToken(SmsVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(verification.tries).toBe(1)
     })
 
     it('PATCH /v2/me should return 400 when there is no email verification code', async () => {
