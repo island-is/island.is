@@ -76,7 +76,8 @@ export const messages = defineMessages({
   },
   paymentParticationExplinationFooter: {
     id: 'sp.health:payment-partication-info-footer',
-    defaultMessage: 'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.'
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
   },
   paymentParticationFooterExplination: {
     id: 'sp.health:payment-partication-footer-info',
