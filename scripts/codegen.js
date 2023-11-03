@@ -15,15 +15,9 @@ const skipCache = process.argv && process.argv[2] === '--skip-cache'
 const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.ts'
 
 /**
- * See SCHEMAS.md to setup your project with auto-generated schemas files
+ * See https://docs.devland.is/repository/codegen about setting up your project with auto-generated API schema and client files
  */
-const TARGETS = [
-  'schemas/external-openapi-generator', // If we depend on external services that comes with theirs own .yaml file (RC and not documented yet)
-  'schemas/build-openapi', // Output openapi.yaml
-  'schemas/openapi-generator', // Output gen/fetch/* based on openapi.yaml to run openapi-generator
-  'schemas/build-graphql-schema', // Output api.graphql based on graphql app modules
-  'schemas/codegen', // Output clients schemas (*.d.ts) based on codegen.yml
-]
+const TARGETS = ['codegen/backend-schema', 'codegen/frontend-client']
 
 const fileExists = async (path) =>
   !!(await promisify(stat)(path).catch((_) => false))
