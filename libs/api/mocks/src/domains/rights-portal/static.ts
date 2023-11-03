@@ -18,41 +18,41 @@ export const getPaymentOverviewServiceTypes = {
 export const getPaymentOverview = {
   items: [
     {
-      "credit": 0,
-      "debt": 0,
-      "bills": [
+      credit: 0,
+      debt: 0,
+      bills: [
         {
-          "date": "2022-12-14",
-          "serviceType": {
-            "code": "ELK",
-            "name": "Endurgr.lyfjakostnaður til einstaklinga",
+          date: '2022-12-14',
+          serviceType: {
+            code: 'ELK',
+            name: 'Endurgr.lyfjakostnaður til einstaklinga',
           },
-          "totalAmount": 38121,
-          "insuranceAmount": 38121,
-          "documentId": 42
+          totalAmount: 38121,
+          insuranceAmount: 38121,
+          documentId: 42,
         },
         {
-          "date": "2022-10-29",
-          "serviceType": {
-            "code": "GTK",
-            "name": "Greiðsluþátttökukerfi",
+          date: '2022-10-29',
+          serviceType: {
+            code: 'GTK',
+            name: 'Greiðsluþátttökukerfi',
           },
-          "totalAmount": 13300,
-          "insuranceAmount": 13300,
-          "documentId": 43
+          totalAmount: 13300,
+          insuranceAmount: 13300,
+          documentId: 43,
         },
         {
-          "date": "2022-05-03",
-          "serviceType": {
-            "code": "AKS",
-            "name": "Afsláttakort",
+          date: '2022-05-03',
+          serviceType: {
+            code: 'AKS',
+            name: 'Afsláttakort',
           },
-          "totalAmount": 9350,
-          "insuranceAmount": 9350,
-          "documentId": 44
-        }
-      ]
-    }
+          totalAmount: 9350,
+          insuranceAmount: 9350,
+          documentId: 44,
+        },
+      ],
+    },
   ],
   errors: [],
 }
