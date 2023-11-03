@@ -9,7 +9,7 @@ import { parsePhoneNumber } from 'libphonenumber-js'
  */
 export const formatPhoneNumber = (phoneNumber: string): string => {
   if (!phoneNumber) {
-    return null
+    return ''
   }
 
   const tempPhoneNumber = parsePhoneNumber(phoneNumber, 'IS')

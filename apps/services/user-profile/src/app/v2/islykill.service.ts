@@ -3,15 +3,17 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 
-import { IslayklarUpsertDto } from './dto/islayklar-upsertDto'
+import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { isDefined } from '@island.is/shared/utils'
+
+import { IslyklarUpsertDto } from './dto/islyklar-upsert.dto'
 
 @Injectable()
 export class IslykillService {
   constructor(private readonly islyklarApi: IslyklarApi) {}
 
-  async getIslykillSettings(
+  private async getIslykillSettings(
     nationalId: string,
   ): Promise<PublicUser & { userNotFound?: boolean }> {
     try {
@@ -48,20 +50,8 @@ export class IslykillService {
     }
   }
 
-  async updateIslykillSettings({
-    nationalId,
-    email,
-    phoneNumber,
-    publicUser,
-  }: IslayklarUpsertDto): Promise<PublicUser> {
+  private async updateIslykillSettings(user: PublicUser): Promise<PublicUser> {
     try {
-      const user = {
-        ...publicUser,
-        ssn: nationalId,
-        ...(email !== undefined && { email }),
-        ...(phoneNumber !== undefined && { mobile: phoneNumber }),
-      }
-
       return this.islyklarApi.islyklarPut({ user })
     } catch (e) {
       const error = e as Error
@@ -73,21 +63,11 @@ export class IslykillService {
     }
   }
 
-  async createIslykillSettings({
-    nationalId,
-    email,
-    phoneNumber,
-    publicUser,
-  }: IslayklarUpsertDto): Promise<PublicUser> {
+  private async createIslykillSettings(user: PublicUser): Promise<PublicUser> {
     try {
-      const user = {
-        ...publicUser,
-        ssn: nationalId,
-        ...(email === undefined && { email }),
-        ...(phoneNumber === undefined && { mobile: phoneNumber }),
-      }
-
-      return this.islyklarApi.islyklarPost({ user })
+      return this.islyklarApi.islyklarPost({
+        user,
+      })
     } catch (e) {
       const error = e as Error
 
@@ -102,26 +82,23 @@ export class IslykillService {
     nationalId,
     email,
     phoneNumber,
-  }: IslayklarUpsertDto): Promise<PublicUser> {
-    const { userNotFound, ...islyklar } = await this.getIslykillSettings(
+  }: IslyklarUpsertDto): Promise<PublicUser> {
+    const { userNotFound, ...publicUser } = await this.getIslykillSettings(
       nationalId,
     )
 
-    const islykillSettings = {
-      nationalId,
-      ...(email !== undefined && { email }),
-      ...(phoneNumber !== undefined && { phoneNumber }),
-      publicUser: islyklar,
-    }
-
     if (userNotFound) {
       return this.createIslykillSettings({
-        nationalId,
+        ssn: nationalId,
         email,
-        phoneNumber,
+        mobile: phoneNumber,
       })
     } else {
-      return this.updateIslykillSettings(islykillSettings)
+      return this.updateIslykillSettings({
+        ...publicUser,
+        ...(isDefined(email) && { email }),
+        ...(isDefined(phoneNumber) && { mobile: phoneNumber }),
+      })
     }
   }
 }

@@ -221,7 +221,7 @@ describe('MeUserProfileController', () => {
       await app.cleanUp()
     })
 
-    it('PATCH /v2/me should return 201 with changed data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
@@ -231,7 +231,7 @@ describe('MeUserProfileController', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         email: newEmail,
         emailVerified: true,
@@ -249,7 +249,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
     })
 
-    it('PATCH /v2/me should return 201 with changed mobile data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed mobile data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: newPhoneNumber,
@@ -257,7 +257,7 @@ describe('MeUserProfileController', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
         mobilePhoneNumber: newPhoneNumber,
@@ -273,7 +273,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
     })
 
-    it('PATCH /v2/me should return 201 with changed email data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed email data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
@@ -281,7 +281,7 @@ describe('MeUserProfileController', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
         email: newEmail,
@@ -381,15 +381,17 @@ describe('MeUserProfileController', () => {
       })
     })
 
-    it('PATCH /v2/me should return 201 and clear email and phoneNumber null is sent', async () => {
+    it('PATCH /v2/me should return 200 and clear email and phoneNumber null is sent', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: null,
-        email: null,
+        mobilePhoneNumber: '',
+        email: '',
       })
 
+      console.log(res.body)
+
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         mobilePhoneNumber: null,
         mobilePhoneNumberVerified: false,
@@ -405,9 +407,12 @@ describe('MeUserProfileController', () => {
 
       expect(userProfile.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(null)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith
     })
 
-    it('PATCH /v2/me should return 201 and create islyklar profile when it does not exist', async () => {
+    it('PATCH /v2/me should return 200 and create islyklar profile when it does not exist', async () => {
       // Arrange
       islyklarApi.islyklarGet = jest.fn().mockImplementation(() => {
         return new Promise((resolve, reject) =>
@@ -419,25 +424,29 @@ describe('MeUserProfileController', () => {
 
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: null,
-        email: null,
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(islyklarApi.islyklarPut).not.toBeCalled()
       expect(islyklarApi.islyklarPost).toBeCalled()
     })
 
-    it('PATCH /v2/me should return 201 and should call the islyklar put method and not post', async () => {
+    it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: null,
-        email: null,
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(islyklarApi.islyklarPost).not.toBeCalled()
       expect(islyklarApi.islyklarPut).toBeCalled()
     })

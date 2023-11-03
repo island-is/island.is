@@ -57,7 +57,7 @@ export class MeUserProfileController {
   @Patch()
   @Documentation({
     description: 'Update user profile for the current user.',
-    response: { status: 201, type: UserProfileDto },
+    response: { status: 200, type: UserProfileDto },
   })
   @Scopes(UserProfileScope.write)
   patchUserProfile(

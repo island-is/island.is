@@ -66,13 +66,12 @@ export class UserProfileService {
     nationalId: string,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    const isEmailDefinedOrNull = userProfile.email !== undefined
-    const isMobilePhoneNumberDefinedOrNull =
-      userProfile.mobilePhoneNumber !== undefined
+    const isEmailDefined = isDefined(userProfile.email)
+    const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const shouldVerifyEmail = isEmailDefinedOrNull && userProfile.email !== null
+    const shouldVerifyEmail = isEmailDefined && userProfile.email !== ''
     const shouldVerifyMobilePhoneNumber =
-      isMobilePhoneNumberDefinedOrNull && userProfile.mobilePhoneNumber !== null
+      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== ''
 
     if (shouldVerifyEmail && !isDefined(userProfile.emailVerificationCode)) {
       throw new BadRequestException('Email verification code is required')
@@ -88,7 +87,7 @@ export class UserProfileService {
     }
 
     const formattedPhoneNumber =
-      isMobilePhoneNumberDefinedOrNull &&
+      isMobilePhoneNumberDefined &&
       formatPhoneNumber(userProfile.mobilePhoneNumber)
 
     return this.sequelize.transaction(async (transaction) => {
@@ -124,16 +123,13 @@ export class UserProfileService {
 
       const update = {
         nationalId,
-        ...(isEmailDefinedOrNull && {
-          email: userProfile.email,
-          emailVerified: userProfile.email !== null,
+        ...(isEmailDefined && {
+          email: userProfile.email || null,
+          emailVerified: userProfile.email !== '',
         }),
-        ...(isMobilePhoneNumberDefinedOrNull && {
-          mobilePhoneNumberVerified: userProfile.mobilePhoneNumber !== null,
-          mobilePhoneNumber:
-            userProfile.mobilePhoneNumber === null
-              ? null
-              : formattedPhoneNumber,
+        ...(isMobilePhoneNumberDefined && {
+          mobilePhoneNumber: formattedPhoneNumber || null,
+          mobilePhoneNumberVerified: formattedPhoneNumber !== '',
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
@@ -148,7 +144,7 @@ export class UserProfileService {
         { transaction },
       )
 
-      if (isEmailDefinedOrNull || isMobilePhoneNumberDefinedOrNull) {
+      if (isEmailDefined || isMobilePhoneNumberDefined) {
         await this.islykillService.upsertIslykillSettings({
           nationalId,
           phoneNumber: formattedPhoneNumber,
@@ -200,10 +196,6 @@ export class UserProfileService {
       const cutOffDate = subMonths(new Date(), NUDGE_INTERVAL)
 
       if (!userProfile.email && !userProfile.mobilePhoneNumber) {
-        console.log('comparing dates', {
-          lastNudge: userProfile.lastNudge,
-          cutOffDate,
-        })
         return userProfile.lastNudge < cutOffDate
       }
 
