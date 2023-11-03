@@ -4,6 +4,7 @@ import { Localhost } from '../dsl/localhost-runtime'
 import { localrun } from '../dsl/exports/localrun'
 
 export const renderLocalServices = async (services: string[]) => {
+  console.log('renderLocalServices', services)
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
