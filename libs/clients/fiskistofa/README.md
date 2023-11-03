@@ -21,5 +21,5 @@ yarn nx run clients-fiskistofa:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-fiskistofa:schemas/external-openapi-generator
+yarn nx run clients-fiskistofa:codegen/backend-client
 ```
