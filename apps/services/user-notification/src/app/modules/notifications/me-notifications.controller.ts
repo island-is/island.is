@@ -21,6 +21,7 @@ import { NotificationsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments/environment'
+import { Documentation } from '@island.is/nest/swagger'
 
 @Controller({
   path: 'me/notifications',
@@ -28,11 +29,14 @@ import { environment } from '../../../environments/environment'
 // @UseGuards(IdsUserGuard, ScopesGuard)
 export class MeNotificationsController {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    // @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
   ) {}
 
   @Get('')
+  @Documentation({
+    summary: 'Returns a paginated list of notifications for the current user',
+  })
   @Scopes(NotificationsScope.read)
   @ApiSecurity('oauth2', [NotificationsScope.read])
   @ApiTags('user notification')
@@ -46,6 +50,9 @@ export class MeNotificationsController {
   }
 
   @Get(':id')
+  @Documentation({
+    summary: 'Returns a notification for the current user',
+  })
   @Scopes(NotificationsScope.read)
   @ApiSecurity('oauth2', [NotificationsScope.read])
   @ApiTags('user notification')
@@ -55,6 +62,9 @@ export class MeNotificationsController {
   }
 
   @Patch(':id')
+  @Documentation({
+    summary: 'Updates a notification for the current user',
+  })
   @Scopes(NotificationsScope.write)
   @ApiSecurity('oauth2', [NotificationsScope.write])
   @ApiTags('user notification')

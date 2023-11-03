@@ -72,8 +72,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches all templates',
-    summary: 'Fetches all templates',
+    summary: 'Fetches all notification templates',
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
     request: {
@@ -95,8 +94,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches a single template',
-    summary: 'Fetches a single template',
+    summary: 'Fetches a single notification template',
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
@@ -127,7 +125,6 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Creates a new notification and adds to queue',
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
     response: { status: 201, type: CreateNotificationResponse },
