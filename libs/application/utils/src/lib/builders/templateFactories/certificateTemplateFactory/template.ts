@@ -19,17 +19,13 @@ import dataProviders from './providers'
 import { generateCompleted, generatePayment } from './forms/'
 import { prerequisitesForm } from '../../form/prerequisitesBuilder'
 
-export function buildCertificateTemplate<
-  TContext extends ApplicationContext,
-  TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject,
->(
+export function buildCertificateTemplate(
   name: string,
   certificateProvider: FactoryDataproviderBuilderItem,
   getPdfApi: TemplateApi<unknown>,
   templateId: ApplicationTypes,
   title: string,
-): ApplicationTemplate<TContext, TStateSchema, TEvents> {
+) {
   const prerequisites = state('prerequisites', 'draft')
   const payment = state('payment', 'draft')
   const completed = state('completed', 'completed')
@@ -38,10 +34,7 @@ export function buildCertificateTemplate<
     .addExternalDataProvider(...dataProviders, certificateProvider)
     .build()
 
-  const application = applicationBuilder<TContext, TStateSchema, TEvents>(
-    name,
-    templateId,
-  )
+  const application = applicationBuilder(name, templateId)
     .addState(
       prerequisites
         .apis(
