@@ -21,8 +21,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuditService } from '@island.is/nest/audit'
 import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -32,8 +30,6 @@ export class HealthPaymentsOverviewController {
   constructor(
     private readonly paymentApi: PaymentApi,
     private readonly auditService: AuditService,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   @Post('/payments/:documentId')
@@ -49,10 +45,6 @@ export class HealthPaymentsOverviewController {
     @Body() resource: GetGetHealthPaymentDocumentDto,
     @Res() res: Response,
   ) {
-    this.logger.debug('getHealthPaymentOverviewPdf', {
-      res: typeof parseInt(documentId),
-    })
-
     const authUser = {
       ...user,
       authorization: `Bearer ${resource.__accessToken}`,
@@ -63,8 +55,6 @@ export class HealthPaymentsOverviewController {
       .getPaymentsOverviewDocument({
         documentId: parseInt(documentId),
       })
-
-    this.logger.debug('getHealthPaymentOverviewPdf', { res: documentResponse })
 
     if (documentResponse) {
       this.auditService.audit({
