@@ -105,8 +105,8 @@ export const PaymentOverview = () => {
       {error ? (
         <AlertMessage
           type="error"
-          title="Villa kom upp"
-          message="Ekki tókst að sækja greiðsluupplýsingar"
+          title={formatMessage(m.errorTitle)}
+          message={formatMessage(messages.errorFetchPaymentInfo)}
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
@@ -188,8 +188,8 @@ export const PaymentOverview = () => {
               {overviewError ? (
                 <AlertMessage
                   type="error"
-                  title="Villa kom upp"
-                  message="Ekki tókst að sækja greiðsluupplýsingar"
+                  title={formatMessage(m.errorTitle)}
+                  message={formatMessage(messages.errorFetchPaymentInfo)}
                 />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
@@ -235,7 +235,7 @@ export const PaymentOverview = () => {
                               icon="open"
                               size="small"
                             >
-                              Sækja skjal
+                              {formatMessage(messages.fetchDocument)}
                             </Button>
                           </T.Data>
                         </tr>

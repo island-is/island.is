@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  fetchDocument: {
+    id: 'sp.health:fetch-document',
+    defaultMessage: 'Sækja skjal',
+  },
+  errorFetchPaymentInfo: {
+    id: 'sp.health:error-fetch-payment-info',
+    defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
+  },
   from: {
     id: 'sp.health:from',
     defaultMessage: 'Frá',
