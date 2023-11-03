@@ -156,7 +156,7 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'question.pensionFundAlert',
-                  title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                   doesNotRequireAnswer: true,

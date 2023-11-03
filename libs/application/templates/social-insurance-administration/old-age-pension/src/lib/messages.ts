@@ -102,11 +102,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Spurningar',
       description: 'Questions',
     },
-    pensionFundAlertTitle: {
-      id: 'oap.application:pension.fund.alert.title',
-      defaultMessage: 'Lífeyrissjóðir',
-      description: 'Pension funds',
-    },
     pensionFundAlertDescription: {
       id: 'oap.application:pension.fund.alert.description',
       defaultMessage:
