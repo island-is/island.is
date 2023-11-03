@@ -1,3 +1,3 @@
 export { Review } from './Review'
 export { default as Conclusion } from './Conclusion/Conclusion'
-export { default as CarsList } from './CarsList/CarsList'
+export { default as VehiclesOverview } from './VehiclesOverview/VehiclesOverview'

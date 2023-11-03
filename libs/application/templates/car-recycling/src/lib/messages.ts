@@ -75,10 +75,25 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Ekki hægt að endurvinna',
       description: 'Cant be recycled',
     },
+    owner: {
+      id: 'rf.cr.application:owner',
+      defaultMessage: 'Eigandi',
+      description: 'Owner',
+    },
     coOwner: {
       id: 'rf.cr.application:co.owner',
       defaultMessage: 'Meðeigandi',
       description: 'Co-owner',
+    },
+    operator: {
+      id: 'rf.cr.application:operator',
+      defaultMessage: 'Umráðamaður',
+      description: 'Operator',
+    },
+    onlyOwnerCanRecyle: {
+      id: 'rf.cr.application:onlyOwnerCanRecyle',
+      defaultMessage: 'Aðeins eigandi ökutækis má setja það í endurvinnslu',
+      description: 'Only the owner of the vehicle may place it for recycling',
     },
     cancel: {
       id: 'rf.cr.application:cancel',

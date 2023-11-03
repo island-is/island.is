@@ -23,14 +23,14 @@ export const CarRecyclingForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'carsListSection',
+      id: 'vehiclesOverviewSection',
       title: carRecyclingMessages.cars.list,
       children: [
         buildCustomField(
           {
-            id: 'carsList',
+            id: 'vehiclesOverview',
             title: carRecyclingMessages.cars.sectionTitle,
-            component: 'CarsList',
+            component: 'VehiclesOverview',
           },
           {
             editable: true,

@@ -7,13 +7,13 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import {
-  CurrentVehiclesApi,
   Form,
   FormModes,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { carRecyclingMessages } from '../lib/messages'
+import { CurrentVehiclesApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CarRecyclingPrerequisites',
@@ -46,13 +46,11 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            /*  buildDataProviderItem({
+            buildDataProviderItem({
               provider: CurrentVehiclesApi,
-              title:
-                'parentalLeaveFormMessages.shared.childrenInformationTitle',
-              subTitle:
-                'parentalLeaveFormMessages.shared.childrenInformationSubTitle',
-            }),*/
+              title: 'Samgöngustofa',
+              subTitle: 'AThuga bíldruslurnar',
+            }),
           ],
         }),
       ],

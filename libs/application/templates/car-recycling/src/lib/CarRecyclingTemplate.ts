@@ -10,7 +10,6 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  CurrentVehiclesApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -20,6 +19,7 @@ import {
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 import { ApiActions } from '../shared'
+import { CurrentVehiclesApi } from '../dataProviders'
 
 const enum States {
   PREREQUISITES = 'prerequisites',

@@ -1,5 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
+import { VehicleMiniDto } from '@island.is/clients/vehicles'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   return {}
@@ -35,10 +36,17 @@ export function getApplicationExternalData(
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
+  const vehiclesList = getValueViaPath(
+    externalData,
+    'vehiclesList.data',
+    [],
+  ) as VehicleMiniDto[]
+
   return {
     applicantName,
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
+    vehiclesList,
   }
 }
