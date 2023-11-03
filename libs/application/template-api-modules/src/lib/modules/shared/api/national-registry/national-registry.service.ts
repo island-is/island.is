@@ -113,8 +113,15 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private validateAge(params: NationalRegistryParameters, individual: NationalRegistryIndividual) {
-    if (params?.ageToValidate && individual?.age && individual.age < params.ageToValidate) {
+  private validateAge(
+    params: NationalRegistryParameters,
+    individual: NationalRegistryIndividual,
+  ) {
+    if (
+      params?.ageToValidate &&
+      individual?.age &&
+      individual.age < params.ageToValidate
+    ) {
       if (params.ageToValidateError) {
         throw new TemplateApiError(params.ageToValidateError, 400)
       } else {
