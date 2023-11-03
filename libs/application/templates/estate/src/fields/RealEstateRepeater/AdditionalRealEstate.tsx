@@ -65,7 +65,7 @@ export const AdditionalRealEstate = ({
     // https://www.skra.is/um-okkur/frettir/frett/2018/03/01/Nytt-fasteignanumer-og-itarlegri-skraning-stadfanga/
     // The property number is a seven digit informationless sequence.
     // Has the prefix F.
-    if (/[Ff]{0,1}\d{7}$/.test(propertyNumberInput.trim().toUpperCase())) {
+    if (/^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(propertyNumberInput.trim())) {
       getProperty({
         variables: {
           input: {
@@ -115,6 +115,7 @@ export const AdditionalRealEstate = ({
             backgroundColor="blue"
             defaultValue={field.assetNumber}
             error={error?.assetNumber}
+            placeholder="F1234567"
             required
           />
         </GridColumn>

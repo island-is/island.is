@@ -17,6 +17,7 @@ import {
   useOrganizations,
 } from '@island.is/service-portal/graphql'
 import {
+  GoBack,
   ServicePortalPath,
   formatPlausiblePathToParams,
   m,
@@ -29,7 +30,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -63,7 +64,6 @@ export const ServicePortalDocuments = () => {
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [docLoading, setDocLoading] = useState(false)
   const [totalPages, setTotalPages] = useState<number>()
-  const navigate = useNavigate()
   const location = useLocation()
   const [activeDocument, setActiveDocument] =
     useState<ActiveDocumentType | null>(null)
@@ -311,17 +311,7 @@ export const ServicePortalDocuments = () => {
               display={'inlineFlex'}
               alignItems={'center'}
             >
-              <Button
-                preTextIcon="arrowBack"
-                preTextIconType="filled"
-                size="small"
-                type="button"
-                variant="text"
-                truncate
-                onClick={() => navigate('/')}
-              >
-                {formatMessage(m.goBackToDashboard)}
-              </Button>
+              <GoBack display="inline" noUnderline marginBottom={0} />
               <Box
                 borderRadius={'circle'}
                 display={'inlineBlock'}
@@ -440,7 +430,12 @@ export const ServicePortalDocuments = () => {
               {filteredDocuments.map((doc) => (
                 <Box key={doc.id}>
                   <DocumentLine
-                    img={getOrganizationLogoUrl(doc.senderName, organizations)}
+                    img={getOrganizationLogoUrl(
+                      doc.senderName,
+                      organizations,
+                      60,
+                      'none',
+                    )}
                     documentLine={doc}
                     onClick={setActiveDocument}
                     onError={(err) => setDocumentDisplayError(err)}
@@ -469,6 +464,22 @@ export const ServicePortalDocuments = () => {
                   />
                 </Box>
               ))}
+              {totalPages && (
+                <Box paddingBottom={4} marginTop={4}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <button
+                        className={className}
+                        onClick={handlePageChange.bind(null, page)}
+                      >
+                        {children}
+                      </button>
+                    )}
+                  />
+                </Box>
+              )}
             </Stack>
           </Box>
         </GridColumn>
@@ -503,26 +514,6 @@ export const ServicePortalDocuments = () => {
             }}
             loading={docLoading}
           />
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-          {totalPages && (
-            <Box paddingBottom={4} marginTop={4}>
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                renderLink={(page, className, children) => (
-                  <button
-                    className={className}
-                    onClick={handlePageChange.bind(null, page)}
-                  >
-                    {children}
-                  </button>
-                )}
-              />
-            </Box>
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

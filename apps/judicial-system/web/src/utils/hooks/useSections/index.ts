@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -17,7 +16,6 @@ import {
   CaseAppealState,
   CaseState,
   completedCaseStates,
-  Feature,
   isCourtRole,
   isExtendedCourtRole,
   isIndictmentCase,
@@ -25,7 +23,6 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -67,7 +64,6 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
   const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
@@ -416,7 +412,8 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        (user?.role === UserRole.PROSECUTOR ||
+          user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
@@ -993,7 +990,7 @@ const useSections = (
     }
   }
 
-  const getRestrictionCaseExtenstionSections = (
+  const getRestrictionCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1093,7 +1090,7 @@ const useSections = (
     }
   }
 
-  const getInvestigationCaseExtenstionSections = (
+  const getInvestigationCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1124,7 +1121,7 @@ const useSections = (
                 ),
                 isActive: routeIndex === 0,
                 href:
-                  (section.children.length > 0 && section.children[5].href) ||
+                  (section.children.length > 0 && section.children[0].href) ||
                   undefined,
               },
               {
@@ -1332,8 +1329,8 @@ const useSections = (
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtenstionSections(workingCase, user)
-              : getInvestigationCaseExtenstionSections(workingCase, user),
+              ? getRestrictionCaseExtensionSections(workingCase, user)
+              : getInvestigationCaseExtensionSections(workingCase, user),
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
@@ -1352,8 +1349,7 @@ const useSections = (
             },
           ]
         : []),
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) ||
-      !workingCase.appealState
+      ...(!workingCase.appealState
         ? []
         : getCourtOfAppealSections(workingCase, user)),
     ]

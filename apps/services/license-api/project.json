@@ -50,18 +50,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/license-api"]
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/license-api/tsconfig.app.json apps/services/license-api/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/license-api/src/openapi.yaml"]
-    },
-    "schemas/build-graphql-schema": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn ts-node -P apps/services/license-api/tsconfig.json scripts/build-graphql-schema.ts apps/services/license-api/src/app/app.module"
-      }
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "dev-init": {
       "executor": "nx:run-commands",

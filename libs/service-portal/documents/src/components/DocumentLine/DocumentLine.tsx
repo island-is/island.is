@@ -32,6 +32,7 @@ interface Props {
   refetchInboxItems?: (input?: GetDocumentListInput) => void
   active: boolean
   asFrame?: boolean
+  includeTopBorder?: boolean
   selected?: boolean
   bookmarked?: boolean
   archived?: boolean
@@ -56,6 +57,7 @@ export const DocumentLine: FC<Props> = ({
   refetchInboxItems,
   active,
   asFrame,
+  includeTopBorder,
   bookmarked,
   archived,
   selected,
@@ -168,6 +170,7 @@ export const DocumentLine: FC<Props> = ({
         position="relative"
         borderColor="blue200"
         borderBottomWidth="standard"
+        borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
         width="full"
         className={cn(styles.docline, {
@@ -221,12 +224,7 @@ export const DocumentLine: FC<Props> = ({
             </Text>
             <Text variant="small">{date}</Text>
           </Box>
-          <Box
-            className={styles.title}
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-          >
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <button
               onClick={async () => onLineClick()}
               aria-label={formatMessage(m.openDocumentAriaLabel, {

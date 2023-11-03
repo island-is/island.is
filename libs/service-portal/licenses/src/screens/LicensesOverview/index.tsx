@@ -3,8 +3,9 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
-  ICELAND_ID,
+  FootNote,
   m as coreMessage,
+  ISLAND_SYSLUMENN_ID,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
@@ -139,7 +140,7 @@ export const LicensesOverview = () => {
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
         marginBottom={4}
-        serviceProviderID={ICELAND_ID}
+        serviceProviderID={ISLAND_SYSLUMENN_ID}
         serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
@@ -183,6 +184,7 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
+      <FootNote serviceProviderID={ISLAND_SYSLUMENN_ID} />
     </>
   )
 }

@@ -19,7 +19,7 @@ export const tooltip = style({
   selectors: {
     '[data-enter] &': {
       opacity: 1,
-      transform: 'translate3d(0, 0, 0)',
+      transform: 'translate3d(0, -5px, 0)',
     },
   },
 })

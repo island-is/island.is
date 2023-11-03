@@ -18,7 +18,7 @@
         "passWithNoTests": true
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "parallel": false,

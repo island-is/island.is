@@ -46,14 +46,14 @@ Run on whenever you check out a branch:
 
 ```bash
 yarn install
-yarn schemas
+yarn codegen
 ```
 
 When you clone the repo for the first time, and whenever you change branches, you need to update your dependencies to match your current branch using `yarn install`.
-In addition, schemas change frequently, so you will also need to update the generated schemas and clients using `yarn schemas`.
+In addition, API schemas change frequently, so you will also need to run codegen using `yarn codegen`.
 
-If you want schemas to be generated on every install you can set the environment variable `GENERATE_SCHEMAS_ON_INSTALL=true`.
-Note that this will generate the schemas when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
+If you want run codegen on every install you can set the environment variable `RUN_CODEGEN_ON_INSTALL=true`.
+Note that this will run codegen when rebuilding the workspace in the post-install phase, with no output, so the `install` script seems to hang.
 
 ### Development server
 
@@ -121,9 +121,9 @@ To execute the end-to-end tests affected by a change:
 yarn affected:e2e
 ```
 
-### Schemas
+### Codegen
 
-If your project is generating schemas files from an OpenAPI, Codegen or is an API, check out [this documentation](https://docs.devland.is/repository/schemas).
+If your project is generating an API schema or API client using OpenAPI or GraphQL, check out [this documentation](https://docs.devland.is/repository/codegen).
 
 ### Understand your workspace
 
