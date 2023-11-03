@@ -2,7 +2,7 @@ x-generator: NSwag v13.9.4.0 (NJsonSchema v10.3.1.0 (Newtonsoft.Json v12.0.0.0))
 openapi: 3.0.0
 info:
   title: Car recycling - Skilavottord
-  version: 0.0.5
+  version: 1.0.0
 servers:
   - url: 'localhost:3339'
 paths:
