@@ -25,6 +25,12 @@ export const defenderInfo = {
         },
       }),
       defenderRequestAccess: defineMessages({
+        title: {
+          id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.title',
+          defaultMessage: 'Aðgangur verjanda að kröfu',
+          description:
+            'Notaður sem titill fyrir gáreiti á fyrirtöku skrefi í rannsóknarheimildum.',
+        },
         labelCourtDate: {
           id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.label',
           defaultMessage:
@@ -79,6 +85,12 @@ export const defenderInfo = {
         },
       }),
       defenderRequestAccess: defineMessages({
+        title: {
+          id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.title',
+          defaultMessage: 'Aðgangur verjanda að kröfu',
+          description:
+            'Notaður sem titill fyrir gáreiti á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+        },
         labelCourtDate: {
           id: 'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.label',
           defaultMessage:
