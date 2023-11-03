@@ -7,6 +7,6 @@ export {
   Metadata,
   LinkedContact,
   DocumentInfo,
-} from './gen/fetch/dev'
+} from './gen/fetch'
 export { TokenMiddleware } from './lib/data-protection-complaint-client.middleware'
 export { DataProtectionComplaintClientConfig } from './lib/config/'

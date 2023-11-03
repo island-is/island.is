@@ -15,5 +15,5 @@ yarn nx run clients-icelandic-government-institution-vacancies:update-openapi-do
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-icelandic-government-institution-vacancies:schemas/external-openapi-generator
+yarn nx run clients-icelandic-government-institution-vacancies:codegen/backend-client
 ```
