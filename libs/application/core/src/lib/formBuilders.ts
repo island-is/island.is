@@ -45,6 +45,7 @@ export function buildExternalDataProvider(
 export function buildDataProviderItem(
   data: DataProviderBuilderItem,
 ): DataProviderItem {
+  console.log('buildDataProviderItem', data)
   return {
     id: data.provider?.externalDataId ?? data.provider?.action ?? '',
     action: data.provider?.actionId,

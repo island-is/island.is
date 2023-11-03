@@ -6,18 +6,11 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  DataProviderBuilderItem,
-  NationalRegistryUserApi,
-  PaymentCatalogApi,
-  TemplateApi,
-  UserProfileApi,
-  ValidateCriminalRecordApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
 import { Injectable } from '@nestjs/common'
 import { EventObject } from 'xstate'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
-import { CertificateTemplateMapper } from './applicationTemplates/certificates'
+import { TemplateMapper } from '@island.is/application/server-templates'
 
 @Injectable()
 export class TemplateService {
@@ -31,12 +24,13 @@ export class TemplateService {
     const config = ApplicationConfigurations[templateId]
 
     if (config.formType === ApplicationFormTypes.DYNAMIC) {
-      const template = CertificateTemplateMapper[templateId]
+      const template = TemplateMapper[templateId]
       if (!template) {
         throw new Error(
-          `Template for ${templateId} not found in CertificateTemplateMapper`,
+          `Template for ${templateId} not found in TemplateMapper`,
         )
       }
+
       return template as ApplicationTemplate<TContext, TStateSchema, TEvents>
     }
 
