@@ -4,7 +4,7 @@ import {
   Services,
 } from '../types/output-types'
 import { Localhost } from '../localhost-runtime'
-import { excludeNonLocalEnvWithService } from '../../cli/render-env-vars'
+import { isLocalEnvWithService } from '../../cli/render-env-vars'
 import { readFile, writeFile } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
@@ -57,7 +57,7 @@ export const getLocalrunValueFile = async (
           env: Object.assign(
             {},
             Object.entries(service.env)
-              .filter(excludeNonLocalEnvWithService(serviceNXName))
+              .filter(isLocalEnvWithService(serviceNXName))
               .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}),
             { PROD_MODE: 'true' },
             portConfig,

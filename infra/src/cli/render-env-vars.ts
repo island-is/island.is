@@ -19,18 +19,13 @@ export const EXCLUDED_ENVIRONMENT_NAMES = [
   'HSN_WEB_FORM_RESPONSE_URL',
 ]
 
-const excludeNonLocalEnvInService = (
+const isLocalEnvInService = (
   [name, val]: [string, string],
   serviceNXName?: string,
 ) => {
-  if (
-    EXCLUDED_ENVIRONMENT_NAMES.includes(name) ||
-    val.match(/^(https?:\/\/)?localhost/)
-  ) {
-    // console.debug(`Excluding environment variable ${name}=${val} from service`)
-    return false
-  }
-  const regMatch = val.match(/(https?:\/\/)?((\w|-)+\.)*(\w|-)+:\d+/g)
+  if (val.match(/^(https?:\/\/)?localhost/)) return true
+  if (EXCLUDED_ENVIRONMENT_NAMES.includes(name)) return false
+  const regMatch = val.match(/(https?:\/\/)?((\w|-)+\.)*(\w|-)+(:\d+)+/g)
   if (regMatch) {
     console.error(
       `Secret ${name} ${
@@ -41,16 +36,12 @@ const excludeNonLocalEnvInService = (
     console.error(`Ignoring it for now.`)
     return false
   }
-  // console.log(
-  //   `Excluding environment variable ${name}=${val} from ${serviceNXName}`,
-  // )
   return true
 }
-export const excludeNonLocalEnv = (args: [string, string]) =>
-  excludeNonLocalEnvInService(args)
-export const excludeNonLocalEnvWithService =
+export const isLocalEnv = (args: [string, string]) => isLocalEnvInService(args)
+export const isLocalEnvWithService =
   (serviceNXName: string) => (args: [string, string]) =>
-    excludeNonLocalEnvInService(args, serviceNXName)
+    isLocalEnvInService(args, serviceNXName)
 
 const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
   XROAD_BASE_PATH: 'http://localhost:8081',
@@ -87,7 +78,7 @@ export const renderServiceEnvVars = async (service: string) => {
     })
     .flat()
     // .reduce((p, c) => p.concat(c), [])
-    .filter(excludeNonLocalEnv)
+    .filter(isLocalEnv)
     .map((request) => {
       const envName = request[0]
       const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]
