@@ -11,6 +11,9 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
 import axios from 'axios'
+// import notificationModel from './notification.model'
+import { Notification } from './notification.model'
+import { InjectModel } from '@nestjs/sequelize'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
@@ -22,6 +25,8 @@ export class NotificationsService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
+    @InjectModel(Notification)
+    private readonly notificationModel: typeof Notification,
   ) {}
 
   async addToCache(key: string, item: object) {
@@ -152,113 +157,134 @@ export class NotificationsService {
     return template
   }
 
+  // async findOne(id: number): Promise<any> {
+  //   // return await this.notificationModel.findByPk(id);
+  //   return {
+  //     id: 2,
+  //     nationalId: 'B789012',
+  //     templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+  //     args: [
+  //       {
+  //         key: 'organization',
+  //         value: 'Hnipp Dev Team',
+  //       },
+  //       {
+  //         key: 'documentId',
+  //         value: 'efgh-efgh-efgh-efgh',
+  //       },
+  //     ],
+  //     compiled: {
+  //       title: 'Document Update Alert',
+  //       body: 'An existing document has been updated by Hnipp Dev Team.',
+  //       click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+  //     },
+  //     created: '2023-10-23T10:10:10.000Z',
+  //     modified: '2023-10-23T10:12:12.000Z',
+  //     state: 'read',
+  //   }
+  // }
+
+  // async findAll(cursor?: number, limit = 10): Promise<any[]> {
+  //   // return await this.notificationModel.findAll({
+  //   //   where: cursor ? { id: { [Op.gt]: cursor } } : {},
+  //   //   limit: limit,
+  //   // });
+  //   return [
+  //     {
+  //       id: 1,
+  //       nationalId: 'A123456',
+  //       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+  //       args: [
+  //         {
+  //           key: 'organization',
+  //           value: 'Hnipp Test Crew',
+  //         },
+  //         {
+  //           key: 'documentId',
+  //           value: 'abcd-abcd-abcd-abcd',
+  //         },
+  //       ],
+  //       compiled: {
+  //         title: 'New Document Alert',
+  //         body: 'A new document has been uploaded by Hnipp Test Crew.',
+  //         click_action: 'https://example.com/documents/abcd-abcd-abcd-abcd',
+  //       },
+  //       created: '2023-10-24T14:15:22.000Z',
+  //       modified: '2023-10-24T14:15:22.000Z',
+  //       state: 'unread',
+  //     },
+  //     {
+  //       id: 2,
+  //       nationalId: 'B789012',
+  //       templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+  //       args: [
+  //         {
+  //           key: 'organization',
+  //           value: 'Hnipp Dev Team',
+  //         },
+  //         {
+  //           key: 'documentId',
+  //           value: 'efgh-efgh-efgh-efgh',
+  //         },
+  //       ],
+  //       compiled: {
+  //         title: 'Document Update Alert',
+  //         body: 'An existing document has been updated by Hnipp Dev Team.',
+  //         click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+  //       },
+  //       created: '2023-10-23T10:10:10.000Z',
+  //       modified: '2023-10-23T10:12:12.000Z',
+  //       state: 'read',
+  //     },
+  //     // ... more notifications ...
+  //   ]
+  // }
+
+  // async update(id: number): Promise<any> {
+  //   // return await this.notificationModel.findByPk(id);
+  //   return {
+  //     id: 2,
+  //     nationalId: 'B789012',
+  //     templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+  //     args: [
+  //       {
+  //         key: 'organization',
+  //         value: 'Hnipp Dev Team',
+  //       },
+  //       {
+  //         key: 'documentId',
+  //         value: 'efgh-efgh-efgh-efgh',
+  //       },
+  //     ],
+  //     compiled: {
+  //       title: 'Document Update Alert',
+  //       body: 'An existing document has been updated by Hnipp Dev Team.',
+  //       click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+  //     },
+  //     created: '2023-10-23T10:10:10.000Z',
+  //     modified: '2023-10-23T10:12:12.000Z',
+  //     state: 'read',
+  //   }
+  // }
+
+  async create(task: Partial<Notification>): Promise<any> {
+    return this.notificationModel.create(task);
+  }
+
+  async findAll(): Promise<any[]> {
+    return this.notificationModel.findAll();
+  }
+
   async findOne(id: number): Promise<any> {
-    // return await this.notificationModel.findByPk(id);
-    return {
-      id: 2,
-      nationalId: 'B789012',
-      templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: 'Hnipp Dev Team',
-        },
-        {
-          key: 'documentId',
-          value: 'efgh-efgh-efgh-efgh',
-        },
-      ],
-      compiled: {
-        title: 'Document Update Alert',
-        body: 'An existing document has been updated by Hnipp Dev Team.',
-        click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-      },
-      created: '2023-10-23T10:10:10.000Z',
-      modified: '2023-10-23T10:12:12.000Z',
-      state: 'read',
-    }
+    return this.notificationModel.findByPk(id);
   }
 
-  async findAll(cursor?: number, limit = 10): Promise<any[]> {
-    // return await this.notificationModel.findAll({
-    //   where: cursor ? { id: { [Op.gt]: cursor } } : {},
-    //   limit: limit,
-    // });
-    return [
-      {
-        id: 1,
-        nationalId: 'A123456',
-        templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        args: [
-          {
-            key: 'organization',
-            value: 'Hnipp Test Crew',
-          },
-          {
-            key: 'documentId',
-            value: 'abcd-abcd-abcd-abcd',
-          },
-        ],
-        compiled: {
-          title: 'New Document Alert',
-          body: 'A new document has been uploaded by Hnipp Test Crew.',
-          click_action: 'https://example.com/documents/abcd-abcd-abcd-abcd',
-        },
-        created: '2023-10-24T14:15:22.000Z',
-        modified: '2023-10-24T14:15:22.000Z',
-        state: 'unread',
-      },
-      {
-        id: 2,
-        nationalId: 'B789012',
-        templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-        args: [
-          {
-            key: 'organization',
-            value: 'Hnipp Dev Team',
-          },
-          {
-            key: 'documentId',
-            value: 'efgh-efgh-efgh-efgh',
-          },
-        ],
-        compiled: {
-          title: 'Document Update Alert',
-          body: 'An existing document has been updated by Hnipp Dev Team.',
-          click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-        },
-        created: '2023-10-23T10:10:10.000Z',
-        modified: '2023-10-23T10:12:12.000Z',
-        state: 'read',
-      },
-      // ... more notifications ...
-    ]
-  }
+  // async update(id: number, task: Partial<Notification>): Promise<[number, Notification[]]> {
+  //   return this.notificationModel.update(task, { where: { id } });
+  // }
 
-  async update(id: number): Promise<any> {
-    // return await this.notificationModel.findByPk(id);
-    return {
-      id: 2,
-      nationalId: 'B789012',
-      templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: 'Hnipp Dev Team',
-        },
-        {
-          key: 'documentId',
-          value: 'efgh-efgh-efgh-efgh',
-        },
-      ],
-      compiled: {
-        title: 'Document Update Alert',
-        body: 'An existing document has been updated by Hnipp Dev Team.',
-        click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-      },
-      created: '2023-10-23T10:10:10.000Z',
-      modified: '2023-10-23T10:12:12.000Z',
-      state: 'read',
-    }
+  async remove(id: number): Promise<void> {
+    const task = await this.findOne(id);
+    await task.destroy();
   }
 }

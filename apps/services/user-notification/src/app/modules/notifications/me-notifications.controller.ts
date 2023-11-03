@@ -10,6 +10,8 @@ import {
   VERSION_NEUTRAL,
   UseGuards,
   Patch,
+  Put,
+  Delete,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -22,6 +24,7 @@ import { NotificationsService } from './notifications.service'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { environment } from '../../../environments/environment'
 import { Documentation } from '@island.is/nest/swagger'
+import { Notification } from './notification.model'
 
 @Controller({
   path: 'me/notifications',
@@ -33,43 +36,69 @@ export class MeNotificationsController {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  @Get('')
-  @Documentation({
-    summary: 'Returns a paginated list of notifications for the current user',
-  })
-  @Scopes(NotificationsScope.read)
-  @ApiSecurity('oauth2', [NotificationsScope.read])
-  @ApiTags('user notification')
-  @Version('1')
-  findAll(@Query('cursor') cursor: number): any {
-    // async
-    // console.log(environment)
-    // console.log(process.env)
-    return process.env
-    return this.notificationsService.findAll(cursor)
+  // @Get('')
+  // @Documentation({
+  //   summary: 'Returns a cursor based paginated list of notifications for the current user',
+  // })
+  // @Scopes(NotificationsScope.read)
+  // @ApiSecurity('oauth2', [NotificationsScope.read])
+  // @ApiTags('user notification')
+  // @Version('1')
+  // async findAll(@Query('cursor') cursor: number): Promise<any> {
+  //   return this.notificationsService.findAll(cursor)
+  // }
+
+  // @Get(':id')
+  // @Documentation({
+  //   summary: 'Returns a notification for the current user',
+  // })
+  // @Scopes(NotificationsScope.read)
+  // @ApiSecurity('oauth2', [NotificationsScope.read])
+  // @ApiTags('user notification')
+  // @Version('1')
+  // async findOne(@Param('id') id: number): Promise<Notification> {
+  //   return this.notificationsService.findOne(id)
+  // }
+
+
+  
+
+
+
+  // @Patch(':id')
+  // @Documentation({
+  //   summary: 'Updates a notification for the current user',
+  // })
+  // @Scopes(NotificationsScope.write)
+  // @ApiSecurity('oauth2', [NotificationsScope.write])
+  // @ApiTags('user notification')
+  // @Version('1')
+  // async update(@Param('id') id: number): Promise<Notification> {
+  //   return this.notificationsService.update(id)
+  // }
+
+  @Post()
+  create(@Body() notification: Partial<Notification>) {
+    return this.notificationsService.create(notification);
+  }
+
+  @Get()
+  findAll() {
+    return this.notificationsService.findAll();
   }
 
   @Get(':id')
-  @Documentation({
-    summary: 'Returns a notification for the current user',
-  })
-  @Scopes(NotificationsScope.read)
-  @ApiSecurity('oauth2', [NotificationsScope.read])
-  @ApiTags('user notification')
-  @Version('1')
-  findOne(@Param('id') id: number): Promise<Notification> {
-    return this.notificationsService.findOne(id)
+  findOne(@Param('id') id: string) {
+    return this.notificationsService.findOne(+id);
   }
 
-  @Patch(':id')
-  @Documentation({
-    summary: 'Updates a notification for the current user',
-  })
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
-  @ApiTags('user notification')
-  @Version('1')
-  update(@Param('id') id: number): Promise<Notification> {
-    return this.notificationsService.update(id)
+  // @Put(':id')
+  // update(@Param('id') id: string, @Body() notification: Partial<Notification>) {
+  //   return this.notificationsService.update(+id, notification);
+  // }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.notificationsService.remove(+id);
   }
 }
