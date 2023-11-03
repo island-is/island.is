@@ -103,10 +103,6 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     return licenseData
   }
 
-  async getLicenseDetail(user: User): Promise<Result<VinnuvelaDto | null>> {
-    return this.getLicense(user)
-  }
-
   private async createPkPassPayload(
     user: User,
     locale: Locale,
