@@ -16,9 +16,9 @@ const testUserProfile = {
   mobilePhoneNumber: '1234567',
 }
 
-describe('/v2/user', () => {
+describe('UserProfileController', () => {
   describe('No auth', () => {
-    it('GET /v2/user/.national-id should return 401 when user is not authenticated', async () => {
+    it('GET /v2/users/.national-id should return 401 when user is not authenticated', async () => {
       // Arrange
       const app = await setupAppWithoutAuth({
         AppModule: AppModule,
@@ -42,14 +42,12 @@ describe('/v2/user', () => {
       await app.cleanUp()
     })
 
-    it('GET /v2/user/.national-id should return 403 Forbidden when user does not have the correct scope', async () => {
+    it('GET /v2/users/.national-id should return 403 Forbidden when user does not have the correct scope', async () => {
       // Arrange
       const app = await setupApp({
         AppModule,
         SequelizeConfigService,
-        user: createCurrentUser({
-          scope: [UserProfileScope.read],
-        }),
+        user: createCurrentUser({}),
       })
 
       const server = request(app.getHttpServer())
@@ -91,7 +89,7 @@ describe('/v2/user', () => {
       await app.cleanUp()
     })
 
-    it('GET /v2/user/.national-id should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
+    it('GET /v2/users/.national-id should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
       const res = await server
         .get('/v2/users/.national-id')
         .set('X-Param-National-Id', testNationalId)

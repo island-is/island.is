@@ -16,7 +16,7 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 
-const namespace = '@island.is/user-profile/v2/user'
+const namespace = '@island.is/user-profile/v2/users'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(UserProfileScope.system)
