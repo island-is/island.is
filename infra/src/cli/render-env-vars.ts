@@ -16,6 +16,7 @@ export const EXCLUDED_ENVIRONMENT_NAMES = [
   'COMPANY_REGISTRY_REDIS_NODES',
   'XROAD_RSK_PROCURING_REDIS_NODES',
   'APOLLO_CACHE_REDIS_NODES',
+  'HSN_WEB_FORM_RESPONSE_URL',
 ]
 
 export const excludeNonLocalEnv = ([name, val]: [string, string]) => {
@@ -33,6 +34,7 @@ export const excludeNonLocalEnv = ([name, val]: [string, string]) => {
         ', ',
       )}`,
     )
+    console.error(`  Ignoring it for now.`)
     return false
   }
   // console.log(
