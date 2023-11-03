@@ -106,7 +106,7 @@ export class UserProfile extends Model {
   mobileStatus?: string
 
   @Column({
-    type: 'TIMESTAMP WITH TIME ZONE',
+    type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()

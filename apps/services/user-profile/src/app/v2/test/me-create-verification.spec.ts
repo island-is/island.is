@@ -62,14 +62,14 @@ describe('Email confirmation', () => {
       app.cleanUp()
     })
 
-    it('POST /v2/me/create-verification should return 201, email verification should be created and user profile email unchanged', async () => {
+    it('POST /v2/me/create-verification should return 200, email verification should be created and user profile email unchanged', async () => {
       // Act
       const res = await server.post('/v2/me/create-verification').send({
         email: newEmail,
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({})
 
       // Assert that email verification has been removed from DB
@@ -89,14 +89,14 @@ describe('Email confirmation', () => {
       expect(userProfile.email).toBe(testUserProfile.email)
     })
 
-    it('POST /v2/me/create-verification should return 201, sms verification should be created and user profile phone number unchanged', async () => {
+    it('POST /v2/me/create-verification should return 200, sms verification should be created and user profile phone number unchanged', async () => {
       // Act
       const res = await server.post('/v2/me/create-verification').send({
         mobilePhoneNumber: newPhoneNumber,
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({})
 
       // Assert that sms verification has been added to DB
