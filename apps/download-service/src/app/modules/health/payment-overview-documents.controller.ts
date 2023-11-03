@@ -6,6 +6,7 @@ import {
   Param,
   UseGuards,
   Inject,
+  Body,
 } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
 import { Response } from 'express'
@@ -22,6 +23,7 @@ import { AuditService } from '@island.is/nest/audit'
 import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { GetGetHealthPaymentDocumentDto } from './dto/getHealthPaymentDocument.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.health)
@@ -44,14 +46,20 @@ export class HealthPaymentsOverviewController {
   async getHealthPaymentOverviewPdf(
     @Param('documentId') documentId: string,
     @CurrentUser() user: User,
+    @Body() resource: GetGetHealthPaymentDocumentDto,
     @Res() res: Response,
   ) {
     this.logger.debug('getHealthPaymentOverviewPdf', {
       res: typeof parseInt(documentId),
     })
 
+    const authUser = {
+      ...user,
+      authorization: `Bearer ${resource.__accessToken}`,
+    }
+
     const documentResponse = await this.paymentApi
-      .withMiddleware(new AuthMiddleware(user))
+      .withMiddleware(new AuthMiddleware(authUser))
       .getPaymentsOverviewDocument({
         documentId: parseInt(documentId),
       })
