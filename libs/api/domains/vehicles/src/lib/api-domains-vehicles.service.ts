@@ -5,8 +5,9 @@ import {
   PdfApi,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
+  OwnershipReportDataDto,
 } from '@island.is/clients/vehicles'
-import { VehiclesDetail } from '../models/getVehicleDetail.model'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
@@ -39,8 +40,22 @@ export class VehiclesService {
       pageSize: input.pageSize,
       type: input.type,
       dtFrom: input.dtFrom,
-      dtTo: input.dtTo,
+      //dtTo: input.dtTo,
     })
+  }
+
+  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
+    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
+      ssn: auth.nationalId,
+    })
+
+    return {
+      persidno: res.persidno ?? undefined,
+      name: res.name ?? undefined,
+      vehicles: res.vehicles?.map((item) =>
+        basicVehicleInformationMapper(item, auth.nationalId),
+      ),
+    }
   }
 
   async getVehiclesSearch(

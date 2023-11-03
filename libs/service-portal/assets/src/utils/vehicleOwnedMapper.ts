@@ -1,158 +1,256 @@
 import { downloadVehicleOwnedFile } from './downloadVehicleOwnedFile'
-import { VehiclesVehicle } from '@island.is/api/schema'
 import {
   vehicleCoOwnedDataHeader,
   vehicleOperatorDataHeader,
   vehicleOwnedDataHeader,
 } from './dataHeaders'
 import isValid from 'date-fns/isValid'
+import { LOCALE } from './constants'
+import { useGetExcelVehiclesQuery } from './VehicleExcel.generated'
 import {
-  VEHICLE_OPERATOR,
-  VEHICLE_OWNER,
-  VEHICLE_COOWNER,
-  LOCALE,
-} from './constants'
+  Query,
+  VehicleUserTypeEnum,
+  VehiclesDetail,
+} from '@island.is/api/schema'
+import { useEffect } from 'react'
+import { gql, useQuery } from '@apollo/client'
 
 export const exportVehicleOwnedDocument = async (
-  data: any[],
+  data: any,
   fileName: string,
   name: string,
   nationalId: string,
 ) => {
-  const ownersVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OWNER,
-  )
-
-  const coOwnerVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_COOWNER,
-  )
-
-  const operatorVehicles = data.filter(
-    (x: VehiclesVehicle) => x.role?.toLowerCase() === VEHICLE_OPERATOR,
-  )
-
-  const ownersData = ownersVehicles.map((item: VehiclesVehicle) => {
-    const firstRegDate = item.firstRegDate && new Date(item.firstRegDate)
-    const operatorStartDate =
-      item.operatorStartDate && new Date(item.operatorStartDate)
-    const lastInspectionDate =
-      item.lastInspectionDate && new Date(item.lastInspectionDate)
-    const nextInspectionDate =
-      item.nextInspection?.nextInspectionDate &&
-      new Date(item.nextInspection.nextInspectionDate)
-
-    return [
-      item.permno,
-      item.regno,
-      item.type,
-      firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString(LOCALE)
-        : '',
-      operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString(LOCALE)
-        : '',
-      nationalId,
-      name,
-      item.ownerSsid === nationalId ? 'Já' : 'Nei',
-      item.otherOwners ? 'Já' : 'Nei',
-      item.termination,
-      item.vehicleStatus,
-      item.useGroup,
-      item.lastInspectionResult,
-      lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-      item.lastInspectionType,
-      nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-    ]
-  })
-
-  const coOwnersData = coOwnerVehicles.map((item: VehiclesVehicle) => {
-    const firstRegDate = item.firstRegDate && new Date(item.firstRegDate)
-    const operatorStartDate =
-      item.operatorStartDate && new Date(item.operatorStartDate)
-    const lastInspectionDate =
-      item.lastInspectionDate && new Date(item.lastInspectionDate)
-    const nextInspectionDate =
-      item.nextInspection?.nextInspectionDate &&
-      new Date(item.nextInspection.nextInspectionDate)
-    return [
-      item.permno,
-      item.regno,
-      item.type,
-      firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString(LOCALE)
-        : '',
-      operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString(LOCALE)
-        : '',
-      nationalId,
-      name,
-      item.ownerSsid === nationalId ? 'Já' : 'Nei',
-      item.otherOwners ? 'Já' : 'Nei',
-      item.termination,
-      item.vehicleStatus,
-      item.useGroup,
-      item.lastInspectionResult,
-      lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-      item.lastInspectionType,
-      nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-    ]
-  })
-
-  const operatorsData = operatorVehicles.map((item: VehiclesVehicle) => {
-    const firstRegDate = item.firstRegDate && new Date(item.firstRegDate)
-    const operatorStartDate =
-      item.operatorStartDate && new Date(item.operatorStartDate)
-    const lastInspectionDate =
-      item.lastInspectionDate && new Date(item.lastInspectionDate)
-    const nextInspectionDate =
-      item.nextInspection?.nextInspectionDate &&
-      new Date(item.nextInspection.nextInspectionDate)
-
-    return [
-      item.permno,
-      item.regno,
-      item.type,
-      firstRegDate && isValid(firstRegDate)
-        ? firstRegDate.toLocaleDateString(LOCALE)
-        : '',
-      operatorStartDate && isValid(operatorStartDate)
-        ? operatorStartDate.toLocaleDateString(LOCALE)
-        : '',
-      item.ownerSsid,
-      item.ownerName,
-      item.primaryOperator ? 'Já' : 'Nei',
-      item.operatorNumber,
-      item.termination,
-      item.vehicleStatus,
-      item.useGroup,
-      item.lastInspectionResult,
-      lastInspectionDate && isValid(lastInspectionDate)
-        ? lastInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-      item.lastInspectionType,
-      nextInspectionDate && isValid(nextInspectionDate)
-        ? nextInspectionDate.toLocaleDateString(LOCALE)
-        : '',
-    ]
-  })
-
-  await downloadVehicleOwnedFile(
+  return await downloadVehicleOwnedFile(
     fileName,
     name,
     nationalId,
+    [vehicleOwnedDataHeader, vehicleOperatorDataHeader],
     [
-      vehicleOwnedDataHeader,
-      vehicleCoOwnedDataHeader,
-      vehicleOperatorDataHeader,
+      filterOwners(VehicleUserTypeEnum.eigandi, data, nationalId, name) ?? [],
+      filterOwners(VehicleUserTypeEnum.umradamadur, data, nationalId, name) ??
+        [],
     ],
-    [ownersData, coOwnersData, operatorsData],
   )
+  /* const ownersVehicles = data.filter(
+    (x: VehiclesDetail) => x.role?.toLowerCase() === VEHICLE_OWNER,
+  )
+
+  const coOwnerVehicles = data.filter(
+    (x: VehiclesDetail) => x.role?.toLowerCase() === VEHICLE_COOWNER,
+  )
+
+  const operatorVehicles = data.filter(
+    (x: VehiclesDetail) => x.role?.toLowerCase() === VEHICLE_OPERATOR,
+  )
+
+  const ownersData = ownersVehicles.map((item: VehiclesDetail) => {
+    const firstRegDate = item.refirstRegDate && new Date(item.firstRegDate)
+    const operatorStartDate =
+      item.operatorStartDate && new Date(item.operatorStartDate)
+    const lastInspectionDate =
+      item.lastInspectionDate && new Date(item.lastInspectionDate)
+    const nextInspectionDate =
+      item.nextInspection?.nextInspectionDate &&
+      new Date(item.nextInspection.nextInspectionDate)
+
+    return [
+      item.permno,
+      item.regno,
+      item.type,
+      firstRegDate && isValid(firstRegDate)
+        ? firstRegDate.toLocaleDateString(LOCALE)
+        : '',
+      operatorStartDate && isValid(operatorStartDate)
+        ? operatorStartDate.toLocaleDateString(LOCALE)
+        : '',
+      nationalId,
+      name,
+      item.ownerSsid === nationalId ? 'Já' : 'Nei',
+      item.otherOwners ? 'Já' : 'Nei',
+      item.termination,
+      item.vehicleStatus,
+      item.useGroup,
+      item.lastInspectionResult,
+      lastInspectionDate && isValid(lastInspectionDate)
+        ? lastInspectionDate.toLocaleDateString(LOCALE)
+        : '',
+      item.lastInspectionType,
+      nextInspectionDate && isValid(nextInspectionDate)
+        ? nextInspectionDate.toLocaleDateString(LOCALE)
+        : '',
+    ]
+  })
+
+  const coOwnersData = coOwnerVehicles.map(
+    (item: VehicleExcelVehicleInformation) => {
+      const firstRegDate = item.firstRegDate && new Date(item.firstRegDate)
+      const operatorStartDate =
+        item.operatorStartDate && new Date(item.operatorStartDate)
+      const lastInspectionDate =
+        item.lastInspectionDate && new Date(item.lastInspectionDate)
+      const nextInspectionDate =
+        item.nextInspection?.nextInspectionDate &&
+        new Date(item.nextInspection.nextInspectionDate)
+      return [
+        item.permno,
+        item.regno,
+        item.type,
+        firstRegDate && isValid(firstRegDate)
+          ? firstRegDate.toLocaleDateString(LOCALE)
+          : '',
+        operatorStartDate && isValid(operatorStartDate)
+          ? operatorStartDate.toLocaleDateString(LOCALE)
+          : '',
+        nationalId,
+        name,
+        item.ownerSsid === nationalId ? 'Já' : 'Nei',
+        item.otherOwners ? 'Já' : 'Nei',
+        item.termination,
+        item.vehicleStatus,
+        item.useGroup,
+        item.lastInspectionResult,
+        lastInspectionDate && isValid(lastInspectionDate)
+          ? lastInspectionDate.toLocaleDateString(LOCALE)
+          : '',
+        item.lastInspectionType,
+        nextInspectionDate && isValid(nextInspectionDate)
+          ? nextInspectionDate.toLocaleDateString(LOCALE)
+          : '',
+      ]
+    },
+  )
+
+  const operatorsData = operatorVehicles.map(
+    (item: VehicleExcelVehicleInformation) => {
+      const firstRegDate = item.firstRegDate && new Date(item.firstRegDate)
+      const operatorStartDate =
+        item.operatorStartDate && new Date(item.operatorStartDate)
+      const lastInspectionDate =
+        item.lastInspectionDate && new Date(item.lastInspectionDate)
+      const nextInspectionDate =
+        item.nextInspection?.nextInspectionDate &&
+        new Date(item.nextInspection.nextInspectionDate)
+
+      return [
+        item.permno,
+        item.regno,
+        item.type,
+        firstRegDate && isValid(firstRegDate)
+          ? firstRegDate.toLocaleDateString(LOCALE)
+          : '',
+        operatorStartDate && isValid(operatorStartDate)
+          ? operatorStartDate.toLocaleDateString(LOCALE)
+          : '',
+        item.ownerSsid,
+        item.ownerName,
+        item.primaryOperator ? 'Já' : 'Nei',
+        item.operatorNumber,
+        item.termination,
+        item.vehicleStatus,
+        item.useGroup,
+        item.lastInspectionResult,
+        lastInspectionDate && isValid(lastInspectionDate)
+          ? lastInspectionDate.toLocaleDateString(LOCALE)
+          : '',
+        item.lastInspectionType,
+        nextInspectionDate && isValid(nextInspectionDate)
+          ? nextInspectionDate.toLocaleDateString(LOCALE)
+          : '',
+      ]
+    },
+  )*/
+}
+
+function filterOwners(
+  role: VehicleUserTypeEnum,
+  vehicles: Array<VehiclesDetail>,
+  nationalId: string,
+  name: string,
+) {
+  let filteredVehicles
+
+  switch (role) {
+    case VehicleUserTypeEnum.eigandi:
+      filteredVehicles = vehicles.filter(
+        (item) => item.currentOwnerInfo?.nationalId === nationalId,
+      )
+      break
+    case VehicleUserTypeEnum.medeigandi:
+      filteredVehicles = vehicles.filter(
+        (item) =>
+          item.coOwners?.find((x) => x.nationalId === nationalId) !== undefined,
+      )
+      break
+
+    case VehicleUserTypeEnum.umradamadur:
+      filteredVehicles = vehicles.filter(
+        (item) =>
+          item.operators?.find((owner) => owner.nationalId === nationalId) !==
+          undefined,
+      )
+      break
+
+    default:
+      break
+  }
+
+  return filteredVehicles?.map((item: VehiclesDetail) => {
+    const firstRegDate =
+      item.registrationInfo?.firstRegistrationDate &&
+      new Date(item.registrationInfo?.firstRegistrationDate)
+    const operatorStartDate =
+      item.operators?.length && new Date(item.operators[0].startDate)
+    const lastInspectionDate =
+      item.inspectionInfo?.lastInspectionDate &&
+      new Date(item.inspectionInfo?.lastInspectionDate)
+    const nextInspectionDate =
+      item.inspectionInfo?.nextInspectionDate &&
+      new Date(item.inspectionInfo?.nextInspectionDate)
+
+    const operator = item.operators?.find((x) => x.nationalId === nationalId)
+
+    return [
+      item.basicInfo?.permno,
+      item.basicInfo?.regno,
+      item.inspectionInfo?.type,
+      firstRegDate && isValid(firstRegDate)
+        ? firstRegDate.toLocaleDateString(LOCALE)
+        : '',
+      operatorStartDate && isValid(operatorStartDate)
+        ? operatorStartDate.toLocaleDateString(LOCALE)
+        : '',
+      role === VehicleUserTypeEnum.eigandi
+        ? nationalId
+        : item.currentOwnerInfo?.nationalId,
+      role === VehicleUserTypeEnum.eigandi
+        ? name
+        : item.currentOwnerInfo?.owner,
+      role === VehicleUserTypeEnum.eigandi
+        ? item.currentOwnerInfo?.nationalId === nationalId
+          ? 'Já'
+          : 'Nei'
+        : operator?.mainoperator
+        ? 'Já'
+        : 'Nei',
+      role === VehicleUserTypeEnum.eigandi
+        ? (item.coOwners?.length ?? 0) > 0
+          ? 'Já'
+          : 'Nei'
+        : operator?.serial !== 0
+        ? operator?.serial
+        : '',
+      item.isOutOfCommission,
+      item.basicInfo?.vehicleStatus,
+      item.registrationInfo?.useGroup,
+      item.inspectionInfo?.result,
+      lastInspectionDate && isValid(lastInspectionDate)
+        ? lastInspectionDate.toLocaleDateString(LOCALE)
+        : '',
+      item.inspectionInfo?.type,
+      nextInspectionDate && isValid(nextInspectionDate)
+        ? nextInspectionDate.toLocaleDateString(LOCALE)
+        : '',
+    ]
+  })
 }

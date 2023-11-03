@@ -17,7 +17,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { VehiclesHistory, VehiclesList } from '../models/usersVehicles.model'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
-import { VehiclesDetail } from '../models/getVehicleDetail.model'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
@@ -60,6 +60,13 @@ export class VehiclesResolver {
       },
       downloadServiceURL: !input.type ? downloadServiceURL : null,
     }
+  }
+
+  @Scopes(ApiScope.vehicles)
+  @Query(() => VehiclesExcel, { name: 'getExcelVehicles', nullable: true })
+  async getExcelVehicles(@CurrentUser() user: User) {
+    const res = await this.vehiclesService.getExcelVehiclesForUser(user)
+    return { ...res }
   }
 
   @Scopes(

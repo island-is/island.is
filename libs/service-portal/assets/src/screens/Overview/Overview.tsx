@@ -28,8 +28,13 @@ import { useUserInfo } from '@island.is/auth/react'
 import { VehicleCard } from '../../components/VehicleCard'
 import { vehicleMessage as messages, urls } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
-import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
+
 import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
+import {
+  useGetExcelVehiclesLazyQuery,
+  useGetExcelVehiclesQuery,
+} from '../../utils/VehicleExcel.generated'
+import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -62,6 +67,8 @@ const VehiclesOverview = () => {
   const userInfo = useUserInfo()
   const { formatMessage, lang } = useLocale()
   const [page, setPage] = useState(1)
+  const [downloadExcel, setDownloadExcel] = useState(false)
+  const [vehicleData, setVehicleData] = useState<any>(null)
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
   const [filterValue, setFilterValue] =
@@ -80,9 +87,38 @@ const VehiclesOverview = () => {
     },
   })
 
+  const [
+    GetExcelVehiclesLazyQuery,
+    { loading: excelLoading, error: excelError, ...usersExcelVehicleQuery },
+  ] = useGetExcelVehiclesLazyQuery()
+
   useEffect(() => {
     GetUsersVehiclesLazyQuery()
   }, [page])
+
+  useEffect(() => {
+    if (downloadExcel) {
+      GetExcelVehiclesLazyQuery().then((data) =>
+        setVehicleData(data.data?.getExcelVehicles?.vehicles),
+      )
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [downloadExcel])
+
+  useEffect(() => {
+    if (downloadExcel && vehicleData) {
+      console.log(usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles)
+      exportVehicleOwnedDocument(
+        usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles,
+        formatMessage(messages.myCarsFiles),
+        userInfo.profile.name,
+        userInfo.profile.nationalId,
+      )
+      setDownloadExcel(false)
+    }
+  }, [vehicleData])
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const vehicles = usersVehicleQuery.data?.vehiclesList?.vehicleList || []
   const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
@@ -143,14 +179,7 @@ const VehiclesOverview = () => {
             <Box marginRight={2} marginBottom={[1, 1, 1, 1]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
-                onGetExcel={() =>
-                  exportVehicleOwnedDocument(
-                    filteredVehicles,
-                    formatMessage(messages.myCarsFiles),
-                    userInfo.profile.name,
-                    userInfo.profile.nationalId,
-                  )
-                }
+                onGetExcel={() => setDownloadExcel(true)}
               />
             </Box>
           )}
