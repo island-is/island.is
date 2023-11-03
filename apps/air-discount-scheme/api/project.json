@@ -46,17 +46,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/api"]
     },
-    "schemas/build-graphql-schema": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "docker-express": {}
   },

@@ -25,6 +25,12 @@
           "apps/judicial-system/web-e2e-regression/**/*.{ts,tsx,js,jsx}"
         ]
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/judicial-system/web-e2e-regression/codegen.yml"
+      }
     }
   },
   "tags": ["scope:judicial-system"],

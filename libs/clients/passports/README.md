@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 ### Generate the client:
 
 ```sh
-yarn nx run clients-passports:schemas/external-openapi-generator
+yarn nx run clients-passports:codegen/backend-client
 ```
 
 ### Usage

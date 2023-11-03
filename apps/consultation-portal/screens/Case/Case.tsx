@@ -31,8 +31,8 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     chosenCase?.statusName !== CaseStatuses.published
   const isStatusNameForReview =
     chosenCase?.statusName === CaseStatuses.forReview
-  const isChosenCaseNull = Object.values(chosenCase).every((value) =>
-    Boolean(String(value).trim()),
+  const isChosenCaseNull = Object.values(chosenCase).every(
+    (value) => value === null,
   )
 
   const expressions = {

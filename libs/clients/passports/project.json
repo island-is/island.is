@@ -18,14 +18,18 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/passports/gen/fetch -i libs/clients/passports/src/clientConfig.yaml",
           "prettier --write libs/clients/passports/src/clientConfig.yaml"
         ]
-      }
+      },
+      "outputs": [
+        "{projectRoot}/gen/fetch",
+        "{projectRoot}/src/clientConfig.yaml"
+      ]
     }
   },
   "tags": ["lib:client", "scope:client"]

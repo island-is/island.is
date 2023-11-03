@@ -21,11 +21,12 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/university-of-iceland/gen/fetch -i libs/clients/university-of-iceland/src/clientConfig.yaml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     },
     "update-openapi-document": {
       "executor": "nx:run-commands",

@@ -15,5 +15,5 @@ yarn nx run clients-aircraft-registry:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-aircraft-registry:schemas/external-openapi-generator
+yarn nx run clients-aircraft-registry:codegen/backend-client
 ```

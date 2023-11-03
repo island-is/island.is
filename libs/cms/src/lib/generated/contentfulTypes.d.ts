@@ -392,7 +392,10 @@ export interface ICardFields {
   title: string
 
   /** Body */
-  body: string
+  body?: string | undefined
+
+  /** Link */
+  linkUrl: string
 
   /** Link Text */
   linkText?: string | undefined

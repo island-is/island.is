@@ -31,13 +31,12 @@
         "cwd": "libs/clients/vehicle-service-fjs-v1"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/vehicle-service-fjs-v1/gen/fetch -i libs/clients/vehicle-service-fjs-v1/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/vehicle-service-fjs-v1/gen/fetch -i libs/clients/vehicle-service-fjs-v1/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

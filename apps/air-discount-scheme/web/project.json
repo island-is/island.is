@@ -106,6 +106,26 @@
         "cwd": "apps/air-discount-scheme/web/i18n/locales"
       }
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/air-discount-scheme/web/codegen.yml"
+      },
+      "dependsOn": [
+        {
+          "projects": ["air-discount-scheme-api"],
+          "target": "codegen/backend-schema"
+        }
+      ],
+      "inputs": [
+        "default",
+        "{workspaceRoot}/apps/air-discount-scheme/api/src/api.graphql"
+      ],
+      "outputs": [
+        "{projectRoot}/graphql/schema.tsx",
+        "{projectRoot}/graphql/possibleTypes.json"
+      ]
+    },
     "docker-next": {}
   },
   "tags": ["scope:react-next"]

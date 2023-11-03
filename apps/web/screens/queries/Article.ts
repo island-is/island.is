@@ -48,11 +48,7 @@ export const GET_ARTICLE_QUERY = gql`
         config
       }
       processEntry {
-        id
-        processTitle
-        processLink
-        openLinkInModal
-        buttonText
+        ...ProcessEntryFields
       }
       organization {
         id

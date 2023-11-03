@@ -5,7 +5,7 @@ import { ICardSection } from '../generated/contentfulTypes'
 import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()
-export class LinkCardSlice {
+export class LinkCardSection {
   @Field(() => ID)
   id!: string
 
@@ -16,11 +16,11 @@ export class LinkCardSlice {
   cards!: LinkCard[]
 }
 
-export const mapLinkCardSlice = ({
+export const mapLinkCardSection = ({
   fields,
   sys,
-}: ICardSection): SystemMetadata<LinkCardSlice> => ({
-  typename: 'LinkCardSlice',
+}: ICardSection): SystemMetadata<LinkCardSection> => ({
+  typename: 'LinkCardSection',
   id: sys.id,
   title: fields.title ?? '',
   cards: (fields.cards ?? []).map(mapLinkCard),

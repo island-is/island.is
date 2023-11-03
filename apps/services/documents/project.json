@@ -68,12 +68,12 @@
         "cwd": "apps/services/documents"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/documents/tsconfig.app.json apps/services/documents/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/documents/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

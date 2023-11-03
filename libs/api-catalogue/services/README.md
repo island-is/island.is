@@ -31,7 +31,7 @@ we have setup a `codegen` command:
 
 ```
 # Generates clients
-yarn nx run services-xroad-collector:schemas/codegen
+yarn nx run services-xroad-collector:codegen/frontend-client
 ```
 
 ### X-Road Security Server

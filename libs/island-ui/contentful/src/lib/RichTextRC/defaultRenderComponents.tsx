@@ -9,6 +9,7 @@ import { Image } from '../Image/Image'
 import FaqList from '../FaqList/FaqList'
 import { Statistics } from '../Statistics/Statistics'
 import { AssetLink } from '../AssetLink/AssetLink'
+import { LinkCard, LinkCardProps } from '../LinkCard/LinkCard'
 import { Hidden } from '@island.is/island-ui/core'
 import { ProcessEntry } from '../ProcessEntry/ProcessEntry'
 import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
@@ -64,6 +65,7 @@ export const defaultRenderComponentObject = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   Asset: (slice) => <AssetLink {...slice} />,
+  LinkCard: (slice: LinkCardProps) => <LinkCard {...slice} />,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   ProcessEntry: (slice) => (

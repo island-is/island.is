@@ -291,5 +291,5 @@ libs/clients/rsk/relationships/                                                 
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
-/scripts/schemas.js                                                                                      @island-is/devops @island-is/core
+/scripts/codegen.js                                                                                      @island-is/devops @island-is/core
 /charts                                                                                                  @island-is/devops

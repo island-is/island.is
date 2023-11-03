@@ -46,17 +46,15 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PoliceRequestAccordionItem,
-  RestrictionTags,
   RulingAccordionItem,
-  RulingDateLabel,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
@@ -451,19 +449,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 {formatMessage(core.back)}
               </Button>
             </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader />
-                {workingCase.rulingDate && (
-                  <Box>
-                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
-                  </Box>
-                )}
-              </Box>
-              <Box display="flex" flexDirection="column">
-                <RestrictionTags workingCase={workingCase} />
-              </Box>
-            </Box>
+            <CaseTitleInfoAndTags />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&

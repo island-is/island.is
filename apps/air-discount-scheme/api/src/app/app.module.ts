@@ -17,7 +17,7 @@ const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/air-discount-scheme/api.graphql'
+  : 'apps/air-discount-scheme/api/src/api.graphql'
 
 @Module({
   imports: [

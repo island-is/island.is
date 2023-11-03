@@ -19,7 +19,7 @@ When testing an app/project you need to first start the app, then test it with P
 
 ## ⚡ TL;DR
 
-- Set up Playwright: `yarn install && yarn schemas && yarn playwright install`
+- Set up Playwright: `yarn install && yarn codegen && yarn playwright install`
 - Start the application: `yarn dev-init <app> && yarn dev <app>`
 - Test the app: `yarn system-e2e <name-of-your-app>`
 

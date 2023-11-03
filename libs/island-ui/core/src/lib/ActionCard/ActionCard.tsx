@@ -14,7 +14,7 @@ import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
 
-type ActionCardProps = {
+export type ActionCardProps = {
   date?: string
   heading?: string
   headingVariant?: 'h3' | 'h4'

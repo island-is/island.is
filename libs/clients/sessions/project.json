@@ -18,13 +18,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/sessions/gen/fetch -i apps/services/sessions/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{workspaceRoot}/libs/clients/sessions/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-sessions"],
   "tags": ["lib:client"]
 }

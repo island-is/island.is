@@ -69,6 +69,7 @@ import {
 } from '../queries'
 import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
 import { ActionType, initialState, reducer } from './Search.state'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 const PERPAGE = 10
 
@@ -91,7 +92,7 @@ type TagsList = {
   key: string
 }
 
-type SearchType = Article &
+export type SearchEntryType = Article &
   LifeEventPage &
   News &
   AdgerdirPage &
@@ -207,7 +208,7 @@ const Search: Screen<CategoryProps> = ({
     ],
   )
 
-  const getLabels = (item: SearchType) => {
+  const getLabels = (item: SearchEntryType) => {
     const labels = []
 
     switch (item.__typename) {
@@ -233,7 +234,7 @@ const Search: Screen<CategoryProps> = ({
         break
     }
 
-    if (checkForProcessEntries(item)) {
+    if (item.__typename === 'Article' && hasProcessEntries(item)) {
       labels.push(n('applicationForm'))
     }
 
@@ -309,21 +310,7 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const checkForProcessEntries = (item: SearchType) => {
-    if (item.__typename === 'Article') {
-      const hasMainProcessEntry =
-        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = !!item.body?.filter((content) => {
-        return content.__typename === 'ProcessEntry'
-      }).length
-
-      return hasMainProcessEntry || hasProcessEntryInBody
-    }
-
-    return false
-  }
-
-  const getItemLink = (item: SearchType) => {
+  const getItemLink = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -335,7 +322,7 @@ const Search: Screen<CategoryProps> = ({
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
-  const getItemImages = (item: SearchType) => {
+  const getItemImages = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -359,22 +346,23 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
-    (item) => ({
-      typename: item.__typename,
-      title: item.title,
-      parentTitle: item.parent?.title,
-      description:
-        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: getItemLink(item),
-      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-      category: item.category ?? item.parent?.category,
-      hasProcessEntry: checkForProcessEntries(item),
-      group: item.group,
-      ...getItemImages(item),
-      labels: getLabels(item),
-    }),
-  )
+  const searchResultsItems = (
+    searchResults.items as Array<SearchEntryType>
+  ).map((item) => ({
+    typename: item.__typename,
+    title: item.title,
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+    link: getItemLink(item),
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
+    hasProcessEntry:
+      item.__typename === 'Article' && hasProcessEntries(item as Article),
+    group: item.group,
+    ...getItemImages(item),
+    labels: getLabels(item),
+  }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const noUncategorized = (item) => {

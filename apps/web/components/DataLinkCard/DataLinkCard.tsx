@@ -7,17 +7,11 @@ import {
   FocusableBox,
   Hyphen,
 } from '@island.is/island-ui/core'
-// import { LinkResolverResponse } from '@island.is/web/hooks/useLinkResolver'
+import type { LinkCard } from '@island.is/web/graphql/schema'
 
 import * as styles from './DataLinkCard.css'
 
-export interface DataLinkCardProps {
-  title: string
-  body: string
-  link?: string
-}
-
-export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
+export const DataLinkCard = ({ title, body, linkUrl }: LinkCard) => {
   const [ref, { width }] = useMeasure()
 
   const shouldStack = width < 360
@@ -46,10 +40,10 @@ export const DataLinkCard = ({ title, body, link }: DataLinkCardProps) => {
     </Box>
   )
 
-  if (link) {
+  if (linkUrl) {
     return (
       <FocusableBox
-        href={link}
+        href={linkUrl}
         borderRadius="large"
         flexDirection="column"
         height="full"

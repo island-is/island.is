@@ -10,6 +10,12 @@
       "options": {
         "lintFilePatterns": ["libs/api/schema/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/api/schema/codegen.yml"
+      }
     }
   },
   "tags": ["lib:dom", "scope:dom"]

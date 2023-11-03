@@ -42,7 +42,7 @@ yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-driving-license:schemas/external-openapi-generator
+yarn nx run clients-driving-license:codegen/backend-client
 ```
 
 ### Import into other NestJS modules

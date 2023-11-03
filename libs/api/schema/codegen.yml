@@ -10,12 +10,6 @@ generates:
       contextType: ./context#Context
       namingConvention:
         enumValues: keep
-  ./apps/web/graphql/fragmentTypes.json:
-    plugins:
-      - fragment-matcher
-    config:
-      module: commonjs
-      apolloClientVersion: 3
 hooks:
   afterAllFileWrite:
     - prettier --write

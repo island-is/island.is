@@ -97,6 +97,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/judicial-system/web/codegen.yml"
+      }
+    },
     "docker-next": {},
     "extract-strings": {
       "executor": "nx:run-commands",

@@ -13,5 +13,5 @@ Run `nx lint clients-assets` to execute the lint via [ESLint](https://eslint.org
 ### Updating the open api definition (clientConfig.json)
 
 ```sh
-yarn nx run clients-assets:schemas/external-openapi-generator
+yarn nx run clients-assets:codegen/backend-client
 ```

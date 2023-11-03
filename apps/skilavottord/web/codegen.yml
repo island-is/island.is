@@ -1,7 +1,7 @@
 generates:
   ./apps/skilavottord/web/graphql/schema.tsx:
     schema:
-      - ./apps/skilavottord/api.graphql
+      - ./apps/skilavottord/ws/src/api.graphql
     plugins:
       - typescript
       - typescript-operations
@@ -16,7 +16,7 @@ generates:
         enumValues: keep
   ./apps/skilavottord/web/graphql/possibleTypes.json:
     schema:
-      - ./apps/skilavottord/api.graphql
+      - ./apps/skilavottord/ws/src/api.graphql
     plugins:
       - fragment-matcher
     config:

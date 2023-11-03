@@ -36,10 +36,8 @@
           "yarn nx run application-system-api:dev-services",
           "yarn nx run application-system-api:migrate",
           "yarn nx run services-endorsements-api:migrate",
-          "yarn nx run application-templates-general-petition:schemas/external-openapi-generator --skip-nx-cache",
-          "yarn nx run application-templates-general-petition:schemas/codegen --skip-nx-cache",
-          "yarn nx run application-system-api:schemas/build-openapi --skip-nx-cache",
-          "yarn nx run api-domains-application:schemas/openapi-generator --skip-nx-cache"
+          "yarn nx run api:codegen/backend-schema",
+          "yarn nx run application-templates-general-petition:codegen/frontend-client"
         ],
         "parallel": false
       }
@@ -57,27 +55,12 @@
         "parallel": true
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "graphql-codegen --config libs/application/templates/general-petition/codegen.yml"
-      }
-    },
-    "schemas/external-openapi-generator": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
-          "nx run application-templates-general-petition:schemas/openapi-generator $NX_OPTIONS"
-        ],
-        "parallel": false
-      }
-    },
-    "schemas/openapi-generator": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch/endorsements -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{projectRoot}/src/types/schema.ts"]
     }
   },
   "tags": ["scope:application-system", "lib:application-system"]

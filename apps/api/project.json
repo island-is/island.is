@@ -44,18 +44,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/api"]
     },
-    "schemas/build-graphql-schema": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/api/tsconfig.json scripts/build-graphql-schema.ts apps/api/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "nx:run-commands",
-      "options": {
-        "parallel": false,
-        "command": "graphql-codegen --config apps/api/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "contentful-types": {
       "executor": "nx:run-commands",
