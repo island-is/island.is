@@ -11,7 +11,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
-import { UseGuards } from '@nestjs/common'
+import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PaymentService } from './payment.service'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -25,6 +25,8 @@ import { PaymentOverviewDocumentInput } from './dto/paymentOverviewDocument.inpu
 import { PaymentOverviewInput } from './dto/paymentOverview.input'
 import { PaymentOverviewServiceTypeResponse } from './models/paymentOverviewServiceType.response'
 import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -32,7 +34,11 @@ import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 @FeatureFlag(Features.servicePortalHealthPaymentPages)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {
-  constructor(private readonly service: PaymentService) {}
+  constructor(
+    private readonly service: PaymentService,
+    @Inject(DownloadServiceConfig.KEY)
+    private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
+  ) {}
 
   @Query(() => CopaymentStatusResponse, {
     name: 'rightsPortalCopaymentStatus',
@@ -89,7 +95,20 @@ export class PaymentResolver {
     @CurrentUser() user: User,
     @Args('input') input: PaymentOverviewInput,
   ): Promise<PaymentOverviewResponse> {
-    return await this.service.getPaymentOverview(user, input)
+    const data = await this.service.getPaymentOverview(user, input)
+
+    const items = data.items.map((item) => ({
+      ...item,
+      bills: item?.bills?.map((bill) => ({
+        ...bill,
+        downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/health/payments/${bill.documentId}`,
+      })),
+    }))
+
+    return {
+      items: items,
+      errors: data.errors,
+    }
   }
 
   @Query(() => PaymentOverviewDocumentResponse, {

@@ -78,6 +78,7 @@ query getPaymentOverview($input: RightsPortalPaymentOverviewInput!) {
         totalAmount
         insuranceAmount
         documentId
+        downloadUrl
       }
     }
     errors {

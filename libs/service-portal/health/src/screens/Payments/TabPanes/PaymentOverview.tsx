@@ -7,48 +7,98 @@ import {
   Text,
   Table as T,
   Button,
+  Select,
 } from '@island.is/island-ui/core'
-import { UserInfoLine, m } from '@island.is/service-portal/core'
+import { UserInfoLine, formSubmit, m } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { SECTION_GAP } from '../../Medicine/constants'
 import * as styles from './Payments.css'
 import {
-  useGetPaymentOverviewQuery,
+  useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from '../Payments.generated'
 import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
+import { isDefined } from '@island.is/shared/utils'
+import {
+  RightsPortalPaymentOverview,
+  RightsPortalPaymentOverviewDocument,
+} from '@island.is/api/schema'
 
 export const PaymentOverview = () => {
+  const intl = useIntl()
+  const { formatMessage, formatDateFns } = useLocale()
+
   const [startDate, setStartDate] = useState<Date>(
-    sub(new Date(), { months: 1 }),
+    sub(new Date(), { years: 3 }),
   )
   const [endDate, setEndDate] = useState<Date>(new Date())
+  const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
-  const { data, loading, error } = useGetPaymentOverviewServiceTypesQuery()
+  const [overview, setOverview] = useState<Omit<
+    RightsPortalPaymentOverview,
+    '__typename'
+  > | null>(null)
 
-  const status = data?.rightsPortalPaymentOverviewServiceTypes.items[0]
+  const [document, setDocument] = useState<Omit<
+    RightsPortalPaymentOverviewDocument,
+    '__typename'
+  > | null>(null)
 
   const {
-    data: overviewData,
-    loading: overviewLoading,
-    error: overviewError,
-  } = useGetPaymentOverviewQuery({
-    variables: {
-      input: {
-        dateFrom: startDate?.toString(),
-        dateTo: endDate?.toString(),
-        serviceTypeCode: '',
-      },
+    data: serviceTypes,
+    loading,
+    error,
+  } = useGetPaymentOverviewServiceTypesQuery()
+
+  const [
+    lazyOverviewQuery,
+    { loading: overviewLoading, error: overviewError },
+  ] = useGetPaymentOverviewLazyQuery({
+    onCompleted(data) {
+      const item = data.rightsPortalPaymentOverview.items[0]
+      setOverview({
+        credit: item.credit,
+        debt: item.debt,
+        bills: item.bills,
+      })
     },
   })
 
-  const overview = overviewData?.rightsPortalPaymentOverview.items[0]
+  const services = serviceTypes?.rightsPortalPaymentOverviewServiceTypes.items
 
-  const intl = useIntl()
-  const { formatMessage, formatDateFns } = useLocale()
+  const options = services
+    ?.map((s) =>
+      s.name && s.code
+        ? {
+            label: s.name,
+            value: s.code,
+          }
+        : undefined,
+    )
+    .filter(isDefined)
+
+  const onFetchBills = () => {
+    lazyOverviewQuery({
+      variables: {
+        input: {
+          dateFrom: formatDateFns(startDate, 'MM.dd.yyyy'),
+          dateTo: formatDateFns(endDate, 'MM.dd.yyyy'),
+          serviceTypeCode: selectedOptionId ?? '',
+        },
+      },
+    })
+  }
+
+  const onFetchDocument = (url: string) => {
+    formSubmit(url)
+  }
+
+  useEffect(() => {
+    onFetchBills()
+  }, [])
 
   return (
     <Box paddingY={4} background="white">
@@ -60,7 +110,7 @@ export const PaymentOverview = () => {
         />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
-      ) : status ? (
+      ) : (
         <Box>
           <Box
             marginBottom={SECTION_GAP}
@@ -96,23 +146,43 @@ export const PaymentOverview = () => {
             <Box
               marginBottom={SECTION_GAP}
               display="flex"
-              justifyContent="flexStart"
-              columnGap={2}
+              flexDirection="column"
+              rowGap={2}
             >
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateFrom)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setStartDate(date)}
-                selected={startDate}
-              />
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateTo)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setEndDate(date)}
-                selected={endDate}
-              />
+              <Box display="flex" columnGap={2}>
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateFrom)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setStartDate(date)}
+                  selected={startDate}
+                />
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateTo)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setEndDate(date)}
+                  selected={endDate}
+                />
+              </Box>
+              {!!options?.length && (
+                <Box display="flex" alignItems="center" columnGap={2}>
+                  <Select
+                    value={
+                      selectedOptionId
+                        ? options?.find((opt) => opt.value === selectedOptionId)
+                        : options[0]
+                    }
+                    size="sm"
+                    name="service"
+                    options={options}
+                    onChange={(opt) => setSelectedOptionId(opt?.value ?? null)}
+                  />
+                  <Button size="medium" onClick={() => onFetchBills()}>
+                    Sækja
+                  </Button>
+                </Box>
+              )}
             </Box>
             <Box marginBottom={SECTION_GAP}>
               {overviewError ? (
@@ -123,7 +193,7 @@ export const PaymentOverview = () => {
                 />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
-              ) : (
+              ) : overview?.bills?.length ? (
                 <T.Table>
                   <T.Head>
                     <tr className={styles.tableRowStyle}>
@@ -143,39 +213,46 @@ export const PaymentOverview = () => {
                     </tr>
                   </T.Head>
                   <T.Body>
-                    {overview?.bills?.map((item, index) => (
-                      <tr key={index} className={styles.tableRowStyle}>
-                        <T.Data>
-                          {formatDateFns(item.date, 'dd.MM.yyyy')}
-                        </T.Data>
-                        <T.Data>{item.serviceType?.name}</T.Data>
-                        <T.Data>{item.totalAmount}</T.Data>
-                        <T.Data>{item.insuranceAmount}</T.Data>
-                        <T.Data>
-                          <Button
-                            iconType="outline"
-                            onClick={() => undefined} // TODO: Add download functionality
-                            variant="text"
-                            icon="open"
-                            size="small"
-                          >
-                            Sækja skjal
-                          </Button>
-                        </T.Data>
-                      </tr>
-                    ))}
+                    {overview?.bills?.map((item, index) => {
+                      return (
+                        <tr key={index} className={styles.tableRowStyle}>
+                          <T.Data>
+                            {item.date &&
+                              formatDateFns(item.date, 'dd.MM.yyyy')}
+                          </T.Data>
+                          <T.Data>{item.serviceType?.name}</T.Data>
+                          <T.Data>{item.totalAmount}</T.Data>
+                          <T.Data>{item.insuranceAmount}</T.Data>
+                          <T.Data>
+                            <Button
+                              iconType="outline"
+                              onClick={() =>
+                                item.downloadUrl
+                                  ? onFetchDocument(item?.downloadUrl)
+                                  : undefined
+                              }
+                              variant="text"
+                              icon="open"
+                              size="small"
+                            >
+                              Sækja skjal
+                            </Button>
+                          </T.Data>
+                        </tr>
+                      )
+                    })}
                   </T.Body>
                 </T.Table>
+              ) : (
+                <AlertMessage
+                  type="warning"
+                  title={formatMessage(m.noData)}
+                  message={formatMessage(m.noDataFound)}
+                />
               )}
             </Box>
           </Box>
         </Box>
-      ) : (
-        <AlertMessage
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFound)}
-          type="warning"
-        />
       )}
     </Box>
   )

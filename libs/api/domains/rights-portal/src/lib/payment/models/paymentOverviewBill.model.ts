@@ -17,4 +17,7 @@ export class PaymentOverviewBill {
 
   @Field(() => Number, { nullable: true })
   documentId?: number | null
+
+  @Field(() => String, { nullable: true })
+  downloadUrl?: string | null
 }

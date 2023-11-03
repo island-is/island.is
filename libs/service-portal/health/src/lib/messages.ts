@@ -74,6 +74,10 @@ export const messages = defineMessages({
     defaultMessage:
       'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði 4.694 kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
   },
+  paymentParticationExplinationFooter: {
+    id: 'sp.health:payment-partication-info-footer',
+    defaultMessage: 'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.'
+  },
   paymentParticationFooterExplination: {
     id: 'sp.health:payment-partication-footer-info',
     defaultMessage:
