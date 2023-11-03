@@ -62,7 +62,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params?: NationalRegistryParameters,
   ) {
     if (params?.legalDomicileIceland && !params?.allowPassOnChild) {
-      this.validateDomicleInIceland(individual)
+      this.validateDomicileInIceland(individual)
     }
 
     if (params?.icelandicCitizenship) {
@@ -86,7 +86,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private validateDomicleInIceland(individual: NationalRegistryIndividual) {
+  private validateDomicileInIceland(individual: NationalRegistryIndividual) {
     const domicileCode = individual?.address?.municipalityCode
     if (!domicileCode || domicileCode.substring(0, 2) === '99') {
       // If no individual has a domicile in Iceland, then we fail this check
@@ -113,10 +113,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     }
   }
 
-  private validateAge(params: any, individual: NationalRegistryIndividual) {
-    if (individual?.age && individual?.age < params.ageToValidate) {
-      if (params?.ageToValidateError) {
-        throw new TemplateApiError(params?.ageToValidateError, 400)
+  private validateAge(params: NationalRegistryParameters, individual: NationalRegistryIndividual) {
+    if (params?.ageToValidate && individual?.age && individual.age < params.ageToValidate) {
+      if (params.ageToValidateError) {
+        throw new TemplateApiError(params.ageToValidateError, 400)
       } else {
         throw new TemplateApiError(
           {
