@@ -89,7 +89,7 @@ export default function FinanceTransactionSelectedPeriod({
           <T.Body>
             {data.getChargeTypePeriodSubject.records.map((record) => (
               <ExpandRow
-                key={`${record.category}-${record.chargeItemSubject}-${record.createTime}`}
+                key={`${record.category}-${record.chargeItemSubject}-${record.createTime}-${record.amount}`}
                 data={[
                   {
                     value: format(new Date(record.createDate), dateFormat.is),

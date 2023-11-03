@@ -78,7 +78,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
   const setActivePeriods = (
     subject: ChargeItemSubject,
     period: ChargeItemSubjectsPeriod,
-    selected: boolean,
+    checked: boolean,
   ) => {
     let selectedPeriods = [
       ...(financeTransactionPeriodsState.selectedPeriods ?? []),
@@ -88,14 +88,14 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
       p.period === period.period &&
       p.subject === subject.chargeItemSubject
 
-    if (selected && !selectedPeriods.find(findPeriod)) {
+    if (checked && !selectedPeriods.find(findPeriod)) {
       selectedPeriods.push({
         typeId,
         period: period.period,
         subject: subject.chargeItemSubject,
         year: financeTransactionPeriodsState.year ?? '',
       })
-    } else if (!selected && selectedPeriods.find(findPeriod)) {
+    } else if (!checked && selectedPeriods.find(findPeriod)) {
       selectedPeriods = selectedPeriods.filter(
         (p) =>
           !(
@@ -111,21 +111,25 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
 
   return (
     <Box padding={2} background="blue100">
-      <Box padding={2} paddingBottom={4} width="half">
-        <Select
-          name="filter-subjects"
-          label={formatMessage(m.feeBasePlural)}
-          placeholder={formatMessage(m.feeBasePlaceholder)}
-          value={activeSubjects.filter((v) => subjectsFilter.includes(v.value))}
-          options={activeSubjects}
-          onChange={(val) => {
-            setSubjectsFilter(val?.value ? [val.value] : [])
-          }}
-          isClearable
-          isSearchable
-          // isMulti // isMulti is not supported by Select component, always returns single value
-        />
-      </Box>
+      {subjects.length > 1 ? (
+        <Box padding={2} paddingBottom={4} width="half">
+          <Select
+            name="filter-subjects"
+            label={formatMessage(m.feeBasePlural)}
+            placeholder={formatMessage(m.feeBasePlaceholder)}
+            value={activeSubjects.filter((v) =>
+              subjectsFilter.includes(v.value),
+            )}
+            options={activeSubjects}
+            onChange={(val) => {
+              setSubjectsFilter(val?.value ? [val.value] : [])
+            }}
+            isClearable
+            isSearchable
+            // isMulti // isMulti is not supported by Select component, always returns single value
+          />
+        </Box>
+      ) : null}
       {filteredSubjects
         .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
         .map((item) => (
