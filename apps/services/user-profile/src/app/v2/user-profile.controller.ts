@@ -1,22 +1,29 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import { Controller, Get, Param, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Param,
+  UseGuards,
+  Headers,
+  BadRequestException,
+} from '@nestjs/common'
 
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { UserProfileScope } from '@island.is/auth/scopes'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profileDto'
 import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/user'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(UserProfileScope.system)
-@ApiTags('v2/user')
+@ApiTags('v2/users')
 @ApiSecurity('oauth2', [UserProfileScope.system])
 @Controller({
-  path: 'user',
+  path: 'users',
   version: ['2'],
 })
 @Audit({ namespace })
@@ -26,7 +33,7 @@ export class UserProfileController {
     private readonly userProfileService: UserProfileService,
   ) {}
 
-  @Get('/:nationalId')
+  @Get('/.national-id')
   @Documentation({
     description: 'Get user profile for given nationalId.',
     response: { status: 200, type: UserProfileDto },
@@ -35,8 +42,11 @@ export class UserProfileController {
     resources: (profile) => profile.nationalId,
   })
   findUserProfile(
-    @Param('nationalId') nationalId: string,
+    @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<UserProfileDto> {
+    if (!nationalId || nationalId.length !== 10) {
+      throw new BadRequestException('National id is not valid')
+    }
     return this.userProfileService.findById(nationalId)
   }
 }
