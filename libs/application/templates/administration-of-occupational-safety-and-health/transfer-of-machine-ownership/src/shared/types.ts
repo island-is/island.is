@@ -9,8 +9,8 @@ import { z } from 'zod'
 
 export interface ReviewScreenProps {
   setStep?: (s: ReviewState) => void
-  setInsurance?: (s: string) => void
-  insurance?: string
+  setLocation?: (location: MachineLocation) => void
+  location?: MachineLocation
   reviewerNationalId?: string
   setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
   coOwnersAndOperators?: CoOwnerAndOperator[]
@@ -24,7 +24,7 @@ export type ReviewState =
   | 'conclusion'
   | 'addPeople'
   | 'mainOperator'
-  | 'insurance'
+  | 'location'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
 export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>
@@ -119,4 +119,10 @@ export type MachineDetails = {
   supervisorAddress?: string
   supervisorPostcode?: string
   _links?: MachineLink[] | null
+}
+
+export type MachineLocation = {
+  address?: string
+  postCode?: string
+  moreInfo?: string
 }

@@ -52,7 +52,13 @@ export const CoOwnerAndOperatorRepeaterItem: FC<
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
     setValue(typeField, userMessageId)
-  }, [repeaterField.wasRemoved, userMessageId, setValue])
+  }, [
+    repeaterField.wasRemoved,
+    userMessageId,
+    setValue,
+    wasRemovedField,
+    typeField,
+  ])
 
   return (
     <Box

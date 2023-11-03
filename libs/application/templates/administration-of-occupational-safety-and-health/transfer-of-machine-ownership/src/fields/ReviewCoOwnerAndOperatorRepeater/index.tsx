@@ -185,30 +185,24 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
             />
           )
         })}
-        <Box
-          display="flex"
-          alignItems="stretch"
-          flexDirection="row"
-          className={repeaterButtons}
-          marginTop={3}
-        >
-          <Button
-            variant="ghost"
-            icon="add"
-            iconType="outline"
-            onClick={handleAdd.bind(null, 'coOwner')}
+        {tempCoOwnersAndOperators.length === 0 || allOperators.length === 0 ? (
+          <Box
+            display="flex"
+            alignItems="stretch"
+            flexDirection="row"
+            className={repeaterButtons}
+            marginTop={3}
           >
-            {formatMessage(information.labels.coOwner.add)}
-          </Button>
-          <Button
-            variant="ghost"
-            icon="add"
-            iconType="outline"
-            onClick={handleAdd.bind(null, 'operator')}
-          >
-            {formatMessage(information.labels.operator.add)}
-          </Button>
-        </Box>
+            <Button
+              variant="ghost"
+              icon="add"
+              iconType="outline"
+              onClick={handleAdd.bind(null, 'operator')}
+            >
+              {formatMessage(information.labels.operator.add)}
+            </Button>
+          </Box>
+        ) : null}
       </Box>
       {genericErrorMessage && (
         <Text variant="eyebrow" color="red600">

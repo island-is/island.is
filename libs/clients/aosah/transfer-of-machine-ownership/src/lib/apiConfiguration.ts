@@ -4,7 +4,6 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { MachinesApi, Configuration } from '../../gen/fetch'
 import { TransferOfMachineOwnershipClientConfig } from './transferOfMachineOwnershipClient.config'
 
 export const configFactory = (

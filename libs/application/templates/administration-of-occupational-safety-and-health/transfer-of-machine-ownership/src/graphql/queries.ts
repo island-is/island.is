@@ -69,29 +69,10 @@ query GetMachineDetails($input: MachineDetailsInput!) {
     }
   }
 }
-
 `
 
-// query GetMachineDetails($id: String) {
-//   machineDetails(id: $id) {
-//     id
-//     registrationNumber
-//     type
-//     status
-//     category
-//     subCategory
-//     productionYear
-//     registrationDate
-//     ownerNumber
-//     productionNumber
-//     productionCountry
-
-//   }
-// }
-
-//  _links {
-//         href
-//         rel
-//         method
-//         displayTitle
-//       }
+export const APPROVE_OWNER_CHANGE = `
+      mutation ConfirmOwnerChange($input: ConfirmOwnerChange!) {
+        confirmOwnerChange(input: $input)
+      }
+    `

@@ -4,9 +4,9 @@ import { Box } from '@island.is/island-ui/core'
 import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
-import { Insurance } from '../Insurance'
+import { Location } from '../Insurance'
 import { ReviewCoOwnerAndOperatorRepeater } from '../ReviewCoOwnerAndOperatorRepeater'
-import { CoOwnerAndOperator, ReviewState } from '../../shared'
+import { CoOwnerAndOperator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { ReviewMainOperator } from '../ReviewMainOperator'
@@ -15,9 +15,11 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
   const { userInfo } = useAuth()
   const [step, setStep] = useState<ReviewState>('states')
-  const [insurance, setInsurance] = useState<string | undefined>(
-    getValueViaPath(application.answers, 'insurance.value', undefined),
+
+  const [location, setLocation] = useState<MachineLocation>(
+    getValueViaPath(application.answers, 'location') as MachineLocation,
   )
+
   const [coOwnersAndOperators, setCoOwnersAndOperators] = useState<
     CoOwnerAndOperator[]
   >(
@@ -59,7 +61,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <Overview
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            insurance={insurance}
+            location={location}
             coOwnersAndOperators={filteredCoOwnersAndOperators}
             mainOperator={mainOperator}
             {...props}
@@ -94,12 +96,12 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             {...props}
           />
         )
-      case 'insurance':
+      case 'location':
         return (
-          <Insurance
+          <Location
             setStep={setStep}
+            setLocation={setLocation}
             reviewerNationalId={reviewerNationalId}
-            setInsurance={setInsurance}
             {...props}
           />
         )

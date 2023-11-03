@@ -89,7 +89,7 @@ export const ReviewCoOwnerAndOperatorRepeaterItem: FC<
     >
       <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
         <Text variant="h5">
-          {formatMessage(information.labels[userMessageId].title)} {rowLocation}
+          {formatMessage(information.labels[userMessageId].title)}
         </Text>
         <Box>
           <Button variant="text" onClick={handleRemove.bind(null, index)}>

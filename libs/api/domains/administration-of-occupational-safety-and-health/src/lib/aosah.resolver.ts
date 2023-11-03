@@ -15,6 +15,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
+import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
+import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -29,6 +31,16 @@ export class AosahResolver {
     @Args('input') input: MachineDetailsInput,
   ) {
     return await this.aosahApi.getMachineDetails(auth, input.id)
+  }
+
+  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Query(() => Boolean)
+  @Audit()
+  async isPaymentRequired(
+    @CurrentUser() auth: User,
+    @Args('input') regNumber: string,
+  ) {
+    return await this.aosahApi.isPaymentRequired(auth, regNumber)
   }
 
   @Mutation(() => Boolean)
@@ -49,13 +61,28 @@ export class AosahResolver {
   @Mutation(() => Boolean)
   async confirmOwnerChange(
     @CurrentUser() auth: User,
-    @Args('input') input: ChangeMachineOwner,
+    @Args('input') input: ConfirmOwnerChange,
   ): Promise<boolean> {
     try {
       await this.aosahApi.confirmOwnerChange(auth, input)
       return true // Operation was successful
     } catch (error) {
       console.log('confirmOwnerChange Error: ', error)
+      // Handle errors here
+      return false // Operation failed
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async changeMachineSupervisor(
+    @CurrentUser() auth: User,
+    @Args('input') input: ChangeMachineSupervisor,
+  ): Promise<boolean> {
+    try {
+      await this.aosahApi.changeMachineSupervisor(auth, input)
+      return true // Operation was successful
+    } catch (error) {
+      console.log('changeMachineSupervisor Error: ', error)
       // Handle errors here
       return false // Operation failed
     }

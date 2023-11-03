@@ -160,7 +160,7 @@ export const CoOwnerAndOperatorRepeater: FC<
           />
         )
       })}
-      <Box
+      {/* <Box
         display="flex"
         alignItems="stretch"
         flexDirection="row"
@@ -191,7 +191,7 @@ export const CoOwnerAndOperatorRepeater: FC<
             title={formatMessage(information.labels.operator.identicalError)}
           />
         </Box>
-      )}
+      )} */}
     </Box>
   )
 }

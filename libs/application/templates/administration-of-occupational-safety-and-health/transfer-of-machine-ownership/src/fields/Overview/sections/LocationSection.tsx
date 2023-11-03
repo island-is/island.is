@@ -1,13 +1,13 @@
 // Insurance company with button - only visible to buyer
 // Buyer and buyers coowener + button for buyer to add more coowners or operators
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC } from 'react'
+import { FC, useState, useEffect } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { error, overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps, InsuranceCompany } from '../../../shared'
+import { ReviewScreenProps, MachineLocation } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 
@@ -15,11 +15,11 @@ interface Props {
   noInsuranceError: boolean
 }
 
-export const InsuranceSection: FC<
+export const LocationSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps & Props>
 > = ({
   setStep,
-  insurance = undefined,
+  location = {},
   reviewerNationalId = '',
   application,
   noInsuranceError,
@@ -28,33 +28,42 @@ export const InsuranceSection: FC<
   const { answers } = application
 
   const onButtonClick = () => {
-    setStep && setStep('insurance')
+    setStep && setStep('location')
   }
+  const initialMachineLocation = getValueViaPath(
+    application.answers,
+    'location',
+    undefined,
+  ) as MachineLocation | undefined
 
-  const insuranceCompanyList = getValueViaPath(
-    application.externalData,
-    'insuranceCompanyList.data',
-    [],
-  ) as InsuranceCompany[]
+  const [machineLocation, setMachineLocation] = useState<
+    MachineLocation | undefined
+  >(
+    getValueViaPath(application.answers, 'location', undefined) as
+      | MachineLocation
+      | undefined,
+  )
+
+  // Use an effect to update machineLocation when initialMachineLocation changes.
+  useEffect(() => {
+    setMachineLocation(initialMachineLocation)
+
+    // If location prop has a value, update machineLocation
+    if (location) {
+      setMachineLocation(location)
+    }
+  }, [initialMachineLocation, location])
 
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
-
-  const getInsurance = () => {
-    const insuranceName = insuranceCompanyList?.find(
-      (insuranceItem) => insuranceItem.code === insurance,
-    )
-    return insuranceName ? insuranceName.name : undefined
-  }
-
   return (
     <ReviewGroup
       editMessage={
         isBuyer &&
         !hasReviewerApproved(reviewerNationalId, answers) &&
         application.state !== States.COMPLETED
-          ? formatMessage(overview.labels.addInsuranceButton)
+          ? formatMessage(overview.labels.addLocationButton)
           : undefined
       }
       isLast
@@ -63,10 +72,12 @@ export const InsuranceSection: FC<
       <GridRow>
         <GridColumn span={['6/12']}>
           <Text variant="h4" color={noInsuranceError ? 'red600' : 'dark400'}>
-            {formatMessage(overview.labels.insuranceTitle)}
+            {formatMessage(overview.labels.locationTitle)}
           </Text>
           <Text color={noInsuranceError ? 'red600' : 'dark400'}>
-            {getInsurance() || formatMessage(overview.labels.noChosenInsurance)}
+            {machineLocation?.address && machineLocation?.postCode
+              ? `${machineLocation.address} - ${machineLocation.postCode}`
+              : formatMessage(overview.labels.noLocation)}
           </Text>
         </GridColumn>
       </GridRow>

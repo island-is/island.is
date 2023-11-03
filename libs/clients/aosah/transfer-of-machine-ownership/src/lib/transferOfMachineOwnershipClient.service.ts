@@ -1,8 +1,14 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import { MachineOwnerChangeApi, MachinesApi } from '../../gen/fetch/apis'
+import {
+  MachineCategoryApi,
+  MachineOwnerChangeApi,
+  MachineSupervisorChangeApi,
+  MachinesApi,
+} from '../../gen/fetch/apis'
 import {
   ChangeMachineOwner,
+  ChangeMachineSupervisor,
   ConfirmOwnerChange,
   Machine,
   MachineDetails,
@@ -10,6 +16,7 @@ import {
 import { CustomMachineApi } from './customMachineApi'
 import {
   apiChangeMachineOwnerToApiRequest,
+  apiChangeMachineSupervisorToApiRequest,
   confirmChangeToApiRequest,
 } from './transferOfMachineOwnershipClient.utils'
 
@@ -19,6 +26,8 @@ export class TransferOfMachineOwnershipClient {
     private readonly machinesApi: MachinesApi,
     private readonly machineApi: CustomMachineApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
+    private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
+    private readonly machineCategoryApi: MachineCategoryApi,
   ) {}
 
   private machinesApiWithAuth(auth: Auth) {
@@ -31,6 +40,16 @@ export class TransferOfMachineOwnershipClient {
 
   private machineOwnerChangeApiWithAuth(auth: Auth) {
     return this.machineOwnerChangeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineSupervisorChangeApiWithAuth(auth: Auth) {
+    return this.machineSupervisorChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  private machineCategoryApiWithAuth(auth: Auth) {
+    return this.machineCategoryApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   public async getMachines(auth: User): Promise<Machine[]> {
@@ -114,6 +133,14 @@ export class TransferOfMachineOwnershipClient {
     return machine
   }
 
+  public async isPaymentRequired(auth: Auth, regNumber: string) {
+    const result = await this.machineCategoryApiWithAuth(
+      auth,
+    ).apiMachineCategoryGet({ registrationNumber: regNumber })
+
+    return result.paymentRequiredForOwnerChange
+  }
+
   public async changeMachineOwner(auth: Auth, ownerChange: ChangeMachineOwner) {
     const input = apiChangeMachineOwnerToApiRequest(ownerChange)
 
@@ -131,5 +158,16 @@ export class TransferOfMachineOwnershipClient {
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
       input,
     )
+  }
+
+  public async changeMachineSupervisor(
+    auth: Auth,
+    supervisorChange: ChangeMachineSupervisor,
+  ) {
+    const input = apiChangeMachineSupervisorToApiRequest(supervisorChange)
+
+    await this.machineSupervisorChangeApiWithAuth(
+      auth,
+    ).apiMachineSupervisorChangePost(input)
   }
 }

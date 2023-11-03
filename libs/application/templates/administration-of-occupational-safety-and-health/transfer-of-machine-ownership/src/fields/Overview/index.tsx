@@ -40,8 +40,12 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   OwnerChangeAnswers,
   OwnerChangeValidationMessage,
+  //ConfirmOwnerChange,
 } from '@island.is/api/schema'
-import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
+import {
+  VALIDATE_VEHICLE_OWNER_CHANGE,
+  APPROVE_OWNER_CHANGE,
+} from '../../graphql/queries'
 import { AdministrationOfOccupationalSafetyAndHealthAnswers } from '../..'
 
 export const Overview: FC<
@@ -53,7 +57,7 @@ export const Overview: FC<
   mainOperator = '',
   ...props
 }) => {
-  const { application, refetch, insurance = undefined } = props
+  const { application, refetch, location = undefined } = props
   const answers =
     application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
   const { formatMessage } = useLocale()
@@ -154,21 +158,27 @@ export const Overview: FC<
     }
   }
 
-  const [validateVehicleThenApproveAndSubmit, { data }] = useLazyQuery<
-    any,
-    { answers: OwnerChangeAnswers }
-  >(
+  const [changeMachineOwnerMutation, { data }] = useMutation(
     gql`
-      ${VALIDATE_VEHICLE_OWNER_CHANGE}
+      ${APPROVE_OWNER_CHANGE}
     `,
     {
       onCompleted: async (data) => {
-        if (!data?.vehicleOwnerChangeValidation?.hasError) {
+        console.log(data)
+        if (data && data.confirmOwnerChange) {
           await doApproveAndSubmit()
+          // call change machineSupervisorMutation
+          console.log('Change machine owner was successful')
+        } else {
+          // The operation failed
+          // Handle errors here
+          console.log('Change machine owner failed')
         }
       },
     },
   )
+
+  // change machinesupervisorMutation
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -179,7 +189,13 @@ export const Overview: FC<
   }
 
   const onApproveButtonClick = async () => {
-    if (isBuyer && !insurance) {
+    if (location) {
+      // update location
+    }
+    // check supervisor/Operator and add if there is any with the /api/MachineSupervisorChange endpoint
+    // Add supervisor/Operator if there
+
+    if (isBuyer && !location) {
       setNoInsuranceError(true)
     } else {
       setNoInsuranceError(false)
@@ -199,39 +215,17 @@ export const Overview: FC<
         const updatedApplication = applicationInfo?.data?.applicationApplication
 
         if (updatedApplication) {
-          const currentAnswers: OwnerChangeAnswers = updatedApplication.answers
+          const machineId = getValueViaPath(
+            updatedApplication.answers,
+            'machine.id',
+            '',
+          ) as string
 
-          validateVehicleThenApproveAndSubmit({
+          changeMachineOwnerMutation({
             variables: {
-              answers: {
-                pickVehicle: {
-                  plate: currentAnswers?.pickVehicle?.plate,
-                },
-                vehicle: {
-                  date: currentAnswers?.vehicle?.date,
-                  salePrice: currentAnswers?.vehicle?.salePrice,
-                },
-                seller: {
-                  email: currentAnswers?.seller?.email,
-                  nationalId: currentAnswers?.seller?.nationalId,
-                },
-                buyer: {
-                  email: currentAnswers?.buyer?.email,
-                  nationalId: currentAnswers?.buyer?.nationalId,
-                },
-                buyerCoOwnerAndOperator:
-                  currentAnswers?.buyerCoOwnerAndOperator?.map((x) => ({
-                    nationalId: x.nationalId!,
-                    email: x.email!,
-                    type: x.type,
-                    wasRemoved: x.wasRemoved,
-                  })),
-                buyerMainOperator: currentAnswers?.buyerMainOperator
-                  ? {
-                      nationalId: currentAnswers.buyerMainOperator.nationalId,
-                    }
-                  : null,
-                insurance: insurance ? { value: insurance } : null,
+              input: {
+                id: application.id,
+                machineId: machineId,
               },
             },
           })
@@ -258,17 +252,13 @@ export const Overview: FC<
           {...props}
           reviewerNationalId={reviewerNationalId}
         />
-        <CoOwnersSection
-          reviewerNationalId={reviewerNationalId}
-          coOwnersAndOperators={coOwnersAndOperators}
-          {...props}
-        />
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           coOwnersAndOperators={coOwnersAndOperators}
           mainOperator={mainOperator}
           {...props}
         />
+
         <InsuranceSection
           setStep={setStep}
           {...props}

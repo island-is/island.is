@@ -68,7 +68,7 @@ export const conclusion = {
   approved: defineMessages({
     accordionText: {
       id: 'aosah.application:conclusion.approved.accordionText',
-      defaultMessage: `Nú hafa allir aðilar samþykkt og eigendaskiptin verið skráð hjá Samgöngustofu.`,
+      defaultMessage: `Nú hafa allir aðilar samþykkt og eigendaskiptin verið skráð hjá Vinnueftirlitinu.`,
       description: 'Conclusion approved accordion text',
     },
   }),

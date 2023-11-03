@@ -7,6 +7,7 @@ import {
 import { Injectable } from '@nestjs/common'
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
 import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
+import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input'
 
 @Injectable()
 export class AosahApi {
@@ -57,6 +58,25 @@ export class AosahApi {
     await this.transferOfMachineOwnershipClient.conformOwnerChange(
       auth,
       confirmChange,
+    )
+  }
+
+  async changeMachineSupervisor(
+    auth: User,
+    changeSupervisor: ChangeMachineSupervisor,
+  ): Promise<void> {
+    await this.transferOfMachineOwnershipClient.changeMachineSupervisor(
+      auth,
+      changeSupervisor,
+    )
+  }
+
+  async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
+    return (
+      (await this.transferOfMachineOwnershipClient.isPaymentRequired(
+        auth,
+        regNumber,
+      )) || false
     )
   }
 }

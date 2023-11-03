@@ -1,47 +1,50 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps, Option } from '@island.is/application/types'
-import { Box, Button, Divider, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Divider,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { insurance, review, error } from '../../lib/messages'
-import { SelectController } from '@island.is/shared/form-fields'
-import { InsuranceCompany, ReviewScreenProps } from '../../shared'
+import { insurance, review, error, information } from '../../lib/messages'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
+import {
+  InsuranceCompany,
+  MachineLocation,
+  ReviewScreenProps,
+} from '../../shared'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
-export const Insurance: FC<
+export const Location: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({ application, setStep, setInsurance }) => {
+> = ({ application, setLocation, setStep }) => {
   const { locale, formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const savedSelectedValue = getValueViaPath(
     application.answers,
-    'insurance',
+    'location',
     undefined,
-  ) as { value: string; name: string } | undefined
+  ) as MachineLocation | undefined
 
-  const [selectedValue, setSelectedValue] = useState<Option | null>(
-    savedSelectedValue?.value
-      ? { value: savedSelectedValue.value, label: savedSelectedValue.name }
-      : null,
-  )
+  const [selectedValue, setSelectedValue] = useState<MachineLocation>({
+    address: savedSelectedValue?.address || '',
+    postCode: savedSelectedValue?.postCode || '',
+    moreInfo: savedSelectedValue?.moreInfo || '',
+  })
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   )
-
-  const insuranceCompanyList = getValueViaPath(
-    application.externalData,
-    'insuranceCompanyList.data',
-    [],
-  ) as InsuranceCompany[]
-
-  const onChange = (option: Option) => {
-    setErrorMessage(undefined)
-    setSelectedValue(option)
-  }
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -49,17 +52,20 @@ export const Insurance: FC<
   }
 
   const onForwardButtonClick = async () => {
-    if (selectedValue && setInsurance) {
-      setValue('insurance.value', selectedValue.value)
-      setValue('insurance.name', selectedValue.label)
+    if (selectedValue && setLocation) {
+      setValue('location.address', selectedValue.address)
+      setValue('location.postCode', selectedValue.postCode)
+      setValue('location.moreInfo', selectedValue.moreInfo)
+      console.log('selectedValue', selectedValue)
       const res = await updateApplication({
         variables: {
           input: {
             id: application.id,
             answers: {
-              insurance: {
-                value: selectedValue.value,
-                name: selectedValue.label,
+              location: {
+                address: selectedValue.address,
+                postCode: selectedValue.postCode,
+                moreInfo: selectedValue.moreInfo,
               },
             },
           },
@@ -69,24 +75,13 @@ export const Insurance: FC<
       if (!res.data) {
         setErrorMessage(formatMessage(error.couldNotUpdateApplication))
       } else {
-        setInsurance(selectedValue.value as string)
+        setLocation(selectedValue)
         setErrorMessage(undefined)
         setStep && setStep('overview')
       }
     } else {
       setErrorMessage(formatMessage(error.noInsuranceSelected))
     }
-  }
-
-  const getOptions = () => {
-    const options = insuranceCompanyList.map((insurance, index) => {
-      return {
-        value: insurance.code || index,
-        label: insurance.name || '',
-      }
-    })
-
-    return options
   }
 
   return (
@@ -97,16 +92,61 @@ export const Insurance: FC<
       <Text marginBottom={5}>
         {formatMessage(insurance.general.description)}
       </Text>
-      <SelectController
-        label={formatMessage(insurance.labels.selectTitle)}
-        placeholder={formatMessage(insurance.labels.selectPlaceholder)}
-        id="insurance.value"
-        name="insurance.value"
-        error={errorMessage}
-        onSelect={(option) => onChange(option as Option)}
-        options={getOptions()}
-        backgroundColor="blue"
-      />
+      <Text variant="h5">{formatMessage(insurance.labels.addressTitle)}</Text>
+      <GridRow>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id="address"
+            name="address"
+            type="text"
+            label={formatMessage(insurance.labels.addressLabel)}
+            //error={errors && getErrorViaPath(errors, 'address')}
+            backgroundColor="blue"
+            required
+            onChange={(event) => {
+              setSelectedValue({
+                ...selectedValue,
+                address: event.target.value,
+              })
+            }}
+            defaultValue={selectedValue.address}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+          <InputController
+            id="postcode"
+            name="postcode"
+            type="text"
+            format="###"
+            label={formatMessage(insurance.labels.postCodeLabel)}
+            backgroundColor="blue"
+            required
+            onChange={(event) => {
+              setSelectedValue({
+                ...selectedValue,
+                postCode: event.target.value,
+              })
+            }}
+            defaultValue={selectedValue.postCode}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/1', '1/1']} paddingTop={2}>
+          <InputController
+            id="moreInfo"
+            name="moreInfo"
+            type="text"
+            label={formatMessage(insurance.labels.moreInfoLabel)}
+            backgroundColor="blue"
+            onChange={(event) => {
+              setSelectedValue({
+                ...selectedValue,
+                moreInfo: event.target.value,
+              })
+            }}
+            defaultValue={selectedValue.moreInfo}
+          />
+        </GridColumn>
+      </GridRow>
       <Box style={{ marginTop: '40vh' }}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

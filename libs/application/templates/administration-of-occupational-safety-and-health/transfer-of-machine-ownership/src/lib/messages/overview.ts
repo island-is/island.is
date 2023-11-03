@@ -27,22 +27,22 @@ export const overview = {
     },
     addCoOwnerAndOperatorButton: {
       id: 'aosah.application:overview.labels.addCoOwnerAndOperatorButton',
-      defaultMessage: 'Bæta við meðeiganda /umráðamanni',
+      defaultMessage: 'Bæta við umráðamanni',
       description: 'Add co owner and operator button',
     },
-    insuranceTitle: {
-      id: 'aosah.application:overview.labels.insuranceTitle',
-      defaultMessage: 'Tryggingafélag',
+    locationTitle: {
+      id: 'aosah.application:overview.labels.locationTitle',
+      defaultMessage: 'Ný staðsetning tækis',
       description: 'Insurance company title',
     },
-    noChosenInsurance: {
-      id: 'aosah.application:overview.labels.noChosenInsurance',
-      defaultMessage: 'Ekkert tryggingafélag er valið',
+    noLocation: {
+      id: 'aosah.application:overview.labels.noLocation',
+      defaultMessage: 'Ekkert skráð',
       description: 'User has not chosen an insurance company',
     },
-    addInsuranceButton: {
-      id: 'aosah.application:overview.labels.addInsuranceButton',
-      defaultMessage: 'Skrá tryggingafélag',
+    addLocationButton: {
+      id: 'aosah.application:overview.labels.addLocation',
+      defaultMessage: 'Skrá staðsetningu tækis',
       description: 'Add insurance company button',
     },
     salePrice: {

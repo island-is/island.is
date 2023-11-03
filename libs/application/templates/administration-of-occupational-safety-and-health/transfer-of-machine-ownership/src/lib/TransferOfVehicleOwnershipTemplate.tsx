@@ -114,9 +114,6 @@ const template: ApplicationTemplate<
           },
           progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
 
           roles: [
             {
@@ -193,13 +190,6 @@ const template: ApplicationTemplate<
               pruneInDaysAtMidnight(application, 7),
             shouldDeleteChargeIfPaymentFulfilled: true,
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.addReview,
-            shouldPersistToExternalData: true,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -212,7 +202,7 @@ const template: ApplicationTemplate<
                   'sellerCoOwner',
                   'buyer',
                   'buyerCoOwnerAndOperator',
-                  'insurance',
+                  'location',
                   'rejecter',
                 ],
               },
@@ -231,7 +221,7 @@ const template: ApplicationTemplate<
                   'buyer',
                   'buyerCoOwnerAndOperator',
                   'buyerMainOperator',
-                  'insurance',
+                  'location',
                   'rejecter',
                 ],
               },

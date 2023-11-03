@@ -22,17 +22,18 @@ export const VehicleSection: FC<
   const { answers } = application
 
   const dateOfContract = format(
-    parseISO(getValueViaPath(answers, 'vehicle.date', '') as string),
+    parseISO(getValueViaPath(answers, 'machine.date', '') as string),
     'dd.MM.yyyy',
     {
       locale: is,
     },
   )
-  const carColor = getValueViaPath(answers, 'pickVehicle.color', undefined) as
+  const regNumber = getValueViaPath(answers, 'machine.regNumber', undefined) as
     | string
     | undefined
-  const carPlate = getValueViaPath(answers, 'pickVehicle.plate', '') as string
-  const salePrice = getValueViaPath(answers, 'vehicle.salePrice', '') as string
+  const type = getValueViaPath(answers, 'machine.type', '') as string
+  const subType = getValueViaPath(answers, 'machine.subType', '') as string
+  const category = getValueViaPath(answers, 'machine.category', '') as string
   const buyerCoOwnerAndOperator = getValueViaPath(
     answers,
     'buyerCoOwnerAndOperator',
@@ -67,20 +68,15 @@ export const VehicleSection: FC<
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text>{getValueViaPath(answers, 'vehicle.type', '') as string}</Text>
+          <Text>{regNumber ? regNumber : ''}</Text>
           <Text>
-            {carColor ? `${carColor} - ` : ''}
-            {carPlate}
+            {type ? `${type} - ` : ''}
+            {subType}
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           {(!isOperator || isSeller || isSellerCoOwner) &&
-            salePrice.length > 0 && (
-              <Text>
-                {`${formatMessage(overview.labels.salePrice)} ${formatIsk(
-                  parseInt(salePrice, 10),
-                )}`}
-              </Text>
-            )}
+            category.length > 0 && <Text>{category}</Text>}
           <Text>{`${formatMessage(
             overview.labels.agreementDate,
           )} ${dateOfContract}`}</Text>

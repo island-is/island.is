@@ -16,6 +16,8 @@ export class BaseTemplateApiService {
       error: Error,
     ) => TemplateApiError,
   ): Promise<PerformActionResult> {
+    console.log('action', action)
+    console.log('error', handleError)
     // No index signature with a parameter of type 'string' was found on type
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

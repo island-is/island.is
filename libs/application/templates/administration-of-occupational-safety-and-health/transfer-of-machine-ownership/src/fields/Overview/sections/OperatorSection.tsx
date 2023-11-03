@@ -32,11 +32,7 @@ export const OperatorSection: FC<
             >
               <Box marginBottom={operators.length === index + 1 ? 0 : 2}>
                 <Text variant="h4">
-                  {formatMessage(information.labels.operator.title)}{' '}
-                  {operators.length > 1 ? index + 1 : ''}{' '}
-                  {operators.length > 1 && mainOperator === nationalId
-                    ? `(${formatMessage(information.labels.operator.main)})`
-                    : ''}{' '}
+                  {formatMessage(information.labels.operator.title)}
                   {isOperator && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>

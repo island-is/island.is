@@ -31,6 +31,7 @@ export const ApplicationStatus: FC<
     reviewerNationalId,
     application.answers,
   )
+  console.log('application', application)
 
   return (
     <Box marginBottom={10}>

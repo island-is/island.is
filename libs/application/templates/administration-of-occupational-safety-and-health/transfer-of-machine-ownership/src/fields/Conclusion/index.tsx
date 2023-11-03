@@ -22,7 +22,7 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
 ) => {
   const { application } = props
   const { formatMessage } = useLocale()
-
+  console.log('WE ARE HERE !!!!')
   return (
     <Box marginTop={2}>
       <Box marginBottom={5}>

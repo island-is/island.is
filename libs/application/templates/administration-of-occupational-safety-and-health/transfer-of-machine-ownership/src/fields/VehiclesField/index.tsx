@@ -1,8 +1,8 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC, useCallback, useEffect } from 'react'
-import { VehicleSelectField } from './VehicleSelectField'
-import { VehicleRadioField } from './VehicleRadioField'
+import { MachineSelectField } from './MachineSelectField'
+import { MachineRadioField } from './MachineRadioField'
 import { useFormContext } from 'react-hook-form'
 import { Machine, VehiclesCurrentVehicle } from '../../shared'
 import { useMutation } from '@apollo/client'
@@ -39,12 +39,12 @@ export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   return (
     <Box paddingTop={2}>
       {currentMachineList.length > 5 ? (
-        <VehicleSelectField
+        <MachineSelectField
           currentMachineList={currentMachineList}
           {...props}
         />
       ) : (
-        <VehicleRadioField currentMachineList={currentMachineList} {...props} />
+        <MachineRadioField currentMachineList={currentMachineList} {...props} />
       )}
     </Box>
   )

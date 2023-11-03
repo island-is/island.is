@@ -36,11 +36,10 @@ export const prerequisitesSection = buildSection({
           title: externalData.myMachines.title,
           subTitle: externalData.myMachines.subTitle,
         }),
-        //TODOx add back when payment is working on DEV
-        // buildDataProviderItem({
-        //   provider: VinnueftirlitidPaymentCatalogApi,
-        //   title: '',
-        // }),
+        buildDataProviderItem({
+          provider: VinnueftirlitidPaymentCatalogApi,
+          title: '',
+        }),
       ],
     }),
   ],

@@ -4,8 +4,8 @@ export const insurance = {
   general: defineMessages({
     title: {
       id: 'aosah.application:insurance.general.title',
-      defaultMessage: 'Veldu tryggingafélag',
-      description: 'Title of insurance screen',
+      defaultMessage: 'Staðsetning tækis',
+      description: 'Title of location screen',
     },
     description: {
       id: 'aosah.application:insurance.general.description',
@@ -15,10 +15,25 @@ export const insurance = {
     },
   }),
   labels: defineMessages({
-    selectTitle: {
-      id: 'aosah.application:insurance.labels.selectTitle',
-      defaultMessage: 'Veldu tryggingarfélag',
+    addressTitle: {
+      id: 'aosah.application:insurance.labels.addressTitle',
+      defaultMessage: 'Staðsetning',
       description: 'Insurance select title',
+    },
+    addressLabel: {
+      id: 'aosah.application:insurance.labels.addressLabel',
+      defaultMessage: 'Heimilisfang',
+      description: 'Location address label',
+    },
+    postCodeLabel: {
+      id: 'aosah.application:insurance.labels.postCodeLabel',
+      defaultMessage: 'Póstnúmer',
+      description: 'Cocation postcode label',
+    },
+    moreInfoLabel: {
+      id: 'aosah.application:insurance.labels.moreInfoLabel',
+      defaultMessage: 'Nánari lýsing',
+      description: 'Location more info label',
     },
     selectPlaceholder: {
       id: 'aosah.application:insurance.labels.selectPlaceholder',
@@ -27,7 +42,7 @@ export const insurance = {
     },
     approveButton: {
       id: 'aosah.application:insurance.labels.approveButton',
-      defaultMessage: 'Staðfesta tryggingafélag',
+      defaultMessage: 'Staðfesta',
       description: 'Insurance approve button text',
     },
     outOfCommission: {

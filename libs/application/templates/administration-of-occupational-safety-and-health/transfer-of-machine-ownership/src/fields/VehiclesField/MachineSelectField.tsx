@@ -18,12 +18,12 @@ import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { Machine, MachineDetails } from '../../shared'
 
-interface VehicleSearchFieldProps {
+interface MachineSearchFieldProps {
   currentMachineList: Machine[]
 }
 
-export const VehicleSelectField: FC<
-  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
+export const MachineSelectField: FC<
+  React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
 > = ({ currentMachineList, application, errors, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()

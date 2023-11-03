@@ -10,6 +10,8 @@ import {
   MachinesApi,
   Configuration,
   MachineOwnerChangeApi,
+  MachineSupervisorChangeApi,
+  MachineCategoryApi,
 } from '../../gen/fetch'
 import { TransferOfMachineOwnershipClientConfig } from './transferOfMachineOwnershipClient.config'
 import { CustomMachineApi } from './customMachineApi'
@@ -75,6 +77,56 @@ import { CustomMachineApi } from './customMachineApi'
         idsClientConfig: ConfigType<typeof IdsClientConfig>,
       ) => {
         return new MachineOwnerChangeApi(
+          new Configuration(
+            configFactory(
+              xRoadConfig,
+              config,
+              idsClientConfig,
+              `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+              'application/json', // Set the desired Accept header
+            ),
+          ),
+        )
+      },
+      inject: [
+        XRoadConfig.KEY,
+        TransferOfMachineOwnershipClientConfig.KEY,
+        IdsClientConfig.KEY,
+      ],
+    },
+    {
+      provide: MachineSupervisorChangeApi,
+      useFactory: (
+        xRoadConfig: ConfigType<typeof XRoadConfig>,
+        config: ConfigType<typeof TransferOfMachineOwnershipClientConfig>,
+        idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      ) => {
+        return new MachineSupervisorChangeApi(
+          new Configuration(
+            configFactory(
+              xRoadConfig,
+              config,
+              idsClientConfig,
+              `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+              'application/json-patch+json', // Set the desired Accept header
+            ),
+          ),
+        )
+      },
+      inject: [
+        XRoadConfig.KEY,
+        TransferOfMachineOwnershipClientConfig.KEY,
+        IdsClientConfig.KEY,
+      ],
+    },
+    {
+      provide: MachineCategoryApi,
+      useFactory: (
+        xRoadConfig: ConfigType<typeof XRoadConfig>,
+        config: ConfigType<typeof TransferOfMachineOwnershipClientConfig>,
+        idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      ) => {
+        return new MachineCategoryApi(
           new Configuration(
             configFactory(
               xRoadConfig,

@@ -23,12 +23,12 @@ interface Option {
   disabled?: boolean
 }
 
-interface VehicleSearchFieldProps {
+interface MachineSearchFieldProps {
   currentMachineList: Machine[]
 }
 
-export const VehicleRadioField: FC<
-  React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
+export const MachineRadioField: FC<
+  React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
 > = ({ currentMachineList, application, errors }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
@@ -88,6 +88,7 @@ export const VehicleRadioField: FC<
         )
         setValue('machine.plate', response.machineDetails.licensePlateNumber)
         setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
+        setValue('machine.id', currentMachine.id)
         setPlate(disabled ? '' : currentMachine.registrationNumber || '')
 
         setIsLoading(false)

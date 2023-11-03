@@ -306,7 +306,7 @@ export const information = {
     coOwnersAndOperators: defineMessages({
       title: {
         id: 'aosah.application:information.labels.coOwnersAndOperators.title',
-        defaultMessage: 'Meðeigandi / umráðamaður',
+        defaultMessage: 'Umráðamaður',
         description: 'Coowners and operators title',
       },
       description: {
