@@ -55,7 +55,9 @@ const CaseMobile = ({
     isStatusNameForReview,
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
   } = expressions
+
   return (
     <CaseSkeleton
       caseNumber={caseNumber}
@@ -83,11 +85,13 @@ const CaseMobile = ({
             status={statusName}
             advicePublishTypeId={advicePublishTypeId}
           />
-          <BlowoutList
-            list={stakeholders}
-            isStakeholder
-            isEmpty={!isStakeholdersNotEmpty}
-          />
+          {isStakeholdersBoxVisible && (
+            <BlowoutList
+              list={stakeholders}
+              isStakeholder
+              isEmpty={!isStakeholdersNotEmpty}
+            />
+          )}
           {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
           <Coordinator contactEmail={contactEmail} contactName={contactName} />
           {isStatusNameNotPublished && (
