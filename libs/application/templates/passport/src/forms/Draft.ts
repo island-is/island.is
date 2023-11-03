@@ -9,6 +9,7 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
@@ -23,7 +24,11 @@ import {
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import { DistrictCommissionerAgencies, Services } from '../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  Passport,
+  Services,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
@@ -130,6 +135,7 @@ export const Draft: Form = buildForm({
                   Services.EXPRESS,
                 )
                 const expressPrices = getPrice(externalData, expressCode)
+
                 return [
                   {
                     value: Services.REGULAR,

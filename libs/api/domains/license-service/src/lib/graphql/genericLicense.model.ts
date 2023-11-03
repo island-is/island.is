@@ -45,7 +45,7 @@ export class GenericLicenseProvider {
 
 @ObjectType()
 export class GenericUserLicenseMetaLinks {
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   label?: string
 
   @Field(() => String)

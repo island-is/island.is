@@ -132,7 +132,11 @@ export class LicenseServiceService {
 
       if (!onlyList) {
         const genericLicense = await this.getLicense(user, locale, license.type)
-        if (genericLicense) {
+
+        if (
+          genericLicense &&
+          genericLicense.license.status === GenericUserLicenseStatus.HasLicense
+        ) {
           licenses.push(genericLicense)
         }
       }
@@ -226,6 +230,25 @@ export class LicenseServiceService {
       })
       throw new InternalServerErrorException(
         `Invalid license type. type: ${licenseType}`,
+      )
+    }
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.getPkPassUrl) {
+      this.logger.error('License client has no getPkPassUrl implementation', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
       )
     }
 
