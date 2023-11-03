@@ -1,50 +1,46 @@
 import {
-  AnswerValidator,
-  coreHistoryMessages,
-  corePendingActionMessages,
-  pruneAfterDays,
+  buildDataProviderItem,
+  buildPaymentChargeOverviewField,
+  buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import {
-  AllowedDelegation,
   Application,
   ApplicationContext,
   ApplicationRole,
-  ApplicationStateSchema,
   ApplicationStateMachineStatus,
+  ApplicationStateMeta,
+  ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
-  DefaultEvents,
-  RoleInState,
-  Schema,
-  StateLifeCycle,
-  StaticText,
-  TemplateApi,
-  ApplicationStateMeta,
   DataProviderBuilderItem,
-  NationalRegistryUserApi,
-  UserProfileApi,
-  PaymentCatalogApi,
-  InstitutionNationalIds,
-  ValidateCriminalRecordApi,
   DataProviderItem,
+  DefaultEvents,
+  FormItemTypes,
+  FormModes,
   HistoryEventMessage,
+  InstitutionNationalIds,
+  NationalRegistryUserApi,
+  PaymentCatalogApi,
   PendingAction,
+  RoleInState,
+  StateLifeCycle,
+  TemplateApi,
+  UserProfileApi,
+  ValidateCriminalRecordApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import {
   AnyEventObject,
   EventObject,
   StateNodeConfig,
-  MachineConfig,
-  MachineOptions,
   StatesConfig,
 } from 'xstate'
 
 import { z } from 'zod'
 
 import { data, completedData } from './states'
-import { buildDataProviderItem } from '@island.is/application/core'
 import { buildTemplate } from '@island.is/application/utils'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 export interface ApplicationBlueprint {
   ApplicatonType: ApplicationTypes
@@ -242,4 +238,227 @@ function transformTransitions<T extends EventObject>(
   }
 
   return result as TransitionsConfig<unknown, T>
+}
+
+export function buildCertificateTemplate<
+  TContext extends ApplicationContext,
+  TStateSchema extends ApplicationStateSchema<TEvents>,
+  TEvents extends EventObject,
+>(
+  name: string,
+  certificateProvider: DataProviderBuilderItem,
+  getPdfApi: TemplateApi,
+  templateId: ApplicationTypes,
+  title: string,
+): ApplicationTemplate<TContext, TStateSchema, TEvents> {
+  const providers = [
+    buildDataProviderItem({
+      provider: NationalRegistryUserApi,
+      title: 'Persónuupplýsingar úr Þjóðskrá',
+      subTitle:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    }),
+    buildDataProviderItem({
+      provider: UserProfileApi,
+      title: 'Netfang og símanúmer úr þínum stillingum',
+      subTitle:
+        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+    }),
+    buildDataProviderItem(certificateProvider),
+    buildDataProviderItem({
+      provider: PaymentCatalogApi.configure({
+        params: {
+          organizationId: InstitutionNationalIds.SYSLUMENN,
+        },
+      }),
+      title: '',
+    }),
+  ]
+
+  const generatePayment = (title: string): string => {
+    const payment = {
+      id: 'SampleFormId',
+      title: title,
+      mode: FormModes.DRAFT,
+      type: FormItemTypes.FORM,
+      renderLastScreenBackButton: true,
+      renderLastScreenButton: true,
+      children: [
+        buildSection({
+          id: 'section',
+          title: 'Greiðsla',
+          children: [
+            {
+              id: 'multifield_payment_approval',
+              title: 'Greiðsla',
+              type: FormItemTypes.MULTI_FIELD,
+              children: [
+                buildPaymentChargeOverviewField({
+                  id: 'paymentChargeOverviewField',
+                  chargeItemCode: ChargeItemCode.CRIMINAL_RECORD,
+                  title: '',
+                }),
+                buildSubmitField({
+                  id: 'submit2',
+                  title: 'Greiðslu upplýsingar',
+                  refetchApplicationAfterSubmit: true,
+                  placement: 'footer',
+                  actions: [
+                    { event: 'SUBMIT', name: 'Confirm', type: 'primary' },
+                  ],
+                }),
+              ],
+            },
+          ],
+        }),
+      ],
+    }
+    return JSON.stringify(payment)
+  }
+
+  const generateCompleted = (title: string): string => {
+    const completed = {
+      id: 'SampleFormId',
+      title: title,
+      mode: 'draft',
+      type: 'FORM',
+      renderLastScreenBackButton: false,
+      renderLastScreenButton: false,
+      children: [
+        {
+          id: 'section1',
+          title: 'Umsókn send inn!',
+          type: 'SECTION',
+          children: [
+            {
+              id: 'multifield1',
+              title: title,
+              type: 'MULTI_FIELD',
+              children: [
+                {
+                  id: 'pdfViewer',
+                  title: 'PDF viewer',
+                  type: 'PDF_VIEWER',
+                  children: null,
+                  component: 'PdfViewerFormField',
+                  pdfKey: 'criminalRecord.data.contentBase64',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }
+    return JSON.stringify(completed)
+  }
+
+  function generatePrerequisites(
+    dataProviders: DataProviderItem[],
+    title: string,
+  ): string {
+    const prerequisites = {
+      id: 'SampleFormId',
+      title: title,
+      mode: 'notstarted',
+      type: 'FORM',
+      renderLastScreenBackButton: true,
+      renderLastScreenButton: true,
+      children: [
+        {
+          id: 'section1',
+          title: 'Gagnaöflun',
+          type: 'SECTION',
+          children: [
+            {
+              id: 'approveExternalData',
+              title: 'Utanaðkomandi gögn',
+              type: 'EXTERNAL_DATA_PROVIDER',
+              isPartOfRepeater: false,
+              children: null,
+              submitField: {
+                id: 'submit2',
+                title: 'Submit Title',
+                type: 'SUBMIT',
+                placement: 'footer',
+                children: null,
+                doesNotRequireAnswer: true,
+                component: 'SubmitFormField',
+                actions: [
+                  {
+                    event: 'SUBMIT',
+                    name: 'Samþykkja',
+                    type: 'primary',
+                  },
+                ],
+                refetchApplicationAfterSubmit: true,
+              },
+              dataProviders: dataProviders,
+            },
+          ],
+        },
+      ],
+    }
+    return JSON.stringify(prerequisites)
+  }
+
+  const blueprint: ApplicationBlueprint = {
+    ApplicatonType: templateId,
+    initalState: 'prerequisites',
+    name: name,
+    states: [
+      {
+        name: 'prerequisites',
+        status: 'draft',
+        form: generatePrerequisites(providers, title),
+        transitions: [{ event: 'SUBMIT', target: 'draft' }],
+        historyLogs: {
+          onEvent: 'SUBMIT',
+          logMessage: 'Umsókn hafin',
+        },
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: false,
+        },
+        dataProviders: [
+          PaymentCatalogApi,
+          UserProfileApi,
+          NationalRegistryUserApi,
+          ValidateCriminalRecordApi,
+        ],
+      },
+      {
+        name: 'draft',
+        status: 'draft',
+        form: generatePayment(title),
+        transitions: [{ event: 'SUBMIT', target: 'completed' }],
+        historyLogs: {
+          onEvent: 'SUBMIT',
+          logMessage: 'Greiðsla móttekin.',
+        },
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 1 * 24 * 3600 * 1000,
+        },
+      },
+      {
+        name: 'completed',
+        status: 'completed',
+        form: generateCompleted(title),
+        transitions: [{ event: 'SUBMIT', target: 'completed' }],
+        pendingAction: {
+          displayStatus: 'success',
+          title: 'Vottord afhent',
+          content: 'Vottord aðgengilegt í umsókn og á mínum síðum',
+        },
+        onEntry: [getPdfApi],
+        lifecycle: {
+          shouldBeListed: true,
+          shouldBePruned: true,
+          whenToPrune: 1 * 24 * 3600 * 1000,
+        },
+      },
+    ],
+  }
+  return buildTemplate(blueprint)
 }

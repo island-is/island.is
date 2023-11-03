@@ -7,6 +7,8 @@ export enum Comparators {
   GTE = 'gte',
   LT = 'lt',
   LTE = 'lte',
+  CONTAINS = 'contains',
+  NOT_CONTAINS = 'notcontains',
 }
 
 export enum AllOrAny {
@@ -14,12 +16,23 @@ export enum AllOrAny {
   ANY = 'any',
 }
 
-export interface StaticCheck {
+type BaseStaticCheck = {
   isMultiCheck?: false
-  questionId: string
   comparator: Comparators
   value: string | number
 }
+
+type QuestionCheck = BaseStaticCheck & {
+  questionId: string
+  externalDataId?: never
+}
+
+type ExternalDataCheck = BaseStaticCheck & {
+  questionId?: never
+  externalDataId: string
+}
+
+export type StaticCheck = QuestionCheck | ExternalDataCheck
 
 export type DynamicCheck = (
   formValue: FormValue,
