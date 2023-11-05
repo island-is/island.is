@@ -14,6 +14,8 @@ import { paymentChargeOverview } from './messages'
 
 type props = {
   sectionTitle?: MessageDescriptor
+  forPaymentLabel?: MessageDescriptor
+  totalLabel?: MessageDescriptor
   getSelectedChargeItems: (
     application: Application,
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
@@ -41,8 +43,12 @@ export const buildFormPaymentChargeOverviewSection = (props: props) =>
           buildPaymentChargeOverviewField({
             id: 'uiForms.paymentChargeOverviewMultifield',
             title: '',
-            forPaymentLabel: paymentChargeOverview.payment.forPayment,
-            totalLabel: paymentChargeOverview.payment.total,
+            forPaymentLabel: props.forPaymentLabel
+              ? props.forPaymentLabel
+              : paymentChargeOverview.payment.forPayment,
+            totalLabel: props.totalLabel
+              ? props.totalLabel
+              : paymentChargeOverview.payment.total,
             getSelectedChargeItems: props.getSelectedChargeItems,
           }),
           buildSubmitField({
