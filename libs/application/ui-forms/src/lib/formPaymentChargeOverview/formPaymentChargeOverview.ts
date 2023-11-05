@@ -13,21 +13,23 @@ import { MessageDescriptor } from 'react-intl'
 import { paymentChargeOverview } from './messages'
 
 type props = {
-  sectionTitle?: MessageDescriptor
-  forPaymentLabel?: MessageDescriptor
-  totalLabel?: MessageDescriptor
   getSelectedChargeItems: (
     application: Application,
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+  sectionTitle?: MessageDescriptor
+  forPaymentLabel?: MessageDescriptor
+  totalLabel?: MessageDescriptor
 }
 
 /**
  * Creates a form payment charge overview section for applications
  * so the developer doesn't have to write the same code over and over again.
  *
- * @param  sectionTitle The title for the section
  * @param  getSelectedChargeItems Function that returns all selected chargeItems
  * (chargeItem code and additional extraLabel if necessary)
+ * @param  sectionTitle The text for the section title
+ * @param  forPaymentLabel The text for the "For payment" sub title
+ * @param  totalLabel The text for the "total" label for total sum of all charges
  */
 export const buildFormPaymentChargeOverviewSection = (props: props) =>
   buildSection({
