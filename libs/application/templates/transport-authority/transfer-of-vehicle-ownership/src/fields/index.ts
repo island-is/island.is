@@ -1,6 +1,5 @@
 export { NationalIdWithName } from './NationalIdWithName'
 export { ApplicationStatus } from './ApplicationStatus'
-export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { Conclusion } from './Conclusion'
 export { VehiclesField } from './VehiclesField'
 export { CoOwner } from './CoOwner'
