@@ -803,6 +803,11 @@ export const m = defineMessages({
     defaultMessage: 'Tengsl',
     description: 'Relation label',
   },
+  inheritanceRelationWithApplicantLabel: {
+    id: 'es.application:inheritanceRelationWithApplicantLabel',
+    defaultMessage: 'Tengsl við umsækjanda',
+    description: 'Relation label',
+  },
   inheritanceRelationPlaceholder: {
     id: 'es.application:inheritanceRelationPlaceholder',
     defaultMessage: 'Veldu tengsl',

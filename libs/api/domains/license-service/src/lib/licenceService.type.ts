@@ -31,6 +31,7 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
+  DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -103,6 +104,8 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  //if any functionality comes attached to said data field, f.x. renewLicense
+  link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }

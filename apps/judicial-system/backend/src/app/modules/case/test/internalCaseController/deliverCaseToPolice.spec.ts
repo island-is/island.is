@@ -137,8 +137,8 @@ describe('InternalCaseController - Deliver case to police', () => {
         requestPdf,
         courtRecordPdf,
         rulingPdf,
-        [],
         custodyNoticePdf,
+        undefined,
       )
       expect(then.result.delivered).toEqual(true)
     })
