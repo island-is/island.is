@@ -31,6 +31,7 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
+  DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId

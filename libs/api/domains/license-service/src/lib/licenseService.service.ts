@@ -252,6 +252,26 @@ export class LicenseServiceService {
       )
     }
 
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.getPkPassUrl) {
+      this.logger.error('License client has no getPkPassUrl implementation', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
+      )
+    }
+
     const pkPassRes = await client.getPkPassUrl(user)
 
     if (pkPassRes.ok) {
