@@ -252,6 +252,15 @@ export const signedVerdictOverview = {
           'Notaður sem titill í upplýsingaboxi um að úrskurður hafi verið leiðréttur á yfirlitsskjá afgreiddra mála.',
       },
     }),
+    reopenCase: defineMessages({
+      text: {
+        id: 'judicial.system.core:signed_verdict_overview.reopen_case.text',
+        defaultMessage:
+          'Með því að halda áfram fellur núverandi undirritun úr gildi og dómari þarf að undirrita aftur eftir leiðréttingu.',
+        description:
+          'Notaður sem texti í modal til að opna mál aftur eftir úrskurð.',
+      },
+    }),
     shareCase: defineMessages({
       title: {
         id: 'judicial.system.core:signed_verdict_overview.share_case.title',

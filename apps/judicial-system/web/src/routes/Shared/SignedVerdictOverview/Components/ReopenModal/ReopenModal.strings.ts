@@ -7,13 +7,7 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á modal til að opna mál aftur eftir úrskurð.',
   },
-  text: {
-    id: 'judicial.system.core:reopen_modal.text',
-    defaultMessage:
-      'Með því að halda áfram fellur núverandi undirritun úr gildi og dómari þarf að undirrita aftur eftir leiðréttingu.',
-    description:
-      'Notaður sem texti í modal til að opna mál aftur eftir úrskurð.',
-  },
+
   continue: {
     id: 'judicial.system.core:reopen_modal.continue',
     defaultMessage: 'Halda áfram',

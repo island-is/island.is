@@ -21,12 +21,17 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
+import ReopenModal from '../../Shared/SignedVerdictOverview/Components/ReopenModal/ReopenModal'
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { result as strings } from './Result.strings'
+
+type modalTypes = 'reopenCase' | 'none'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -156,10 +161,17 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
-            hideNextButton={true}
+            nextButtonText={formatMessage(strings.nextButtonText)}
+            onNextButtonClick={() => setModalVisible('reopenCase')}
           />
         </FormContentContainer>
       </PageLayout>
+      {modalVisible === 'reopenCase' && (
+        <ReopenModal
+          text={formatMessage(strings.reopenCaseText)}
+          onClose={() => setModalVisible('none')}
+        />
+      )}
     </>
   )
 }

@@ -3,35 +3,43 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
+  COURT_OF_APPEAL_OVERVIEW_ROUTE,
   INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   CaseTransition,
+  InstitutionType,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReopenModal.strings'
 
 interface Props {
+  text: string
   onClose: () => void
 }
 
-const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
+const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({
+  onClose,
+  text,
+}) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
+  const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase } = useCase()
 
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(strings.text)}
+      text={text}
       primaryButtonText={formatMessage(strings.continue)}
       isPrimaryButtonLoading={isTransitioningCase}
       onPrimaryButtonClick={async () => {
@@ -42,7 +50,9 @@ const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
 
         if (caseTransitioned) {
           router.push(
-            isRestrictionCase(workingCase.type)
+            user?.institution?.type === InstitutionType.COURT_OF_APPEALS
+              ? `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`
+              : isRestrictionCase(workingCase.type)
               ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
               : `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
           )

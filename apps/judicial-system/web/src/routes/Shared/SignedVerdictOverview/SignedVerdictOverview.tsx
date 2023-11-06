@@ -758,7 +758,10 @@ export const SignedVerdictOverview: React.FC = () => {
           />
         )}
         {isReopeningCase && (
-          <ReopenModal onClose={() => setIsReopeningCase(false)} />
+          <ReopenModal
+            text={formatMessage(m.sections.reopenCase.text)}
+            onClose={() => setIsReopeningCase(false)}
+          />
         )}
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal
