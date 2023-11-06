@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { slices, nestedFields } from './fragments'
+import { slices, nestedFields, processEntryFields } from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -276,9 +276,12 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      body {
+        ...ProcessEntryFields
+      }
       processEntryButtonText
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       category {
         slug
@@ -290,6 +293,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
       }
     }
   }
+  ${processEntryFields}
 `
 
 export const GET_ORGANIZATION_TAGS_QUERY = gql`

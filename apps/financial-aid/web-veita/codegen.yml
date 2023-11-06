@@ -1,9 +1,9 @@
 generates:
-  ./apps/air-discount-scheme/web/graphql/schema.tsx:
+  ./apps/financial-aid/web-veita/src/graphql/schema.tsx:
     schema:
-      - ./apps/air-discount-scheme/api.graphql
+      - ./apps/financial-aid/api/src/api.graphql
     documents:
-      - ./apps/air-discount-scheme/web/**/*.(ts|tsx)
+      - ./apps/financial-aid/web-veita/**/*.(ts|tsx)
     plugins:
       - typescript
       - typescript-operations
@@ -14,9 +14,9 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
-  ./apps/air-discount-scheme/web/graphql/possibleTypes.json:
+  ./apps/financial-aid/web-veita/src/graphql/possibleTypes.json:
     schema:
-      - ./apps/air-discount-scheme/api.graphql
+      - ./apps/financial-aid/api/src/api.graphql
     plugins:
       - fragment-matcher
     config:
