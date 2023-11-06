@@ -59,6 +59,7 @@ export const financeModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
+      key: 'FinanceTransactionPeriods',
     },
     {
       name: m.financeEmployeeClaims,
