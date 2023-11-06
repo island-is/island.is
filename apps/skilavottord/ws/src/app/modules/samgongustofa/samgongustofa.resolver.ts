@@ -14,9 +14,7 @@ export class SamgongustofaResolver {
 
   @Query(() => [VehicleInformation])
   async skilavottordVehicles(): Promise<Array<VehicleInformation>> {
-    console.log(
-      '------------ SKILAVOTTORD ENDPOINT HITTTT  1536 ------------------',
-    )
+    console.log('------------ OLD ENDPOINT HITTTT  1536 ------------------')
 
     return this.samgongustofaService.getUserVehiclesInformation('3012755609')
   }
