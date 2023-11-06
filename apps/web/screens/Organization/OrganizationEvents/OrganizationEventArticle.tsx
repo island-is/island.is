@@ -109,13 +109,17 @@ const EventInformationBox = ({
             <EventTime
               startTime={event.time?.startTime ?? ''}
               endTime={event.time?.endTime ?? ''}
+              timePrefix={
+                n('timePrefix', activeLocale === 'is' ? 'kl.' : '') as string
+              }
               timeSuffix={
                 n('timeSuffix', activeLocale === 'is' ? 'til' : 'to') as string
               }
             />
           </Box>
         )}
-        {event.location && (
+        {((event.location?.useFreeText && event.location?.freeText) ||
+          event.location?.streetAddress) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Box>
               <Icon color="blue400" icon="home" type="outline" />

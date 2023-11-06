@@ -60,7 +60,7 @@ export const LatestEventsSlice = ({
         </GridContainer>
 
         <GridItems
-          mobileItemWidth={270}
+          mobileItemWidth={316}
           mobileItemsRows={1}
           paddingTop={5}
           paddingBottom={5}

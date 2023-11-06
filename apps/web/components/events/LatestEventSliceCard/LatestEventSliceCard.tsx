@@ -54,6 +54,12 @@ export const LatestEventSliceCard: React.FC<
                 <EventTime
                   startTime={startTime}
                   endTime={endTime}
+                  timePrefix={
+                    n(
+                      'timePrefix',
+                      activeLocale === 'is' ? 'kl.' : '',
+                    ) as string
+                  }
                   timeSuffix={
                     n(
                       'timeSuffix',
