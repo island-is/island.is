@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseTransition,
   NotificationType,
@@ -93,11 +94,14 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleNextButtonClick = async () => {
-    const caseTransitioned = await transitionCase(
-      workingCase.id,
-      CaseTransition.COMPLETE_APPEAL,
-      setWorkingCase,
-    )
+    const caseTransitioned =
+      workingCase.appealState !== CaseAppealState.COMPLETED
+        ? await transitionCase(
+            workingCase.id,
+            CaseTransition.COMPLETE_APPEAL,
+            setWorkingCase,
+          )
+        : true
 
     setVisibleModal(
       hasSentNotification(
