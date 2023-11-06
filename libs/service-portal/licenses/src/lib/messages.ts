@@ -78,6 +78,18 @@ export const m = defineMessages({
     defaultMessage:
       'Hér birtast upplýsingar um vinnuvélaskírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
   },
+  pCard: {
+    id: 'sp.license:p-card',
+    defaultMessage: 'P-kort',
+  },
+  yourPCard: {
+    id: 'sp.license:your-p-card',
+    defaultMessage: 'P-kort',
+  },
+  yourPCardDescription: {
+    id: 'sp.license:p-card-description',
+    defaultMessage: 'Stæðiskort fyrir hreyfihamlaða',
+  },
   expiresIn: {
     id: 'sp.license:expires-in',
     defaultMessage: 'Rennur út innan ',

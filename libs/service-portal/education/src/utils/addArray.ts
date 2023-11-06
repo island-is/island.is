@@ -6,5 +6,5 @@ export const addArray = (arr: Array<string>) => {
         return sum
       }
       return sum + it
-    })
+    }, 0)
 }

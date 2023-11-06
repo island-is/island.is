@@ -109,21 +109,22 @@ describe('InternalCaseController - Deliver case to police', () => {
 
       then = await givenWhenThen(caseId, theCase)
     })
-
-    it('should generate the court record pdf', async () => {
+    it('should update the police case', async () => {
+      expect(getRequestPdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
       )
-    })
-
-    it('should generate the ruling pdf', async () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         `generated/${caseId}/ruling.pdf`,
       )
-    })
-
-    it('should update the police case', async () => {
+      expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
         user,
         caseId,
@@ -137,10 +138,8 @@ describe('InternalCaseController - Deliver case to police', () => {
         courtRecordPdf,
         rulingPdf,
         custodyNoticePdf,
+        undefined,
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result.delivered).toEqual(true)
     })
   })

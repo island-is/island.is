@@ -150,7 +150,7 @@ export const is = {
   // inbox
   'inbox.screenTitle': 'Pósthólf',
   'inbox.bottomTabText': 'Pósthólf',
-  'inbox.searchPlaceholder': 'Sláðu inn leitarorð...',
+  'inbox.searchPlaceholder': 'Leita...',
   'inbox.loadingText': 'Leita í pósthólfi...',
   'inbox.resultText': 'niðurstöður fundust',
   'inbox.singleResultText': 'niðurstaða fannst',
@@ -158,6 +158,16 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
+  'inbox.filterButtonTitle': 'Opna síu',
+  'inbox.filterOpenedTagTitle': 'Ólesið',
+  'inbox.filterArchivedTagTitle': 'Geymsla',
+  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+
+  // inbox filters
+  'inboxFilters.screenTitle': 'Sía skjöl',
+  'inboxFilters.unreadOnly': 'Sýna einungis ólesið',
+  'inboxFilters.starred': 'Stjörnumerkt',
+  'inboxFilters.archived': 'Geymsla',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
@@ -348,6 +358,11 @@ export const is = {
   'licenseScannerResult.birthDate': 'Fæðingardagur',
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
+
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',

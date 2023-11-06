@@ -19,6 +19,7 @@ import type { ConfigType } from '@island.is/nest/config'
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
@@ -780,6 +781,7 @@ export class InternalCaseService {
           courtRecordPdf as string,
           rulingPdf as string,
           custodyNoticePdf,
+          undefined,
         )
 
         return { delivered }
@@ -789,6 +791,78 @@ export class InternalCaseService {
         this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
           reason,
         })
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverAppealToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.refreshFormatMessage()
+      .then(async () => {
+        const appealRuling =
+          theCase.appealState === CaseAppealState.COMPLETED && theCase.caseFiles
+            ? await Promise.all(
+                theCase.caseFiles
+                  .filter(
+                    (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                  )
+                  .map((file) =>
+                    this.awsS3Service
+                      .getObject(file.key ?? '')
+                      .then((pdf) => pdf.toString('binary')),
+                  ),
+              )
+            : []
+        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+          (ids, defendant) =>
+            !defendant.noNationalId && defendant.nationalId
+              ? [...ids, defendant.nationalId]
+              : ids,
+          [],
+        )
+        const validToDate =
+          ([
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+
+        const originalAncestor = await this.findOriginalAncestor(theCase)
+
+        const delivered = await this.policeService.updatePoliceCase(
+          user,
+          originalAncestor.id,
+          theCase.type,
+          theCase.state,
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
+            : '',
+          validToDate,
+          theCase.conclusion ?? '',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          appealRuling,
+        )
+
+        return { delivered }
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver appeal for case ${theCase.id} to police`,
+          { reason },
+        )
 
         return { delivered: false }
       })

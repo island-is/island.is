@@ -3,6 +3,7 @@ import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
   corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -19,6 +20,8 @@ import {
   QualityPhotoApi,
   TeachersApi,
   ExistingApplicationApi,
+  InstitutionNationalIds,
+  Application,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { ApiActions, B_FULL, B_FULL_RENEWAL_65, B_TEMP } from '../lib/constants'
@@ -31,6 +34,22 @@ import {
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
 import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
+
+const getCodes = (application: Application) => {
+  const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    application.answers,
+    'applicationFor',
+    'B-full',
+  )
+
+  const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+
+  if (!chargeItemCode) {
+    throw new Error('No selected charge item code')
+  }
+  return [chargeItemCode]
+}
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -164,51 +183,10 @@ const template: ApplicationTemplate<
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          progress: 0.9,
-          lifecycle: DefaultStateLifeCycle,
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/payment').then((val) => val.payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',

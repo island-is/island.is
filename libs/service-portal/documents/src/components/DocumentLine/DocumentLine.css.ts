@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const dark50 = '#F8F8FA'
@@ -21,10 +21,6 @@ export const active = style({
   backgroundColor: theme.color.blue100,
 })
 
-export const title = style({
-  cursor: 'pointer',
-})
-
 export const unread = style({
   backgroundColor: dark50,
 })
@@ -45,6 +41,7 @@ export const line = style({
 
 export const docLineButton = style({
   overflow: 'hidden',
+  cursor: 'pointer',
 })
 
 export const button = style({})
@@ -88,6 +85,7 @@ export const imageContainer = style({
   minHeight: 48,
   maxHeight: 48,
   maxWidth: 48,
+  transition: 'background-color .25s',
 })
 
 export const largeAvatar = style({
@@ -106,6 +104,7 @@ export const checkCircle = style({
   minHeight: 30,
   maxHeight: 30,
   maxWidth: 30,
+  transition: 'background-color .25s',
 })
 
 export const linkWrapper = style({
