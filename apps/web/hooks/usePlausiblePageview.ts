@@ -12,10 +12,9 @@ export const usePlausiblePageview = (domain?: string) => {
   useEffect(() => {
     const onRouteChangeComplete = () => {
       // Only track pageviews in production
-      if (publicRuntimeConfig.environment !== 'dev' || !domain) return // TODO: change this to 'prod' again
+      if (publicRuntimeConfig.environment !== 'prod' || !domain) return
 
       // Documentation: https://plausible.io/docs/events-api
-
       fetch('https://plausible.io/api/event', {
         method: 'POST',
         headers: {
