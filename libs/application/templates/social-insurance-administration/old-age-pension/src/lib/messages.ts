@@ -109,10 +109,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
     },
-    pensionFundQuestionTitle: {
-      id: 'oap.application:pension.fund.question.title',
-      defaultMessage: 'Hefur þú sótt um í öllum þínum lífeyrissjóðum?',
-      description: 'Have you applied to all your pension funds?',
+    pensionFundQuestionDescription: {
+      id: 'oap.application:pension.fund.question.description',
+      defaultMessage: 'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+      description: 'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',

@@ -146,11 +146,11 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'questions',
               title: oldAgePensionFormMessage.pre.questionTitle,
+              description: oldAgePensionFormMessage.pre.pensionFundQuestionDescription,
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title: oldAgePensionFormMessage.pre.pensionFundQuestionTitle,
-                  description: '',
+                  title: '',
                   options: getYesNOOptions(),
                   width: 'half',
                 }),
@@ -160,7 +160,7 @@ export const PrerequisitesForm: Form = buildForm({
                   message:
                     oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                   doesNotRequireAnswer: true,
-                  alertType: 'warning',
+                  alertType: 'error',
                   condition: (answers) => {
                     const { pensionFundQuestion } =
                       getApplicationAnswers(answers)
