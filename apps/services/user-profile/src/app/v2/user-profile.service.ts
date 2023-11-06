@@ -2,14 +2,12 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import subMonths from 'date-fns/subMonths'
-import { CountryCallingCode, parsePhoneNumber } from 'libphonenumber-js'
-import pick from 'lodash/pick'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 
-import { UserProfileDto } from './dto/user-profileDto'
-import { PatchUserProfileDto } from './dto/patch-user-profileDto'
+import { UserProfileDto } from './dto/user-profile.dto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
 import { IslykillService } from './islykill.service'
@@ -86,9 +84,9 @@ export class UserProfileService {
       )
     }
 
-    const formattedPhoneNumber =
-      isMobilePhoneNumberDefined &&
-      formatPhoneNumber(userProfile.mobilePhoneNumber)
+    const formattedPhoneNumber = isMobilePhoneNumberDefined
+      ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+      : null
 
     return this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, transaction] as const

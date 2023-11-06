@@ -9,6 +9,7 @@ import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 import { DataStatus } from '../types/dataStatusTypes'
+import { formatPhoneNumber } from '../../utils/format-phone-number'
 
 jest.useFakeTimers()
 
@@ -306,6 +307,7 @@ describe('User profile API', () => {
         // Assert
         .expect(400)
 
+      console.log(response.body)
       expect(response.body.message).toBe(
         'Profile does not have a configured email address.',
       )
@@ -513,7 +515,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
 
@@ -536,7 +538,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
 
@@ -571,7 +573,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
 
@@ -601,7 +603,7 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
         Object {
           "confirmed": false,
-          "message": "Sms verification does not exist for this user",
+          "message": "SMS verification does not exist for this user",
         }
       `)
     })
@@ -619,7 +621,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
       jest.setSystemTime(new Date(2020, 5, 2))
@@ -654,7 +656,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
 
@@ -721,7 +723,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
       const response = await request(app.getHttpServer())
@@ -754,16 +756,18 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
+          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
         },
       })
+
+      console.log('verification123', verification)
 
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)
         .send({
           code: verification.smsCode,
-          mobilePhoneNumber: '1234567',
+          mobilePhoneNumber: '7777777',
         })
         .expect(200)
 
@@ -771,7 +775,7 @@ describe('User profile API', () => {
       expect(response.body).toMatchInlineSnapshot(`
           Object {
             "confirmed": false,
-            "message": "Sms verification does not exist for this user",
+            "message": "SMS verification does not exist for this user",
           }
         `)
     })

@@ -19,7 +19,6 @@ import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
 import { NUDGE_INTERVAL } from '../user-profile.service'
-import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
 
 const testUserProfile = {

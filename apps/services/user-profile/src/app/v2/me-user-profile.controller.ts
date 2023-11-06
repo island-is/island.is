@@ -19,11 +19,10 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-
-import { UserProfileDto } from './dto/user-profileDto'
+import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-import { PatchUserProfileDto } from './dto/patch-user-profileDto'
-import { CreateVerificationDto } from './dto/create-verificationDto'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { CreateVerificationDto } from './dto/create-verification.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 

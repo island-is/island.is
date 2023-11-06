@@ -90,7 +90,10 @@ export class VerificationService {
   ): Promise<SmsVerification | null> {
     const code = this.generateVerificationCode(codeLength)
     const verification = {
-      ...createSmsVerification,
+      nationalId: createSmsVerification.nationalId,
+      mobilePhoneNumber: formatPhoneNumber(
+        createSmsVerification.mobilePhoneNumber,
+      ),
       tries: 0,
       smsCode: code,
       created: new Date(),
