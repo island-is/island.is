@@ -98,6 +98,9 @@ export const generateJobsForFeature = async (
         `create-db-${feature}-${new Date().getTime()}`,
         62,
       ),
+      annotations: {
+        'argocd.argoproj.io/hook': 'PreSync'
+      }
     },
     spec: {
       template: {
