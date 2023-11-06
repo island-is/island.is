@@ -19,6 +19,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
   BlueBox,
+  CaseResubmitModal,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -97,6 +98,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       CaseTransition.COMPLETE_APPEAL,
       setWorkingCase,
     )
+
     setVisibleModal(
       hasSentNotification(
         NotificationType.APPEAL_COMPLETED,
@@ -324,7 +326,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
       </FormContentContainer>
-      {visibleModal && (
+      {visibleModal === 'UploadComplete' && (
         <Modal
           title={formatMessage(strings.uploadCompletedModalTitle)}
           text={formatMessage(strings.uploadCompletedModalText)}
@@ -334,6 +336,16 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             router.push(
               `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
             )
+          }}
+        />
+      )}
+      {visibleModal === 'ReopenCase' && (
+        <CaseResubmitModal
+          onClose={() => setVisibleModal('none')}
+          workingCase={workingCase}
+          isLoading={false}
+          onContinue={() => {
+            console.log('sad')
           }}
         />
       )}
