@@ -138,7 +138,7 @@ export const i18n = {
   },
   nationalId: {
     is: 'Kennitala',
-    en: 'SSN',
+    en: 'National Id',
   },
   cardNumber: {
     is: 'Númer korts',
