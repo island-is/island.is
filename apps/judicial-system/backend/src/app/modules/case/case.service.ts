@@ -154,17 +154,8 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
-  },
   { model: Institution, as: 'court' },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -175,7 +166,6 @@ export const include: Includeable[] = [
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'judge',
@@ -190,25 +180,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -229,6 +200,35 @@ export const include: Includeable[] = [
     model: User,
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Case,
+    as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+      },
+    ],
+  },
+  { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
   },
 ]
 
@@ -759,7 +759,7 @@ export class CaseService {
 
     if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
-        type: MessageType.DELIVER_CASE_TO_POLICE,
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
         user,
         caseId: theCase.id,
       })

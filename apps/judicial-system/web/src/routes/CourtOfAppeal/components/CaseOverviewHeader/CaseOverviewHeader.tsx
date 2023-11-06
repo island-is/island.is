@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
@@ -18,20 +18,13 @@ import {
   CaseDates,
   FormContext,
   MarkdownWrapper,
-  OverviewHeader,
-  RestrictionTags,
 } from '@island.is/judicial-system-web/src/components'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import {
-  CaseAppealDecision,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 
-const CourtOfAppealCaseOverviewHeader: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -59,6 +52,12 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
 
       return acc
     }, [] as EventLog[])
+
+  const wasAppealedAfterDeadline =
+    workingCase.appealedDate &&
+    workingCase.appealDeadline &&
+    workingCase.appealedDate > workingCase.appealDeadline
+
   return (
     <>
       <Box marginBottom={5}>
@@ -72,6 +71,14 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Button>
         </Box>
       </Box>
+      {!workingCase.appealRulingDecision && wasAppealedAfterDeadline && (
+        <Box marginBottom={5}>
+          <AlertMessage
+            message={formatMessage(strings.appealSentAfterDeadline)}
+            type="warning"
+          />
+        </Box>
+      )}
       {workingCase.appealRulingDecision &&
         workingCase.eventLogs &&
         workingCase.eventLogs.length > 0 && (
@@ -90,41 +97,7 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
           </Box>
         )}
 
-      <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-        <Box>
-          <OverviewHeader />
-
-          {workingCase.rulingDate && (
-            <Box>
-              <RulingDateLabel rulingDate={workingCase.rulingDate} />
-            </Box>
-          )}
-          {workingCase.appealedDate && (
-            <Box marginTop={1}>
-              <Text as="h5" variant="h5">
-                {workingCase.prosecutorAppealDecision ===
-                  CaseAppealDecision.APPEAL ||
-                workingCase.accusedAppealDecision === CaseAppealDecision.APPEAL
-                  ? formatMessage(strings.appealedByInCourt, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                    })
-                  : formatMessage(strings.appealedBy, {
-                      appealedByProsecutor:
-                        workingCase.appealedByRole === UserRole.PROSECUTOR,
-                      appealedDate: `${formatDate(
-                        workingCase.appealedDate,
-                        'PPPp',
-                      )}`,
-                    })}
-              </Text>
-            </Box>
-          )}
-        </Box>
-        <Box display="flex" flexDirection="column">
-          <RestrictionTags workingCase={workingCase} />
-        </Box>
-      </Box>
+      <CaseTitleInfoAndTags />
       <Box marginBottom={5}>
         {isRestrictionCase(workingCase.type) &&
           workingCase.decision !==
@@ -167,4 +140,4 @@ const CourtOfAppealCaseOverviewHeader: React.FC<
   )
 }
 
-export default CourtOfAppealCaseOverviewHeader
+export default CaseOverviewHeader
