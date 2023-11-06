@@ -30,7 +30,6 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationTestApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -126,17 +125,13 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationTestApi,
-                  title:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
-                }),
-                buildDataProviderItem({
                   provider: SocialInsuranceAdministrationBankInfoApi,
-                  title: '',
+                  title:
+                  oldAgePensionFormMessage.pre
+                    .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                  oldAgePensionFormMessage.pre
+                    .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,
@@ -162,21 +157,21 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'questions',
               title: oldAgePensionFormMessage.pre.questionTitle,
+              description: oldAgePensionFormMessage.pre.pensionFundQuestionDescription,
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
-                  title: oldAgePensionFormMessage.pre.pensionFundQuestionTitle,
-                  description: '',
+                  title: '',
                   options: getYesNOOptions(),
                   width: 'half',
                 }),
                 buildAlertMessageField({
                   id: 'question.pensionFundAlert',
-                  title: oldAgePensionFormMessage.pre.pensionFundAlertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.pre.pensionFundAlertDescription,
                   doesNotRequireAnswer: true,
-                  alertType: 'warning',
+                  alertType: 'error',
                   condition: (answers) => {
                     const { pensionFundQuestion } =
                       getApplicationAnswers(answers)

@@ -12,6 +12,7 @@ import {
   ApplicationType,
   Employment,
   RatioType,
+  TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
 } from './constants'
@@ -28,7 +29,12 @@ import * as kennitala from 'kennitala'
 import addYears from 'date-fns/addYears'
 import addMonths from 'date-fns/addMonths'
 import addDays from 'date-fns/addDays'
-import { CombinedResidenceHistory, Employer, ChildPensionRow } from '../types'
+import {
+  CombinedResidenceHistory,
+  Employer,
+  ChildPensionRow,
+  BankInfo,
+} from '../types'
 
 export interface FileType {
   key: string
@@ -102,8 +108,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
+  // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
     answers,
     'residenceHistory.question',
@@ -157,6 +162,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as ChildPensionRow[]
 
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
   const personalAllowance = getValueViaPath(
     answers,
     'paymentInfo.personalAllowance',
@@ -176,6 +183,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'paymentInfo.spouseAllowanceUsage',
   ) as string
+
+  const taxLevel = getValueViaPath(
+    answers,
+    'paymentInfo.taxLevel',
+  ) as TaxLevelOptions
 
   const additionalAttachments = getValueViaPath(
     answers,
@@ -255,7 +267,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     schoolConfirmationAttachments,
     maintenanceAttachments,
     notLivesWithApplicantAttachments,
-    //  taxLevel,
+    taxLevel,
   }
 }
 
@@ -327,10 +339,10 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
-  const bank = getValueViaPath(
+  const bankInfo = getValueViaPath(
     externalData,
-    'userProfile.data.bankInfo',
-  ) as string
+    'socialInsuranceAdministrationBankInfo.data',
+  ) as BankInfo
 
   const isEligible = getValueViaPath(
     externalData,
@@ -349,8 +361,8 @@ export function getApplicationExternalData(
     spouseName,
     spouseNationalId,
     maritalStatus,
-    bank,
     isEligible,
+    bankInfo,
   }
 }
 
@@ -669,6 +681,29 @@ export function getYesNOOptions() {
   return options
 }
 
+export function getTaxOptions() {
+  const options: Option[] = [
+    {
+      value: TaxLevelOptions.INCOME,
+      label: oldAgePensionFormMessage.payment.taxIncomeLevel,
+    },
+    {
+      value: TaxLevelOptions.FIRST_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxFirstLevel,
+    },
+    {
+      value: TaxLevelOptions.SECOND_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxSecondLevel,
+    },
+    {
+      value: TaxLevelOptions.THIRD_LEVEL,
+      label: oldAgePensionFormMessage.payment.taxThirdLevel,
+    },
+  ]
+
+  return options
+}
+
 export function getChildPensionTitle(application: Application) {
   const { custodyInformation } = getApplicationExternalData(
     application.externalData,
@@ -789,4 +824,10 @@ export const formatBankInfo = (bankInfo: string) => {
   }
 
   return bankInfo
+}
+
+export const getBank = (bankInfo: BankInfo) => {
+  return bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+    : ''
 }

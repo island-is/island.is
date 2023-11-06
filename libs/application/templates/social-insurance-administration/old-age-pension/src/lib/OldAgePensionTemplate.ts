@@ -39,8 +39,6 @@ import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationTestApi,
-  SocialInsuranceAdministrationStatusApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
@@ -95,8 +93,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
-                SocialInsuranceAdministrationTestApi,
-                SocialInsuranceAdministrationStatusApi,
                 SocialInsuranceAdministrationBankInfoApi,
                 SocialInsuranceAdministrationSpouseInNursingHomeApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

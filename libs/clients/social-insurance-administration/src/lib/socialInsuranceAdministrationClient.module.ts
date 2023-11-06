@@ -6,8 +6,6 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import {
   Configuration,
-  GetStatusApi,
-  HelloOddurApi,
   SendApplicationApi,
   GetBankInfoApi,
   GetSpouseInNursingHomeApi,
@@ -56,8 +54,6 @@ export class SocialInsuranceAdministrationClientModule {
     })
 
     const exportedApis = [
-      HelloOddurApi,
-      GetStatusApi,
       GetBankInfoApi,
       SendApplicationApi,
       GetSpouseInNursingHomeApi,

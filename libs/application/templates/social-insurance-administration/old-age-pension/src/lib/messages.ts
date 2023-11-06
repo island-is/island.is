@@ -28,6 +28,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    alertTitle: {
+      id: 'oap.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention'
+    }
   }),
 
   pre: defineMessages({
@@ -97,11 +102,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Spurningar',
       description: 'Questions',
     },
-    pensionFundAlertTitle: {
-      id: 'oap.application:pension.fund.alert.title',
-      defaultMessage: 'Lífeyrissjóðir',
-      description: 'Pension funds',
-    },
     pensionFundAlertDescription: {
       id: 'oap.application:pension.fund.alert.description',
       defaultMessage:
@@ -109,10 +109,10 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'You must start by contacting the pension funds you have paid into before you can apply for a old age pension.',
     },
-    pensionFundQuestionTitle: {
-      id: 'oap.application:pension.fund.question.title',
-      defaultMessage: 'Hefur þú sótt um í öllum þínum lífeyrissjóðum?',
-      description: 'Have you applied to all your pension funds?',
+    pensionFundQuestionDescription: {
+      id: 'oap.application:pension.fund.question.description',
+      defaultMessage: 'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+      description: 'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',
@@ -251,11 +251,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Greiðsluupplýsingar',
       description: 'Payment information',
     },
-    alertTitle: {
-      id: 'oap.application:payment.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
-    },
     alertMessage: {
       id: 'oap.application:payment.alert.message',
       defaultMessage:
@@ -283,6 +278,39 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Skráðu tölu á bilinu 1-100',
       description: 'Enter a number between 1-100',
     },
+    taxLevel: {
+      id: 'oap.application:payment.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
+    },
+    taxIncomeLevel: {
+      id: 'oap.application:payment.tax.first.level',
+      defaultMessage:
+        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
+      description:
+        'I want the withholding tax to be calculated based on my income estimate',
+    },
+    taxFirstLevel: {
+      id: 'oap.application:payment.tax.second.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      description:
+        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
+    },
+    taxSecondLevel: {
+      id: 'oap.application:payment.tax.third.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      description:
+        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
+    taxThirdLevel: {
+      id: 'oap.application:payment.tax.forth.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 3 í útreikningum staðgreiðslu (46,25% af tekjum yfir 1.151.012 kr.)',
+      description:
+        'I want tax level 3 to be taken into account in the withholding calculations (46,25% of income over ISK 1,151,012)',
+    },
   }),
 
   onePaymentPerYear: defineMessages({
@@ -296,11 +324,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage:
         'Vilt þú óska eftir að fá greiddan lífeyri einu sinni á ári? Þá eru réttindin reiknuð út þegar staðfest skattframtal liggur fyrir og eru greidd út í einu lagi. Ath með því að fá greitt einu sinni á ári fær viðkomandi nákvæmlega það sem hann á rétt á og losnar til dæmis við að fá á sig kröfu við uppgjör vegna ofgreiddra greiðslnna. Reynist inneign vera til staðar verður hún greidd með eingreiðslu þann 1. júní.',
       description: 'description',
-    },
-    onePaymentPerYearAlertTitle: {
-      id: 'oap.application:one.payment.per.year.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
     onePaymentPerYearAlertDescription: {
       id: 'oap.application:one.payment.per.year.alert.description',
@@ -403,7 +426,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'english translation',
     },
     householdSupplementDescription: {
-      id: 'oap.application:connected.applications.household.supplement.description',
+      id: 'oap.application:connected.applications.household.supplement.description#markdown',
       defaultMessage:
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description:
@@ -462,11 +485,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:connected.applications.child.pension.birth.date.placeholder',
       defaultMessage: 'Veldu fæðingardag',
       description: 'Choose date of birth',
-    },
-    childPensionNameAlertTitle: {
-      id: 'oap.application:connected.applications.child.pension.name.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
     },
     childPensionNameAlertMessage: {
       id: 'oap.application:connected.applications.child.pension.name.alert.message',
@@ -767,11 +785,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:period.desember',
       defaultMessage: 'Desember',
       description: 'December',
-    },
-    periodAlertTitle: {
-      id: 'oap.application:period.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
     },
     periodAlertMessage: {
       id: 'oap.application:period.alert.message',

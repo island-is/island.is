@@ -92,6 +92,13 @@ export enum AnswerValidationConstants {
   VALIDATE_LATEST_CHILD = 'childPensionRepeater',
 }
 
+export enum TaxLevelOptions {
+  INCOME = '0', 
+  FIRST_LEVEL = '1', 
+  SECOND_LEVEL = '2', 
+  THIRD_LEVEL = '3',
+}
+
 export enum ApplicationType {
   OLD_AGE_PENSION = 'oldAgePension',
   HALF_OLD_AGE_PENSION = 'halfOldAgePension',

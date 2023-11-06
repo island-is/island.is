@@ -22,7 +22,6 @@ describe('OldAgePensionService', () => {
         {
           provide: SocialInsuranceAdministrationClientService,
           useClass: jest.fn(() => ({
-            getOddur: () => 'OK FROM Oddur',
             sendApplication: () =>
               Promise.resolve({
                 applicationLineId: '123',
@@ -38,21 +37,6 @@ describe('OldAgePensionService', () => {
 
     oldAgePensionService =
       module.get<OldAgePensionService>(OldAgePensionService)
-  })
-
-  it('should be hello Oddur', () => {
-    expect(oldAgePensionService).toBeDefined()
-
-    const user = createCurrentUser()
-    const application = createApplication({})
-
-    return expect(
-      oldAgePensionService.helloWorld({
-        application: application,
-        auth: user,
-        currentUserLocale: 'is',
-      }),
-    ).resolves.toBe('OK FROM Oddur')
   })
 
   it('should send old age pension application', async () => {

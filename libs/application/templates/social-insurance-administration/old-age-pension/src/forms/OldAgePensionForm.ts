@@ -38,13 +38,16 @@ import {
   YES,
   IS,
   maritalStatuses,
+  TaxLevelOptions,
 } from '../lib/constants'
 import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
+  getBank,
   getChildPensionDescription,
   getChildPensionTitle,
+  getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
@@ -250,7 +253,7 @@ export const OldAgePensionForm: Form = buildForm({
               children: [
                 buildAlertMessageField({
                   id: 'paymentInfo.alert',
-                  title: oldAgePensionFormMessage.payment.alertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message: oldAgePensionFormMessage.payment.alertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'info',
@@ -265,11 +268,7 @@ export const OldAgePensionForm: Form = buildForm({
                     const bankInfo = application.externalData
                       .socialInsuranceAdministrationBankInfo.data as BankInfo
 
-                    return bankInfo.bank &&
-                      bankInfo.ledger &&
-                      bankInfo.accountNumber
-                      ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
-                      : ''
+                    return getBank(bankInfo)
                   },
                 }),
                 buildRadioField({
@@ -291,7 +290,7 @@ export const OldAgePensionForm: Form = buildForm({
                     return personalAllowance === YES
                   },
                   placeholder: '1%',
-                  defaultValue: '100%',
+                  defaultValue: '100',
                   variant: 'number',
                   width: 'half',
                   maxLength: 4,
@@ -324,10 +323,19 @@ export const OldAgePensionForm: Form = buildForm({
                     return hasSpouse && spouseAllowance === YES
                   },
                   placeholder: '1%',
-                  defaultValue: '100%',
+                  defaultValue: '100',
                   variant: 'number',
                   width: 'half',
                   maxLength: 4,
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.taxLevel',
+                  title: oldAgePensionFormMessage.payment.taxLevel,
+                  options: getTaxOptions(),
+                  width: 'full',
+                  largeButtons: true,
+                  space: 'containerGutter',
+                  defaultValue: TaxLevelOptions.INCOME,
                 }),
               ],
             }),
@@ -363,6 +371,7 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
+                  space: 'containerGutter',
                   condition: (_, externalData) => {
                     const { residenceHistory } =
                       getApplicationExternalData(externalData)
@@ -526,7 +535,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'period.alert',
-                  title: oldAgePensionFormMessage.period.periodAlertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message: oldAgePensionFormMessage.period.periodAlertMessage,
                   doesNotRequireAnswer: true,
                   alertType: 'warning',
@@ -641,8 +650,7 @@ export const OldAgePensionForm: Form = buildForm({
                 buildAlertMessageField({
                   id: 'onePaymentPerYear.alert',
                   title:
-                    oldAgePensionFormMessage.onePaymentPerYear
-                      .onePaymentPerYearAlertTitle,
+                    oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearAlertDescription,
