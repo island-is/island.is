@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import type { Locale } from 'locale'
 import { useRouter } from 'next/router'
@@ -153,12 +154,15 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
   const { linkResolver } = useLinkResolver()
 
   useLocalLinkTypeResolver()
-  // TODO: test this out so it works changing to english locale
   useContentfulId(organizationPage?.id, event?.id)
+
+  const [isSmall, setIsSmall] = useState(false)
 
   const { width } = useWindowSize()
 
-  const isSmall = width <= LAYOUT_CHANGE_BREAKPOINT
+  useEffect(() => {
+    setIsSmall(width <= LAYOUT_CHANGE_BREAKPOINT)
+  }, [width])
 
   const eventsHeading = n(
     'eventListPageTitle',
@@ -253,7 +257,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
             />
           )}
 
-          <Text>
+          <Box>
             {webRichText(
               event.content ?? [],
               {
@@ -267,7 +271,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
               },
               activeLocale,
             )}
-          </Text>
+          </Box>
         </Stack>
       </OrganizationWrapper>
       <HeadWithSocialSharing
