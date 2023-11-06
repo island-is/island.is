@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG,
-  ComplaintsToAlthingiOmbudsmanConfig,
-} from './config'
+import type { ComplaintsToAlthingiOmbudsmanConfig } from './config'
+import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
 import { generateConfirmationEmail } from './emailGenerators'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
@@ -57,17 +55,15 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     await this.caseApi
       .withMiddleware(this.tokenMiddleware)
       .createCase({ requestData: caseRequest })
-    // TODO: Check if email is still required, if so, fix email sender.
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   (props) =>
-    //     generateConfirmationEmail(
-    //       props,
-    //       this.complaintConfig.applicationSenderName,
-    //       this.complaintConfig.applicationSenderEmail,
-    //       pdf.toString('binary'),
-    //     ),
-    //   application,
-    // )
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateConfirmationEmail(
+          props,
+          this.complaintConfig.applicationSenderName,
+          this.complaintConfig.applicationSenderEmail,
+        ),
+      application,
+    )
     return null
   }
 }
