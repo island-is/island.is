@@ -116,10 +116,15 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const relationOptions = (await this.syslumennService.getEstateRelations())
       .relations
 
+    const applicantRelationOptions = (
+      await this.syslumennService.getApplicantEstateRelations()
+    ).relations
+
     return {
       success: true,
       estate,
       relationOptions,
+      applicantRelationOptions,
     }
   }
 

@@ -19,7 +19,7 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
-import { EstateTypes, relationWithApplicant } from '../../lib/constants'
+import { EstateTypes } from '../../lib/constants'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -34,19 +34,22 @@ export const EstateMembersRepeater: FC<
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
+    applicantRelationOptions: string[]
     estate: EstateRegistrant
   }
-
-  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
-    value: relation,
-    label: relation,
-  }))
 
   const relations =
     externalData.relationOptions?.map((relation) => ({
       value: relation,
       label: relation,
     })) || []
+
+  const relationsWithApplicant =
+    externalData.applicantRelationOptions?.map((relation) => ({
+      value: relation,
+      label: relation,
+    })) || []
+
   const error = (errors as any)?.estate?.estateMembers
 
   const handleAddMember = () =>

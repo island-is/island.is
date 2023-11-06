@@ -448,6 +448,18 @@ export class SyslumennService {
     }
   }
 
+  async getApplicantEstateRelations(): Promise<EstateRelations> {
+    const { id, api } = await this.createApi()
+    const res = await api.danarbuAlgengTengslUmsaekjandaGet({
+      audkenni: id,
+    })
+    return {
+      relations: res
+        .map((relation) => relation?.heiti)
+        .filter((heiti): heiti is string => Boolean(heiti)),
+    }
+  }
+
   async changeEstateRegistrant(
     currentRegistrantNationalId: string,
     newRegistrantNationalId: string,
