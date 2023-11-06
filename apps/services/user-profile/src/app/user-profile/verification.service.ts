@@ -1,21 +1,23 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
-import { parsePhoneNumber } from 'libphonenumber-js'
-import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
-import { SmsVerification } from './smsVerification.model'
-import { SmsService } from '@island.is/nova-sms'
+import { Transaction } from 'sequelize'
+
 import { EmailService } from '@island.is/email-service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
+
 import environment from '../../environments/environment'
-import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
-import { Transaction } from 'sequelize'
+import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { EmailVerification } from './emailVerification.model'
+import { SmsVerification } from './smsVerification.model'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'verification-service'
@@ -89,7 +91,10 @@ export class VerificationService {
   ): Promise<SmsVerification | null> {
     const code = this.generateVerificationCode(codeLength)
     const verification = {
-      ...createSmsVerification,
+      nationalId: createSmsVerification.nationalId,
+      mobilePhoneNumber: formatPhoneNumber(
+        createSmsVerification.mobilePhoneNumber,
+      ),
       tries: 0,
       smsCode: code,
       created: new Date(),
@@ -121,7 +126,7 @@ export class VerificationService {
 
     if (!verification) {
       return {
-        message: `Email verification does not exist for this user`,
+        message: `Email verification code does not match.`,
         confirmed: false,
       }
     }
@@ -149,7 +154,7 @@ export class VerificationService {
       verification = await verification.increment('tries')
       const remaining = maxTries - verification.tries
       return {
-        message: `Email code is not a match. ${remaining} tries remaining.`,
+        message: 'Email verification code does not match.',
         confirmed: false,
         remainingAttempts: remaining,
       }
@@ -196,20 +201,19 @@ export class VerificationService {
   ): Promise<ConfirmationDtoResponse> {
     const { transaction, maxTries = SMS_VERIFICATION_MAX_TRIES } = options ?? {}
 
-    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
-    const mobileNumber =
-      phoneNumber.country === 'IS'
-        ? (phoneNumber.nationalNumber as string)
-        : confirmSmsDto.mobilePhoneNumber
+    const formattedPhoneNumber = formatPhoneNumber(
+      confirmSmsDto.mobilePhoneNumber,
+    )
+
     let verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: mobileNumber },
+      where: { nationalId, mobilePhoneNumber: formattedPhoneNumber },
       order: [['created', 'DESC']],
       ...(transaction && { transaction }),
     })
 
     if (!verification) {
       return {
-        message: `Sms verification does not exist for this user`,
+        message: `SMS verification does not exist for this user`,
         confirmed: false,
       }
     }

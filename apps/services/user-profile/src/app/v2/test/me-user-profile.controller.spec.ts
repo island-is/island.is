@@ -1,30 +1,39 @@
-import request from 'supertest'
-
-import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
-import { createCurrentUser } from '@island.is/testing/fixtures'
-import { UserProfileScope } from '@island.is/auth/scopes'
-
-import { FixtureFactory } from './fixtureFactory'
 import { getModelToken } from '@nestjs/sequelize'
+import subMonths from 'date-fns/subMonths'
+import faker from 'faker'
+import request, { SuperTest, Test } from 'supertest'
+
+import { UserProfileScope } from '@island.is/auth/scopes'
+import { setupApp, TestApp } from '@island.is/testing/nest'
+import {
+  createCurrentUser,
+  createNationalId,
+  createPhoneNumber,
+  createVerificationCode,
+} from '@island.is/testing/fixtures'
+import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+
+import { FixtureFactory } from '../../../../test/fixture-factory'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
-import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
+import { NUDGE_INTERVAL } from '../user-profile.service'
+import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 
 const testUserProfile = {
-  nationalId: '1234567890',
-  email: 'test@test.is',
-  mobilePhoneNumber: '1234567',
+  nationalId: createNationalId(),
+  email: faker.internet.email(),
+  mobilePhoneNumber: formatPhoneNumber(createPhoneNumber()),
 }
 
-const smsVerificationCode = '123'
-const emailVerificationCode = '321'
+const smsVerificationCode = createVerificationCode()
+const emailVerificationCode = createVerificationCode()
 
-const newEmail = 'test1234@test.is'
-const newPhoneNumber = '9876543'
+const newEmail = faker.internet.email()
+const newPhoneNumber = formatPhoneNumber(createPhoneNumber())
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
@@ -38,59 +47,14 @@ const testSMSVerification = {
   smsCode: smsVerificationCode,
 }
 
-describe('MeUserProfile', () => {
-  describe('Auth and scopes', () => {
-    it('GET /v2/me should return 401 when user is not authenticated', async () => {
-      // Arrange
-      const app = await setupAppWithoutAuth({
-        AppModule: AppModule,
-        SequelizeConfigService: SequelizeConfigService,
-      })
+describe('MeUserProfileController', () => {
+  describe('GET /v2/me', () => {
+    let app: TestApp = null
+    let server: SuperTest<Test> = null
+    let fixtureFactory: FixtureFactory = null
+    let userProfileModel: typeof UserProfile = null
 
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(401)
-      expect(res.body).toMatchObject({
-        statusCode: 401,
-        message: 'Unauthorized',
-      })
-
-      await app.cleanUp()
-    })
-
-    it('GET /v2/me should return 403 Forbidden when user does not have the correct scope', async () => {
-      // Arrange
-      const app = await setupApp({
-        AppModule,
-        SequelizeConfigService,
-        user: createCurrentUser(),
-      })
-
-      const server = request(app.getHttpServer())
-
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(403)
-      expect(res.body).toMatchObject({
-        statusCode: 403,
-        error: 'Forbidden',
-        message: 'Forbidden resource',
-      })
-
-      await app.cleanUp()
-    })
-  })
-  describe('GET user-profile', () => {
-    let app = null
-    let server = null
-
-    beforeEach(async () => {
+    beforeAll(async () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
@@ -101,13 +65,22 @@ describe('MeUserProfile', () => {
       })
 
       server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
     })
 
-    afterEach(() => {
-      app.cleanUp()
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
     })
 
-    it('GET /v2/me should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
+    afterAll(async () => {
+      await app.cleanUp()
+    })
+
+    it('should return 200 with default user profile when user does not exist in db', async () => {
+      // Act
       const res = await server.get('/v2/me')
 
       // Assert
@@ -120,82 +93,78 @@ describe('MeUserProfile', () => {
         mobilePhoneNumberVerified: false,
         locale: null,
         documentNotifications: true,
-      })
-    })
-
-    it('GET /v2/me should return 200 with UserProfileDto for logged in user', async () => {
-      // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-
-      await fixtureFactory.createUserProfile(testUserProfile)
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject({
-        nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: false,
-        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-        mobilePhoneNumberVerified: false,
-        documentNotifications: true,
         needsNudge: null,
       })
     })
 
-    it('GET /v2/me should return 200 with UserProfileDto for logged in user with no need for nudge', async () => {
-      // Arrange
-      const fixtureFactory = new FixtureFactory(app)
+    const currentDate = new Date()
+    const expiredDate = subMonths(new Date(), NUDGE_INTERVAL + 1)
 
-      await fixtureFactory.createUserProfile({
-        ...testUserProfile,
-        lastNudge: new Date(),
-      })
+    it.each`
+      verifiedField                     | isVerified | lastNudge      | needsNudgeExpected
+      ${['email']}                      | ${true}    | ${null}        | ${true}
+      ${['email']}                      | ${true}    | ${currentDate} | ${false}
+      ${['email']}                      | ${true}    | ${expiredDate} | ${true}
+      ${['email']}                      | ${false}   | ${null}        | ${null}
+      ${['email']}                      | ${false}   | ${currentDate} | ${null}
+      ${['email']}                      | ${false}   | ${expiredDate} | ${null}
+      ${['mobilePhoneNumber']}          | ${true}    | ${null}        | ${true}
+      ${['mobilePhoneNumber']}          | ${true}    | ${currentDate} | ${false}
+      ${['mobilePhoneNumber']}          | ${true}    | ${expiredDate} | ${true}
+      ${['mobilePhoneNumber']}          | ${false}   | ${null}        | ${null}
+      ${['mobilePhoneNumber']}          | ${false}   | ${currentDate} | ${null}
+      ${['mobilePhoneNumber']}          | ${false}   | ${expiredDate} | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${null}        | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${currentDate} | ${false}
+      ${['email', 'mobilePhoneNumber']} | ${true}    | ${expiredDate} | ${true}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${null}        | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${currentDate} | ${null}
+      ${['email', 'mobilePhoneNumber']} | ${false}   | ${expiredDate} | ${null}
+      ${null}                           | ${false}   | ${null}        | ${null}
+      ${null}                           | ${false}   | ${currentDate} | ${false}
+      ${null}                           | ${false}   | ${expiredDate} | ${true}
+    `(
+      'should return needsNudge=$needsNudgeExpected when $verifiedField is set and lastNudge=$lastNudge',
+      async ({
+        verifiedField,
+        isVerified,
+        lastNudge,
+        needsNudgeExpected,
+      }: {
+        verifiedField: string[] | null
+        isVerified: boolean
+        lastNudge: Date | null
+        needsNudgeExpected: boolean | null
+      }) => {
+        // Arrange
+        const expectedTestValues = verifiedField
+          ? verifiedField.reduce((acc, field) => {
+              return {
+                ...acc,
+                [field]: testUserProfile[field],
+                [`${field}Verified`]: isVerified,
+              }
+            }, {})
+          : {}
+        await fixtureFactory.createUserProfile({
+          nationalId: testUserProfile.nationalId,
+          ...expectedTestValues,
+          lastNudge,
+        })
 
-      // Act
-      const res = await server.get('/v2/me')
+        // Act
+        const res = await server.get('/v2/me')
 
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject({
-        nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: false,
-        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-        mobilePhoneNumberVerified: false,
-        documentNotifications: true,
-        needsNudge: false,
-      })
-    })
-
-    it('GET /v2/me should return 200 with UserProfileDto for logged in user with need for nudge since its been 6 months since last nudge', async () => {
-      // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-      const lastNudge = new Date().setMonth(new Date().getMonth() - 7)
-
-      await fixtureFactory.createUserProfile({
-        nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-        lastNudge: new Date(lastNudge),
-      })
-
-      // Act
-      const res = await server.get('/v2/me')
-
-      // Assert
-      expect(res.status).toEqual(200)
-      expect(res.body).toMatchObject({
-        nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
-        emailVerified: false,
-        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
-        mobilePhoneNumberVerified: false,
-        documentNotifications: true,
-        needsNudge: true,
-      })
-    })
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toMatchObject({
+          nationalId: testUserProfile.nationalId,
+          documentNotifications: true,
+          ...expectedTestValues,
+          needsNudge: needsNudgeExpected,
+        })
+      },
+    )
   })
 
   describe('PATCH user-profile', () => {
@@ -214,8 +183,7 @@ describe('MeUserProfile', () => {
         // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
         dbType: 'postgres',
       })
-
-      // Arrange
+      server = request(app.getHttpServer())
       const fixtureFactory = new FixtureFactory(app)
 
       await fixtureFactory.createUserProfile(testUserProfile)
@@ -233,22 +201,28 @@ describe('MeUserProfile', () => {
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
 
+      // Mock islyklar api responses
       islyklarApi = app.get(IslyklarApi)
-      islyklarApi.islyklarPut = jest
+      islyklarApi.islyklarPut = jest.fn()
+      islyklarApi.islyklarPost = jest
         .fn()
-        .mockImplementation((user: PublicUser) => {
-          return new Promise<PublicUser>((resolve) => resolve(user))
+        .mockImplementation(({ user }: { user: PublicUser }) => {
+          return new Promise((resolve) => {
+            resolve(user)
+          })
         })
-      islyklarApi.islyklarGet = jest.fn()
-
-      server = request(app.getHttpServer())
+      islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
+        ssn: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        mobile: testUserProfile.mobilePhoneNumber,
+      })
     })
 
-    afterEach(() => {
-      app.cleanUp()
+    afterEach(async () => {
+      await app.cleanUp()
     })
 
-    it('PATCH /v2/me should return 201 with changed data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
@@ -258,7 +232,7 @@ describe('MeUserProfile', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         email: newEmail,
         emailVerified: true,
@@ -276,7 +250,7 @@ describe('MeUserProfile', () => {
       expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
     })
 
-    it('PATCH /v2/me should return 201 with changed mobile data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed mobile data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: newPhoneNumber,
@@ -284,7 +258,7 @@ describe('MeUserProfile', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
         mobilePhoneNumber: newPhoneNumber,
@@ -300,7 +274,7 @@ describe('MeUserProfile', () => {
       expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
     })
 
-    it('PATCH /v2/me should return 201 with changed email data in response', async () => {
+    it('PATCH /v2/me should return 200 with changed email data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
@@ -308,7 +282,7 @@ describe('MeUserProfile', () => {
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
         email: newEmail,
@@ -334,7 +308,9 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message: 'Email code is not a match. 2 tries remaining.',
+        title: 'Email verification code does not match.',
+        status: 400,
+        type: 'https://httpstatuses.org/400',
       })
 
       // Assert Db records
@@ -363,7 +339,9 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message: 'SMS code is not a match. 2 tries remaining.',
+        title: 'SMS code is not a match. 2 tries remaining.',
+        status: 400,
+        type: 'https://httpstatuses.org/400',
       })
 
       // Assert Db records
@@ -393,8 +371,10 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        statusCode: 400,
-        message: 'Email verification code is required',
+        detail: 'Email verification code is required',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
       })
     })
 
@@ -407,7 +387,10 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message: 'Mobile phone number verification code is required',
+        detail: 'Mobile phone number verification code is required',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
       })
     })
 
@@ -430,8 +413,10 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message:
+        title:
           'Too many failed SMS verifications. Please restart verification.',
+        status: 400,
+        type: 'https://httpstatuses.org/400',
       })
     })
 
@@ -454,20 +439,22 @@ describe('MeUserProfile', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        message:
+        title:
           'Too many failed email verifications. Please restart verification.',
+        status: 400,
+        type: 'https://httpstatuses.org/400',
       })
     })
 
-    it('PATCH /v2/me should return 201 and clear email and phoneNumber null is sent', async () => {
+    it('PATCH /v2/me should return 200 and clear email and phoneNumber when empty string is sent', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: null,
-        email: null,
+        mobilePhoneNumber: '',
+        email: '',
       })
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         mobilePhoneNumber: null,
         mobilePhoneNumberVerified: false,
@@ -483,6 +470,104 @@ describe('MeUserProfile', () => {
 
       expect(userProfile.email).toBe(null)
       expect(userProfile.mobilePhoneNumber).toBe(null)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: '',
+          mobile: '',
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and create islyklar profile when it does not exist', async () => {
+      // Arrange
+      islyklarApi.islyklarGet = jest.fn().mockImplementation(() => {
+        return new Promise((resolve, reject) =>
+          reject({
+            status: 404,
+          }),
+        )
+      })
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPut).not.toBeCalled()
+      expect(islyklarApi.islyklarPost).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: newPhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: newPhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and should call the islyklar put method with new email and current mobilePhoneNumber', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: testUserProfile.mobilePhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and should call the islyklar put method with new mobilePhoneNumber and current email', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          mobile: newPhoneNumber,
+        },
+      })
     })
   })
 
@@ -507,7 +592,7 @@ describe('MeUserProfile', () => {
       app.cleanUp()
     })
 
-    it('POST /v2/me/nudge should return 201 and update the lastNudge field when user confirms nudge', async () => {
+    it('POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge', async () => {
       // Arrange
       const fixtureFactory = new FixtureFactory(app)
 
@@ -517,7 +602,7 @@ describe('MeUserProfile', () => {
       const res = await server.post('/v2/me/nudge')
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
 
       // Assert that lastNudge is updated
       const userProfileModel = app.get(getModelToken(UserProfile))
@@ -528,12 +613,12 @@ describe('MeUserProfile', () => {
       expect(userProfile.lastNudge).not.toBeNull()
     })
 
-    it(`POST /v2/me/nudge should return 201 and update the lastNudge field when user confirms nudge`, async () => {
+    it(`POST /v2/me/nudge should return 200 and update the lastNudge field when user confirms nudge`, async () => {
       // Act
       const res = await server.post('/v2/me/nudge')
 
       // Assert
-      expect(res.status).toEqual(201)
+      expect(res.status).toEqual(200)
 
       // Assert that lastNudge is updated
       const userProfileModel = app.get(getModelToken(UserProfile))
