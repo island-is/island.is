@@ -18,8 +18,6 @@ interface Props {
   onThumbnailClick?: () => void
 }
 
-const MAX_GALLERY_IMAGES = 6
-
 export const GalleryModal: FC<Props> = ({
   id,
   onVisibilityChange,
