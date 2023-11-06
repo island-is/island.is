@@ -200,8 +200,12 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
     _case.statusName === 'Til umsagnar'
       ? sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
       : sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].past
-  const shouldDisplayHidden = _case.allowUsersToSendPrivateAdvices && _case.advicePublishTypeId !== 3
-  const hiddenText = _case.statusName === 'Til umsagnar' ? sloc.hiddenName.present : sloc.hiddenName.past
+  const shouldDisplayHidden =
+    _case.allowUsersToSendPrivateAdvices && _case.advicePublishTypeId !== 3
+  const hiddenText =
+    _case.statusName === 'Til umsagnar'
+      ? sloc.hiddenName.present
+      : sloc.hiddenName.past
 
   return isAuthenticated ? (
     <Box
@@ -244,9 +248,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
 
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
-        {` ${
-          publishRuleText
-        } 
+        {` ${publishRuleText} 
         ${sloc.publishLaw.text} 
         `}
         {` ${shouldDisplayHidden && hiddenText}`}

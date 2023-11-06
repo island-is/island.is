@@ -11,14 +11,19 @@ interface Props {
   advicePublishTypeId: number
   shouldDisplayHidden?: boolean
 }
-export const CaseStatusBox = ({ status, advicePublishTypeId, shouldDisplayHidden = false }: Props) => {
+export const CaseStatusBox = ({
+  status,
+  advicePublishTypeId,
+  shouldDisplayHidden = false,
+}: Props) => {
   const loc = localization['caseStatusBox']
   const sloc = sharedLocalization['publishingRules']
   const publishRuleText =
     status == 'Til umsagnar'
       ? sloc[advicePublishTypeKeyHelper[advicePublishTypeId]].present
       : sloc[advicePublishTypeKeyHelper[advicePublishTypeId]].past
-  const hiddenText = status === 'Til umsagnar' ? sloc.hiddenName.present : sloc.hiddenName.past
+  const hiddenText =
+    status === 'Til umsagnar' ? sloc.hiddenName.present : sloc.hiddenName.past
 
   return (
     <CardSkeleton>
@@ -26,7 +31,10 @@ export const CaseStatusBox = ({ status, advicePublishTypeId, shouldDisplayHidden
         headingColor="blue400"
         title={loc[status].title}
       >
-        <Text>{`${loc[status].text} ${publishRuleText}`}{` ${shouldDisplayHidden && hiddenText}`}</Text>
+        <Text>
+          {`${loc[status].text} ${publishRuleText}`}
+          {` ${shouldDisplayHidden && hiddenText}`}
+        </Text>
       </StackedTitleAndDescription>
       {status == 'Til umsagnar' && (
         <Box paddingTop={2}>

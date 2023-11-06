@@ -35,7 +35,9 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     (value) => value === null,
   )
   const isStakeholdersBoxVisible = shouldShowStakeholdersBox({ chosenCase })
-  const shouldDisplayHidden = chosenCase.allowUsersToSendPrivateAdvices && chosenCase.advicePublishTypeId !== 3
+  const shouldDisplayHidden =
+    chosenCase.allowUsersToSendPrivateAdvices &&
+    chosenCase.advicePublishTypeId !== 3
 
   const expressions = {
     isDocumentsNotEmpty,
@@ -45,7 +47,7 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
     isStakeholdersBoxVisible,
-    shouldDisplayHidden
+    shouldDisplayHidden,
   }
 
   if (isChosenCaseNull) {

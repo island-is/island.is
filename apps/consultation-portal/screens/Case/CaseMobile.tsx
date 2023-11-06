@@ -56,7 +56,7 @@ const CaseMobile = ({
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
     isStakeholdersBoxVisible,
-    shouldDisplayHidden
+    shouldDisplayHidden,
   } = expressions
 
   return (
