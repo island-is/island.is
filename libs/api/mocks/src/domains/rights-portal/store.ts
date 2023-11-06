@@ -5,31 +5,31 @@ import {
   RightsPortalCopaymentBillResponse,
   RightsPortalCopaymentPeriodResponse,
   RightsPortalCopaymentStatusResponse,
-  RightsPortalPaymentOverviewBillResponse,
   RightsPortalPaymentOverviewDocumentResponse,
-  RightsPortalPaymentOverviewStatusResponse,
+  RightsPortalPaymentOverviewResponse,
+  RightsPortalPaymentOverviewServiceTypeResponse,
 } from '../../types'
 
 export const store = createStore(() => {
-  const paymentOverviewStatus: RightsPortalPaymentOverviewStatusResponse =
-    data.getPaymentOverviewStatus
-  const paymentOverviewBills: RightsPortalPaymentOverviewBillResponse =
-    data.getPaymentOverviewBills
-  const paymentOverviewDocument: RightsPortalPaymentOverviewDocumentResponse =
+  const getPaymentOverviewServiceTypes: RightsPortalPaymentOverviewServiceTypeResponse =
+    data.getPaymentOverviewServiceTypes
+  const getPaymentOverview: RightsPortalPaymentOverviewResponse =
+    data.getPaymentOverview
+  const getPaymentOverviewDocument: RightsPortalPaymentOverviewDocumentResponse =
     data.getPaymentOverviewDocument
-  const rightsPortalCopaymentStatus: RightsPortalCopaymentStatusResponse =
+  const getCopaymentStatus: RightsPortalCopaymentStatusResponse =
     data.getCopaymentStatus
-  const copaymentPeriods: RightsPortalCopaymentPeriodResponse =
+  const getCopaymentPeriods: RightsPortalCopaymentPeriodResponse =
     data.getCopaymentPeriods
-  const copaymentPeriodBills: RightsPortalCopaymentBillResponse =
-    data.getCopaymentPeriodBills
+  const getCopaymentBills: RightsPortalCopaymentBillResponse =
+    data.getCopaymentBills
 
   return {
-    paymentOverviewStatus,
-    paymentOverviewBills,
-    paymentOverviewDocument,
-    rightsPortalCopaymentStatus,
-    copaymentPeriods,
-    copaymentPeriodBills,
+    getPaymentOverviewServiceTypes,
+    getPaymentOverview,
+    getPaymentOverviewDocument,
+    getCopaymentStatus,
+    getCopaymentPeriods,
+    getCopaymentBills,
   }
 })
