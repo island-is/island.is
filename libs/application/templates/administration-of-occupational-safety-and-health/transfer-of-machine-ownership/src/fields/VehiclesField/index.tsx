@@ -9,7 +9,7 @@ import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 
-export const VehiclesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
+export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { locale } = useLocale()

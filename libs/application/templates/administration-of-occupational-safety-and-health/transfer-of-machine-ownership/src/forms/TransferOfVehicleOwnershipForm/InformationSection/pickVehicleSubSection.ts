@@ -5,18 +5,18 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 
-export const pickVehicleSubSection = buildSubSection({
+export const pickMachineSubSection = buildSubSection({
   id: 'pickVehicle',
-  title: information.labels.pickVehicle.sectionTitle,
+  title: information.labels.pickMachine.sectionTitle,
   children: [
     buildMultiField({
       id: 'pickVehicleMultiField',
-      title: information.labels.pickVehicle.title,
-      description: information.labels.pickVehicle.description,
+      title: information.labels.pickMachine.title,
+      description: information.labels.pickMachine.description,
       children: [
         buildCustomField({
-          id: 'pickVehicle',
-          component: 'VehiclesField',
+          id: 'pickMachine',
+          component: 'MachinesField',
           title: '',
         }),
       ],

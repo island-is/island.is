@@ -34,19 +34,19 @@ export const MachineSelectField: FC<
   ) as string
 
   console.log('application.answers', application.answers)
-  const currentVehicle = currentMachineList[parseInt(machineValue, 10)]
+  const currentMachine = currentMachineList[parseInt(machineValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedMachine, setSelectedMachine] = useState<Machine | null>(
-    currentVehicle && currentVehicle.registrationNumber
+    currentMachine && currentMachine.registrationNumber
       ? {
-          id: currentVehicle.id,
-          registrationNumber: currentVehicle.registrationNumber,
-          type: currentVehicle.type,
-          owner: currentVehicle.owner,
-          supervisor: currentVehicle.supervisor,
-          status: currentVehicle.status,
-          category: currentVehicle.category,
+          id: currentMachine.id,
+          registrationNumber: currentMachine.registrationNumber,
+          type: currentMachine.type,
+          owner: currentMachine.owner,
+          supervisor: currentMachine.supervisor,
+          status: currentMachine.status,
+          category: currentMachine.category,
           ownerNumber: '',
         }
       : null,
@@ -78,28 +78,28 @@ export const MachineSelectField: FC<
   // "Afskráð tímabundið" DISABLED
   // "Afskráð endanlega" DISABLED
   const onChange = (option: Option) => {
-    const currentVehicle = currentMachineList[parseInt(option.value, 10)]
+    const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
-    if (currentVehicle.id) {
+    if (currentMachine.id) {
       getMachineDetailsCallback({
-        id: currentVehicle.id,
+        id: currentMachine.id,
       })
         .then((response) => {
           console.log('response', response)
           setSelectedMachine({
-            id: currentVehicle.id,
-            registrationNumber: currentVehicle.registrationNumber,
-            type: currentVehicle.type,
-            owner: currentVehicle.owner,
-            supervisor: currentVehicle.supervisor,
-            status: currentVehicle.status,
-            _links: currentVehicle._links,
-            category: currentVehicle.category,
+            id: currentMachine.id,
+            registrationNumber: currentMachine.registrationNumber,
+            type: currentMachine.type,
+            owner: currentMachine.owner,
+            supervisor: currentMachine.supervisor,
+            status: currentMachine.status,
+            _links: currentMachine._links,
+            category: currentMachine.category,
             ownerNumber: response.machineDetails?.ownerNumber || '',
           })
 
           const disabled = isCurrentMachineDisabled(selectedMachine?.status)
-          console.log('currentVechicle', currentVehicle)
+          console.log('currentVechicle', currentMachine)
           console.log('currentMachine', selectedMachine)
 
           setValue(
@@ -117,17 +117,9 @@ export const MachineSelectField: FC<
           )
           setValue('machine.plate', response.machineDetails.licensePlateNumber)
           setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
+          setValue('machine.id', currentMachine.id)
 
-          setPlate(disabled ? '' : currentVehicle.registrationNumber || '')
-          // setValue('vehicle.plate', currentVehicle.registrationNumber)
-          // setValue('vehicle.type', currentVehicle.type)
-          // setValue('vehicle.ownerNumber', selectedMachine?.ownerNumber)
-          // setValue('vehicle.date', new Date().toISOString().substring(0, 10))
-          // setValue(
-          //   'pickVehicle.plate',
-          //   disabled ? '' : currentVehicle.registrationNumber || '',
-          // )
-          //setValue('pickVehicle.color', currentVehicle.color || undefined)
+          setPlate(disabled ? '' : currentMachine.registrationNumber || '')
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
@@ -156,7 +148,7 @@ export const MachineSelectField: FC<
   return (
     <Box>
       <SelectController
-        label={formatMessage(information.labels.pickVehicle.vehicle)}
+        label={formatMessage(information.labels.pickMachine.vehicle)}
         id="machine"
         name="machine"
         onSelect={(option) => onChange(option as Option)}
@@ -166,7 +158,7 @@ export const MachineSelectField: FC<
             label: `${vehicle.type}` || '',
           }
         })}
-        placeholder={formatMessage(information.labels.pickVehicle.placeholder)}
+        placeholder={formatMessage(information.labels.pickMachine.placeholder)}
         backgroundColor="blue"
       />
       <Box paddingTop={3}>
@@ -191,7 +183,7 @@ export const MachineSelectField: FC<
                   <AlertMessage
                     type="error"
                     title={formatMessage(
-                      information.labels.pickVehicle.hasErrorTitle,
+                      information.labels.pickMachine.hasErrorTitle,
                     )}
                     message={
                       <Box>

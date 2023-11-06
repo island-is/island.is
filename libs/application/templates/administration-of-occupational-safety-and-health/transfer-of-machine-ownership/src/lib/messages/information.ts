@@ -20,103 +20,103 @@ export const information = {
     },
   }),
   labels: {
-    pickVehicle: defineMessages({
+    pickMachine: defineMessages({
       sectionTitle: {
-        id: 'aosah.application:information.labels.pickVehicle.sectionTitle',
+        id: 'aosah.application:information.labels.pickMachine.sectionTitle',
         defaultMessage: 'Veldu tæki',
         description: 'Pick machine section title',
       },
       title: {
-        id: 'aosah.application:information.labels.pickVehicle.title',
+        id: 'aosah.application:information.labels.pickMachine.title',
         defaultMessage: 'Veldu tæki til eigendaskipta',
         description: 'Pick machine title',
       },
       description: {
-        id: 'aosah.application:information.labels.pickVehicle.description',
+        id: 'aosah.application:information.labels.pickMachine.description',
         defaultMessage:
           'Hér að neðan er listi yfir vélar og tæki í þinni eigu. Veldu það tæki sem þú vilt selja',
         description: 'Pick machine description',
       },
       vehicle: {
-        id: 'aosah.application:information.labels.pickVehicle.vehicle',
+        id: 'aosah.application:information.labels.pickMachine.vehicle',
         defaultMessage: 'Tæki',
         description: 'Pick machine label',
       },
       placeholder: {
-        id: 'aosah.application:information.labels.pickVehicle.placeholder',
+        id: 'aosah.application:information.labels.pickMachine.placeholder',
         defaultMessage: 'Veldu tæki',
         description: 'Pick machine placeholder',
       },
       hasErrorTitle: {
-        id: 'aosah.application:information.labels.pickVehicle.hasErrorTitle',
+        id: 'aosah.application:information.labels.pickMachine.hasErrorTitle',
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
         description: 'Pick machine has an error title',
       },
       isNotDebtLessTag: {
-        id: 'aosah.application:information.labels.pickVehicle.isNotDebtLessTag',
+        id: 'aosah.application:information.labels.pickMachine.isNotDebtLessTag',
         defaultMessage: 'Ógreidd bifreiðagjöld',
         description: 'Pick machine is not debt less tag',
       },
     }),
-    vehicle: defineMessages({
+    machine: defineMessages({
       sectionTitle: {
-        id: 'aosah.application:information.labels.vehicle.sectionTitle',
+        id: 'aosah.application:information.labels.machine.sectionTitle',
         defaultMessage: 'Tæki',
         description: 'Machine section title',
       },
       title: {
-        id: 'aosah.application:information.labels.vehicle.title',
+        id: 'aosah.application:information.labels.machine.title',
         defaultMessage: 'Tæki',
         description: 'Machine title',
       },
       description: {
-        id: 'aosah.application:information.labels.vehicle.description',
+        id: 'aosah.application:information.labels.machine.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
         description: 'Machine description',
       },
       plate: {
-        id: 'aosah.application:information.labels.vehicle.plate',
+        id: 'aosah.application:information.labels.machine.plate',
         defaultMessage: 'Plötuskráningarnúmer',
         description: 'Machine plate number label',
       },
       type: {
-        id: 'aosah.application:information.labels.vehicle.type',
+        id: 'aosah.application:information.labels.machine.type',
         defaultMessage: 'Tegund',
         description: 'Machine type label',
       },
       salePrice: {
-        id: 'aosah.application:information.labels.vehicle.salePrice',
+        id: 'aosah.application:information.labels.machine.salePrice',
         defaultMessage: 'Söluverð (kr.)',
-        description: 'Sale price for vehicle label',
+        description: 'Sale price for machine label',
       },
       purchasePrice: {
-        id: 'aosah.application:information.labels.vehicle.purchasePrice',
+        id: 'aosah.application:information.labels.machine.purchasePrice',
         defaultMessage: 'Kaupverð (kr.)',
-        description: 'Purchase price for vehicle label',
+        description: 'Purchase price for machine label',
       },
       date: {
-        id: 'aosah.application:information.labels.vehicle.date',
+        id: 'aosah.application:information.labels.machine.date',
         defaultMessage: 'Dagsetning kaupsamnings',
         description: 'Date of purchase agreement label',
       },
       registrationNumber: {
-        id: 'aosah.application:information.labels.vehicle.registrationNumber',
+        id: 'aosah.application:information.labels.machine.registrationNumber',
         defaultMessage: 'Skráningarnúmer',
         description: 'Registration number label',
       },
       category: {
-        id: 'aosah.application:information.labels.vehicle.category',
+        id: 'aosah.application:information.labels.machine.category',
         defaultMessage: 'Yfirflokkur',
         description: 'Category label',
       },
       ownerNumber: {
-        id: 'aosah.application:information.labels.vehicle.ownerNumber',
+        id: 'aosah.application:information.labels.machine.ownerNumber',
         defaultMessage: 'Eigandanúmer',
         description: 'Owner number label',
       },
       subType: {
-        id: 'aosah.application:information.labels.vehicle.subType',
+        id: 'aosah.application:information.labels.machine.subType',
         defaultMessage: 'Gerð',
         description: 'Sub type label',
       },

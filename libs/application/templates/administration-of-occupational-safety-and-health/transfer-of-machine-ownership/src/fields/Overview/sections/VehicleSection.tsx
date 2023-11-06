@@ -15,7 +15,7 @@ import {
 } from '../../../shared'
 import { formatIsk } from '../../../utils'
 
-export const VehicleSection: FC<
+export const MachineSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({ application, reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
@@ -63,7 +63,7 @@ export const VehicleSection: FC<
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Text variant="h4">
-            {formatMessage(information.labels.vehicle.title)}
+            {formatMessage(information.labels.machine.title)}
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>

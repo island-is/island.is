@@ -7,25 +7,25 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Machine } from '../../../shared'
-import { getSelectedVehicle } from '../../../utils'
+import { getSelectedMachine } from '../../../utils/getSelectedVehicle'
 
-export const vehicleSubSection = buildSubSection({
+export const machineSubSection = buildSubSection({
   id: 'machine',
-  title: information.labels.vehicle.sectionTitle,
+  title: information.labels.machine.sectionTitle,
   children: [
     buildMultiField({
       id: 'machineMultiField',
-      title: information.labels.vehicle.title,
-      description: information.labels.vehicle.description,
+      title: information.labels.machine.title,
+      description: information.labels.machine.description,
       children: [
         buildTextField({
           id: 'machine.regNumber',
-          title: information.labels.vehicle.registrationNumber,
+          title: information.labels.machine.registrationNumber,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -34,12 +34,12 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'machine.category',
-          title: information.labels.vehicle.category,
+          title: information.labels.machine.category,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -48,12 +48,12 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'machine.type',
-          title: information.labels.vehicle.type,
+          title: information.labels.machine.type,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -62,12 +62,12 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'machine.subType',
-          title: information.labels.vehicle.subType,
+          title: information.labels.machine.subType,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -76,12 +76,12 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'machine.plate',
-          title: information.labels.vehicle.plate,
+          title: information.labels.machine.plate,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -90,12 +90,12 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'machine.ownerNumber',
-          title: information.labels.vehicle.ownerNumber,
+          title: information.labels.machine.ownerNumber,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const machine = getSelectedVehicle(
+            const machine = getSelectedMachine(
               application.externalData,
               application.answers,
             ) as Machine
@@ -104,7 +104,7 @@ export const vehicleSubSection = buildSubSection({
         }),
         buildDateField({
           id: 'machine.date',
-          title: information.labels.vehicle.date,
+          title: information.labels.machine.date,
           required: true,
           width: 'half',
           maxDate: new Date(),

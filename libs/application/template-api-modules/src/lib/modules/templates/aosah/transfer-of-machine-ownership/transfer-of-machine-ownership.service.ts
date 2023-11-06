@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ApplicationTypes } from '@island.is/application/types'
@@ -9,10 +9,19 @@ import {
 } from '@island.is/clients/aosah/transfer-of-machine-ownership'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { EmailRecipient, EmailRole } from './types'
+//import { getRecipients } from './transfer-of-machine-ownership.utils'
+import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership'
+import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
+import { getRecipients } from './transfer-of-machine-ownership.utils'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
 
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
   ) {
@@ -85,7 +94,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   async initReview({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<string> {
+  }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     //Promise<Array<EmailRecipient>> {
     // 1. Validate payment
 
@@ -138,47 +147,48 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         ownerChange,
       )
     }
+
+    const answers = application.answers as TransferOfMachineOwnerShipAnswers
+    const recipientList = getRecipients(answers, [
+      EmailRole.sellerCoOwner,
+      EmailRole.buyer,
+      EmailRole.buyerCoOwner,
+      EmailRole.buyerOperator,
+    ])
+
+    // 2b. Send email/sms individually to each recipient
+    for (let i = 0; i < recipientList.length; i++) {
+      if (recipientList[i].email) {
+        await this.sharedTemplateAPIService
+          .sendEmail(
+            (props) => generateRequestReviewEmail(props, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending email about initReview to ${recipientList[i].email}`,
+            )
+          })
+      }
+
+      if (recipientList[i].phone) {
+        await this.sharedTemplateAPIService
+          .sendSms(
+            (_, options) =>
+              generateRequestReviewSms(application, options, recipientList[i]),
+            application,
+          )
+          .catch(() => {
+            this.logger.error(
+              `Error sending sms about initReview to ${recipientList[i].phone}`,
+            )
+          })
+      }
+    }
+
+    return recipientList
     return ''
     // 2. Notify users that need to review
-
-    // 2a. Get list of users that need to review
-    // const answers = application.answers as TransferOfVehicleOwnershipAnswers
-    // const recipientList = getRecipients(answers, [
-    //   EmailRole.sellerCoOwner,
-    //   EmailRole.buyer,
-    //   EmailRole.buyerCoOwner,
-    //   EmailRole.buyerOperator,
-    // ])
-
-    // // 2b. Send email/sms individually to each recipient
-    // for (let i = 0; i < recipientList.length; i++) {
-    //   if (recipientList[i].email) {
-    //     await this.sharedTemplateAPIService
-    //       .sendEmail(
-    //         (props) => generateRequestReviewEmail(props, recipientList[i]),
-    //         application,
-    //       )
-    //       .catch(() => {
-    //         this.logger.error(
-    //           `Error sending email about initReview to ${recipientList[i].email}`,
-    //         )
-    //       })
-    //   }
-
-    //   if (recipientList[i].phone) {
-    //     await this.sharedTemplateAPIService
-    //       .sendSms(
-    //         (_, options) =>
-    //           generateRequestReviewSms(application, options, recipientList[i]),
-    //         application,
-    //       )
-    //       .catch(() => {
-    //         this.logger.error(
-    //           `Error sending sms about initReview to ${recipientList[i].phone}`,
-    //         )
-    //       })
-    //   }
-    // }
 
     // return recipientList
   }

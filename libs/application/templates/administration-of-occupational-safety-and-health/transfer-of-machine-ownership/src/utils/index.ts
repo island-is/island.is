@@ -7,7 +7,7 @@ export const formatIsk = (value: number): string =>
 export const formatPhoneNumber = (value: string): string =>
   value.length === 7 ? value.substr(0, 3) + '-' + value.substr(3, 6) : value
 
-export { getSelectedVehicle } from './getSelectedVehicle'
+export { getSelectedMachine as getSelectedVehicle } from './getSelectedVehicle'
 export { getReviewSteps } from './getReviewSteps'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'

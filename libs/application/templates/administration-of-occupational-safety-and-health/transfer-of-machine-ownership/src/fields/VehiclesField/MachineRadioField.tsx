@@ -58,19 +58,6 @@ export const MachineRadioField: FC<
       getMachineDetailsCallback({
         id: currentMachine.id,
       }).then((response) => {
-        console.log('response', response)
-        // setSelectedMachine({
-        //   id: currentVehicle.id,
-        //   registrationNumber: currentVehicle.registrationNumber,
-        //   type: currentVehicle.type,
-        //   ownerName: currentVehicle.owner,
-        //   supervisorName: currentVehicle.supervisor,
-        //   status: currentVehicle.status,
-        //   _links: currentVehicle._links,
-        //   category: currentVehicle.category,
-        //   ownerNumber: response.machineDetails.ownerNumber,
-        // })
-        //currentVehicle.ownerNumber = response?.machineDetails?.ownerNumber || ''
         const disabled = isCurrentMachineDisabled(currentMachine?.status)
         console.log('currentMachine', currentMachine)
         setValue(
@@ -88,13 +75,13 @@ export const MachineRadioField: FC<
         )
         setValue('machine.plate', response.machineDetails.licensePlateNumber)
         setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
-        setValue('machine.id', currentMachine.id)
         setPlate(disabled ? '' : currentMachine.registrationNumber || '')
 
         setIsLoading(false)
       })
     }
 
+    setValue('machine.id', currentMachine.id)
     setPlate(currentMachine.registrationNumber || '')
   }
 
@@ -115,7 +102,7 @@ export const MachineRadioField: FC<
     }
   }
 
-  const vehicleOptions = (machines: Machine[]) => {
+  const machineOptions = (machines: Machine[]) => {
     const options = [] as Option[]
     for (const [index, machine] of machines.entries()) {
       const disabled = isCurrentMachineDisabled(machine.status)
@@ -141,7 +128,7 @@ export const MachineRadioField: FC<
                 <AlertMessage
                   type="error"
                   title={formatMessage(
-                    information.labels.pickVehicle.hasErrorTitle,
+                    information.labels.pickMachine.hasErrorTitle,
                   )}
                   message={
                     <Box>
@@ -170,7 +157,7 @@ export const MachineRadioField: FC<
         largeButtons
         backgroundColor="blue"
         onSelect={onRadioControllerSelect}
-        options={vehicleOptions(currentMachineList as Machine[])}
+        options={machineOptions(currentMachineList as Machine[])}
       />
       {regNumber.length === 0 && (errors as any)?.machine && (
         <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />

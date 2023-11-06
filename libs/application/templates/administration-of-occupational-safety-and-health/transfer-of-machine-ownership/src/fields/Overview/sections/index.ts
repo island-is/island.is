@@ -1,4 +1,4 @@
-export { VehicleSection } from './VehicleSection'
+export { MachineSection as VehicleSection } from './VehicleSection'
 export { SellerSection } from './SellerSection'
 export { BuyerSection } from './BuyerSection'
 export { OperatorSection } from './OperatorSection'

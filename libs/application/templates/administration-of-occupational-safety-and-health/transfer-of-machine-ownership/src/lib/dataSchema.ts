@@ -114,3 +114,29 @@ export const AdministrationOfOccupationalSafetyAndHealthSchema = z.object({
 export type AdministrationOfOccupationalSafetyAndHealth = z.TypeOf<
   typeof AdministrationOfOccupationalSafetyAndHealthSchema
 >
+
+export const MachineAnswersSchema = z.object({
+  buyer: UserInformationSchema,
+  seller: UserInformationSchema,
+  machine: z.object({
+    id: z.string(),
+    date: z.string(),
+    type: z.string(),
+    plate: z.string().nullable(),
+    subType: z.string(),
+    category: z.string(),
+    regNumber: z.string(),
+    ownerNumber: z.string().nullable(),
+  }),
+  location: z.object({
+    address: z.string(),
+    postCode: z.string(),
+    moreInfo: z.string(),
+  }),
+  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
+  approveExternalData: z.boolean(),
+})
+
+export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>
+
+//export { TransferOfVehicleOwnershipSchema, TransferOfVehicleOwnership }
