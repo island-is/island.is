@@ -14,6 +14,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { EventLocation } from '../EventLocation'
 import { EventTime } from '../EventTime'
+import * as styles from './LatestEventSliceCard.css'
 
 interface EventCardProps {
   title: string
@@ -36,7 +37,7 @@ export const LatestEventSliceCard: React.FC<
   const n = useNamespace(namespace)
 
   return (
-    <LinkV2 href={href}>
+    <LinkV2 href={href} className={styles.container}>
       <ProfileCard
         image={image}
         heightFull={true}
