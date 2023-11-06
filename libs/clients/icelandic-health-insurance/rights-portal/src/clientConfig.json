@@ -1343,10 +1343,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CopaymentBillDTO"
-                  }
+                  "$ref": "#/components/schemas/CopaymentBillsDTO"
                 }
               }
             }
@@ -1816,6 +1813,39 @@
         },
         "additionalProperties": false
       },
+      "CopaymentBillsDTO": {
+        "type": "object",
+        "properties": {
+          "totalTotalAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalInsuranceAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalOwnAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalOverpaid": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "bills": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CopaymentBillDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CopaymentInsuranceStatusDTO": {
         "type": "object",
         "properties": {
@@ -2058,6 +2088,11 @@
           },
           "description": {
             "type": "string",
+            "nullable": true
+          },
+          "paymentStatus": {
+            "type": "integer",
+            "format": "int32",
             "nullable": true
           },
           "totalSalesPrice": {
@@ -2697,6 +2732,16 @@
             "nullable": true
           },
           "debt": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalTotalAmount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalInsuranceAmount": {
             "type": "integer",
             "format": "int32",
             "nullable": true
