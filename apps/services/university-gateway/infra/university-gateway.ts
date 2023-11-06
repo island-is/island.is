@@ -1,9 +1,9 @@
-import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 import {
   Base,
   Client,
   UniversityGatewayUniversityOfIceland,
-} from '../../../../../infra/src/dsl/xroad'
+} from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo = {
   username: 'university_gateway',
@@ -12,10 +12,10 @@ const postgresInfo = {
 }
 
 export const serviceSetup =
-  (): ServiceBuilder<'services-university-gateway-backend'> => {
-    return service('services-university-gateway-backend')
+  (): ServiceBuilder<'services-university-gateway'> => {
+    return service('services-university-gateway')
       .namespace('university-gateway')
-      .image('services-university-gateway-backend')
+      .image('services-university-gateway')
       .resources({
         limits: { cpu: '200m', memory: '384Mi' },
         requests: { cpu: '50m', memory: '256Mi' },
@@ -30,8 +30,6 @@ export const serviceSetup =
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
-        AUTH_JWT_SECRET: '/k8s/university-gateway/AUTH_JWT_SECRET',
-        BACKEND_ACCESS_TOKEN: '/k8s/university-gateway/BACKEND_ACCESS_TOKEN',
       })
       .xroad(Base, Client, UniversityGatewayUniversityOfIceland)
       .postgres(postgresInfo)

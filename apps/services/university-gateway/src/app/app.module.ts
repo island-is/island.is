@@ -9,8 +9,6 @@ import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
-import { environment } from '../environments'
 
 @Module({
   imports: [
@@ -20,10 +18,6 @@ import { environment } from '../environments'
     UniversityModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
-    }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
     }),
     ConfigModule.forRoot({
       isGlobal: true,

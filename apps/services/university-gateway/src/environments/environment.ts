@@ -4,25 +4,14 @@ const devConfig = {
   auth: {
     audience: ['@island.is'],
     issuer: 'https://identity-server.dev01.devland.is',
-    jwtSecret: 'jwt-secret',
-    secretToken: 'secret-backend-api-token',
   },
   events: {
     url: process.env.EVENT_URL,
     errorUrl: process.env.ERROR_EVENT_URL,
   },
   audit: {
-    defaultNamespace: '@island.is/university-gateway-backend',
+    defaultNamespace: '@island.is/university-gateway',
   },
-}
-
-if (process.env.NODE_ENV === 'production') {
-  if (!process.env.AUTH_JWT_SECRET) {
-    throw new Error('Missing AUTH_JWT_SECRET environment.')
-  }
-  if (!process.env.BACKEND_ACCESS_TOKEN) {
-    throw new Error('Missing BACKEND_ACCESS_TOKEN environment.')
-  }
 }
 
 const prodConfig = {
@@ -31,8 +20,6 @@ const prodConfig = {
   auth: {
     audience: process.env.AUTH_AUDIENCE,
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
-    secretToken: process.env.BACKEND_ACCESS_TOKEN ?? '',
   },
   admin: {
     users: process.env.ADMIN_USERS ?? '',
@@ -43,8 +30,8 @@ const prodConfig = {
   },
   audit: {
     groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-university-gateway-backend',
-    defaultNamespace: '@island.is/university-gateway-backend',
+    serviceName: 'services-university-gateway',
+    defaultNamespace: '@island.is/university-gateway',
   },
 }
 

@@ -1,11 +1,10 @@
-import { HttpStatus, UseGuards } from '@nestjs/common'
-import { TokenGuard } from '@island.is/judicial-system/auth'
+import { HttpStatus } from '@nestjs/common'
 import { Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { InternalCourseService } from './internalCourse.service'
 
-@UseGuards(TokenGuard)
+//TODOx remove as controller?
 @ApiTags('Internal course')
 @Controller({
   path: 'internal/courses',

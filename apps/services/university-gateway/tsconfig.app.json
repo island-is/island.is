@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": "../../../../dist/out-tsc",
+    "outDir": "../../../dist/out-tsc",
     "types": ["node"],
     "target": "es2021"
   },
