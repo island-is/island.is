@@ -148,6 +148,7 @@ export interface FeatureKubeJob {
     annotations?: { [name: string]: string }
   }
   spec: {
+    ttlSecondsAfterFinished?: number
     template: {
       spec: {
         serviceAccountName: 'feature-deployment'

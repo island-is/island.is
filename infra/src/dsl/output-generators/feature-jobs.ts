@@ -103,6 +103,7 @@ export const generateJobsForFeature = async (
       },
     },
     spec: {
+      ttlSecondsAfterFinished: 600,
       template: {
         spec: {
           serviceAccountName: 'feature-deployment',
