@@ -107,7 +107,6 @@ const VehiclesOverview = () => {
 
   useEffect(() => {
     if (downloadExcel && vehicleData) {
-      console.log(usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles)
       exportVehicleOwnedDocument(
         usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles,
         formatMessage(messages.myCarsFiles),
@@ -176,14 +175,14 @@ const VehiclesOverview = () => {
       {!loading && !error && filteredVehicles.length > 0 && (
         <Box marginBottom={3} display="flex" flexWrap="wrap">
           {!loading && ownershipPdf && (
-            <Box marginRight={2} marginBottom={[1, 1, 1, 1]}>
+            <Box marginRight={2} marginBottom={[1]}>
               <DropdownExport
                 onGetPDF={() => formSubmit(`${ownershipPdf}`)}
                 onGetExcel={() => setDownloadExcel(true)}
               />
             </Box>
           )}
-          <Box paddingRight={2} marginBottom={[1, 1, 1, 1]}>
+          <Box paddingRight={2} marginBottom={[1]}>
             <a
               href={formatMessage(urls.ownerChange)}
               target="_blank"
@@ -201,7 +200,7 @@ const VehiclesOverview = () => {
               </Button>
             </a>
           </Box>
-          <Box marginRight={2} marginBottom={[1, 1, 1, 1]}>
+          <Box marginRight={2} marginBottom={[1]}>
             <a
               href="/app/skilavottord/my-cars"
               target="_blank"
@@ -217,7 +216,7 @@ const VehiclesOverview = () => {
               </Button>
             </a>
           </Box>
-          <Box marginBottom={[1, 1, 1, 1]}>
+          <Box marginBottom={[1]}>
             <a
               href={formatMessage(urls.hideName)}
               target="_blank"

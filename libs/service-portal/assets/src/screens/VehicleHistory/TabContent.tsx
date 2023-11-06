@@ -41,8 +41,8 @@ export const TabContent: FC<React.PropsWithChildren<Props>> = ({
         showDeregeristered: showDeregistered,
         showHistory: true,
         type,
-        dtFrom: fromDate,
-        dtTo: toDate,
+        dateFrom: fromDate,
+        dateTo: toDate,
       },
     },
   })

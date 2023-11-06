@@ -38,8 +38,8 @@ export class VehiclesService {
       page: input.page,
       pageSize: input.pageSize,
       type: input.type,
-      dtFrom: input.dtFrom,
-      dtTo: input.dtTo,
+      dtFrom: input.dateFrom,
+      dtTo: input.dateTo,
     })
   }
 
@@ -71,12 +71,6 @@ export class VehiclesService {
       page,
       pageSize,
     })
-    /*const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
-      search,
-    })
-    const { data } = res
-    if (!data) return null
-    return data[0]*/
   }
 
   async getPublicVehicleSearch(search: string) {

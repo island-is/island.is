@@ -28,8 +28,8 @@ export class GetVehiclesForUserInput {
   showHistory!: boolean
 
   @Field(() => Date, { nullable: true })
-  dtFrom?: Date
+  dateFrom?: Date
 
   @Field(() => Date, { nullable: true })
-  dtTo?: Date
+  dateTo?: Date
 }

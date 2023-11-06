@@ -169,7 +169,7 @@ export const basicVehicleInformationMapper = (
           city: operator.city,
           startDate: operator.startdate,
           endDate: operator.enddate,
-          mainoperator: operator.mainoperator,
+          mainOperator: operator.mainoperator,
           serial: operator.serial,
         }
       }) || undefined,
