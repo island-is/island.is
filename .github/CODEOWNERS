@@ -247,6 +247,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/templates/european-health-insurance-card/                                              @island-is/fuglar
 /libs/application/template-api-modules/src/lib/modules/templates/european-health-insurance-card/         @island-is/fuglar
 /libs/clients/ehic-client-v1                                                                             @island-is/fuglar
+/libs/clients/p-card                                                                             @island-is/fuglar
 
 /apps/services/auth/personal-representative/                                                             @island-is/programm @island-is/aranja
 /apps/services/auth/personal-representative-public/                                                      @island-is/programm @island-is/aranja
