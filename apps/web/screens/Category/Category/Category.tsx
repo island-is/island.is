@@ -41,7 +41,8 @@ import {
   QueryGetLifeEventsInCategoryArgs,
   Image,
   ArticleGroup,
-} from '../../../graphql/schema'
+  Article,
+} from '@island.is/web/graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
@@ -51,6 +52,7 @@ import {
   getHashString,
   updateHashArray,
 } from './utils'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 type Articles = GetArticlesQuery['getArticles']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -352,39 +354,32 @@ const Category: Screen<CategoryProps> = ({
                     </Text>
                   )}
                   <Stack space={2}>
-                    {sortedArticles.map(
-                      ({
-                        __typename: typename,
-                        title,
-                        slug,
-                        processEntry,
-                        processEntryButtonText,
-                      }) => {
-                        return (
-                          <FocusableBox key={slug} borderRadius="large">
-                            <TopicCard
-                              href={
-                                linkResolver(
-                                  typename?.toLowerCase() as LinkType,
-                                  [slug],
-                                ).href
-                              }
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore make web strict
-                              tag={
-                                (!!processEntry || processEntryButtonText) &&
-                                n(
-                                  processEntryButtonText || 'application',
-                                  'Umsókn',
-                                )
-                              }
-                            >
-                              {title}
-                            </TopicCard>
-                          </FocusableBox>
-                        )
-                      },
-                    )}
+                    {sortedArticles.map((article) => {
+                      return (
+                        <FocusableBox key={article.slug} borderRadius="large">
+                          <TopicCard
+                            href={
+                              linkResolver(
+                                article.__typename?.toLowerCase() as LinkType,
+                                [article.slug],
+                              ).href
+                            }
+                            {...(hasProcessEntries(article as Article) ||
+                            article.processEntryButtonText
+                              ? {
+                                  tag: n(
+                                    article.processEntryButtonText ||
+                                      'application',
+                                    'Umsókn',
+                                  ),
+                                }
+                              : {})}
+                          >
+                            {article.title}
+                          </TopicCard>
+                        </FocusableBox>
+                      )
+                    })}
                   </Stack>
                 </React.Fragment>
               )

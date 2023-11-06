@@ -4,6 +4,7 @@ import { DisabilityLicensePayloadMapper } from './disabilityLicenseMapper'
 import { FirearmLicensePayloadMapper } from './firearmLicenseMapper'
 import { MachineLicensePayloadMapper } from './machineLicenseMapper'
 import { DrivingLicensePayloadMapper } from './drivingLicenseMapper'
+import { PCardPayloadMapper } from './pCardMapper'
 
 @Module({
   providers: [
@@ -12,6 +13,7 @@ import { DrivingLicensePayloadMapper } from './drivingLicenseMapper'
     DisabilityLicensePayloadMapper,
     MachineLicensePayloadMapper,
     DrivingLicensePayloadMapper,
+    PCardPayloadMapper,
   ],
   exports: [
     AdrLicensePayloadMapper,
@@ -19,6 +21,7 @@ import { DrivingLicensePayloadMapper } from './drivingLicenseMapper'
     DisabilityLicensePayloadMapper,
     MachineLicensePayloadMapper,
     DrivingLicensePayloadMapper,
+    PCardPayloadMapper,
   ],
 })
 export class LicenseMapperModule {}
