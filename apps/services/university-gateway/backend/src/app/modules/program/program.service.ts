@@ -11,7 +11,7 @@ import { TagResponse } from './dto/tagResponse'
 import { Course } from '../course'
 import { University } from '../university'
 import { InjectModel } from '@nestjs/sequelize'
-import { PaginateInput, paginate } from '@island.is/nest/pagination'
+import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import { NoContentException } from '@island.is/nest/problem'
 
