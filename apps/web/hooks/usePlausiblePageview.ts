@@ -1,10 +1,10 @@
+import { useEffect } from 'react'
 import getConfig from 'next/config'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-let hasSentInitialLoadPageview = false
+let newestVisitedUrl = ''
 
 export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
@@ -33,12 +33,12 @@ export const usePlausiblePageview = (domain?: string) => {
     // Client side routing should trigger a pageview
     router.events.on('routeChangeComplete', onRouteChangeComplete)
 
-    // Initial page load should trigger a pageview
-    const isInitialPageLoad = window.history?.state?.idx === 0
+    const currentUrl = window.location.href
 
-    if (!hasSentInitialLoadPageview && isInitialPageLoad) {
+    // Initial page load should trigger a pageview
+    if (!newestVisitedUrl || newestVisitedUrl !== currentUrl) {
+      newestVisitedUrl = currentUrl
       onRouteChangeComplete()
-      hasSentInitialLoadPageview = true
     }
 
     return () => {
