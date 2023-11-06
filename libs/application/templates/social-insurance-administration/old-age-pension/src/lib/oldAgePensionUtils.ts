@@ -112,7 +112,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const residenceHistoryQuestion = getValueViaPath(
     answers,
     'residenceHistory.question',
-    YES,
   ) as YesOrNo
 
   const onePaymentPerYear = getValueViaPath(
