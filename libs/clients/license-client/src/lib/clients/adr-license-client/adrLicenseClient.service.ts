@@ -125,10 +125,6 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     }
   }
 
-  async getLicenseDetail(user: User): Promise<Result<FlattenedAdrDto | null>> {
-    return this.getLicense(user)
-  }
-
   private async createPkPassPayload(
     data: AdrDto,
     nationalId: string,
