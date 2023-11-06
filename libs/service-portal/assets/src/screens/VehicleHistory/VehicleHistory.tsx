@@ -34,6 +34,8 @@ const VehiclesHistory = () => {
         <TabContent
           type={VehicleUserTypeEnum.eigandi}
           showDeregistered={checkbox}
+          fromDate={fromDate}
+          toDate={toDate}
         />
       ),
     },
@@ -43,6 +45,8 @@ const VehiclesHistory = () => {
         <TabContent
           type={VehicleUserTypeEnum.medeigandi}
           showDeregistered={checkbox}
+          fromDate={fromDate}
+          toDate={toDate}
         />
       ),
     },
@@ -52,6 +56,8 @@ const VehiclesHistory = () => {
         <TabContent
           type={VehicleUserTypeEnum.umradamadur}
           showDeregistered={checkbox}
+          fromDate={fromDate}
+          toDate={toDate}
         />
       ),
     },

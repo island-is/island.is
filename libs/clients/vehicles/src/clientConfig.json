@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-13 : 20231018.1",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-17 : 20231103.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -274,6 +274,11 @@
           },
           {
             "name": "dtFrom",
+            "in": "query",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "dtTo",
             "in": "query",
             "schema": { "type": "string", "format": "date-time" }
           },

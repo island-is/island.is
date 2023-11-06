@@ -5,7 +5,6 @@ import {
   PdfApi,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
-  OwnershipReportDataDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -40,7 +39,7 @@ export class VehiclesService {
       pageSize: input.pageSize,
       type: input.type,
       dtFrom: input.dtFrom,
-      //dtTo: input.dtTo,
+      dtTo: input.dtTo,
     })
   }
 

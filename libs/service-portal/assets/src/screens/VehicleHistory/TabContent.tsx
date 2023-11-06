@@ -16,11 +16,15 @@ import { useGetUsersVehiclesLazyQuery } from './VehicleHistory.generated'
 interface Props {
   type: VehicleUserTypeEnum
   showDeregistered?: boolean
+  fromDate?: Date | null
+  toDate?: Date | null
 }
 
 export const TabContent: FC<React.PropsWithChildren<Props>> = ({
   type,
   showDeregistered = false,
+  fromDate,
+  toDate,
 }) => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
@@ -37,6 +41,8 @@ export const TabContent: FC<React.PropsWithChildren<Props>> = ({
         showDeregeristered: showDeregistered,
         showHistory: true,
         type,
+        dtFrom: fromDate,
+        dtTo: toDate,
       },
     },
   })
