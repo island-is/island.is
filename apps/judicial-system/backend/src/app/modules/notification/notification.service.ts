@@ -204,15 +204,17 @@ export class NotificationService {
     recipientName?: string,
     recipientEmail?: string,
     attachments?: Attachment[],
+    skipTail?: boolean,
   ): Promise<Recipient> {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
 
-      html = html.match(/<a/g)
-        ? html
-        : `${html} ${this.formatMessage(notifications.emailTail)}`
+      html =
+        html.match(/<a/g) || skipTail
+          ? html
+          : `${html} ${this.formatMessage(notifications.emailTail)}`
 
       await this.emailService.sendEmail({
         from: {
@@ -396,6 +398,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -455,6 +459,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -688,6 +694,7 @@ export class NotificationService {
       theCase.defenderName,
       theCase.defenderEmail,
       calendarInvite ? [calendarInvite] : undefined,
+      Boolean(theCase.defenderNationalId) === false,
     ).then((recipient) => {
       if (recipient.success) {
         // No need to wait
@@ -718,12 +725,13 @@ export class NotificationService {
       theCase.courtCaseNumber,
       Boolean(theCase.requestSharedWithDefender),
     )
-
     return this.sendEmail(
       linkSubject,
       linkHtml,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -861,6 +869,8 @@ export class NotificationService {
           }),
       defenderName ?? '',
       defenderEmail ?? '',
+      [],
+      Boolean(defenderNationalId) === false,
     )
   }
 
@@ -1358,7 +1368,14 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
-    return this.sendEmail(subject, body, defenderName, defenderEmail)
+    return this.sendEmail(
+      subject,
+      body,
+      defenderName,
+      defenderEmail,
+      undefined,
+      Boolean(defenderNationalId) === false,
+    )
   }
 
   private async sendDefenderAssignedNotifications(
@@ -1500,6 +1517,8 @@ export class NotificationService {
       html,
       theCase.registrar.name,
       theCase.registrar.email,
+      [],
+      true,
     )
 
     return this.recordNotification(
@@ -1586,6 +1605,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1688,6 +1709,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1816,6 +1839,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1918,6 +1943,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
