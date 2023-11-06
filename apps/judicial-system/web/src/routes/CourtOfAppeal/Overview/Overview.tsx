@@ -18,8 +18,8 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
+import CaseOverviewHeader from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
@@ -50,7 +50,7 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CaseTitleInfoAndTags />
+          <CaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
