@@ -763,8 +763,6 @@ describe('User profile API', () => {
         },
       })
 
-      console.log('verification123', verification)
-
       // Act
       const response = await request(app.getHttpServer())
         .post(`/confirmSms/${mockProfile.nationalId}`)

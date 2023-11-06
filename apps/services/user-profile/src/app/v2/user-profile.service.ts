@@ -88,7 +88,7 @@ export class UserProfileService {
       ? formatPhoneNumber(userProfile.mobilePhoneNumber)
       : undefined
 
-    return this.sequelize.transaction(async (transaction) => {
+    await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, transaction] as const
 
       const promises = await Promise.all(
@@ -149,9 +149,9 @@ export class UserProfileService {
           email: userProfile.email,
         })
       }
-
-      return this.findById(nationalId, true)
     })
+
+    return this.findById(nationalId, true)
   }
 
   async createEmailVerification({
