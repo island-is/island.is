@@ -116,8 +116,8 @@ export const householdSupplementFormMessage: MessageDir = {
     },
     paymentAlertTitle: {
       id: 'hs.application:info.payment.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
     },
     paymentAlertMessage: {
       id: 'hs.application:info.payment.alert.message',
@@ -248,21 +248,21 @@ export const householdSupplementFormMessage: MessageDir = {
     leaseAgreement: {
       id: 'hs.application:fileUppload.lease.agreement',
       defaultMessage:
-        'Hér getur þú skilað undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Hér þarft þú að skila undirritaðum leigusamningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'Here you can upload the signed rental agreement. Note that the document must be in .pdf format.',
+        'Here you must upload the signed rental agreement. Note that the document must be in .pdf format.',
     },
     schoolConfirmation: {
       id: 'hs.application:fileUppload.school.confirmation',
       defaultMessage:
-        'Hér getur þú skilað vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Hér þarft þú að skila vottorði um skólavist ungmennis. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        "Here you can upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
+        "Here you must upload a certificate of a young person's school attendance. Note that the document must be in .pdf format.",
     },
     additionalDocumentRequired: {
       id: 'hs.application:fileUpload.additional.document.required',
       defaultMessage:
-        'Viðbótargögn krafist, vinsamlegast hlaðið viðbótargögn á næstu síðu',
+        'Viðbótargagna krafist, vinsamlegast hlaðið viðbótargögnum upp á næstu síðu',
       description:
         'Additional document(s) required, on the next page you will be able to upload the additional document(s), to begin please press continue.',
     },
