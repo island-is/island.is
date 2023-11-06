@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { AuditModule } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { LoggingModule } from '@island.is/logging'
+import { AuditModule } from '@island.is/nest/audit'
+import { ProblemModule } from '@island.is/nest/problem'
 
 import environment from '../environments/environment'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -16,6 +18,8 @@ import { UserProfileModule as UserProfileV2Module } from './v2/user-profile.modu
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    ProblemModule,
+    LoggingModule,
     UserProfileModule,
     UserProfileV2Module,
   ],
