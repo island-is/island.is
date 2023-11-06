@@ -18,6 +18,10 @@
         "label": "um samráðsgáttina.",
         "href": "/samradsgatt/um"
       }
+    },
+    "hiddenName": {
+      "present": "Þátttakendum í þessu samráðsferli er þó heimilt að óska eftir að efni umsagnar og nafn sendanda birtist ekki í gáttinni.",
+      "past": "Þátttakendum í þessu samráðsferli var þó heimilt að óska eftir því að efni umsagnar og nafn sendanda birtist ekki í gáttinni."
     }
   }
 }

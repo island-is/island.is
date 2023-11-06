@@ -56,6 +56,7 @@ const CaseMobile = ({
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
     isStakeholdersBoxVisible,
+    shouldDisplayHidden
   } = expressions
 
   return (
@@ -84,6 +85,7 @@ const CaseMobile = ({
           <CaseStatusBox
             status={statusName}
             advicePublishTypeId={advicePublishTypeId}
+            shouldDisplayHidden={shouldDisplayHidden}
           />
           {isStakeholdersBoxVisible && (
             <BlowoutList

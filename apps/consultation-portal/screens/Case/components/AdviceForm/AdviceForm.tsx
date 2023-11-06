@@ -195,6 +195,14 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
+
+  const publishRuleText =
+    _case.statusName === 'Til umsagnar'
+      ? sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
+      : sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].past
+  const shouldDisplayHidden = _case.allowUsersToSendPrivateAdvices && _case.advicePublishTypeId !== 3
+  const hiddenText = _case.statusName === 'Til umsagnar' ? sloc.hiddenName.present : sloc.hiddenName.past
+
   return isAuthenticated ? (
     <Box
       paddingY={3}
@@ -237,11 +245,11 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
       <Text marginBottom={2}>
         {loc.card.description.textBefore}
         {` ${
-          sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
+          publishRuleText
         } 
         ${sloc.publishLaw.text} 
         `}
-
+        {` ${shouldDisplayHidden && hiddenText}`}
         <Link href={sloc.publishLaw.link.href} legacyBehavior>
           {sloc.publishLaw.link.label}
         </Link>
