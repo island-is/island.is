@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinanceDocumentsListModel')
 export class DocumentsListModel {
   @Field(() => [DocumentsListItem])
   documentsList!: DocumentsListItem[]
@@ -9,7 +9,7 @@ export class DocumentsListModel {
   downloadServiceURL?: string
 }
 
-@ObjectType()
+@ObjectType('FinanceDocumentsListItem')
 export class DocumentsListItem {
   @Field()
   id!: string

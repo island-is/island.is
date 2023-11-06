@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
   IsEmail,
@@ -5,7 +6,6 @@ import {
   IsOptional,
   IsString,
 } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Locale } from '../../user-profile/types/localeTypes'
 

@@ -9,7 +9,7 @@ import { LoadingDots } from '@island.is/island-ui/core'
 import { hasDisabilityLicense } from '../../lib/queries'
 import { Markdown } from '@island.is/shared/components'
 
-export const NoDisabilityRecordInfo: FC<
+export const HasDisabilityLicenseMessage: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = () => {
   const { data, loading, error, refetch } = useQuery(
@@ -22,11 +22,8 @@ export const NoDisabilityRecordInfo: FC<
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    if (data && !!data.hasDisabilityDiscount) {
-      setValue(
-        'personalInfo.hasDisabilityDiscountChecked',
-        data.hasDisabilityDiscount,
-      )
+    if (data && !!data.hasDisabilityLicense) {
+      setValue('personalInfo.hasDisabilityLicense', data.hasDisabilityLicense)
     }
   }, [data])
 
@@ -38,7 +35,7 @@ export const NoDisabilityRecordInfo: FC<
 
   return (
     <Box style={{ fontSize: 14 }}>
-      {!loading && !data?.hasDisabilityDiscount && (
+      {!loading ? (
         <AlertMessage
           message={
             <Markdown>
@@ -53,8 +50,7 @@ export const NoDisabilityRecordInfo: FC<
             error ? 'error' : data?.hasDisabilityLicense ? 'success' : 'info'
           }
         />
-      )}
-      {loading && (
+      ) : (
         <Box display="flex" justifyContent="center" marginTop={2}>
           <LoadingDots />
         </Box>
