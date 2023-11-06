@@ -869,7 +869,7 @@ export class NotificationService {
           }),
       defenderName ?? '',
       defenderEmail ?? '',
-      [],
+      undefined,
       Boolean(defenderNationalId) === false,
     )
   }
@@ -1517,7 +1517,7 @@ export class NotificationService {
       html,
       theCase.registrar.name,
       theCase.registrar.email,
-      [],
+      undefined,
       true,
     )
 
