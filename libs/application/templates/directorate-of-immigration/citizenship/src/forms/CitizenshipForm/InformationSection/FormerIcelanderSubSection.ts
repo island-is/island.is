@@ -27,6 +27,7 @@ export const FormerIcelanderSubSection = buildSubSection({
           id: 'formerIcelander',
           title: '',
           description: '',
+          required: true,
           width: 'half',
           options: [
             {
@@ -53,12 +54,6 @@ export const FormerIcelanderSubSection = buildSubSection({
             },
           ],
         }),
-        // buildCustomField({
-        //   id: 'formerIcelander',
-        //   title: '',
-        //   description: '',
-        //   component: 'FormerIcelander',
-        // }),
       ],
     }),
   ],

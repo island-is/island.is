@@ -8,6 +8,7 @@ export enum ApiActions {
 }
 
 export const MAX_CNT_APPLICANTS = 18
+export const FILE_SIZE_LIMIT = 10000000
 
 export const MIN_AGE_WRITTEN_CONSENT = 12
 export const MIN_AGE_CHILD_INFORMATION_BOX = 11

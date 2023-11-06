@@ -15,8 +15,7 @@ import {
 } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
 import { Routes } from '../../../lib/constants'
-
-const FILE_SIZE_LIMIT = 10000000
+import { FILE_SIZE_LIMIT } from '../../../shared'
 
 export const OtherDocumentsSubSection = buildSubSection({
   id: Routes.SUPPORTINGDOCUMENTS,
