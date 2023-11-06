@@ -14,14 +14,14 @@ export class PatchUserProfileDto {
     nullable: true,
   })
   @IsOptional()
-  @ValidateIf((e) => e.email !== null)
+  @ValidateIf((profile) => profile.email !== '')
   @IsEmail()
   email?: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  @ValidateIf((e) => e.email !== null)
+  @ValidateIf((profile) => profile.email !== '')
   emailVerificationCode?: string
 
   @ApiPropertyOptional({
@@ -30,13 +30,13 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsString()
   @MinLength(7)
-  @ValidateIf((e) => e.mobilePhoneNumber !== null)
+  @ValidateIf((profile) => profile.mobilePhoneNumber !== '')
   mobilePhoneNumber?: string
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  @ValidateIf((e) => e.mobilePhoneNumber !== null)
+  @ValidateIf((profile) => profile.mobilePhoneNumber !== '')
   mobilePhoneNumberVerificationCode?: string
 
   @ApiPropertyOptional()
