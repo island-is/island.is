@@ -1,5 +1,5 @@
 import { Children, FC, ReactElement, cloneElement, useState } from 'react'
-import { Box, ModalBase, Swiper } from '@island.is/island-ui/core'
+import { Box, ModalBase, Swiper, Text } from '@island.is/island-ui/core'
 import * as styles from './GalleryModal.css'
 import * as galleryStyles from './Gallery.css'
 import cn from 'classnames'
@@ -67,7 +67,9 @@ export const GalleryModal: FC<Props> = ({
           </Box>
         </Box>
         <Box display="flex" justifyContent="center">
-          {activeItem + 1}/{thumbnailsArray.length}
+          <Text>
+            {activeItem + 1}/{thumbnailsArray.length}
+          </Text>
         </Box>
         <Box overflow="hidden" paddingLeft={1} paddingRight={1}>
           <Swiper>
