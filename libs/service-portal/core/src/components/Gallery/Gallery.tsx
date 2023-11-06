@@ -1,14 +1,7 @@
 import { FC, useState, Children, cloneElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Gallery.css'
-import {
-  AlertMessage,
-  Box,
-  Inline,
-  LoadingDots,
-  Swiper,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
 import { GalleryItemProps } from '../..'
 import { isDefined } from '@island.is/shared/utils'
 import { GalleryModal } from './GalleryModal'
@@ -48,6 +41,7 @@ export const Gallery: FC<GalleryProps> = ({
               justifyContent="center"
               alignItems="center"
               textAlign="center"
+              overflow="hidden"
               height="full"
             >
               <LoadingDots large />

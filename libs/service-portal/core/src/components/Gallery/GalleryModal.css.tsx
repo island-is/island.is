@@ -20,7 +20,6 @@ export const container = style({
   height: '100%',
   width: '100%',
   display: 'grid',
-  gridTemplateRows: '4fr 1fr',
   rowGap: '5px',
   backgroundColor: white,
 })

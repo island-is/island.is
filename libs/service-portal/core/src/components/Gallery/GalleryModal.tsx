@@ -1,27 +1,8 @@
-import {
-  Children,
-  FC,
-  ReactElement,
-  cloneElement,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import {
-  Box,
-  Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  ModalBase,
-  Swiper,
-  Text,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { Children, FC, ReactElement, cloneElement, useState } from 'react'
+import { Box, ModalBase, Swiper } from '@island.is/island-ui/core'
 import * as styles from './GalleryModal.css'
 import * as galleryStyles from './Gallery.css'
 import cn from 'classnames'
-import { useMountedState } from 'react-use'
 import { GalleryItemProps } from './GalleryItem'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -69,11 +50,17 @@ export const GalleryModal: FC<Props> = ({
       <Box className={styles.container}>
         <Box
           className={galleryStyles.gallery}
+          width="full"
           overflow="hidden"
           transition="fast"
-          style={{ height: '352px', width: '352px' }}
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
         >
-          <Box className={galleryStyles.galleryImageWrap}>
+          <Box
+            className={galleryStyles.galleryImageWrap}
+            style={{ height: '400px', width: '300px' }}
+          >
             {childArray.map((item, i) =>
               cloneElement(item as React.ReactElement, {
                 active: i === activeItem,
@@ -81,7 +68,10 @@ export const GalleryModal: FC<Props> = ({
             )}
           </Box>
         </Box>
-        <Box>
+        <Box display="flex" justifyContent="center">
+          {activeItem + 1}/{thumbnailsArray.length}
+        </Box>
+        <Box overflow="hidden" paddingLeft={1} paddingRight={1}>
           <Swiper>
             {thumbnailsArray
               .map((thumbnail, i) => {
