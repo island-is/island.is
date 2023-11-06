@@ -37,7 +37,7 @@ export const EventList = ({
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
-    setIsMobile(width < theme.breakpoints.md)
+    setIsMobile(width < theme.breakpoints.sm)
   }, [width])
 
   return (
