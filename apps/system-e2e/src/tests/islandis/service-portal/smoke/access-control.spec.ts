@@ -41,7 +41,7 @@ test.describe('Service portal, in access control', () => {
   // Smoke test: Aðgangstýring - kanna að öll umboð sjáist
   // Smoke test: Aðgangstýring - Gefa umboð sem einstaklingur
   // Smoke test: Innskráning umboð gefið af öðrum
-  test.only('can remove, create and use custom delegations', async () => {
+  test('can remove, create and use custom delegations', async () => {
     // Arrange
     const granterPage = await contextGranter.newPage()
     await granterPage.goto(
