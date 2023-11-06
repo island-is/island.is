@@ -1,11 +1,10 @@
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
+  BadRequestException,
   Controller,
   Get,
-  Param,
-  UseGuards,
   Headers,
-  BadRequestException,
+  UseGuards,
 } from '@nestjs/common'
 
 import { Documentation } from '@island.is/nest/swagger'
@@ -13,8 +12,10 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
-import { UserProfileDto } from './dto/user-profileDto'
+import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+
+import * as kennitala from 'kennitala'
 
 const namespace = '@island.is/user-profile/v2/users'
 
@@ -36,6 +37,14 @@ export class UserProfileController {
   @Get('/.national-id')
   @Documentation({
     description: 'Get user profile for given nationalId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the user to find',
+        },
+      },
+    },
     response: { status: 200, type: UserProfileDto },
   })
   @Audit<UserProfileDto>({
@@ -44,7 +53,7 @@ export class UserProfileController {
   findUserProfile(
     @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<UserProfileDto> {
-    if (!nationalId || nationalId.length !== 10) {
+    if (!kennitala.isValid(nationalId)) {
       throw new BadRequestException('National id is not valid')
     }
     return this.userProfileService.findById(nationalId)

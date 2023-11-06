@@ -1,19 +1,22 @@
 import request from 'supertest'
+import faker from 'faker'
 
-import { createCurrentUser } from '@island.is/testing/fixtures'
+import {
+  createCurrentUser,
+  createNationalId,
+  createPhoneNumber,
+} from '@island.is/testing/fixtures'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
 
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { FixtureFactory } from './fixtureFactory'
-
-const testNationalId = '0101302399'
+import { FixtureFactory } from '../../../../test/fixture-factory'
 
 const testUserProfile = {
-  nationalId: testNationalId,
-  email: 'test@test.is',
-  mobilePhoneNumber: '1234567',
+  nationalId: createNationalId(),
+  email: faker.internet.email(),
+  mobilePhoneNumber: createPhoneNumber(),
 }
 
 describe('UserProfileController', () => {
@@ -30,13 +33,14 @@ describe('UserProfileController', () => {
       // Act
       const res = await server
         .get('/v2/users/.national-id')
-        .set('X-Param-National-Id', '1234567890')
+        .set('X-Param-National-Id', testUserProfile.nationalId)
 
       // Assert
       expect(res.status).toBe(401)
       expect(res.body).toMatchObject({
-        statusCode: 401,
-        message: 'Unauthorized',
+        status: 401,
+        title: 'Unauthorized',
+        type: 'https://httpstatuses.org/401',
       })
 
       await app.cleanUp()
@@ -60,9 +64,10 @@ describe('UserProfileController', () => {
       // Assert
       expect(res.status).toEqual(403)
       expect(res.body).toMatchObject({
-        statusCode: 403,
-        error: 'Forbidden',
-        message: 'Forbidden resource',
+        detail: 'Forbidden resource',
+        status: 403,
+        title: 'Forbidden',
+        type: 'https://httpstatuses.org/403',
       })
 
       await app.cleanUp()
@@ -73,7 +78,7 @@ describe('UserProfileController', () => {
     let app = null
     let server = null
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
@@ -85,19 +90,19 @@ describe('UserProfileController', () => {
       server = request(app.getHttpServer())
     })
 
-    afterEach(async () => {
+    afterAll(async () => {
       await app.cleanUp()
     })
 
     it('GET /v2/users/.national-id should return 200 with default UserProfileDto when the User Profile does not exist in db', async () => {
       const res = await server
         .get('/v2/users/.national-id')
-        .set('X-Param-National-Id', testNationalId)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
 
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
-        nationalId: testNationalId,
+        nationalId: testUserProfile.nationalId,
         email: null,
         emailVerified: false,
         mobilePhoneNumber: null,
@@ -109,17 +114,16 @@ describe('UserProfileController', () => {
 
     it('GET /v2/user/.national-id should return 200 with the UserProfileDto when the User Profile exists in db', async () => {
       // Arrange
-      const fixtureFactory = new FixtureFactory(app)
-      const userProfile = fixtureFactory.createUserProfile(testUserProfile)
+      await new FixtureFactory(app).createUserProfile(testUserProfile)
 
       const res = await server
         .get('/v2/users/.national-id')
-        .set('X-Param-National-Id', testNationalId)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
 
       // Assert
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
-        nationalId: testNationalId,
+        nationalId: testUserProfile.nationalId,
         email: testUserProfile.email,
         emailVerified: false,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
