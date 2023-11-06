@@ -524,6 +524,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
+      "@island.is/clients/intellectual-properties": [
+        "libs/clients/intellectual-properties/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
