@@ -62,7 +62,7 @@
     "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
-    "@apollo/client": "3.7.15",
+    "@apollo/client": "3.8.7",
     "@apollo/gateway": "2.1.1",
     "@apollo/subgraph": "2.1.1",
     "@apollo/utils.keyvadapter": "3.0.0",
