@@ -6,12 +6,12 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 
-import { UserProfileDto } from './dto/user-profile.dto'
-import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
-import { IslykillService } from './islykill.service'
 import { formatPhoneNumber } from '../utils/format-phone-number'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
+import { IslykillService } from './islykill.service'
 
 export const NUDGE_INTERVAL = 6
 
@@ -86,7 +86,7 @@ export class UserProfileService {
 
     const formattedPhoneNumber = isMobilePhoneNumberDefined
       ? formatPhoneNumber(userProfile.mobilePhoneNumber)
-      : null
+      : undefined
 
     return this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, transaction] as const

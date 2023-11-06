@@ -122,7 +122,7 @@ export class VerificationService {
 
     if (!verification) {
       return {
-        message: `Email verification does not exist for this user`,
+        message: `Email verification code does not match.`,
         confirmed: false,
       }
     }
@@ -141,7 +141,7 @@ export class VerificationService {
     if (confirmEmailDto.hash !== verification.hash) {
       // TODO: Add tries?
       return {
-        message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
+        message: 'Email verification code does not match.',
         confirmed: false,
       }
     }

@@ -199,20 +199,18 @@ describe('MeUserProfileController', () => {
 
       // Mock islyklar api responses
       islyklarApi = app.get(IslyklarApi)
-      islyklarApi.islyklarPut = jest
-        .fn()
-        .mockResolvedValue((user: PublicUser) => {
-          return { ssn: user.ssn }
-        })
+      islyklarApi.islyklarPut = jest.fn()
       islyklarApi.islyklarPost = jest
         .fn()
-        .mockResolvedValue((user: PublicUser) => {
-          return { ssn: user.ssn }
+        .mockImplementation(({ user }: { user: PublicUser }) => {
+          return new Promise((resolve) => {
+            resolve(user)
+          })
         })
-      islyklarApi.islyklarGet = jest.fn().mockResolvedValue(() => {
-        return {
-          ssn: testUserProfile.nationalId,
-        }
+      islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
+        ssn: testUserProfile.nationalId,
+        email: testUserProfile.email,
+        mobile: testUserProfile.mobilePhoneNumber,
       })
     })
 
@@ -306,7 +304,7 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        detail: 'Email verification with hash 000 does not exist',
+        detail: 'Email verification code does not match.',
         status: 400,
         title: 'Bad Request',
         type: 'https://httpstatuses.org/400',
@@ -380,14 +378,12 @@ describe('MeUserProfileController', () => {
       })
     })
 
-    it('PATCH /v2/me should return 200 and clear email and phoneNumber null is sent', async () => {
+    it('PATCH /v2/me should return 200 and clear email and phoneNumber when empty string is sent', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: '',
         email: '',
       })
-
-      console.log(res.body)
 
       // Assert
       expect(res.status).toEqual(200)
@@ -408,7 +404,13 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumber).toBe(null)
 
       // Assert that islyklar api is called
-      expect(islyklarApi.islyklarPut).toBeCalledWith
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: '',
+          mobile: '',
+        },
+      })
     })
 
     it('PATCH /v2/me should return 200 and create islyklar profile when it does not exist', async () => {
@@ -432,7 +434,13 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(islyklarApi.islyklarPut).not.toBeCalled()
-      expect(islyklarApi.islyklarPost).toBeCalled()
+      expect(islyklarApi.islyklarPost).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: newPhoneNumber,
+        },
+      })
     })
 
     it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
@@ -447,7 +455,51 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(200)
       expect(islyklarApi.islyklarPost).not.toBeCalled()
-      expect(islyklarApi.islyklarPut).toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: newPhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and should call the islyklar put method with new email and current mobilePhoneNumber', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: emailVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: testUserProfile.mobilePhoneNumber,
+        },
+      })
+    })
+
+    it('PATCH /v2/me should return 200 and should call the islyklar put method with new mobilePhoneNumber and current email', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumberVerificationCode: smsVerificationCode,
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(islyklarApi.islyklarPost).not.toBeCalled()
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          mobile: newPhoneNumber,
+        },
+      })
     })
   })
 
