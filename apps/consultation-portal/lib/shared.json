@@ -9,8 +9,8 @@
       "past": "Umsagnir voru birtar að loknum umsagnarfresti."
     },
     "publishNever": {
-      "present": "Umsagnir eru ekki birtar.",
-      "past": "Umsagnir voru ekki birtar."
+      "present": "Umsagnir eru ekki birtar í gáttinni.",
+      "past": "Umsagnir voru ekki birtar í gáttinni."
     },
     "publishLaw": {
       "text": "Upplýsingalög gilda, sjá nánar í",
