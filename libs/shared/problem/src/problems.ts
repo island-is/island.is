@@ -34,7 +34,7 @@ export interface BadSubjectProblem extends BaseProblem {
 
 export interface AttemptFailedProblem extends BaseProblem {
   type: ProblemType.ATTEMPT_FAILED
-  remainingAttempts?: number
+  remainingAttempts: number
   fields?: ValidationFailedFields
 }
 

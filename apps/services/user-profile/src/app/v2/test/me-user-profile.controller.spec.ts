@@ -308,9 +308,11 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        title: 'Email verification code does not match.',
+        title: 'Attempt Failed',
         status: 400,
-        type: 'https://httpstatuses.org/400',
+        detail:
+          '2 attempts remaining. Validation issues found in field: emailVerificationCode',
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
       })
 
       // Assert Db records
@@ -339,9 +341,12 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        title: 'SMS code is not a match. 2 tries remaining.',
+        title: 'Attempt Failed',
         status: 400,
-        type: 'https://httpstatuses.org/400',
+        detail:
+          '2 attempts remaining. Validation issues found in field: smsVerificationCode',
+        remainingAttempts: 2,
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
       })
 
       // Assert Db records
@@ -413,9 +418,10 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        title:
+        detail:
           'Too many failed SMS verifications. Please restart verification.',
         status: 400,
+        title: 'Bad Request',
         type: 'https://httpstatuses.org/400',
       })
     })
@@ -439,9 +445,10 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        title:
+        detail:
           'Too many failed email verifications. Please restart verification.',
         status: 400,
+        title: 'Bad Request',
         type: 'https://httpstatuses.org/400',
       })
     })

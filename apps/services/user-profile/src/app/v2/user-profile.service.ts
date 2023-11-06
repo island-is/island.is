@@ -93,35 +93,49 @@ export class UserProfileService {
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
-      const promises = await Promise.all(
-        [
-          shouldVerifyEmail &&
-            (await this.verificationService.confirmEmail(
-              {
-                email: userProfile.email,
-                hash: userProfile.emailVerificationCode,
-              },
-              ...commonArgs,
-            )),
+      if (shouldVerifyEmail) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmEmail(
+            {
+              email: userProfile.email,
+              hash: userProfile.emailVerificationCode,
+            },
+            ...commonArgs,
+          )
 
-          shouldVerifyMobilePhoneNumber &&
-            (await this.verificationService.confirmSms(
-              {
-                mobilePhoneNumber: formattedPhoneNumber,
-                code: userProfile.mobilePhoneNumberVerificationCode,
-              },
-              ...commonArgs,
-            )),
-        ].filter(Boolean),
-      )
-
-      promises.map(({ confirmed, remainingAttempts }) => {
         if (confirmed === false) {
-          throw new AttemptFailed(remainingAttempts, {
-            smsVerificationCode: 'Verification code does not match',
-          })
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              emailVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
         }
-      })
+      }
+
+      if (shouldVerifyMobilePhoneNumber) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmSms(
+            {
+              mobilePhoneNumber: formattedPhoneNumber,
+              code: userProfile.mobilePhoneNumberVerificationCode,
+            },
+            ...commonArgs,
+          )
+
+        if (confirmed === false) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              smsVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
+        }
+      }
 
       const update = {
         nationalId,
