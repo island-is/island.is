@@ -1,7 +1,7 @@
 generates:
   ./apps/judicial-system/web/src/:
     schema:
-      - ./apps/judicial-system/api.graphql
+      - ./apps/judicial-system/api/src/api.graphql
     documents: apps/judicial-system/web/src/**/*.graphql
     preset: 'near-operation-file'
     presetConfig:
@@ -16,7 +16,7 @@ generates:
 
   ./apps/judicial-system/web/src/graphql/schema.tsx:
     schema:
-      - ./apps/judicial-system/api.graphql
+      - ./apps/judicial-system/api/src/api.graphql
     documents:
       - ./apps/judicial-system/web/**/*.(ts|tsx)
     plugins:
@@ -31,24 +31,9 @@ generates:
         object: true
       namingConvention:
         enumValues: 'change-case-all#upperCase'
-  ./apps/judicial-system/web-e2e-regression/src/graphql/schema.ts:
-    schema:
-      - ./apps/judicial-system/api.graphql
-    documents:
-      - ./apps/judicial-system/web-e2e-regression/**/*.(ts|tsx)
-    plugins:
-      - typescript
-      - typescript-operations
-      - typescript-react-apollo
-    config:
-      withHooks: false
-      withHOC: false
-      withComponent: false
-      avoidOptionals:
-        object: true
   ./apps/judicial-system/web/src/graphql/possibleTypes.json:
     schema:
-      - ./apps/judicial-system/api.graphql
+      - ./apps/judicial-system/api/src/api.graphql
     plugins:
       - fragment-matcher
     config:

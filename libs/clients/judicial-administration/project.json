@@ -32,13 +32,12 @@
         "cwd": "libs/clients/judicial-administration"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/judicial-administration/gen/fetch -i libs/clients/judicial-administration/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/judicial-administration/gen/fetch -i libs/clients/judicial-administration/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

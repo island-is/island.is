@@ -36,7 +36,7 @@ const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/judicial-system/api.graphql'
+  : 'apps/judicial-system/api/src/api.graphql'
 
 @Module({
   imports: [

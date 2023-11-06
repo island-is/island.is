@@ -127,10 +127,6 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     }
   }
 
-  async getLicenseDetail(user: User): Promise<Result<OrorkuSkirteini | null>> {
-    return this.getLicense(user)
-  }
-
   private async createPkPassPayload(
     data: OrorkuSkirteini,
   ): Promise<PassDataInput | null> {
