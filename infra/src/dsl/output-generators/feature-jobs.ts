@@ -99,8 +99,8 @@ export const generateJobsForFeature = async (
         62,
       ),
       annotations: {
-        'argocd.argoproj.io/hook': 'PreSync'
-      }
+        'argocd.argoproj.io/hook': 'PreSync',
+      },
     },
     spec: {
       template: {
