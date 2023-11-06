@@ -753,7 +753,8 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-          ./monorepo/infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" --dockertag "$DOCKER_TAG" > feature-values/$FEATURE_NAME.yaml
+          ./monorepo/infra/scripts/generate-feature-values.sh jobs --feature $FEATURE_NAME --images "$IMAGES" --chart islandis --jobImage "821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config:$DOCKER_TAG" > feature-values/$FEATURE_NAME.yaml
+          ./monorepo/infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" --dockertag "$DOCKER_TAG" >> feature-values/$FEATURE_NAME.yaml
       - name: Commit and push feature-values
         env:
           FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
