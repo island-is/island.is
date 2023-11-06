@@ -10,6 +10,39 @@ import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
 
+type MountebankConfig = {
+  protocol: string
+  name: string
+  port: number
+  stubs: [
+    {
+      predicates: any[] //[{ equals: {} }],
+      responses: [
+        {
+          proxy: {
+            to: string
+            mode: string
+            // soffia proxy service hack. need to get this proxy to forward host header but not really how to do it yet.
+            injectHeaders?: {
+              Host: string
+            }
+            predicateGenerators: [
+              {
+                matches: {
+                  method: boolean
+                  path: boolean
+                  query: boolean
+                  body: boolean
+                }
+              },
+            ]
+          }
+        },
+      ]
+    },
+  ]
+}
+
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
   const projects = globSync(['apps/*/project.json', 'apps/*/*/project.json'], {
@@ -135,11 +168,11 @@ export const getLocalrunValueFile = async (
                 ],
               },
             ],
-          },
+          } as MountebankConfig,
         ],
       }
     },
-    { ports: [] as number[], configs: [] as any[] },
+    { ports: [] as number[], configs: [] as MountebankConfig[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
   await writeFile(
