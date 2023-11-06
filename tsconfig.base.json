@@ -273,6 +273,12 @@
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-health/work-license": [
+        "libs/application/templates/directorate-of-health/work-license/src/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-health/work-licenses": [
+        "libs/application/templates/directorate-of-health/work-licenses/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
