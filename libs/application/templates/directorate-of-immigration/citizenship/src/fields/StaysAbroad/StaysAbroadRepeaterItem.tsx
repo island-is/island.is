@@ -118,6 +118,9 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               marginBottom: 0,
             }}
           />
+          /*
+            <Text as="h5" fontWeight="semiBold">{formatMessage(information.labels.staysAbroad.itemTitle)}</Text>
+        */
         )}
 
         {itemNumber > 0 && !readOnly && (
