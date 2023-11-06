@@ -63,6 +63,11 @@ export const conclusion = {
       defaultMessage: 'Afrita hlekk',
       description: 'Copy link label on conclusion screen',
     },
+    showOverviewLink: {
+      id: 'ta.cov.application:conclusion.default.showOverviewLink',
+      defaultMessage: 'Staða tilkynningar',
+      description: 'Show overview link title',
+    },
   }),
   review: defineMessages({
     accordionText: {

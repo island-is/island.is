@@ -10,6 +10,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
+  FootNote,
+  HMS_ID,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -103,6 +105,8 @@ export const AssetsOverview = () => {
           defaultMessage:
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
+        serviceProviderID={HMS_ID}
+        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
       />
 
       {loading && <AssetCardLoader />}
@@ -144,10 +148,11 @@ export const AssetsOverview = () => {
         !error &&
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
-          <Box marginTop={8}>
+          <Box marginTop={[0, 8]}>
             <EmptyState />
           </Box>
         )}
+      <FootNote serviceProviderID={HMS_ID} />
     </>
   )
 }

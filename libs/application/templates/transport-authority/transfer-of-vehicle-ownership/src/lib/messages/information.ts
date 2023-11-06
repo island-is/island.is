@@ -100,6 +100,11 @@ export const information = {
         defaultMessage: 'Dagsetning kaupsamnings',
         description: 'Date of purchase agreement label',
       },
+      mileage: {
+        id: 'ta.tvo.application:information.labels.vehicle.mileage',
+        defaultMessage: 'Kílómetrar',
+        description: 'Mileage for vehicle label',
+      },
     }),
     seller: defineMessages({
       sectionTitle: {

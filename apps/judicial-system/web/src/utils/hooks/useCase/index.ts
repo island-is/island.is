@@ -24,6 +24,7 @@ import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   InstitutionType,
   useCaseLazyQuery,
+  useLimitedAccessCaseLazyQuery,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -284,7 +285,20 @@ const useCase = () => {
   const [extendCaseMutation, { loading: isExtendingCase }] =
     useMutation<ExtendCaseMutationResponse>(ExtendCaseMutation)
 
-  const [getCaseToOpen] = useCaseLazyQuery({
+  const [getLimitedAccessCase] = useLimitedAccessCaseLazyQuery({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+    onCompleted: (limitedAccessCaseData) => {
+      if (user && limitedAccessCaseData?.limitedAccessCase) {
+        openCase(limitedAccessCaseData.limitedAccessCase as Case, user)
+      }
+    },
+    onError: () => {
+      toast.error(formatMessage(errors.getCaseToOpen))
+    },
+  })
+
+  const [getCase] = useCaseLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (caseData) => {
@@ -296,6 +310,12 @@ const useCase = () => {
       toast.error(formatMessage(errors.getCaseToOpen))
     },
   })
+
+  const getCaseToOpen = (id: string) => {
+    limitedAccess
+      ? getLimitedAccessCase({ variables: { input: { id } } })
+      : getCase({ variables: { input: { id } } })
+  }
 
   const createCase = useMemo(
     () =>
@@ -477,7 +497,6 @@ const useCase = () => {
               },
             },
           })
-
           return Boolean(data?.sendNotification?.notificationSent)
         } catch (e) {
           return false
