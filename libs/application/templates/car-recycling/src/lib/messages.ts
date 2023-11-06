@@ -92,7 +92,7 @@ export const carRecyclingMessages: MessageDir = {
     },
     onlyOwnerCanRecyle: {
       id: 'rf.cr.application:onlyOwnerCanRecyle',
-      defaultMessage: 'Aðeins eigandi ökutækis má setja það í endurvinnslu',
+      defaultMessage: 'Aðeins eigandi ökutækis má skrá í endurvinnslu',
       description: 'Only the owner of the vehicle may place it for recycling',
     },
     cancel: {
@@ -102,8 +102,8 @@ export const carRecyclingMessages: MessageDir = {
     },
     selectedTitle: {
       id: 'rf.cr.application:selected.title',
-      defaultMessage: 'Ökutæki valin í afskrá til endurvinnslu',
-      description: 'Vehicles selected in deregistration for recycling',
+      defaultMessage: 'Ökutæki valin til endurvinnslu',
+      description: 'Vehicles selected for recycling',
     },
   }),
   review: defineMessages({
