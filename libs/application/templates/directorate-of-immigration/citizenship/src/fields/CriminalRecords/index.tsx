@@ -25,7 +25,7 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box>
+    <Box paddingTop={2}>
       {filteredCountryList &&
         filteredCountryList.map((x) => {
           return (

@@ -34,8 +34,18 @@ export const information = {
       alertDescription: {
         id: 'doi.cs.application:information.labels.formerIcelander.alertDescription',
         defaultMessage:
-          'Þú uppfyllir engin búsetuskliyrði, vinsamlegast hafðu samband við Útlendingastofnun ef þú telur þig hafa rétt á því. Sjá nánar um búsetuskilyrði hér.',
+          'Þú uppfyllir engin búsetuskliyrði, vinsamlegast hafðu samband við Útlendingastofnun ef þú telur þig hafa rétt á því.',
         description: 'formerIcelander alert description',
+      },
+      alertLinkTitle: {
+        id: 'doi.cs.application:information.labels.formerIcelander.alertLinkTitle',
+        defaultMessage: 'Sjá nánar um búsetuskilyrði hér.',
+        description: 'formerIcelander alert link title',
+      },
+      alertLinkUrl: {
+        id: 'doi.cs.application:information.labels.formerIcelander.alertLinkUrl',
+        defaultMessage: '/',
+        description: 'formerIcelander alert link url',
       },
     }),
     parents: defineMessages({
