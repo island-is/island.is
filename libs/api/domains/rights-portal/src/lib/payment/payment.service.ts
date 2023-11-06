@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
-import {
-  PaymentApi,
-  PaymentOverviewDTO,
-} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { CopaymentStatus } from './models/copaymentStatus.model'
 import { CopaymentPeriod } from './models/copaymentPeriod.model'
