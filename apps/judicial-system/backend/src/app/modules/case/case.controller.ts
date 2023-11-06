@@ -237,6 +237,9 @@ export class CaseController {
     if (update.caseResentExplanation) {
       update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
       update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+      update.prosecutorDemands = update.demands ?? theCase.demands
+      update.validToDate =
+        update.requestedValidToDate ?? theCase.requestedValidToDate
     }
 
     if (update.prosecutorStatementDate) {
