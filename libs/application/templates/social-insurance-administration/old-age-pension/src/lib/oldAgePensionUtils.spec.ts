@@ -389,9 +389,9 @@ describe('getBank', () => {
       externalData: {
         socialInsuranceAdministrationBankInfo: {
           data: {
-            bank: "2222",
-            ledger: "00",
-            accountNumber: "123456"
+            bank: '2222',
+            ledger: '00',
+            accountNumber: '123456',
           },
           date: new Date(),
           status: 'success',
@@ -399,11 +399,9 @@ describe('getBank', () => {
       },
     })
 
-    const { bankInfo } = getApplicationExternalData(
-      application.externalData,
-    )
+    const { bankInfo } = getApplicationExternalData(application.externalData)
     const bankNumer = getBank(bankInfo)
 
-    expect("222200123456").toEqual(bankNumer)
+    expect('222200123456').toEqual(bankNumer)
   })
 })

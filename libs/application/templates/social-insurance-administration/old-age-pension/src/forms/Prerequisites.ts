@@ -87,11 +87,11 @@ export const PrerequisitesForm: Form = buildForm({
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationBankInfoApi,
                   title:
-                  oldAgePensionFormMessage.pre
-                    .socialInsuranceAdministrationInformationTitle,
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationTitle,
                   subTitle:
-                  oldAgePensionFormMessage.pre
-                    .socialInsuranceAdministrationInformationDescription,
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationDescription,
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,
@@ -146,7 +146,8 @@ export const PrerequisitesForm: Form = buildForm({
             buildMultiField({
               id: 'questions',
               title: oldAgePensionFormMessage.pre.questionTitle,
-              description: oldAgePensionFormMessage.pre.pensionFundQuestionDescription,
+              description:
+                oldAgePensionFormMessage.pre.pensionFundQuestionDescription,
               children: [
                 buildRadioField({
                   id: 'questions.pensionFund',
