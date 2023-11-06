@@ -5,6 +5,7 @@ import subMonths from 'date-fns/subMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed } from '@island.is/nest/problem'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -12,8 +13,6 @@ import { formatPhoneNumber } from '../utils/format-phone-number'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
-import { ValidationFailed } from '@island.is/nest/problem'
-import { AttemptFailed } from '../../../../../../libs/nest/problem/src/lib/AttemptFailed'
 
 export const NUDGE_INTERVAL = 6
 
@@ -103,7 +102,7 @@ export class UserProfileService {
             ...commonArgs,
           )
 
-        if (confirmed === false) {
+        if (!confirmed) {
           // Check if we should throw a BadRequest or an AttemptFailed error
           if (remainingAttempts >= 0) {
             throw new AttemptFailed(remainingAttempts, {
