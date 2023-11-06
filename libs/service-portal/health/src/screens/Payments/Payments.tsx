@@ -27,7 +27,7 @@ export const Payments = () => {
   const [activeTab, setActiveTab] = useState<PaymentTabs>(
     Object.values(PaymentTabs).includes(hashValue as PaymentTabs)
       ? (hashValue as PaymentTabs)
-      : PaymentTabs.PAYMENT_PARTICIPATION,
+      : PaymentTabs.PAYMENT_OVERVIEW,
   )
 
   // Needed to update internal state of tab component..
