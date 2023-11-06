@@ -726,6 +726,8 @@ export const slices = gql`
         streetAddress
         floor
         postalCode
+        freeText
+        useFreeText
       }
       thumbnailImage {
         url
