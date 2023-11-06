@@ -98,13 +98,25 @@ export const LicensesOverview = () => {
 
   useEffect(() => {
     const checkIncluded = async () => {
-      const featureEnabled = await featureFlagClient.getValue(
+      const ehicEnabled = await featureFlagClient.getValue(
         'isEHICCardEnabled',
         false,
       )
-      if (featureEnabled) {
-        setIncludedTypes([...includedTypes, GenericLicenseType.Ehic])
+      const pcardEnabled = await featureFlagClient.getValue(
+        'isPcardEnabled',
+        false,
+      )
+
+      let included = includedTypes
+      if (ehicEnabled) {
+        included = [...included, GenericLicenseType.Ehic]
       }
+
+      if (pcardEnabled) {
+        included = [...included, GenericLicenseType.PCard]
+      }
+
+      setIncludedTypes(included)
     }
 
     checkIncluded()
@@ -118,6 +130,7 @@ export const LicensesOverview = () => {
       },
     },
   })
+
   const { genericLicenses = [] } = data ?? {}
   const {
     data: passportData,
