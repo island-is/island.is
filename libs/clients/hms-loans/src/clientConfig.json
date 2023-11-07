@@ -1,0 +1,553 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "LibraAPI",
+    "description": "Vefþjónusta fyrir Libra kerfi.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v{version}/Authenticate/token": {
+      "post": {
+        "tags": [
+          "Authenticate"
+        ],
+        "summary": "Skilar token ef notandinn er auðkenndur.",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "description": "Notandanafn",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "Lykilorð",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TokenModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TokenModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TokenModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Libra/lanayfirlit": {
+      "post": {
+        "tags": [
+          "Libra"
+        ],
+        "summary": "Skilar upplýsingar um lán fyrir viðkomandi einstakling sem eru í Libra kerfi HMS.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "description": "Kennitala lántakanda",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LanaYfirlitReturnModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LanaYfirlitReturnModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LanaYfirlitReturnModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Libra/greidsluyfirlit": {
+      "post": {
+        "tags": [
+          "Libra"
+        ],
+        "summary": "Skilar greiðsluyfirlit lána fyrir viðkomandi einstakling sem eru í Libra kerfi HMS.",
+        "parameters": [
+          {
+            "name": "kennitala",
+            "in": "query",
+            "description": "Kennitala lántakanda",
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GreidsluYfirlitReturnModel": {
+        "type": "object",
+        "properties": {
+          "gjalddagi": {
+            "type": "string",
+            "description": "Gjalddagi fyrir greiðslu.",
+            "format": "date-time"
+          },
+          "hreyfingadagur": {
+            "type": "string",
+            "description": "Hreyfingadagur greiðslu.",
+            "format": "date-time"
+          },
+          "afborgun": {
+            "type": "number",
+            "description": "Afborgun fyrir greiðslu.",
+            "format": "double",
+            "nullable": true
+          },
+          "vextir": {
+            "type": "number",
+            "description": "Vextir fyrir greiðslu.",
+            "format": "double",
+            "nullable": true
+          },
+          "verdbAfborgun": {
+            "type": "number",
+            "description": "Verðbætur afborgun.",
+            "format": "double",
+            "nullable": true
+          },
+          "verdbVextir": {
+            "type": "number",
+            "description": "Verðbætur vextir.",
+            "format": "double",
+            "nullable": true
+          },
+          "kostnadur": {
+            "type": "number",
+            "description": "Kostnaður við greiðslu.",
+            "format": "double",
+            "nullable": true
+          },
+          "drattarvextir": {
+            "type": "number",
+            "description": "Dráttarvextir greiðslu.",
+            "format": "double",
+            "nullable": true
+          },
+          "samtals": {
+            "type": "number",
+            "description": "Samtala fyrir greiðslu.",
+            "format": "double",
+            "nullable": true
+          },
+          "lansnumer": {
+            "type": "integer",
+            "description": "Lánsnúmer fyrir greiðslu.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model fyrir greiðsluyfirlit."
+      },
+      "LanaYfirlitReturnModel": {
+        "type": "object",
+        "properties": {
+          "masterloanid": {
+            "type": "integer",
+            "description": "Lánsnúmer",
+            "format": "int32"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Lántakandi - aðalgreiðandi láns.",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "description": "Lögheimili lántakanda samkv. þjóðskrá",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "number",
+            "description": "Póstnúmer",
+            "format": "double"
+          },
+          "poststod": {
+            "type": "string",
+            "description": "Staður póstnúmers.",
+            "nullable": true
+          },
+          "fyrstiVaxtadagur": {
+            "type": "string",
+            "description": "Fyrsti vaxtadagur láns.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fyrstiGjalddagi": {
+            "type": "string",
+            "description": "Fyrsti gjalddagi láns.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fjoldiGjalddaga": {
+            "type": "integer",
+            "description": "Fjöldi gjalddaga.",
+            "format": "int32",
+            "nullable": true
+          },
+          "fjoldiGjalddagaAAri": {
+            "type": "integer",
+            "description": "Fjöldi gjalddaga á ári.",
+            "format": "int32",
+            "nullable": true
+          },
+          "greidslujofnun": {
+            "type": "string",
+            "description": "Greiðslujöfnun. Skilar já eða nei.",
+            "nullable": true
+          },
+          "uppGrAkvaedi": {
+            "type": "string",
+            "description": "Uppgreiðsluþóknun já/nei",
+            "nullable": true
+          },
+          "frysting": {
+            "type": "string",
+            "description": "Veitir upplýsingar hvort lán sé fryst eða hafi verið fryst.",
+            "nullable": true
+          },
+          "timabFrysting": {
+            "type": "string",
+            "description": "Tímabundin frysting.  Er ekki í notkun og ekki almenn vitneskja hvaða upplýsingum er verið að skila.",
+            "nullable": true
+          },
+          "breytilegir": {
+            "type": "string",
+            "description": "Breytilegir vextir, já/nei.",
+            "nullable": true
+          },
+          "hlutdeildarlan": {
+            "type": "integer",
+            "description": "Númer lánaflokks. Ef tómt þá lánið ekki hlutdeildarlán.",
+            "format": "int32"
+          },
+          "tegVisitolu": {
+            "type": "string",
+            "description": "Vísitala neysluverðs",
+            "nullable": true
+          },
+          "grunnVisitala": {
+            "type": "number",
+            "description": "Grunnvísitala á útgáfudegi láns.",
+            "format": "double",
+            "nullable": true
+          },
+          "vextir": {
+            "type": "number",
+            "description": "Vaxta prósenta láns.",
+            "format": "double",
+            "nullable": true
+          },
+          "upphaflegFjarhaed": {
+            "type": "number",
+            "description": "Upphafleg lánsfjárhæð.",
+            "format": "double"
+          },
+          "naestiGjalddagi": {
+            "type": "string",
+            "description": "Næsti gjalddagi.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sidastiGjalddagi": {
+            "type": "string",
+            "description": "Síðasti gjalddagi.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "elstiOgreiddiGjalddagi": {
+            "type": "string",
+            "description": "Elsti ógreiddi gjalddagi.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fjoldiGjalddagaEftir": {
+            "type": "integer",
+            "description": "Fjöldi gjalddaga eftir af láni.",
+            "format": "int32",
+            "nullable": true
+          },
+          "stadaJofnun": {
+            "type": "number",
+            "description": "Staða greiðslujöfnunar reiknings.",
+            "format": "double"
+          },
+          "sidastaGreidsla": {
+            "type": "number",
+            "description": "Upphæð síðustu afborgunar.",
+            "format": "double",
+            "nullable": true
+          },
+          "vanskilAlls": {
+            "type": "number",
+            "description": "Upphæð vanskila.",
+            "format": "double"
+          },
+          "nafnverdOgjaldfallid": {
+            "type": "number",
+            "description": "Eftirstöðvar nafnverð láns án verðbóta og vaxta.",
+            "format": "double",
+            "nullable": true
+          },
+          "afallnirVxtVb": {
+            "type": "number",
+            "description": "Áfallnir vextir og verðbætur innan vaxtatímabils.",
+            "format": "double",
+            "nullable": true
+          },
+          "eftirstodvarMVSkil": {
+            "type": "number",
+            "description": "Eftirstöðvar láns miðað við að lántakandi sé í fullum skilum.",
+            "format": "double",
+            "nullable": true
+          },
+          "uppgreidslugjald": {
+            "type": "number",
+            "description": "Upphæð uppgreiðsluþóknunar",
+            "format": "double",
+            "nullable": true
+          },
+          "uppgreidsluverdmaeti": {
+            "type": "number",
+            "description": "Uppgreiðslu verðmæti. Staða láns með uppgreiðsluþóknun.",
+            "format": "double",
+            "nullable": true
+          },
+          "stadaLans": {
+            "type": "string",
+            "description": "Staða láns. Virkt eða óvirkt.",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Kennitala lántakanda.",
+            "nullable": true
+          },
+          "lanaFlokkur": {
+            "type": "string",
+            "description": "Tegund láns.",
+            "nullable": true
+          },
+          "leggur": {
+            "type": "integer",
+            "description": "Á aðeins við um ádráttarlán. Fjöldi leggja endurspegla útgreiðslur til lántakanda.",
+            "format": "int32"
+          },
+          "vedstadir": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VedstadirModel"
+            },
+            "description": "Listi yfir veðstaði fyrir lán.",
+            "nullable": true
+          },
+          "medgreidendur": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedgreidendurModel"
+            },
+            "description": "Listi yfir meðgreiðendur/lántakendur",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedgreidendurModel": {
+        "type": "object",
+        "properties": {
+          "nafnMedgreidandi": {
+            "type": "string",
+            "description": "Nafn meðgreiðanda.",
+            "nullable": true
+          },
+          "medGreidandi": {
+            "type": "string",
+            "description": "Kennitala meðgreiðanda.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TokenModel": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "Token fyrir auðkenningu.",
+            "nullable": true
+          },
+          "expiration": {
+            "type": "string",
+            "description": "Datetime hvenær token rennur út.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VedstadirModel": {
+        "type": "object",
+        "properties": {
+          "fastanumer": {
+            "type": "string",
+            "description": "Fastanúmer veðs.",
+            "nullable": true
+          },
+          "vedstadurHeiti": {
+            "type": "string",
+            "description": "Heiti veðs (fastanúmers).",
+            "nullable": true
+          },
+          "vedstadurSVfelag": {
+            "type": "string",
+            "description": "Sveitarfélag veðstaðar.",
+            "nullable": true
+          },
+          "epilog": {
+            "type": "string",
+            "description": "Matshluti.",
+            "nullable": true
+          },
+          "svFelagsNumer": {
+            "type": "string",
+            "description": "Sveitarfélagsnúmer veðs.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
