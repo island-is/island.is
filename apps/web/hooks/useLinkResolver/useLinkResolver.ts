@@ -39,6 +39,10 @@ export const routesTemplate = {
     is: '/s/stafraent-island/[slug]',
     en: '',
   },
+  applications: {
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
+  },
   page: {
     is: '/stafraent-island',
     en: '',
@@ -74,6 +78,14 @@ export const routesTemplate = {
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -223,14 +235,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
   },
 }
 
