@@ -435,19 +435,26 @@ export class InternalCaseService {
         .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
-        const errorMessage = `User ${
-          prosecutor?.id ?? 'unknown'
-        } is not registered as a prosecutor`
         // Tolerate failure, but log error
-        this.logger.error(errorMessage)
+        this.logger.error(
+          `User ${
+            prosecutor?.id ?? 'unknown'
+          } is not registered as a prosecutor`,
+        )
         // Unless case is marked with heightened security, then we won't tolerate failure
         if (caseToCreate.isHeightenedSecurityLevel === true) {
-          throw new BadRequestException(errorMessage)
+          throw new BadRequestException(
+            'Invalid prosecutor for heightened security case',
+          )
         }
       } else {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
       }
+    } else if (caseToCreate.isHeightenedSecurityLevel === true) {
+      throw new BadRequestException(
+        'A prosecutor is required for heightened security cases',
+      )
     }
 
     return this.sequelize.transaction(async (transaction) => {
