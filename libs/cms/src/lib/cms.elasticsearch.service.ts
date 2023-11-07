@@ -256,11 +256,11 @@ export class CmsElasticsearchService {
   ): Promise<RequestedType | null> {
     // return a single item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const itemResponse = await this.elasticService.getSingleDocumentByMetaData(
+    const itemsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )
-    const response = itemResponse.hits.hits?.[0]?._source?.response
+    const response = itemsResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
   }
 
