@@ -1154,6 +1154,9 @@ download-service:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
+    XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
+    XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -1217,6 +1220,10 @@ download-service:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
+    XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
+    XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+    XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1842,6 +1849,7 @@ regulations-admin-backend:
       DB_NAME: 'regulations_admin_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'regulations_admin_backend'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'

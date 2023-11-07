@@ -1,5 +1,16 @@
 import gql from 'graphql-tag'
 
+export const processEntryFields = gql`
+  fragment ProcessEntryFields on ProcessEntry {
+    __typename
+    id
+    processTitle
+    processLink
+    openLinkInModal
+    buttonText
+  }
+`
+
 export const slices = gql`
   fragment ImageFields on Image {
     __typename
@@ -184,15 +195,6 @@ export const slices = gql`
     }
   }
 
-  fragment ProcessEntryFields on ProcessEntry {
-    __typename
-    id
-    processTitle
-    processLink
-    openLinkInModal
-    buttonText
-  }
-
   fragment HtmlFields on Html {
     __typename
     id
@@ -362,7 +364,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
     }
@@ -371,7 +373,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
       importance
@@ -765,6 +767,7 @@ export const slices = gql`
     ...FaqListFields
     ...FeaturedSupportQNAsFields
   }
+  ${processEntryFields}
 `
 
 export const nestedOneColumnTextFields = gql`

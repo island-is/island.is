@@ -243,4 +243,6 @@ export interface CaseExpressions {
   isStatusNameForReview: boolean
   isStakeholdersNotEmpty: boolean
   isRelatedCasesNotEmpty: boolean
+  isStakeholdersBoxVisible: boolean
+  shouldDisplayHidden: boolean
 }

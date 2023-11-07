@@ -142,12 +142,6 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     return licenseData
   }
 
-  async getLicenseDetail(
-    user: User,
-  ): Promise<Result<FirearmLicenseDto | null>> {
-    return this.getLicense(user)
-  }
-
   private async createPkPassPayload(
     data: FirearmLicenseDto,
     nationalId: string,
