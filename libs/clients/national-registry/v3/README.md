@@ -9,5 +9,5 @@ Run `nx test clients-national-registry-v3` to execute the unit tests via [Jest](
 ### Updating the open api definition (clientConfig.json)
 
 ```sh
-yarn nx run clients-national-registry-v3:schemas/external-openapi-generator
+yarn nx run clients-national-registry-v3:codegen/backend-client
 ```
