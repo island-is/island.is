@@ -90,4 +90,16 @@ export class AdminController {
       nationalId,
     )
   }
+  @Get('admin/institution/:nationalId/applications')
+  async findAllInstitution(
+    @Param('nationalId') nationalId: string,
+    @Query('status') status?: string,
+  ) {
+    this.logger.debug(`Getting institution applications with status ${status}`)
+
+    return this.applicationService.findAllByInstitutionAndFilters(
+      nationalId,
+      status,
+    )
+  }
 }

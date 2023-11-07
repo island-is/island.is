@@ -7,8 +7,10 @@ import {
   FormValue,
   ApplicationStatus,
   ApplicationLifecycle,
+  institutionMapper,
 } from '@island.is/application/types'
 import { Application } from './application.model'
+import { invertBy } from 'lodash'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -108,6 +110,27 @@ export class ApplicationService {
             }
           : {}),
       },
+    })
+  }
+
+  async findAllByInstitutionAndFilters(
+    nationalId: string,
+    status?: string,
+  ): Promise<Application[]> {
+    const statuses = status?.split(',')
+    const typeIds = this.getTypeIdsForInstitution(nationalId)
+    console.log(typeIds)
+
+    return this.applicationModel.findAll({
+      where: {
+        ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
+        ...(statuses ? { status: { [Op.in]: statuses } } : {}),
+        [Op.and]: [applicationIsNotSetToBePruned()],
+        isListed: {
+          [Op.eq]: true,
+        },
+      },
+      order: [['modified', 'DESC']],
     })
   }
 
@@ -303,5 +326,13 @@ export class ApplicationService {
 
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
+  }
+
+  getTypeIdsForInstitution(nationalId: string): string[] {
+    const institutions = invertBy(
+      institutionMapper,
+      (application) => application.nationalId,
+    )
+    return institutions[nationalId]
   }
 }
