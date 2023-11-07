@@ -6,7 +6,7 @@
 # Organisation name is @island-is, not @island.is
 
 # Fallback. If there is no owner, assign to core maintainers.
-*                                                                                                        @island-is/core
+# *                                                                                                        @island-is/core
 
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
