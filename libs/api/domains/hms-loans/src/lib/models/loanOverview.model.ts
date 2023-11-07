@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HmsLoansVedstadirModel')
-export class VedstadirModel {
+@ObjectType('HmsLoansVedstadir')
+export class Vedstadir {
   @Field(() => String, { nullable: true })
   fastanumer?: string
 
@@ -18,8 +18,8 @@ export class VedstadirModel {
   svFelagsNumer?: string
 }
 
-@ObjectType('HmsLoansMedgreidendurModel')
-export class MedgreidendurModel {
+@ObjectType('HmsLoansMedgreidendur')
+export class Medgreidendur {
   @Field(() => String, { nullable: true })
   nafnMedgreidandi?: string | null
 
@@ -27,8 +27,8 @@ export class MedgreidendurModel {
   medGreidandi?: string | null
 }
 
-@ObjectType('HmsLoansLanayfirlitModel')
-export class LanayfirlitModel {
+@ObjectType('HmsLoansLoanOverview')
+export class LoanOverview {
   @Field(() => Number, { nullable: true })
   masterloanid?: number
 
@@ -134,9 +134,9 @@ export class LanayfirlitModel {
   @Field(() => Number, { nullable: true })
   leggur?: number
 
-  @Field(() => [VedstadirModel], { nullable: true })
-  vedstadir?: VedstadirModel[]
+  @Field(() => [Vedstadir], { nullable: true })
+  vedstadir?: Vedstadir[]
 
-  @Field(() => [MedgreidendurModel], { nullable: true })
-  medgreidendur?: MedgreidendurModel[]
+  @Field(() => [Medgreidendur], { nullable: true })
+  medgreidendur?: Medgreidendur[]
 }

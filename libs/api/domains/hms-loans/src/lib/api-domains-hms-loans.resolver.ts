@@ -12,8 +12,8 @@ import {
 import { HmsLoansClientService } from '@island.is/clients/hms-loans'
 import { Audit } from '@island.is/nest/audit'
 
-import { LanayfirlitModel } from './models/hmsLoansLanayfirlit.model'
-import { GreidsluyfirlitModel } from './models/hmsLoansGreidsluyfirlit.model'
+import { LoanOverview } from './models/loanOverview.model'
+import { PaymentOverview } from './models/paymentOverview.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
@@ -22,21 +22,15 @@ import { GreidsluyfirlitModel } from './models/hmsLoansGreidsluyfirlit.model'
 export class HmsLoansResolver {
   constructor(private hmsLoansService: HmsLoansClientService) {}
 
-  @Query(() => LanayfirlitModel, { nullable: true })
+  @Query(() => LoanOverview, { nullable: true })
   @Audit()
-  async getHmsLoansLanayfirlit(@CurrentUser() user: User) {
-    return await this.hmsLoansService.getHmsLoansLanayfirlit(
-      user.nationalId,
-      user,
-    )
+  async getHmsLoansLoanOverview(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansLoanOverview(user)
   }
 
-  @Query(() => GreidsluyfirlitModel, { nullable: true })
+  @Query(() => PaymentOverview, { nullable: true })
   @Audit()
-  async getHmsLoansGreidsluyfirlit(@CurrentUser() user: User) {
-    return this.hmsLoansService.getHmsLoansGreidsluyfirlit(
-      user.nationalId,
-      user,
-    )
+  async getHmsLoansPaymentOverview(@CurrentUser() user: User) {
+    return this.hmsLoansService.getHmsLoansPaymentOverview(user)
   }
 }
