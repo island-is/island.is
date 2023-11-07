@@ -12,6 +12,8 @@ import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { FixtureFactory } from '../../../../test/fixture-factory'
+import { UserProfile } from '../../user-profile/userProfile.model'
+import { getModelToken } from '@nestjs/sequelize'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -77,6 +79,8 @@ describe('UserProfileController', () => {
   describe('With auth', () => {
     let app = null
     let server = null
+    let fixtureFactory = null
+    let userProfileModel: typeof UserProfile = null
 
     beforeAll(async () => {
       app = await setupApp({
@@ -88,6 +92,14 @@ describe('UserProfileController', () => {
       })
 
       server = request(app.getHttpServer())
+      fixtureFactory = new FixtureFactory(app)
+      userProfileModel = app.get(getModelToken(UserProfile))
+    })
+
+    beforeEach(async () => {
+      await userProfileModel.destroy({
+        truncate: true,
+      })
     })
 
     afterAll(async () => {
@@ -114,7 +126,7 @@ describe('UserProfileController', () => {
 
     it('GET /v2/user/.national-id should return 200 with the UserProfileDto when the User Profile exists in db', async () => {
       // Arrange
-      await new FixtureFactory(app).createUserProfile(testUserProfile)
+      await fixtureFactory.createUserProfile(testUserProfile)
 
       const res = await server
         .get('/v2/users/.national-id')

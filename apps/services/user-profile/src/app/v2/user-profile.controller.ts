@@ -6,6 +6,7 @@ import {
   Headers,
   UseGuards,
 } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit, AuditService } from '@island.is/nest/audit'
@@ -14,8 +15,6 @@ import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
-
-import * as kennitala from 'kennitala'
 
 const namespace = '@island.is/user-profile/v2/users'
 
