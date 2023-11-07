@@ -441,6 +441,7 @@ enum LicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
+  PCard = 'PCard',
 }
 enum LicenseTypePath {
   okurettindi = 'okurettindi',
@@ -448,18 +449,21 @@ enum LicenseTypePath {
   adrrettindi = 'adrrettindi',
   vinnuvelarettindi = 'vinnuvelarettindi',
   ororkuskirteini = 'ororkuskirteini',
+  pcard = 'pkort',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration',
+  DistrictCommissioners = 'DistrictCommissioners',
 }
 enum LicenseProviderPath {
   vinnueftirlitid = 'vinnueftirlitid',
   umhverfisstofnun = 'umhverfisstofnun',
   rikislogreglustjori = 'rikislogreglustjori',
   tryggingastofnun = 'tryggingastofnun',
+  syslumenn = 'syslumenn',
 }
 
 export const getLicenseDetailHeading = (type: string) => {
@@ -489,6 +493,12 @@ export const getLicenseDetailHeading = (type: string) => {
       return {
         title: m.yourDisabilityicense,
         text: m.disabilityLicenseDescription,
+      }
+      break
+    case LicenseType.PCard:
+      return {
+        title: m.yourPCard,
+        text: m.yourPCardDescription,
       }
       break
     default:
@@ -524,6 +534,11 @@ export const getTitleAndLogo = (type: string) => {
         title: m.disabilityLicense,
         logo: './assets/images/tr.svg',
       }
+    case LicenseType.PCard:
+      return {
+        title: m.pCard,
+        logo: './assets/images/island.svg',
+      }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
   }
@@ -541,6 +556,8 @@ export const getPathFromType = (type: string) => {
       return ServicePortalPath.MachineLicensesDetail
     case LicenseType.DisabilityLicense:
       return ServicePortalPath.DisabilityLicense
+    case LicenseType.PCard:
+      return ServicePortalPath.PCardDetail
     default:
       return ''
   }
@@ -558,6 +575,8 @@ export const getTypeFromPath = (path: string) => {
       return LicenseType.MachineLicense
     case LicenseTypePath.ororkuskirteini:
       return LicenseType.DisabilityLicense
+    case LicenseTypePath.pcard:
+      return LicenseType.PCard
     default:
       return undefined
   }
@@ -572,6 +591,8 @@ export const getPathFromProviderId = (id: string) => {
       return LicenseProviderPath.rikislogreglustjori
     case LicenseProviderId.SocialInsuranceAdministration:
       return LicenseProviderPath.tryggingastofnun
+    case LicenseProviderId.DistrictCommissioners:
+      return LicenseProviderPath.syslumenn
     default:
       return ''
   }

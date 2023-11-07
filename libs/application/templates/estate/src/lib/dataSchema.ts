@@ -78,6 +78,7 @@ export const estateSchema = z.object({
       .object({
         name: z.string(),
         relation: customZodError(z.string().min(1), m.errorRelation),
+        relationWithApplicant: z.string().optional(),
         nationalId: z.string().optional(),
         custodian: z.string().length(10).optional(),
         foreignCitizenship: z.string().array().min(0).max(1).optional(),
@@ -99,6 +100,16 @@ export const estateSchema = z.object({
       .refine(
         ({ nationalId, advocate }) => {
           return kennitala.info(nationalId as string).age < 18 ? advocate : true
+        },
+        {
+          path: ['nationalId'],
+        },
+      )
+      .refine(
+        ({ foreignCitizenship, nationalId }) => {
+          return !foreignCitizenship?.length
+            ? nationalId && kennitala.isValid(nationalId)
+            : true
         },
         {
           path: ['nationalId'],
@@ -376,6 +387,26 @@ export const estateSchema = z.object({
       {
         params: m.errorNationalIdIncorrect,
         path: ['nationalId'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || balance !== ''
+          ? isValidString(loanIdentity)
+          : true
+      },
+      {
+        path: ['loanIdentity'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || creditorName !== '' || loanIdentity !== ''
+          ? isValidString(balance)
+          : true
+      },
+      {
+        path: ['balance'],
       },
     )
     .array()
