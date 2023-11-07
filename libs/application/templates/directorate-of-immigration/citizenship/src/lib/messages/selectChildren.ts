@@ -94,7 +94,8 @@ export const selectChildren = {
     },
     linkUrl: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.linkUrl',
-      defaultMessage: 'https://www.mbl.is',
+      defaultMessage:
+        'https://island.is/rikisborgararettur-fyrir-born-og-ungmenni/ungmenni',
       description: 'url of the link in text',
     },
   }),
