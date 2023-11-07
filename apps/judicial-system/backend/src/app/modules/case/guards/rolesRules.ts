@@ -92,6 +92,7 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'appealJudge3Id',
   'appealConclusion',
   'appealRulingDecision',
+  'appealRulingModifiedHistory',
 ]
 
 const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']

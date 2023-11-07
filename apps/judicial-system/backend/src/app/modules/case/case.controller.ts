@@ -243,6 +243,14 @@ export class CaseController {
       update.prosecutorStatementDate = nowFactory()
     }
 
+    if (update.appealRulingModifiedHistory) {
+      const history = theCase.appealRulingModifiedHistory
+        ? `${theCase.appealRulingModifiedHistory}\n\n`
+        : ''
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+      update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 

@@ -122,6 +122,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -137,6 +138,7 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
   > {
   type?: CaseType
@@ -145,7 +147,6 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null

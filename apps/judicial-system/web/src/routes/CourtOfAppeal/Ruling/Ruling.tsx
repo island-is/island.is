@@ -20,13 +20,13 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import {
   BlueBox,
-  CaseResubmitModal,
   FormContentContainer,
   FormContext,
   FormFooter,
   Modal,
   PageHeader,
   PageLayout,
+  RulingModifiedModal,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -44,7 +44,7 @@ import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/s
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-type ModalType = 'UploadComplete' | 'ReopenCase' | 'none'
+type ModalType = 'UploadComplete' | 'AppealRulingModified' | 'none'
 
 const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -60,7 +60,12 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const {
+    updateCase,
+    transitionCase,
+    isTransitioningCase,
+    setAndSendCaseToServer,
+  } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -93,7 +98,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
     )
   }
 
-  const handleNextButtonClick = async () => {
+  const handleComplete = async () => {
     const caseTransitioned =
       workingCase.appealState !== CaseAppealState.COMPLETED
         ? await transitionCase(
@@ -103,16 +108,22 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
           )
         : true
 
-    setVisibleModal(
+    if (caseTransitioned) {
+      setVisibleModal('UploadComplete')
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    if (
       hasSentNotification(
         NotificationType.APPEAL_COMPLETED,
         workingCase.notifications,
       )
-        ? 'ReopenCase'
-        : caseTransitioned
-        ? 'UploadComplete'
-        : 'none',
-    )
+    ) {
+      setVisibleModal('AppealRulingModified')
+    } else {
+      await handleComplete()
+    }
   }
 
   return (
@@ -325,7 +336,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
         <FormFooter
           previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`}
           onNextButtonClick={async () => await handleNextButtonClick()}
-          nextIsDisabled={!isStepValid}
+          nextIsDisabled={!isStepValid || isTransitioningCase}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
@@ -343,14 +354,11 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
           }}
         />
       )}
-      {visibleModal === 'ReopenCase' && (
-        <CaseResubmitModal
-          onClose={() => setVisibleModal('none')}
-          workingCase={workingCase}
-          isLoading={false}
-          onContinue={() => {
-            console.log('sad')
-          }}
+      {visibleModal === 'AppealRulingModified' && (
+        <RulingModifiedModal
+          onCancel={() => setVisibleModal('none')}
+          onContinue={handleComplete}
+          continueDisabled={isTransitioningCase}
         />
       )}
     </PageLayout>

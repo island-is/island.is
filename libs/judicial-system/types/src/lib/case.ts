@@ -284,6 +284,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
 }
@@ -404,6 +405,7 @@ export interface UpdateCase
     | 'appealCaseNumber'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
