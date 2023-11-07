@@ -441,19 +441,20 @@ export class InternalCaseService {
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
-        // Unless case is marked with heightened security, then we won't tolerate failure
-        if (caseToCreate.isHeightenedSecurityLevel === true) {
-          throw new BadRequestException(
-            'Invalid prosecutor for heightened security case',
-          )
-        }
       } else {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
       }
-    } else if (caseToCreate.isHeightenedSecurityLevel === true) {
+    }
+
+    // If case is marked with heightened security, there needs to be a valid prosecutor
+    // assigned to it so that it doesn't get lost in the system
+    if (
+      caseToCreate.isHeightenedSecurityLevel &&
+      (!caseToCreate.prosecutorNationalId || !prosecutorId)
+    ) {
       throw new BadRequestException(
-        'A prosecutor is required for heightened security cases',
+        'A valid prosecutor is required for heightened security cases',
       )
     }
 
