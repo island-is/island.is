@@ -205,7 +205,7 @@ jobs:
           fi
       - name: Check release-manager approval
         id: check-release-manager-approval
-        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.head.ref, '/pre-release/') }}
+        if: ${{ contains(github.event.pull_request.labels.*.name, 'automerge') && contains(github.event.pull_request.base.ref, 'pre-release/') }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
