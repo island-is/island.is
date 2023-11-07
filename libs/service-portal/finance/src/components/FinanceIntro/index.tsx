@@ -1,11 +1,5 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Column,
-  Columns,
-  GridContainer,
-  Text,
-} from '@island.is/island-ui/core'
+import { Column, Columns, GridContainer, Text } from '@island.is/island-ui/core'
 
 interface Props {
   text: string

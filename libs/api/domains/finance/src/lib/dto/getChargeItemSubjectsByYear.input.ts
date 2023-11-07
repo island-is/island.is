@@ -2,16 +2,16 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class GetDocumentsListInput {
+export class GetChargeItemSubjectsByYearInput {
   @Field()
   @IsString()
-  dayFrom!: string
+  year!: string
 
   @Field()
   @IsString()
-  dayTo!: string
+  typeId!: string
 
   @Field()
   @IsString()
-  listPath!: string
+  nextKey!: string
 }

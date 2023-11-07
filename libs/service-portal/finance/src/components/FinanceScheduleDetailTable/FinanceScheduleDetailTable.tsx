@@ -18,12 +18,6 @@ interface Props {
   data: Array<DetailedSchedule>
 }
 
-type DetailData = Array<
-  DetailedSchedule & {
-    paid: boolean
-  }
->
-
 const FinanceScheduleDetailTable: FC<React.PropsWithChildren<Props>> = ({
   data,
 }) => {

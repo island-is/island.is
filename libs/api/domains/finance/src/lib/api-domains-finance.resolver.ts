@@ -11,13 +11,14 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
+import { FinanceClientV2Service } from '@island.is/clients/finance-v2'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { GetFinancialOverviewInput } from './dto/getOverview.input'
 import { GetCustomerRecordsInput } from './dto/getCustomerRecords.input'
-import { GetDocumentsListInput } from './dto/getDocumentsList.input'
+import { GetFinanceDocumentsListInput } from './dto/getFinanceDocumentsList.input'
 import { GetFinanceDocumentInput } from './dto/getFinanceDocument.input'
 import { GetAnnualStatusDocumentInput } from './dto/getAnnualStatusDocument.input'
 import { CustomerChargeType } from './models/customerChargeType.model'
@@ -31,6 +32,15 @@ import {
 } from './models/paymentSchedule.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
+import { AssessmentYearsModel } from './models/assessmentYears.model'
+import { ChargeTypesByYearModel } from './models/chargeTypesByYear.model'
+import { FinanceChargeTypeDetailsModel } from './models/chargeTypeDetails.model'
+import { ChargeTypePeriodSubjectModel } from './models/chargeTypePeriodSubject.model'
+import { ChargeItemSubjectsByYearModel } from './models/chargeItemSubjectsByYear.model'
+import { GetChargeTypesByYearInput } from './dto/getChargeTypesByYear.input'
+import { GetChargeTypesDetailsByYearInput } from './dto/getChargeTypesDetailsByYear.input'
+import { GetChargeItemSubjectsByYearInput } from './dto/getChargeItemSubjectsByYear.input'
+import { GetChargeTypePeriodSubjectInput } from './dto/getChargeTypePeriodSubject.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -39,6 +49,7 @@ import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.
 export class FinanceResolver {
   constructor(
     private financeService: FinanceClientService,
+    private financeServiceV2: FinanceClientV2Service,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
@@ -98,7 +109,7 @@ export class FinanceResolver {
   @Scopes(ApiScope.financeOverview, ApiScope.financeSalary)
   async getDocumentsList(
     @CurrentUser() user: User,
-    @Args('input') input: GetDocumentsListInput,
+    @Args('input') input: GetFinanceDocumentsListInput,
   ) {
     if (
       input.listPath === 'employeeClaims' &&
@@ -215,6 +226,70 @@ export class FinanceResolver {
     return this.financeService.getPaymentScheduleById(
       user.nationalId,
       input.scheduleNumber,
+      user,
+    )
+  }
+
+  @Query(() => AssessmentYearsModel)
+  @Audit()
+  async getAssessmentYears(@CurrentUser() user: User) {
+    return await this.financeServiceV2.getAssessmentYears(user.nationalId, user)
+  }
+
+  @Query(() => ChargeTypesByYearModel, { nullable: true })
+  @Audit()
+  async getChargeTypesByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypesByYearInput,
+  ) {
+    return await this.financeServiceV2.getChargeTypesByYear(
+      user.nationalId,
+      input.year,
+      user,
+    )
+  }
+
+  @Query(() => FinanceChargeTypeDetailsModel)
+  @Audit()
+  async getChargeTypesDetailsByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypesDetailsByYearInput,
+  ) {
+    return await this.financeServiceV2.getChargeTypesDetailsByYear(
+      user.nationalId,
+      input.year,
+      input.typeId,
+      user,
+    )
+  }
+
+  @Query(() => ChargeItemSubjectsByYearModel)
+  @Audit()
+  async getChargeItemSubjectsByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeItemSubjectsByYearInput,
+  ) {
+    return await this.financeServiceV2.getChargeItemSubjectsByYear(
+      user.nationalId,
+      input.year,
+      input.typeId,
+      input.nextKey,
+      user,
+    )
+  }
+
+  @Query(() => ChargeTypePeriodSubjectModel)
+  @Audit()
+  async getChargeTypePeriodSubject(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypePeriodSubjectInput,
+  ) {
+    return await this.financeServiceV2.getChargeTypePeriodSubject(
+      user.nationalId,
+      input.year,
+      input.typeId,
+      input.subject,
+      input.period,
       user,
     )
   }
