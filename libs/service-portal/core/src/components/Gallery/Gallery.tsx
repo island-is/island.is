@@ -1,7 +1,13 @@
 import { FC, useState, Children, cloneElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Gallery.css'
-import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  Inline,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { GalleryItemProps } from '../..'
 import { isDefined } from '@island.is/shared/utils'
 import { GalleryModal } from './GalleryModal'
@@ -23,6 +29,14 @@ export const Gallery: FC<GalleryProps> = ({
 
   const [activeItem, setActiveItem] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const onThumbnailClick = (i: number, lastImage: boolean) => {
+    console.log(i)
+    console.log(lastImage)
+    if (lastImage) {
+      setIsModalOpen(true)
+    } else setActiveItem(i)
+  }
 
   return (
     <>
@@ -66,48 +80,37 @@ export const Gallery: FC<GalleryProps> = ({
                 const lastImage = shortenedThumbnailsArray.length - 1 === i
 
                 return (
-                  <Box
+                  <FocusableBox
+                    component="button"
                     key={i}
                     className={cn(styles.galleryButton, {
                       [styles.activeGalleryButton]: i === activeItem,
                     })}
                     style={{ height: '80px', width: '80px' }}
+                    onClick={() => onThumbnailClick(i, lastImage)}
                   >
-                    {lastImage ? (
-                      <>
-                        {cloneElement(
-                          thumbnail as React.ReactElement<GalleryItemProps>,
-                          {
-                            thumbnail: true,
-                          },
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => setIsModalOpen(true)}
-                        >
-                          <Box className={styles.lastImageOverlay}>
-                            <Text
-                              variant="h4"
-                              as="p"
-                              color="blue400"
-                              fontWeight="semiBold"
-                            >
-                              +{thumbnailsArray.length - 4}
-                            </Text>
-                          </Box>
-                        </button>
-                      </>
-                    ) : (
-                      <button type="button" onClick={() => setActiveItem(i)}>
-                        {cloneElement(
-                          thumbnail as React.ReactElement<GalleryItemProps>,
-                          {
-                            thumbnail: true,
-                          },
-                        )}
-                      </button>
-                    )}
-                  </Box>
+                    <>
+                      {cloneElement(
+                        thumbnail as React.ReactElement<GalleryItemProps>,
+                        {
+                          thumbnail: true,
+                        },
+                      )}
+                      {lastImage && (
+                        <Box className={styles.lastImageOverlay}>
+                          <Text
+                            variant="h4"
+                            as="p"
+                            color="blue400"
+                            fontWeight="semiBold"
+                          >
+                            +{thumbnailsArray.length - 4}
+                          </Text>
+                        </Box>
+                      )}
+                    </>
+                    )
+                  </FocusableBox>
                 )
               })
               .filter(isDefined)}
@@ -116,15 +119,22 @@ export const Gallery: FC<GalleryProps> = ({
       </Inline>
 
       {isModalOpen && (
-        <GalleryModal
-          id="ip-design-modal"
-          isVisible={isModalOpen}
-          onVisibilityChange={(isVisible) => setIsModalOpen(isVisible)}
-          thumbnails={thumbnails}
-          label="all designs"
+        <Box
+          display="flex"
+          alignItems="center"
+          position="relative"
+          height="full"
         >
-          {children}
-        </GalleryModal>
+          <GalleryModal
+            id="ip-design-modal"
+            isVisible={isModalOpen}
+            onVisibilityChange={(isVisible) => setIsModalOpen(isVisible)}
+            thumbnails={thumbnails}
+            label="all designs"
+          >
+            {children}
+          </GalleryModal>
+        </Box>
       )}
     </>
   )

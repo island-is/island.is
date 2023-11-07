@@ -34,6 +34,11 @@ export const galleryButton = style({
   zIndex: theme.zIndex.base,
   width: '100%',
   opacity: 0.8,
+
+  ':focus': {
+    borderColor: theme.color.mint400,
+    outline: 0,
+  },
 })
 
 export const activeGalleryButton = style({

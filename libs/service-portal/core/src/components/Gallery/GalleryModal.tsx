@@ -1,5 +1,11 @@
 import { Children, FC, ReactElement, cloneElement, useState } from 'react'
-import { Box, ModalBase, Swiper, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  FocusableBox,
+  ModalBase,
+  Swiper,
+  Text,
+} from '@island.is/island-ui/core'
 import * as styles from './GalleryModal.css'
 import * as galleryStyles from './Gallery.css'
 import cn from 'classnames'
@@ -80,22 +86,22 @@ export const GalleryModal: FC<Props> = ({
                 }
 
                 return (
-                  <Box
+                  <FocusableBox
                     key={i}
+                    component="button"
+                    onClick={() => setActiveItem(i)}
                     className={cn(galleryStyles.galleryButton, {
                       [galleryStyles.activeGalleryButton]: i === activeItem,
                     })}
                     style={{ height: '80px', width: '80px' }}
                   >
-                    <button type="button" onClick={() => setActiveItem(i)}>
-                      {cloneElement(
-                        thumbnail as React.ReactElement<GalleryItemProps>,
-                        {
-                          thumbnail: true,
-                        },
-                      )}
-                    </button>
-                  </Box>
+                    {cloneElement(
+                      thumbnail as React.ReactElement<GalleryItemProps>,
+                      {
+                        thumbnail: true,
+                      },
+                    )}
+                  </FocusableBox>
                 )
               })
               .filter(isDefined)}
