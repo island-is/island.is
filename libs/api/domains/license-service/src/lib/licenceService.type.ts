@@ -1,8 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 
-export type DriversLicenseClientTypes = 'old' | 'new'
-
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
   HuntingLicense = 'HuntingLicense',
@@ -10,6 +8,8 @@ export enum GenericLicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
+  PCard = 'PCard',
+  Ehic = 'Ehic',
 }
 
 /**
@@ -23,6 +23,8 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
+  PCard = 'syslumenn',
+  EHIC = 'sjukratryggingar-islands',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -31,6 +33,8 @@ export enum GenericLicenseProviderId {
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
+  DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
+  IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -60,6 +64,11 @@ export enum GenericUserLicensePkPassStatus {
   Available = 'Available',
   NotAvailable = 'NotAvailable',
   Unknown = 'Unknown',
+}
+
+export enum GenericUserLicenseMetaLinksType {
+  External = 'External',
+  Download = 'Download',
 }
 
 export type GenericLicenseProvider = {
@@ -103,6 +112,8 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
+  //if any functionality comes attached to said data field, f.x. renewLicense
+  link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
 }
@@ -110,6 +121,7 @@ export type GenericLicenseDataField = {
 export type GenericUserLicenseMetaLinks = {
   label?: string
   value?: string
+  type?: GenericUserLicenseMetaLinksType
 }
 
 export type GenericUserLicenseMetadata = {
@@ -128,6 +140,11 @@ export type GenericUserLicensePayload = {
 export type GenericLicenseUserdata = {
   status: GenericUserLicenseStatus
   pkpassStatus: GenericUserLicensePkPassStatus
+}
+
+export type GenericLicenseFetchResult = {
+  data: unknown
+  fetch: GenericLicenseFetch
 }
 
 // Bit of an awkward type, it contains data from any external API, but we don't know if it's
@@ -152,6 +169,7 @@ export type GenericLicenseCached = {
 export type LicenseLabelsObject = {
   [x: string]: string
 }
+
 export type GenericLicenseLabels = {
   labels?: LicenseLabelsObject
 }
@@ -251,12 +269,24 @@ export interface GenericLicenseClient<LicenseType> {
     locale?: Locale,
   ) => Promise<string | null>
 
-  verifyPkPass: (data: string) => Promise<PkPassVerification | null>
+  verifyPkPass: (
+    data: string,
+    passTemplateId: string,
+  ) => Promise<PkPassVerification | null>
 }
 
-export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
+export interface GenericLicenseMapper {
+  parsePayload: (
+    payload?: unknown,
+    locale?: Locale,
+    labels?: GenericLicenseLabels,
+  ) => GenericUserLicensePayload | null
+}
 
-export const OLD_DRIVING_LICENSE_CLIENT_FACTORY =
-  'old_generic_license_client_factory'
+export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
+
+export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
+
+export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
 
 export const CONFIG_PROVIDER = 'config_provider'

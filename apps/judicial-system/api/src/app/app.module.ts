@@ -15,11 +15,13 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
 import { CaseListModule } from './modules/caseList/caseList.module'
+import { defenderModuleConfig } from './modules/defender/defender.config'
 import {
   AuthModule,
   authModuleConfig,
   CaseModule,
   DefendantModule,
+  DefenderModule,
   FeatureModule,
   featureModuleConfig,
   FileModule,
@@ -34,7 +36,7 @@ const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/judicial-system/api.graphql'
+  : 'apps/judicial-system/api/src/api.graphql'
 
 @Module({
   imports: [
@@ -58,6 +60,7 @@ const autoSchemaFile = environment.production
     CaseModule,
     CaseListModule,
     DefendantModule,
+    DefenderModule,
     IndictmentCountModule,
     FileModule,
     InstitutionModule,
@@ -72,6 +75,7 @@ const autoSchemaFile = environment.production
         auditTrailModuleConfig,
         featureModuleConfig,
         authModuleConfig,
+        defenderModuleConfig,
       ],
     }),
   ],

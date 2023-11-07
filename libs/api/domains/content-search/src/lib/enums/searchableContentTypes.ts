@@ -5,6 +5,7 @@ export enum SearchableContentTypes {
   webSubArticle = 'webSubArticle',
   webLifeEventPage = 'webLifeEventPage',
   webDigitalIcelandService = 'webDigitalIcelandService',
+  webDigitalIcelandCommunityPage = 'webDigitalIcelandCommunityPage',
   webNews = 'webNews',
   webAdgerdirPage = 'webAdgerdirPage',
   webOrganizationSubpage = 'webOrganizationSubpage',
@@ -12,6 +13,7 @@ export enum SearchableContentTypes {
   webQNA = 'webQNA',
   webLink = 'webLink',
   webProjectPage = 'webProjectPage',
+  webManual = 'webManual',
 }
 
 registerEnumType(SearchableContentTypes, { name: 'SearchableContentTypes' })

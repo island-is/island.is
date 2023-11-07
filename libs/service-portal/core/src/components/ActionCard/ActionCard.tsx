@@ -168,7 +168,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         <Text variant="eyebrow" color="purple400">
           {eyebrow}
         </Text>
-
         {renderTag()}
       </Box>
     )
@@ -254,7 +253,8 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                     colorScheme="default"
                     iconType="outline"
                     size="small"
-                    type="button"
+                    type="span"
+                    unfocusable
                     variant="text"
                   >
                     {cta.label}
@@ -321,7 +321,12 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
               justifyContent="spaceBetween"
               alignItems={['flexStart', 'flexStart', 'flexEnd']}
             >
-              <Box display="flex" flexDirection="row" alignItems="center">
+              <Box
+                display="flex"
+                flexDirection="row"
+                alignItems="center"
+                style={{ flex: 1 }}
+              >
                 {/* Checking image type so the logo is placed correctly */}
                 {image?.type === 'logo' && renderImage()}
                 <Text

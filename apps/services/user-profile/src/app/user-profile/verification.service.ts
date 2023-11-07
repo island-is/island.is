@@ -1,22 +1,23 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { EmailVerification } from './emailVerification.model'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
-import { parsePhoneNumber, isValidNumber } from 'libphonenumber-js'
-import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { join } from 'path'
-import { UserProfileService } from '../user-profile/userProfile.service'
-import { SmsVerification } from './smsVerification.model'
-import { CreateUserProfileDto } from '../user-profile/dto/createUserProfileDto'
-import { SmsService } from '@island.is/nova-sms'
+import { Transaction } from 'sequelize'
+
 import { EmailService } from '@island.is/email-service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
+
 import environment from '../../environments/environment'
-import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
+import { CreateSmsVerificationDto } from './dto/createSmsVerificationDto'
+import { EmailVerification } from './emailVerification.model'
+import { SmsVerification } from './smsVerification.model'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'verification-service'
@@ -57,7 +58,6 @@ export class VerificationService {
     private smsVerificationModel: typeof SmsVerification,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private readonly userProfileService: UserProfileService,
     private readonly smsService: SmsService,
     @Inject(EmailService)
     private readonly emailService: EmailService,
@@ -66,8 +66,9 @@ export class VerificationService {
   async createEmailVerification(
     nationalId: string,
     email: string,
+    codeLength: 3 | 6 = 6,
   ): Promise<EmailVerification | null> {
-    const emailCode = randomInt(0, 999999).toString().padStart(6, '0')
+    const emailCode = this.generateVerificationCode(codeLength)
 
     const [record] = await this.emailVerificationModel.upsert(
       { nationalId, email, hash: emailCode, created: new Date() },
@@ -85,10 +86,14 @@ export class VerificationService {
 
   async createSmsVerification(
     createSmsVerification: CreateSmsVerificationDto,
+    codeLength: 3 | 6 = 6,
   ): Promise<SmsVerification | null> {
-    const code = randomInt(0, 999999).toString().padStart(6, '0')
+    const code = this.generateVerificationCode(codeLength)
     const verification = {
-      ...createSmsVerification,
+      nationalId: createSmsVerification.nationalId,
+      mobilePhoneNumber: formatPhoneNumber(
+        createSmsVerification.mobilePhoneNumber,
+      ),
       tries: 0,
       smsCode: code,
       created: new Date(),
@@ -107,15 +112,17 @@ export class VerificationService {
   async confirmEmail(
     confirmEmailDto: ConfirmEmailDto,
     nationalId: string,
+    transaction?: Transaction,
   ): Promise<ConfirmationDtoResponse> {
     const verification = await this.emailVerificationModel.findOne({
+      ...(transaction && { transaction }),
       where: { nationalId, email: confirmEmailDto.email },
       order: [['created', 'DESC']],
     })
 
     if (!verification) {
       return {
-        message: `Email verification does not exist for this user`,
+        message: `Email verification code does not match.`,
         confirmed: false,
       }
     }
@@ -134,7 +141,7 @@ export class VerificationService {
     if (confirmEmailDto.hash !== verification.hash) {
       // TODO: Add tries?
       return {
-        message: `Email verification with hash ${confirmEmailDto.hash} does not exist`,
+        message: 'Email verification code does not match.',
         confirmed: false,
       }
     }
@@ -143,6 +150,7 @@ export class VerificationService {
       await this.emailVerificationModel.update(
         { confirmed: true },
         {
+          ...(transaction && { transaction }),
           where: { nationalId },
           returning: true,
         },
@@ -159,7 +167,7 @@ export class VerificationService {
     }
 
     try {
-      await this.removeEmailVerification(nationalId)
+      await this.removeEmailVerification(nationalId, transaction)
     } catch (e) {
       this.logger.error('Email verification removal error', {
         error: JSON.stringify(e),
@@ -175,20 +183,21 @@ export class VerificationService {
   async confirmSms(
     confirmSmsDto: ConfirmSmsDto,
     nationalId: string,
+    transaction?: Transaction,
   ): Promise<ConfirmationDtoResponse> {
-    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
-    const mobileNumber =
-      phoneNumber.country === 'IS'
-        ? (phoneNumber.nationalNumber as string)
-        : confirmSmsDto.mobilePhoneNumber
+    const formattedPhoneNumber = formatPhoneNumber(
+      confirmSmsDto.mobilePhoneNumber,
+    )
+
     const verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: mobileNumber },
+      where: { nationalId, mobilePhoneNumber: formattedPhoneNumber },
       order: [['created', 'DESC']],
+      ...(transaction && { transaction }),
     })
 
     if (!verification) {
       return {
-        message: `Sms verification does not exist for this user`,
+        message: `SMS verification does not exist for this user`,
         confirmed: false,
       }
     }
@@ -225,6 +234,7 @@ export class VerificationService {
       await this.smsVerificationModel.update(
         { confirmed: true },
         {
+          ...(transaction && { transaction }),
           where: { nationalId },
           returning: true,
         },
@@ -241,7 +251,7 @@ export class VerificationService {
     }
 
     try {
-      await this.removeSmsVerification(nationalId)
+      await this.removeSmsVerification(nationalId, transaction)
     } catch (e) {
       this.logger.error('SMS verification removal error', {
         error: JSON.stringify(e),
@@ -335,15 +345,23 @@ export class VerificationService {
     }
   }
 
-  async removeSmsVerification(nationalId: string) {
+  async removeSmsVerification(nationalId: string, transaction?: Transaction) {
     await this.smsVerificationModel.destroy({
       where: { nationalId },
+      ...(transaction && { transaction }),
     })
   }
 
-  async removeEmailVerification(nationalId: string) {
+  async removeEmailVerification(nationalId: string, transaction?: Transaction) {
     await this.emailVerificationModel.destroy({
       where: { nationalId },
+      ...(transaction && { transaction }),
     })
+  }
+
+  private generateVerificationCode(length: number): string {
+    return randomInt(0, Number('9'.repeat(length)))
+      .toString()
+      .padStart(length, '0')
   }
 }

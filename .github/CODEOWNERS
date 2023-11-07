@@ -5,9 +5,6 @@
 
 # Organisation name is @island-is, not @island.is
 
-# Fallback. If there is no owner, assign to core maintainers.
-*                                                                                                        @island-is/core
-
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
@@ -20,7 +17,6 @@
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                       @island-is/core
-/.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -115,7 +111,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/download-service/                                                                                  @island-is/hugsmidjan
 /apps/service-portal*/                                                                                   @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                @island-is/hugsmidjan
-/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni
+/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
@@ -125,7 +121,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
+/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
@@ -140,12 +136,14 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
+/libs/clients/license-client/                                                                            @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
 /libs/clients/national-registry/v1/                                                                      @island-is/hugsmidjan
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
@@ -281,8 +279,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/system-e2e/                                                                                        @island-is/qa
 
 # DevOps
-/.github/actions/                                                                                        @island-is/devops
-/.github/workflows/                                                                                      @island-is/devops
+/.github/                                                                                                @island-is/devops
+/.gitignore                                                                                              @island-is/devops @island-is/core
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -290,5 +288,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
-/scripts/schemas.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/scripts/codegen.js                                                                                      @island-is/devops @island-is/core
+/charts/                                                                                                 @island-is/devops
+
+
+# Fallback. If there is no owner, assign to core maintainers.
+*                                                                                                        @island-is/core

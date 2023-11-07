@@ -10,10 +10,6 @@ generates:
     plugins:
       - typescript-operations
       - typescript-react-apollo
-
-    config:
-      scalars:
-        DateTime: Date
 hooks:
   afterAllFileWrite:
     - prettier --write

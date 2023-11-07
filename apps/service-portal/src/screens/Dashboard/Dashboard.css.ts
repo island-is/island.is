@@ -1,29 +1,51 @@
+import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { styleVariants } from '@vanilla-extract/css'
 import { style, globalStyle } from '@vanilla-extract/css'
-import { themeUtils } from '@island.is/island-ui/theme'
 
-export const relative = style({
-  position: 'relative',
+export const badge = styleVariants({
+  active: {
+    position: 'absolute',
+    top: 34,
+    left: 67,
+    height: theme.spacing[1],
+    width: theme.spacing[1],
+    borderRadius: '50%',
+    backgroundColor: theme.color.red400,
+    ...themeUtils.responsiveStyle({
+      md: {
+        left: 67,
+      },
+    }),
+  },
+  inactive: {
+    display: 'none',
+  },
 })
 
-globalStyle(`${relative} a`, {
-  textDecoration: 'none',
+export const lock = style({
+  position: 'absolute',
+  zIndex: 1,
+  top: theme.spacing[2],
+  right: theme.spacing[3],
 })
 
-export const imageAbsolute = style({
-  display: 'none',
+export const mailIcon = style({
+  minWidth: 30,
+  width: 40,
+  height: 40,
   ...themeUtils.responsiveStyle({
     md: {
-      top: -288,
-      display: 'block',
-      position: 'absolute',
-      right: -55,
-      height: 'auto',
-    },
-    lg: {
-      right: -45,
-    },
-    xl: {
-      right: 0,
+      minWidth: 40,
     },
   }),
+})
+
+export const mailLink = style({
+  display: 'inline-block',
+})
+
+export const svgOutline = style({})
+
+globalStyle(`${svgOutline} svg path`, {
+  stroke: theme.color.blue400,
 })

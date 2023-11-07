@@ -84,7 +84,7 @@ export const hasHealthRemarks = (externalData: ExternalData) => {
   return (
     (
       getValueViaPath<DrivingLicense>(externalData, 'currentLicense.data')
-        ?.healthRemarks || []
+        ?.remarks || []
     ).length > 0
   )
 }
