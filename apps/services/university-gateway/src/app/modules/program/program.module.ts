@@ -7,6 +7,7 @@ import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
+import { ProgramMinor } from './model/programMinor'
 import { Course } from '../course'
 import { University } from '../university'
 import { AuditModule } from '@island.is/nest/audit'
@@ -23,6 +24,7 @@ import { environment } from '../../../environments'
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
+      ProgramMinor,
     ]),
   ],
   controllers: [ProgramController],

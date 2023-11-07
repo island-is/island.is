@@ -14,18 +14,13 @@ import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import { NoContentException } from '@island.is/nest/problem'
+import { ProgramMinor } from './model/programMinor'
 
 @Injectable()
 export class ProgramService {
   constructor(
     @InjectModel(ProgramTable)
     private programModel: typeof ProgramTable,
-
-    @InjectModel(ProgramTag)
-    private programTagModel: typeof ProgramTag,
-
-    @InjectModel(University)
-    private universityModel: typeof University,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
@@ -74,6 +69,7 @@ export class ProgramService {
           'costInformationEn',
           'courses',
           'extraApplicationFields',
+          'minors',
         ],
       },
       include: [
@@ -122,6 +118,9 @@ export class ProgramService {
         },
         {
           model: ProgramExtraApplicationField,
+        },
+        {
+          model: ProgramMinor,
         },
       ],
     })

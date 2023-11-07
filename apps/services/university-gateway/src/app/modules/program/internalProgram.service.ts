@@ -4,6 +4,7 @@ import { Tag } from './model/tag'
 import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
+import { ProgramMinor } from './model/programMinor'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { University } from '../university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
@@ -35,6 +36,9 @@ export class InternalProgramService {
 
     @InjectModel(ProgramExtraApplicationField)
     private programExtraApplicationFieldModel: typeof ProgramExtraApplicationField,
+
+    @InjectModel(ProgramMinor)
+    private programMinorModel: typeof ProgramMinor,
   ) {}
 
   async updatePrograms(): Promise<void> {
@@ -64,7 +68,9 @@ export class InternalProgramService {
     )?.id
 
     if (!universityId) {
-      throw new Error('University not found in DB')
+      throw new Error(
+        `University with national id ${universityNationalId} not found in DB`,
+      )
     }
 
     logger.info(
@@ -128,6 +134,7 @@ export class InternalProgramService {
         const tagList = program.tag || []
         const modeOfDeliveryList = program.modeOfDelivery || []
         const extraApplicationFieldList = program.extraApplicationFields || []
+        const minorList = program.minors || []
 
         // 2. CREATE or UPDATE program (make sure tmpActive becomes true)
         const updatedProgram = await this.programModel.bulkCreate(
@@ -191,6 +198,22 @@ export class InternalProgramService {
               extraApplicationFieldList[j].uploadAcceptedFileType,
           })
         }
+
+        // 6a. DELETE program minor
+        await this.programMinorModel.destroy({
+          where: { programId: programId },
+          logging: false,
+        })
+
+        // 6b. CREATE program minor
+        for (let j = 0; j < minorList.length; j++) {
+          await this.programMinorModel.create({
+            programId: programId,
+            externalId: minorList[j].externalId,
+            nameIs: minorList[j].nameIs,
+            nameEn: minorList[j].nameEn,
+          })
+        }
       } catch (e) {
         logger.error(
           `Failed to update program with externalId ${program.externalId}, reason:`,
@@ -199,7 +222,7 @@ export class InternalProgramService {
       }
     }
 
-    // 6. UPDATE all programs for this university and make them inactive
+    // 7. UPDATE all programs for this university and make them inactive
     await this.programModel.update(
       {
         active: false,

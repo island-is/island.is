@@ -4,7 +4,7 @@ import { CourseController } from './course.controller'
 import { CourseService } from './course.service'
 import { Course } from './model/course'
 import { University } from '../university'
-import { ProgramCourse, ProgramTable } from '../program'
+import { ProgramCourse, ProgramMinor, ProgramTable } from '../program'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../../environments'
 
@@ -16,6 +16,7 @@ import { environment } from '../../../environments'
       Course,
       ProgramTable,
       ProgramCourse,
+      ProgramMinor,
     ]),
   ],
   controllers: [CourseController],

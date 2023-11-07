@@ -19,6 +19,7 @@ import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university'
 import { ProgramCourse } from './programCourse'
+import { ProgramMinor } from './programMinor'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
 export class Program extends Model {
@@ -45,6 +46,24 @@ export class Program extends Model {
   externalId!: string
 
   @ApiProperty({
+    description: 'University ID',
+    example: '00000000-0000-0000-0000-000000000000',
+  })
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ForeignKey(() => University)
+  universityId!: string
+
+  @ApiProperty({
+    description: 'University details',
+    type: University,
+  })
+  @BelongsTo(() => University, 'universityId')
+  universityDetails?: University
+
+  @ApiProperty({
     description: 'Program name (Icelandic)',
     example: 'Tölvunarfræði',
   })
@@ -63,24 +82,6 @@ export class Program extends Model {
     allowNull: false,
   })
   nameEn!: string
-
-  @ApiProperty({
-    description: 'University ID',
-    example: '00000000-0000-0000-0000-000000000000',
-  })
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ForeignKey(() => University)
-  universityId!: string
-
-  @ApiProperty({
-    description: 'University details',
-    type: University,
-  })
-  @BelongsTo(() => University, 'universityId')
-  universityDetails?: University
 
   @ApiProperty({
     description:
@@ -408,6 +409,13 @@ export class ProgramDetails extends Program {
   })
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationFields?: ProgramExtraApplicationField[]
+
+  @ApiProperty({
+    description: 'Minors available for the selected program',
+    type: [ProgramMinor],
+  })
+  @HasMany(() => ProgramMinor)
+  minors?: ProgramMinor[]
 }
 
 @Table({
