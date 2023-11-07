@@ -4,6 +4,7 @@ import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -434,12 +435,15 @@ export class InternalCaseService {
         .catch(() => undefined) // Tolerate failure
 
       if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+        const errorMessage = `User ${
+          prosecutor?.id ?? 'unknown'
+        } is not registered as a prosecutor`
         // Tolerate failure, but log error
-        this.logger.error(
-          `User ${
-            prosecutor?.id ?? 'unknown'
-          } is not registered as a prosecutor`,
-        )
+        this.logger.error(errorMessage)
+        // Unless case is marked with heightened security, then we won't tolerate failure
+        if (caseToCreate.isHeightenedSecurityLevel === true) {
+          throw new BadRequestException(errorMessage)
+        }
       } else {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
