@@ -98,27 +98,23 @@ export class EstateTemplateService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
-    let estateResponse: EstateInfo
-    if (
+    const useFakeData =
       application.applicant.startsWith('010130') &&
       (application.applicant.endsWith('2399') ||
         application.applicant.endsWith('7789'))
-    ) {
-      estateResponse = getFakeData(application)
-    } else {
-      estateResponse = (
-        await this.syslumennService.getEstateInfo(application.applicant)
-      )[0]
-    }
 
-    const estate = estateTransformer(estateResponse)
+    const [estateResponseArray, relationResponse, applicantRelationResponse] =
+      await Promise.all([
+        useFakeData
+          ? Promise.resolve([getFakeData(application)])
+          : this.syslumennService.getEstateInfo(application.applicant),
+        this.syslumennService.getEstateRelations(),
+        this.syslumennService.getApplicantEstateRelations(),
+      ])
 
-    const relationOptions = (await this.syslumennService.getEstateRelations())
-      .relations
-
-    const applicantRelationOptions = (
-      await this.syslumennService.getApplicantEstateRelations()
-    ).relations
+    const estate = estateTransformer(estateResponseArray[0])
+    const relationOptions = relationResponse.relations
+    const applicantRelationOptions = applicantRelationResponse.relations
 
     return {
       success: true,
