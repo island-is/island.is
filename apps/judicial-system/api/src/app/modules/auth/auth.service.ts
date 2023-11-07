@@ -18,6 +18,7 @@ import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { DefenderService } from '../defender/defender.service'
 import { authModuleConfig } from './auth.config'
+import { AuthUser } from './auth.types'
 
 @Injectable()
 export class AuthService {
@@ -158,6 +159,21 @@ export class AuthService {
       console.error('Token verification failed:', error)
       throw error
     }
+  }
+
+  async logLogin(user: AuthUser) {
+    console.log('user', user)
+    const res = await fetch(
+      `${this.config.backendUrl}/api/event-log/log-login`,
+      {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${this.config.secretToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nationalId: '1112902539' } as User),
+      },
+    )
   }
 
   validateUser(user: User): boolean {

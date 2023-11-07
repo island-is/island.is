@@ -66,9 +66,3 @@ export const buttonContainer = style({
     },
   },
 })
-
-export const btn = style({
-  ':hover': {
-    textDecoration: 'none',
-  },
-})

@@ -2,7 +2,16 @@ import { createHash, randomBytes } from 'crypto'
 import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
-import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
@@ -24,7 +33,11 @@ import {
   IDS_ID_TOKEN,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { InstitutionType, UserRole } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { environment } from '../../../environments'
 import { authModuleConfig } from './auth.config'
@@ -99,6 +112,7 @@ export class AuthController {
     if (this.config.allowAuthBypass && nationalId) {
       this.logger.debug(`Logging in using development mode`)
 
+      this.authService.logLogin({ nationalId: '1112902539' })
       return this.redirectAuthenticatedUser(
         {
           nationalId,
@@ -162,6 +176,7 @@ export class AuthController {
 
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
+        this.authService.logLogin({ nationalId: verifiedUserToken.nationalId })
 
         return this.redirectAuthenticatedUser(
           {
