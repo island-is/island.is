@@ -46,28 +46,22 @@ const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
   appealRulingDecision?: CaseAppealRulingDecision,
 ) => {
-  if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
-    return formatMessage(appealRuling.decisionAccept)
+  switch (appealRulingDecision) {
+    case CaseAppealRulingDecision.ACCEPTING:
+      return formatMessage(appealRuling.decisionAccept)
+    case CaseAppealRulingDecision.REPEAL:
+      return formatMessage(appealRuling.decisionRepeal)
+    case CaseAppealRulingDecision.CHANGED:
+      return formatMessage(appealRuling.decisionChanged)
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+      return formatMessage(appealRuling.decisionDismissedFromCourt)
+    case CaseAppealRulingDecision.REMAND:
+      return formatMessage(appealRuling.decisionRemand)
+    default:
+      return undefined
   }
-  if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
-    return formatMessage(appealRuling.decisionRepeal)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
-    return formatMessage(appealRuling.decisionChanged)
-  }
-  if (
-    appealRulingDecision ===
-    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-  ) {
-    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-    return formatMessage(appealRuling.decisionDismissedFromCourt)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-    return formatMessage(appealRuling.decisionRemand)
-  }
-  return undefined
 }
 
 const useAppealAlertBanner = (
