@@ -10,20 +10,17 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { HmsLoansClientService } from '@island.is/clients/hms-loans'
-import { Audit, AuditService } from '@island.is/nest/audit'
+import { Audit } from '@island.is/nest/audit'
 
 import { LanayfirlitModel } from './models/hmsLoansLanayfirlit.model'
 import { GreidsluyfirlitModel } from './models/hmsLoansGreidsluyfirlit.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
-@Scopes(ApiScope.hmsLoans)
+@Scopes(ApiScope.financeLoans)
 @Resolver()
 @Audit({ namespace: '@island.is/api/hms-loans' })
 export class HmsLoansResolver {
-  constructor(
-    // private readonly auditService: AuditService,
-    private hmsLoansService: HmsLoansClientService,
-  ) {}
+  constructor(private hmsLoansService: HmsLoansClientService) {}
 
   @Query(() => LanayfirlitModel, { nullable: true })
   @Audit()
