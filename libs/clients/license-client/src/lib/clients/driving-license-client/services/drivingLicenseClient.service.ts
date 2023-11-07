@@ -146,10 +146,6 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     return licenseResponse
   }
 
-  async getLicenseDetail(user: User): Promise<Result<DriversLicense | null>> {
-    return this.getLicense(user)
-  }
-
   async getPkPass(user: User): Promise<Result<Pass>> {
     const license = await Promise.all([
       this.fetchLicense(user),

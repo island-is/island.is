@@ -29,8 +29,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run services-university-gateway-backend:schemas/build-openapi $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/university-gateway-api/gen/fetch -i apps/services/university-gateway/backend/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+          "nx run services-university-gateway:schemas/build-openapi $NX_OPTIONS",
+          "yarn openapi-generator -o libs/clients/university-gateway-api/gen/fetch -i apps/services/university-gateway/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
         ],
         "parallel": false
       },

@@ -20,12 +20,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i libs/clients/document-provider/src/clientConfig.yaml"
-      }
+        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-documents"],
   "tags": ["lib:client", "scope:client"]
 }

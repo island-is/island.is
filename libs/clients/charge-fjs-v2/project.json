@@ -28,13 +28,14 @@
         "cwd": "libs/clients/charge-fjs-v2"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/charge-fjs-v2/gen/fetch -i libs/clients/charge-fjs-v2/src/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
