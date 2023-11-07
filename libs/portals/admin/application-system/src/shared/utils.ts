@@ -51,7 +51,7 @@ export const getLogo = (
   typeId: ApplicationListAdminResponseDtoTypeIdEnum,
   organizations: Organization[],
 ): string => {
-  const institutionSlug = institutionMapper[typeId]
+  const institutionSlug = institutionMapper[typeId].slug
   const institution = organizations.find((x) => x.slug === institutionSlug)
   return getOrganizationLogoUrl(
     institution?.title ?? 'stafraent-island',
