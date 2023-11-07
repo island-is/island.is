@@ -691,6 +691,7 @@ describe('User profile API', () => {
         Object {
           "confirmed": false,
           "message": "Too many failed SMS verifications. Please restart verification.",
+          "remainingAttempts": -1,
         }
       `)
     })

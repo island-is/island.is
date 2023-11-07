@@ -11,8 +11,17 @@ export const usePlausiblePageview = (domain?: string) => {
 
   useEffect(() => {
     const onRouteChangeComplete = () => {
-      // Only track pageviews in production
-      if (publicRuntimeConfig.environment !== 'prod' || !domain) return
+      if (
+        // Only track pageviews in production
+        publicRuntimeConfig.environment !== 'prod' ||
+        !domain ||
+        // Only track pageviews if we visit a page we weren't already on
+        newestVisitedUrl === window.location.href
+      ) {
+        return
+      }
+
+      newestVisitedUrl = window.location.href
 
       // Documentation: https://plausible.io/docs/events-api
       fetch('https://plausible.io/api/event', {
@@ -32,16 +41,12 @@ export const usePlausiblePageview = (domain?: string) => {
     // Client side routing should trigger a pageview
     router.events.on('routeChangeComplete', onRouteChangeComplete)
 
-    const currentUrl = window.location.href
-
     // Initial page load should trigger a pageview
-    if (!newestVisitedUrl || newestVisitedUrl !== currentUrl) {
-      newestVisitedUrl = currentUrl
-      onRouteChangeComplete()
-    }
+    onRouteChangeComplete()
 
     return () => {
       router.events.off('routeChangeComplete', onRouteChangeComplete)
+      newestVisitedUrl = ''
     }
   }, [domain, router.events])
 }
