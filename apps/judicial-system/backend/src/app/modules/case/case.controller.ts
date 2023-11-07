@@ -235,11 +235,15 @@ export class CaseController {
     }
 
     if (update.caseResentExplanation) {
+      // We want to overwrite certain fields that the court sees so they're always seeing
+      // the correct information post resend
       update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
       update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
       update.prosecutorDemands = update.demands ?? theCase.demands
-      update.validToDate =
-        update.requestedValidToDate ?? theCase.requestedValidToDate
+      if (!theCase.decision) {
+        update.validToDate =
+          update.requestedValidToDate ?? theCase.requestedValidToDate
+      }
     }
 
     if (update.prosecutorStatementDate) {
