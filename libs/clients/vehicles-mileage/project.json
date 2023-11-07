@@ -37,13 +37,12 @@
         "cwd": "libs/clients/vehicles"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn openapi-generator -o libs/clients/vehicles-mileage/gen/fetch -i libs/clients/vehicles-mileage/src/clientConfig.json"
-        ]
-      }
+        "command": "yarn openapi-generator -o libs/clients/vehicles-mileage/gen/fetch -i libs/clients/vehicles-mileage/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

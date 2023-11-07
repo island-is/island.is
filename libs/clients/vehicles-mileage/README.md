@@ -13,7 +13,7 @@ The client is generated from a copy of the openApi document provided in x-road.
 This regenerates the client from clientConfig.json file.
 
 ```sh
-yarn nx run clients-vehicles-mileage:schemas/external-openapi-generator
+yarn nx run clients-vehicles-mileage:codegen/backend-client
 ```
 
 ## Code owners and maintainers
