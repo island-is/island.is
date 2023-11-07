@@ -45,11 +45,11 @@ export class InternalProgramService {
     Promise.allSettled([
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.REYKJAVIK_UNIVERSITY,
-        await this.reykjavikUniversityClient.getPrograms(),
+        () => this.reykjavikUniversityClient.getPrograms(),
       ),
       await this.doUpdateProgramsForUniversity(
         UniversityNationalIds.UNIVERSITY_OF_ICELAND,
-        await this.universityOfIcelandClient.getPrograms(),
+        () => this.universityOfIcelandClient.getPrograms(),
       ),
     ]).catch((e) => {
       logger.error('Failed to update programs, reason:', e)
@@ -58,7 +58,7 @@ export class InternalProgramService {
 
   private async doUpdateProgramsForUniversity(
     universityNationalId: string,
-    programList: IProgram[],
+    getPrograms: () => Promise<IProgram[]>,
   ): Promise<void> {
     const universityId = (
       await this.universityModel.findOne({
@@ -76,6 +76,8 @@ export class InternalProgramService {
     logger.info(
       `Started updating programs for university ${universityNationalId}`,
     )
+
+    const programList = await getPrograms()
 
     // 1. Mark all programs as "temporarily inactive", so we know in the end which programs
     // should actually be inactive (hidden)
@@ -137,13 +139,21 @@ export class InternalProgramService {
         const minorList = program.minors || []
 
         // 2. CREATE or UPDATE program (make sure tmpActive becomes true)
-        const updatedProgram = await this.programModel.bulkCreate(
-          [programObj],
-          {
-            updateOnDuplicate: ['externalId'],
+        let programId: string | undefined
+        const oldProgramObj = await this.programModel.findOne({
+          attributes: ['id'],
+          where: {
+            externalId: programObj.externalId,
           },
-        )
-        const programId = updatedProgram[0].id
+        })
+        if (oldProgramObj) {
+          programId = oldProgramObj.id
+          await this.programModel.update(programObj, {
+            where: { id: programId },
+          })
+        } else {
+          programId = (await this.programModel.create(programObj)).id
+        }
 
         // 3a. DELETE program tag
         await this.programTagModel.destroy({

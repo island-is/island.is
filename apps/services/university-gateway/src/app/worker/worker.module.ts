@@ -11,7 +11,7 @@ import {
   UniversityOfIcelandApplicationClientConfig,
   UniversityOfIcelandApplicationClientModule,
 } from '@island.is/clients/university-application/university-of-iceland'
-import { UniversityGatewayProcessor } from './university-gateway-processor'
+import { UniversityGatewayWorkerService } from './worker.service'
 import { AuditModule } from '@island.is/nest/audit'
 import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
@@ -21,15 +21,18 @@ import { Course } from '../modules/course'
 import { Tag } from '../modules/program/model/tag'
 import {
   ProgramCourse,
+  ProgramMinor,
   ProgramModeOfDelivery,
   ProgramTable,
 } from '../modules/program'
 import { ProgramTag } from '../modules/program/model/programTag'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
+import { LoggingModule } from '@island.is/logging'
 
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
+    LoggingModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
@@ -42,6 +45,7 @@ import { ProgramExtraApplicationField } from '../modules/program/model/programEx
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
       ProgramCourse,
+      ProgramMinor,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,
@@ -58,7 +62,7 @@ import { ProgramExtraApplicationField } from '../modules/program/model/programEx
   providers: [
     InternalProgramService,
     InternalCourseService,
-    UniversityGatewayProcessor,
+    UniversityGatewayWorkerService,
   ],
 })
-export class WorkerModule {}
+export class UniversityGatewayWorkerModule {}
