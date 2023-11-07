@@ -2,7 +2,7 @@ import { Button } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
 import { FC } from 'react'
 import { servicePortalOutboundLink } from '@island.is/plausible'
-import { formatPlausiblePathToParams } from '@island.is/service-portal/core'
+import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
 
 interface Props {
   to: string
@@ -10,7 +10,7 @@ interface Props {
   skipIcon?: boolean
 }
 
-const LinkButton: FC<React.PropsWithChildren<Props>> = ({
+export const LinkButton: FC<React.PropsWithChildren<Props>> = ({
   to,
   text,
   skipIcon = false,
@@ -40,5 +40,3 @@ const LinkButton: FC<React.PropsWithChildren<Props>> = ({
     </a>
   )
 }
-
-export default LinkButton

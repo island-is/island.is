@@ -147,6 +147,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan

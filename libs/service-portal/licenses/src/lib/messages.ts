@@ -10,6 +10,7 @@ export const m = defineMessages({
     defaultMessage:
       'Hér gefur að líta núverandi skírteini og réttindi þín. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og vegabréfi.',
   },
+
   license: {
     id: 'sp.license:license',
     defaultMessage: 'Réttindi',
@@ -82,17 +83,34 @@ export const m = defineMessages({
     id: 'sp.license:p-card',
     defaultMessage: 'P-kort',
   },
-  yourPCard: {
-    id: 'sp.license:your-p-card',
-    defaultMessage: 'P-kort',
-  },
   yourPCardDescription: {
     id: 'sp.license:p-card-description',
     defaultMessage: 'Stæðiskort fyrir hreyfihamlaða',
   },
+  ehic: {
+    id: 'sp.license:ehic',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
+  ehicDescription: {
+    id: 'sp.license:ehic-description',
+    defaultMessage:
+      'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss.',
+  },
+  ehicDescription2: {
+    id: 'sp.license:ehic-description-2',
+    defaultMessage: '<link> Nánar um kortið.</link>',
+  },
+  ehicDescriptionLink: {
+    id: 'sp.license:ehic-description-link',
+    defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
+  },
   expiresIn: {
     id: 'sp.license:expires-in',
     defaultMessage: 'Rennur út innan ',
+  },
+  externalLicenseDetailLink: {
+    id: 'sp.license:external-license-detail-link',
+    defaultMessage: 'Nánar um kortið',
   },
   months: {
     id: 'sp.license:months',
