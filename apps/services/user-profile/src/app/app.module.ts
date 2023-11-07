@@ -11,6 +11,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserProfileModule } from './user-profile/userProfile.module'
 import { UserProfileModule as UserProfileV2Module } from './v2/user-profile.module'
 
+// Trigger test run
+
 @Module({
   imports: [
     AuditModule.forRoot(environment.audit),
