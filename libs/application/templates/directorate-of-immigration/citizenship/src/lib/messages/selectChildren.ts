@@ -95,7 +95,7 @@ export const selectChildren = {
     linkUrl: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.linkUrl',
       defaultMessage:
-        'https://island.is/rikisborgararettur-fyrir-born-og-ungmenni/ungmenni',
+        'https://island.is/s/utlendingastofnun/stada-mala-og-afgreidslutimi',
       description: 'url of the link in text',
     },
   }),
