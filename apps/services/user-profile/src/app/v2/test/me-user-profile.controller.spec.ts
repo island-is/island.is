@@ -35,6 +35,8 @@ const emailVerificationCode = createVerificationCode()
 const newEmail = faker.internet.email()
 const newPhoneNumber = formatPhoneNumber(createPhoneNumber())
 
+const audKenniPhoneNumber = createPhoneNumber()
+
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
   email: testUserProfile.email,
@@ -171,6 +173,7 @@ describe('MeUserProfileController', () => {
     let app = null
     let server = null
     let islyklarApi = null
+    let confirmSmsSpy = null
 
     beforeEach(async () => {
       app = await setupApp({
@@ -179,6 +182,7 @@ describe('MeUserProfileController', () => {
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
+          audkenniSimNumber: audKenniPhoneNumber,
         }),
         // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
         dbType: 'postgres',
@@ -200,6 +204,7 @@ describe('MeUserProfileController', () => {
       const verificationService = app.get(VerificationService)
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
+      confirmSmsSpy = jest.spyOn(verificationService, 'confirmSms')
 
       // Mock islyklar api responses
       islyklarApi = app.get(IslyklarApi)
@@ -272,6 +277,37 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+
+      // Check if confirmSms is called once so we know it was not skipped with audkenniSimNumber
+      expect(confirmSmsSpy).toBeCalledTimes(1)
+    })
+
+    it('PATCH /v2/me should return 200 with changed mobile data in response and skip verification when when phone number matches audkenniSimNumber', async () => {
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: audKenniPhoneNumber,
+        mobilePhoneNumberVerificationCode: '',
+      })
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        mobilePhoneNumber: formatPhoneNumber(audKenniPhoneNumber),
+        mobilePhoneNumberVerified: true,
+      })
+
+      // Assert Db records
+      const userProfileModel = app.get(getModelToken(UserProfile))
+      const userProfile = await userProfileModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(userProfile.mobilePhoneNumber).toBe(
+        formatPhoneNumber(audKenniPhoneNumber),
+      )
+
+      expect(confirmSmsSpy).toBeCalledTimes(0)
     })
 
     it('PATCH /v2/me should return 200 with changed email data in response', async () => {
