@@ -147,6 +147,7 @@ export class VerificationService {
         message:
           'Too many failed email verifications. Please restart verification.',
         confirmed: false,
+        remainingAttempts: -1,
       }
     }
 
@@ -234,6 +235,7 @@ export class VerificationService {
         message:
           'Too many failed SMS verifications. Please restart verification.',
         confirmed: false,
+        remainingAttempts: -1,
       }
     }
 

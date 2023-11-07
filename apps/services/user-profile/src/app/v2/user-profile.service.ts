@@ -130,6 +130,8 @@ export class UserProfileService {
             throw new AttemptFailed(remainingAttempts, {
               smsVerificationCode: 'Verification code does not match.',
             })
+          } else if (remainingAttempts === -1) {
+            throw new AttemptFailed(0)
           } else {
             throw new BadRequestException(message)
           }

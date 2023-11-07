@@ -418,11 +418,10 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        detail:
-          'Too many failed SMS verifications. Please restart verification.',
+        detail: '0 attempts remaining.',
         status: 400,
-        title: 'Bad Request',
-        type: 'https://httpstatuses.org/400',
+        title: 'Attempt Failed',
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
       })
     })
 
