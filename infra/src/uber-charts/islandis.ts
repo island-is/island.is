@@ -45,7 +45,10 @@ import { serviceSetup as externalContractsTestsSetup } from '../../../apps/exter
 
 import { serviceSetup as rabBackendSetup } from '../../../apps/services/regulations-admin-backend/infra/backend'
 
-import { serviceSetup as universityGatewaySetup } from '../../../apps/services/university-gateway/infra/university-gateway'
+import {
+  serviceSetup as universityGatewaySetup,
+  workerSetup as universityGatewayWorkerSetup,
+} from '../../../apps/services/university-gateway/infra/university-gateway'
 
 import {
   serviceSetup as sessionsServiceSetup,
@@ -82,7 +85,8 @@ const sessionsGeoip = sessionsGeoipSetup()
 
 const authAdminApi = authAdminApiSetup()
 
-const universityGateway = universityGatewaySetup()
+const universityGatewayService = universityGatewaySetup()
+const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -94,7 +98,7 @@ const api = apiSetup({
   regulationsAdminBackend: rabBackend,
   sessionsApi: sessionsService,
   authAdminApi,
-  universityGateway,
+  universityGatewayApi: universityGatewayService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
 const appSystemForm = appSystemFormSetup({ api: api })
@@ -224,7 +228,8 @@ export const Services: EnvironmentServices = {
     sessionsWorker,
     sessionsGeoip,
     contentfulApps,
-    universityGateway,
+    universityGatewayService,
+    universityGatewayWorker,
   ],
 }
 

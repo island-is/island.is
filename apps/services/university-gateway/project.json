@@ -59,6 +59,13 @@
         ]
       }
     },
+    "worker": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-university-gateway:build",
+        "args": ["--job", "worker"]
+      }
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
