@@ -112,6 +112,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { UniversityOfIcelandClientConfig } from '@island.is/clients/university-of-iceland'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
+import { IntellectualPropertiesClientConfig } from '@island.is/clients/intellectual-properties'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
@@ -309,6 +310,7 @@ const environment = getConfig
         DisabilityDigitalLicenseClientConfig,
         MachineDigitalLicenseClientConfig,
         DrivingDigitalLicenseClientConfig,
+        IntellectualPropertiesClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,
