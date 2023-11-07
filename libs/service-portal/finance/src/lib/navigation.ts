@@ -30,6 +30,10 @@ export const financeNavigation: PortalNavigationItem = {
       name: m.financeLocalTax,
       path: FinancePaths.FinanceLocalTax,
     },
+    {
+      name: m.financeLoans,
+      path: FinancePaths.FinanceLoans,
+    },
   ],
   icon: {
     icon: 'cellular',
