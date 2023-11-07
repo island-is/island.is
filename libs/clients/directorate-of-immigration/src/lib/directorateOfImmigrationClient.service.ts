@@ -60,42 +60,30 @@ export class DirectorateOfImmigrationClient {
 
   // Common:
 
-  async getCountries(): Promise<OptionSetItem[]> {
-    const res = await this.optionSetApi.apiOptionSetLookupTypeGet({
+  getCountries(): Promise<OptionSetItem[]> {
+    return this.optionSetApi.apiOptionSetLookupTypeGet({
       lookupType: LookupType.Countries,
     })
-
-    return res
   }
 
-  async getTravelDocumentTypes(): Promise<OptionSetItem[]> {
-    const res = await this.optionSetApi.apiOptionSetLookupTypeGet({
+  getTravelDocumentTypes(): Promise<OptionSetItem[]> {
+    return this.optionSetApi.apiOptionSetLookupTypeGet({
       lookupType: LookupType.TravelDocumentTypes,
     })
-
-    return res
   }
 
   // Citizenship:
 
-  async getCurrentCountryOfResidenceList(
+  getCurrentCountryOfResidenceList(
     auth: Auth,
   ): Promise<CountryOfResidenceViewModel[]> {
-    const res = await this.countryOfResidenceApiWithAuth(
+    return this.countryOfResidenceApiWithAuth(
       auth,
     ).apiCountryOfResidenceGetAllGet()
-
-    return res
   }
 
-  async getCurrentStayAbroadList(
-    auth: Auth,
-  ): Promise<ResidenceAbroadViewModel[]> {
-    const res = await this.residenceAbroadApiWithAuth(
-      auth,
-    ).apiResidenceAbroadGetAllGet()
-
-    return res
+  getCurrentStayAbroadList(auth: Auth): Promise<ResidenceAbroadViewModel[]> {
+    return this.residenceAbroadApiWithAuth(auth).apiResidenceAbroadGetAllGet()
   }
 
   async getCurrentPassportItem(
@@ -114,14 +102,12 @@ export class DirectorateOfImmigrationClient {
     return newestItem
   }
 
-  async getCitizenshipResidenceConditionInfo(
+  getCitizenshipResidenceConditionInfo(
     auth: Auth,
   ): Promise<ApplicantResidenceConditionViewModel> {
-    const res = await this.applicantResidenceConditionApiWithAuth(
+    return this.applicantResidenceConditionApiWithAuth(
       auth,
     ).apiApplicantResidenceConditionGetGet()
-
-    return res
   }
 
   async submitApplicationForCitizenship(
