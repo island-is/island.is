@@ -7,7 +7,7 @@ import {
   PHYSIO_THERAPY,
   SPEECH_THERAPY,
 } from '../../utils/constants'
-import LinkButton from '../LinkButton/LinkButton'
+import { LinkButton } from '@island.is/service-portal/core'
 
 export const getFootNoteByType = (
   type: string,

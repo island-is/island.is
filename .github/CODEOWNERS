@@ -5,9 +5,6 @@
 
 # Organisation name is @island-is, not @island.is
 
-# Fallback. If there is no owner, assign to core maintainers.
-*                                                                                                        @island-is/core
-
 # Top level project ownership. When a project contains, for example, templates or modules
 # that are developed by others teams, we first list down the team working on the core and
 # further below the other team working on other part of the project.
@@ -20,7 +17,6 @@
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                       @island-is/core
-/.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -148,6 +144,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
@@ -283,8 +280,8 @@ libs/clients/rsk/relationships/                                                 
 /apps/system-e2e/                                                                                        @island-is/qa
 
 # DevOps
-/.github/actions/                                                                                        @island-is/devops
-/.github/workflows/                                                                                      @island-is/devops
+/.github/                                                                                                @island-is/devops
+/.gitignore                                                                                              @island-is/devops @island-is/core
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -293,4 +290,8 @@ libs/clients/rsk/relationships/                                                 
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/charts/                                                                                                 @island-is/devops
+
+
+# Fallback. If there is no owner, assign to core maintainers.
+*                                                                                                        @island-is/core
