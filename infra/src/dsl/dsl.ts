@@ -183,7 +183,14 @@ export class ServiceBuilder<ServiceType> {
       )
     }
     this.serviceDef.initContainers = {
-      envs: {},
+      envs: {
+        NPM_CONFIG_UPDATE_NOTIFIER: {
+          local: 'true',
+          dev: 'false',
+          staging: 'false',
+          prod: 'false',
+        },
+      },
       secrets: {},
       features: {},
       ...ic,
