@@ -5,9 +5,7 @@ interface Props {
   isAuthenticated?: boolean
 }
 
-export const useFetchEmail = ({
-  isAuthenticated = false,
-}: Props) => {
+export const useFetchEmail = ({ isAuthenticated = false }: Props) => {
   const { data, loading } = useQuery(SUB_GET_EMAIL, {
     ssr: false,
     fetchPolicy: 'network-only',
