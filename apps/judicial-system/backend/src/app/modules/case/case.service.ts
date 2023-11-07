@@ -819,7 +819,10 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)

@@ -118,6 +118,7 @@ export enum CaseTransition {
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
