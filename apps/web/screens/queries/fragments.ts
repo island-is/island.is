@@ -595,6 +595,7 @@ export const slices = gql`
   }
 
   fragment SidebarCardFields on SidebarCard {
+    id
     title
     contentString
     type

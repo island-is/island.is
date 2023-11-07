@@ -110,7 +110,11 @@ export const NewsCard: React.FC<React.PropsWithChildren<NewsCardProps>> = ({
               <Text variant={titleVariant} as={titleAs}>
                 {title}
               </Text>
-              <Text>{introduction}</Text>
+              {React.isValidElement(introduction) ? (
+                introduction
+              ) : (
+                <Text>{introduction}</Text>
+              )}
             </Stack>
             {readMoreText && (
               <Box marginTop={2}>
