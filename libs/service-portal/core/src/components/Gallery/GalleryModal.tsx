@@ -5,6 +5,7 @@ import {
   ModalBase,
   Swiper,
   Text,
+  Button,
 } from '@island.is/island-ui/core'
 import * as styles from './GalleryModal.css'
 import * as galleryStyles from './Gallery.css'
@@ -52,8 +53,12 @@ export const GalleryModal: FC<Props> = ({
       className={styles.modal}
     >
       <Box className={styles.container}>
+        <Box className={styles.closeButton}>X</Box>
+        <Box className={cn(styles.carets, styles.leftCaret)}>
+          <Button icon="chevronBack" size="small" variant="ghost" />
+        </Box>
         <Box
-          className={galleryStyles.gallery}
+          className={cn(galleryStyles.gallery, styles.main)}
           width="full"
           overflow="hidden"
           transition="fast"
@@ -61,10 +66,7 @@ export const GalleryModal: FC<Props> = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Box
-            className={galleryStyles.galleryImageWrap}
-            style={{ height: '400px', width: '300px' }}
-          >
+          <Box className={galleryStyles.galleryImageWrap}>
             {childArray.map((item, i) =>
               cloneElement(item as React.ReactElement, {
                 active: i === activeItem,
@@ -72,12 +74,20 @@ export const GalleryModal: FC<Props> = ({
             )}
           </Box>
         </Box>
-        <Box display="flex" justifyContent="center">
+        <Box className={cn(styles.carets, styles.rightCaret)}>
+          <Button icon="chevronForward" size="small" variant="ghost" />
+        </Box>
+        <Box className={styles.counter} display="flex" justifyContent="center">
           <Text>
             {activeItem + 1}/{thumbnailsArray.length}
           </Text>
         </Box>
-        <Box overflow="hidden" paddingLeft={1} paddingRight={1}>
+        <Box
+          className={styles.swiper}
+          overflow="hidden"
+          paddingLeft={1}
+          paddingRight={1}
+        >
           <Swiper>
             {thumbnailsArray
               .map((thumbnail, i) => {

@@ -6,35 +6,53 @@ export const modal = style({
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  maxWidth: `calc(100% - ${theme.spacing['6']}px)`,
+  maxWidth: '60%',
   maxHeight: `calc(100% - ${theme.spacing['6']}px)`,
-  margin: theme.spacing['3'],
   borderRadius: theme.border.radius.large,
-  overflowY: 'auto',
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
-  ...themeUtils.responsiveStyle({
-    md: {
-      margin: `${theme.spacing['6']}px auto`,
-      maxHeight: `calc(100% - ${theme.spacing['12']}px)`,
-      width: '90%',
-    },
-    lg: {
-      width: 828,
-    },
-  }),
+})
+
+export const main = style({
+  gridArea: 'main',
 })
 
 export const closeButton = style({
-  position: 'absolute',
-  top: theme.spacing['1'],
-  right: theme.spacing['1'],
-  zIndex: 2,
+  gridArea: 'exit',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+})
+
+export const rightCaret = style({
+  gridArea: 'right',
+})
+
+export const leftCaret = style({
+  gridArea: 'left',
+})
+
+export const carets = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const swiper = style({
+  gridArea: 'swiper',
+})
+
+export const counter = style({
+  gridArea: 'counter',
 })
 
 export const container = style({
   height: '100%',
   width: '100%',
   display: 'grid',
+  gridTemplateRows: `${theme.spacing[8]}px 5fr ${theme.spacing[2]}px 1fr`,
+  gridTemplateColumns: `${theme.spacing[10]}px 1fr ${theme.spacing[10]}px`,
+  gridTemplateAreas:
+    '". . exit""left main right" ". counter ." " swiper swiper swiper"',
   rowGap: '5px',
   backgroundColor: white,
 })

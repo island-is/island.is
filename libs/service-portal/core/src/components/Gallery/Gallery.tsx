@@ -31,8 +31,6 @@ export const Gallery: FC<GalleryProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const onThumbnailClick = (i: number, lastImage: boolean) => {
-    console.log(i)
-    console.log(lastImage)
     if (lastImage) {
       setIsModalOpen(true)
     } else setActiveItem(i)

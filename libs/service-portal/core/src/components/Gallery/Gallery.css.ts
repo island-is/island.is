@@ -1,5 +1,5 @@
 import { style } from '@vanilla-extract/css'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const gallery = style({
@@ -13,9 +13,20 @@ export const galleryImageWrap = style({
   height: '100%',
   width: '100%',
 
-  ':before': {
-    display: 'block',
-  },
+  ...themeUtils.responsiveStyle({
+    lg: {
+      maxWidth: '560px',
+      maxHeight: '560px',
+    },
+    md: {
+      maxWidth: '400px',
+      maxHeight: '400px',
+    },
+    sm: {
+      maxWidth: '160px',
+      maxHeight: '160px',
+    },
+  }),
 })
 
 export const thumbnailGrid = style({
@@ -36,16 +47,14 @@ export const galleryButton = style({
   opacity: 0.8,
 
   ':focus': {
-    borderColor: theme.color.mint400,
+    borderColor: theme.color.blue400,
     outline: 0,
+    transition: theme.transitions.fast,
+    opacity: 1,
   },
 })
 
-export const activeGalleryButton = style({
-  borderColor: theme.color.blue400,
-  transition: theme.transitions.fast,
-  opacity: 1,
-})
+export const activeGalleryButton = style({})
 
 export const lastImageOverlay = style({
   position: 'absolute',
