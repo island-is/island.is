@@ -49,6 +49,7 @@ import {
   PageHeader,
   PageLayout,
   PoliceRequestAccordionItem,
+  ReopenModal,
   RulingAccordionItem,
   SigningModal,
   UserContext,
@@ -75,7 +76,6 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ReopenModal from './Components/ReopenModal/ReopenModal'
 import ShareCase from './Components/ShareCase/ShareCase'
 import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
@@ -758,10 +758,7 @@ export const SignedVerdictOverview: React.FC = () => {
           />
         )}
         {isReopeningCase && (
-          <ReopenModal
-            text={formatMessage(m.sections.reopenCase.text)}
-            onClose={() => setIsReopeningCase(false)}
-          />
+          <ReopenModal onClose={() => setIsReopeningCase(false)} />
         )}
         {modalVisible === 'ConfirmAppealAfterDeadline' && (
           <Modal

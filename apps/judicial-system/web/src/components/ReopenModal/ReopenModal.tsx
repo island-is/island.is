@@ -9,8 +9,9 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseTransition,
-  InstitutionType,
+  isAppealsCourtUser,
   isRestrictionCase,
+  User,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -22,14 +23,10 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { strings } from './ReopenModal.strings'
 
 interface Props {
-  text: string
   onClose: () => void
 }
 
-const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({
-  onClose,
-  text,
-}) => {
+const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
@@ -39,18 +36,24 @@ const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={text}
+      text={
+        isAppealsCourtUser(user as unknown as User)
+          ? formatMessage(strings.reopenAppealText)
+          : formatMessage(strings.reopenCaseText)
+      }
       primaryButtonText={formatMessage(strings.continue)}
       isPrimaryButtonLoading={isTransitioningCase}
       onPrimaryButtonClick={async () => {
         const caseTransitioned = await transitionCase(
           workingCase.id,
-          CaseTransition.REOPEN,
+          isAppealsCourtUser(user as unknown as User)
+            ? CaseTransition.REOPEN_APPEAL
+            : CaseTransition.REOPEN,
         )
 
         if (caseTransitioned) {
           router.push(
-            user?.institution?.type === InstitutionType.COURT_OF_APPEALS
+            isAppealsCourtUser(user as unknown as User)
               ? `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`
               : isRestrictionCase(workingCase.type)
               ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
