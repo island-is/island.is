@@ -32,8 +32,8 @@ export const CaseStatusBox = ({
         title={loc[status].title}
       >
         <Text>
-          {`${loc[status].text} ${publishRuleText}`}
-          {` ${shouldDisplayHidden && hiddenText}`}
+          {`${loc[status].text} ${publishRuleText} `}
+          {shouldDisplayHidden && hiddenText}
         </Text>
       </StackedTitleAndDescription>
       {status == 'Til umsagnar' && (

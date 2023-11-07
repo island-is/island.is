@@ -251,10 +251,11 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
         {` ${publishRuleText} 
         ${sloc.publishLaw.text} 
         `}
-        {` ${shouldDisplayHidden && hiddenText}`}
         <Link href={sloc.publishLaw.link.href} legacyBehavior>
           {sloc.publishLaw.link.label}
         </Link>
+        {` `}
+        {shouldDisplayHidden && hiddenText}
       </Text>
 
       <Text marginBottom={2}>
