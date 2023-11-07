@@ -2481,6 +2481,10 @@ services-sessions-worker:
     create: true
     name: 'sessions-worker'
 services-university-gateway:
+  args:
+    - 'main.js'
+  command:
+    - 'node'
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2490,6 +2494,7 @@ services-university-gateway:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -2529,71 +2534,6 @@ services-university-gateway:
         - host: 'university-gateway.internal.dev01.devland.is'
           paths:
             - '/api'
-  namespace: 'university-gateway'
-  pvcs: []
-  replicaCount:
-    default: 2
-    max: 10
-    min: 2
-  resources:
-    limits:
-      cpu: '200m'
-      memory: '384Mi'
-    requests:
-      cpu: '50m'
-      memory: '256Mi'
-  secrets:
-    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/university-gateway/DB_PASSWORD'
-    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
-  securityContext:
-    allowPrivilegeEscalation: false
-    privileged: false
-services-university-gateway-worker:
-  args:
-    - 'main.js'
-    - '--job=worker'
-  command:
-    - 'node'
-  enabled: true
-  env:
-    DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'university_gateway'
-    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'university_gateway'
-    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
-    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=345'
-    SERVERSIDE_FEATURES_ON: ''
-    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
-    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
-    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
-    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
-    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
-    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
-  grantNamespaces:
-    - 'islandis'
-    - 'nginx-ingress-internal'
-  grantNamespacesEnabled: true
-  healthCheck:
-    liveness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-    readiness:
-      initialDelaySeconds: 3
-      path: '/liveness'
-      timeoutSeconds: 3
-  hpa:
-    scaling:
-      metric:
-        cpuAverageUtilization: 70
-        nginxRequestsIrate: 5
-      replicas:
-        max: 3
-        min: 1
-  image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   initContainer:
     containers:
       - args:
@@ -2636,9 +2576,9 @@ services-university-gateway-worker:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 1
-    max: 3
-    min: 1
+    default: 2
+    max: 10
+    min: 2
   resources:
     limits:
       cpu: '200m'
@@ -2655,9 +2595,84 @@ services-university-gateway-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/university-gateway-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-university-gateway'
     create: true
-    name: 'university-gateway-worker'
+    name: 'services-university-gateway'
+services-university-gateway-worker:
+  args:
+    - 'main.js'
+    - '--job'
+    - 'worker'
+  command:
+    - 'node'
+  enabled: true
+  env:
+    DB_HOST: 'postgres-applications.internal'
+    DB_NAME: 'university_gateway'
+    DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_USER: 'university_gateway'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/university-gateway'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    NODE_OPTIONS: '--max-old-space-size=345'
+    REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    SERVERSIDE_FEATURES_ON: ''
+    XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
+    XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
+    XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1'
+  grantNamespaces:
+    - 'islandis'
+    - 'nginx-ingress-internal'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 70
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
+  namespace: 'university-gateway'
+  podSecurityContext:
+    fsGroup: 65534
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '200m'
+      memory: '384Mi'
+    requests:
+      cpu: '50m'
+      memory: '256Mi'
+  schedule: '0 * * * *'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    DB_PASS: '/k8s/university-gateway/DB_PASSWORD'
+    IDENTITY_SERVER_CLIENT_SECRET: '/k8s/university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/services-university-gateway-worker'
+    create: true
+    name: 'services-university-gateway-worker'
 skilavottord-web:
   enabled: true
   env:
