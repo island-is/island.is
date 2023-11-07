@@ -283,7 +283,7 @@ libs/clients/rsk/relationships/                                                 
 
 # DevOps
 /.github/                                                                                                @island-is/devops
-/.gitignore                                                                                              @island-is/devops @island-is/core
+/.gitignore                                                                                              @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -292,4 +292,4 @@ libs/clients/rsk/relationships/                                                 
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/charts/                                                                                                 @island-is/devops
