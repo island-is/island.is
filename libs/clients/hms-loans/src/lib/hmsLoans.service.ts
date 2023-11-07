@@ -55,7 +55,7 @@ export class HmsLoansClientService {
     return (await response.json()) as T
   }
 
-  async getHmsLoanslanayfirlit(nationalID: string, auth: Auth) {
+  async getHmsLoansLanayfirlit(nationalID: string, auth: Auth) {
     return this.get<LanaYfirlitReturnModel[] | null>(
       `/greidsluyfirlit`,
       {
