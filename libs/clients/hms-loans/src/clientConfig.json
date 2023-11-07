@@ -8,9 +8,7 @@
   "paths": {
     "/api/v{version}/Authenticate/token": {
       "post": {
-        "tags": [
-          "Authenticate"
-        ],
+        "tags": ["Authenticate"],
         "summary": "Skilar token ef notandinn er auðkenndur.",
         "parameters": [
           {
@@ -76,9 +74,7 @@
     },
     "/api/v{version}/Libra/lanayfirlit": {
       "post": {
-        "tags": [
-          "Libra"
-        ],
+        "tags": ["Libra"],
         "summary": "Skilar upplýsingar um lán fyrir viðkomandi einstakling sem eru í Libra kerfi HMS.",
         "parameters": [
           {
@@ -135,9 +131,7 @@
     },
     "/api/v{version}/Libra/greidsluyfirlit": {
       "post": {
-        "tags": [
-          "Libra"
-        ],
+        "tags": ["Libra"],
         "summary": "Skilar greiðsluyfirlit lána fyrir viðkomandi einstakling sem eru í Libra kerfi HMS.",
         "parameters": [
           {
@@ -547,7 +541,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }
