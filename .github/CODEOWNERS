@@ -283,6 +283,7 @@ libs/clients/rsk/relationships/                                                 
 
 # DevOps
 /.github/                                                                                                @island-is/devops
+/.gitignore                                                                                              @island-is/devops @island-is/core
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
