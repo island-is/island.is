@@ -74,12 +74,13 @@ global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
     AWS_REGION: 'eu-west-1'
-    NO_UPDATE_NOTIFIER: 'true'
+    NPM_CONFIG_UPDATE_NOTIFIER: 'false'
     PORT: '3333'
     name: 'dev'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
@@ -108,7 +109,6 @@ identity-server:
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843'
-    NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
@@ -423,7 +423,6 @@ services-auth-ids-api:
       DB_NAME: 'servicesauth'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'servicesauth'
-      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
