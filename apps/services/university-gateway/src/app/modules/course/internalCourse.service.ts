@@ -122,15 +122,19 @@ export class InternalCourseService {
             }
 
             // 2. CREATE or UPDATE course
-            // In case this course has already been registered with another program
-            // we should to check if we only need update (instead of inserting duplicate)
-            const updatedCourse = await this.courseModel.bulkCreate(
-              [courseObj],
-              {
-                updateOnDuplicate: ['externalId'],
-              },
-            )
-            const courseId = updatedCourse[0].id
+            let courseId: string | undefined
+            const oldCourseObj = await this.courseModel.findOne({
+              attributes: ['id'],
+              where: { externalId: courseObj.externalId },
+            })
+            if (oldCourseObj) {
+              courseId = oldCourseObj.id
+              await this.courseModel.update(courseObj, {
+                where: { id: courseId },
+              })
+            } else {
+              courseId = (await this.courseModel.create(courseObj)).id
+            }
 
             // Map to programCourseModel object
             const programCourseObj = {
@@ -144,9 +148,20 @@ export class InternalCourseService {
             }
 
             // 3. CREATE or UPDATE program course (make sure tmpActive becomes true)
-            await this.programCourseModel.bulkCreate([programCourseObj], {
-              updateOnDuplicate: ['programId', 'courseId'],
+            const oldProgramCourseObj = await this.programCourseModel.findOne({
+              attributes: ['id'],
+              where: {
+                programId,
+                courseId,
+              },
             })
+            if (oldProgramCourseObj) {
+              await this.programCourseModel.update(programCourseObj, {
+                where: { id: oldProgramCourseObj.id },
+              })
+            } else {
+              await this.programCourseModel.create(programCourseObj)
+            }
 
             activeCourseIdList.push(courseId)
           } catch (e) {
