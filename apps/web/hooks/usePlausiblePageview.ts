@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-let newestVisitedUrl = ''
+let initialPageLoadHasOccurred = false
 
 export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
@@ -34,11 +34,9 @@ export const usePlausiblePageview = (domain?: string) => {
     // Client side routing should trigger a pageview
     router.events.on('routeChangeComplete', onRouteChangeComplete)
 
-    const currentUrl = window.location.href
-
     // Initial page load should trigger a pageview
-    if (!newestVisitedUrl || newestVisitedUrl !== currentUrl) {
-      newestVisitedUrl = currentUrl
+    if (!initialPageLoadHasOccurred) {
+      initialPageLoadHasOccurred = true
       onRouteChangeComplete()
     }
 
