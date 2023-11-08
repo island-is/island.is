@@ -90,8 +90,38 @@ export class AdminController {
       nationalId,
     )
   }
+  @Scopes(AdminPortalScope.applicationSystem)
+  @BypassDelegation()
   @Get('admin/institution/:nationalId/applications')
-  async findAllInstitution(
+  @UseInterceptors(ApplicationAdminSerializer)
+  @Audit<ApplicationListAdminResponseDto[]>({
+    resources: (apps) => apps.map((app) => app.id),
+  })
+  @Documentation({
+    description: 'Get applications for a specific institution',
+    response: {
+      status: 200,
+      type: [ApplicationListAdminResponseDto],
+    },
+    request: {
+      params: {
+        nationalId: {
+          type: 'string',
+          required: true,
+          description: `To get the applications for a specific institution's national id.`,
+        },
+      },
+      query: {
+        status: {
+          type: 'string',
+          required: false,
+          description:
+            'To filter applications by status. Comma-separated for multiple values.',
+        },
+      },
+    },
+  })
+  async findAllInstitutionAdmin(
     @Param('nationalId') nationalId: string,
     @Query('status') status?: string,
   ) {

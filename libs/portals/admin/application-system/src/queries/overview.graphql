@@ -37,6 +37,47 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
   }
 }
 
+query getInstitutionApplications(
+  $input: ApplicationApplicationsInstitutionAdminInput!
+) {
+  applicationApplicationsInstitutionAdmin(input: $input) {
+    id
+    typeId
+    applicant
+    state
+    created
+    modified
+    assignees
+    applicantActors
+    name
+    institution
+    progress
+    status
+    applicantName
+    paymentStatus
+    actionCard {
+      title
+      description
+      tag {
+        label
+        variant
+      }
+      pendingAction {
+        displayStatus
+        content
+        title
+      }
+      history {
+        log
+        date
+      }
+      deleteButton
+      draftTotalSteps
+      draftFinishedSteps
+    }
+  }
+}
+
 query getOrganizations($input: GetOrganizationsInput) {
   getOrganizations(input: $input) {
     items {

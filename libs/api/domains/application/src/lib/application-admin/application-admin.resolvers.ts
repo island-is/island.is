@@ -5,11 +5,14 @@ import {
   ScopesGuard,
   CurrentUser,
 } from '@island.is/auth-nest-tools'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import type { Locale } from '@island.is/shared/types'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Scopes } from '@island.is/auth-nest-tools'
-import { ApplicationApplicationsAdminInput } from './dto/applications-applications-admin-input'
+import {
+  ApplicationApplicationsAdminInput,
+  ApplicationApplicationsInstitutionAdminInput,
+} from './dto/applications-applications-admin-input'
 import { ApplicationAdmin } from '../application.model'
 import { ApplicationService } from '../application.service'
 
@@ -28,5 +31,16 @@ export class ApplicationAdminResolver {
     input: ApplicationApplicationsAdminInput,
   ): Promise<ApplicationAdmin[] | null> {
     return this.applicationService.findAllAdmin(user, locale, input)
+  }
+
+  @Query(() => [ApplicationAdmin], { nullable: true })
+  async applicationApplicationsInstitutionAdmin(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input')
+    input: ApplicationApplicationsInstitutionAdminInput,
+  ): Promise<ApplicationAdmin[] | null> {
+    return this.applicationService.findAllInstitutionAdmin(user, locale, input)
   }
 }
