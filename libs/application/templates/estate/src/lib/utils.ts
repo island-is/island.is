@@ -36,4 +36,4 @@ export const isValidString = (string: string | undefined) =>
   string && /\S/.test(string)
 
 export const isNumericalString = (string: string | undefined) =>
-  string && /^[0-9]/.test(string)
+  string && /^[0-9]+$|^[0-9][0-9,.]+[0-9]$/.test(string)
