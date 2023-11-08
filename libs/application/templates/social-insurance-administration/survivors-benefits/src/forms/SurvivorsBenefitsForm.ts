@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -39,6 +40,34 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
                   width: 'half',
                 }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: survivorsBenefitsFormMessage.confirm.section,
+      children: [
+        buildSubSection({
+          title: '',
+          children: [
+            buildMultiField({
+              id: 'confirm',
+              title: '',
+              description: '',
+              children: [
+                buildCustomField(
+                  {
+                    id: 'confirmScreen',
+                    title: survivorsBenefitsFormMessage.confirm.title,
+                    component: 'Review',
+                  },
+                  {
+                    editable: true,
+                  },
+                ),
               ],
             }),
           ],
