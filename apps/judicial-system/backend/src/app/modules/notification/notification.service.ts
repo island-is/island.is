@@ -67,6 +67,7 @@ import {
   formatProsecutorReceivedByCourtSmsNotification,
   stripHtmlTags,
 } from '../../formatters'
+import { formatCourtOfAppealJudgeAssignedEmailNotification } from '../../formatters/formatters'
 import { notifications } from '../../messages'
 import { Case } from '../case'
 import { CourtService } from '../court'
@@ -177,6 +178,10 @@ export class NotificationService {
       return { address: mobileNumbers, success: true }
     }
 
+    smsText = smsText.match(/rettarvorslugatt.island.is/g)
+      ? smsText
+      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
+
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
       .then(() => ({ address: mobileNumbers, success: true }))
@@ -199,11 +204,17 @@ export class NotificationService {
     recipientName?: string,
     recipientEmail?: string,
     attachments?: Attachment[],
+    skipTail?: boolean,
   ): Promise<Recipient> {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
+
+      html =
+        html.match(/<a/g) || skipTail
+          ? html
+          : `${html} ${this.formatMessage(notifications.emailTail)}`
 
       await this.emailService.sendEmail({
         from: {
@@ -222,10 +233,10 @@ export class NotificationService {
         ],
         cc:
           recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
-        subject: subject,
+        subject,
         text: stripHtmlTags(html),
         html: html,
-        attachments: attachments,
+        attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
@@ -387,6 +398,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -446,6 +459,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -679,6 +694,7 @@ export class NotificationService {
       theCase.defenderName,
       theCase.defenderEmail,
       calendarInvite ? [calendarInvite] : undefined,
+      Boolean(theCase.defenderNationalId) === false,
     ).then((recipient) => {
       if (recipient.success) {
         // No need to wait
@@ -709,12 +725,13 @@ export class NotificationService {
       theCase.courtCaseNumber,
       Boolean(theCase.requestSharedWithDefender),
     )
-
     return this.sendEmail(
       linkSubject,
       linkHtml,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -852,6 +869,8 @@ export class NotificationService {
           }),
       defenderName ?? '',
       defenderEmail ?? '',
+      undefined,
+      Boolean(defenderNationalId) === false,
     )
   }
 
@@ -1349,7 +1368,14 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
-    return this.sendEmail(subject, body, defenderName, defenderEmail)
+    return this.sendEmail(
+      subject,
+      body,
+      defenderName,
+      defenderEmail,
+      undefined,
+      Boolean(defenderNationalId) === false,
+    )
   }
 
   private async sendDefenderAssignedNotifications(
@@ -1414,6 +1440,50 @@ export class NotificationService {
     )
   }
 
+  /* COURT_OF_APPEAL_JUDGE_ASSIGNED notifications */
+
+  private async sendCourtOfAppealJudgeAssignedNotification(
+    theCase: Case,
+  ): Promise<SendNotificationResponse> {
+    const promises: Promise<Recipient>[] = []
+    const recipientRoles = [
+      theCase.appealAssistant,
+      theCase.appealJudge1,
+      theCase.appealJudge2,
+      theCase.appealJudge3,
+    ]
+
+    recipientRoles.forEach((recipient) => {
+      if (theCase.appealCaseNumber && recipient && theCase.appealJudge1?.name) {
+        const { subject, body } =
+          formatCourtOfAppealJudgeAssignedEmailNotification(
+            this.formatMessage,
+            theCase.appealCaseNumber,
+            recipient.id === theCase.appealJudge1Id,
+            theCase.appealJudge1.name,
+            recipient.role,
+            `${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}`,
+          )
+
+        promises.push(
+          this.sendEmail(subject, body, recipient.name, recipient.email),
+        )
+      }
+    })
+
+    const recipients = await Promise.all(promises)
+
+    if (recipients.length > 0) {
+      return this.recordNotification(
+        theCase.id,
+        NotificationType.APPEAL_JUDGES_ASSIGNED,
+        recipients,
+      )
+    }
+
+    return { notificationSent: true }
+  }
+
   /* DEFENDANTS_NOT_UPDATED_AT_COURT notifications */
 
   private async sendDefendantsNotUpdatedAtCourtNotifications(
@@ -1447,6 +1517,8 @@ export class NotificationService {
       html,
       theCase.registrar.name,
       theCase.registrar.email,
+      undefined,
+      true,
     )
 
     return this.recordNotification(
@@ -1533,6 +1605,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1563,6 +1637,10 @@ export class NotificationService {
   private async sendAppealReceivedByCourtNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    const statementDeadline =
+      theCase.appealReceivedByCourtDate &&
+      getStatementDeadline(theCase.appealReceivedByCourtDate)
+
     const subject = this.formatMessage(
       notifications.caseAppealReceivedByCourt.subject,
       {
@@ -1574,6 +1652,7 @@ export class NotificationService {
       notifications.caseAppealReceivedByCourt.courtOfAppealsBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
+        statementDeadline: formatDate(statementDeadline, 'PPPp'),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
@@ -1587,10 +1666,6 @@ export class NotificationService {
         this.getCourtEmail(this.config.courtOfAppealsId),
       ),
     ]
-
-    const statementDeadline =
-      theCase.appealReceivedByCourtDate &&
-      getStatementDeadline(theCase.appealReceivedByCourtDate)
 
     const prosecutorHtml = this.formatMessage(
       notifications.caseAppealReceivedByCourt.body,
@@ -1634,6 +1709,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1762,6 +1839,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1864,6 +1943,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1955,6 +2036,8 @@ export class NotificationService {
         return this.sendAppealStatementNotifications(theCase, user)
       case NotificationType.APPEAL_COMPLETED:
         return this.sendAppealCompletedNotifications(theCase)
+      case NotificationType.APPEAL_JUDGES_ASSIGNED:
+        return this.sendCourtOfAppealJudgeAssignedNotification(theCase)
     }
   }
 
@@ -2027,6 +2110,15 @@ export class NotificationService {
           messages = [
             this.getNotificationMessage(
               MessageType.SEND_DEFENDER_ASSIGNED_NOTIFICATION,
+              user,
+              theCase,
+            ),
+          ]
+          break
+        case NotificationType.APPEAL_JUDGES_ASSIGNED:
+          messages = [
+            this.getNotificationMessage(
+              MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
               user,
               theCase,
             ),

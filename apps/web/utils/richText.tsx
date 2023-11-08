@@ -20,6 +20,7 @@ import {
   ChartsCard,
   DrivingInstructorList,
   EmailSignup,
+  MasterList,
   OneColumnTextSlice,
   OverviewLinksSlice,
   PlateAvailableSearch,
@@ -41,7 +42,6 @@ import {
   AccordionSlice as AccordionSliceSchema,
   Embed as EmbedSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
-  IntroLinkImage as IntroLinkImageSchema,
   OverviewLinks as OverviewLinksSliceSchema,
   PowerBiSlice as PowerBiSliceSchema,
   SectionWithVideo as SectionWithVideoSchema,
@@ -93,6 +93,8 @@ export const webRenderConnectedComponent = (slice) => {
       return <HousingBenefitCalculator slice={slice} />
     case 'PublicShipSearch':
       return <PublicShipSearch slice={slice} />
+    case 'Meistaraleyfi/MasterLicences':
+      return <MasterList slice={slice} />
     default:
       break
   }

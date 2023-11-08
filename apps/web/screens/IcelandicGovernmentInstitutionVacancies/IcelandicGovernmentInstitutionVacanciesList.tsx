@@ -1,25 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
+
 import {
-  Text,
-  FocusableBox,
-  GridContainer,
-  GridColumn,
   Box,
-  GridRow,
   Breadcrumbs,
-  Stack,
-  Pagination,
-  Hidden,
   Filter,
-  FilterMultiChoice,
   FilterInput,
+  FilterMultiChoice,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
   Inline,
+  Pagination,
+  Stack,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { sortAlpha } from '@island.is/shared/utils'
+import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacanciesQuery,
   GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
@@ -28,15 +30,14 @@ import {
   IcelandicGovernmentInstitutionVacanciesResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { GET_NAMESPACE_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
-import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
-import { sortAlpha } from '@island.is/shared/utils'
-import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
+import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
 type Vacancy =
@@ -686,6 +687,7 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   return {
     vacancies,
     namespace,
+    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 

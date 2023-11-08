@@ -465,7 +465,7 @@ export const m = defineMessages({
     description: '',
   },
   moneyAndDepositDescription: {
-    id: 'es.application:moneyAndDepositDescription',
+    id: 'es.application:moneyAndDepositDescription#markdown',
     defaultMessage: 'Nafn og kennitala ef um einstakling er að ræða',
     description: '',
   },
@@ -801,6 +801,11 @@ export const m = defineMessages({
   inheritanceRelationLabel: {
     id: 'es.application:inheritanceRelationLabel',
     defaultMessage: 'Tengsl',
+    description: 'Relation label',
+  },
+  inheritanceRelationWithApplicantLabel: {
+    id: 'es.application:inheritanceRelationWithApplicantLabel',
+    defaultMessage: 'Tengsl við umsækjanda',
     description: 'Relation label',
   },
   inheritanceRelationPlaceholder: {

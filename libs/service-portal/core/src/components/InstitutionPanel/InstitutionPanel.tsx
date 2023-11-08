@@ -56,6 +56,7 @@ export const InstitutionPanel = ({
               height={isMobile ? undefined : 'full'}
               marginRight={isMobile ? 2 : 0}
               className={isMobile && styles.image}
+              style={{ maxWidth: 60 }}
             />
             {title && (
               <Text variant="h4" as="p" color="purple600" lineHeight="xl">
@@ -83,7 +84,7 @@ export const InstitutionPanel = ({
       {elements}
     </a>
   ) : (
-    elements
+    <Box className={styles.link}>{elements}</Box>
   )
 }
 
