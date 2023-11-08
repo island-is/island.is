@@ -1,19 +1,13 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Text,
-  Button,
-} from '@island.is/island-ui/core'
-import { FC } from 'react'
-import { BaseInformation } from './review-groups/BaseInformation'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
-import { useLocale } from '@island.is/localization'
+import { FC } from 'react'
+import { BaseInformation } from './review-groups/BaseInformation'
 
 import { carRecyclingMessages } from '../../lib/messages'
-import { Cars } from './review-groups/Cars'
+import { Vehicles } from './review-groups/Vehicles'
 
 interface ReviewScreenProps {
   application: Application
@@ -75,7 +69,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       </Box>
       <BaseInformation {...childProps} />
-      <Cars {...childProps} />
+      <Vehicles {...childProps} />
     </>
   )
 }

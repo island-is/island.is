@@ -12,8 +12,8 @@ import {
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { carRecyclingMessages } from '../lib/messages'
 import { CurrentVehiclesApi } from '../dataProviders'
+import { carRecyclingMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'CarRecyclingPrerequisites',
@@ -47,9 +47,17 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
+              provider: NationalRegistryUserApi,
+              title: carRecyclingMessages.pre.nationalRegistryInformationTitle,
+              subTitle:
+                carRecyclingMessages.pre.nationalRegistryInformationSubTitle,
+            }),
+            buildDataProviderItem({
               provider: CurrentVehiclesApi,
-              title: 'Samgöngustofa',
-              subTitle: 'AThuga bíldruslurnar',
+              title:
+                carRecyclingMessages.pre.externalDataTransportAuthorityTitle,
+              subTitle:
+                carRecyclingMessages.pre.externalDataTransportAuthoritySubtitle,
             }),
           ],
         }),

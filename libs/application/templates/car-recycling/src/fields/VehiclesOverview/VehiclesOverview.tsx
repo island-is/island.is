@@ -28,7 +28,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
       variables: {
         input: {
           id: application.id,
-          answers: { vehicles: { data: vehicles } },
+          answers: { vehiclesList: vehicles },
         },
         locale,
       },
@@ -53,7 +53,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
     }
   }
 
-  function recycle(vehicle: VehicleMiniDto): void {
+  function onRecycle(vehicle: VehicleMiniDto): void {
     selectedVehiclesList.push(vehicle)
     setSelectedVehiclesList(selectedVehiclesList)
 
@@ -66,7 +66,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
     onUpdateApplication(selectedVehiclesList)
   }
 
-  function cancel(vehicle: VehicleMiniDto): void {
+  function onCancel(vehicle: VehicleMiniDto): void {
     currentVehiclesList.unshift(vehicle)
     setSelectedVehiclesList(currentVehiclesList)
 
@@ -129,7 +129,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
                   colorScheme: 'destructive',
                 },
                 label: formatMessage(carRecyclingMessages.cars.cancel),
-                onClick: () => cancel(vehicle),
+                onClick: () => onCancel(vehicle),
               }}
               heading={vehicle.permno || ''}
               text={`${vehicle.make}, ${vehicle.color}`}
@@ -161,7 +161,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
                 },
                 label: formatMessage(carRecyclingMessages.cars.recycle),
                 onClick: () => {
-                  recycle(vehicle)
+                  onRecycle(vehicle)
                 },
               }}
               heading={vehicle.permno || ''}

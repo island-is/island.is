@@ -1,21 +1,20 @@
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 
-export const Cars = ({
+export const Vehicles = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
-  const cars = [
-    { name: 'Audi', year: '2006', number: 'BMX45' },
-    { name: 'BMW', year: '2008', number: 'BMX46' },
-    { name: 'Mercedes', year: '2009', number: 'BMX47' },
-  ]
+  const [{ vehiclesList }] = useStatefulAnswers(application)
+
+  console.log('vehiclesList', vehiclesList)
 
   return (
     <ReviewGroup
@@ -29,7 +28,7 @@ export const Cars = ({
         </Label>
       </Box>
 
-      {cars.map((car, index) => {
+      {vehiclesList.map((vehicle, index) => {
         return (
           <Box
             key={index}
@@ -39,8 +38,8 @@ export const Cars = ({
             padding={4}
             marginBottom={2}
           >
-            <Label>{formatMessage(car.number)}</Label>
-            {car.name}, {car.year}
+            <Label>{formatMessage(vehicle.permno || '')}</Label>
+            {vehicle.make}, {vehicle.color}
           </Box>
         )
       })}
