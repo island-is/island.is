@@ -1,3 +1,4 @@
+import { ServicePortalPath } from '@island.is/service-portal/core'
 import { m } from '../lib/messages'
 
 interface Category {
@@ -440,18 +441,29 @@ enum LicenseType {
   MachineLicense = 'MachineLicense',
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
+  PCard = 'PCard',
+}
+enum LicenseTypePath {
+  okurettindi = 'okurettindi',
+  skotvopnaleyfi = 'skotvopnaleyfi',
+  adrrettindi = 'adrrettindi',
+  vinnuvelarettindi = 'vinnuvelarettindi',
+  ororkuskirteini = 'ororkuskirteini',
+  pcard = 'pkort',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',
   EnvironmentAgency = 'EnvironmentAgency',
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration',
+  DistrictCommissioners = 'DistrictCommissioners',
 }
 enum LicenseProviderPath {
   vinnueftirlitid = 'vinnueftirlitid',
   umhverfisstofnun = 'umhverfisstofnun',
   rikislogreglustjori = 'rikislogreglustjori',
   tryggingastofnun = 'tryggingastofnun',
+  syslumenn = 'syslumenn',
 }
 
 export const getLicenseDetailHeading = (type: string) => {
@@ -481,6 +493,12 @@ export const getLicenseDetailHeading = (type: string) => {
       return {
         title: m.yourDisabilityicense,
         text: m.disabilityLicenseDescription,
+      }
+      break
+    case LicenseType.PCard:
+      return {
+        title: m.yourPCard,
+        text: m.yourPCardDescription,
       }
       break
     default:
@@ -516,39 +534,32 @@ export const getTitleAndLogo = (type: string) => {
         title: m.disabilityLicense,
         logo: './assets/images/tr.svg',
       }
+    case LicenseType.PCard:
+      return {
+        title: m.pCard,
+        logo: './assets/images/island.svg',
+      }
     default:
       return { title: m.license, logo: './assets/images/island.svg' }
   }
 }
 
-enum LicenseTypePath {
-  okurettindi = 'okurettindi',
-  skotvopnaleyfi = 'skotvopnaleyfi',
-  adrrettindi = 'adrrettindi',
-  vinnuvelarettindi = 'vinnuvelarettindi',
-  ororkuskirteini = 'ororkuskirteini',
-}
-
 export const getPathFromType = (type: string) => {
   switch (type) {
     case LicenseType.AdrLicense:
-      return LicenseTypePath.adrrettindi
-      break
+      return ServicePortalPath.ADRLicensesDetail
     case LicenseType.DriversLicense:
-      return LicenseTypePath.okurettindi
-      break
+      return ServicePortalPath.DrivingLicensesDetail
     case LicenseType.FirearmLicense:
-      return LicenseTypePath.skotvopnaleyfi
-      break
+      return ServicePortalPath.FirearmLicensesDetail
     case LicenseType.MachineLicense:
-      return LicenseTypePath.vinnuvelarettindi
-      break
+      return ServicePortalPath.MachineLicensesDetail
     case LicenseType.DisabilityLicense:
-      return LicenseTypePath.ororkuskirteini
-      break
+      return ServicePortalPath.DisabilityLicense
+    case LicenseType.PCard:
+      return ServicePortalPath.PCardDetail
     default:
       return ''
-      break
   }
 }
 
@@ -556,41 +567,33 @@ export const getTypeFromPath = (path: string) => {
   switch (path) {
     case LicenseTypePath.adrrettindi:
       return LicenseType.AdrLicense
-      break
     case LicenseTypePath.okurettindi:
       return LicenseType.DriversLicense
-      break
     case LicenseTypePath.skotvopnaleyfi:
       return LicenseType.FirearmLicense
-      break
     case LicenseTypePath.vinnuvelarettindi:
       return LicenseType.MachineLicense
-      break
     case LicenseTypePath.ororkuskirteini:
       return LicenseType.DisabilityLicense
-      break
+    case LicenseTypePath.pcard:
+      return LicenseType.PCard
     default:
       return undefined
-      break
   }
 }
-
 export const getPathFromProviderId = (id: string) => {
   switch (id) {
     case LicenseProviderId.AdministrationOfOccupationalSafetyAndHealth:
       return LicenseProviderPath.vinnueftirlitid
-      break
     case LicenseProviderId.EnvironmentAgency:
       return LicenseProviderPath.umhverfisstofnun
-      break
     case LicenseProviderId.NationalPoliceCommissioner:
       return LicenseProviderPath.rikislogreglustjori
-      break
     case LicenseProviderId.SocialInsuranceAdministration:
       return LicenseProviderPath.tryggingastofnun
-      break
+    case LicenseProviderId.DistrictCommissioners:
+      return LicenseProviderPath.syslumenn
     default:
       return ''
-      break
   }
 }

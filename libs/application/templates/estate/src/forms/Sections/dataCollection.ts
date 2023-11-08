@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/types'
 import { EstateApi } from '../../dataProviders'
 import { m } from '../../lib/messages'
+import { EstateTypes } from '../../lib/constants'
 
 export const dataCollection = buildSection({
   id: 'externalData',
@@ -23,7 +24,21 @@ export const dataCollection = buildSection({
         buildDataProviderItem({
           provider: EstateApi,
           title: m.deceasedInfoProviderTitle,
-          subTitle: m.deceasedInfoProviderSubtitle,
+          subTitle: (application) =>
+            application.answers.selectedEstate ===
+            EstateTypes.estateWithoutAssets
+              ? /* EIGNALAUST DÁNARBU */
+                m.providerSubtitleEstateWithoutAssets
+              : application.answers.selectedEstate ===
+                EstateTypes.officialDivision
+              ? /* OPINBER SKIPTI */
+                m.providerSubtitleOfficialDivision
+              : application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate
+              ? /* SETA Í ÓSKIPTU BÚI */
+                m.providerSubtitleUndividedEstate
+              : /* EINKASKIPTI */
+                m.providerSubtitleDivisionOfEstateByHeirs,
         }),
         buildDataProviderItem({
           provider: NationalRegistryUserApi,

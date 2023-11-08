@@ -73,18 +73,12 @@
         "cwd": "apps/services/user-profile"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS"
-      }
-    },
-    "schemas/build-openapi-internal": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/user-profile/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -100,12 +94,20 @@
         "cwd": "apps/services/user-profile/"
       }
     },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["sequelize-cli db:seed:all --seeders-path ./seeders"],
+        "cwd": "apps/services/user-profile/"
+      }
+    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run services-user-profile:dev-services",
-          "yarn nx run services-user-profile:migrate"
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
         ],
         "parallel": false
       }

@@ -14,15 +14,23 @@ import {
 import {
   BlowoutList,
   CaseDocuments,
-  CaseEmailBox,
   CaseOverview,
   CaseStatusBox,
   CaseTimeline,
   Coordinator,
-  RenderAdvices,
 } from './components'
 import CaseSkeleton from './components/CaseSkeleton/CaseSkeleton'
 import localization from './Case.json'
+import dynamic from 'next/dynamic'
+
+const CaseEmailBox = dynamic(
+  () => import('./components/CaseEmailBox/CaseEmailBox'),
+  { ssr: false },
+)
+const RenderAdvices = dynamic(
+  () => import('./components/RenderAdvices/RenderAdvices'),
+  { ssr: false },
+)
 
 interface Props {
   chosenCase: Case
@@ -61,6 +69,7 @@ const CaseDesktop = ({
     isStatusNameForReview,
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
   } = expressions
 
   return (
@@ -111,11 +120,13 @@ const CaseDesktop = ({
                 status={statusName}
                 advicePublishTypeId={advicePublishTypeId}
               />
-              <BlowoutList
-                list={stakeholders}
-                isStakeholder
-                isEmpty={!isStakeholdersNotEmpty}
-              />
+              {isStakeholdersBoxVisible && (
+                <BlowoutList
+                  list={stakeholders}
+                  isStakeholder
+                  isEmpty={!isStakeholdersNotEmpty}
+                />
+              )}
               {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
               <Coordinator
                 contactEmail={contactEmail}

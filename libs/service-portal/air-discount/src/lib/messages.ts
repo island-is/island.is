@@ -75,10 +75,6 @@ export const messages = defineMessages({
     id: 'sp.air-discount:flight',
     defaultMessage: 'Flugleið',
   },
-  date: {
-    id: 'sp.air-discount:date',
-    defaultMessage: 'Dagsetning',
-  },
   activeConnectionCodes: {
     id: 'sp.air-discount:active-connection-codes',
     defaultMessage: 'Virkir afsláttarkóðar fyrir áframhaldandi flug',
@@ -95,5 +91,9 @@ export const messages = defineMessages({
     id: 'sp.air-discount:no-rights-text',
     defaultMessage:
       'Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og á eyjum eiga rétt á Loftbrú (sjá kort á loftbru.is).',
+  },
+  date: {
+    id: 'sp.air-discount:date',
+    defaultMessage: 'Dagsetning',
   },
 })

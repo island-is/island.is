@@ -649,8 +649,7 @@ export const OldAgePensionForm: Form = buildForm({
                 }),
                 buildAlertMessageField({
                   id: 'onePaymentPerYear.alert',
-                  title:
-                    oldAgePensionFormMessage.shared.alertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearAlertDescription,

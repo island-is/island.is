@@ -225,7 +225,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.APPROVE,
+                onEvent: DefaultEvents.SUBMIT,
                 logMessage: statesMessages.additionalDocumentsAdded,
               },
             ],

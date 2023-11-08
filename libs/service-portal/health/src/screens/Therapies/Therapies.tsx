@@ -5,6 +5,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
+  SJUKRATRYGGINGAR_ID,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -64,7 +65,7 @@ const Therapies = () => {
   }
   // Construct tabs array and filter out empty arrays
   const tabs = [
-    physioTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.physicalTherapy),
       content: (
         <TherapiesTabContent
@@ -74,7 +75,7 @@ const Therapies = () => {
         />
       ),
     },
-    speechTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.speechTherapy),
       content: (
         <TherapiesTabContent
@@ -84,7 +85,7 @@ const Therapies = () => {
         />
       ),
     },
-    occupationalTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.occupationalTherapy),
       content: (
         <TherapiesTabContent
@@ -94,7 +95,7 @@ const Therapies = () => {
         />
       ),
     },
-  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
+  ]
 
   const tabsElement =
     tabs.length === 1 ? (
@@ -117,6 +118,8 @@ const Therapies = () => {
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
       {!loading && !error && tabs.length === 0 && (
         <Box marginTop={8}>

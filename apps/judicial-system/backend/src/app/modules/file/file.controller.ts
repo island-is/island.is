@@ -30,6 +30,7 @@ import {
 import {
   assistantRule,
   judgeRule,
+  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   registrarRule,
@@ -70,8 +71,8 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
     assistantRule,
   )
   @Post('file/url')
@@ -93,8 +94,8 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
     assistantRule,
   )
   @Post('file')
@@ -125,6 +126,7 @@ export class FileController {
     judgeRule,
     registrarRule,
     assistantRule,
+    prisonSystemStaffRule,
   )
   @Get('file/:fileId/url')
   @ApiOkResponse({
@@ -147,8 +149,9 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    registrarRule,
     judgeRule,
+    registrarRule,
+    assistantRule,
   )
   @Delete('file/:fileId')
   @ApiOkResponse({

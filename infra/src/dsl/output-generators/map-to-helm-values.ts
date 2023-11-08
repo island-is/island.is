@@ -24,7 +24,7 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
-import { getScaledValue } from '../../../../libs/shared/utils/src/lib/scale-value'
+import { getScaledValue } from '../utils/scale-value'
 
 /**
  * Transforms our definition of a service to a Helm values object
@@ -336,6 +336,8 @@ function serializeIngress(
 
   return {
     annotations: {
+      'nginx.ingress.kubernetes.io/service-upstream':
+        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       'kubernetes.io/ingress.class':
         ingressConf.public ?? true
           ? 'nginx-external-alb'

@@ -128,4 +128,12 @@ export const i18n = {
     is: 'Grunnupplýsingar skírteinis',
     en: 'Basic license information',
   },
+  nationalId: {
+    is: 'Kennitala',
+    en: 'SSN',
+  },
+  cardNumber: {
+    is: 'Númer stæðiskorts',
+    en: 'Card number',
+  },
 }

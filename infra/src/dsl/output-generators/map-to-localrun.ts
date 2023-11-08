@@ -19,7 +19,7 @@ import {
 } from './serialization-helpers'
 import { getSsmParams } from '../adapters/get-ssm-params'
 import { getPostgresExtensions } from './map-to-helm-values'
-import { getScaledValue } from '../../../../libs/shared/utils/src/lib/scale-value'
+import { getScaledValue } from '../utils/scale-value'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce

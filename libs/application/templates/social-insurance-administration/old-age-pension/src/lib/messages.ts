@@ -31,8 +31,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     alertTitle: {
       id: 'oap.application:alert.title',
       defaultMessage: 'Athugið',
-      description: 'Attention'
-    }
+      description: 'Attention',
+    },
   }),
 
   pre: defineMessages({
@@ -111,8 +111,10 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     pensionFundQuestionDescription: {
       id: 'oap.application:pension.fund.question.description',
-      defaultMessage: 'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
-      description: 'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
+      defaultMessage:
+        'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+      description:
+        'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',
@@ -1004,7 +1006,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Additional attachments required',
     },
     additionalDocumentRequiredDescription: {
-      id: 'oap.application:fileUpload.additionalDocumentRequired.description',
+      id: 'oap.application:fileUpload.additionalDocumentRequired.description#markdown',
       defaultMessage:
         'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',

@@ -44,7 +44,7 @@ export const transformApplicationToOldAgePensionDTO = (
 
   const { bankInfo } = getApplicationExternalData(application.externalData)
   const bankNumber = getBank(bankInfo)
-  
+
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
     application.answers,

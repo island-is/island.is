@@ -30,12 +30,6 @@ export enum ServicePortalPath {
   AccessControlDelegationsIncoming = '/adgangsstyring/umbod-til-min',
 
   SettingsPersonalInformation = '/stillingar/minar-stillingar',
-  SettingsPersonalInformationEditPhoneNumber = '/stillingar/minar-stillingar/breyta-simanumeri',
-  SettingsPersonalInformationEditEmail = '/stillingar/minar-stillingar/breyta-netfangi',
-  SettingsPersonalInformationEditLanguage = '/stillingar/minar-stillingar/breyta-tungumali',
-  SettingsPersonalInformationEditNudge = '/stillingar/minar-stillingar/breyta-hnippi',
-  SettingsPersonalInformationEditBankInfo = '/stillingar/minar-stillingar/reikningsnumer',
-  SettingsPersonalInformationEmailConfirmation = '/stillingar/minar-stillingar/stadfesta-netfang/:hash',
   SettingsExternal = 'https://minarsidur.island.is/minar-sidur/minn-adgangur/stillingar/',
   SettingsIslykill = '/stillingar/islykill',
 
@@ -47,6 +41,16 @@ export enum ServicePortalPath {
   MyInfoRootOverview = '/min-gogn/yfirlit',
   UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
   Company = '/fyrirtaeki',
+
+  // Education License
+  EducationLicense = '/min-gogn/leyfisbref',
+
+  // Education
+  EducationRoot = '/min-gogn/menntun',
+  EducationDegree = '/min-gogn/menntun/profgradur',
+  EducationCareer = '/min-gogn/menntun/namsferill',
+  EducationStudentAssessment = '/min-gogn/menntun/namsferill/:familyIndex/samraemd-prof',
+  EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
 
   // General Petitions
   Petitions = '/min-gogn/listar',
@@ -78,17 +82,22 @@ export enum ServicePortalPath {
   HealthTherapies = '/heilsa/thjalfun',
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
+  // Transports
+  TransportRoot = '/samgongur',
+  TransportVehicles = '/samgongur/okutaeki',
+  TransportMyVehicles = '/samgongur/okutaeki/min-okutaeki',
+  TransportVehiclesDetail = '/samgongur/okutaeki/min-okutaeki/:id',
+  TransportVehiclesLookup = '/samgongur/okutaeki/leit',
+  TransportVehiclesHistory = '/samgongur/okutaeki/okutaekjaferill',
+  TransportLowerAirfare = '/samgongur/loftbru',
+  AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
+  AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
   // Education
-  EducationRoot = '/menntun',
-  EducationDegree = '/menntun/profgradur',
-  EducationCareer = '/menntun/namsferill',
-  EducationStudentAssessment = '/menntun/namsferill/:familyIndex/samraemd-prof',
-  EducationExternal = 'https://minarsidur.island.is/minar-sidur/menntun/namsferill/',
+  EducationHaskoli = '/menntun/haskoli',
+  EducationDrivingLessons = '/menntun/okunam',
+  EducationPaths = '/menntun/okunam',
   EducationHaskoliGraduation = '/menntun/haskoli/brautskraning',
   EducationHaskoliGraduationDetail = '/menntun/haskoli/brautskraning/:id',
-
-  // Education License
-  EducationLicense = '/leyfisbref',
 
   // Occupational Licenses
   OccupationalLicenses = '/starfsleyfi',
@@ -97,14 +106,6 @@ export enum ServicePortalPath {
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
-  AssetsVehicles = '/okutaeki',
-  AssetsMyVehicles = '/okutaeki/min-okutaeki',
-  AssetsVehiclesDetail = '/okutaeki/min-okutaeki/:id',
-  AssetsVehiclesLookup = '/okutaeki/leit',
-  AssetsVehiclesHistory = '/okutaeki/okutaekjaferill',
-  AssetsVehiclesDrivingLessons = '/okutaeki/okunam',
-  AssetsWorkMachines = '/okutaeki/vinnuvelar',
-  AssetsWorkMachinesDetail = '/okutaeki/vinnuvelar/:regNumber/:id',
 
   // Messages
   MessagesRoot = '/skilabod',
@@ -118,9 +119,13 @@ export enum ServicePortalPath {
 
   // Licenses service
   LicensesRoot = '/skirteini',
+  // Pattern should be : /skirteini/provider/licensetype
+  DrivingLicensesDetail = '/skirteini/rikislogreglustjori/okurettindi',
+  ADRLicensesDetail = '/skirteini/umhverfisstofnun/adrrettindi',
+  FirearmLicensesDetail = '/skirteini/rikislogreglustjori/skotvopnaleyfi',
+  MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
+  DisabilityLicense = '/skirteini/tryggingastofnun/ororkuskirteini',
+  PCardDetail = '/skirteini/syslumenn/pkort',
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
   LicensesDetail = '/skirteini/:provider/:type',
-
-  // Air Discount
-  AirDiscountRoot = '/loftbru',
 }
