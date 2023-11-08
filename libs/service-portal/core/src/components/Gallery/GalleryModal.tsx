@@ -107,7 +107,7 @@ export const GalleryModal: FC<Props> = ({
           />
         </Box>
         <Box
-          className={cn(galleryStyles.gallery, styles.main)}
+          className={styles.main}
           width="full"
           overflow="hidden"
           transition="fast"
@@ -115,7 +115,7 @@ export const GalleryModal: FC<Props> = ({
           justifyContent="center"
           alignItems="center"
         >
-          <Box className={galleryStyles.galleryImageWrap}>
+          <Box className={styles.imageWrap}>
             {childArray.map((item, i) =>
               cloneElement(item as React.ReactElement, {
                 active: i === activeItem,
