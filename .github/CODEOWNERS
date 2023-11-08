@@ -20,7 +20,6 @@
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                       @island-is/core
-/.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -287,8 +286,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/system-e2e/                                                                                        @island-is/qa
 
 # DevOps
-/.github/actions/                                                                                        @island-is/devops
-/.github/workflows/                                                                                      @island-is/devops
+/.github/                                                                                                @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -297,4 +295,4 @@ libs/clients/rsk/relationships/                                                 
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/charts/                                                                                                 @island-is/devops

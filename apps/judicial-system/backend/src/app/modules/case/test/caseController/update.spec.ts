@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
+  CaseDecision,
   CaseFileCategory,
   CaseFileState,
   CaseOrigin,
@@ -223,6 +224,58 @@ describe('CaseController - Update', () => {
           courtCaseFacts: `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`,
           courtLegalArguments: `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`,
         },
+        { where: { id: caseId }, transaction },
+      )
+    })
+  })
+
+  describe('case is resent by prosecutor with changed dates', () => {
+    const caseToUpdate = {
+      caseResentExplanation: 'Endursending',
+      demands: 'Updated demands',
+      requestedValidToDate: new Date(),
+    }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update prosecutor demands and valid to date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          demands: 'Updated demands',
+          prosecutorDemands: 'Updated demands',
+          requestedValidToDate: caseToUpdate.requestedValidToDate,
+          validToDate: caseToUpdate.requestedValidToDate,
+        }),
+        { where: { id: caseId }, transaction },
+      )
+    })
+  })
+
+  describe('case is resent by prosecutor with changed dates after decision', () => {
+    const caseToUpdate = {
+      caseResentExplanation: 'Endursending',
+      demands: 'Updated demands',
+      requestedValidToDate: new Date(),
+    }
+
+    const acceptingCase = {
+      ...theCase,
+      decision: CaseDecision.ACCEPTING,
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, acceptingCase, caseToUpdate)
+    })
+
+    it('should update prosecutor demands but not valid to date', () => {
+      expect(mockCaseModel.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          demands: 'Updated demands',
+          prosecutorDemands: 'Updated demands',
+          requestedValidToDate: caseToUpdate.requestedValidToDate,
+        }),
         { where: { id: caseId }, transaction },
       )
     })
