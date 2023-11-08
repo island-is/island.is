@@ -11,6 +11,7 @@ export default {
   globals: {},
   displayName: 'services-user-profile',
   testEnvironment: 'node',
+  testTimeout: 10000,
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
