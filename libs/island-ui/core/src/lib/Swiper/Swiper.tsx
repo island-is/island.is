@@ -34,6 +34,7 @@ export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
               className={styles.slide}
               style={{
                 width,
+                aspectRatio: '1/1',
               }}
             >
               {child}

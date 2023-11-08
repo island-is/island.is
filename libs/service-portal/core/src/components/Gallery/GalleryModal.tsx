@@ -92,6 +92,7 @@ export const GalleryModal: FC<Props> = ({
       className={styles.modal}
     >
       <Box className={styles.container}>
+        <Box className={styles.header} />
         <Box
           className={styles.closeButton}
           onClick={() => onVisibilityChange(false)}
@@ -142,7 +143,7 @@ export const GalleryModal: FC<Props> = ({
           paddingLeft={1}
           paddingRight={1}
         >
-          <Swiper width={80}>
+          <Swiper width={70}>
             {thumbnailsArray
               .map((thumbnail, i) => {
                 if (!thumbnail) {
@@ -161,7 +162,6 @@ export const GalleryModal: FC<Props> = ({
                       [galleryStyles.activeGalleryButton]: i === activeItem,
                     })}
                     onKeyDown={(e) => onKeyDown(e)}
-                    style={{ height: '80px', width: '80px' }}
                   >
                     {cloneElement(
                       thumbnail as React.ReactElement<GalleryItemProps>,
