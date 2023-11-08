@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.css'
 
@@ -41,7 +40,7 @@ export const Swiper: FC<React.PropsWithChildren<Props>> = ({
               key={i}
               className={styles.slide}
               style={{
-                width: '80px',
+                width,
               }}
             >
               {child}

@@ -47,14 +47,13 @@ export const galleryButton = style({
   opacity: 0.8,
 
   ':focus': {
-    borderColor: theme.color.blue400,
-    outline: 0,
-    transition: theme.transitions.fast,
-    opacity: 1,
+    borderColor: theme.color.mint400,
   },
 })
 
-export const activeGalleryButton = style({})
+export const activeGalleryButton = style({
+  borderColor: theme.color.blue400,
+})
 
 export const lastImageOverlay = style({
   position: 'absolute',
