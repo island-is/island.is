@@ -1,12 +1,12 @@
-import { buildDataProviderItem } from '@island.is/application/core'
 import {
   InstitutionNationalIds,
   NationalRegistryUserApi,
   PaymentCatalogApi,
+  TemplateApiProviderBuilderItem,
   UserProfileApi,
 } from '@island.is/application/types'
 
-const dataProviders = [
+const dataProviders: TemplateApiProviderBuilderItem[] = [
   {
     provider: NationalRegistryUserApi,
     title: 'Persónuupplýsingar úr Þjóðskrá',
@@ -18,14 +18,6 @@ const dataProviders = [
     title: 'Netfang og símanúmer úr þínum stillingum',
     subTitle:
       'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
-  },
-  {
-    provider: PaymentCatalogApi.configure({
-      params: {
-        organizationId: InstitutionNationalIds.SYSLUMENN,
-      },
-    }),
-    title: '',
   },
 ]
 

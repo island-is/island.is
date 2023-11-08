@@ -2,9 +2,11 @@ import { buildCertificateTemplate } from '@island.is/application/utils'
 
 import {
   ApplicationTypes,
+  InstitutionNationalIds,
   ValidateCriminalRecordApi,
   defineTemplateApi,
 } from '@island.is/application/types'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 const pdfApi = defineTemplateApi({
   action: 'getCriminalRecordPDF',
@@ -13,14 +15,16 @@ const pdfApi = defineTemplateApi({
   namespace: 'CriminalRecordShared',
 })
 
-export const criminalRecord = buildCertificateTemplate(
-  'Umsókn um skírteini',
-  {
+export const criminalRecord = buildCertificateTemplate({
+  name: 'Umsókn um skírteini',
+  additionalProvider: {
     provider: ValidateCriminalRecordApi,
     title: 'Information from the criminal record database',
     subTitle: 'Skjal sem inniheldur sakavottorðið þitt.',
   },
-  pdfApi,
-  ApplicationTypes.NEW_TYPE_OF_APPLICATION,
-  'Sakavottorð',
-)
+  getPdfApi: pdfApi,
+  templateId: ApplicationTypes.NEW_TYPE_OF_APPLICATION,
+  title: 'Sakavottorð',
+  organizationId: InstitutionNationalIds.SYSLUMENN,
+  chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],
+})

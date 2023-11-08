@@ -149,7 +149,7 @@ export interface DataProviderBuilderItem {
   provider?: Provider
 }
 
-export interface FactoryDataproviderBuilderItem
+export interface TemplateApiProviderBuilderItem
   extends DataProviderBuilderItem {
   provider: TemplateApi
 }
