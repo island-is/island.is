@@ -26,7 +26,9 @@ const getTranslations = (
 
   const panelTitle =
     namespace?.utlendingastofnunChatPanelTitle ??
-    'Netspjall Útlendingastofnunar'
+    (activeLocale === 'is'
+      ? 'Netspjall Útlendingastofnunar'
+      : "Directorate of Immigration's chat")
 
   const missingEmailText =
     namespace?.utlendingastofnunChatMissingEmailText ??

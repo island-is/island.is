@@ -89,7 +89,10 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         if (Object.keys(languagePack).length > 0) {
           instance.updateLanguagePack(languagePack)
         }
-        if (props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54') {
+        if (
+          props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54' ||
+          props.integrationID === '53c6e788-8178-448d-94c3-f5d71ec3b80e'
+        ) {
           onDirectorateOfImmigrationChatLoad(instance, namespace, activeLocale)
         }
 
