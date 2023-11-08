@@ -8187,6 +8187,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/config-plugins@npm:^4.0.6":
+  version: 4.1.5
+  resolution: "@expo/config-plugins@npm:4.1.5"
+  dependencies:
+    "@expo/config-types": ^45.0.0
+    "@expo/json-file": 8.2.36
+    "@expo/plist": 0.0.18
+    "@expo/sdk-runtime-versions": ^1.0.0
+    "@react-native/normalize-color": ^2.0.0
+    chalk: ^4.1.2
+    debug: ^4.3.1
+    find-up: ~5.0.0
+    getenv: ^1.0.0
+    glob: 7.1.6
+    resolve-from: ^5.0.0
+    semver: ^7.3.5
+    slash: ^3.0.0
+    xcode: ^3.0.1
+    xml2js: 0.4.23
+  checksum: f631217251281b1e25949adbec175ef1362dd08d837ce676ed8350c1401b5764091ba100f76f42adb623e4cdcde5b270be77ad6606f978d419c07fd8c81b701c
+  languageName: node
+  linkType: hard
+
+"@expo/config-types@npm:^45.0.0":
+  version: 45.0.0
+  resolution: "@expo/config-types@npm:45.0.0"
+  checksum: 9b4866540654da61af0985ebfc975b3cb690625acf7742443a7e56263bf134b261e22719720982223407f8957d08a3646178c79f482861218882f0956d804021
+  languageName: node
+  linkType: hard
+
 "@expo/config-types@npm:^47.0.0":
   version: 47.0.0
   resolution: "@expo/config-types@npm:47.0.0"
@@ -10023,7 +10053,7 @@ __metadata:
     react-native-pdf: 6.6.2
     react-native-quick-actions: 0.3.13
     react-native-share: 7.1.1
-    react-native-spotlight-search: 2.0.0
+    react-native-spotlight-search: 2.2.0
     react-native-webview: 11.26.1
     react-test-renderer: 18.2.0
     styled-components: 5.3.6
@@ -17613,6 +17643,13 @@ __metadata:
   version: 16.18.34
   resolution: "@types/node@npm:16.18.34"
   checksum: 35c0ffe09687578d002ceb7e706d0ba450546aeb3d2716f28691f2af0063bd274dbde0f741d087ea217f2a8db413eb700d22dfb4f08a67986ff801423bd7be8d
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.11.5":
+  version: 16.18.61
+  resolution: "@types/node@npm:16.18.61"
+  checksum: fdd162829eddc9b0b82a1ec485ba3876428ff3bd94c5869b13f4a36eb2aa9bddd22ea7e8ee3b2faa91a0f70ff08d8fd8d4be7dd0d143f8ee776907d6a1d2ed25
   languageName: node
   linkType: hard
 
@@ -45135,12 +45172,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-spotlight-search@npm:2.0.0":
-  version: 2.0.0
-  resolution: "react-native-spotlight-search@npm:2.0.0"
+"react-native-spotlight-search@npm:2.2.0":
+  version: 2.2.0
+  resolution: "react-native-spotlight-search@npm:2.2.0"
+  dependencies:
+    "@expo/config-plugins": ^4.0.6
+    "@types/node": ^16.11.5
+    typescript: ^4.4.4
   peerDependencies:
     react-native: "*"
-  checksum: a2d9ca1d1ff5a629faf5f57d061f091f03e0526f18a8cf76bbfd9b33adae2f07705d2eedd683489288ca8e8fe20c0be11258dd406d9adc3c7c01166d000ccd3a
+  checksum: 2a5aca8fcb174b801041dff5469f437885e6b19ea76d5c5223bc0e5d772b7d9d187896e55042c4103c6c4158740b77b9a14e0e68acb05ce6de92d0be124396ee
   languageName: node
   linkType: hard
 
@@ -51381,7 +51422,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.3":
+"typescript@npm:^4.3, typescript@npm:^4.4.4":
   version: 4.9.5
   resolution: "typescript@npm:4.9.5"
   bin:
@@ -51441,7 +51482,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.4.4#~builtin<compat/typescript>":
   version: 4.9.5
   resolution: "typescript@patch:typescript@npm%3A4.9.5#~builtin<compat/typescript>::version=4.9.5&hash=a1c5e5"
   bin:

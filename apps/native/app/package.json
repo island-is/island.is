@@ -67,7 +67,7 @@
     "react-native-pdf": "6.6.2",
     "react-native-quick-actions": "0.3.13",
     "react-native-share": "7.1.1",
-    "react-native-spotlight-search": "2.0.0",
+    "react-native-spotlight-search": "2.2.0",
     "react-native-webview": "11.26.1",
     "styled-components": "5.3.6",
     "zustand": "3.5.12"
