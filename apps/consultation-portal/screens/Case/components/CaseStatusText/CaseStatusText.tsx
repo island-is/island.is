@@ -52,7 +52,7 @@ const CaseStatusText = ({
   const hiddenText =
     status === 'Til umsagnar' ? sloc.hiddenName.present : sloc.hiddenName.past
 
-  let retComp = []
+  const retComp = []
   if (textBefore) {
     retComp.push(textBefore)
     retComp.push(' ')
