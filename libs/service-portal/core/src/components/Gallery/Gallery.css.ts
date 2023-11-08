@@ -2,38 +2,49 @@ import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { hexToRgba } from '@island.is/island-ui/utils'
 
-export const gallery = style({
-  contain: 'layout',
-  position: 'relative',
-  zIndex: theme.zIndex.base,
-})
-
-export const galleryImageWrap = style({
-  position: 'relative',
-  height: '100%',
-  width: '100%',
-
+export const galleryContainer = style({
+  display: 'inherit',
+  width: '80%',
   ...themeUtils.responsiveStyle({
-    lg: {
-      maxWidth: '560px',
-      maxHeight: '560px',
-    },
-    md: {
-      maxWidth: '400px',
-      maxHeight: '400px',
-    },
     sm: {
-      maxWidth: '160px',
-      maxHeight: '160px',
+      display: 'flex',
+      width: 'initial',
     },
   }),
 })
 
+export const gallery = style({
+  contain: 'layout',
+  position: 'relative',
+  zIndex: theme.zIndex.base,
+  aspectRatio: '1/1',
+  width: '100%',
+
+  ...themeUtils.responsiveStyle({
+    sm: {
+      width: '352px',
+      marginRight: theme.spacing[2],
+    },
+  }),
+})
+
+export const galleryImageWrap = style({
+  position: 'relative',
+  aspectRatio: '1/1',
+  width: '100%',
+})
+
 export const thumbnailGrid = style({
   display: 'flex',
-  flexDirection: 'column',
+  marginTop: theme.spacing.p2,
   justifyContent: 'space-between',
-  height: '100%',
+
+  ...themeUtils.responsiveStyle({
+    sm: {
+      marginTop: 0,
+      flexDirection: 'column',
+    },
+  }),
 })
 
 export const galleryButton = style({

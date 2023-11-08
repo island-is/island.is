@@ -38,14 +38,13 @@ export const Gallery: FC<GalleryProps> = ({
 
   return (
     <>
-      <Inline space={2}>
+      <Box className={styles.galleryContainer}>
         <Box
           className={styles.gallery}
           border="standard"
           borderRadius="large"
           overflow="hidden"
           transition="fast"
-          style={{ height: '352px', width: '352px' }}
         >
           {loading ? (
             <Box
@@ -114,7 +113,7 @@ export const Gallery: FC<GalleryProps> = ({
               .filter(isDefined)}
           </Box>
         )}
-      </Inline>
+      </Box>
 
       {isModalOpen && (
         <Box
