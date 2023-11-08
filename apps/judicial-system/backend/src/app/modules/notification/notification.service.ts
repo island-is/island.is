@@ -116,6 +116,14 @@ export class NotificationService {
       })
   }
 
+  private async hasSentNotification(caseId: string, type: NotificationType) {
+    const previousNotifications = await this.notificationModel.findAll({
+      where: { caseId, type },
+    })
+
+    return previousNotifications.length > 0
+  }
+
   private async hasReceivedNotification(
     caseId: string,
     type: NotificationType | NotificationType[],
@@ -1866,7 +1874,7 @@ export class NotificationService {
      * If anyone has received the APPEAL_COMPLETED notification before,
      * we know that the case is being reopened.
      */
-    const isReopened = await this.hasReceivedNotification(
+    const isReopened = await this.hasSentNotification(
       theCase.id,
       NotificationType.APPEAL_COMPLETED,
     )
