@@ -1,5 +1,6 @@
 {{- if .Values.enabled }}
-{{- $fullName := include "cronjob-template.fullname" . -}}
+{{- if .Values.schedule }}
+{{- $fullName := include "api-template.fullname" . -}}
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
@@ -8,10 +9,10 @@ metadata:
   namespace: {{ $.Values.namespace }}
   {{- end }}
   labels:
-    {{- include "cronjob-template.labels" . | nindent 4 }}
+    {{- include "api-template.labels" . | nindent 4 }}
     chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
-    tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
+    tags.datadoghq.com/service: {{ include "api-template.name" . }}
     tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
 spec:
   concurrencyPolicy: {{ .Values.concurrencyPolicy | default "Allow" }}
@@ -35,13 +36,13 @@ spec:
               }]
 
           labels:
-            {{- include "cronjob-template.labels" . | nindent 12 }}
+            {{- include "api-template.labels" . | nindent 12 }}
             chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
             tags.datadoghq.com/env: {{ .Values.global.env.name }}
-            tags.datadoghq.com/service: {{ include "cronjob-template.name" . }}
+            tags.datadoghq.com/service: {{ include "api-template.name" . }}
             tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
         spec:
-          serviceAccountName: {{ include "cronjob-template.serviceAccountName" $ }}
+          serviceAccountName: {{ include "api-template.serviceAccountName" $ }}
           securityContext:
             {{- toYaml $.Values.podSecurityContext | nindent 12 }}
           containers:
@@ -121,7 +122,7 @@ spec:
           {{- if not (empty .Values.files) }}
           - name: config-volume
             configMap:
-              name: {{ include "cronjob-template.name" . }}
+              name: {{ include "api-template.name" . }}
           {{- end }}
           {{- if not (empty .Values.pvcs) }}
           {{- range .Values.pvcs }}

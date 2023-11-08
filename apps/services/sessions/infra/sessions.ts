@@ -7,10 +7,6 @@ const dbName = 'services_sessions'
 const geoDataDir = '/geoip-lite/data'
 const geoTmpDir = `${geoDataDir}/tmp`
 
-const geoipExtraValues = {
-  schedule: '0 0 * * *',
-}
-
 const geoipAnnotations = {
   annotations: {
     'helm.sh/hook': 'pre-install,pre-upgrade',
@@ -158,7 +154,7 @@ export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
     })
     .volumes(...geoipVolume)
     .extraAttributes({
-      dev: { ...geoipExtraValues, ...geoipAnnotations },
-      staging: { ...geoipExtraValues, ...geoipAnnotations },
-      prod: { ...geoipExtraValues, ...geoipAnnotations },
+      dev: { ...geoipAnnotations },
+      staging: { ...geoipAnnotations },
+      prod: { ...geoipAnnotations },
     })
