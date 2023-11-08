@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  COURT_OF_APPEAL_OVERVIEW_ROUTE,
+  COURT_OF_APPEAL_CASE_ROUTE,
   INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
@@ -54,7 +54,7 @@ const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
         if (caseTransitioned) {
           router.push(
             isAppealsCourtUser(user as unknown as User)
-              ? `${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${workingCase.id}`
+              ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
               : isRestrictionCase(workingCase.type)
               ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`
               : `${INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`,
