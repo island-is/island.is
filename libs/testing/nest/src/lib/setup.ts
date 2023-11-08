@@ -11,12 +11,14 @@ interface SetupOptions {
   AppModule: Type<any>
   SequelizeConfigService: Type<SequelizeOptionsFactory>
   user?: User
+  dbType?: 'sqlite' | 'postgres'
 }
 
 export const setupApp = ({
   AppModule,
   SequelizeConfigService,
   user = createCurrentUser(),
+  dbType = 'sqlite',
 }: SetupOptions): Promise<TestApp> => {
   // Setup app with authentication and database
   return testServer({
@@ -24,7 +26,7 @@ export const setupApp = ({
     enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: dbType, provider: SequelizeConfigService }),
     ],
   })
 }
