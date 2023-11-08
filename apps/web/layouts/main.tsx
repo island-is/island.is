@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import getConfig from 'next/config'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+
 import {
-  Page,
-  Box,
-  FooterLinkProps,
-  Footer,
   AlertBanner,
   AlertBannerVariants,
-  Hidden,
+  Box,
   ButtonTypes,
   ColorSchemeContext,
   ColorSchemes,
+  Footer,
+  FooterLinkProps,
+  Hidden,
+  Page,
 } from '@island.is/island-ui/core'
-import getConfig from 'next/config'
-import { Screen } from '../types'
-import Cookies from 'js-cookie'
 import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
+import { stringHash } from '@island.is/shared/utils'
 import { userMonitoring } from '@island.is/user-monitoring'
-import { useRouter } from 'next/router'
 import {
   Header,
   Main,
@@ -25,40 +27,40 @@ import {
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
-import {
-  GetGroupedMenuQuery,
-  GetNamespaceQuery,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  GetAlertBannerQuery,
-  QueryGetAlertBannerArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetGroupedMenuArgs,
-  Menu,
-  GetOrganizationPageQuery,
-  GetSingleArticleQuery,
-} from '../graphql/schema'
+
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { getLocaleFromPath, useI18n } from '../i18n'
-import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import {
+  ContentLanguage,
+  GetAlertBannerQuery,
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
+  GetNamespaceQuery,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
+  Menu,
+  QueryGetAlertBannerArgs,
+  QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
+  QueryGetNamespaceArgs,
+} from '../graphql/schema'
 import { useNamespace } from '../hooks'
+import {
+  linkResolver as LinkResolver,
+  LinkType,
+  pathIsRoute,
+  useLinkResolver,
+} from '../hooks/useLinkResolver'
+import { getLocaleFromPath, useI18n } from '../i18n'
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { Screen } from '../types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { stringHash } from '@island.is/shared/utils'
-import { Locale } from '@island.is/shared/types'
-import {
-  LinkType,
-  useLinkResolver,
-  linkResolver as LinkResolver,
-  pathIsRoute,
-} from '../hooks/useLinkResolver'
-import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -103,6 +105,7 @@ export interface LayoutProps {
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  customAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -147,6 +150,7 @@ const Layout: Screen<LayoutProps> = ({
   alertBannerContent,
   organizationAlertBannerContent,
   articleAlertBannerContent,
+  customAlertBannerContent,
   languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
@@ -203,6 +207,12 @@ const Layout: Screen<LayoutProps> = ({
           )}`,
           ...articleAlertBannerContent,
         },
+        {
+          bannerId: `custom-alert-${stringHash(
+            JSON.stringify(customAlertBannerContent ?? {}),
+          )}`,
+          ...customAlertBannerContent,
+        },
       ].filter(
         (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
       ),
@@ -211,6 +221,7 @@ const Layout: Screen<LayoutProps> = ({
     alertBannerContent,
     articleAlertBannerContent,
     organizationAlertBannerContent,
+    customAlertBannerContent,
   ])
 
   // Update html lang in case a route change leads us to a new locale
@@ -664,6 +675,7 @@ interface LayoutComponentProps {
   themeConfig?: Partial<LayoutProps>
   organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
   article?: GetSingleArticleQuery['getSingleArticle']
+  customAlertBanner?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
 }
 
@@ -706,6 +718,7 @@ export const withMainLayout = <T,>(
     const organizationAlertBannerContent =
       layoutComponentProps.organizationPage?.alertBanner
     const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
+    const customAlertBannerContent = layoutComponentProps.customAlertBanner
     const languageToggleQueryParams =
       layoutComponentProps.languageToggleQueryParams
 
@@ -716,6 +729,7 @@ export const withMainLayout = <T,>(
         ...themeConfig,
         organizationAlertBannerContent,
         articleAlertBannerContent,
+        customAlertBannerContent,
         languageToggleQueryParams,
       },
       componentProps,
