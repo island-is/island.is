@@ -34,6 +34,17 @@ export const notifications = {
     description:
       'Notaður sem texti í sms-i til þess að tilgreina hver er sækjandi í málinu',
   }),
+  smsTail: defineMessage({
+    id: 'judicial.system.backend:notifications.sms_tail',
+    defaultMessage: 'Sjá nánar á rettarvorslugatt.island.is.',
+    description: 'Notaður sem texti í sms-i til þess að tilgreina slóð á RVG',
+  }),
+  emailTail: defineMessage({
+    id: 'judicial.system.backend:notifications.email_tail',
+    defaultMessage:
+      'Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.',
+    description: 'Notaður sem texti í sms-i til þess að tilgreina slóð á RVG',
+  }),
   readyForCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.ready_for_court.subjectV2',
@@ -680,6 +691,26 @@ export const notifications = {
       id: 'judicial.system.backend:notifications.email_names.court_of_appeals',
       defaultMessage: 'Landsréttur',
       description: 'Nafn á Landsrétti í tölvupóstum',
+    },
+  }),
+  COAJudgeAssigned: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.coa_judge_assigned.subject',
+      defaultMessage: 'Úthlutun máls nr. {caseNumber}',
+      description:
+        'Fyrirsögn í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
+    },
+    forepersonBody: {
+      id: 'judicial.system.backend:notifications.coa_judge_assigned.foreperson_body',
+      defaultMessage:
+        'Landsréttur hefur skráð þig sem dómsformann í máli nr. {caseNumber}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.coa_judge_assigned.body',
+      defaultMessage:
+        'Landsréttur hefur skráð þig sem {role, select, JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Dómsformaður er {foreperson}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+      description:
+        'Texti í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
     },
   }),
 }
