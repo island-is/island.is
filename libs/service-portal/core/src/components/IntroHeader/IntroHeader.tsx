@@ -65,7 +65,6 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
           </Text>
         )}
         {props.children}
-        {props.buttonGroup && props.buttonGroup}
       </GridColumn>
       {!isMobile && currentOrganization && (
         <GridColumn span={'2/8'} offset={'1/8'}>
