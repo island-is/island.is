@@ -45,10 +45,14 @@ test.describe('MS - Work Machines', () => {
       await inputField.type('hys', { delay: 200 })
       const actionCardButton = page.getByTestId('action-card-cta').first()
 
+      const closeFilter = page
+        .getByRole('button', { name: label(m.closeFilter) })
+        .first()
+
       await filterButton.click()
 
       // Assert
-      await expect(filterButton).toBeVisible()
+      await expect(closeFilter).toBeVisible()
       await expect(actionCardButton).toBeVisible()
       await expect(page.getByTestId('icon-reload').first()).toBeVisible()
     })
