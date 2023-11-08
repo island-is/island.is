@@ -106,14 +106,6 @@ export class VehiclesResolver {
     name: 'vehiclesSearch',
     nullable: true,
   })
-  @Audit()
-  async getVehicleSearch(
-    @Args('input') input: GetVehicleSearchInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getVehiclesSearch(user, input.search)
-  }
-
   @BypassAuth()
   @CacheControl(defaultCache)
   @Query(() => VehiclesPublicVehicleSearch, { nullable: true })

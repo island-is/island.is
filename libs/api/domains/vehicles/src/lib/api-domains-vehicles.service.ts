@@ -40,6 +40,7 @@ export class VehiclesService {
       type: input.type,
       dtFrom: input.dateFrom,
       dtTo: input.dateTo,
+      permno: input.permno ? input.permno + '*' : undefined,
     })
   }
 
@@ -55,22 +56,6 @@ export class VehiclesService {
         basicVehicleInformationMapper(item, auth.nationalId),
       ),
     }
-  }
-
-  async getVehiclesSearch(
-    auth: User,
-    search: string,
-    page = 1,
-    pageSize = 50,
-  ): Promise<VehicleDtoListPagedResponse | null> {
-    return await this.getVehiclesWithAuth(
-      auth,
-    ).vehicleHistoryRequestedPersidnoGet({
-      requestedPersidno: auth.nationalId,
-      permno: `${search}*`,
-      page,
-      pageSize,
-    })
   }
 
   async getPublicVehicleSearch(search: string) {

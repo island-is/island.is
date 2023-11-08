@@ -32,4 +32,7 @@ export class GetVehiclesForUserInput {
 
   @Field(() => Date, { nullable: true })
   dateTo?: Date
+
+  @Field(() => String, { nullable: true })
+  permno?: string
 }
