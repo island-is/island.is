@@ -146,7 +146,7 @@
       "text": "Þú þarft að vera skráð(ur) inn til að senda inn umsögn.",
       "ctaLabel": "Skrá mig inn"
     },
-    "privateLabel": "Viltu að þessi umsögn verði falin almenningi?"
+    "privateLabel": "Viltu að þessi umsögn verði ekki birt í Samráðsgáttinni?"
   },
   "agencyText": {
     "textBefore": "Ef umsögn er send fyrir hönd samtaka, fyrirtækis eða stofnunar þarf umboð þaðan,",
