@@ -35,7 +35,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      {!isLoadingWorkingCase && (
+        <AlertBanner
+          variant="warning"
+          title={title}
+          description={description}
+        />
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}

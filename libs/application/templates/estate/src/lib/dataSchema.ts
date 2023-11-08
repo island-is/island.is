@@ -4,6 +4,7 @@ import { EstateTypes, YES, NO } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
+  isNumericalString,
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
@@ -302,7 +303,7 @@ export const estateSchema = z.object({
     .refine(
       ({ organization, nationalId, faceValue, rateOfExchange }) => {
         return organization !== '' || nationalId !== '' || rateOfExchange !== ''
-          ? faceValue !== ''
+          ? isNumericalString(faceValue)
           : true
       },
       {
@@ -312,7 +313,7 @@ export const estateSchema = z.object({
     .refine(
       ({ organization, nationalId, faceValue, rateOfExchange }) => {
         return nationalId !== '' || faceValue !== '' || organization !== ''
-          ? rateOfExchange !== ''
+          ? isNumericalString(rateOfExchange)
           : true
       },
       {

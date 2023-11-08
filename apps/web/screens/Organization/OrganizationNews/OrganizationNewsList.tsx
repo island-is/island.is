@@ -36,8 +36,8 @@ import {
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
-} from '../queries'
-import { GET_GENERIC_TAG_BY_SLUG_QUERY } from '../queries/GenericTag'
+} from '../../queries'
+import { GET_GENERIC_TAG_BY_SLUG_QUERY } from '../../queries/GenericTag'
 
 const PERPAGE = 10
 
