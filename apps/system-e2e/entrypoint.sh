@@ -40,7 +40,7 @@ line like this, extract and open 'index.html':
 
   aws s3 cp ${TEST_RESULTS_S3:-'<s3-bucket-name>'} ./tesults-results.zip
   unzip ./tesults-results.zip
-  firefox ./playwright-report/index.html
+  python -m http.server -d playwright-report 8000
 
 Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
