@@ -6,14 +6,18 @@ export const modal = style({
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
+  height: '40vh',
   maxWidth: '60%',
   maxHeight: `calc(100% - ${theme.spacing['6']}px)`,
   borderRadius: theme.border.radius.large,
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 
   ...themeUtils.responsiveStyle({
-    lg: {
-      maxWidth: '60%',
+    xl: {
+      maxWidth: '50%',
+    },
+    sm: {
+      height: '80vh',
     },
   }),
 })
