@@ -7,4 +7,10 @@ export const result = defineMessages({
     description:
       'Notaður sem texti í "Næsta" hnapp í úrskurðarferli héraðsdóms',
   },
+  rulingModifiedTitle: {
+    id: 'judicial.system.core:court_of_appeal.result.ruling_modified_title',
+    defaultMessage: 'Úrskurður leiðréttur',
+    description:
+      'Notaður sem titill í "Úrskurður leiðréttur" hlutanum í úrskurðarferli héraðsdóms',
+  },
 })
