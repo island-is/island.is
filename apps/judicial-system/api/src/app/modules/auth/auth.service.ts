@@ -162,18 +162,14 @@ export class AuthService {
   }
 
   async logLogin(user: AuthUser) {
-    console.log('user', user)
-    const res = await fetch(
-      `${this.config.backendUrl}/api/event-log/log-login`,
-      {
-        method: 'POST',
-        headers: {
-          authorization: `Bearer ${this.config.secretToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nationalId: '1112902539' } as User),
+    await fetch(`${this.config.backendUrl}/api/event-log/log-login`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${this.config.secretToken}`,
+        'Content-Type': 'application/json',
       },
-    )
+      body: JSON.stringify({ nationalId: user.nationalId }),
+    })
   }
 
   validateUser(user: User): boolean {
