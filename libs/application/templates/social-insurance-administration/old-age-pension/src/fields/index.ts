@@ -11,3 +11,4 @@ export { default as PeriodsSectionImage } from './PeriodsSectionImage/PeriodsSec
 export { default as ChildDoesNotHaveNationalIdCheckbox } from './ChildDoesNotHaveNationalIdCheckbox/ChildDoesNotHaveNationalIdCheckbox'
 export { default as ChildNationalIdOrBirthDate } from './ChildNationalIdOrBirthDate/ChildNationalIdOrBirthDate'
 export { default as UploadAdditionalDocuments } from './UploadAdditionalDocuments'
+export { default as BankAccount } from './BankAccount'

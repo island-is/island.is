@@ -91,6 +91,30 @@ paths:
             application/json:
               schema:
                 type: string
+  /Application/currencies:
+    get:
+      tags:
+        - Get currencies
+      operationId: Application_GetCurrencies
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Currencies'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -242,6 +266,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Attachment'
+        foreignBankAccount:
+          type: array
+          items:
+            $ref: '#/components/schemas/Attachment'
     Attachment:
       type: object
       additionalProperties: false
@@ -311,5 +339,9 @@ components:
       properties:
         isSpouseInNursingHome:
           type: boolean
+    Currencies:
+      type: array
+      items:
+        type: string
 security:
   - bearerAuth: []

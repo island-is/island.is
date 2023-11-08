@@ -15,6 +15,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationType,
+  // BankAccountType,
   ConnectedApplications,
   Employment,
   FileType,
@@ -85,6 +86,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       additionalAttachments,
       pensionAttachments,
       fishermenAttachments,
+      // foreignBankAccountAttachments,
       selfEmployedAttachments,
       earlyRetirementAttachments,
       leaseAgreementAttachments,
@@ -97,6 +99,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       householdSupplementHousing,
       householdSupplementChildren,
       employmentStatus,
+      // bankAccountType,
     } = getApplicationAnswers(application.answers)
 
     const uploads: Uploads = {}
@@ -131,6 +134,20 @@ export class OldAgePensionService extends BaseTemplateApiService {
         fishermenAttachments,
       )
     }
+
+    // if (
+    //   foreignBankAccountAttachments &&
+    //   foreignBankAccountAttachments.length > 0 &&
+    //   bankAccountType === BankAccountType.FOREIGN
+    // ) {
+    //   // TODO: Vantar að TR bæti við File týpu
+    //   uploads.foreignBankAccount = await this.initAttachments(
+    //     application,
+    //     'fileUpload.foreignBankAccount',
+    //     'foreignBankAccount', // TODO: Breyta þegar TR getur tekið á móti týpu?
+    //     foreignBankAccountAttachments,
+    //   )
+    // }
 
     if (
       leaseAgreementAttachments &&

@@ -14,6 +14,7 @@ import {
   earlyRetirementMaxAge,
   earlyRetirementMinAge,
   MONTHS,
+  BankAccountType,
 } from '../constants'
 import { buildError } from './utils'
 
@@ -21,7 +22,7 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOAD } = AnswerValidationConstants
 
-  const { selectedMonth, selectedYear, applicationType } =
+  const { selectedMonth, selectedYear, applicationType, bankAccountType } =
     getApplicationAnswers(application.answers)
   const dateOfBirth = kennitala.info(application.applicant).birthday
 
@@ -64,6 +65,17 @@ export const fileUpload = (newAnswer: unknown, application: Application) => {
       return buildError(
         validatorErrorMessages.requireAttachment,
         `${FILEUPLOAD}.fishermen`,
+      )
+    }
+  }
+
+  if (bankAccountType === BankAccountType.FOREIGN && obj.foreignBankAccount) {
+    if (
+      isEmpty((obj as { foreignBankAccount: unknown[] }).foreignBankAccount)
+    ) {
+      return buildError(
+        validatorErrorMessages.requireAttachment,
+        `${FILEUPLOAD}.foreignBankAccount`,
       )
     }
   }

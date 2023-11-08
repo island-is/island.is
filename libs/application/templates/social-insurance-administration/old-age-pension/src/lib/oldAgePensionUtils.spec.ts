@@ -20,6 +20,7 @@ import {
   childCustodyLivesWithApplicant,
   filterValidEmployers,
   getBank,
+  friendlyFormatSWIFT,
 } from './oldAgePensionUtils'
 import { ApplicationType, MONTHS } from './constants'
 import * as kennitala from 'kennitala'
@@ -280,6 +281,7 @@ describe('childCustodyLivesWithApplicant', () => {
     const application = buildApplication({
       answers: {
         childPension: {
+          // eslint-disable-next-line local-rules/disallow-kennitalas
           custodyKids: ['0703111430'],
         },
       },
@@ -389,9 +391,9 @@ describe('getBank', () => {
       externalData: {
         socialInsuranceAdministrationBankInfo: {
           data: {
-            bank: "2222",
-            ledger: "00",
-            accountNumber: "123456"
+            bank: '2222',
+            ledger: '00',
+            accountNumber: '123456',
           },
           date: new Date(),
           status: 'success',
@@ -399,11 +401,34 @@ describe('getBank', () => {
       },
     })
 
-    const { bankInfo } = getApplicationExternalData(
-      application.externalData,
-    )
+    const { bankInfo } = getApplicationExternalData(application.externalData)
     const bankNumer = getBank(bankInfo)
 
-    expect("222200123456").toEqual(bankNumer)
+    expect('222200123456').toEqual(bankNumer)
+  })
+})
+
+describe('friendlyFormatSWIFT', () => {
+  it('should return icelandic bank number if bank, ledger and account number is returned', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationBankInfo: {
+          data: {
+            iban: 'NL91ABNA0417164300',
+            swift: 'NEDSZAJJXXX',
+            foreignBankName: 'Heiti banka',
+            foreignBankAddress: 'Heimili banka',
+            currency: 'EUR',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const formattedSWIFT = friendlyFormatSWIFT(bankInfo.swift)
+
+    expect('NEDS ZA JJ XXX').toEqual(formattedSWIFT)
   })
 })

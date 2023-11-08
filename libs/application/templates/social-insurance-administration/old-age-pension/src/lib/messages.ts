@@ -31,8 +31,8 @@ export const oldAgePensionFormMessage: MessageDir = {
     alertTitle: {
       id: 'oap.application:alert.title',
       defaultMessage: 'Athugið',
-      description: 'Attention'
-    }
+      description: 'Attention',
+    },
   }),
 
   pre: defineMessages({
@@ -111,8 +111,10 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     pensionFundQuestionDescription: {
       id: 'oap.application:pension.fund.question.description',
-      defaultMessage: 'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
-      description: 'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
+      defaultMessage:
+        'Til að geta sótt um ellilífeyri þarft þú staðfestingu á að sótt hafi verið um ellilífeyri hjá öllum lífeyrissjóðum sem þú átt rétt í.',
+      description:
+        'To be able to apply for old-age pension you must have confirmation that you have applied for old-age pension at all pension funds that you have paid into.',
     },
     fishermenQuestionTitle: {
       id: 'oap.application:fishermen.question.title',
@@ -245,6 +247,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
     },
+    alertMessageForeign: {
+      id: 'oap.application:payment.alert.message.foreign',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+      description: 'english description',
+    },
     bank: {
       id: 'oap.application:payment.bank',
       defaultMessage: 'Banki',
@@ -297,6 +305,48 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Ég vil að miðað sé við Skattþrep 3 í útreikningum staðgreiðslu (46,25% af tekjum yfir 1.151.012 kr.)',
       description:
         'I want tax level 3 to be taken into account in the withholding calculations (46,25% of income over ISK 1,151,012)',
+    },
+
+    icelandicBankAccount: {
+      id: 'oap.application:payment.icelandic.bank.account',
+      defaultMessage: 'Íslenskur reikningur',
+      description: 'Icelandic account',
+    },
+    foreignBankAccount: {
+      id: 'oap.application:payment.foreign.bank.account',
+      defaultMessage: 'Erlendur reikningur',
+      description: 'Foreign account',
+    },
+
+    iban: {
+      id: 'oap.application:payment.iban',
+      defaultMessage: 'IBAN',
+      description: 'IBAN',
+    },
+    swift: {
+      id: 'oap.application:payment.swift',
+      defaultMessage: 'SWIFT',
+      description: 'SWIFT',
+    },
+    bankName: {
+      id: 'oap.application:payment.bank.name',
+      defaultMessage: 'Heiti banka',
+      description: 'Bank name',
+    },
+    bankAddress: {
+      id: 'oap.application:payment.bank.address',
+      defaultMessage: 'Heimili banka',
+      description: 'Bank address',
+    },
+    currency: {
+      id: 'oap.application:payment.currency',
+      defaultMessage: 'Mynt',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'oap.application:payment.select.currency',
+      defaultMessage: 'Veldu mynt',
+      description: 'Select currency',
     },
   }),
 
@@ -996,6 +1046,19 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
     },
+
+    foreignBankAccountFileTitle: {
+      id: 'oap.application:fileUpload.foreignBankAccountFile.title',
+      defaultMessage: 'Staðfesting vegna erlends bankareiknings',
+      description: 'Confirmation for a foreign bank account',
+    },
+    foreignBankAccountFileDescription: {
+      id: 'oap.application:fileUpload.foreignBankAccountFile.description',
+      defaultMessage:
+        'Hér getur þú skilað skilað inn staðfestingu á erlendum bankareikningi. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit confirmation of a foreign bank account. Note that the document must be in .pdf format.',
+    },
   }),
 
   comment: defineMessages({
@@ -1149,6 +1212,16 @@ export const errorMessages = defineMessages({
     id: 'oap.application:error.period',
     defaultMessage: 'Tímabil þarf að vera gilt.',
     description: 'The period must be valid.',
+  },
+  iban: {
+    id: 'oap.application:error.iban',
+    defaultMessage: 'Ógilt IBAN',
+    description: 'Invalid IBAN',
+  },
+  swift: {
+    id: 'oap.application:error.swift',
+    defaultMessage: 'Ógilt SWIFT',
+    description: 'Invalid SWIFT',
   },
 })
 

@@ -15,6 +15,7 @@ import {
   TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
+  BankAccountType,
 } from './constants'
 import {
   ApplicantChildCustodyInformation,
@@ -45,6 +46,7 @@ interface FileUpload {
   earlyRetirement?: FileType[]
   pension?: FileType[]
   fishermen?: FileType[]
+  foreignBankAccount?: FileType[]
 }
 
 interface LeaseAgreementSchoolConfirmation {
@@ -76,6 +78,7 @@ enum AttachmentTypes {
   MAINTENANCE = 'maintenance',
   CHILD_SUPPORT = 'childSupport',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+  FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
 }
 
 interface Attachments {
@@ -162,8 +165,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as ChildPensionRow[]
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
   const personalAllowance = getValueViaPath(
     answers,
     'paymentInfo.personalAllowance',
@@ -204,6 +205,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.fishermen',
   ) as FileType[]
 
+  const foreignBankAccountAttachments = getValueViaPath(
+    answers,
+    'fileUpload.foreignBankAccount',
+  ) as FileType[]
+
   const selfEmployedAttachments = getValueViaPath(
     answers,
     'employment.selfEmployedAttachment',
@@ -234,6 +240,41 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadChildPension.notLivesWithApplicant',
   ) as FileType[]
 
+  const bankAccountType = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankAccountType',
+  ) as BankAccountType
+
+  const bank = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bank',
+  ) as string
+
+  const iban = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.iban',
+  ) as string
+
+  const swift = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.swift',
+  ) as string
+
+  const bankName = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankName',
+  ) as string
+
+  const bankAddress = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankAddress',
+  ) as string
+
+  const currency = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.currency',
+  ) as string
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -261,6 +302,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     additionalAttachments,
     pensionAttachments,
     fishermenAttachments,
+    foreignBankAccountAttachments,
     selfEmployedAttachments,
     earlyRetirementAttachments,
     leaseAgreementAttachments,
@@ -268,6 +310,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     maintenanceAttachments,
     notLivesWithApplicantAttachments,
     taxLevel,
+    bankAccountType,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
   }
 }
 
@@ -539,11 +587,12 @@ export function getAttachments(application: Application) {
     employmentStatus,
     childPension,
     childPensionAddChild,
+    bankAccountType,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
 
-  // Early retirement, pension fund, fishermen
+  // Early retirement, pension fund, fishermen, foreign bank account
   const fileUpload = answers.fileUpload as FileUpload
 
   getAttachmentDetails(fileUpload?.pension, AttachmentTypes.PENSION)
@@ -555,6 +604,13 @@ export function getAttachments(application: Application) {
   }
   if (applicationType === ApplicationType.SAILOR_PENSION) {
     getAttachmentDetails(fileUpload?.fishermen, AttachmentTypes.FISHERMAN)
+  }
+
+  if (bankAccountType === BankAccountType.FOREIGN) {
+    getAttachmentDetails(
+      fileUpload?.foreignBankAccount,
+      AttachmentTypes.FOREIGN_BANK_ACCOUNT,
+    )
   }
 
   // leaseAgreement, schoolAgreement
@@ -824,4 +880,14 @@ export const getBank = (bankInfo: BankInfo) => {
   return bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
     ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
+}
+
+export const friendlyFormatSWIFT = (value: string | undefined) => {
+  return value
+    ? value
+        .toUpperCase()
+        .replace(/[\s]+/g, '')
+        .replace(/(.{4})(?!$)/g, '$1 ')
+        .replace(/(.{4}[\s].{2})(?!$)/g, '$1 ')
+    : undefined
 }

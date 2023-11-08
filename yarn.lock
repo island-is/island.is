@@ -31912,6 +31912,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ibantools@npm:4.3.5":
+  version: 4.3.5
+  resolution: "ibantools@npm:4.3.5"
+  checksum: 6b36cdef0563a1f72f1a518cd9b7d2566e658e949764e3cf113de8cce04ca4dea92cb5609ff1afa73aa48c70bbbaff904475606daa217412decf972304247810
+  languageName: node
+  linkType: hard
+
 "iconv-lite@npm:0.4.13 - 0.6.3, iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
@@ -33684,6 +33691,7 @@ __metadata:
     http-cache-semantics: 4.1.1
     http-proxy-middleware: 2.0.6
     hypher: 0.2.5
+    ibantools: 4.3.5
     identicon.js: 2.3.3
     imap-simple: 5.1.0
     inspectpack: 4.7.1

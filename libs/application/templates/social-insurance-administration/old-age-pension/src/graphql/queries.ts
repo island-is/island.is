@@ -8,3 +8,9 @@ export const IDENTITY_QUERY = gql`
     }
   }
 `
+
+export const GetCurrencies = gql`
+  query GetCurrencies {
+    getCurrencies
+  }
+`

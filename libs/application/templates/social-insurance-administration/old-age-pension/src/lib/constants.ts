@@ -93,9 +93,9 @@ export enum AnswerValidationConstants {
 }
 
 export enum TaxLevelOptions {
-  INCOME = '0', 
-  FIRST_LEVEL = '1', 
-  SECOND_LEVEL = '2', 
+  INCOME = '0',
+  FIRST_LEVEL = '1',
+  SECOND_LEVEL = '2',
   THIRD_LEVEL = '3',
 }
 
@@ -111,6 +111,8 @@ export const AttachmentLabel: {
   pension: oldAgePensionFormMessage.review.pensionAttachment,
   earlyRetirement: oldAgePensionFormMessage.review.earlyRetirementAttachment,
   fishermen: oldAgePensionFormMessage.review.fishermenAttachment,
+  foreignBankAccount:
+    oldAgePensionFormMessage.fileUpload.foreignBankAccountFileTitle,
   leaseAgreement: oldAgePensionFormMessage.review.leaseAgreementAttachment,
   schoolConfirmation:
     oldAgePensionFormMessage.review.schoolConfirmationAttachment,
@@ -151,4 +153,9 @@ export enum RatioType {
 
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
+}
+
+export enum BankAccountType {
+  ICELANDIC = 'icelandic',
+  FOREIGN = 'foreign',
 }

@@ -39,12 +39,12 @@ import {
   IS,
   maritalStatuses,
   TaxLevelOptions,
+  BankAccountType,
 } from '../lib/constants'
 import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   getApplicationExternalData,
-  getBank,
   getChildPensionDescription,
   getChildPensionTitle,
   getTaxOptions,
@@ -52,7 +52,6 @@ import {
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
-import { BankInfo } from '../types'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -251,25 +250,10 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.payment.title,
               description: '',
               children: [
-                buildAlertMessageField({
-                  id: 'paymentInfo.alert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
-                  message: oldAgePensionFormMessage.payment.alertMessage,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bank',
-                  title: oldAgePensionFormMessage.payment.bank,
-                  backgroundColor: 'white',
-                  format: '####-##-######',
-                  placeholder: '0000-00-000000',
-                  defaultValue: (application: Application) => {
-                    const bankInfo = application.externalData
-                      .socialInsuranceAdministrationBankInfo.data as BankInfo
-
-                    return getBank(bankInfo)
-                  },
+                buildCustomField({
+                  id: 'paymentInfo.bankAccountInfo',
+                  title: '',
+                  component: 'BankAccount',
                 }),
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
@@ -624,6 +608,33 @@ export const OldAgePensionForm: Form = buildForm({
                 return applicationType === ApplicationType.SAILOR_PENSION
               },
             }),
+            buildFileUploadField({
+              id: 'fileUpload.foreignBankAccount',
+              title:
+                oldAgePensionFormMessage.fileUpload.foreignBankAccountFileTitle,
+              description:
+                oldAgePensionFormMessage.fileUpload
+                  .foreignBankAccountFileDescription,
+              introduction:
+                oldAgePensionFormMessage.fileUpload
+                  .foreignBankAccountFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+              condition: (answers) => {
+                const { bankAccountType } = getApplicationAnswers(answers)
+
+                return bankAccountType === BankAccountType.FOREIGN
+              },
+            }),
           ],
         }),
         buildSubSection({
@@ -636,21 +647,20 @@ export const OldAgePensionForm: Form = buildForm({
               title:
                 oldAgePensionFormMessage.onePaymentPerYear
                   .onePaymentPerYearTitle,
+              description:
+                oldAgePensionFormMessage.onePaymentPerYear
+                  .onePaymentPerYearDescription,
               children: [
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
                   title: '',
-                  description:
-                    oldAgePensionFormMessage.onePaymentPerYear
-                      .onePaymentPerYearDescription,
                   options: getYesNOOptions(),
                   defaultValue: NO,
                   width: 'half',
                 }),
                 buildAlertMessageField({
                   id: 'onePaymentPerYear.alert',
-                  title:
-                    oldAgePensionFormMessage.shared.alertTitle,
+                  title: oldAgePensionFormMessage.shared.alertTitle,
                   message:
                     oldAgePensionFormMessage.onePaymentPerYear
                       .onePaymentPerYearAlertDescription,

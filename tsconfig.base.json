@@ -185,6 +185,9 @@
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
       ],
+      "@island.is/api/domains/social-insurance-administration": [
+        "libs/api/domains/social-insurance-administration/src/index.ts"
+      ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],

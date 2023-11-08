@@ -31,6 +31,7 @@ import {
   NO,
   Roles,
   States,
+  BankAccountType,
 } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
@@ -116,6 +117,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearChildPension',
           'clearChildPensionAddChild',
           'clearChildPensionChildSupport',
+          'clearBankAccountInfo',
         ],
         meta: {
           name: States.DRAFT,
@@ -493,6 +495,26 @@ const OldAgePensionTemplate: ApplicationTemplate<
         if (childPensionAddChild === NO) {
           unset(application.answers, 'childPensionRepeater')
           unset(application.answers, 'fileUploadChildPension.maintenance')
+        }
+
+        return context
+      }),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.bankAccountInfo.iban')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.swift')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'fileUpload.foreignBankAccount')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bank')
         }
 
         return context

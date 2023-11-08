@@ -138,6 +138,7 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { SocialInsuranceAdministrationModule } from '@island.is/api/domains/social-insurance-administration'
 
 const environment = getConfig
 
@@ -184,6 +185,7 @@ const environment = getConfig
     }),
     LicenseServiceModule,
     DirectorateOfLabourModule.register(),
+    SocialInsuranceAdministrationModule.register(),
     FileUploadModule,
     DocumentModule.register({
       documentClientConfig: {
