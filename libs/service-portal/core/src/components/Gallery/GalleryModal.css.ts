@@ -9,7 +9,7 @@ export const container = style({
   gridTemplateRows: `${theme.spacing[8]}px 8fr ${theme.spacing[2]}px 2fr`,
   gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
   gridTemplateAreas:
-    '". . exit""left main right" ". counter ." " swiper swiper swiper"',
+    '"header header exit""left main right" ". counter ." " swiper swiper swiper"',
   rowGap: '5px',
   backgroundColor: white,
 })
@@ -26,10 +26,15 @@ export const modal = style({
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 
   ...themeUtils.responsiveStyle({
-    lg: {
+    md: {
       width: 'auto',
     },
   }),
+})
+
+export const header = style({
+  gridArea: 'header',
+  overflow: 'visible',
 })
 
 export const main = style({
