@@ -25,7 +25,8 @@ import {
   sortVacancyList,
 } from './utils'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { FetchError } from '@island.is/clients/middlewares'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
