@@ -6,7 +6,6 @@ import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { login, titles } from '@island.is/judicial-system-web/messages'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import { api } from '@island.is/judicial-system-web/src/services'
-import { login as performLogin } from '@island.is/judicial-system-web/src/services/api'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
 import * as styles from './Login.css'
@@ -69,9 +68,14 @@ const Login = () => {
           <Text>{formatMessage(login.general.description)}</Text>
         </div>
         <div className={styles.buttonContainer}>
-          <Button onClick={performLogin} fluid>
-            {formatMessage(login.general.buttonLabel)}
-          </Button>
+          <a
+            href={`${api.apiUrl}/api/auth/login`}
+            role="button"
+            rel="noreferrer noopener"
+            className={styles.btn}
+          >
+            <Button fluid>{formatMessage(login.general.buttonLabel)}</Button>
+          </a>
         </div>
       </div>
     </>
