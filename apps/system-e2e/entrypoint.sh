@@ -42,6 +42,8 @@ line like this, extract and open 'index.html':
   unzip ./tesults-results.zip
   python -m http.server -d playwright-report 8000
 
+  Now you can navigate to http://localhost:8000 to view the report.
+
 Additionally a web-based overview can be found at
   https://www.tesults.com/digital-iceland/monorepo
 EOF
