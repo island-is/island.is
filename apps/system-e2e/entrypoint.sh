@@ -36,11 +36,11 @@ fi
 
 cat <<EOF
 To access the detailed report (with any failure traces), download it from the command
-line like this, extract and open 'index.html':
+line and run a local web server for the index.html file:
 
   aws s3 cp ${TEST_RESULTS_S3:-'<s3-bucket-name>'} ./tesults-results.zip
   unzip ./tesults-results.zip
-  python -m http.server -d playwright-report 8000
+  python3 -m http.server -d playwright-report 8000
 
   Now you can navigate to http://localhost:8000 to view the report.
 
