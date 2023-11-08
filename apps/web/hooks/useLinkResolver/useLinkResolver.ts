@@ -35,9 +35,17 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
+  organizationeventoverview: {
+    is: '/s/[organization]/vidburdir',
+    en: '/en/o/[organization]/events',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
+  },
+  applications: {
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
   },
   page: {
     is: '/stafraent-island',
@@ -122,6 +130,10 @@ export const routesTemplate = {
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationevent: {
+    is: '/s/[organization]/vidburdir/[slug]',
+    en: '/en/o/[organization]/events/[slug]',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',

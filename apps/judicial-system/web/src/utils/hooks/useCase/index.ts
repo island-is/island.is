@@ -497,7 +497,6 @@ const useCase = () => {
               },
             },
           })
-
           return Boolean(data?.sendNotification?.notificationSent)
         } catch (e) {
           return false
