@@ -25,8 +25,8 @@ import {
   OrganizationWrapper,
 } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '../../hooks/useLinkResolver'
-import { CustomNextError } from '../../units/errors'
+import { useLinkResolver } from '@island.is/web/hooks'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { Locale } from 'locale'
 
