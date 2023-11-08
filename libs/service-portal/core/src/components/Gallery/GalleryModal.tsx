@@ -1,4 +1,13 @@
-import { Children, FC, ReactElement, cloneElement, useState } from 'react'
+import {
+  Children,
+  FC,
+  ReactElement,
+  cloneElement,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Box,
   FocusableBox,
@@ -6,6 +15,7 @@ import {
   Swiper,
   Text,
   Button,
+  Icon,
 } from '@island.is/island-ui/core'
 import * as styles from './GalleryModal.css'
 import * as galleryStyles from './Gallery.css'
@@ -35,13 +45,42 @@ export const GalleryModal: FC<Props> = ({
   thumbnails,
 }) => {
   const [activeItem, setActiveItem] = useState(0)
+  const imageRefs = useRef<Array<HTMLElement | null>>([])
+
+  useEffect(() => {
+    imageRefs.current[activeItem]?.focus()
+  }, [activeItem])
+
+  useEffect(() => {
+    imageRefs.current[activeItem]?.focus()
+  }, [activeItem])
+
+  const childArray = Children.toArray(children).filter(Boolean)
+  const thumbnailsArray = Children.toArray(thumbnails).filter(Boolean)
+
+  const onCaretClick = (direction: 'next' | 'prev') => {
+    const nextItem = direction === 'next' ? activeItem + 1 : activeItem - 1
+    if (nextItem < thumbnailsArray.length && nextItem >= 0) {
+      setActiveItem(nextItem)
+    } else {
+      setActiveItem(direction === 'next' ? 0 : thumbnailsArray.length - 1)
+    }
+  }
+
+  const onKeyDown = useCallback((event: { key: string }) => {
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft':
+        onCaretClick('prev')
+        break
+      case 'arrowright':
+        onCaretClick('next')
+        break
+    }
+  }, [])
 
   if (!thumbnails) {
     return null
   }
-
-  const childArray = Children.toArray(children).filter(Boolean)
-  const thumbnailsArray = Children.toArray(thumbnails).filter(Boolean)
 
   return (
     <ModalBase
@@ -53,9 +92,19 @@ export const GalleryModal: FC<Props> = ({
       className={styles.modal}
     >
       <Box className={styles.container}>
-        <Box className={styles.closeButton}>X</Box>
+        <Box
+          className={styles.closeButton}
+          onClick={() => onVisibilityChange(false)}
+        >
+          <Button circle icon="close" variant="ghost" />
+        </Box>
         <Box className={cn(styles.carets, styles.leftCaret)}>
-          <Button icon="chevronBack" size="small" variant="ghost" />
+          <Button
+            icon="chevronBack"
+            size="small"
+            variant="ghost"
+            onClick={() => onCaretClick('prev')}
+          />
         </Box>
         <Box
           className={cn(galleryStyles.gallery, styles.main)}
@@ -75,11 +124,16 @@ export const GalleryModal: FC<Props> = ({
           </Box>
         </Box>
         <Box className={cn(styles.carets, styles.rightCaret)}>
-          <Button icon="chevronForward" size="small" variant="ghost" />
+          <Button
+            icon="chevronForward"
+            size="small"
+            variant="ghost"
+            onClick={() => onCaretClick('next')}
+          />
         </Box>
         <Box className={styles.counter} display="flex" justifyContent="center">
-          <Text>
-            {activeItem + 1}/{thumbnailsArray.length}
+          <Text variant="small">
+            {activeItem + 1} / {thumbnailsArray.length}
           </Text>
         </Box>
         <Box
@@ -88,7 +142,7 @@ export const GalleryModal: FC<Props> = ({
           paddingLeft={1}
           paddingRight={1}
         >
-          <Swiper>
+          <Swiper width={80}>
             {thumbnailsArray
               .map((thumbnail, i) => {
                 if (!thumbnail) {
@@ -98,11 +152,15 @@ export const GalleryModal: FC<Props> = ({
                 return (
                   <FocusableBox
                     key={i}
+                    ref={(el) => (imageRefs.current[i] = el)}
                     component="button"
+                    color="blueberry"
+                    aria-selected={activeItem === i}
                     onClick={() => setActiveItem(i)}
                     className={cn(galleryStyles.galleryButton, {
                       [galleryStyles.activeGalleryButton]: i === activeItem,
                     })}
+                    onKeyDown={(e) => onKeyDown(e)}
                     style={{ height: '80px', width: '80px' }}
                   >
                     {cloneElement(

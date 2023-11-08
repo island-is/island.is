@@ -10,6 +10,12 @@ export const modal = style({
   maxHeight: `calc(100% - ${theme.spacing['6']}px)`,
   borderRadius: theme.border.radius.large,
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
+
+  ...themeUtils.responsiveStyle({
+    lg: {
+      maxWidth: '60%',
+    },
+  }),
 })
 
 export const main = style({
@@ -49,6 +55,7 @@ export const container = style({
   height: '100%',
   width: '100%',
   display: 'grid',
+  borderRadius: theme.border.radius.large,
   gridTemplateRows: `${theme.spacing[8]}px 5fr ${theme.spacing[2]}px 1fr`,
   gridTemplateColumns: `${theme.spacing[10]}px 1fr ${theme.spacing[10]}px`,
   gridTemplateAreas:
