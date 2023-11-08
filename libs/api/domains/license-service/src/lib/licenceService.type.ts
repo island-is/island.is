@@ -9,6 +9,7 @@ export enum GenericLicenseType {
   FirearmLicense = 'FirearmLicense',
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
+  Ehic = 'Ehic',
 }
 
 /**
@@ -22,7 +23,8 @@ export enum GenericLicenseOrganizationSlug {
   AdrLicense = 'vinnueftirlitid',
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
-  PCard = 'sýslumenn',
+  PCard = 'syslumenn',
+  EHIC = 'sjukratryggingar-islands',
 }
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
@@ -32,6 +34,7 @@ export enum GenericLicenseProviderId {
   AdministrationOfOccupationalSafetyAndHealth = 'AdministrationOfOccupationalSafetyAndHealth',
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
   DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
+  IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -61,6 +64,11 @@ export enum GenericUserLicensePkPassStatus {
   Available = 'Available',
   NotAvailable = 'NotAvailable',
   Unknown = 'Unknown',
+}
+
+export enum GenericUserLicenseMetaLinksType {
+  External = 'External',
+  Download = 'Download',
 }
 
 export type GenericLicenseProvider = {
@@ -113,6 +121,7 @@ export type GenericLicenseDataField = {
 export type GenericUserLicenseMetaLinks = {
   label?: string
   value?: string
+  type?: GenericUserLicenseMetaLinksType
 }
 
 export type GenericUserLicenseMetadata = {

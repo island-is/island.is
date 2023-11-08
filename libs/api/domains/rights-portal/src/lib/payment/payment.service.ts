@@ -79,7 +79,7 @@ export class PaymentService {
         .catch(handle404)
 
       return {
-        items: data ? data : [],
+        items: data ? data.bills ?? [] : [],
         errors: [],
       }
     } catch (error) {
