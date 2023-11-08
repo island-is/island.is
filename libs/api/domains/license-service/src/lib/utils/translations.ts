@@ -68,6 +68,14 @@ export const i18n = {
     is: 'Endurnýja skotvopnaleyfi',
     en: 'Renew firearm license',
   },
+  downloadCard: {
+    is: 'Hlaða niður korti',
+    en: 'Download card',
+  },
+  applyForNewCard: {
+    is: 'Sækja um nýtt kort',
+    en: 'Apply for a new card',
+  },
   collectorLicenseValidTo: {
     is: 'Safnaraskírteini gildir til',
     en: 'Collector license valid to',
@@ -130,10 +138,10 @@ export const i18n = {
   },
   nationalId: {
     is: 'Kennitala',
-    en: 'SSN',
+    en: 'National Id',
   },
   cardNumber: {
-    is: 'Númer stæðiskorts',
+    is: 'Númer korts',
     en: 'Card number',
   },
 }
