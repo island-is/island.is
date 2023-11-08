@@ -50,6 +50,7 @@ const FinanceStatusTableRow: FC<React.PropsWithChildren<Props>> = ({
       {financeStatusDetails?.chargeItemSubjects?.length > 0 ? (
         <FinanceStatusDetailTable
           organization={organization}
+          chargeType={chargeType}
           financeStatusDetails={financeStatusDetails}
           downloadURL={downloadURL}
         />
