@@ -67,7 +67,7 @@ export const GalleryModal: FC<Props> = ({
     }
   }
 
-  const onKeyDown = useCallback((event: { key: string }) => {
+  const onKeyDown = (event: { key: string }) => {
     switch (event.key.toLowerCase()) {
       case 'arrowleft':
         onCaretClick('prev')
@@ -76,7 +76,7 @@ export const GalleryModal: FC<Props> = ({
         onCaretClick('next')
         break
     }
-  }, [])
+  }
 
   if (!thumbnails) {
     return null
