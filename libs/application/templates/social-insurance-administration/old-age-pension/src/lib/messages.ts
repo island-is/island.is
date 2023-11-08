@@ -993,7 +993,7 @@ export const oldAgePensionFormMessage: MessageDir = {
       description: 'Additional attachments required',
     },
     additionalDocumentRequiredDescription: {
-      id: 'oap.application:fileUpload.additionalDocumentRequired.description',
+      id: 'oap.application:fileUpload.additionalDocumentRequired.description#markdown',
       defaultMessage:
         'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description: 'english translation',
