@@ -2,5 +2,5 @@ import dynamic from 'next/dynamic'
 
 export const DigitalIcelandHeader = dynamic(
   () => import('./DigitalIcelandHeader'),
-  { ssr: false },
+  { ssr: true },
 )

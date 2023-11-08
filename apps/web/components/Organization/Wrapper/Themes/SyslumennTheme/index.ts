@@ -1,9 +1,9 @@
 import dynamic from 'next/dynamic'
 
 export const SyslumennHeader = dynamic(() => import('./SyslumennHeader'), {
-  ssr: false,
+  ssr: true,
 })
 
 export const SyslumennFooter = dynamic(() => import('./SyslumennFooter'), {
-  ssr: false,
+  ssr: true,
 })
