@@ -67,7 +67,6 @@ const SubscriptionsSkeleton = ({
   const { isMobile } = useIsMobile()
   const { email, emailVerified, getUserEmailLoading } = useFetchEmail({
     isAuthenticated,
-    isMySubscriptions,
   })
 
   return (
