@@ -1,6 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
-import { supportingDocuments } from '../../lib/messages'
+import { review, supportingDocuments } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
 import { Routes } from '../../lib/constants'
@@ -33,6 +33,12 @@ export const PassportReview: FC<Props> = ({
     [],
   ) as OptionSetItem[]
 
+  const applicantName = getValueViaPath(
+    application.externalData,
+    'individual.data.fullName',
+    '',
+  ) as string
+
   const passport = answers.passport
   const {
     publishDate,
@@ -44,6 +50,7 @@ export const PassportReview: FC<Props> = ({
 
   return (
     <GenericReview
+      application={application}
       leftColumnItems={[
         `${formatMessage(
           supportingDocuments.labels.passport.publishDate,
@@ -68,7 +75,9 @@ export const PassportReview: FC<Props> = ({
             ?.name
         }`,
       ]}
-      leftDescription={supportingDocuments.labels.passport.title}
+      leftDescription={formatMessage(review.labels.passports, {
+        name: applicantName,
+      })}
       goToScreen={goToScreen}
       route={route}
     />

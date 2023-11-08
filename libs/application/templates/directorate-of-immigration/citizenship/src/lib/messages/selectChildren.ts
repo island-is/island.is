@@ -133,7 +133,7 @@ export const selectChildren = {
   checkboxes: defineMessages({
     subLabel: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.sublabel',
-      defaultMessage: 'Hinn forsjáraðilinn:',
+      defaultMessage: 'Hinn forsjáraðilinn',
       description: 'Sublabel: displayed below a childs name',
     },
     tagCitizenship: {

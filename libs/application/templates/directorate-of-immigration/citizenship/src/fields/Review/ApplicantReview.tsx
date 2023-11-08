@@ -22,6 +22,7 @@ export const ApplicantReview: FC<Props> = ({
 
   return (
     <GenericReview
+      application={application}
       leftColumnItems={[
         answers?.userInformation?.name,
         kennitala.format(answers?.userInformation?.nationalId),
@@ -42,7 +43,7 @@ export const ApplicantReview: FC<Props> = ({
             .residenceInIcelandLastChangeDateShorter,
         )}: ${answers?.userInformation?.residenceInIcelandLastChangeDate}`,
       ]}
-      leftDescription={review.labels.applicant}
+      leftDescription={formatMessage(review.labels.applicant)}
       goToScreen={goToScreen}
       route={route}
     />
