@@ -18,7 +18,6 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
@@ -37,9 +36,6 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .liveness('/liveness')
     .readiness('/readiness')

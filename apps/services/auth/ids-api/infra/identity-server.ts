@@ -78,7 +78,6 @@ export const serviceSetup = (services: {
         prod: 'https://service-portal-api.internal.island.is',
       },
       Application__MinCompletionPortThreads: '10',
-      NO_UPDATE_NOTIFIER: 'true',
       ContentfulSettings__BaseAddress: {
         dev: 'https://preview.contentful.com',
         staging: 'https://cdn.contentful.com',
