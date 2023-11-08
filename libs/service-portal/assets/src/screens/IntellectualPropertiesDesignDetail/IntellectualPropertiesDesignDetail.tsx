@@ -68,7 +68,7 @@ const IntellectualPropertiesDesignDetail = () => {
       </Box>
 
       <Stack space="containerGutter">
-        <Box marginBottom={3} paddingRight={2}>
+        <Box>
           <Inline space={2}>
             <Button
               size="medium"
