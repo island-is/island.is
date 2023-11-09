@@ -84,10 +84,6 @@ export class UserProfileService {
       )
     }
 
-    const formattedPhoneNumber = isMobilePhoneNumberDefined
-      ? formatPhoneNumber(userProfile.mobilePhoneNumber)
-      : undefined
-
     await this.sequelize.transaction(async (transaction) => {
       const commonArgs = [nationalId, transaction] as const
 
@@ -105,7 +101,7 @@ export class UserProfileService {
           shouldVerifyMobilePhoneNumber &&
             (await this.verificationService.confirmSms(
               {
-                mobilePhoneNumber: formattedPhoneNumber,
+                mobilePhoneNumber: userProfile.mobilePhoneNumber,
                 code: userProfile.mobilePhoneNumberVerificationCode,
               },
               ...commonArgs,
@@ -118,6 +114,10 @@ export class UserProfileService {
           throw new BadRequestException(message)
         }
       })
+
+      const formattedPhoneNumber = isMobilePhoneNumberDefined
+        ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+        : undefined
 
       const update = {
         nationalId,
