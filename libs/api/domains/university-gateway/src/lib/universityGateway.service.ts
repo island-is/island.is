@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import {
   ProgramApi,
+  University,
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
 import { CmsContentfulService } from '@island.is/cms'
@@ -37,11 +38,14 @@ export class UniversityGatewayApi {
       totalCount: res.totalCount,
       pageInfo: res.pageInfo,
       data: res.data.map((item) => ({
+        active: item.active,
         id: item.id,
         externalId: item.externalId,
-        active: item.active,
         nameIs: item.nameIs,
         nameEn: item.nameEn,
+        specializationExternalId: item.specializationExternalId,
+        specializationNameIs: item.specializationNameIs,
+        specializationNameEn: item.specializationNameEn,
         universityId: item.universityId,
         universityContentfulKey: item.universityDetails.contentfulKey,
         departmentNameIs: item.departmentNameIs,
@@ -150,7 +154,9 @@ export class UniversityGatewayApi {
   async getUniversities(): Promise<UniversityGatewayUniversity[]> {
     const res = await this.universityApi.universityControllerGetUniversities()
 
-    const referenceIdentifierSet = res.data?.map((i: any) => i.contentfulKey)
+    const referenceIdentifierSet = res.data?.map(
+      (item: University) => item.contentfulKey,
+    )
 
     // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
     const organizationsResponse =
@@ -174,7 +180,7 @@ export class UniversityGatewayApi {
       }
     }
 
-    return res.data.map((item: any) => {
+    return res.data.map((item: University) => {
       const info = organizationMap.get(item.contentfulKey)
       return {
         id: item.id,
@@ -204,7 +210,7 @@ export class UniversityGatewayApi {
         field: 'universityId',
         options: (
           await this.universityApi.universityControllerGetUniversities()
-        ).data.map((item: any) => item.id),
+        ).data.map((item: University) => item.id),
       },
       {
         field: 'durationInYears',

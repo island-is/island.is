@@ -16,20 +16,32 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          university_id: {
-            type: Sequelize.UUID,
-            references: {
-              model: 'university',
-              key: 'id',
-            },
-            allowNull: false,
-          },
           name_is: {
             type: Sequelize.STRING,
             allowNull: false,
           },
           name_en: {
             type: Sequelize.STRING,
+            allowNull: false,
+          },
+          specialization_external_id: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          specialization_name_is: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          specialization_name_en: {
+            type: Sequelize.STRING,
+            allowNull: true,
+          },
+          university_id: {
+            type: Sequelize.UUID,
+            references: {
+              model: 'university',
+              key: 'id',
+            },
             allowNull: false,
           },
           department_name_is: {

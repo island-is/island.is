@@ -23,24 +23,16 @@ export class CourseService {
     after: string,
     before?: string,
     programId?: string,
-    programMinorId?: string,
     universityId?: string,
   ): Promise<CourseResponse> {
     const where: {
       id?: { [Op.in]: string[] }
       universityId?: string
     } = {}
-    if (programId && !programMinorId) {
+    if (programId) {
       const courseList = await this.programCourseModel.findAll({
         attributes: ['courseId'],
         where: { programId },
-      })
-      where.id = { [Op.in]: courseList.map((c) => c.courseId) }
-    }
-    if (programId && programMinorId) {
-      const courseList = await this.programCourseModel.findAll({
-        attributes: ['courseId'],
-        where: { programId, programMinorId },
       })
       where.id = { [Op.in]: courseList.map((c) => c.courseId) }
     }

@@ -21,7 +21,6 @@ import { Course } from '../modules/course'
 import { Tag } from '../modules/program/model/tag'
 import {
   ProgramCourse,
-  ProgramMinor,
   ProgramModeOfDelivery,
   ProgramTable,
 } from '../modules/program'
@@ -45,7 +44,6 @@ import { LoggingModule } from '@island.is/logging'
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
       ProgramCourse,
-      ProgramMinor,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,

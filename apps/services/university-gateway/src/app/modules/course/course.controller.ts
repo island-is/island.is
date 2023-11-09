@@ -66,7 +66,6 @@ export class CourseController {
     @Query('before') before: string,
     @Query('after') after: string,
     @Query('programId') programId: string,
-    @Query('programMinorId') programMinorId: string,
     @Query('universityId') universityId: string,
   ): Promise<CourseResponse> {
     return this.courseService.getCourses(
@@ -74,7 +73,6 @@ export class CourseController {
       after,
       before,
       programId,
-      programMinorId,
       universityId,
     )
   }

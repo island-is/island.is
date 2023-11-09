@@ -1,6 +1,6 @@
 import { ITag } from './tag'
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
-import { IProgramMinor } from './programMinor'
+import { IProgramSpecialization } from './programSpecialization'
 import { Season } from '../types/season'
 import { DegreeType } from '../types/degreeType'
 import { ModeOfDelivery } from '../types/modeOfDelivery'
@@ -38,5 +38,5 @@ export interface IProgram {
   tag?: ITag[]
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
-  minors?: IProgramMinor[]
+  specializations?: IProgramSpecialization[]
 }

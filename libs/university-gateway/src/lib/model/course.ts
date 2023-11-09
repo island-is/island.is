@@ -3,7 +3,6 @@ import { Season } from '../types/season'
 
 export interface ICourse {
   externalId: string
-  minorExternalId?: string
   nameIs: string
   nameEn: string
   credits: number

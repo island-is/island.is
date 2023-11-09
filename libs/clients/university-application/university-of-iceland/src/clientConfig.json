@@ -88,6 +88,10 @@
                             "type": "string",
                             "format": "date-time"
                           },
+                          "applicationEndDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
                           "degreeType": {
                             "type": "string"
                           },
@@ -226,6 +230,23 @@
                                 }
                               }
                             }
+                          },
+                          "kjorsvid": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "heiti": {
+                                  "type": "string"
+                                },
+                                "heiti_en": {
+                                  "type": "string"
+                                }
+                              }
+                            }
                           }
                         }
                       }
@@ -280,7 +301,12 @@
                             "type": "string"
                           },
                           "required": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "MANDATORY",
+                              "ELECTIVE",
+                              "RESTRICTED_ELECTIVE"
+                            ]
                           },
                           "credits": {
                             "type": "string"
@@ -289,7 +315,14 @@
                             "type": "string"
                           },
                           "semesterSeason": {
-                            "type": "string"
+                            "type": "string",
+                            "enum": [
+                              "SPRING",
+                              "FALL",
+                              "SUMMER",
+                              "WHOLE-YEAR",
+                              "ANY"
+                            ]
                           },
                           "descriptionIs": {
                             "type": "string"
@@ -329,9 +362,7 @@
             "in": "path",
             "allowEmptyValue": false,
             "description": "Application ID",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -411,9 +442,6 @@
                     "type": "string"
                   },
                   "tegund_umsoknar": {
-                    "type": "integer"
-                  },
-                  "uid": {
                     "type": "integer"
                   },
                   "namsform": {
