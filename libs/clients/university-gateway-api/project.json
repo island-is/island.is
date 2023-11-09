@@ -25,7 +25,7 @@
         }
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -34,7 +34,7 @@
         ],
         "parallel": false
       },
-      "outputs": ["{workspaceRoot}/libs/clients/university-gateway-api/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
