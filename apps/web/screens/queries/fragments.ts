@@ -595,6 +595,7 @@ export const slices = gql`
   }
 
   fragment SidebarCardFields on SidebarCard {
+    id
     title
     contentString
     type
@@ -720,6 +721,32 @@ export const slices = gql`
     aspectRatio
   }
 
+  fragment LatestEventsSliceFields on LatestEventsSlice {
+    title
+    events {
+      title
+      slug
+      startDate
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+        freeText
+        useFreeText
+      }
+      thumbnailImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -760,6 +787,7 @@ export const slices = gql`
     ...EmailSignupFields
     ...SliceDropdownFields
     ...EmbedFields
+    ...LatestEventsSliceFields
   }
 
   fragment AllSlices on Slice {

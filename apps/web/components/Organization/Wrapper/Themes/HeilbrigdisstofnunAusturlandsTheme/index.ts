@@ -2,10 +2,10 @@ import dynamic from 'next/dynamic'
 
 export const HeilbrigdisstofnunAusturlandsFooter = dynamic(
   () => import('./HeilbrigdisstofnunAusturlandsFooter'),
-  { ssr: false },
+  { ssr: true },
 )
 
 export const HeilbrigdisstofnunAusturlandsHeader = dynamic(
   () => import('./HeilbrigdisstofnunAusturlandsHeader'),
-  { ssr: false },
+  { ssr: true },
 )
