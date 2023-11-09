@@ -1,9 +1,8 @@
 import dynamic from 'next/dynamic'
 
-export const RikislogmadurHeader = dynamic(
-  () => import('./RikislogmadurHeader'),
-  { ssr: true },
-)
+import Header from './RikislogmadurHeader'
+
+export const RikislogmadurHeader = Header
 
 export const RikislogmadurFooter = dynamic(
   () => import('./RikislogmadurFooter'),

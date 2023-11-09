@@ -1,6 +1,3 @@
-import dynamic from 'next/dynamic'
+import Header from './RettindagaeslaFatladsFolksHeader'
 
-export const RettindagaeslaFatladsFolksHeader = dynamic(
-  () => import('./RettindagaeslaFatladsFolksHeader'),
-  { ssr: true },
-)
+export const RettindagaeslaFatladsFolksHeader = Header
