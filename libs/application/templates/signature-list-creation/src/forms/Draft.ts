@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
