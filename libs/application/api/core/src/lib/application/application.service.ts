@@ -119,7 +119,6 @@ export class ApplicationService {
   ): Promise<Application[]> {
     const statuses = status?.split(',')
     const typeIds = this.getTypeIdsForInstitution(nationalId)
-    console.log(typeIds)
 
     return this.applicationModel.findAll({
       where: {
