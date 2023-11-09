@@ -17,7 +17,6 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { ApplicationType, NO } from '../lib/constants'

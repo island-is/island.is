@@ -271,7 +271,7 @@ export const OldAgePensionForm: Form = buildForm({
                       .socialInsuranceAdministrationApplicant
                       .data as ApplicantInfo
 
-                    return getBank(data.bankAccount!)
+                    return getBank(data.bankAccount)
                   },
                 }),
                 buildRadioField({

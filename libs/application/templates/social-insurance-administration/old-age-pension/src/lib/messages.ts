@@ -1153,6 +1153,17 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Tímabil þarf að vera gilt.',
     description: 'The period must be valid.',
   },
+  noEmailFound: {
+    id: 'oap.application:error.no.email.found.title',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'english translation',
+  },
+  noEmailFoundDescription: {
+    id: 'oap.application:error.no.email.found.description#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/) og komdu svo aftur til að sækja um ellilífeyri.',
+    description: 'english translation',
+  },
 })
 
 export const validatorErrorMessages = defineMessages({

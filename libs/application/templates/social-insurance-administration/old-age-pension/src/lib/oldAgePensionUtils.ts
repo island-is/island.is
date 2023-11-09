@@ -826,8 +826,8 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBank = (bankInfo: BankInfo) => {
-  return bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+export const getBank = (bankInfo?: BankInfo) => {
+  return bankInfo?.bank && bankInfo?.ledger && bankInfo?.accountNumber
     ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
 }
