@@ -79,8 +79,6 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinanceLoans,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceLoans />,
-      dynamic: true,
-      loader: financeRoutesLoader({ userInfo, ...rest }),
     },
   ],
 }

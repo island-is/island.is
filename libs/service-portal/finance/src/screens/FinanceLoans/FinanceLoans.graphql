@@ -1,0 +1,65 @@
+query GetHmsLoansLoanOverview {
+  getHmsLoansLoanOverview {
+    masterloanid
+    nafn
+    heimili
+    postnumer
+    poststod
+    fyrstiVaxtadagur
+    fyrstiGjalddagi
+    fjoldiGjalddaga
+    fjoldiGjalddagaAAri
+    greidslujofnun
+    uppGrAkvaedi
+    frysting
+    timabFrysting
+    breytilegir
+    hlutdeildarlan
+    tegVisitolu
+    grunnVisitala
+    vextir
+    upphaflegFjarhaed
+    naestiGjalddagi
+    sidastiGjalddagi
+    elstiOgreiddiGjalddagi
+    fjoldiGjalddagaEftir
+    stadaJofnun
+    sidastaGreidsla
+    vanskilAlls
+    nafnverdOgjaldfallid
+    afallnirVxtVb
+    eftirstodvarMVSkil
+    uppgreidslugjald
+    uppgreidsluverdmaeti
+    stadaLans
+    kennitala
+    lanaFlokkur
+    leggur
+    vedstadir {
+      fastanumer
+      vedstadurHeiti
+      vedstadurSVfelag
+      epilog
+      svFelagsNumer
+    }
+    medgreidendur {
+      nafnMedgreidandi
+      medGreidandi
+    }
+  }
+}
+
+query GetHmsLoansPaymentOverview {
+  getHmsLoansPaymentOverview {
+    gjalddagi
+    hreyfingadagur
+    afborgun
+    vextir
+    verdbAfborgun
+    verdbVextir
+    kostnadur
+    drattarvextir
+    samtals
+    lansnumer
+  }
+}
