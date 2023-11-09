@@ -1,19 +1,15 @@
 import { downloadVehicleOwnedFile } from './downloadVehicleOwnedFile'
 import {
-  vehicleCoOwnedDataHeader,
   vehicleOperatorDataHeader,
   vehicleOwnedDataHeader,
 } from './dataHeaders'
 import isValid from 'date-fns/isValid'
 import { LOCALE } from './constants'
-import { useGetExcelVehiclesQuery } from './VehicleExcel.generated'
 import {
   Query,
   VehicleUserTypeEnum,
   VehiclesDetail,
 } from '@island.is/api/schema'
-import { useEffect } from 'react'
-import { gql, useQuery } from '@apollo/client'
 
 export const exportVehicleOwnedDocument = async (
   data: any,
@@ -85,7 +81,7 @@ function filterOwners(
     return [
       item.basicInfo?.permno,
       item.basicInfo?.regno,
-      item.inspectionInfo?.type,
+      `${item.mainInfo?.model} ${item.mainInfo?.subModel}`,
       firstRegDate && isValid(firstRegDate)
         ? firstRegDate.toLocaleDateString(LOCALE)
         : '',

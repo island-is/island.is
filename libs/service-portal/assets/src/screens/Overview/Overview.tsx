@@ -30,12 +30,8 @@ import { vehicleMessage as messages, urls } from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
 import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
-import {
-  useGetExcelVehiclesLazyQuery,
-  useGetExcelVehiclesQuery,
-} from '../../utils/VehicleExcel.generated'
+import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
-import { debounce } from 'lodash'
 import useDebounce from 'react-use/lib/useDebounce'
 
 const defaultFilterValues = {
