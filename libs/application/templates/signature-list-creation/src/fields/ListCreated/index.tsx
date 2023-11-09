@@ -1,4 +1,4 @@
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
@@ -8,18 +8,15 @@ export const ListCreated = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Stack space={3}>
-      <Box>
-        <Text variant="h3" marginBottom={2}>
-          {formatMessage(m.nextSteps)}
-        </Text>
-        <Text>{formatMessage(m.nextStepsDescription)}</Text>
-      </Box>
+    <>
       <Box>
         <Text variant="h3" marginBottom={2}>
           {formatMessage(m.shareList)}
         </Text>
-        <CopyLink linkUrl={'/todo'} buttonTitle={formatMessage(m.copyLink)} />
+        <CopyLink
+          linkUrl={m.shareListLink.defaultMessage}
+          buttonTitle={formatMessage(m.copyLink)}
+        />
       </Box>
 
       <Box
@@ -30,7 +27,7 @@ export const ListCreated = () => {
       >
         <Illustration />
       </Box>
-    </Stack>
+    </>
   )
 }
 

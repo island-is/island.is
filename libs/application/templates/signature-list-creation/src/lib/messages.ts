@@ -174,6 +174,11 @@ export const m = defineMessages({
     defaultMessage: 'Deila meðmælalista',
     description: '',
   },
+  shareListLink: {
+    id: 'slc.application:shareListLink',
+    defaultMessage: 'https://island.is/umsoknir/medmaelalisti',
+    description: '',
+  },
   copyLink: {
     id: 'slc.application:copyLink',
     defaultMessage: 'Afrita hlekk',
@@ -181,11 +186,6 @@ export const m = defineMessages({
   },
 
   /* Action Card History logs */
-  logListInProgress: {
-    id: 'slc.application:listInProgress',
-    defaultMessage: 'Gerð meðmælalista hafin',
-    description: '',
-  },
   logListCreated: {
     id: 'slc.application:listCreated',
     defaultMessage: 'Meðmælalisti stofnaður',

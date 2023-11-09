@@ -1,6 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -57,7 +55,7 @@ const SignatureListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: m.logListInProgress,
+                logMessage: m.logListCreated,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -82,14 +80,6 @@ const SignatureListTemplate: ApplicationTemplate<
             shouldPersistToExternalData: true,
             throwOnError: true,
           })*/
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: m.logListCreated,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
           roles: [
             {
               id: Roles.APPLICANT,

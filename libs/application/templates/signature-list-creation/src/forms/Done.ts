@@ -24,6 +24,20 @@ export const Done: Form = buildForm({
           title: m.listCreated,
           description: m.listCreatedDescription,
           children: [
+            buildDescriptionField({
+              id: 'nextStepsTitle',
+              title: m.nextSteps,
+              titleVariant: 'h3',
+              marginBottom: 1,
+            }),
+            //Set up separately for even spacing
+            buildDescriptionField({
+              id: 'nextStepsDescription',
+              title: '',
+              description: m.nextStepsDescription,
+              titleVariant: 'h3',
+              marginBottom: 5,
+            }),
             buildCustomField({
               id: 'doneScreen',
               title: 'test',
