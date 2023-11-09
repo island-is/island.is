@@ -63,7 +63,7 @@ export const MedicineLicence = () => {
                       url: certificate.id
                         ? HealthPaths.HealthMedicineCertificate.replace(
                             ':name',
-                            certificate.drugName ?? '',
+                            certificate.drugName ?? certificate.id.toString(),
                           ).replace(':id', certificate.id.toString())
                         : undefined,
                     }}
