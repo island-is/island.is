@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { boolean } from 'zod'
 
 @ObjectType()
 export class VehiclesMainInfo {

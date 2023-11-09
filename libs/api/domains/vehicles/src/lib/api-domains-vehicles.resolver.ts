@@ -19,7 +19,6 @@ import { VehiclesService } from './api-domains-vehicles.service'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
-import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -37,8 +36,6 @@ export class VehiclesResolver {
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
     >,
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
   ) {}
 
   @Scopes(ApiScope.vehicles)

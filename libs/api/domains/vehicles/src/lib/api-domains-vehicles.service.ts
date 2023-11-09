@@ -16,7 +16,6 @@ import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 export class VehiclesService {
   constructor(
     @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
-    @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}

@@ -12,7 +12,7 @@ import {
 } from '@island.is/api/schema'
 
 export const exportVehicleOwnedDocument = async (
-  data: any,
+  data: Array<VehiclesDetail>,
   fileName: string,
   name: string,
   nationalId: string,

@@ -122,7 +122,7 @@ const VehiclesOverview = () => {
   useEffect(() => {
     if (downloadExcel && vehicleData) {
       exportVehicleOwnedDocument(
-        usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles,
+        usersExcelVehicleQuery.data?.getExcelVehicles?.vehicles ?? [],
         formatMessage(messages.myCarsFiles),
         userInfo.profile.name,
         userInfo.profile.nationalId,
@@ -136,7 +136,6 @@ const VehiclesOverview = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
 
-  //const vehicles = usersVehicleQuery.data?.vehiclesList?.vehicleList || []
   const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
 

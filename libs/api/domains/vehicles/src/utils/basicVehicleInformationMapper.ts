@@ -10,7 +10,6 @@ const KW_TO_METRIC_HP = 1.359622
 
 export const basicVehicleInformationMapper = (
   data: BasicVehicleInformationDto,
-  nationalId: string,
 ): VehiclesDetail => {
   const newestInspection = data.inspections?.sort((a, b) => {
     if (a && b && a.date && b.date)
