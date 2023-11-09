@@ -26,7 +26,11 @@ import {
 import { useUserInfo } from '@island.is/auth/react'
 
 import { VehicleCard } from '../../components/VehicleCard'
-import { vehicleMessage as messages, urls } from '../../lib/messages'
+import {
+  vehicleMessage as messages,
+  urls,
+  vehicleMessage,
+} from '../../lib/messages'
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 
 import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
@@ -268,7 +272,7 @@ const VehiclesOverview = () => {
                   }}
                   name="okutaeki-leit"
                   label={formatMessage(m.searchLabel)}
-                  placeholder={formatMessage(m.searchPlaceholder)}
+                  placeholder={formatMessage(vehicleMessage.searchForPlate)}
                 />
               </Box>
             </GridColumn>

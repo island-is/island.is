@@ -40,7 +40,11 @@ export class VehiclesService {
       type: input.type,
       dtFrom: input.dateFrom,
       dtTo: input.dateTo,
-      permno: input.permno ? input.permno + '*' : undefined,
+      permno: input.permno
+        ? input.permno.length < 5
+          ? `${input.permno}*`
+          : `${input.permno}`
+        : undefined,
     })
   }
 
