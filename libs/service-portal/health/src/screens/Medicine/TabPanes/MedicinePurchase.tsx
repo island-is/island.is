@@ -102,7 +102,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
+          span={['8/8']}
           title={messages.medicinePurchaseTitle}
           intro={messages.medicinePurchaseIntroText}
         />
