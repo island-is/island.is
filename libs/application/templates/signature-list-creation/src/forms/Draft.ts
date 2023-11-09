@@ -4,6 +4,7 @@ import {
   buildDividerField,
   buildExternalDataProvider,
   buildForm,
+  buildKeyValueField,
   buildMultiField,
   buildPhoneField,
   buildSection,
@@ -17,8 +18,10 @@ import {
 } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 import { m } from '../lib/messages'
+import { formatPhone } from '../lib/utils'
 
 export const Draft: Form = buildForm({
   id: 'SignatureListCreationDraft',
@@ -138,8 +141,68 @@ export const Draft: Form = buildForm({
       id: 'overview',
       title: m.overview,
       children: [
-        buildDividerField({})
-      ]
-    }), 
+        buildMultiField({
+          id: 'overview',
+          title: m.overview,
+          description: m.overviewDescription,
+          children: [
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'applicantOverview',
+              title: m.applicantOverviewHeader,
+              titleVariant: 'h3',
+              space: 'gutter',
+              marginBottom: 3,
+            }),
+            buildKeyValueField({
+              label: m.name,
+              width: 'half',
+              value: ({ answers }) => {
+                return (answers.applicant as any).name
+              },
+            }),
+            buildKeyValueField({
+              label: m.nationalId,
+              width: 'half',
+              value: ({ answers }) => {
+                return (answers.applicant as any).nationalId
+              },
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.phone,
+              width: 'half',
+              value: ({ answers }) => {
+                return formatPhone((answers.applicant as any).phone)
+              },
+            }),
+            buildKeyValueField({
+              label: m.email,
+              width: 'half',
+              value: ({ answers }) => {
+                return (answers.applicant as any).email
+              },
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              space: 'gutter',
+            }),
+            buildDividerField({}),
+            buildDescriptionField({
+              id: 'listOverview',
+              title: m.listOverviewHeader,
+              titleVariant: 'h3',
+              space: 'gutter',
+              marginBottom: 3,
+            }),
+          ],
+        }),
+      ],
+    }),
   ],
 })

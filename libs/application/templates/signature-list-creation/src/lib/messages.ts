@@ -114,4 +114,20 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit',
     description: '',
   },
+  overviewDescription: {
+    id: 'slc.application:overviewDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vitae mattis neque. Sed nec nulla efficitur massa molestie rutrum id ac sem. Donec eu volutpat ante.',
+    description: '',
+  },
+  applicantOverviewHeader: {
+    id: 'slc.application:applicantOverviewHeader',
+    defaultMessage: 'Upplýsingar um frambjóðanda',
+    description: '',
+  },
+  listOverviewHeader: {
+    id: 'slc.application:listOverviewHeader',
+    defaultMessage: 'Upplýsingar um meðmælalista',
+    description: '',
+  },
 })
