@@ -162,7 +162,6 @@ export class AuthController {
 
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
-        this.authService.logLogin({ nationalId: verifiedUserToken.nationalId })
 
         return this.redirectAuthenticatedUser(
           {
@@ -172,7 +171,11 @@ export class AuthController {
           redirectRoute,
           idsTokens.id_token,
           new Entropy({ bits: 128 }).string(),
-        )
+        ).then(() => {
+          this.authService.logLogin({
+            nationalId: verifiedUserToken.nationalId,
+          })
+        })
       }
     } catch (error) {
       this.logger.error('Authentication callback failed:', { error })
