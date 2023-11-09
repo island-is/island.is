@@ -26,7 +26,7 @@ export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
             heading={(application.answers.applicant as any).name + ' - ' + area}
             text={formatMessage(m.listCardText)}
             progressMeter={{
-              currentProgress: 45,
+              currentProgress: 0,
               maxProgress: 350,
               withLabel: true,
             }}
