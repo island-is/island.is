@@ -1,6 +1,8 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Injectable } from '@nestjs/common'
 import { LibraApi } from '../../gen/fetch'
 
+@Injectable()
 export class HmsLoansClientService {
   constructor(private readonly loansApi: LibraApi) {}
 
