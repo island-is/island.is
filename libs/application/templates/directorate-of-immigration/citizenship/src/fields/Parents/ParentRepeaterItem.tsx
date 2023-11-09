@@ -1,10 +1,16 @@
-import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+  GenericFormField,
+} from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import { ParentsToApplicant } from '../../shared'
 import { information } from '../../lib/messages'
-import DescriptionText from '../../components/DescriptionText'
 import { NationalIdWithGivenFamilyName } from '../NationalIdWithGivenFamilyName'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { useLocale } from '@island.is/localization'
 
 interface Props {
   index: number
@@ -29,20 +35,26 @@ export const ParentRepeaterItem: FC<Props & FieldBaseProps> = ({
   ...props
 }) => {
   const { application, errors, field } = props
-
+  const { formatMessage } = useLocale()
   return (
     <Box key={`parentBox${index}`} hidden={isHidden}>
-      <DescriptionText
-        text={information.labels.parents.parentTitle}
-        format={{ index: itemNumber + 1 }}
-        textProps={{
-          as: 'h5',
-          fontWeight: 'semiBold',
-          paddingBottom: 1,
-          paddingTop: 3,
-          marginBottom: 0,
-        }}
-      />
+      <Box paddingTop={3} paddingBottom={1}>
+        {DescriptionFormField({
+          application: application,
+          showFieldName: false,
+          field: {
+            id: 'title',
+            title: '',
+            description: formatMessage(information.labels.parents.parentTitle, {
+              index: itemNumber + 1,
+            }),
+            titleVariant: 'h5',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
+      </Box>
       <NationalIdWithGivenFamilyName
         field={field}
         application={application}

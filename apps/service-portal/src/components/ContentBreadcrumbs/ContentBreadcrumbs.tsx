@@ -6,10 +6,10 @@ import { useWindowSize } from 'react-use'
 import {
   Box,
   BreadcrumbsDeprecated as Breadcrumbs,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  GoBack,
   ServicePortalNavigationItem,
   m,
   useDynamicRoutesWithNavigation,
@@ -69,11 +69,22 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
           )
         : null
 
+      // Use active ancestor to fill in parameter references for ancestors.
+      const activeAncestor = navItem.path
+        ? matchPath(
+            {
+              path: navItem.path,
+              end: false,
+            },
+            location.pathname,
+          )
+        : null
+
       // Push the nav item to the current array as we are currently located here in our search
       currentBreadcrumbs.push({
-        name: parseNavItemName(navItem, activePath),
+        name: parseNavItemName(navItem, activeAncestor),
         hidden: navItem.breadcrumbHide ?? false,
-        path: activePath ? location.pathname : navItem.path,
+        path: activeAncestor ? activeAncestor.pathname : navItem.path,
       })
 
       // Only update if we have found a deeper path
@@ -95,7 +106,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
 
-  const isMobile = width < theme.breakpoints.sm
+  const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
 
   return (
@@ -110,14 +121,16 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
       <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
         <Breadcrumbs color="blue400" separatorColor="blue400">
           {items.map((item, index) =>
-            isDefined(item.path) &&
-            !item.hidden &&
-            !(isMobile && index === 0) ? (
-              <Link className={styles.link} key={index} to={item.path}>
-                {index === 0
-                  ? formatMessage(m.overview)
-                  : formatMessage(item.name)}
-              </Link>
+            isDefined(item.path) && !item.hidden ? (
+              isMobile && index === 0 ? (
+                <GoBack noUnderline={true} display="inline" />
+              ) : (
+                <Link className={styles.link} key={index} to={item.path}>
+                  {index === 0
+                    ? formatMessage(m.overview)
+                    : formatMessage(item.name)}
+                </Link>
+              )
             ) : null,
           )}
         </Breadcrumbs>

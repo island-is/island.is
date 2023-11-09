@@ -114,7 +114,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                     fluid
                     nowrap
                   >
-                    {labelOpen}
+                    {popover.visible ? labelClose : labelOpen}
                   </Button>
                 </Box>
                 {additionalFilters && additionalFilters}

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   isCourtRole,
   isInvestigationCase,
@@ -15,6 +15,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCase } from '../../utils/hooks'
+import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, SectionHeading } from '..'
 import DefenderInput from './DefenderInput'
@@ -84,7 +85,6 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       return null
     }
   }
-
   return (
     <>
       <SectionHeading
@@ -101,7 +101,17 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
         {user?.role === UserRole.PROSECUTOR && (
-          <Box marginTop={2}>
+          <>
+            <Text variant="h4" marginTop={2} marginBottom={2}>
+              {`${formatMessage(
+                isRestrictionCase(workingCase.type)
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .title
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.title,
+              )} `}
+              <RequiredStar />
+            </Text>
             <Box>
               <RadioButton
                 name="defender-access"
@@ -179,7 +189,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     : defenderInfo.investigationCases.sections
                         .defenderRequestAccess.labelNoAccess,
                 )}
-                checked={!workingCase.requestSharedWithDefender}
+                checked={workingCase.requestSharedWithDefender === null}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
@@ -197,7 +207,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 disabled={!workingCase.defenderName}
               />
             </Box>
-          </Box>
+          </>
         )}
       </BlueBox>
     </>

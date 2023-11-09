@@ -5,14 +5,12 @@ on:
     branches:
       - 'main'
       - 'release/**'
+      - 'pre-release/**'
     paths:
       - 'charts/**'
       - 'infra/**'
       - '**/infra/**'
   workflow_dispatch: {}
-  create:
-    branches:
-      - 'release/**'
   pull_request:
     paths:
       - 'charts/**'
@@ -24,7 +22,6 @@ defaults:
     shell: bash
 
 env:
-  DEVOPS_DEBUG: ${{ secrets.DEVOPS_DEBUG }}
   AWS_MAX_ATTEMPTS: 10
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
 

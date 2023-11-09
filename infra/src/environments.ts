@@ -22,12 +22,13 @@ const dev01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'dev',
-        NO_UPDATE_NOTIFIER: 'true',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
       },
       initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         },
       },
     },
@@ -52,12 +53,13 @@ const staging01: EnvironmentConfig = {
         AWS_REGION: 'eu-west-1',
         PORT: '3333',
         name: 'staging',
-        NO_UPDATE_NOTIFIER: 'true',
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         AUDIT_GROUP_NAME: '/island-is/audit-log',
       },
       initContainer: {
         env: {
           AWS_REGION: 'eu-west-1',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
         },
       },
     },
@@ -96,12 +98,13 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
-          NO_UPDATE_NOTIFIER: 'true',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           AUDIT_GROUP_NAME: '/island-is/audit-log',
         },
         initContainer: {
           env: {
             AWS_REGION: 'eu-west-1',
+            NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           },
         },
       },
@@ -126,12 +129,13 @@ export let Envs: EnvironmentConfigs = {
           AWS_REGION: 'eu-west-1',
           PORT: '3333',
           name: 'prod',
-          NO_UPDATE_NOTIFIER: 'true',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           AUDIT_GROUP_NAME: '/identity-server/audit-log',
         },
         initContainer: {
           env: {
             AWS_REGION: 'eu-west-1',
+            NPM_CONFIG_UPDATE_NOTIFIER: 'false',
           },
         },
       },

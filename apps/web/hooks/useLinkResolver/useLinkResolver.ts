@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
+
 import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
@@ -33,9 +35,17 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
+  organizationeventoverview: {
+    is: '/s/[organization]/vidburdir',
+    en: '/en/o/[organization]/events',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
+  },
+  applications: {
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
   },
   page: {
     is: '/stafraent-island',
@@ -60,6 +70,26 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  manual: {
+    is: '/handbaekur/[slug]',
+    en: '/en/manuals/[slug]',
+  },
+  manualchangelog: {
+    is: '/handbaekur/[slug]/breytingasaga',
+    en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapter: {
+    is: '/handbaekur/[slug]/[chapterSlug]',
+    en: '/en/manuals/[slug]/[chapterSlug]',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -100,6 +130,10 @@ export const routesTemplate = {
   organizationnews: {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
+  },
+  organizationevent: {
+    is: '/s/[organization]/vidburdir/[slug]',
+    en: '/en/o/[organization]/events/[slug]',
   },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
@@ -209,14 +243,6 @@ export const routesTemplate = {
   undirskriftalistar: {
     is: '/undirskriftalistar',
     en: '/en/petitions',
-  },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
   },
 }
 

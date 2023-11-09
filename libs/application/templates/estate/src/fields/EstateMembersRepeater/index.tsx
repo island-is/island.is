@@ -14,8 +14,12 @@ import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
 import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
+import { EstateTypes, relationWithApplicant } from '../../lib/constants'
 
 export const EstateMembersRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
@@ -32,6 +36,12 @@ export const EstateMembersRepeater: FC<
     relationOptions: string[]
     estate: EstateRegistrant
   }
+
+  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
+    value: relation,
+    label: relation,
+  }))
+
   const relations =
     externalData.relationOptions?.map((relation) => ({
       value: relation,
@@ -130,9 +140,39 @@ export const EstateMembersRepeater: FC<
                   name={`${id}[${index}].relation`}
                   label={formatMessage(m.inheritanceRelationLabel)}
                   readOnly
-                  defaultValue={member.relation || ''}
+                  defaultValue={member.relation}
                   backgroundColor="white"
                   disabled={!member.enabled}
+                />
+              </GridColumn>
+              {application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate && (
+                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                  <SelectController
+                    id={`${id}[${index}].relationWithApplicant`}
+                    name={`${id}[${index}].relationWithApplicant`}
+                    label={formatMessage(
+                      m.inheritanceRelationWithApplicantLabel,
+                    )}
+                    defaultValue={member.relationWithApplicant}
+                    options={relationsWithApplicant}
+                    error={error?.relationWithApplicant}
+                    backgroundColor="blue"
+                    disabled={!member.enabled}
+                    required
+                  />
+                </GridColumn>
+              )}
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={`${id}[${index}].email`}
+                  name={`${id}[${index}].email`}
+                  label={m.email.defaultMessage}
+                  backgroundColor="blue"
+                  disabled={!member.enabled}
+                  defaultValue={member.email || ''}
+                  error={error && error[index] && error[index].email}
+                  required
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -145,17 +185,7 @@ export const EstateMembersRepeater: FC<
                   format="###-####"
                   defaultValue={member.phone || ''}
                   error={error && error[index] && error[index].phone}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
+                  required
                 />
               </GridColumn>
             </GridRow>
@@ -237,18 +267,22 @@ export const EstateMembersRepeater: FC<
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {fields.map((member: GenericFormField<EstateMember>, index) => (
-        <Box key={member.id} hidden={member.initial}>
-          <AdditionalEstateMember
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((member: GenericFormField<EstateMember>, index) => {
+        return (
+          <Box key={member.id} hidden={member.initial}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              relationWithApplicantOptions={relationsWithApplicant}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
       <Box marginTop={3}>
         <Button
           variant="text"

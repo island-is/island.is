@@ -1,11 +1,10 @@
 import dynamic from 'next/dynamic'
 
-export const HeilbrigdisstofnunNordurlandsHeader = dynamic(
-  () => import('./HeilbrigdisstofnunNordurlandsHeader'),
-  { ssr: false },
-)
+import Header from './HeilbrigdisstofnunNordurlandsHeader'
+
+export const HeilbrigdisstofnunNordurlandsHeader = Header
 
 export const HeilbrigdisstofnunNordurlandsFooter = dynamic(
   () => import('./HeilbrigdisstofnunNordurlandsFooter'),
-  { ssr: false },
+  { ssr: true },
 )

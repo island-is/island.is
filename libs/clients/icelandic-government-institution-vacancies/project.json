@@ -33,11 +33,12 @@
         "cwd": "libs/clients/icelandic-government-institution-vacancies"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/icelandic-government-institution-vacancies/gen/fetch -i libs/clients/icelandic-government-institution-vacancies/src/clientConfig.yaml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client"]

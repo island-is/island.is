@@ -65,7 +65,7 @@ const Therapies = () => {
   }
   // Construct tabs array and filter out empty arrays
   const tabs = [
-    physioTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.physicalTherapy),
       content: (
         <TherapiesTabContent
@@ -75,7 +75,7 @@ const Therapies = () => {
         />
       ),
     },
-    speechTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.speechTherapy),
       content: (
         <TherapiesTabContent
@@ -85,7 +85,7 @@ const Therapies = () => {
         />
       ),
     },
-    occupationalTherapyData.length > 0 && {
+    {
       label: formatMessage(messages.occupationalTherapy),
       content: (
         <TherapiesTabContent
@@ -95,7 +95,7 @@ const Therapies = () => {
         />
       ),
     },
-  ].filter((x) => x !== false) as Array<{ label: string; content: JSX.Element }>
+  ]
 
   const tabsElement =
     tabs.length === 1 ? (

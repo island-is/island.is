@@ -15,5 +15,6 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
+  testEnvironment: 'node',
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/message-handler',
 }

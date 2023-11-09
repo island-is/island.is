@@ -267,6 +267,63 @@
         ]
       }
     },
+    "/api/Okutaeki/{fastanumer}/{audkenni}": {
+      "get": {
+        "tags": ["Okutaeki"],
+        "operationId": "Okutaeki_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "fastanumer",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/Okutaeki"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Uppbod/{audkenni}": {
       "get": {
         "tags": ["Uppbod"],
@@ -883,6 +940,59 @@
           "401": {
             "x-nullable": false,
             "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/DanarbuAlgengTengslUmsaekjanda/{audkenni}": {
+      "get": {
+        "tags": ["DanarbuAlgengTengslUmsaekjanda"],
+        "operationId": "DanarbuAlgengTengslUmsaekjanda_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlgengUmsaekjandaTengsl"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
             }
@@ -2477,6 +2587,47 @@
         }
       }
     },
+    "Okutaeki": {
+      "type": "object",
+      "required": ["skraningardagur", "skraningardagurEiganda"],
+      "properties": {
+        "numerOkutaekis": {
+          "type": "string"
+        },
+        "fastanumerOkutaekis": {
+          "type": "string"
+        },
+        "framleidandi": {
+          "type": "string"
+        },
+        "framleidandaGerd": {
+          "type": "string"
+        },
+        "litur": {
+          "type": "string"
+        },
+        "skraning": {
+          "type": "string"
+        },
+        "nafnEiganda": {
+          "type": "string"
+        },
+        "kennitalaEiganda": {
+          "type": "string"
+        },
+        "heimilisfangEiganda": {
+          "type": "string"
+        },
+        "skraningardagur": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "skraningardagurEiganda": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
     "Uppbod": {
       "type": "object",
       "properties": {
@@ -3065,6 +3216,19 @@
         }
       }
     },
+    "AlgengUmsaekjandaTengsl": {
+      "type": "object",
+      "required": ["oid"],
+      "properties": {
+        "oid": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        }
+      }
+    },
     "BankaupplysingarDanarbusSkeyti": {
       "type": "object",
       "properties": {
@@ -3625,6 +3789,29 @@
           "type": "string"
         },
         "tengsl": {
+          "type": "string"
+        },
+        "simi": {
+          "type": "string"
+        },
+        "netfang": {
+          "type": "string"
+        },
+        "malsvari": {
+          "$ref": "#/definitions/Malsvari"
+        }
+      }
+    },
+    "Malsvari": {
+      "type": "object",
+      "properties": {
+        "kennitala": {
+          "type": "string"
+        },
+        "nafn": {
+          "type": "string"
+        },
+        "heimilisfang": {
           "type": "string"
         },
         "simi": {

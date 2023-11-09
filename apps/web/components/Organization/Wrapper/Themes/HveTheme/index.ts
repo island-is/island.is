@@ -1,4 +1,6 @@
 import dynamic from 'next/dynamic'
 
-export const HveHeader = dynamic(() => import('./HveHeader'), { ssr: false })
-export const HveFooter = dynamic(() => import('./HveFooter'), { ssr: false })
+import Header from './HveHeader'
+
+export const HveHeader = Header
+export const HveFooter = dynamic(() => import('./HveFooter'), { ssr: true })

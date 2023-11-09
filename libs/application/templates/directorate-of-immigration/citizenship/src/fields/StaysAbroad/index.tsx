@@ -13,6 +13,11 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
 import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
+import { ResidenceAbroadViewModel } from '@island.is/clients/directorate-of-immigration'
+
+interface ExtendedCountryProps extends CountryOfVisit {
+  readOnly?: boolean
+}
 
 export const StaysAbroad: FC<FieldBaseProps> = (props) => {
   const { application, errors } = props
@@ -20,25 +25,59 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
 
   const { formatMessage } = useLocale()
 
+  const preRegisteredCountries = getValueViaPath(
+    application.externalData,
+    'currentStayAbroadList.data',
+    [],
+  ) as ResidenceAbroadViewModel[]
+
   const [hasStayedAbroad, setHasStayedAbroad] = useState<string>(
     getValueViaPath(
       application.answers,
       'staysAbroad.hasStayedAbroad',
-      '',
+      preRegisteredCountries.length > 0 ? YES : '',
     ) as string,
   )
 
-  const [selectedCountries, setSelectedCountries] = useState<CountryOfVisit[]>(
+  const [selectedCountries, setSelectedCountries] = useState<
+    ExtendedCountryProps[]
+  >(
     getValueViaPath(
       application.answers,
       'staysAbroad.selectedAbroadCountries',
       [],
-    ) as CountryOfVisit[],
+    ) as ExtendedCountryProps[],
   )
 
-  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState(
-    selectedCountries.filter((x) => x.wasRemoved !== 'true'),
-  )
+  const [filteredSelectedCountries, setFilteredSelectedCountries] = useState<
+    Array<ExtendedCountryProps>
+  >([])
+
+  useEffect(() => {
+    const notDuplicateAnswers = selectedCountries.filter(
+      (x) =>
+        preRegisteredCountries.findIndex(
+          (y) => y.countryId === parseInt(x.countryId),
+        ) === -1,
+    )
+
+    const combinedLists = [
+      ...preRegisteredCountries
+        .filter((x) => !!x.countryId)
+        .map((i) => {
+          return {
+            countryId: i.countryId?.toString(),
+            dateTo: i.dateTo,
+            dateFrom: i.dateFrom,
+            purpose: i.purposeOfStay,
+            wasRemoved: 'false',
+            readOnly: true,
+          } as ExtendedCountryProps
+        }),
+      ...notDuplicateAnswers,
+    ]
+    setSelectedCountries(combinedLists)
+  }, [])
 
   useEffect(() => {
     setFilteredSelectedCountries(
@@ -132,6 +171,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
         onSelect={(value) => {
           handleStayAbroadChange(value)
         }}
+        disabled={preRegisteredCountries.length > 0}
         error={errors && getErrorViaPath(errors, 'staysAbroad.hasStayedAbroad')}
         defaultValue={hasStayedAbroad}
         options={[
@@ -161,6 +201,7 @@ export const StaysAbroad: FC<FieldBaseProps> = (props) => {
               itemNumber={position}
               addDataToCountryList={addDataToCountryList}
               showItemTitle={showItemTitle}
+              readOnly={field.readOnly}
               {...props}
             />
           )

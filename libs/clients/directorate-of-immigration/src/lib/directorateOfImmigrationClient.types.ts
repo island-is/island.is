@@ -21,8 +21,7 @@ export interface CitizenshipApplication {
   dateOfMaritalStatus?: Date | null
   spouse?: {
     nationalId: string
-    givenName?: string | null
-    familyName?: string | null
+    name: string
     birthCountry?: string | null
     citizenshipCode?: string | null
     address?: string | null

@@ -48,7 +48,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
         staging: 'COURT,POLICE_CASE',
         prod: '',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
         staging: 'false',
@@ -83,9 +82,6 @@ export const serviceSetup = (): ServiceBuilder<'judicial-system-backend'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

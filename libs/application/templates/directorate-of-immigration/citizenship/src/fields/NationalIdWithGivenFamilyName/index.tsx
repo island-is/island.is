@@ -47,7 +47,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
   const givenNameField = `${usedId}.givenName`
   const familyNameField = `${usedId}.familyName`
   const currentNameField = `${usedId}.currentName`
-  const nationaIdField = `${usedId}.nationalId`
+  const nationalIdField = `${usedId}.nationalId`
   const wasRemovedField = `${usedId}.wasRemoved`
 
   const [getIdentity, { loading: queryLoading }] = useLazyQuery<
@@ -70,19 +70,14 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
 
   useEffect(() => {
     setValue(wasRemovedField, repeaterField.wasRemoved)
-    if (!repeaterField.nationalId) {
-      setNationalIdInput(
-        repeaterField.nationalId ? repeaterField.nationalId : '',
-      )
-      setValue(nationaIdField, repeaterField.nationalId)
+  }, [repeaterField.wasRemoved, setValue])
+
+  useEffect(() => {
+    if (repeaterField.nationalId) {
+      setNationalIdInput(repeaterField.nationalId)
+      setValue(nationalIdField, repeaterField.nationalId)
     }
-  }, [
-    nationaIdField,
-    repeaterField.nationalId,
-    repeaterField.wasRemoved,
-    setValue,
-    wasRemovedField,
-  ])
+  }, [repeaterField.nationalId])
 
   useEffect(() => {
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
@@ -107,8 +102,9 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
       '',
     ) as string
 
-    if (!!givenName && !!familyName)
+    if (!!givenName && !!familyName) {
       setCurrentName(`${givenName} ${familyName}`)
+    }
 
     if (nationalIdInput === '' && !isRequired) {
       setValue(wasRemovedField, 'true')
@@ -117,30 +113,20 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
     } else {
       setValue(wasRemovedField, 'false')
     }
-  }, [
-    nationalIdInput,
-    getIdentity,
-    application.answers,
-    givenNameField,
-    familyNameField,
-    isRequired,
-    setValue,
-    wasRemovedField,
-    currentNameField,
-  ])
+  }, [nationalIdInput])
 
   useEffect(() => {
     if (currentName !== '') {
       addParentToApplication(itemNumber)
     }
-  }, [addParentToApplication, currentName, itemNumber])
+  }, [currentName, itemNumber])
 
   return (
     <Box>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
-            id={nationaIdField}
+            id={nationalIdField}
             label={formatMessage(personal.labels.userInformation.nationalId)}
             format="######-####"
             required={isRequired}
@@ -150,7 +136,7 @@ export const NationalIdWithGivenFamilyName: FC<Props & FieldBaseProps> = ({
             })}
             readOnly={readOnly}
             loading={queryLoading}
-            error={errors && getErrorViaPath(errors, nationaIdField)}
+            error={errors && getErrorViaPath(errors, nationalIdField)}
             disabled={disabled}
           />
         </GridColumn>

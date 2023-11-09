@@ -31,18 +31,19 @@
         "cwd": "libs/clients/national-registry/v3"
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/sessions/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/sessions/codegen.yml"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/national-registry/v3/gen/fetch -i libs/clients/national-registry/v3/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

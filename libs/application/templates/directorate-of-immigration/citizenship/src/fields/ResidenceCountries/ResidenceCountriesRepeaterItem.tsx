@@ -22,6 +22,7 @@ interface Props {
   handleRemove: (index: number) => void
   itemNumber: number
   addCountryToList: (country: string, index: number) => void
+  readOnly?: boolean
 }
 
 export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
@@ -31,6 +32,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
   repeaterField,
   itemNumber,
   addCountryToList,
+  readOnly,
   ...props
 }) => {
   const { setValue } = useFormContext()
@@ -55,13 +57,17 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
     setValue(wasRemovedField, repeaterField.wasRemoved)
   }, [repeaterField.wasRemoved, setValue, wasRemovedField])
 
+  useEffect(() => {
+    setValue(countryField, repeaterField.countryId)
+  }, [repeaterField.countryId, setValue, countryField])
+
   return (
     <Box
       position="relative"
       marginBottom={1}
       hidden={repeaterField.wasRemoved === 'true'}
     >
-      {itemNumber > 0 && (
+      {itemNumber > 0 && !readOnly && (
         <Box display="flex" flexDirection="row" justifyContent="flexEnd">
           <Button
             variant="text"
@@ -85,6 +91,7 @@ export const ResidenceCountriesRepeaterItem: FC<Props & FieldBaseProps> = ({
           options: countryOptions,
           component: FieldComponents.SELECT,
           children: undefined,
+          disabled: readOnly,
           type: FieldTypes.SELECT,
           required: repeaterField.wasRemoved === 'true' ? false : true,
           onSelect: (value) => addCountryToList(value.value as string, index),

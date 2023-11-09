@@ -1,0 +1,15 @@
+schema:
+  - apps/api/src/api.graphql
+generates:
+  ./libs/api/schema/src/lib/schema.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+      - fragment-matcher
+    config:
+      contextType: ./context#Context
+      namingConvention:
+        enumValues: keep
+hooks:
+  afterAllFileWrite:
+    - prettier --write

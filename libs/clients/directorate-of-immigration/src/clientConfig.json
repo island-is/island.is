@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/Applicant/Get": {
+    "/api/Applicant/Get": {
       "get": {
         "tags": ["Applicant"],
         "responses": {
@@ -32,7 +32,34 @@
         }
       }
     },
-    "/Applicant": {
+    "/api/Applicant/GetTokenSSNR": {
+      "get": {
+        "tags": ["Applicant"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Applicant": {
       "post": {
         "tags": ["Applicant"],
         "requestBody": {
@@ -122,7 +149,7 @@
         }
       }
     },
-    "/Applicant/NewChild": {
+    "/api/Applicant/NewChild": {
       "post": {
         "tags": ["Applicant"],
         "requestBody": {
@@ -270,6 +297,98 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/ApplicationCitizienshipNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/CitizenshipComplete": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipCompleteNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipCompleteNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipCompleteNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/CitizenshipChildComplete": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipChildCompleteNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipChildCompleteNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationCitizenshipChildCompleteNewModel"
               }
             }
           }
@@ -468,6 +587,7 @@
     "/api/ApplicationAttachment/{applicationId}": {
       "post": {
         "tags": ["ApplicationAttachment"],
+        "summary": "Allowable mime types: image/jpeg, application/pdf",
         "parameters": [
           {
             "name": "applicationId",
@@ -515,6 +635,104 @@
               "text/json": {
                 "schema": {
                   "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ApplicationAttachment/NewItems/{applicationId}": {
+      "post": {
+        "tags": ["ApplicationAttachment"],
+        "summary": "Allowable mime types: image/jpeg, application/pdf",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationAttachmentArrayNewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationAttachmentArrayNewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationAttachmentArrayNewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1154,52 +1372,6 @@
         }
       }
     },
-    "/api/StaticData": {
-      "post": {
-        "tags": ["StaticData"],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StaticDataNewModel"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/StaticDataNewModel"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/StaticDataNewModel"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              },
-              "text/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/StaticData/GetAll": {
       "get": {
         "tags": ["StaticData"],
@@ -1461,6 +1633,43 @@
   },
   "components": {
     "schemas": {
+      "ApplicantCompleteNewModel": {
+        "type": "object",
+        "properties": {
+          "icelandicIDNO": {
+            "type": "string",
+            "nullable": true
+          },
+          "givenName": {
+            "type": "string",
+            "nullable": true
+          },
+          "surName": {
+            "type": "string",
+            "nullable": true
+          },
+          "emailAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "telephone": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressCity": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryOfResidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountryOfResidenceNewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicantEditModel": {
         "type": "object",
         "properties": {
@@ -1620,6 +1829,19 @@
         },
         "additionalProperties": false
       },
+      "ApplicationAttachmentArrayNewModel": {
+        "type": "object",
+        "properties": {
+          "applicationAttachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationAttachmentNewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicationAttachmentNewModel": {
         "type": "object",
         "properties": {
@@ -1637,6 +1859,51 @@
           "countryCode": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationCitizenshipChildCompleteNewModel": {
+        "type": "object",
+        "properties": {
+          "applicant": {
+            "$ref": "#/components/schemas/ApplicantNewChildModel"
+          },
+          "travelDocuments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TravelDocumentNewModel"
+            },
+            "nullable": true
+          },
+          "staticData": {
+            "$ref": "#/components/schemas/StaticDataChildNewModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationCitizenshipCompleteNewModel": {
+        "type": "object",
+        "properties": {
+          "applicant": {
+            "$ref": "#/components/schemas/ApplicantCompleteNewModel"
+          },
+          "residenceAbroads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResidenceAbroadNewModel"
+            },
+            "nullable": true
+          },
+          "travelDocuments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TravelDocumentNewModel"
+            },
+            "nullable": true
+          },
+          "staticData": {
+            "$ref": "#/components/schemas/StaticDataApplicantNewModel"
           }
         },
         "additionalProperties": false
@@ -1966,6 +2233,33 @@
         },
         "additionalProperties": false
       },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ResidenceAbroadNewModel": {
         "type": "object",
         "properties": {
@@ -2026,18 +2320,9 @@
         },
         "additionalProperties": false
       },
-      "StaticDataNewModel": {
-        "required": ["name", "ssn"],
+      "StaticDataApplicantNewModel": {
         "type": "object",
         "properties": {
-          "ssn": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "name": {
-            "minLength": 1,
-            "type": "string"
-          },
           "address": {
             "type": "string",
             "nullable": true
@@ -2055,10 +2340,6 @@
             "nullable": true
           },
           "countryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
             "type": "string",
             "nullable": true
           },
@@ -2102,19 +2383,15 @@
             "type": "string",
             "nullable": true
           },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
           "parent2SSN": {
             "type": "string",
             "nullable": true
           },
           "parent2Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2BirthDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
             "type": "string",
             "nullable": true
           },
@@ -2129,18 +2406,28 @@
         },
         "additionalProperties": false
       },
+      "StaticDataChildNewModel": {
+        "type": "object",
+        "properties": {
+          "parent2SSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "parent2BirthDate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "StaticDataViewModel": {
         "required": ["name", "ssn"],
         "type": "object",
         "properties": {
-          "ssn": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "name": {
-            "minLength": 1,
-            "type": "string"
-          },
           "address": {
             "type": "string",
             "nullable": true
@@ -2158,10 +2445,6 @@
             "nullable": true
           },
           "countryOfBirth": {
-            "type": "string",
-            "nullable": true
-          },
-          "phone": {
             "type": "string",
             "nullable": true
           },
@@ -2205,19 +2488,15 @@
             "type": "string",
             "nullable": true
           },
+          "postalCode": {
+            "type": "string",
+            "nullable": true
+          },
           "parent2SSN": {
             "type": "string",
             "nullable": true
           },
           "parent2Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "parent2BirthDate": {
-            "type": "string",
-            "nullable": true
-          },
-          "postalCode": {
             "type": "string",
             "nullable": true
           },
@@ -2229,7 +2508,23 @@
             "type": "boolean",
             "nullable": true
           },
+          "parent2BirthDate": {
+            "type": "string",
+            "nullable": true
+          },
           "staticDataId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ssn": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "phone": {
             "type": "string",
             "nullable": true
           }

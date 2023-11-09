@@ -74,14 +74,14 @@ export type PersonalInfo = {
   nationalId: string
   email: string
   phoneNumber: string
-  hasDisabilityDiscount: string[]
-  hasDisabilityDiscountChecked: boolean
+  disabilityCheckbox: string[]
+  hasDisabilityLicense: boolean
 }
 
 export type ChildsPersonalInfo = {
   name: string
   nationalId: string
-  hasDisabilityDiscount: Array<string>
+  disabilityCheckbox: Array<string>
   guardian1: Guardian
   guardian2: Guardian
 }

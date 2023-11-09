@@ -182,22 +182,26 @@ const WorkMachinesOverview = () => {
                       />
                     }
                     additionalFilters={
-                      <DropdownMenu
-                        title={formatMessage(m.get)}
-                        icon="download"
-                        items={[
-                          {
-                            onClick: () =>
-                              getFileExport(WorkMachinesFileType.CSV),
-                            title: formatMessage(m.getAsCsv),
-                          },
-                          {
-                            onClick: () =>
-                              getFileExport(WorkMachinesFileType.EXCEL),
-                            title: formatMessage(m.getAsExcel),
-                          },
-                        ]}
-                      />
+                      !loading &&
+                      !error &&
+                      !!data?.workMachinesPaginatedCollection?.data.length && (
+                        <DropdownMenu
+                          title={formatMessage(m.get)}
+                          icon="download"
+                          items={[
+                            {
+                              onClick: () =>
+                                getFileExport(WorkMachinesFileType.CSV),
+                              title: formatMessage(m.getAsCsv),
+                            },
+                            {
+                              onClick: () =>
+                                getFileExport(WorkMachinesFileType.EXCEL),
+                              title: formatMessage(m.getAsExcel),
+                            },
+                          ]}
+                        />
+                      )
                     }
                   >
                     {

@@ -22,44 +22,59 @@ export const ResidenceConditionInfoApi = defineTemplateApi({
   externalDataId: 'residenceConditionInfo',
 })
 
-export const CountriesApi = defineTemplateApi({
-  action: ApiActions.getCountries,
-  externalDataId: 'countries',
-})
-
-export const TravelDocumentTypesApi = defineTemplateApi({
-  action: ApiActions.getTravelDocumentTypes,
-  externalDataId: 'travelDocumentTypes',
-})
-
 export const CurrentCountryOfResidenceListApi = defineTemplateApi({
   action: ApiActions.getCurrentCountryOfResidenceList,
   externalDataId: 'currentCountryOfResidenceList',
 })
 
+export const ResidenceInIcelandLastChangeDateApi = defineTemplateApi({
+  action: ApiActions.getResidenceInIcelandLastChangeDate,
+  externalDataId: 'residenceInIcelandLastChangeDate',
+})
+
+export const CountriesApi = defineTemplateApi({
+  action: 'getCountries',
+  externalDataId: 'countries',
+  namespace: 'DirectorateOfImmigrationShared',
+})
+
+export const TravelDocumentTypesApi = defineTemplateApi({
+  action: 'getTravelDocumentTypes',
+  externalDataId: 'travelDocumentTypes',
+  namespace: 'DirectorateOfImmigrationShared',
+})
+
 export const CurrentStayAbroadListApi = defineTemplateApi({
-  action: ApiActions.getCurrentStayAbroadList,
+  action: 'getCurrentStayAbroadList',
   externalDataId: 'currentStayAbroadList',
+  namespace: 'DirectorateOfImmigrationShared',
 })
 
 export const CurrentPassportItemApi = defineTemplateApi({
-  action: ApiActions.getCurrentPassportItem,
+  action: 'getCurrentPassportItem',
   externalDataId: 'currentPassportItem',
+  namespace: 'DirectorateOfImmigrationShared',
 })
 
 export const NationalRegistryIndividualApi = defineTemplateApi({
-  action: ApiActions.getNationalRegistryIndividual,
+  action: 'nationalRegistry',
   externalDataId: 'individual',
+  namespace: 'NationalRegistry',
+  params: {
+    validateAlreadyHasIcelandicCitizenship: true,
+  },
+})
+
+export const NationalRegistryBirthplaceApi = defineTemplateApi({
+  action: 'getBirthplace',
+  externalDataId: 'birthplace',
+  namespace: 'NationalRegistry',
 })
 
 export const NationalRegistrySpouseDetailsApi = defineTemplateApi({
-  action: ApiActions.getNationalRegistrySpouseDetails,
+  action: 'getSpouse',
   externalDataId: 'spouseDetails',
-})
-
-export const BirthplaceApi = defineTemplateApi({
-  action: ApiActions.getBirthplace,
-  externalDataId: 'birthplace',
+  namespace: 'NationalRegistry',
 })
 
 export const NationalRegistryParentsApi = defineTemplateApi({

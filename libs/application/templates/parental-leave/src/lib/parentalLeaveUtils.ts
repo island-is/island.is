@@ -36,6 +36,7 @@ import {
   PERMANENT_FOSTER_CARE,
   ADOPTION,
   OTHER_NO_CHILDREN_FOUND,
+  States,
 } from '../constants'
 import { SchemaFormValues } from '../lib/dataSchema'
 
@@ -94,6 +95,10 @@ export function getBeginningOfThisMonth(): Date {
   return addDays(today, today.getDate() * -1 + 1)
 }
 
+export function getBeginningOfMonth3MonthsAgo(): Date {
+  return addMonths(getBeginningOfThisMonth(), -3)
+}
+
 export function getLastDayOfLastMonth(): Date {
   const today = new Date()
   return addDays(today, today.getDate() * -1)
@@ -104,16 +109,22 @@ export function formatPeriods(
   application: Application,
   formatMessage: FormatMessage,
 ): TimelinePeriod[] {
-  const { periods, firstPeriodStart } = getApplicationAnswers(
-    application.answers,
-  )
+  const { periods, firstPeriodStart, addPeriods, tempPeriods } =
+    getApplicationAnswers(application.answers)
   const { applicationFundId } = getApplicationExternalData(
     application.externalData,
   )
 
   const timelinePeriods: TimelinePeriod[] = []
 
-  periods?.forEach((period, index) => {
+  const periodsArray =
+    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+      ? addPeriods === YES
+        ? periods
+        : tempPeriods
+      : periods
+
+  periodsArray?.forEach((period, index) => {
     const isActualDob =
       index === 0 && firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
 
@@ -930,9 +941,22 @@ export function getApplicationAnswers(answers: Application['answers']) {
     | 'period'
     | 'document'
     | 'documentPeriod'
+    | 'empper'
+    | 'employer'
     | undefined
 
   const previousState = getValueViaPath(answers, 'previousState') as string
+
+  const addEmployer = getValueViaPath(answers, 'addEmployer') as YesOrNo
+
+  const addPeriods = getValueViaPath(answers, 'addPeriods') as YesOrNo
+
+  const tempPeriods = getValueViaPath(answers, 'tempPeriods', []) as Period[]
+  const tempEmployers = getValueViaPath(
+    answers,
+    'tempEmployers',
+    [],
+  ) as EmployerRow[]
 
   return {
     applicationType,
@@ -995,6 +1019,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employmentTerminationCertificateFiles,
     hasAppliedForReidenceGrant,
     previousState,
+    addEmployer,
+    addPeriods,
+    tempPeriods,
+    tempEmployers,
   }
 }
 
@@ -1215,6 +1243,9 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (periods.length === 0) {
     return null
@@ -1230,6 +1261,10 @@ export const getLastValidPeriodEndDate = (
 
   const today = new Date()
   const beginningOfMonth = getBeginningOfThisMonth()
+
+  if (!applicationFundId || applicationFundId === '') {
+    if (lastEndDate > getBeginningOfMonth3MonthsAgo()) return lastEndDate
+  }
 
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
@@ -1261,6 +1296,9 @@ export const getMinimumStartDate = (application: Application): Date => {
   const expectedDateOfBirthOrAdoptionDate =
     getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const today = new Date()
   if (lastPeriodEndDate) {
@@ -1279,12 +1317,20 @@ export const getMinimumStartDate = (application: Application): Date => {
     }
 
     const beginningOfMonth = getBeginningOfThisMonth()
+    const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
       expectedDateOfBirthOrAdoptionDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
-    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
+
+    if (leastStartDate >= beginningOfMonth3MonthsAgo) {
       return leastStartDate
+    } else {
+      if (!applicationFundId || applicationFundId === '')
+        return beginningOfMonth3MonthsAgo
+      if (leastStartDate >= beginningOfMonth) {
+        return leastStartDate
+      }
     }
 
     return beginningOfMonth
@@ -1404,6 +1450,22 @@ export const getPeriodImageTitle = (application: Application) => {
     return parentalLeaveFormMessages.shared.periodsImageGrantTitle
   }
   return parentalLeaveFormMessages.shared.periodsImageTitle
+}
+
+export const getEditOrAddInfoSectionTitle = (application: Application) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionTitle
+  }
+  return parentalLeaveFormMessages.shared.editOrAddInfoSectionTitle
+}
+
+export const getEditOrAddInfoSectionDescription = (
+  application: Application,
+) => {
+  if (isParentalGrant(application)) {
+    return parentalLeaveFormMessages.shared.editOrAddInfoGrantSectionDescription
+  }
+  return parentalLeaveFormMessages.shared.editOrAddInfoSectionDescription
 }
 
 export const getFirstPeriodTitle = (application: Application) => {

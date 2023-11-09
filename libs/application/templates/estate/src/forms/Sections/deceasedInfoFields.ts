@@ -5,8 +5,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
-import { isEstateInfo } from '../../lib/utils/isEstateInfo'
 import { format as formatKennitala } from 'kennitala'
+import { isEstateInfo } from '../../lib/utils'
 
 export const deceasedInfoFields = [
   buildDividerField({}),

@@ -45,7 +45,7 @@ export const AssetsRepeater: FC<
   const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: {

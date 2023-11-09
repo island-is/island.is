@@ -1,12 +1,17 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import DescriptionText from '../../components/DescriptionText'
 import { review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
+import { useLocale } from '@island.is/localization'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -19,6 +24,7 @@ export const DocumentReview: FC<Props> = ({
   route,
 }) => {
   const answers = application.answers as Citizenship
+  const { formatMessage } = useLocale()
 
   const selectedChildren = getSelectedCustodyChildren(
     application.externalData,
@@ -30,29 +36,41 @@ export const DocumentReview: FC<Props> = ({
       <Box paddingBottom={4}>
         <GridRow>
           <GridColumn span="1/2">
-            <DescriptionText
-              text={review.labels.documents}
-              format={{ name: answers?.userInformation?.name }}
-              textProps={{
-                as: 'h4',
-                fontWeight: 'semiBold',
-                marginBottom: 0,
-              }}
-            />
+            {DescriptionFormField({
+              application: application,
+              showFieldName: false,
+              field: {
+                id: 'title',
+                title: '',
+                description: formatMessage(review.labels.documents, {
+                  name: answers?.userInformation?.name,
+                }),
+                titleVariant: 'h4',
+                type: FieldTypes.DESCRIPTION,
+                component: FieldComponents.DESCRIPTION,
+                children: undefined,
+              },
+            })}
           </GridColumn>
           {selectedChildren &&
             selectedChildren.map((child) => {
               return (
                 <GridColumn span="1/2">
-                  <DescriptionText
-                    text={review.labels.documents}
-                    format={{ name: `${child.givenName} ${child.familyName}` }}
-                    textProps={{
-                      as: 'h4',
-                      fontWeight: 'semiBold',
-                      marginBottom: 0,
-                    }}
-                  />
+                  {DescriptionFormField({
+                    application: application,
+                    showFieldName: false,
+                    field: {
+                      id: 'title',
+                      title: '',
+                      description: formatMessage(review.labels.documents, {
+                        name: `${child.givenName} ${child.familyName}`,
+                      }),
+                      titleVariant: 'h4',
+                      type: FieldTypes.DESCRIPTION,
+                      component: FieldComponents.DESCRIPTION,
+                      children: undefined,
+                    },
+                  })}
                 </GridColumn>
               )
             })}

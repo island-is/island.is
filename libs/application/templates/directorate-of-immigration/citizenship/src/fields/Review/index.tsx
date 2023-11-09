@@ -12,6 +12,7 @@ import { Citizenship } from '../../lib/dataSchema'
 import { getSelectedCustodyChildren } from '../../utils/childrenInfo'
 import { Routes } from '../../lib/constants'
 import { PassportReview } from './PassportReview'
+import { ChildrenPassportReview } from './ChildrenPassportReview'
 
 export const Review: FC<FieldBaseProps> = ({
   application,
@@ -32,14 +33,14 @@ export const Review: FC<FieldBaseProps> = ({
 
   return (
     <Box>
-      <Divider></Divider>
+      <Divider />
       <ApplicantReview
         field={field}
         application={application}
         route={Routes.USERINFORMATION}
         goToScreen={goToScreen}
       />
-      <Divider></Divider>
+      <Divider />
       {selectedChildren && selectedChildren.length > 0 && (
         <ChildrenReview
           field={field}
@@ -49,8 +50,8 @@ export const Review: FC<FieldBaseProps> = ({
           goToScreen={goToScreen}
         />
       )}
-      <Divider></Divider>
-      <Divider></Divider>
+      <Divider />
+      <Divider />
       {showParents && (
         <ParentsReview
           field={field}
@@ -59,7 +60,7 @@ export const Review: FC<FieldBaseProps> = ({
           goToScreen={goToScreen}
         />
       )}
-      <Divider></Divider>
+      <Divider />
       {answers?.maritalStatus && (
         <MaritalStatusReview
           field={field}
@@ -68,28 +69,42 @@ export const Review: FC<FieldBaseProps> = ({
           goToScreen={goToScreen}
         />
       )}
-      <Divider></Divider>
+      <Divider />
       <ResidencyReview
         field={field}
         application={application}
         route={Routes.COUNTRIESOFRESIDENCE}
         goToScreen={goToScreen}
       />
-      <Divider></Divider>
+      <Divider />
       <StaysAbroadReview
         field={field}
         application={application}
         route={Routes.STAYSABROAD}
         goToScreen={goToScreen}
       />
-      <Divider></Divider>
+      <Divider />
       <PassportReview
         field={field}
         application={application}
         route={Routes.PASSPORT}
         goToScreen={goToScreen}
       ></PassportReview>
-      <Divider></Divider>
+      <Divider />
+      {selectedChildren &&
+        selectedChildren.length > 0 &&
+        selectedChildren.map((child) => {
+          return (
+            <ChildrenPassportReview
+              child={child}
+              field={field}
+              application={application}
+              route={Routes.PICKCHILDREN}
+              goToScreen={goToScreen}
+            />
+          )
+        })}
+      <Divider />
       <DocumentReview
         field={field}
         application={application}

@@ -18,6 +18,7 @@ import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
 import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
+import { LinkCard, LinkCardProps } from './LinkCard/LinkCard'
 import {
   Text,
   TextProps,
@@ -63,6 +64,7 @@ type ImageSlice = { __typename: 'Image'; id: string } & Omit<
   'thumbnail'
 >
 type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type LinkCardSlice = { __typename: 'LinkCard'; id: string } & LinkCardProps
 type ProcessEntrySlice = {
   __typename: 'ProcessEntry'
   id: string
@@ -97,6 +99,7 @@ export type Slice =
   | StatisticsSlice
   | ImageSlice
   | AssetSlice
+  | LinkCardSlice
   | ProcessEntrySlice
   | EmbeddedVideoSlice
   | TeamListSlice
@@ -111,7 +114,7 @@ export type Slice =
       __typename:
         | 'TimelineSlice'
         | 'HeadingSlice'
-        | 'LinkCardSlice'
+        | 'LinkCardSection'
         | 'EmailSignup'
         | 'StorySlice'
         | 'LatestNewsSlice'
@@ -197,6 +200,9 @@ export const defaultRenderComponent = (
 
     case 'Asset':
       return <AssetLink {...slice} />
+
+    case 'LinkCard':
+      return <LinkCard {...slice} />
 
     case 'ProcessEntry':
       return (

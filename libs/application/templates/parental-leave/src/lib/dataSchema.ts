@@ -207,6 +207,8 @@ export const dataSchema = z.object({
       .refine((v) => !isNaN(Number(v)))
       .optional(),
   }),
+  addEmployer: z.enum([YES, NO]),
+  addPeriods: z.enum([YES, NO]),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

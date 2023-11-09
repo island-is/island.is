@@ -464,7 +464,17 @@ describe('Parental Leave Application Template', () => {
   })
 
   describe('edit flow', () => {
-    it('should create a temp copy of periods when going into the Edit flow', () => {
+    it('should create a temp copy of employers and periods when going into the Edit flow', () => {
+      const employers = [
+        {
+          email: 'testEmail1@test.is',
+          ratio: '100',
+        },
+        {
+          email: 'testEmail2@test.is',
+          ratio: '100',
+        },
+      ]
       const periods = [
         {
           ratio: '100',
@@ -480,6 +490,7 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
+            employers,
             periods,
           },
           state: ApplicationStates.APPROVED,
@@ -490,11 +501,22 @@ describe('Parental Leave Application Template', () => {
         type: DefaultEvents.EDIT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_PERIODS)
+      expect(newState).toBe(ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS)
+      expect(newApplication.answers.tempEmployers).toEqual(employers)
       expect(newApplication.answers.tempPeriods).toEqual(periods)
     })
 
-    it('should remove the temp copy of periods when canceling out of the Edit flow and go to APPROVED state', () => {
+    it('should remove the temp copy of employers and periods when canceling out of the Edit flow and go to APPROVED state', () => {
+      const employers = [
+        {
+          email: 'testEmail1@test.is',
+          ratio: '100',
+        },
+        {
+          email: 'testEmail2@test.is',
+          ratio: '100',
+        },
+      ]
       const periods = [
         {
           ratio: '100',
@@ -510,11 +532,13 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
+            employers,
+            tempEmployers: employers,
             periods,
             tempPeriods: periods,
             previousState: States.APPROVED,
           },
-          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -523,10 +547,21 @@ describe('Parental Leave Application Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe(ApplicationStates.APPROVED)
+      expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
-    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVE_EDITS state', () => {
+    it('should remove the temp copy of employers and periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVE_EDITS state', () => {
+      const employers = [
+        {
+          email: 'testEmail1@test.is',
+          ratio: '100',
+        },
+        {
+          email: 'testEmail2@test.is',
+          ratio: '100',
+        },
+      ]
       const periods = [
         {
           ratio: '100',
@@ -542,11 +577,13 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
+            employers,
+            tempEmployers: employers,
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVE_EDITS,
           },
-          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -557,10 +594,21 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
       )
+      expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
-    it('should remove the temp copy of periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVAL state', () => {
+    it('should remove the temp copy of employers and periods when canceling out of the Edit flow and go to VINNUMALASTOFNUN_APPROVAL state', () => {
+      const employers = [
+        {
+          email: 'testEmail1@test.is',
+          ratio: '100',
+        },
+        {
+          email: 'testEmail2@test.is',
+          ratio: '100',
+        },
+      ]
       const periods = [
         {
           ratio: '100',
@@ -576,11 +624,13 @@ describe('Parental Leave Application Template', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
+            employers,
+            tempEmployers: employers,
             periods,
             tempPeriods: periods,
             previousState: States.VINNUMALASTOFNUN_APPROVAL,
           },
-          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -591,6 +641,7 @@ describe('Parental Leave Application Template', () => {
       expect(newState).toBe(
         ApplicationStates.VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE,
       )
+      expect(newApplication.answers.tempEmployers).toEqual(undefined)
       expect(newApplication.answers.tempPeriods).toEqual(undefined)
     })
 
@@ -604,7 +655,7 @@ describe('Parental Leave Application Template', () => {
               option: PARENTAL_LEAVE,
             },
           },
-          state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+          state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
         }),
         ParentalLeaveTemplate,
       )
@@ -786,7 +837,7 @@ test.each([
     data: {
       application: { answers: { previousState: ApplicationStates.APPROVED } },
     } as unknown as ApplicationContext,
-    state: ApplicationStates.EDIT_OR_ADD_PERIODS,
+    state: ApplicationStates.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
     expected: false,
   },
   {

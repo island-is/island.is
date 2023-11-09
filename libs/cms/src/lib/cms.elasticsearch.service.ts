@@ -28,6 +28,8 @@ import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
 import { Vacancy } from './models/vacancy.model'
 import { ResponseError } from '@elastic/elasticsearch/lib/errors'
+import { GetEventsInput } from './dto/getEvents.input'
+import { Event as EventModel } from './models/event.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -93,6 +95,52 @@ export class CmsElasticsearchService {
     return articlesResponse.hits.hits.map<Article>((response) =>
       JSON.parse(response._source.response ?? '[]'),
     )
+  }
+
+  async getEvents(
+    index: string,
+    { size, page, order, organization }: GetEventsInput,
+  ) {
+    const tagList: {
+      key: string
+      type: string
+    }[] = []
+
+    let tagQuery
+
+    if (organization) {
+      tagList.push({ key: organization, type: 'organization' })
+    }
+
+    if (tagList.length > 0) {
+      tagQuery = { tags: tagList }
+    }
+
+    const query = {
+      types: ['webEvent'],
+      sort: [
+        { dateCreated: { order } },
+        { releaseDate: { order } },
+      ] as sortRule[],
+      ...tagQuery,
+      page,
+      size,
+      releaseDate: {
+        from: 'now',
+      },
+    }
+
+    const eventsResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+
+    return {
+      total: eventsResponse.hits.total.value,
+      items: eventsResponse.hits.hits.map<EventModel>((response) =>
+        JSON.parse(response._source.response ?? '{}'),
+      ),
+    }
   }
 
   async getNews(
@@ -206,13 +254,13 @@ export class CmsElasticsearchService {
     index: string,
     { type, slug }: { type: string; slug: string },
   ): Promise<RequestedType | null> {
-    // return a single news item by slug
+    // return a single item by slug
     const query = { types: [type], tags: [{ type: 'slug', key: slug }] }
-    const newsResponse = await this.elasticService.getSingleDocumentByMetaData(
+    const itemsResponse = await this.elasticService.getSingleDocumentByMetaData(
       index,
       query,
     )
-    const response = newsResponse.hits.hits?.[0]?._source?.response
+    const response = itemsResponse.hits.hits?.[0]?._source?.response
     return response ? JSON.parse(response) : null
   }
 

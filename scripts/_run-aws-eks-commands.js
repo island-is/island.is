@@ -81,10 +81,32 @@ async function main() {
           console.log(
             `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
           )
-          execSync(
-            `${args.builder} run --name ${args.service} --rm -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN="${credentials.sessionToken}" -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} -e TARGET_PORT=${args.port} -p ${args['proxy-port']}:8080 ${dockerBuild}`,
-            { stdio: 'inherit' },
-          )
+          const runCmd = [
+            args.builder,
+            `run`,
+            `--name ${args.service}`,
+            `--rm`,
+            `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
+            `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
+            `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
+            `-e CLUSTER="${args.cluster}"`,
+            `-e TARGET_SVC="${args.service}"`,
+            `-e TARGET_NAMESPACE="${args.namespace}"`,
+            `-e TARGET_PORT="${args.port}"`,
+            `-e PROXY_PORT="${args['proxy-port']}"`,
+            `-p ${args['proxy-port']}:${args['proxy-port']}`,
+            dockerBuild,
+          ]
+          // console.debug('Args: ' + runCmd.join(' '))
+          try {
+            execSync(runCmd.join(' '), { stdio: 'inherit' })
+          } catch (err) {
+            console.error("Couldn't run the proxy - \uD83D\uDE31")
+            console.error(
+              `If the proxy is already running, try stopping it first with`,
+            )
+            console.error(`\n    ${args.builder} stop ${args.service}\n`)
+          }
         },
       )
       .command(

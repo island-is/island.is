@@ -30,9 +30,6 @@ export const serviceSetup =
           },
         ],
         postgres: postgresInfo,
-        envs: {
-          NO_UPDATE_NOTIFIER: 'true',
-        },
       })
       .env({
         EMAIL_REGION: 'eu-west-1',
@@ -52,7 +49,6 @@ export const serviceSetup =
           prod: 'https://innskra.island.is',
         },
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement',
-        NO_UPDATE_NOTIFIER: 'true',
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:

@@ -1,0 +1,26 @@
+generates:
+  ./apps/air-discount-scheme/web/graphql/schema.tsx:
+    schema:
+      - ./apps/air-discount-scheme/api/src/api.graphql
+    documents:
+      - ./apps/air-discount-scheme/web/**/*.(ts|tsx)
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      avoidOptionals:
+        object: true
+  ./apps/air-discount-scheme/web/graphql/possibleTypes.json:
+    schema:
+      - ./apps/air-discount-scheme/api/src/api.graphql
+    plugins:
+      - fragment-matcher
+    config:
+      apolloClientVersion: 3
+hooks:
+  afterAllFileWrite:
+    - prettier --write

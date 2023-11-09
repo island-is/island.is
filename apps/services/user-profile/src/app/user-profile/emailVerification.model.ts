@@ -60,4 +60,11 @@ export class EmailVerification extends Model<EmailVerification> {
   })
   @ApiProperty()
   email!: string
+
+  @Column({
+    type: DataType.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  })
+  tries!: number
 }

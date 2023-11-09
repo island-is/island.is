@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -21,8 +21,7 @@ import {
 } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
-import { useNationalRegistryPersonQuery } from './UserInfo.generated'
-import { NationalRegistryName } from '@island.is/api/schema'
+import { useNationalRegistryPersonLazyQuery } from './UserInfo.generated'
 import {
   FeatureFlagClient,
   useFeatureFlagClient,
@@ -37,9 +36,11 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
 
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
+
+  const [getNationalRegistryPerson, { data, loading, error }] =
+    useNationalRegistryPersonLazyQuery()
 
   /* Should use v3? */
   useEffect(() => {
@@ -48,18 +49,14 @@ const SubjectInfo = () => {
         `isserviceportalnationalregistryv3enabled`,
         false,
       )
-      if (ffEnabled) {
-        setUseNatRegV3(ffEnabled as boolean)
-      }
+      getNationalRegistryPerson({
+        variables: {
+          api: ffEnabled ? 'v3' : undefined,
+        },
+      })
     }
     isFlagEnabled()
   }, [])
-
-  const { data, loading, error } = useNationalRegistryPersonQuery({
-    variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
-    },
-  })
 
   const { nationalRegistryPerson } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)

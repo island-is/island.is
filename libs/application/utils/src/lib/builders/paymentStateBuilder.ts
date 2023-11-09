@@ -130,7 +130,6 @@ export function buildPaymentState<
       status: 'inprogress',
       lifecycle: {
         ...pruneAfterDays(1),
-        shouldDeleteChargeIfPaymentFulfilled: true,
         ...options.lifecycle,
       },
       actionCard: {

@@ -2,7 +2,6 @@ import format from 'date-fns/format'
 import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { gql } from '@apollo/client'
 import { Divider, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -14,28 +13,11 @@ import {
   SKATTURINN_ID,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import {
-  CompanyInfoFragment,
-  useCompanyRegistry,
-} from '@island.is/service-portal/graphql'
 import { dateFormat } from '@island.is/shared/constants'
 import { useUserInfo } from '@island.is/auth/react'
 
 import { mCompany } from '../../lib/messages'
-
-const COMPANY_REGISTRY_INFORMATION = gql`
-  query companyRegistryCompanyQuery($input: RskCompanyInfoInput!) {
-    companyRegistryCompany(input: $input) {
-      name
-      nationalId
-      dateOfRegistration
-      companyInfo {
-        ...CompanyInfo
-      }
-    }
-  }
-  ${CompanyInfoFragment}
-`
+import { useCompanyRegistryCompanyQuery } from './Company.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.company:data-not-found',
@@ -47,31 +29,39 @@ const CompanyInfo = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useCompanyRegistry({
-    nationalId: userInfo.profile.nationalId,
-    query: COMPANY_REGISTRY_INFORMATION,
+  const { data, loading, error } = useCompanyRegistryCompanyQuery({
+    variables: {
+      input: { nationalId: userInfo.profile.nationalId },
+    },
   })
 
+  const companyData = data?.companyRegistryCompany
+  const companyInfo = companyData?.companyInfo
+
   const companyAddress =
-    data?.companyInfo?.address?.streetAddress &&
-    data?.companyInfo?.address?.postalCode &&
-    data?.companyInfo?.address?.locality
-      ? `${data.companyInfo.address.streetAddress}, ${data.companyInfo.address.postalCode} ${data.companyInfo.address.locality}`
+    companyInfo?.address?.streetAddress &&
+    companyInfo?.address?.postalCode &&
+    companyInfo?.address?.locality
+      ? `${companyInfo.address.streetAddress}, ${companyInfo.address.postalCode} ${companyInfo.address.locality}`
       : ''
 
   const companyOperation =
-    data?.companyInfo?.formOfOperation?.[0]?.name &&
-    data?.companyInfo?.formOfOperation?.[0]?.type
-      ? `${data?.companyInfo?.formOfOperation?.[0]?.type} - ${data?.companyInfo?.formOfOperation?.[0]?.name}`
+    companyInfo?.formOfOperation?.[0]?.name &&
+    companyInfo?.formOfOperation?.[0]?.type
+      ? `${companyInfo?.formOfOperation?.[0]?.type} - ${companyInfo?.formOfOperation?.[0]?.name}`
       : ''
 
+  const vatDisplay = companyInfo?.vat.filter(
+    (item) => item.dateOfDeregistration === null,
+  )
   const vatClassification =
-    data?.companyInfo?.vat?.[0]?.classification?.[0]?.number &&
-    data?.companyInfo?.vat?.[0]?.classification?.[0]?.name
-      ? `${data?.companyInfo?.vat?.[0]?.classification?.[0]?.number} ${data?.companyInfo?.vat?.[0]?.classification?.[0]?.name}`
+    vatDisplay?.[0]?.classification?.[0]?.number &&
+    vatDisplay?.[0]?.classification?.[0]?.name
+      ? `${vatDisplay?.[0]?.classification?.[0]?.number} ${vatDisplay?.[0]?.classification?.[0]?.name}`
       : ''
 
   const emptyData = data === null
+
   return (
     <>
       <IntroHeader
@@ -87,7 +77,9 @@ const CompanyInfo = () => {
             label={formatMessage(mCompany.name)}
             translate="no"
             content={
-              error ? formatMessage(dataNotFoundMessage) : data?.name || ''
+              error
+                ? formatMessage(dataNotFoundMessage)
+                : companyData?.name || ''
             }
             loading={loading}
           />
@@ -97,8 +89,11 @@ const CompanyInfo = () => {
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
-                : data?.dateOfRegistration
-                ? format(new Date(data.dateOfRegistration), dateFormat.is)
+                : companyData?.dateOfRegistration
+                ? format(
+                    new Date(companyData.dateOfRegistration),
+                    dateFormat.is,
+                  )
                 : ''
             }
             loading={loading}
@@ -110,8 +105,8 @@ const CompanyInfo = () => {
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
-                : data?.nationalId
-                ? formatNationalId(data.nationalId)
+                : companyData?.nationalId
+                ? formatNationalId(companyData.nationalId)
                 : ''
             }
             loading={loading}
@@ -130,7 +125,7 @@ const CompanyInfo = () => {
             content={
               error
                 ? formatMessage(dataNotFoundMessage)
-                : data?.companyInfo?.vat?.[0]?.vatNumber || ''
+                : companyData?.companyInfo?.vat?.[0]?.vatNumber || ''
             }
             loading={loading}
           />

@@ -4,10 +4,11 @@ import { ReviewGroupProps } from './props'
 import {
   formatPeriods,
   getApplicationExternalData,
-  getLastDayOfLastMonth,
+  getBeginningOfMonth3MonthsAgo,
 } from '../../../lib/parentalLeaveUtils'
 import { useLocale } from '@island.is/localization'
 import { errorMessages } from '../../..'
+import addDays from 'date-fns/addDays'
 
 export const Periods = ({
   application,
@@ -28,8 +29,8 @@ export const Periods = ({
       <SummaryTimeline application={application} />
       {(!applicationFundId || applicationFundId === '') &&
         periods.length > 0 &&
-        new Date(periods[0].startDate).getTime() <
-          getLastDayOfLastMonth().getTime() && (
+        new Date(periods[0].startDate) <
+          addDays(getBeginningOfMonth3MonthsAgo(), -1) && (
           <p style={{ color: '#B30038', fontSize: '14px', fontWeight: '500' }}>
             {formatMessage(errorMessages.startDateInThePast)}
           </p>

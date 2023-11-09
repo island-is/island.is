@@ -23,7 +23,6 @@ import {
 import sortTeachers from './sortTeachers'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { CurrentLicenseParameters } from '@island.is/application/types'
-import { EmbaettiDto } from '@island.is/clients/driving-license'
 
 @Injectable()
 export class DrivingLicenseProviderService extends BaseTemplateApiService {
@@ -135,9 +134,19 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       }
     }
 
-    const drivingLicense = await this.drivingLicenseService.getCurrentLicense({
-      token: auth.authorization,
-    })
+    let drivingLicense
+    if (params?.useLegacyVersion) {
+      drivingLicense = await this.drivingLicenseService.legacyGetCurrentLicense(
+        {
+          nationalId: auth.nationalId,
+          token: auth.authorization,
+        },
+      )
+    } else {
+      drivingLicense = await this.drivingLicenseService.getCurrentLicense({
+        token: auth.authorization,
+      })
+    }
 
     const categoryB = (drivingLicense?.categories ?? []).find(
       (cat) => cat.name === 'B' || cat.nr === 'B',
@@ -168,6 +177,9 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
       categories: drivingLicense?.categories,
       id: drivingLicense?.id,
       birthCountry: drivingLicense?.birthCountry,
+      issued: drivingLicense?.issued,
+      expires: drivingLicense?.expires,
+      publishPlaceName: drivingLicense?.publishPlaceName,
     }
   }
 

@@ -95,12 +95,12 @@
         "cwd": "apps/services/auth/ids-api"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/auth/ids-api/tsconfig.app.json apps/services/auth/ids-api/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/auth/ids-api/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

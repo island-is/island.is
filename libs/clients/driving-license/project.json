@@ -33,7 +33,7 @@
         "cwd": "libs/clients/driving-license"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
@@ -42,14 +42,15 @@
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v4 -i libs/clients/driving-license/src/v4/clientConfig.json",
           "yarn openapi-generator -o libs/clients/driving-license/gen/fetch/v5 -i libs/clients/driving-license/src/v5/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn nx run clients-driving-license:update-openapi-document --apiVersion=v2",
-          "yarn nx run clients-driving-license:schemas/external-openapi-generator"
+          "yarn nx run clients-driving-license:codegen/backend-client"
         ],
         "parallel": false
       }

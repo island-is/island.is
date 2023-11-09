@@ -450,6 +450,19 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message summary when a user has no children in joint custody',
   },
+  nationalRegistryAlreadyIcelandicCitizenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenTitle',
+    defaultMessage: 'Nú þegar með íslenskt ríkisfang',
+    description:
+      'Error message title when a user already has icelandic citizenship',
+  },
+  nationalRegistryAlreadyIcelandicCitizenSummary: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland er innskráður notandi nú þegar með íslenskt ríkisfang.',
+    description:
+      'Error message summary when a user already has icelandic citizenship',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',

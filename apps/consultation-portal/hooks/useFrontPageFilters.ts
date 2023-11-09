@@ -101,7 +101,7 @@ export const useFrontPageFilters = ({ types }: Props) => {
       setItem({ key: FILTERS_FRONT_PAGE_KEY, value: filtersCopy })
       setFilters(filtersCopy)
     }
-  }, [filterGroups])
+  }, [filterGroups, getCasesLoading])
 
   useEffect(() => {
     const nextFilters = getFiltersFromLocalStorage({ filters: filters })

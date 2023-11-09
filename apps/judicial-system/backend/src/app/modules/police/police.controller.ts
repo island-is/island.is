@@ -21,7 +21,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { prosecutorRule } from '../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
@@ -51,7 +51,7 @@ export class PoliceController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeFiles')
   @ApiOkResponse({
@@ -69,7 +69,7 @@ export class PoliceController {
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
   }
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeCaseInfo')
   @ApiOkResponse({
@@ -87,7 +87,7 @@ export class PoliceController {
     return this.policeService.getPoliceCaseInfo(theCase.id, user)
   }
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,

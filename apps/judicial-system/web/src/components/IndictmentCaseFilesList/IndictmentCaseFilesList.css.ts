@@ -1,7 +1,0 @@
-import { style } from '@vanilla-extract/css'
-
-import { theme } from '@island.is/island-ui/theme'
-
-export const caseFileContainer = style({
-  borderBottom: `2px solid ${theme.color.blue200}`,
-})

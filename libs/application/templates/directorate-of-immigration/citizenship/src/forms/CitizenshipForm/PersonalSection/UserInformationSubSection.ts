@@ -8,8 +8,10 @@ import {
 import { personal } from '../../../lib/messages'
 import { Application, UserProfile } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
-import { NationalRegistryBirthplace } from '@island.is/application/types'
-import { CitizenIndividual } from '../../../shared'
+import {
+  NationalRegistryBirthplace,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { Routes } from '../../../lib/constants'
 
 export const UserInformationSubSection = buildSubSection({
@@ -37,7 +39,7 @@ export const UserInformationSubSection = buildSubSection({
               application.externalData,
               'individual.data',
               undefined,
-            ) as CitizenIndividual | undefined
+            ) as NationalRegistryIndividual | undefined
 
             return individual?.nationalId
           },
@@ -53,7 +55,7 @@ export const UserInformationSubSection = buildSubSection({
               application.externalData,
               'individual.data',
               undefined,
-            ) as CitizenIndividual | undefined
+            ) as NationalRegistryIndividual | undefined
 
             return `${individual?.givenName} ${individual?.familyName}`
           },
@@ -69,7 +71,7 @@ export const UserInformationSubSection = buildSubSection({
               application.externalData,
               'individual.data',
               undefined,
-            ) as CitizenIndividual | undefined
+            ) as NationalRegistryIndividual | undefined
 
             return individual?.address?.streetAddress
           },
@@ -85,7 +87,7 @@ export const UserInformationSubSection = buildSubSection({
               application.externalData,
               'individual.data',
               undefined,
-            ) as CitizenIndividual | undefined
+            ) as NationalRegistryIndividual | undefined
 
             return `${individual?.address?.postalCode} ${individual?.address?.city}`
           },
@@ -134,7 +136,7 @@ export const UserInformationSubSection = buildSubSection({
               application.externalData,
               'individual.data',
               undefined,
-            ) as CitizenIndividual | undefined
+            ) as NationalRegistryIndividual | undefined
 
             return individual?.citizenship?.name
           },
@@ -147,13 +149,13 @@ export const UserInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const individual = getValueViaPath(
+            const residenceInIcelandLastChangeDate = getValueViaPath(
               application.externalData,
-              'individual.data',
-              undefined,
-            ) as CitizenIndividual | undefined
+              'residenceInIcelandLastChangeDate.data',
+              null,
+            ) as Date | null
 
-            const date = individual?.residenceInIcelandLastChangeDate
+            const date = residenceInIcelandLastChangeDate
 
             return date ? formatDate(date) : ''
           },

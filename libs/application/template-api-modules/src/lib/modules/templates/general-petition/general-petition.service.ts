@@ -7,7 +7,7 @@ import {
   EndorsementListApi,
   EndorsementMetadataDtoFieldEnum,
   EndorsementListTagsEnum,
-} from './gen/fetch/endorsements'
+} from './gen/fetch'
 import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
 import { getValueViaPath } from '@island.is/application/core'
 import { BaseTemplateApiService } from '../../base-template-api.service'

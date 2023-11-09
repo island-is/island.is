@@ -14,8 +14,10 @@ query getHealthCenter {
   }
 }
 
-mutation rightsPortalTransferHealthCenter($id: String!) {
-  rightsPortalTransferHealthCenter(id: $id) {
+mutation rightsPortalTransferHealthCenter(
+  $input: RightsPortalHealthCenterRegisterInput!
+) {
+  rightsPortalRegisterHealthCenter(input: $input) {
     success
   }
 }

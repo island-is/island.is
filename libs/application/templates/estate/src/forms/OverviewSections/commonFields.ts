@@ -48,6 +48,7 @@ export const commonOverviewFields = [
               ? formatNationalId(member.nationalId)
               : member.dateOfBirth,
             member.relation,
+            member.relationWithApplicant,
             formatPhoneNumber(member.phone || ''),
             member.email,
 

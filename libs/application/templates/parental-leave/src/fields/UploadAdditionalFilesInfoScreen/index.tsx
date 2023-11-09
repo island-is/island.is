@@ -30,7 +30,8 @@ const UploadAdditionalFilesInfoScreen: FC<
   const { formatMessage } = useLocale()
   const rights = getAvailableRightsInDays(application)
   const { periods } = getApplicationAnswers(application.answers)
-  const shouldCall = application.state === States.EDIT_OR_ADD_PERIODS
+  const shouldCall =
+    application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
 
   const { data, loading } = useQuery(GetApplicationInformation, {
     variables: {

@@ -5,7 +5,7 @@ import {
   Middleware,
   RequestContext,
   SecurityApi,
-} from '../gen/fetch/dev'
+} from '../gen/fetch'
 
 @Injectable()
 export class TokenMiddleware implements Middleware {

@@ -2,8 +2,9 @@ import React from 'react';
 import styled from 'styled-components/native';
 import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
+import {Animated} from 'react-native';
 
-const Host = styled.View<{isAndroid?: boolean}>`
+const Host = styled(Animated.View)<{isAndroid?: boolean}>`
   width: 100%;
   height: ${({theme}) => theme.spacing[8]}px;
   align-items: center;
@@ -32,6 +33,7 @@ interface SearchHeaderProps {
   loadingText: string;
   resultText: string;
   isAndroid?: boolean;
+  scrollY?: Animated.Value;
 }
 
 export function SearchHeader({

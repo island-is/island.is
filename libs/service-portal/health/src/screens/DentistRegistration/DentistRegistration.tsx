@@ -64,11 +64,6 @@ export const DentistRegistration = () => {
           setErrorTransfering(true)
         }
       },
-      variables: {
-        input: {
-          id: selectedDentist?.id ?? 0,
-        },
-      },
     })
 
   useEffect(() => {
@@ -173,7 +168,15 @@ export const DentistRegistration = () => {
         onClose={() => setSelectedDentist(null)}
         onAccept={() => {
           setErrorTransfering(false)
-          registerDentist()
+          if (selectedDentist && selectedDentist.id) {
+            registerDentist({
+              variables: {
+                input: {
+                  id: `${selectedDentist.id}`,
+                },
+              },
+            })
+          }
         }}
         id={'dentistRegisterModal'}
         title={`${formatMessage(messages.dentistModalTitle)} ${

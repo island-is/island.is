@@ -1,15 +1,17 @@
 import {
   ApplicantChildCustodyInformation,
   FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
 } from '@island.is/application/types'
 import { AlertMessage, GridContainer, LinkV2 } from '@island.is/island-ui/core'
 import { FC } from 'react'
 import * as styles from './ChildrenInformationBoxWithLink.css'
-import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 import { selectChildren } from '../../lib/messages'
 import { getValueViaPath } from '@island.is/application/core'
 import kennitala from 'kennitala'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 export const ChildrenInformationBoxWithLink: FC<FieldBaseProps> = ({
   application,
@@ -44,21 +46,37 @@ export const ChildrenInformationBoxWithLink: FC<FieldBaseProps> = ({
 
   const messageComponent = (
     <GridContainer>
-      {showSharedCustodyWarning.length > 0 && (
-        <DescriptionText
-          text={
-            selectChildren.informationChildrenSection.informationSharedCustody
-          }
-          textProps={{ variant: 'small' }}
-        />
-      )}
+      {showSharedCustodyWarning.length > 0 &&
+        // <DescriptionText
+        //   text={
+        //     selectChildren.informationChildrenSection.informationSharedCustody
+        //   }
+        //   textProps={{ variant: 'small' }}
+        // />
 
-      {showAgeRangeWarning && (
+        DescriptionFormField({
+          application: application,
+          showFieldName: false,
+          field: {
+            id: 'title',
+            title: '',
+            description: formatMessage(
+              selectChildren.informationChildrenSection
+                .informationSharedCustody,
+            ),
+            titleVariant: 'h5',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
+
+      {/* {showAgeRangeWarning && (
         <DescriptionText
           text={selectChildren.informationChildrenSection.informationChildAge}
           textProps={{ variant: 'small' }}
         />
-      )}
+      )} */}
 
       <LinkV2
         href={linkUrl}

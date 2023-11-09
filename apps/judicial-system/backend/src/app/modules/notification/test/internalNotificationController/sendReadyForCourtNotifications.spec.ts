@@ -142,7 +142,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [courtMobileNumber],
-        'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks).',
+        'Gæsluvarðhaldskrafa tilbúin til afgreiðslu. Sækjandi: Derrick (Héraðsdómur Derricks). Sjá nánar á rettarvorslugatt.island.is.',
       )
     })
 
@@ -191,7 +191,7 @@ describe('InternalNotificationController - Send ready for court notifications fo
     it('should send ready for court sms notification to court', () => {
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [courtMobileNumber],
-        `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði.`,
+        `Sækjandi í máli ${courtCaseNumber} hefur breytt kröfunni og sent aftur á héraðsdómstól. Nýtt kröfuskjal hefur verið vistað í Auði. Sjá nánar á rettarvorslugatt.island.is.`,
       )
     })
 

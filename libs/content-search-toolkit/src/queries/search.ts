@@ -14,6 +14,7 @@ export const searchQuery = (
     queryString,
     size = 10,
     page = 1,
+    sort = [],
     types = [],
     tags = [],
     excludedTags = [],
@@ -191,6 +192,7 @@ export const searchQuery = (
     ...(Object.keys(aggregation.aggs).length ? aggregation : {}), // spread aggregations if we have any
     ...(highlightSection ? highlight : {}),
     size,
+    sort,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
 }

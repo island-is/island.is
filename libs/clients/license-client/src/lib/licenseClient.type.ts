@@ -11,6 +11,8 @@ export enum LicenseType {
   MachineLicense = 'MachineLicense',
   DisabilityLicense = 'DisabilityLicense',
   DrivingLicense = 'DrivingLicense',
+  PCard = 'PCard',
+  Ehic = 'Ehic',
 }
 
 export type LicenseTypeType = keyof typeof LicenseType
@@ -114,19 +116,17 @@ export type ServiceErrorCode =
   | 99
 
 export interface LicenseClient<ResultType> {
-  // This might be cached
+  clientSupportsPkPass: boolean
+
   getLicense: (user: User) => Promise<Result<ResultType | null>>
 
-  // This will never be cached
-  getLicenseDetail: (user: User) => Promise<Result<ResultType | null>>
+  licenseIsValidForPkPass?: (payload: unknown) => LicensePkPassAvailability
 
-  licenseIsValidForPkPass: (payload: unknown) => LicensePkPassAvailability
+  getPkPassUrl?: (user: User, locale?: Locale) => Promise<Result<string>>
 
-  getPkPassUrl: (user: User, locale?: Locale) => Promise<Result<string>>
+  getPkPassQRCode?: (user: User, locale?: Locale) => Promise<Result<string>>
 
-  getPkPassQRCode: (user: User, locale?: Locale) => Promise<Result<string>>
-
-  verifyPkPass: (
+  verifyPkPass?: (
     data: string,
     passTemplateId: string,
   ) => Promise<Result<PkPassVerification>>

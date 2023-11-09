@@ -69,6 +69,8 @@ const CaseDesktop = ({
     isStatusNameForReview,
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
+    shouldDisplayHidden,
   } = expressions
 
   return (
@@ -118,12 +120,15 @@ const CaseDesktop = ({
               <CaseStatusBox
                 status={statusName}
                 advicePublishTypeId={advicePublishTypeId}
+                shouldDisplayHidden={shouldDisplayHidden}
               />
-              <BlowoutList
-                list={stakeholders}
-                isStakeholder
-                isEmpty={!isStakeholdersNotEmpty}
-              />
+              {isStakeholdersBoxVisible && (
+                <BlowoutList
+                  list={stakeholders}
+                  isStakeholder
+                  isEmpty={!isStakeholdersNotEmpty}
+                />
+              )}
               {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
               <Coordinator
                 contactEmail={contactEmail}

@@ -29,6 +29,7 @@ import { PaymentScheduleClientConfig } from '@island.is/clients/payment-schedule
 import { EhicClientConfig } from '@island.is/clients/ehic-client-v1'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
+import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
         EhicClientConfig,
         JudicialAdministrationClientConfig,
         AuthPublicApiClientConfig,
+        DirectorateOfImmigrationClientConfig,
       ],
     }),
   ],

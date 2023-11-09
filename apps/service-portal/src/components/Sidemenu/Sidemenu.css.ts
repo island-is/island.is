@@ -122,6 +122,10 @@ export const dropdown = style({
       ...dropdownBaseMD,
       left: 'auto',
       right: 'auto',
+      top: spacing[2],
+    },
+    lg: {
+      top: spacing[4],
     },
   }),
 })

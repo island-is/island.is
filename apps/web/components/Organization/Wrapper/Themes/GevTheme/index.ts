@@ -1,4 +1,6 @@
 import dynamic from 'next/dynamic'
 
-export const GevHeader = dynamic(() => import('./GevHeader'), { ssr: false })
-export const GevFooter = dynamic(() => import('./GevFooter'), { ssr: false })
+import Header from './GevHeader'
+
+export const GevHeader = Header
+export const GevFooter = dynamic(() => import('./GevFooter'), { ssr: true })

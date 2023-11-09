@@ -33,6 +33,8 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: OrorkuSkirteini,
   ): LicensePkPassAvailability {
@@ -123,10 +125,6 @@ export class DisabilityLicenseClient implements LicenseClient<OrorkuSkirteini> {
       ok: true,
       data,
     }
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<OrorkuSkirteini | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(

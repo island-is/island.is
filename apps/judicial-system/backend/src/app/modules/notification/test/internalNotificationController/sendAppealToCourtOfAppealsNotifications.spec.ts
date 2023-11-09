@@ -37,6 +37,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
   const defenderEmail = uuid()
   const courtCaseNumber = uuid()
   const courtId = uuid()
+  const courtEmail = uuid()
   const mobileNumber = uuid()
 
   let mockEmailService: EmailService
@@ -46,6 +47,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
 
   beforeEach(async () => {
     process.env.COURTS_ASSISTANT_MOBILE_NUMBERS = `{"${courtId}": "${mobileNumber}"}`
+    process.env.COURTS_EMAILS = `{"${courtId}": "${courtEmail}"}`
 
     const { emailService, smsService, internalNotificationController } =
       await createTestingNotificationModule()
@@ -89,7 +91,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       then = await givenWhenThen(UserRole.PROSECUTOR, uuid())
     })
 
-    it('should send notification to judge and defender', () => {
+    it('should send notification to judge, registrar, court and defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ name: judgeName, address: judgeEmail }],
@@ -106,11 +108,19 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
+          to: [{ name: 'Héraðsdómur Reykjavíkur', address: courtEmail }],
+          subject: `Kæra í máli ${courtCaseNumber}`,
+          html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+        }),
+      )
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
+        expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Kæra í máli ${courtCaseNumber}`,
           html: `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
+
       expect(mockSmsService.sendSms).toHaveBeenCalledWith(
         [mobileNumber],
         `Úrskurður hefur verið kærður í máli ${courtCaseNumber}. Sjá nánar á rettarvorslugatt.island.is`,

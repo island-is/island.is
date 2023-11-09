@@ -18,14 +18,15 @@ import {
 import {
   ChildrenCustodyInformationApi,
   CountriesApi,
-  BirthplaceApi,
   NationalRegistryIndividualApi,
+  NationalRegistryBirthplaceApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
   CurrentCountryOfResidenceListApi,
   CurrentPassportItemApi,
   CurrentStayAbroadListApi,
   ResidenceConditionInfoApi,
+  ResidenceInIcelandLastChangeDateApi,
   TravelDocumentTypesApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
@@ -68,12 +69,11 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseDetailsApi,
+              provider: NationalRegistryBirthplaceApi,
               title: '',
-              subTitle: '',
             }),
             buildDataProviderItem({
-              provider: BirthplaceApi,
+              provider: NationalRegistrySpouseDetailsApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -115,6 +115,10 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: CurrentPassportItemApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: ResidenceInIcelandLastChangeDateApi,
               title: '',
             }),
             buildDataProviderItem({

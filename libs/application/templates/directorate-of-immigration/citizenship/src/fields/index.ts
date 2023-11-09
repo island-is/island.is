@@ -1,7 +1,6 @@
 export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { SelectChildren } from './SelectChildren'
 export { ChildrenInformationBoxWithLink } from './ChildrenInformationBoxWithLink'
-export { AlertWithLink } from './AlertWithLink'
 export { ResidenceCountries } from './ResidenceCountries'
 export { Parents } from './Parents'
 export { StaysAbroad } from './StaysAbroad'

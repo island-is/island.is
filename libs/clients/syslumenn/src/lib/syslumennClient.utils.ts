@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  AdiliDanarbus,
   DanarbuUppl,
   EignirDanarbus,
   Fasteignasalar,
@@ -20,6 +19,7 @@ import {
   Verdbrefamidlari,
   Erfingar,
   Malsvari,
+  Meistaraleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -47,11 +47,13 @@ import {
   TemporaryEventLicence,
   Broker,
   Advocate,
+  MasterLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 export const cleanPropertyNumber = (propertyNumber: string): string => {
-  return propertyNumber[0] == 'F'
+  const firstChar = propertyNumber.charAt(0).toUpperCase()
+  return firstChar === 'F' || firstChar === 'L'
     ? propertyNumber.substring(1, propertyNumber.length)
     : propertyNumber
 }
@@ -320,7 +322,10 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
-    share: assetRaw.eignarhlutfall ?? 1,
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? assetRaw.eignarhlutfall / 100.0
+        : 1,
   }
 }
 
@@ -338,7 +343,7 @@ export const mapEstateRegistrant = (
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
               a?.fastanumer &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer),
           )
           .map(assetMapper)
       : [],
@@ -391,9 +396,9 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
       ? syslaData.eignir
           .filter(
             (a) =>
+              a?.tegundAngalgs !== undefined &&
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
-              a?.tegundAngalgs &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer ?? ''),
           )
           .map(assetMapper)
       : [],
@@ -432,5 +437,13 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+  }
+}
+export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+    office: licence.embaetti,
   }
 }

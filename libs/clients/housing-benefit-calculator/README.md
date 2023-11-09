@@ -17,5 +17,5 @@ yarn nx run clients-housing-benefit-calculator:update-openapi-document
 ### Regenerating the client:
 
 ```sh
-yarn nx run clients-housing-benefit-calculator:schemas/external-openapi-generator
+yarn nx run clients-housing-benefit-calculator:codegen/backend-client
 ```

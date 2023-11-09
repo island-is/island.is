@@ -1,0 +1,30 @@
+query GetVehiclesSearch($input: GetVehicleSearchInput!) {
+  vehiclesSearch(input: $input) {
+    permno
+    regno
+    vin
+    type
+    color
+    firstregdate
+    latestregistration
+    nextInspection {
+      nextinspectiondate
+      nextinspectiondateIfPassedInspectionToday
+    }
+    currentOwner
+    currentOwnerAddress
+    currentOwnerIsAnonymous
+    useGroup
+    regtype
+    mass
+    massLaden
+    vehicleStatus
+    co
+    co2Wltp
+    weightedco2Wltp
+  }
+}
+
+query GetUsersVehiclesSearchLimit {
+  vehiclesSearchLimit
+}

@@ -36,6 +36,8 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
   ): LicensePkPassAvailability {
@@ -99,10 +101,6 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
     const licenseData = await this.fetchLicense(user)
     return licenseData
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<VinnuvelaDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(

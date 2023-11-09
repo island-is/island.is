@@ -43,7 +43,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
         serviceProviderID={serviceProviderID ?? undefined}
-        buttonGroup={buttonGroup}
+        children={buttonGroup}
       />
       <Stack dividers space="auto">
         {name && (

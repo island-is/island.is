@@ -157,7 +157,7 @@ export const childsPersonalInfo = buildMultiField({
         hasSecondGuardian(answers, externalData),
     }),
     buildSubmitField({
-      id: 'approveCheckForDisability',
+      id: 'childsPersonalInfo.submit',
       placement: 'footer',
       title: '',
       actions: [

@@ -1024,14 +1024,6 @@ export const m = defineMessages({
     id: 'service.portal:download',
     defaultMessage: 'Niðurhala',
   },
-  zoomIn: {
-    id: 'service.portal:zoom-in',
-    defaultMessage: 'Þysja inn',
-  },
-  zoomOut: {
-    id: 'service.portal:zoom-out',
-    defaultMessage: 'Þysja út',
-  },
   airDiscount: {
     id: 'service.portal:air-discount',
     defaultMessage: 'Loftbrú',
@@ -1182,5 +1174,17 @@ export const m = defineMessages({
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
+  },
+  month: {
+    id: 'service.portal:month',
+    defaultMessage: 'Mánuður',
+  },
+  dateOfInvoiceShort: {
+    id: 'service.portal:date-of-invoice',
+    defaultMessage: 'Dags. reiknings',
+  },
+  totalPrice: {
+    id: 'service.portal:total-price',
+    defaultMessage: 'Heildarverð',
   },
 })

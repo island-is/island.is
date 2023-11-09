@@ -96,7 +96,7 @@ export class LicenseServiceService {
       throw new InternalServerErrorException('License service failed')
     }
 
-    const licenseRes = await licenseClient.getLicenseDetail(user)
+    const licenseRes = await licenseClient.getLicense(user)
 
     if (!licenseRes.ok) {
       fetchStatus = GenericUserLicenseFetchStatus.Error
@@ -117,12 +117,7 @@ export class LicenseServiceService {
   async getAllLicenses(
     user: User,
     locale: Locale,
-    {
-      includedTypes,
-      excludedTypes,
-      force,
-      onlyList,
-    }: GetGenericLicenseOptions = {},
+    { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
     const licenses: GenericUserLicense[] = []
 
@@ -137,7 +132,11 @@ export class LicenseServiceService {
 
       if (!onlyList) {
         const genericLicense = await this.getLicense(user, locale, license.type)
-        if (genericLicense) {
+
+        if (
+          genericLicense &&
+          genericLicense.license.status === GenericUserLicenseStatus.HasLicense
+        ) {
           licenses.push(genericLicense)
         }
       }
@@ -188,9 +187,12 @@ export class LicenseServiceService {
       )
 
       if (licensePayload) {
-        licenseUserData.pkpassStatus = licenseService.licenseIsValidForPkPass(
-          licenseRes.data,
-        ) as unknown as GenericUserLicensePkPassStatus
+        licenseUserData.pkpassStatus = licenseService.clientSupportsPkPass
+          ? (licenseService.licenseIsValidForPkPass?.(
+              licenseRes.data,
+            ) as unknown as GenericUserLicensePkPassStatus) ??
+            GenericUserLicensePkPassStatus.Unknown
+          : GenericUserLicensePkPassStatus.NotAvailable
         licenseUserData.status = GenericUserLicenseStatus.HasLicense
       } else {
         licenseUserData.status = GenericUserLicenseStatus.NotAvailable
@@ -230,6 +232,45 @@ export class LicenseServiceService {
         `Invalid license type. type: ${licenseType}`,
       )
     }
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.getPkPassUrl) {
+      this.logger.error('License client has no getPkPassUrl implementation', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.getPkPassUrl) {
+      this.logger.error('License client has no getPkPassUrl implementation', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client has no getPkPassUrl implementation, type: ${licenseType}`,
+      )
+    }
 
     const pkPassRes = await client.getPkPassUrl(user)
 
@@ -255,6 +296,29 @@ export class LicenseServiceService {
       })
       throw new InternalServerErrorException(
         `Invalid license type. type: ${licenseType}`,
+      )
+    }
+
+    if (!client.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        type: licenseType,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, type: ${licenseType}`,
+      )
+    }
+
+    if (!client.getPkPassQRCode) {
+      this.logger.error(
+        'License client has no getPkPassQRCode implementation',
+        {
+          category: LOG_CATEGORY,
+          type: licenseType,
+        },
+      )
+      throw new BadRequestException(
+        `License client has no getPkPassQRCode implementation, type: ${licenseType}`,
       )
     }
 
@@ -295,6 +359,26 @@ export class LicenseServiceService {
     )
     if (!licenseService) {
       throw new Error(`Invalid pass template id: ${passTemplateId}`)
+    }
+
+    if (!licenseService.clientSupportsPkPass) {
+      this.logger.warn('client does not support pkpass', {
+        category: LOG_CATEGORY,
+        passTemplateId,
+      })
+      throw new BadRequestException(
+        `License client does not support pkpass, passTemplateId: ${passTemplateId}`,
+      )
+    }
+
+    if (!licenseService.verifyPkPass) {
+      this.logger.error('License client has no verifyPkPass implementation', {
+        category: LOG_CATEGORY,
+        passTemplateId,
+      })
+      throw new BadRequestException(
+        `License client has no verifyPkPass implementation, passTemplateId: ${passTemplateId}`,
+      )
     }
 
     const verification = await licenseService.verifyPkPass(data, passTemplateId)

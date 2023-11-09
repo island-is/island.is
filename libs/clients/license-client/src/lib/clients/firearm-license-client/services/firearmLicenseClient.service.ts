@@ -28,6 +28,8 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
   ): LicensePkPassAvailability {
@@ -138,12 +140,6 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     }
 
     return licenseData
-  }
-
-  async getLicenseDetail(
-    user: User,
-  ): Promise<Result<FirearmLicenseDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(

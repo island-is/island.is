@@ -212,6 +212,7 @@ export type EstateMember = {
   name: string
   nationalId: string
   relation: string
+  relationWithApplicant?: string
   dateOfBirth?: string
   enabled?: boolean
   phone?: string
@@ -279,4 +280,11 @@ interface UnitsOfUseModel {
 
 interface UnitsOfUse {
   explanation?: string
+}
+
+export interface MasterLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+  office?: string
 }

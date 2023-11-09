@@ -60,7 +60,7 @@ export const vehicleSubSection = buildSubSection({
           maxDate: new Date(),
           minDate: () => {
             const minDate = new Date()
-            minDate.setDate(minDate.getDate() - 7)
+            minDate.setDate(minDate.getDate() - 6)
             return minDate
           },
           defaultValue: new Date().toISOString().substring(0, 10),

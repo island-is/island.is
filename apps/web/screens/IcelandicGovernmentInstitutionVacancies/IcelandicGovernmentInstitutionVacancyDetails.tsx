@@ -1,5 +1,18 @@
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Hidden,
+  Inline,
+  LinkV2,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  HeadWithSocialSharing,
+  InstitutionPanel,
+} from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
   GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
@@ -7,31 +20,19 @@ import {
   GetNamespaceQueryVariables,
   IcelandicGovernmentInstitutionVacancyByIdResponse,
 } from '@island.is/web/graphql/schema'
+import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
+
+import SidebarLayout from '../Layouts/SidebarLayout'
+import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
 import {
-  Text,
-  Box,
-  Stack,
-  LinkV2,
-  Breadcrumbs,
-  Button,
-  Inline,
-  Hidden,
-} from '@island.is/island-ui/core'
-import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
-import SidebarLayout from '../Layouts/SidebarLayout'
-import {
-  HeadWithSocialSharing,
-  InstitutionPanel,
-} from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { webRichText } from '@island.is/web/utils/richText'
-import { SliceType } from '@island.is/island-ui/contentful'
-import {
-  VACANCY_INTRO_MAX_LENGTH,
   shortenText,
+  VACANCY_INTRO_MAX_LENGTH,
 } from './IcelandicGovernmentInstitutionVacanciesList'
 
 type Vacancy = IcelandicGovernmentInstitutionVacancyByIdResponse['vacancy']
@@ -355,6 +356,7 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
   return {
     vacancy,
     namespace,
+    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 

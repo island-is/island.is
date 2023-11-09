@@ -84,17 +84,18 @@ export const selectChildren = {
     information: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.warningMessageTitle',
       defaultMessage:
-        'Ef barn er orðið 18 ára þegar foreldri fær veittan ríkisborgararétt getur barn ekki fylgt foreldri við veitinguna. Börn umsækjanda sem eru orðin 18 ára þegar foreldri fær veittan ríkisborgararétt þurfa að leggja fram umsókn sjálf.  Sjá nánar upplýsingar um afgreiðslutíma',
+        'Ef barn er orðið 18 ára þegar foreldri fær veittan ríkisborgararétt getur barn ekki fylgt foreldri við veitinguna. Börn umsækjanda sem eru orðin 18 ára þegar foreldri fær veittan ríkisborgararétt þurfa að leggja fram umsókn sjálf.',
       description: 'Warning message for persons with children over age of 18',
     },
     linkTitle: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.linkTitle',
-      defaultMessage: 'afgreiðslutíma',
+      defaultMessage: 'Sjá nánar upplýsingar um afgreiðslutíma',
       description: 'title of link in text',
     },
     linkUrl: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.linkUrl',
-      defaultMessage: 'https://www.mbl.is',
+      defaultMessage:
+        'https://island.is/s/utlendingastofnun/stada-mala-og-afgreidslutimi',
       description: 'url of the link in text',
     },
   }),
@@ -132,7 +133,7 @@ export const selectChildren = {
   checkboxes: defineMessages({
     subLabel: {
       id: 'doi.cs.application:section.backgroundInformation.selectChildren.checkboxes.sublabel',
-      defaultMessage: 'Hinn forsjáraðilinn:',
+      defaultMessage: 'Hinn forsjáraðilinn',
       description: 'Sublabel: displayed below a childs name',
     },
     tagCitizenship: {

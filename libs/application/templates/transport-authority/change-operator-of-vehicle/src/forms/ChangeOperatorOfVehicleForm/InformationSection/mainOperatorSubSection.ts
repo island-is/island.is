@@ -8,7 +8,7 @@ import { information } from '../../../lib/messages'
 import { OperatorInformation, OldOperatorInformation } from '../../../shared'
 
 export const mainOperatorSubSection = buildSubSection({
-  id: 'buyerMainOperator',
+  id: 'mainOperator',
   title: information.labels.mainOperator.sectionTitle,
   condition: (formValue) => {
     const operators = getValueViaPath(
@@ -29,12 +29,12 @@ export const mainOperatorSubSection = buildSubSection({
   },
   children: [
     buildMultiField({
-      id: 'buyerMainOperatorMultiField',
+      id: 'mainOperatorMultiField',
       title: information.labels.mainOperator.title,
       description: information.labels.mainOperator.description,
       children: [
         buildRadioField({
-          id: 'buyerMainOperator.nationalId',
+          id: 'mainOperator.nationalId',
           title: information.labels.mainOperator.radioFieldLabel,
           options: (application) => {
             const operators = getValueViaPath(

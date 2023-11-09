@@ -101,7 +101,6 @@ export interface LimitedAccessUpdateCase
   > {}
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
   { model: Institution, as: 'court' },
   {
     model: User,
@@ -128,8 +127,29 @@ export const include: Includeable[] = [
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
   },
+  {
+    model: User,
+    as: 'appealAssistant',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge1',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge2',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
+  },
   { model: Case, as: 'parentCase', attributes },
   { model: Case, as: 'childCase', attributes },
+  { model: Defendant, as: 'defendants' },
   {
     model: CaseFile,
     as: 'caseFiles',
@@ -153,26 +173,6 @@ export const include: Includeable[] = [
         CaseFileCategory.CASE_FILE,
       ],
     },
-  },
-  {
-    model: User,
-    as: 'appealAssistant',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge1',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge2',
-    include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: User,
-    as: 'appealJudge3',
-    include: [{ model: Institution, as: 'institution' }],
   },
 ]
 

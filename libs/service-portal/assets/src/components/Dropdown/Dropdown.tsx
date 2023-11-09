@@ -5,6 +5,7 @@ import * as styles from './Dropdown.css'
 import { vehicleMessage as messages } from '../../lib/messages'
 
 interface Props {
+  label?: string
   dropdownItems?: {
     href?: string
     onClick?: () => void
@@ -17,6 +18,7 @@ interface Props {
   }[]
 }
 const Dropdown: FC<React.PropsWithChildren<Props>> = ({
+  label,
   dropdownItems = [],
 }) => {
   const { formatMessage } = useLocale()
@@ -25,9 +27,9 @@ const Dropdown: FC<React.PropsWithChildren<Props>> = ({
       <DropdownMenu
         menuClassName={styles.container}
         icon="ellipsisHorizontal"
-        menuLabel={formatMessage(messages.more)}
+        menuLabel={label ?? formatMessage(messages.more)}
         items={dropdownItems}
-        title={formatMessage(messages.more)}
+        title={label ?? formatMessage(messages.more)}
       />
     </Box>
   )
