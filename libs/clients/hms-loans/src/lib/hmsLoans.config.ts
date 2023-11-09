@@ -14,11 +14,10 @@ export const HmsLoansClientConfig = defineConfig({
   load: (env) => ({
     xRoadServicePath: env.required(
       'XROAD_HMS_LOANS_PATH',
-      'IS-DEV/GOV/10033/HMS-Protected/libra-v1/api/v1',
+      'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
     ),
     tokenExchangeScope: env.optionalJSON('XROAD_HMS_LOANS_SCOPE') ?? [
       HmsScope.loans,
-      'api_resource.scope',
     ],
     fetchTimeout: env.optionalJSON('XROAD_HMS_LOANS_TIMEOUT') ?? 20000,
   }),
