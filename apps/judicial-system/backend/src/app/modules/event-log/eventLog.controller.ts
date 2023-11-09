@@ -5,8 +5,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { EventType, User } from '@island.is/judicial-system/types'
 
+import { CreateEventLogDto } from './dto/createEventLog.dto'
 import { EventLogService } from './eventLog.service'
 
 @Controller('api/event-log')
@@ -17,12 +17,9 @@ export class EventLogController {
   ) {}
 
   @UseGuards(TokenGuard)
-  @Post('log-login')
-  @ApiCreatedResponse({ description: 'Logs user login in event log' })
-  logLogin(@Body() user: User): Promise<void> {
-    return this.eventLogService.create({
-      eventType: EventType.LOGIN,
-      nationalId: user.nationalId,
-    })
+  @Post('log-event')
+  @ApiCreatedResponse({ description: 'Logs an event to event log' })
+  logEvent(@Body() event: CreateEventLogDto): Promise<void> {
+    return this.eventLogService.create(event)
   }
 }
