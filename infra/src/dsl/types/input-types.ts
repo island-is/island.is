@@ -187,10 +187,37 @@ export type ReplicaCount = {
   scalingMagicNumber?: number
 }
 
+export type Container = {
+  command: string
+  image?: string
+  args?: string[]
+  name?: string
+  resources?: Resources
+}
+
 export type InitContainers = {
   envs: EnvironmentVariables
   secrets: Secrets
   features: Partial<Features>
+  containers: Container[]
+  postgres?: PostgresInfo
+}
+
+export type InitContainersForEnv = {
+  envs: EnvironmentVariablesForEnv
+  secrets: Secrets
+  features: Partial<Features>
+  containers: Container[]
+  postgres?: PostgresInfoForEnv
+}
+
+export type Jobs = {
+  envs: EnvironmentVariables
+  secrets: Secrets
+  backoffLimit: number,
+  completions: number,
+  parallelism: number,
+  restartPolicy:
   containers: {
     command: string
     image?: string
@@ -198,9 +225,9 @@ export type InitContainers = {
     name?: string
     resources?: Resources
   }[]
-  postgres?: PostgresInfo
 }
-export type InitContainersForEnv = {
+
+export type JobsForEnv = {
   envs: EnvironmentVariablesForEnv
   secrets: Secrets
   features: Partial<Features>
@@ -211,7 +238,6 @@ export type InitContainersForEnv = {
     name?: string
     resources?: Resources
   }[]
-  postgres?: PostgresInfoForEnv
 }
 
 export interface Context {
