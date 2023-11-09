@@ -62,6 +62,7 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
   namespace: 'NationalRegistry',
   params: {
     validateAlreadyHasIcelandicCitizenship: true,
+    //TODOx validateAge -> errorMessages.notOldEnough
   },
 })
 
