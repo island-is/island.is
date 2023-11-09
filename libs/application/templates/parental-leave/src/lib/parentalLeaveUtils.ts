@@ -95,6 +95,10 @@ export function getBeginningOfThisMonth(): Date {
   return addDays(today, today.getDate() * -1 + 1)
 }
 
+export function getBeginningOfMonth3MonthsAgo(): Date {
+  return addMonths(getBeginningOfThisMonth(), -3)
+}
+
 export function getLastDayOfLastMonth(): Date {
   const today = new Date()
   return addDays(today, today.getDate() * -1)
@@ -1239,6 +1243,9 @@ export const getLastValidPeriodEndDate = (
   application: Application,
 ): Date | null => {
   const { periods } = getApplicationAnswers(application.answers)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   if (periods.length === 0) {
     return null
@@ -1254,6 +1261,10 @@ export const getLastValidPeriodEndDate = (
 
   const today = new Date()
   const beginningOfMonth = getBeginningOfThisMonth()
+
+  if (!applicationFundId || applicationFundId === '') {
+    if (lastEndDate > getBeginningOfMonth3MonthsAgo()) return lastEndDate
+  }
 
   // LastPeriod's endDate is in current month
   if (isThisMonth(lastEndDate)) {
@@ -1285,6 +1296,9 @@ export const getMinimumStartDate = (application: Application): Date => {
   const expectedDateOfBirthOrAdoptionDate =
     getExpectedDateOfBirthOrAdoptionDate(application)
   const lastPeriodEndDate = getLastValidPeriodEndDate(application)
+  const { applicationFundId } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const today = new Date()
   if (lastPeriodEndDate) {
@@ -1303,12 +1317,20 @@ export const getMinimumStartDate = (application: Application): Date => {
     }
 
     const beginningOfMonth = getBeginningOfThisMonth()
+    const beginningOfMonth3MonthsAgo = getBeginningOfMonth3MonthsAgo()
     const leastStartDate = addMonths(
       expectedDateOfBirthOrAdoptionDateDate,
       -minimumPeriodStartBeforeExpectedDateOfBirth,
     )
-    if (leastStartDate.getTime() >= beginningOfMonth.getTime()) {
+
+    if (leastStartDate >= beginningOfMonth3MonthsAgo) {
       return leastStartDate
+    } else {
+      if (!applicationFundId || applicationFundId === '')
+        return beginningOfMonth3MonthsAgo
+      if (leastStartDate >= beginningOfMonth) {
+        return leastStartDate
+      }
     }
 
     return beginningOfMonth

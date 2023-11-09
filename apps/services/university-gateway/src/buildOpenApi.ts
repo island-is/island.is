@@ -7,4 +7,5 @@ buildOpenApi({
   path: 'apps/services/university-gateway/src/openapi.yaml',
   appModule: AppModule,
   openApi,
+  enableVersioning: true,
 })

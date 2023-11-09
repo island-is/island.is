@@ -10025,9 +10025,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.7.9":
-  version: 0.7.9
-  resolution: "@island.is/regulations-tools@npm:0.7.9"
+"@island.is/regulations-tools@npm:0.7.12":
+  version: 0.7.12
+  resolution: "@island.is/regulations-tools@npm:0.7.12"
   dependencies:
     "@hugsmidjan/qj": ^4.7.0
     "@hugsmidjan/react": ^0.4.4
@@ -10040,7 +10040,7 @@ __metadata:
   peerDependencies:
     react: ">=16.8 <19"
     react-dom: ">=16.8 <19"
-  checksum: 6d72d77cd045bcb237a675033d5afd39f4952f34e26718da22b50b62d2c683670dae328dc13e23187ae9ea97b87dc8409cd44b8043c13119c432000c83fc848a
+  checksum: 278c2fae6856a3e8abdf029918e490fc7322d6f6477836520ddef2f266eb0d71d50bebad20422c1f7cc427c2e00691bdc2e16a429a69abafecf72395de7909ae
   languageName: node
   linkType: hard
 
@@ -33623,7 +33623,7 @@ __metadata:
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
     "@island.is/login": 1.2.1
-    "@island.is/regulations-tools": 0.7.9
+    "@island.is/regulations-tools": 0.7.12
     "@jeremybarbet/contentful-extension-scripts": 0.22.7
     "@keyv/redis": 2.6.1
     "@nestjs/apollo": 10.1.0
