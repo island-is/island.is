@@ -103,8 +103,6 @@ import { GetSingleManualInput } from './dto/getSingleManual.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
-// TODO: remove this comment
-
 @Resolver()
 export class CmsResolver {
   constructor(
