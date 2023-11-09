@@ -211,6 +211,7 @@ export const Draft: Form = buildForm({
               id: 'submit',
               placement: 'footer',
               title: m.createList,
+              refetchApplicationAfterSubmit: true,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

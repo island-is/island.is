@@ -145,4 +145,50 @@ export const m = defineMessages({
     defaultMessage: 'Stofna meðmælalista',
     description: '',
   },
+
+  /* Done Screen */
+  listCreated: {
+    id: 'slc.application:listCreated',
+    defaultMessage: 'Meðmælalisti stofnaður',
+    description: '',
+  },
+  listCreatedDescription: {
+    id: 'slc.application:listCreatedDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
+    description: '',
+  },
+  nextSteps: {
+    id: 'slc.application:nextSteps',
+    defaultMessage: 'Næstu skref',
+    description: '',
+  },
+  nextStepsDescription: {
+    id: 'slc.application:nextStepsDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
+    description: '',
+  },
+  shareList: {
+    id: 'slc.application:shareList',
+    defaultMessage: 'Deila meðmælalista',
+    description: '',
+  },
+  copyLink: {
+    id: 'slc.application:copyLink',
+    defaultMessage: 'Afrita hlekk',
+    description: '',
+  },
+
+  /* Action Card History logs */
+  logListInProgress: {
+    id: 'slc.application:listInProgress',
+    defaultMessage: 'Gerð meðmælalista hafin',
+    description: '',
+  },
+  logListCreated: {
+    id: 'slc.application:listCreated',
+    defaultMessage: 'Meðmælalisti stofnaður',
+    description: '',
+  },
 })

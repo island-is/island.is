@@ -19,6 +19,7 @@ export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
       {areas.map((area) => {
         return (
           <ActionCard
+            key={area}
             eyebrow={
               formatMessage(m.listDateTil) +
               ': ' +

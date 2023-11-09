@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  coreHistoryMessages,
 } from '@island.is/application/core'
 import {
   Application,
@@ -31,7 +30,7 @@ const SignatureListTemplate: ApplicationTemplate<
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
-      draft: {
+      [States.DRAFT]: {
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
@@ -58,7 +57,7 @@ const SignatureListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.applicationStarted,
+                logMessage: m.logListInProgress,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -68,7 +67,41 @@ const SignatureListTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
-      [States.DONE]: {},
+      [States.DONE]: {
+        meta: {
+          name: 'Done',
+          status: 'completed',
+          progress: 1,
+          lifecycle: {
+            shouldBeListed: true,
+            shouldBePruned: false,
+          },
+          /* Add when ready
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+            shouldPersistToExternalData: true,
+            throwOnError: true,
+          })*/
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.logListCreated,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Done').then((val) =>
+                  Promise.resolve(val.Done),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
     },
   },
   mapUserToRole(
