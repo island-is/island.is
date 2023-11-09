@@ -82,6 +82,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
+/libs/application/templates/src/lib/modules/templates/signature-list-creation                            @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/signature-list-creation                 @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
