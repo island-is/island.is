@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber } from 'libphonenumber-js'
 import { join } from 'path'
 import { Transaction } from 'sequelize'
 
@@ -198,8 +199,14 @@ export class VerificationService {
   ): Promise<ConfirmationDtoResponse> {
     const { transaction, maxTries = SMS_VERIFICATION_MAX_TRIES } = options ?? {}
 
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobilePhoneNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
+
     let verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: confirmSmsDto.mobilePhoneNumber },
+      where: { nationalId, mobilePhoneNumber },
       order: [['created', 'DESC']],
       ...(transaction && { transaction }),
     })
