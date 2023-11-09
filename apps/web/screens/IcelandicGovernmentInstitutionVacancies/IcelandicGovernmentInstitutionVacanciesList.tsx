@@ -3,6 +3,7 @@ import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
 
 import {
+  AlertMessage,
   Box,
   Breadcrumbs,
   Filter,
@@ -112,12 +113,13 @@ const mapVacanciesField = (
 
 interface IcelandicGovernmentInstitutionVacanciesListProps {
   vacancies: Vacancy[]
+  fetchErrorOccured?: boolean
   namespace: Record<string, string>
 }
 
 const IcelandicGovernmentInstitutionVacanciesList: Screen<
   IcelandicGovernmentInstitutionVacanciesListProps
-> = ({ vacancies, namespace }) => {
+> = ({ vacancies, fetchErrorOccured, namespace }) => {
   const { query, replace, isReady } = useRouter()
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
@@ -352,6 +354,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
 
   const mainTitle = n('mainTitle', 'Starfatorg - laus störf hjá ríkinu')
   const ogTitle = n('ogTitle', 'Starfatorg - laus störf hjá ríkinu | Ísland.is')
+  const displayFetchErrorIfPresent = n('displayFetchErrorIfPresent', true)
 
   return (
     <Box paddingTop={[0, 0, 8]}>
@@ -453,7 +456,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 }))
               }}
               categories={filterCategories}
-            ></FilterMultiChoice>
+            />
           </Filter>
 
           <GridRow className={styles.filterTagRow} alignItems="center">
@@ -479,6 +482,19 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
               </Inline>
             </GridColumn>
           </GridRow>
+
+          {fetchErrorOccured && displayFetchErrorIfPresent && (
+            <Box paddingBottom={5}>
+              <AlertMessage
+                type="warning"
+                title={n('fetchErrorTitle', 'Ekki tókst að sækja öll störf')}
+                message={n(
+                  'fetchErrorMessage',
+                  'Villa kom upp við að sækja störf frá ytri kerfum og því er möguleiki að ekki öll auglýst séu sýnileg',
+                )}
+              />
+            </Box>
+          )}
         </Box>
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
@@ -681,12 +697,13 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     },
   })
 
-  const vacancies =
-    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies.vacancies
+  const { vacancies, fetchErrorOccurred } =
+    vacanciesResponse.data.icelandicGovernmentInstitutionVacancies
 
   return {
     vacancies,
     namespace,
+    fetchErrorOccurred,
     customAlertBanner: namespace['customAlertBanner'],
   }
 }
