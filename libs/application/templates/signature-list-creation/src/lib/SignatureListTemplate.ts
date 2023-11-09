@@ -1,6 +1,4 @@
-import {
-  DefaultStateLifeCycle,
-} from '@island.is/application/core'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
