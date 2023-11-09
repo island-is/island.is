@@ -69,18 +69,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Information about you, spouse and children. Information about residence, cohabitants and custody.',
     },
-    userProfileInformationTitle: {
-      id: 'oap.application:prerequisites.userprofile.title',
-      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
-      description: 'Information from your account at Ísland.is',
-    },
-    userProfileInformationSubTitle: {
-      id: 'oap.application:prerequisites.userprofile.subtitle',
-      defaultMessage:
-        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður á Ísland.is.',
-      description:
-        'Information about email address and phone number will be retrieved from your account at Ísland.is.',
-    },
     socialInsuranceAdministrationInformationTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
@@ -89,7 +77,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     socialInsuranceAdministrationInformationDescription: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.description#markdown',
       defaultMessage:
-        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description: 'english translation',
     },
     startApplication: {

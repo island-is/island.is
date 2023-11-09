@@ -49,3 +49,9 @@ export interface BankInfo {
   foreignBankAddress?: string
   currency?: string
 }
+
+export interface ApplicantInfo {
+  bankAccount?: BankInfo
+  phoneNumber?: string
+  emailAddress?: string
+}

@@ -30,9 +30,8 @@ import {
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationBankInfoApi,
-  SocialInsuranceAdministrationSpouseInNursingHomeApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -102,13 +101,6 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: UserProfileApi,
-                  title:
-                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
                   provider: ChildrenCustodyInformationApi,
                   title: '',
                 }),
@@ -125,17 +117,13 @@ export const PrerequisitesForm: Form = buildForm({
                   title: '',
                 }),
                 buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationBankInfoApi,
+                  provider: SocialInsuranceAdministrationApplicantApi,
                   title:
                     oldAgePensionFormMessage.pre
                       .socialInsuranceAdministrationInformationTitle,
                   subTitle:
                     oldAgePensionFormMessage.pre
                       .socialInsuranceAdministrationInformationDescription,
-                }),
-                buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,
-                  title: '',
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,

@@ -271,41 +271,46 @@ export class OldAgePensionService extends BaseTemplateApiService {
       )
 
       const applicationType = getApplicationType(application).toLowerCase()
+      console.log('dto ', oldAgePensionDTO)
+      return
+      // const response = await this.siaClientService.sendApplication(
+      //   auth,
+      //   oldAgePensionDTO,
+      //   applicationType,
+      // )
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
-
-      return response
+      // return response
     } catch (e) {
       this.logger.error('Failed to send the old age pension application', e)
       throw this.parseErrors(e)
     }
   }
 
-  async getBankInfo({ auth }: TemplateApiModuleActionProps) {
+  async getApplicant({ auth }: TemplateApiModuleActionProps) {
     try {
-      const res = await this.siaClientService.getBankInfo(auth)
+      const res = await this.siaClientService.getApplicant(auth)
 
+      // mock data since gervimenn don't have bank account registered at TR, 
+      // and might also not have phone number and email address registered 
       if (isRunningOnEnvironment('local')) {
-        if (!res.bank) {
-          ;(res.bank = '2222'),
-            (res.ledger = '00'),
-            (res.accountNumber = '123456')
+        res.bankAccount!.bank = '2222'
+        res.bankAccount!.ledger = '00'
+        res.bankAccount!.accountNumber = '123456'
+        // if(!res.emailAddress) {
+        //   res.emailAddress = 'mail@mail.is'
+        // }
+
+        if(!res.phoneNumber) {
+          res.phoneNumber = '888-8888'
         }
       }
 
-      return res
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    }
-  }
+      if(!res.emailAddress) {
+        console.log('herna inni?')
+        throw new TemplateApiError('Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það hér og komdu svo aftur til að halda áfram með umsóknina.', 500)
+      }
 
-  async getSpouseInNursingHome({ auth }: TemplateApiModuleActionProps) {
-    try {
-      return await this.siaClientService.getSpouseInNursingHome(auth)
+      return res
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }

@@ -341,7 +341,7 @@ export function getApplicationExternalData(
 
   const bankInfo = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationBankInfo.data',
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
   ) as BankInfo
 
   const isEligible = getValueViaPath(

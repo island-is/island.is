@@ -12,7 +12,6 @@ import {
   ApplicationRole,
   DefaultEvents,
   NationalRegistryUserApi,
-  UserProfileApi,
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
   InstitutionNationalIds,
@@ -39,9 +38,8 @@ import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationBankInfoApi,
-  SocialInsuranceAdministrationSpouseInNursingHomeApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -70,7 +68,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
-          //onExit: defineTemplateApi - kalla á TR
           roles: [
             {
               id: Roles.APPLICANT,
@@ -88,14 +85,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryResidenceHistoryApi,
                 NationalRegistryCohabitantsApi,
                 ChildrenCustodyInformationApi,
-                SocialInsuranceAdministrationBankInfoApi,
-                SocialInsuranceAdministrationSpouseInNursingHomeApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationApplicantApi,
               ],
               delete: true,
             },
