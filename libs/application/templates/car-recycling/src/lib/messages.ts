@@ -34,8 +34,41 @@ export const carRecyclingMessages: MessageDir = {
     },
     externalDataDescription: {
       id: 'rf.cr.application:externalData.description',
-      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'english translation',
+      defaultMessage:
+        'Eftirfarandi upplýsingar verða sóttar rafrænt með þínu samþykki',
+      description: 'External data description',
+    },
+    nationalRegistryInformationTitle: {
+      id: 'rf.cr.application:prerequisites.national.registry.title',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
+      description: 'Information from Registers Iceland',
+    },
+    nationalRegistryInformationSubTitle: {
+      id: 'rf.cr.application:prerequisites.national.registry.subtitle',
+      defaultMessage: 'Upplýsingar um þig.',
+      description: 'Information about you.',
+    },
+    userProfileInformationTitle: {
+      id: 'rf.cr.application:prerequisites.userprofile.title',
+      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
+      description: 'Information from your account at Ísland.is',
+    },
+    userProfileInformationSubTitle: {
+      id: 'rf.cr.application:prerequisites.userprofile.subtitle',
+      defaultMessage:
+        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður á Ísland.is.',
+      description:
+        'Information about email address and phone number will be retrieved from your account at Ísland.is.',
+    },
+    externalDataTransportAuthorityTitle: {
+      id: 'rf.cr.application:externalData.transport.authority.title',
+      defaultMessage: 'Upplýsingar frá Samgöngustofu',
+      description: 'External data Transport authority title',
+    },
+    externalDataTransportAuthoritySubtitle: {
+      id: 'rf.cr.application:externalData.transport.authority.description',
+      defaultMessage: 'Upplýsingar um þín ökutæki',
+      description: 'External data Transport authority description',
     },
     checkboxProvider: {
       id: 'rf.cr.application:prerequisites.checkbox.provider',
@@ -92,7 +125,7 @@ export const carRecyclingMessages: MessageDir = {
     },
     onlyOwnerCanRecyle: {
       id: 'rf.cr.application:onlyOwnerCanRecyle',
-      defaultMessage: 'Aðeins eigandi ökutækis má setja það í endurvinnslu',
+      defaultMessage: 'Aðeins eigandi ökutækis má skrá í endurvinnslu',
       description: 'Only the owner of the vehicle may place it for recycling',
     },
     cancel: {
@@ -102,8 +135,8 @@ export const carRecyclingMessages: MessageDir = {
     },
     selectedTitle: {
       id: 'rf.cr.application:selected.title',
-      defaultMessage: 'Ökutæki valin í afskrá til endurvinnslu',
-      description: 'Vehicles selected in deregistration for recycling',
+      defaultMessage: 'Ökutæki valin til endurvinnslu',
+      description: 'Vehicles selected for recycling',
     },
   }),
   review: defineMessages({
@@ -140,8 +173,8 @@ export const carRecyclingMessages: MessageDir = {
     },
     carsSectionTitle: {
       id: 'rf.cr.application:review.cars.section.title',
-      defaultMessage: 'Ökutæki í afskrá til endurvinnslu',
-      description: 'Vehicles deregistered for recycling',
+      defaultMessage: 'Ökutæki valin til endurvinnslu',
+      description: 'Vehicles selected for recycling',
     },
   }),
 }

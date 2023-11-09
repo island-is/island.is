@@ -1,24 +1,47 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { ActionCard, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
-import { useNavigate } from 'react-router-dom'
-
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
+import { FC, useEffect, useState } from 'react'
 
 import { formatText } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
 import { InputController } from '@island.is/shared/form-fields'
 import { getApplicationExternalData } from '../../lib/carRecyclingUtils'
 import { carRecyclingMessages } from '../../lib/messages'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
+
+import { VehicleMiniDto } from '@island.is/clients/vehicles'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
-  const { formatMessage } = useLocale()
-  const navigate = useNavigate()
+  const { formatMessage, locale } = useLocale()
 
-  let { vehiclesList } = getApplicationExternalData(application.externalData)
+  const [currentVehiclesList, setVehiclesList] = useState<VehicleMiniDto[]>([])
+  const [selectedVehiclesList, setSelectedVehiclesList] = useState<
+    VehicleMiniDto[]
+  >([])
+  const [allVehiclesList, setAllVehiclesList] = useState<VehicleMiniDto[]>([])
 
-  let selectedVehicles: any[] = []
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const onUpdateApplication = async (vehicles: VehicleMiniDto[]) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: { vehiclesList: vehicles },
+        },
+        locale,
+      },
+    })
+  }
+
+  useEffect(() => {
+    const { vehiclesList } = getApplicationExternalData(
+      application.externalData,
+    )
+    setAllVehiclesList(vehiclesList)
+    setVehiclesList(vehiclesList)
+  }, [application.externalData])
 
   function getRoleLabel(vechicle: VehicleMiniDto): string {
     if (vechicle.role === 'Eigandi') {
@@ -30,21 +53,28 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
     }
   }
 
-  function recycle(vehicle: VehicleMiniDto): void {
-    selectedVehicles.push(vehicle)
-    vehiclesList = vehiclesList.filter((item) => item.permno !== vehicle.permno)
+  function onRecycle(vehicle: VehicleMiniDto): void {
+    selectedVehiclesList.push(vehicle)
+    setSelectedVehiclesList(selectedVehiclesList)
 
-    console.log('RECYCLE', vehicle)
-    console.log('selectedVehicles', selectedVehicles)
-  }
-
-  function cancel(car: VehicleMiniDto): void {
-    // cars.push(car)
-    selectedVehicles = selectedVehicles.filter(
-      (item) => item.permno !== car.permno,
+    const filterdVehiclesList = currentVehiclesList.filter(
+      (item) => item.permno !== vehicle.permno,
     )
 
-    console.log('CANCEL')
+    setVehiclesList(filterdVehiclesList)
+
+    onUpdateApplication(selectedVehiclesList)
+  }
+
+  function onCancel(vehicle: VehicleMiniDto): void {
+    currentVehiclesList.unshift(vehicle)
+    setSelectedVehiclesList(currentVehiclesList)
+
+    const filteredSelectedVehiclesList = selectedVehiclesList.filter(
+      (item) => item.permno !== vehicle.permno,
+    )
+    setSelectedVehiclesList(filteredSelectedVehiclesList)
+    onUpdateApplication(filteredSelectedVehiclesList)
   }
 
   return (
@@ -52,6 +82,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
       <Box paddingTop={2}>
         <InputController
           id="{nameFieldId}"
+          defaultValue=""
           backgroundColor="blue"
           label={formatText(
             carRecyclingMessages.cars.filter,
@@ -59,24 +90,38 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
             formatMessage,
           )}
           onChange={(e) => {
-            //setValue(nameFieldId as string, e.target.value)
+            const filteredList = allVehiclesList.filter((vehicle) =>
+              vehicle.permno
+                ?.toLowerCase()
+                .includes(e.target.value.toLowerCase()),
+            )
+
+            // Not show selected vehicles in filered list
+            const result = filteredList.filter(
+              (vehicle1) =>
+                !selectedVehiclesList.some(
+                  (vehicle2) => vehicle1.permno === vehicle2.permno,
+                ),
+            )
+
+            setVehiclesList(result)
           }}
         />
       </Box>
 
-      <Box position="relative" marginBottom={3} marginTop={3}>
+      <Box
+        hidden={selectedVehiclesList.length === 0}
+        position="relative"
+        marginBottom={3}
+        marginTop={3}
+      >
         <Label>{formatMessage(carRecyclingMessages.cars.selectedTitle)}</Label>
       </Box>
-      {selectedVehicles.map((vehicle: VehicleMiniDto, index) => {
+      {selectedVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
           <Box marginBottom={2} key={index}>
             <ActionCard
               key={vehicle.permno}
-              tag={{
-                label: formatMessage(carRecyclingMessages.cars.coOwner),
-                variant: 'red',
-                outlined: true,
-              }}
               cta={{
                 icon: undefined,
                 buttonType: {
@@ -84,27 +129,21 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
                   colorScheme: 'destructive',
                 },
                 label: formatMessage(carRecyclingMessages.cars.cancel),
-                onClick: () => cancel(vehicle),
+                onClick: () => onCancel(vehicle),
               }}
               heading={vehicle.permno || ''}
               text={`${vehicle.make}, ${vehicle.color}`}
-              unavailable={{
-                active: vehicle.role === 'Eigandi',
-                label: formatMessage(
-                  carRecyclingMessages.cars.onlyOwnerCanRecyle,
-                ),
-              }}
             />
           </Box>
         )
       })}
 
-      <hr />
+      <hr hidden={selectedVehiclesList.length === 0} />
       <Box position="relative" marginBottom={3} marginTop={2}>
         <Label>{formatMessage(carRecyclingMessages.cars.overview)}</Label>
       </Box>
 
-      {vehiclesList.map((vehicle: VehicleMiniDto, index) => {
+      {currentVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
           <Box marginBottom={2} key={index + '_currentbox'}>
             <ActionCard
@@ -112,7 +151,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
               tag={{
                 label: getRoleLabel(vehicle),
                 variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
-                outlined: true,
+                outlined: false,
               }}
               cta={{
                 icon: undefined,
@@ -122,8 +161,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
                 },
                 label: formatMessage(carRecyclingMessages.cars.recycle),
                 onClick: () => {
-                  console.log('FOOOOO')
-                  recycle(vehicle)
+                  onRecycle(vehicle)
                 },
               }}
               heading={vehicle.permno || ''}
