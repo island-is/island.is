@@ -6,6 +6,8 @@ import { SamgongustofaRestService } from './samgongustofaRest.service'
 import { UseGuards } from '@nestjs/common'
 
 // @Authorize()
+// @UseGuards(IdsUserGuard, ScopesGuard)
+// @UseGuards(IdsUserGuard)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleRestInformation)
 export class SamgongustofaRestResolver {
@@ -16,7 +18,6 @@ export class SamgongustofaRestResolver {
   @Query(() => [VehicleRestInformation])
   async skilavottordRestVehicles(): Promise<Array<VehicleRestInformation>> {
     console.log('------------ NEW ENDPOINT HITTTT  09485 ------------------')
-
     return this.samgongustofaRestService.getUserVehiclesInformation(
       '3012755609',
     )

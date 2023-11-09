@@ -15,7 +15,8 @@ export class RecyclingFundClientService {
 
   async getVehicles(user: User): Promise<any> {
     return await this.getRecyclingFundGraphQLClient(user).recyclingFundQuery({
-      body: { query: '{skilavottordVehicles{ permno }}' },
+      body: { query: '{skilavottordRestVehicles{ permno }}' },
+      // body: { query: '{skilavottordVehicles{ permno }}' },
     })
   }
 }

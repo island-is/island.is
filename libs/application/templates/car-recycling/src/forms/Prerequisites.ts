@@ -46,11 +46,11 @@ export const Prerequisites: Form = buildForm({
             ],
           }),
           dataProviders: [
-            buildDataProviderItem({
-              provider: CurrentVehiclesApi,
-              title: 'Samgöngustofa',
-              subTitle: 'AThuga bíldruslurnar',
-            }),
+            // buildDataProviderItem({
+            //   provider: CurrentVehiclesApi,
+            //   title: 'Samgöngustofa',
+            //   subTitle: 'AThuga bíldruslurnar',
+            // }),
           ],
         }),
       ],

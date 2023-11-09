@@ -2,8 +2,8 @@ const devConfig = {
   production: false,
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@urvinnslusjodur.is/skilavottord',
     nextAuthCookieName: 'next-auth.session-token',
+    audience: ['@urvinnslusjodur.is/skilavottord', '@island.is'],
   },
   samgongustofa: {
     soapUrl:
