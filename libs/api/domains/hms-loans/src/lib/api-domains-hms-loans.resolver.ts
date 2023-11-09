@@ -22,13 +22,13 @@ import { PaymentOverview } from './models/paymentOverview.model'
 export class HmsLoansResolver {
   constructor(private hmsLoansService: HmsLoansClientService) {}
 
-  @Query(() => LoanOverview, { nullable: true })
+  @Query(() => [LoanOverview], { nullable: true })
   @Audit()
   async getHmsLoansLoanOverview(@CurrentUser() user: User) {
     return await this.hmsLoansService.getHmsLoansLoanOverview(user)
   }
 
-  @Query(() => PaymentOverview, { nullable: true })
+  @Query(() => [PaymentOverview], { nullable: true })
   @Audit()
   async getHmsLoansPaymentOverview(@CurrentUser() user: User) {
     return this.hmsLoansService.getHmsLoansPaymentOverview(user)

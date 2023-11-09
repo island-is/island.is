@@ -1,11 +1,12 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DynamicWrapper, m } from '@island.is/service-portal/core'
 
-import { Box } from '@island.is/island-ui/core'
+import { AlertBanner, Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { m } from '@island.is/service-portal/core'
 import FinanceIntro from '../../components/FinanceIntro'
 import { useGetHmsLoansLoanOverviewQuery } from './FinanceLoans.generated'
+import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
 
-const FinanceBills = () => {
+const FinanceLoans = () => {
   useNamespaces('sp.finance-loans')
   const { formatMessage } = useLocale()
 
@@ -13,9 +14,8 @@ const FinanceBills = () => {
     data: loanOverviewData,
     loading: loanOverviewLoading,
     error: loanOverviewError,
+    called: loanOverviewCalled,
   } = useGetHmsLoansLoanOverviewQuery()
-
-  console.log({ loanOverviewData })
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
@@ -25,8 +25,35 @@ const FinanceBills = () => {
           defaultMessage: 'Virk lán hjá HMS',
         })}
       />
+      <Box marginTop={2}>
+        {loanOverviewError && (
+          <AlertBanner
+            description={formatMessage(m.errorFetch)}
+            variant="error"
+          />
+        )}
+        {(loanOverviewLoading || !loanOverviewCalled) && !loanOverviewError && (
+          <Box padding={3}>
+            <SkeletonLoader space={1} height={40} repeat={5} />
+          </Box>
+        )}
+        {!loanOverviewData?.getHmsLoansLoanOverview?.length &&
+          loanOverviewCalled &&
+          !loanOverviewLoading &&
+          !loanOverviewError && (
+            <AlertBanner
+              description={formatMessage(m.noResultsTryAgain)}
+              variant="warning"
+            />
+          )}
+        {loanOverviewData?.getHmsLoansLoanOverview?.length ? (
+          <FinanceLoansTable
+            loanOverview={loanOverviewData.getHmsLoansLoanOverview}
+          />
+        ) : null}
+      </Box>
     </Box>
   )
 }
 
-export default FinanceBills
+export default FinanceLoans

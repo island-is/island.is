@@ -13,4 +13,21 @@ export const m = defineMessages({
     id: 'sp.finance-schedule:status-valid',
     defaultMessage: 'Í gildi',
   },
+
+  loanNumber: {
+    id: 'sp.finance-loans:loan-number',
+    defaultMessage: 'Lánsnúmer',
+  },
+  interests: {
+    id: 'sp.finance-loans:interests',
+    defaultMessage: 'Vextir',
+  },
+  firstPaymentDate: {
+    id: 'sp.finance-loans:first-payment-date',
+    defaultMessage: 'Fyrsti gjalddagi',
+  },
+  originalAmount: {
+    id: 'sp.finance-loans:first-payment-date',
+    defaultMessage: 'Upphafleg fjárhæð',
+  },
 })
