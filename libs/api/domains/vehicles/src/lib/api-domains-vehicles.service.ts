@@ -56,7 +56,7 @@ export class VehiclesService {
       persidno: res.persidno ?? undefined,
       name: res.name ?? undefined,
       vehicles: res.vehicles?.map((item) =>
-        basicVehicleInformationMapper(item, auth.nationalId),
+        basicVehicleInformationMapper(item),
       ),
     }
   }
@@ -89,6 +89,6 @@ export class VehiclesService {
 
     if (!res) return null
 
-    return basicVehicleInformationMapper(res, auth.nationalId)
+    return basicVehicleInformationMapper(res)
   }
 }

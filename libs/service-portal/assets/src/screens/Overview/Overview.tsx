@@ -129,12 +129,11 @@ const VehiclesOverview = () => {
       )
       setDownloadExcel(false)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData])
   const vehicles = isSearching
     ? usersSearchVehicleQuery.data?.vehiclesList
     : usersVehicleQuery.data?.vehiclesList
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
 
   const ownershipPdf = usersVehicleQuery.data?.vehiclesList?.downloadServiceURL
   const filteredVehicles = vehicles?.vehicleList ?? []
