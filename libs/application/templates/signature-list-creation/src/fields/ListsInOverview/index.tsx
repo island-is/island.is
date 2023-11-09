@@ -21,6 +21,7 @@ export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
           <ActionCard
             eyebrow={
               formatMessage(m.listDateTil) +
+              ': ' +
               (application.answers.collection as any).dateTil
             }
             heading={(application.answers.applicant as any).name + ' - ' + area}

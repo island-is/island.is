@@ -46,7 +46,7 @@ const SignatureListTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
+                  name: m.createList,
                   type: 'primary',
                 },
               ],
@@ -59,13 +59,13 @@ const SignatureListTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.PAYMENT,
+                onEvent: DefaultEvents.SUBMIT,
               },
             ],
           },
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+          [DefaultEvents.SUBMIT]: { target: States.DONE },
         },
       },
       [States.DONE]: {},

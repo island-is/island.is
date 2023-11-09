@@ -127,7 +127,7 @@ export const m = defineMessages({
   },
   listOverviewHeader: {
     id: 'slc.application:listOverviewHeader',
-    defaultMessage: 'Upplýsingar um meðmælalista',
+    defaultMessage: 'Meðmælalistar sem verða stofnaðir',
     description: '',
   },
   listDateTil: {
@@ -138,6 +138,11 @@ export const m = defineMessages({
   listCardText: {
     id: 'slc.application:listCardText',
     defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
+  createList: {
+    id: 'slc.application:createList',
+    defaultMessage: 'Stofna meðmælalista',
     description: '',
   },
 })

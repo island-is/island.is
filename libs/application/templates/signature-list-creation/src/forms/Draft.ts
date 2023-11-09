@@ -9,9 +9,11 @@ import {
   buildMultiField,
   buildPhoneField,
   buildSection,
+  buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
 import {
+  DefaultEvents,
   Form,
   FormModes,
   NationalRegistryUserApi,
@@ -204,6 +206,18 @@ export const Draft: Form = buildForm({
               id: 'createdLists',
               title: '',
               component: 'ListsInOverview',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.createList,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.createList,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),
