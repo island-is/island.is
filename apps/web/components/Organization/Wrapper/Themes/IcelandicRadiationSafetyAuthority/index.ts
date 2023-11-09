@@ -1,6 +1,3 @@
-import dynamic from 'next/dynamic'
+import Header from './IcelandicRadiationSafetyAuthorityHeader'
 
-export const IcelandicRadiationSafetyAuthorityHeader = dynamic(
-  () => import('./IcelandicRadiationSafetyAuthorityHeader'),
-  { ssr: true },
-)
+export const IcelandicRadiationSafetyAuthorityHeader = Header

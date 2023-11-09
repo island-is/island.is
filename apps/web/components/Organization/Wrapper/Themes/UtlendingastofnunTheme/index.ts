@@ -1,9 +1,8 @@
 import dynamic from 'next/dynamic'
 
-export const UtlendingastofnunHeader = dynamic(
-  () => import('./UtlendingastofnunHeader'),
-  { ssr: true },
-)
+import Header from './UtlendingastofnunHeader'
+
+export const UtlendingastofnunHeader = Header
 
 export const UtlendingastofnunFooter = dynamic(
   () => import('./UtlendingastofnunFooter'),
