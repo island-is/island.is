@@ -31,7 +31,8 @@ const smsVerificationCode = createVerificationCode()
 const emailVerificationCode = createVerificationCode()
 
 const newEmail = faker.internet.email()
-const newPhoneNumber = formatPhoneNumber(createPhoneNumber())
+const newPhoneNumber = createPhoneNumber()
+const formattedNewPhoneNumber = formatPhoneNumber(newPhoneNumber)
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
@@ -222,7 +223,7 @@ describe('MeUserProfileController', () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         emailVerificationCode: emailVerificationCode,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
@@ -232,7 +233,7 @@ describe('MeUserProfileController', () => {
       expect(res.body).toMatchObject({
         email: newEmail,
         emailVerified: true,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
       })
 
@@ -243,13 +244,13 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.email).toBe(newEmail)
-      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
     })
 
     it('PATCH /v2/me should return 200 with changed mobile data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -257,7 +258,7 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
       })
 
@@ -267,7 +268,7 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
     })
 
     it('PATCH /v2/me should return 200 with changed email data in response', async () => {
@@ -322,7 +323,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 400 when mobile verification code is incorrect', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: '000',
       })
 
@@ -365,7 +366,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 400 when there is no sms verification code', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
       })
 
       // Assert
@@ -427,7 +428,7 @@ describe('MeUserProfileController', () => {
       const res = await server.patch('/v2/me').send({
         email: newEmail,
         emailVerificationCode: emailVerificationCode,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -438,7 +439,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: newEmail,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })
@@ -446,7 +447,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
         email: newEmail,
         emailVerificationCode: emailVerificationCode,
@@ -459,7 +460,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: newEmail,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })
@@ -486,7 +487,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 200 and should call the islyklar put method with new mobilePhoneNumber and current email', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -497,7 +498,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: testUserProfile.email,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })
