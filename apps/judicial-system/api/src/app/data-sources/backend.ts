@@ -335,6 +335,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
   ): Promise<DeleteFileResponse> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
+
+  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
+    return this.get(`case/${caseId}/limitedAccess/files/all`)
+  }
 }
 
 export default BackendApi

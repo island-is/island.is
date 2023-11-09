@@ -37,7 +37,12 @@ export const application = defineMessages({
   },
   historyLogApprovedByReviewer: {
     id: 'ta.tvo.application:historyLogApprovedByReviewer',
-    defaultMessage: 'Samþykkt af öllum aðilum',
+    defaultMessage: 'Samþykkt af samþykktaraðila',
     description: 'History log approved by reviewer',
+  },
+  historyLogSentApplication: {
+    id: 'ta.tvo.application:historyLogSentApplication',
+    defaultMessage: 'Umsókn send á Samgöngustofu',
+    description: 'History log application sent',
   },
 })

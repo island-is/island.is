@@ -234,7 +234,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
   async setBirthDate({ application }: TemplateApiModuleActionProps) {
     const { dateOfBirth } = getApplicationExternalData(application.externalData)
     if (dateOfBirth?.data?.dateOfBirth) {
-      return dateOfBirth?.data?.dateOfBirth
+      return { dateOfBirth: dateOfBirth?.data?.dateOfBirth }
     }
     /*
     If you want to MOCK getting dateOfBirth from API use this.
@@ -453,6 +453,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
     if (
       state === States.VINNUMALASTOFNUN_APPROVE_EDITS ||
+      state === States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT ||
       state === States.RESIDENCE_GRAND_APPLICATION
     ) {
       if (residenceGrantFiles) {
@@ -1413,13 +1414,17 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     if (params) {
       params === 'document' ||
         params === 'documentPeriod' ||
-        params === 'period'
+        params === 'period' ||
+        params === 'empper' ||
+        params === 'employer'
       return params
     }
     if (
       actionName === 'document' ||
       actionName === 'documentPeriod' ||
-      actionName === 'period'
+      actionName === 'period' ||
+      actionName === 'empper' ||
+      actionName === 'employer'
     ) {
       return actionName
     }
@@ -1430,7 +1435,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     typeof params === 'string' &&
     (params === 'period' ||
       params === 'document' ||
-      params === 'documentPeriod')
+      params === 'documentPeriod' ||
+      params === 'empper' ||
+      params === 'employer')
       ? (params as FileType)
       : undefined
     return params

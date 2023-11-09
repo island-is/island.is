@@ -31,7 +31,7 @@ test.describe('Work licenses', () => {
 
     await test.step('Renders the page', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/leyfisbref'))
+      await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
       await page.waitForLoadState('networkidle')
 
       // Act
@@ -43,8 +43,8 @@ test.describe('Work licenses', () => {
         .getByRole('button')
         .first()
 
-      // "Leyfisbréf - kennari" comes from the api - not translateable
-      const licenseName = page.getByText('Leyfisbréf - kennari').first()
+      // "Leyfisbréf - Kennari" comes from the api - not translateable
+      const licenseName = page.getByText('Kennari').first()
 
       // Assert
       await expect(headline).toBeVisible()

@@ -52,7 +52,7 @@ const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box className={styles.buttonWrapper} display="flex">
+    <Box display="flex">
       <Box marginRight={2} className={styles.hideInMobile}>
         <Button
           onClick={() => {

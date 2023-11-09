@@ -1,10 +1,10 @@
 [
   {
-    "kennitala": "1234567890",
-    "nafn": "Jón Jónsson"
+    "ssn": "1234567890",
+    "name": "Jón Jónsson"
   },
   {
-    "kennitala": "1234567890",
-    "nafn": "Jóna Jónsdóttir"
+    "ssn": "1234567890",
+    "name": "Jóna Jónsdóttir"
   }
 ]

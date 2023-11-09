@@ -22,11 +22,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
       title:
         oldAgePensionFormMessage.fileUpload.additionalDocumentRequiredTitle,
       children: [
-        buildCustomField({
-          id: 'uploadAdditionalFilesInfoScreen',
-          title: oldAgePensionFormMessage.fileUpload.additionalFileTitle,
-          component: 'UploadAdditionalFilesInfoScreen',
-        }),
         buildMultiField({
           id: 'additionalDocumentsRequiredScreen',
           title:

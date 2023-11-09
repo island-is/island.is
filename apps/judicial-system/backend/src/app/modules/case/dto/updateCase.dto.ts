@@ -311,16 +311,6 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedPostponedAppealDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly prosecutorPostponedAppealDate?: Date
-
-  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string

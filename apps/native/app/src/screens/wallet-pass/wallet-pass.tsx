@@ -6,6 +6,7 @@ import {
   FieldGroup,
   FieldLabel,
   FieldRow,
+  Alert as InfoAlert,
   LicenceCard,
   LicenseCardType,
 } from '@ui';
@@ -17,8 +18,8 @@ import {
   View,
   ActivityIndicator,
   NativeModules,
-  Alert,
   Linking,
+  Alert,
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import PassKit, {AddPassButton} from 'react-native-passkit-wallet';
@@ -26,7 +27,6 @@ import * as FileSystem from 'expo-file-system';
 import styled, {useTheme} from 'styled-components/native';
 import {client} from '../../graphql/client';
 import {
-  GenericUserLicenseStatus,
   IGenericLicenseDataField,
   GenericUserLicensePkPassStatus,
   IGenericUserLicense,
@@ -329,6 +329,21 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <View style={{height: cardHeight}} />
       <Information contentInset={{bottom: 162}}>
         <SafeAreaView style={{marginHorizontal: 16}}>
+          {/* Show info alert if PCard */}
+          {data?.license?.type === GenericLicenseType.PCard && (
+            <View style={{paddingTop: 24}}>
+              <InfoAlert
+                title={intl.formatMessage({
+                  id: 'licenseDetail.pcard.alert.title',
+                })}
+                message={intl.formatMessage({
+                  id: 'licenseDetail.pcard.alert.description',
+                })}
+                type="info"
+                hasBorder
+              />
+            </View>
+          )}
           {!data?.payload?.data && licenseRes.loading ? (
             <ActivityIndicator
               size="large"

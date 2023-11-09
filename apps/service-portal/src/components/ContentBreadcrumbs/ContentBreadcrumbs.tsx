@@ -1,6 +1,7 @@
 import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { Link, useLocation, PathMatch, matchPath } from 'react-router-dom'
+import { useWindowSize } from 'react-use'
 
 import {
   Box,
@@ -8,13 +9,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  GoBack,
   ServicePortalNavigationItem,
+  m,
   useDynamicRoutesWithNavigation,
 } from '@island.is/service-portal/core'
+import { theme } from '@island.is/island-ui/theme'
 
 import { isDefined } from '@island.is/shared/utils'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-
+import * as styles from './ContentBreadcrumbs.css'
 interface ContentBreadcrumb {
   name: string | MessageDescriptor
   path?: string
@@ -46,6 +50,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
   const location = useLocation()
   const { formatMessage } = useLocale()
+  const { width } = useWindowSize()
   let items: ContentBreadcrumb[] = []
 
   const findBreadcrumbsPath = (
@@ -64,11 +69,22 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
           )
         : null
 
+      // Use active ancestor to fill in parameter references for ancestors.
+      const activeAncestor = navItem.path
+        ? matchPath(
+            {
+              path: navItem.path,
+              end: false,
+            },
+            location.pathname,
+          )
+        : null
+
       // Push the nav item to the current array as we are currently located here in our search
       currentBreadcrumbs.push({
-        name: parseNavItemName(navItem, activePath),
+        name: parseNavItemName(navItem, activeAncestor),
         hidden: navItem.breadcrumbHide ?? false,
-        path: activePath ? location.pathname : navItem.path,
+        path: activeAncestor ? activeAncestor.pathname : navItem.path,
       })
 
       // Only update if we have found a deeper path
@@ -90,19 +106,35 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
 
   findBreadcrumbsPath(navigation, [])
 
+  const isMobile = width < theme.breakpoints.md
   if (items.length < 2) return null
 
   return (
-    <Box paddingTop={0} paddingBottom={[2, 3]}>
-      <Breadcrumbs color="blue400" separatorColor="blue400">
-        {items.map((item, index) =>
-          isDefined(item.path) && !item.hidden ? (
-            <Link key={index} to={item.path}>
-              {formatMessage(item.name)}
-            </Link>
-          ) : null,
-        )}
-      </Breadcrumbs>
+    <Box
+      display="flex"
+      flexDirection="row"
+      justifyContent="spaceBetween"
+      alignItems="center"
+      paddingBottom={[2, 3]}
+      paddingTop={[4, 4, 0]}
+    >
+      <Box className={styles.breadcrumbs} paddingTop={0} position="relative">
+        <Breadcrumbs color="blue400" separatorColor="blue400">
+          {items.map((item, index) =>
+            isDefined(item.path) && !item.hidden ? (
+              isMobile && index === 0 ? (
+                <GoBack noUnderline={true} display="inline" />
+              ) : (
+                <Link className={styles.link} key={index} to={item.path}>
+                  {index === 0
+                    ? formatMessage(m.overview)
+                    : formatMessage(item.name)}
+                </Link>
+              )
+            ) : null,
+          )}
+        </Breadcrumbs>
+      </Box>
     </Box>
   )
 }
