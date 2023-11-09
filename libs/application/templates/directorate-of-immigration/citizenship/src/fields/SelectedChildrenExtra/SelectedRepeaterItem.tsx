@@ -101,6 +101,13 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
     index,
   )
 
+  useEffect(() => {
+    if (repeaterField.otherParentNationalId) {
+      setNationalIdInput(repeaterField.otherParentNationalId)
+      setValue(otherParentNationalIdField, repeaterField.otherParentNationalId)
+    }
+  }, [repeaterField.otherParentNationalId])
+
   const nameError =
     errors &&
     getErrorViaPath(errors, otherParentNameField) &&
@@ -132,7 +139,8 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
         onSelect={() => {
           setShowMoreQuestions(!showMoreQuestions)
         }}
-        defaultValue={repeaterField.hasFullCustody === 'yes' ? YES : NO}
+        disabled={readOnlyFields}
+        defaultValue={repeaterField.hasFullCustody === 'yes' ? YES : ''}
         options={[
           {
             value: YES,

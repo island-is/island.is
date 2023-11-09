@@ -64,6 +64,7 @@ export const MoreChildInfo: FC<FieldBaseProps> = (props) => {
       }
       return predefinedChild
     })
+
     setCombinedChildren(mappedChildren)
   }, [answers, children, childrenExtraData, externalData])
 

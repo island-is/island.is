@@ -1,7 +1,10 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import DescriptionText from '../../components/DescriptionText'
 import { information, review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { useLocale } from '@island.is/localization'
@@ -9,6 +12,7 @@ import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { YES, getValueViaPath } from '@island.is/application/core'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -32,14 +36,19 @@ export const ResidencyReview: FC<Props> = ({
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
-        <DescriptionText
-          text={review.labels.residency}
-          textProps={{
-            as: 'h4',
-            fontWeight: 'semiBold',
-            marginBottom: 0,
-          }}
-        />
+        {DescriptionFormField({
+          application: application,
+          showFieldName: false,
+          field: {
+            id: 'title',
+            title: '',
+            description: formatMessage(review.labels.residency),
+            titleVariant: 'h4',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
         <GridRow>
           {answers?.countriesOfResidence?.hasLivedAbroad === YES &&
           answers?.countriesOfResidence?.selectedAbroadCountries &&

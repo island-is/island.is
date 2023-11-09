@@ -1,11 +1,16 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { FC } from 'react'
-import DescriptionText from '../../components/DescriptionText'
 import { review } from '../../lib/messages'
 import { Citizenship } from '../../lib/dataSchema'
 import { Routes } from '../../lib/constants'
 import SummaryBlock from '../../components/SummaryBlock'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
+import { useLocale } from '@island.is/localization'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -18,18 +23,23 @@ export const ParentsReview: FC<Props> = ({
   route,
 }) => {
   const answers = application.answers as Citizenship
-
+  const { formatMessage } = useLocale()
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>
       <Box paddingBottom={4}>
-        <DescriptionText
-          text={review.labels.parents}
-          textProps={{
-            as: 'h4',
-            fontWeight: 'semiBold',
-            marginBottom: 0,
-          }}
-        />
+        {DescriptionFormField({
+          application: application,
+          showFieldName: false,
+          field: {
+            id: 'title',
+            title: '',
+            description: formatMessage(review.labels.parents),
+            titleVariant: 'h4',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
         <GridRow>
           {answers?.parentInformation?.parents &&
             answers?.parentInformation?.parents?.map((parent) => {

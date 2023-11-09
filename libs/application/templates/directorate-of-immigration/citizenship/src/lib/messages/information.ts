@@ -60,8 +60,8 @@ export const information = {
         description: 'Parents page title',
       },
       parentTitle: {
-        id: 'doi.cs.application:information.labels.parents.parentTitle',
-        defaultMessage: 'Foreldri {index}',
+        id: 'doi.cs.application:information.labels.parents.parentTitle#markdown',
+        defaultMessage: '**Foreldri {index}**',
         description: 'Parent title',
       },
     }),
@@ -152,7 +152,7 @@ export const information = {
       questionTitle: {
         id: 'doi.cs.application:information.labels.countriesOfResidence.questionTitle',
         defaultMessage:
-          'Hefur þú búið í öðru landi en Íslandi eftir 15 ára aldur?',
+          '**Hefur þú búið í öðru landi en Íslandi eftir 15 ára aldur?**',
         description: 'Countries of residence question title',
       },
       countryListTitle: {
@@ -194,14 +194,14 @@ export const information = {
         description: 'Stays abroad page title',
       },
       itemTitle: {
-        id: 'doi.cs.application:information.labels.staysAbroad.itemTitle',
-        defaultMessage: 'Dvalarland {index}',
+        id: 'doi.cs.application:information.labels.staysAbroad.itemTitle#markdown',
+        defaultMessage: '**Dvalarland {index}**',
         description: 'Stay abroad item separator title',
       },
       questionTitle: {
         id: 'doi.cs.application:information.labels.staysAbroad.questionTitle',
         defaultMessage:
-          'Hefur þú frá lögheimilsskráningu dvalið utan Íslands lengur en 3 mánuði?',
+          '**Hefur þú frá lögheimilsskráningu dvalið utan Íslands lengur en 3 mánuði?**',
         description: 'Stays abroad title',
       },
       selectLabel: {
