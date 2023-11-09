@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic'
 
-import Header from './LandkjorstjornHeader'
+import Header from './LandskjorstjornHeader'
 
 export const LandskjorstjornFooter = dynamic(
   () => import('./LandkjorstjornFooter'),
