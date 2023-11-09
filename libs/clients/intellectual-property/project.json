@@ -30,7 +30,7 @@
         "cwd": "libs/clients/intellectual-property"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/intellectual-property/gen/fetch -i libs/clients/intellectual-property/src/clientConfig.json"
