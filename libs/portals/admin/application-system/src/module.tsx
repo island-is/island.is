@@ -5,6 +5,9 @@ import { m } from './lib/messages'
 import { ApplicationSystemPaths } from './lib/paths'
 
 const Overview = lazy(() => import('./screens/Overview/Overview'))
+const InstitutionOverview = lazy(() =>
+  import('./screens/Overview/InstitutionOverview'),
+)
 
 export const applicationSystemAdminModule: PortalModule = {
   name: m.applicationSystem,
@@ -16,6 +19,11 @@ export const applicationSystemAdminModule: PortalModule = {
       name: m.overview,
       path: ApplicationSystemPaths.Root,
       element: <Overview />,
+    },
+    {
+      name: 'Stofnanir',
+      path: ApplicationSystemPaths.Institution,
+      element: <InstitutionOverview />,
     },
   ],
 }
