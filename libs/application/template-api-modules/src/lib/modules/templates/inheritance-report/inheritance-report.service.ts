@@ -17,6 +17,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { infer as zinfer } from 'zod'
 import { inheritanceReportSchema } from '@island.is/application/templates/inheritance-report'
 import type { Logger } from '@island.is/logging'
+import { expandAnswers } from './utils/mappers'
 
 type InheritanceSchema = zinfer<typeof inheritanceReportSchema>
 
@@ -43,22 +44,17 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
-    let estateResponse: EstateInfo
-    if (
+    const [relationOptions, estateResponse] = await Promise.all([
+      this.syslumennService.getEstateRelations(),
+      // Get estate info from syslumenn or fakedata depending on application.applicant
       application.applicant.startsWith('010130') &&
       application.applicant.endsWith('2399')
-    ) {
-      estateResponse = getFakeData()
-    } else {
-      estateResponse = (
-        await this.syslumennService.getEstateInfo(application.applicant)
-      )[0]
-    }
+        ? [getFakeData()]
+        : this.syslumennService.getEstateInfo(application.applicant),
+    ])
+    const estate = estateTransformer(estateResponse[0])
 
-    const estate = estateTransformer(estateResponse)
-
-    const relationOptions = (await this.syslumennService.getEstateRelations())
-      .relations
+    console.log('WE GOT ESTATE', JSON.stringify(estate, null, 2))
 
     return {
       success: true,
@@ -88,7 +84,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
       type: PersonType.AnnouncerOfDeathCertificate,
     }
 
-    const uploadData = this.stringifyObject(answers)
+    const uploadData = this.stringifyObject(expandAnswers(answers))
 
     const uploadDataName = 'erfdafjarskysla1.0'
     const uploadDataId = 'erfdafjarskysla1.0'

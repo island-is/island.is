@@ -48,6 +48,7 @@ export const ReportFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { answers, externalData } = application
+  console.log('THE FIELD IS: ', field)
   const { id, props } = field
   const splitId = id.split('.')
 
