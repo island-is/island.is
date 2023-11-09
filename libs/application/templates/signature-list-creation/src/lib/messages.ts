@@ -130,4 +130,14 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar um meðmælalista',
     description: '',
   },
+  listDateTil: {
+    id: 'slc.application:listDateTil',
+    defaultMessage: 'Lokadagur',
+    description: '',
+  },
+  listCardText: {
+    id: 'slc.application:listCardText',
+    defaultMessage: 'Forsetakosningar 2024',
+    description: '',
+  },
 })

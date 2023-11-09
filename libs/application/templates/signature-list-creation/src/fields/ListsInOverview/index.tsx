@@ -1,6 +1,8 @@
 import { FC } from 'react'
 import { ActionCard, Stack } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 
 const areas = [
   'Sunnlendingafjórðungur',
@@ -10,16 +12,19 @@ const areas = [
 ]
 
 export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
+  const { formatMessage } = useLocale()
+
   return (
     <Stack space={3}>
       {areas.map((area) => {
         return (
           <ActionCard
             eyebrow={
-              'Lokadadur: ' + (application.answers.collection as any).dateTil
+              formatMessage(m.listDateTil) +
+              (application.answers.collection as any).dateTil
             }
             heading={(application.answers.applicant as any).name + ' - ' + area}
-            text="Forsetakosningar 2024"
+            text={formatMessage(m.listCardText)}
             progressMeter={{
               currentProgress: 45,
               maxProgress: 350,
