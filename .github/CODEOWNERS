@@ -20,7 +20,6 @@
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                       @island-is/core
-/.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -115,7 +114,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/download-service/                                                                                  @island-is/hugsmidjan
 /apps/service-portal*/                                                                                   @island-is/hugsmidjan
 /apps/services/regulations-admin-backend/                                                                @island-is/hugsmidjan
-/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni
+/apps/services/user-profile/                                                                             @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /apps/web/screens/Regulations/                                                                           @island-is/hugsmidjan
 /apps/web/components/Regulations/                                                                        @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                    @island-is/hugsmidjan
@@ -125,7 +124,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
-/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni
+/libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
 /libs/api/domains/university-of-iceland/                                                                 @island-is/hugsmidjan
@@ -147,6 +146,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
@@ -282,8 +282,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/system-e2e/                                                                                        @island-is/qa
 
 # DevOps
-/.github/actions/                                                                                        @island-is/devops
-/.github/workflows/                                                                                      @island-is/devops
+/.github/                                                                                                @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -291,5 +290,5 @@ libs/clients/rsk/relationships/                                                 
 /libs/logging/                                                                                           @island-is/devops
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
-/scripts/schemas.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/scripts/codegen.js                                                                                      @island-is/devops @island-is/core
+/charts/                                                                                                 @island-is/devops

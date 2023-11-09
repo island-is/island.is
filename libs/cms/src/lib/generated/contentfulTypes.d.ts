@@ -8,7 +8,7 @@ export interface IAccordionSliceFields {
   title?: string | undefined
 
   /** Type */
-  type: 'accordion' | 'accordion_minimal' | 'CTA'
+  type: 'accordion' | 'accordion_minimal' | 'CTA' | 'category_card'
 
   /** Accordion Items */
   accordionItems?: IOneColumnText[] | undefined
@@ -163,7 +163,7 @@ export interface IArticleFields {
   category: IArticleCategory
 
   /** Group (Main) */
-  group?: IArticleGroup | undefined
+  group: IArticleGroup
 
   /** Subgroup (Main) */
   subgroup?: IArticleSubgroup | undefined
@@ -392,7 +392,10 @@ export interface ICardFields {
   title: string
 
   /** Body */
-  body: string
+  body?: string | undefined
+
+  /** Link */
+  linkUrl: string
 
   /** Link Text */
   linkText?: string | undefined
@@ -691,6 +694,61 @@ export interface IErrorPage extends Entry<IErrorPageFields> {
     contentType: {
       sys: {
         id: 'errorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IEventFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  startDate: string
+
+  /** Event time duration */
+  time?: Record<string, any> | undefined
+
+  /** Event Location */
+  location?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Video */
+  video?: IEmbeddedVideo | undefined
+
+  /** Thumbnail Image */
+  thumbnailImage: Asset
+
+  /** Content Image */
+  contentImage?: Asset | undefined
+
+  /** Full Width Image In Content */
+  fullWidthImageInContent?: boolean | undefined
+
+  /** og:image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IEvent extends Entry<IEventFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'event'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1439,11 +1497,10 @@ export interface IIntroLinkImageFields {
   leftImage?: boolean | undefined
 
   /** Link Title */
-  linkTitle: string
+  linkTitle?: string | undefined
 
   /** Link */
-  link:
-    | IAboutSubPage
+  link?:
     | IArticle
     | IArticleCategory
     | ISubArticle
@@ -1452,9 +1509,10 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | undefined
 
   /** Open Link in New Tab */
-  openLinkInNewTab: boolean
+  openLinkInNewTab?: boolean | undefined
 }
 
 export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
@@ -1467,6 +1525,31 @@ export interface IIntroLinkImage extends Entry<IIntroLinkImageFields> {
     contentType: {
       sys: {
         id: 'introLinkImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ILatestEventsSliceFields {
+  /** Title */
+  title: string
+
+  /** Organization */
+  organization: IOrganization
+}
+
+export interface ILatestEventsSlice extends Entry<ILatestEventsSliceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'latestEventsSlice'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1802,6 +1885,77 @@ export interface ILogoListSlice extends Entry<ILogoListSliceFields> {
   }
 }
 
+export interface IManualFields {
+  /** Organization */
+  organization: IOrganization
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Info */
+  info?: Document | undefined
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapters */
+  chapters: IManualChapter[]
+}
+
+export interface IManual extends Entry<IManualFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manual'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IManualChapterFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Description */
+  description?: Document | undefined
+
+  /** Chapter Items */
+  chapterItems?: IOneColumnText[] | undefined
+
+  /** Changelog */
+  changelog?: Record<string, any> | undefined
+}
+
+export interface IManualChapter extends Entry<IManualChapterFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'manualChapter'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IMenuFields {
   /** Title */
   title?: string | undefined
@@ -2021,6 +2175,9 @@ export interface INewsFields {
 
   /** og:image */
   featuredImage?: Asset | undefined
+
+  /** Sign Language Video */
+  signLanguageVideo?: IEmbeddedVideo | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -2366,6 +2523,7 @@ export interface IOrganizationPageFields {
         | IOneColumnText
         | ITimeline
         | ITwoColumnText
+        | ILatestEventsSlice
       )[]
     | undefined
 
@@ -2739,6 +2897,7 @@ export interface IProjectPageFields {
     | 'ukraine'
     | 'opinbernyskopun'
     | 'gagnasidur-fiskistofu'
+    | 'directorate-of-health'
 
   /** Sidebar */
   sidebar: boolean
@@ -4016,6 +4175,7 @@ export interface IUrlFields {
     | IProjectPage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IOrganizationPage
     | undefined
 
   /** Urls list */
@@ -4068,7 +4228,7 @@ export interface IVacancyFields {
     | 'Sumarstörf'
 
   /** Organization */
-  organization: IOrganization
+  organization?: IOrganization | undefined
 
   /** Locations */
   locations: (
@@ -4081,6 +4241,7 @@ export interface IVacancyFields {
     | 'Suðurland'
     | 'Vestfirðir'
     | 'Suðurnes'
+    | 'Erlendis'
   )[]
 
   /** Job Percentage */
@@ -4325,6 +4486,7 @@ export type CONTENT_TYPE =
   | 'embeddedVideo'
   | 'enhancedAsset'
   | 'errorPage'
+  | 'event'
   | 'eventSlice'
   | 'faqList'
   | 'featured'
@@ -4344,6 +4506,7 @@ export type CONTENT_TYPE =
   | 'hnippTemplate'
   | 'iconBullet'
   | 'introLinkImage'
+  | 'latestEventsSlice'
   | 'latestNewsSlice'
   | 'lifeEventPage'
   | 'lifeEventPageListSlice'
@@ -4354,6 +4517,8 @@ export type CONTENT_TYPE =
   | 'linkUrl'
   | 'location'
   | 'logoListSlice'
+  | 'manual'
+  | 'manualChapter'
   | 'menu'
   | 'menuLink'
   | 'menuLinkWithChildren'

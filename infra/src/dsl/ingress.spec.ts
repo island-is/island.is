@@ -42,12 +42,14 @@ describe('Ingress definitions', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'a.staging01.devland.is', paths: ['/api'] }],
       },
       'secondary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'b.staging01.devland.is', paths: ['/'] }],
       },
@@ -77,6 +79,7 @@ describe('Ingress definitions', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
           A: 'B',
         },
         hosts: [{ host: 'staging01.devland.is', paths: ['/api'] }],
@@ -113,6 +116,7 @@ describe('Ingress definitions', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-external-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: 'notmissing-staging01.devland.is', paths: ['/api'] }],
       },
@@ -137,6 +141,7 @@ describe('Ingress definitions', () => {
       'primary-alb': {
         annotations: {
           'kubernetes.io/ingress.class': 'nginx-internal-alb',
+          'nginx.ingress.kubernetes.io/service-upstream': 'true',
         },
         hosts: [{ host: '007.internal.staging01.devland.is', paths: ['/api'] }],
       },

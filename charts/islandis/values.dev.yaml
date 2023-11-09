@@ -13,7 +13,6 @@ air-discount-scheme-api:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -44,6 +43,7 @@ air-discount-scheme-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
@@ -91,7 +91,6 @@ air-discount-scheme-backend:
     IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
-    NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
@@ -133,6 +132,7 @@ air-discount-scheme-backend:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
@@ -161,7 +161,6 @@ air-discount-scheme-backend:
       DB_NAME: 'air_discount_scheme_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'air_discount_scheme_backend'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
@@ -234,6 +233,7 @@ air-discount-scheme-web:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/proxy-buffers-number: '4'
         nginx.ingress.kubernetes.io/server-snippet: 'client_header_buffer_size 16k; large_client_header_buffers 4 16k;'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'loftbru.dev01.devland.is'
           paths:
@@ -412,6 +412,7 @@ api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -570,7 +571,6 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
     NOVA_USERNAME: 'IslandIs_User_Development'
-    NO_UPDATE_NOTIFIER: 'true'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
@@ -647,6 +647,7 @@ application-system-api:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'application-payment-callback-xrd.internal.dev01.devland.is'
           paths:
@@ -675,7 +676,6 @@ application-system-api:
       DB_NAME: 'application_system_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'application_system_api'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
@@ -851,6 +851,7 @@ application-system-form:
     SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   grantNamespaces:
     - 'nginx-ingress-internal'
+    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
@@ -880,6 +881,7 @@ application-system-form:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -945,6 +947,7 @@ consultation-portal:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -1003,6 +1006,7 @@ contentful-apps:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'contentful-apps.dev01.devland.is'
           paths:
@@ -1065,6 +1069,7 @@ contentful-entry-tagger-service:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'contentful-entry-tagger-service.dev01.devland.is'
           paths:
@@ -1130,6 +1135,7 @@ contentful-translation-extension:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'contentful-translation-extension.dev01.devland.is'
           paths:
@@ -1164,6 +1170,9 @@ download-service:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
+    XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
+    XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
+    XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/EDU/10020/MMS-Protected/license-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
@@ -1200,6 +1209,7 @@ download-service:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'api.dev01.devland.is'
           paths:
@@ -1228,6 +1238,10 @@ download-service:
     REGULATIONS_FILE_UPLOAD_KEY_DRAFT: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_DRAFT'
     REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PRESIGNED'
     REGULATIONS_FILE_UPLOAD_KEY_PUBLISH: '/k8s/api/REGULATIONS_FILE_UPLOAD_KEY_PUBLISH'
+    XROAD_HEALTH_INSURANCE_PASSWORD: '/k8s/health-insurance/XROAD-PASSWORD'
+    XROAD_HEALTH_INSURANCE_USERNAME: '/k8s/health-insurance/XROAD-USER'
+    XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_PASSWORD'
+    XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME: '/k8s/api/HEALTH_INSURANCE_V2_XROAD_USERNAME'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -1250,7 +1264,6 @@ endorsement-system-api:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1306,7 +1319,6 @@ endorsement-system-api:
       DB_NAME: 'services_endorsements_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_endorsements_api'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
@@ -1440,6 +1452,7 @@ github-actions-cache:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'cache.dev01.devland.is'
           paths:
@@ -1473,12 +1486,13 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
-    NO_UPDATE_NOTIFIER: 'true'
+    NPM_CONFIG_UPDATE_NOTIFIER: 'false'
     PORT: '3333'
     name: 'dev'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 icelandic-names-registry-backend:
   enabled: true
   env:
@@ -1488,7 +1502,6 @@ icelandic-names-registry-backend:
     DB_USER: 'icelandic_names_registry_backend'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -1547,7 +1560,6 @@ icelandic-names-registry-backend:
       DB_NAME: 'icelandic_names_registry_backend'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'icelandic_names_registry_backend'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
@@ -1604,6 +1616,7 @@ island-ui-storybook:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'ui.dev01.devland.is'
           paths:
@@ -1671,6 +1684,7 @@ license-api:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'license-api-xrd.internal.dev01.devland.is'
           paths:
@@ -1689,6 +1703,7 @@ license-api:
       cpu: '15m'
       memory: '256Mi'
   secrets:
+    ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DISABILITY_LICENSE_FETCH_TIMEOUT: '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT'
     DISABILITY_LICENSE_PASS_TEMPLATE_ID: '/k8s/DISABILITY_LICENSE_PASS_TEMPLATE_ID'
@@ -1696,6 +1711,7 @@ license-api:
     DRIVING_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/DRIVING_LICENSE_PASS_TEMPLATE_ID'
     FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT'
     FIREARM_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/FIREARM_LICENSE_PASS_TEMPLATE_ID'
+    MACHINE_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/MACHINE_LICENSE_PASS_TEMPLATE_ID'
     PKPASS_API_KEY: '/k8s/api/PKPASS_API_KEY'
     PKPASS_API_URL: '/k8s/api/PKPASS_API_URL'
     PKPASS_AUTH_RETRIES: '/k8s/api/PKPASS_AUTH_RETRIES'
@@ -1706,6 +1722,7 @@ license-api:
     RLS_PKPASS_API_KEY: '/k8s/api/RLS_PKPASS_API_KEY'
     SMART_SOLUTIONS_API_URL: '/k8s/api/SMART_SOLUTIONS_API_URL'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
+    VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
     XROAD_DRIVING_LICENSE_SECRET: '/k8s/api/DRIVING_LICENSE_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -1773,6 +1790,7 @@ portals-admin:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -1930,6 +1948,7 @@ search-indexer-service:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'search-indexer-service.dev01.devland.is'
           paths:
@@ -2060,6 +2079,7 @@ service-portal:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -2094,11 +2114,13 @@ service-portal-api:
     DB_USER: 'service_portal_api'
     EMAIL_REGION: 'eu-west-1'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
+    ISLYKILL_CERT: '/etc/config/islyklar.p12'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'true'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_PORTAL_BASE_URL: 'https://beta.dev01.devland.is/minarsidur'
+  files:
+    - 'islyklar.p12'
   grantNamespaces:
     - 'nginx-ingress-internal'
     - 'islandis'
@@ -2130,6 +2152,7 @@ service-portal-api:
     internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'service-portal-api.internal.dev01.devland.is'
           paths:
@@ -2153,7 +2176,6 @@ service-portal-api:
       DB_NAME: 'service_portal_api'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'service_portal_api'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
@@ -2179,6 +2201,8 @@ service-portal-api:
     EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME'
     EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO'
     EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME'
+    ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH'
+    ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NOVA_PASSWORD: '/k8s/gjafakort/NOVA_PASSWORD'
     NOVA_URL: '/k8s/service-portal-api/NOVA_URL'
     NOVA_USERNAME: '/k8s/gjafakort/NOVA_USERNAME'
@@ -2199,7 +2223,6 @@ services-documents:
     DB_USER: 'services_documents'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
@@ -2245,7 +2268,6 @@ services-documents:
       DB_NAME: 'services_documents'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_documents'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
@@ -2311,6 +2333,7 @@ services-sessions:
     internal-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'sessions-api.internal.dev01.devland.is'
           paths:
@@ -2479,7 +2502,6 @@ services-sessions-worker:
       DB_NAME: 'services_sessions'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'services_sessions'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
@@ -2515,7 +2537,6 @@ skilavottord-web:
     API_URL: 'http://skilavottord-ws'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=230'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -2547,6 +2568,7 @@ skilavottord-web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -2584,7 +2606,6 @@ skilavottord-ws:
     DB_USER: 'skilavottord'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=230'
-    NO_UPDATE_NOTIFIER: 'true'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -2614,6 +2635,7 @@ skilavottord-ws:
     primary-alb:
       annotations:
         kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
@@ -2637,7 +2659,6 @@ skilavottord-ws:
       DB_NAME: 'skilavottord'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'skilavottord'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
@@ -2712,6 +2733,7 @@ user-notification:
         kubernetes.io/ingress.class: 'nginx-internal-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
@@ -2857,6 +2879,7 @@ web:
         kubernetes.io/ingress.class: 'nginx-external-alb'
         nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:

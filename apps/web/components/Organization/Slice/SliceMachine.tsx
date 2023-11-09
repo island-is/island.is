@@ -63,6 +63,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const LatestEventsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestEventsSlice),
+)
+
 const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
@@ -90,7 +94,7 @@ interface SliceMachineProps {
   slug?: string
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
-  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
   wrapWithGridContainer?: boolean
 }
 
@@ -156,6 +160,15 @@ const renderSlice = (
       return <PowerBiSlice slice={slice} />
     case 'SectionWithVideo':
       return <SectionWithVideo slice={slice} />
+    case 'LatestEventsSlice':
+      return (
+        <LatestEventsSlice
+          slice={slice}
+          slug={slug}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -168,14 +181,14 @@ export const SliceMachine = ({
   slug = '',
   marginBottom = 0,
   params,
-  paddingTop = 6,
+  paddingBottom = 6,
   wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>
         <GridColumn
-          paddingTop={paddingTop}
+          paddingBottom={paddingBottom}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

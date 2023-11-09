@@ -148,6 +148,7 @@ export interface IngressForEnv {
   host: string | string[]
   paths: string[]
   public?: boolean
+  serviceUpstream?: boolean
   extraAnnotations?: { [idx: string]: string | null }
 }
 

@@ -3,7 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
 import { FirearmApi } from '@island.is/clients/firearm-license'
-import { format as formatNationalId } from 'kennitala'
 import {
   Pass,
   PassDataInput,
@@ -28,6 +27,8 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     private firearmApi: FirearmApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  clientSupportsPkPass = true
 
   private checkLicenseValidityForPkPass(
     data: FirearmLicenseDto,
@@ -121,7 +122,6 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
   async getLicense(user: User): Promise<Result<FirearmLicenseDto | null>> {
     const licenseData = await this.fetchLicenseData(user)
     if (!licenseData.ok) {
-      this.logger.info(`Firearm license data fetch failed`)
       return {
         ok: false,
         error: {
@@ -140,12 +140,6 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     }
 
     return licenseData
-  }
-
-  async getLicenseDetail(
-    user: User,
-  ): Promise<Result<FirearmLicenseDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(
@@ -182,7 +176,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
     if (!license.ok || !license.data) {
       this.logger.info(
         `No license data found for user, no pkpass payload to create`,
-        { LOG_CATEGORY },
+        { category: LOG_CATEGORY },
       )
       return {
         ok: false,
@@ -220,10 +214,7 @@ export class FirearmLicenseClient implements LicenseClient<FirearmLicenseDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      formatNationalId(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     return pass
   }

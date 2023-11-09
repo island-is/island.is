@@ -102,9 +102,6 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: workerPostgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .liveness('/liveness')
     .readiness('/liveness')

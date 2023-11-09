@@ -337,6 +337,8 @@ function serializeIngress(
 
   return {
     annotations: {
+      'nginx.ingress.kubernetes.io/service-upstream':
+        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       'kubernetes.io/ingress.class':
         ingressConf.public ?? true
           ? 'nginx-external-alb'

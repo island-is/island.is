@@ -91,6 +91,7 @@ describe('limitedAccessFileController - Create case file', () => {
           size: 99,
           caseId,
           name: 'test.txt',
+          userGeneratedFilename: 'test.txt',
         })
       })
 
@@ -136,6 +137,7 @@ describe('limitedAccessFileController - Create case file', () => {
         size: 99,
         caseId,
         name: 'test.txt',
+        userGeneratedFilename: 'test.txt',
       })
     })
 

@@ -16,7 +16,6 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { format } from 'kennitala'
 import { Locale } from 'locale'
 import {
   LicenseClient,
@@ -36,6 +35,8 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     private machineApi: VinnuvelaApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  clientSupportsPkPass = true
 
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
@@ -100,10 +101,6 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
     const licenseData = await this.fetchLicense(user)
     return licenseData
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<VinnuvelaDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(
@@ -171,10 +168,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       }
     }
 
-    const pass = await this.smartApi.generatePkPass(
-      payload,
-      format(user.nationalId),
-    )
+    const pass = await this.smartApi.generatePkPass(payload)
 
     return pass
   }
