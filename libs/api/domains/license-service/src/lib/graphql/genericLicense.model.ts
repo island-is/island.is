@@ -8,6 +8,7 @@ import {
   GenericUserLicenseFetchStatus,
   GenericLicenseProviderId,
   GenericUserLicensePkPassStatus,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 
 registerEnumType(GenericLicenseType, {
@@ -35,6 +36,11 @@ registerEnumType(GenericUserLicensePkPassStatus, {
   description: 'Possible license pkpass statuses',
 })
 
+registerEnumType(GenericUserLicenseMetaLinksType, {
+  name: 'GenericUserLicenseMetaLinksType',
+  description: 'Exhaustive list meta link type',
+})
+
 @ObjectType()
 export class GenericLicenseProvider {
   @Field(() => GenericLicenseProviderId, {
@@ -48,9 +54,13 @@ export class GenericUserLicenseMetaLinks {
   @Field(() => String, { nullable: true })
   label?: string
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   value?: string
+
+  @Field(() => GenericUserLicenseMetaLinksType, { nullable: true })
+  type?: GenericUserLicenseMetaLinksType
 }
+
 @ObjectType()
 export class GenericUserLicenseMetadata {
   @Field(() => [GenericUserLicenseMetaLinks], { nullable: true })

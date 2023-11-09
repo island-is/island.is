@@ -46,6 +46,9 @@ export type WatsonIntegration =
   // Útlendingastofnun
   | '89a03e83-5c73-4642-b5ba-cd3771ceca54'
 
+  // Útlendingastofnun - english
+  | '53c6e788-8178-448d-94c3-f5d71ec3b80e'
+
   // Sjúkratryggingar
   | 'e625e707-c9ce-4048-802c-c12b905c28be'
 

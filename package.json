@@ -90,7 +90,7 @@
     "@formatjs/intl-numberformat": "7.1.5",
     "@hookform/error-message": "2.0.1",
     "@island.is/login": "1.2.1",
-    "@island.is/regulations-tools": "0.7.9",
+    "@island.is/regulations-tools": "0.7.12",
     "@keyv/redis": "2.6.1",
     "@nestjs/apollo": "10.1.0",
     "@nestjs/axios": "2.0.0",

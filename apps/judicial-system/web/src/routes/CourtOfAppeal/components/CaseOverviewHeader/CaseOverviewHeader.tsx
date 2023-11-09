@@ -19,6 +19,7 @@ import {
   FormContext,
   MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
@@ -95,7 +96,8 @@ const CaseOverviewHeader: React.FC<React.PropsWithChildren<unknown>> = () => {
             ))}
           </Box>
         )}
-      <CaseOverviewHeader />
+
+      <CaseTitleInfoAndTags />
       <Box marginBottom={5}>
         {isRestrictionCase(workingCase.type) &&
           workingCase.decision !==
