@@ -11,6 +11,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Events, Roles, States } from './constants'
@@ -51,7 +52,7 @@ const SignatureListTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi],
+              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
           actionCard: {

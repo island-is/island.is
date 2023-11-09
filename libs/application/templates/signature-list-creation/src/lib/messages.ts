@@ -38,6 +38,80 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
+  userProfileProviderTitle: {
+    id: 'slc.application:userProfileProviderTitle',
+    defaultMessage: 'Stillingar frá Ísland.is',
+    description: '',
+  },
+  userProfileProviderSubtitle: {
+    id: 'slc.application:userProfileProviderSubtitle',
+    defaultMessage:
+      'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
+    description: '',
+  },
 
-  /* Upplýsingar */
+  /* Upplýsingar um meðmælalista */
+  listInformationSection: {
+    id: 'slc.application:listInformationSection',
+    defaultMessage: 'Upplýsingar um meðmælalista',
+    description: '',
+  },
+  listInformationDescription: {
+    id: 'slc.application:listInformationDescription',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vitae mattis neque. Sed nec nulla efficitur massa molestie rutrum id ac sem. Donec eu volutpat ante.',
+    description: '',
+  },
+  information: {
+    id: 'slc.application:information',
+    defaultMessage: 'Upplýsingar',
+    description: '',
+  },
+  applicantHeader: {
+    id: 'slc.application:applicantHeader',
+    defaultMessage: 'Frambjóðandi',
+    description: '',
+  },
+  name: {
+    id: 'slc.application:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  nationalId: {
+    id: 'slc.application:nationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  phone: {
+    id: 'slc.application:phone',
+    defaultMessage: 'Símanúmer',
+    description: '',
+  },
+  email: {
+    id: 'slc.application:email',
+    defaultMessage: 'Netfang',
+    description: '',
+  },
+  collectionHeader: {
+    id: 'slc.application:collectionHeader',
+    defaultMessage: 'Söfnun meðmæla',
+    description: '',
+  },
+  collectionDateFrom: {
+    id: 'slc.application:collectionDateFrom',
+    defaultMessage: 'Upphafs dagsetning',
+    description: '',
+  },
+  collectionDateTil: {
+    id: 'slc.application:collectionDateTil',
+    defaultMessage: 'Loka dagsetning',
+    description: '',
+  },
+
+  /* Overview */
+  overview: {
+    id: 'slc.application:overview',
+    defaultMessage: 'Yfirlit',
+    description: '',
+  },
 })
