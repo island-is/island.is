@@ -23,13 +23,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/university-application/reykjavik-university/gen/fetch -i libs/clients/university-application/reykjavik-university/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
