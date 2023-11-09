@@ -1,7 +1,4 @@
-import isEqual from 'lodash/isEqual'
 import { useCallback, useEffect, useState } from 'react'
-
-import { VehiclesVehicle } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -10,7 +7,6 @@ import {
   Input,
   Pagination,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -37,6 +33,7 @@ import { useGetUsersVehiclesLazyQuery } from './Overview.generated'
 import { useGetExcelVehiclesLazyQuery } from '../../utils/VehicleExcel.generated'
 import { exportVehicleOwnedDocument } from '../../utils/vehicleOwnedMapper'
 import useDebounce from 'react-use/lib/useDebounce'
+import { VehiclesDetail } from '@island.is/api/schema'
 
 const defaultFilterValues = {
   searchQuery: '',
@@ -45,34 +42,17 @@ type FilterValues = {
   searchQuery: string
 }
 
-const getFilteredVehicles = (
-  vehicles: VehiclesVehicle[],
-  filterValues: FilterValues,
-): VehiclesVehicle[] => {
-  const { searchQuery } = filterValues
-  if (!vehicles) {
-    return []
-  }
-  if (searchQuery) {
-    return vehicles.filter(
-      (x: VehiclesVehicle) =>
-        x.permno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        x.regno?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        x.type?.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-  }
-  return vehicles
-}
-
 const VehiclesOverview = () => {
   useNamespaces('sp.vehicles')
   const userInfo = useUserInfo()
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
 
   const [searchPage, setSearchPage] = useState(1)
   const [downloadExcel, setDownloadExcel] = useState(false)
-  const [vehicleData, setVehicleData] = useState<any>(null)
+  const [vehicleData, setVehicleData] = useState<
+    Array<VehiclesDetail> | undefined | null
+  >(null)
 
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)
@@ -296,7 +276,12 @@ const VehiclesOverview = () => {
               page={vehicles?.paging?.pageNumber ?? 0}
               totalPages={vehicles?.paging?.totalPages ?? 0}
               renderLink={(page, className, children) => (
-                <button className={className} onClick={() => setPage(page)}>
+                <button
+                  className={className}
+                  onClick={() =>
+                    isSearching ? setSearchPage(page) : setPage(page)
+                  }
+                >
                   {children}
                 </button>
               )}
