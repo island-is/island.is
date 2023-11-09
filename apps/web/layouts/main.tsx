@@ -182,47 +182,30 @@ const Layout: Screen<LayoutProps> = ({
     },
   ]
 
-  const [alertBanners, setAlertBanners] = useState([])
-
-  useEffect(() => {
-    setAlertBanners(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      [
-        {
-          bannerId: `alert-${stringHash(
-            JSON.stringify(alertBannerContent ?? {}),
-          )}`,
-          ...alertBannerContent,
-        },
-        {
-          bannerId: `organization-alert-${stringHash(
-            JSON.stringify(organizationAlertBannerContent ?? {}),
-          )}`,
-          ...organizationAlertBannerContent,
-        },
-        {
-          bannerId: `article-alert-${stringHash(
-            JSON.stringify(articleAlertBannerContent ?? {}),
-          )}`,
-          ...articleAlertBannerContent,
-        },
-        {
-          bannerId: `custom-alert-${stringHash(
-            JSON.stringify(customAlertBannerContent ?? {}),
-          )}`,
-          ...customAlertBannerContent,
-        },
-      ].filter(
-        (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
-      ),
-    )
-  }, [
-    alertBannerContent,
-    articleAlertBannerContent,
-    organizationAlertBannerContent,
-    customAlertBannerContent,
-  ])
+  const alertBanners = [
+    {
+      bannerId: `alert-${stringHash(JSON.stringify(alertBannerContent ?? {}))}`,
+      ...alertBannerContent,
+    },
+    {
+      bannerId: `organization-alert-${stringHash(
+        JSON.stringify(organizationAlertBannerContent ?? {}),
+      )}`,
+      ...organizationAlertBannerContent,
+    },
+    {
+      bannerId: `article-alert-${stringHash(
+        JSON.stringify(articleAlertBannerContent ?? {}),
+      )}`,
+      ...articleAlertBannerContent,
+    },
+    {
+      bannerId: `custom-alert-${stringHash(
+        JSON.stringify(customAlertBannerContent ?? {}),
+      )}`,
+      ...customAlertBannerContent,
+    },
+  ].filter((banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner)
 
   // Update html lang in case a route change leads us to a new locale
   useEffect(() => {
