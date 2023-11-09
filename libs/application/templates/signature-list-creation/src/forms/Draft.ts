@@ -137,9 +137,7 @@ export const Draft: Form = buildForm({
     buildSection({
       id: 'overview',
       title: m.overview,
-      children: [
-        buildDividerField({})
-      ]
-    }), 
+      children: [buildDividerField({})],
+    }),
   ],
 })
