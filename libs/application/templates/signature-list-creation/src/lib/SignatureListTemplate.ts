@@ -23,7 +23,7 @@ const SignatureListTemplate: ApplicationTemplate<
   type: ApplicationTypes.SIGNATURE_LIST_CREATION,
   name: m.applicationName,
   institution: m.institution,
-  featureFlag: Features.passportApplication,
+  featureFlag: Features.signatureListCreation,
   dataSchema,
   stateMachineConfig: {
     initial: States.DRAFT,

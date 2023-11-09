@@ -176,7 +176,7 @@ export const m = defineMessages({
   },
   shareListLink: {
     id: 'slc.application:shareListLink',
-    defaultMessage: 'https://island.is/umsoknir/medmaelalisti',
+    defaultMessage: 'https://island.is/umsoknir/maela-med-lista',
     description: '',
   },
   copyLink: {
