@@ -4,7 +4,7 @@ import {
   PaymentCatalogApi,
 } from '@island.is/application/types'
 
-export { IdentityApi, UserProfileApi } from '@island.is/application/types'
+export { IdentityApi2, UserProfileApi } from '@island.is/application/types'
 
 export const SamgongustofaPaymentCatalogApi = PaymentCatalogApi.configure({
   params: {

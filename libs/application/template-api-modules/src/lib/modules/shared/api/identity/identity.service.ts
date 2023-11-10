@@ -29,4 +29,23 @@ export class IdentityService extends BaseTemplateApiService {
 
     return identity
   }
+
+  async identity2({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<Identity | null> {
+    const identity = await this.identityService.getIdentity2(auth.nationalId)
+
+    if (!identity) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalIdNotFoundInNationalRegistryTitle,
+          summary:
+            coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        },
+        400,
+      )
+    }
+
+    return identity
+  }
 }

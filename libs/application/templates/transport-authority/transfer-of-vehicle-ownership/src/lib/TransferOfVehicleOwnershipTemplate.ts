@@ -27,7 +27,7 @@ import { CoOwnerAndOperator, UserInformation } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
-  IdentityApi,
+  IdentityApi2,
   UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
@@ -142,7 +142,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                IdentityApi,
+                IdentityApi2,
                 UserProfileApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
