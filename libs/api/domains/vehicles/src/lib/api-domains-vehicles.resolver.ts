@@ -23,6 +23,7 @@ import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -103,6 +104,14 @@ export class VehiclesResolver {
     name: 'vehiclesSearch',
     nullable: true,
   })
+  @Audit()
+  async getVehicleSearch(
+    @Args('input') input: GetVehicleSearchInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.getVehiclesSearch(user, input.search)
+  }
+
   @BypassAuth()
   @CacheControl(defaultCache)
   @Query(() => VehiclesPublicVehicleSearch, { nullable: true })

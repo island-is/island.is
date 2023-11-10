@@ -5,6 +5,7 @@ import {
   PdfApi,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
+  VehicleSearchDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -90,5 +91,17 @@ export class VehiclesService {
     if (!res) return null
 
     return basicVehicleInformationMapper(res)
+  }
+
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearchDto | null> {
+    const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+      search,
+    })
+    const { data } = res
+    if (!data) return null
+    return data[0]
   }
 }
