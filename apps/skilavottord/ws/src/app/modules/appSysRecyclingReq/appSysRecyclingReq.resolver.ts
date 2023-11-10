@@ -9,7 +9,7 @@ export class AppSysRecyclingReqResolver {
 
   @Query(() => [AppSysVehicleInformation])
   async skilavottordAppSysVehicles(): Promise<Array<AppSysVehicleInformation>> {
-    console.log('------------ NEW ENDPOINT HITTTT  09485 ------------------')
+    console.log('------------ NEW ENDPOINT HITTTT  1242 ------------------')
     return this.appSysRecyclingReqService.getUserVehiclesInformation()
   }
 }

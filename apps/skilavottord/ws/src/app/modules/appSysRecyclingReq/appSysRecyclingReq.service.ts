@@ -14,7 +14,7 @@ export class AppSysRecyclingReqService {
         permno: 'SR845',
       },
       {
-        permno: 'PS415',
+        permno: 'PS888',
       },
     ]
   }
