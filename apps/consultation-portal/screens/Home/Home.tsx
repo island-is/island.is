@@ -37,7 +37,7 @@ export const Index = ({ types }: HomeProps) => {
     filters,
     setFilters,
     initialValues,
-    filtersLoaded
+    filtersLoaded,
   } = useFrontPageFilters({
     types: types,
   })

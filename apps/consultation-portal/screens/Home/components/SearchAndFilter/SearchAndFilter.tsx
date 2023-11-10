@@ -31,7 +31,7 @@ const SearchAndFilter = ({
   filters,
   setFilters,
   loading,
-  filtersLoaded
+  filtersLoaded,
 }: SearchAndFilterProps) => {
   const loc = localization.searchAndFilter
 
