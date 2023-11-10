@@ -161,7 +161,6 @@ export const OldAgePensionForm: Form = buildForm({
                   title:
                     oldAgePensionFormMessage.applicant.applicantInfoPhonenumber,
                   width: 'half',
-                  required: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData
                       .socialInsuranceAdministrationApplicant
