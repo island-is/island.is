@@ -138,6 +138,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { SignatureCollectionModule} from '@island.is/api/domains/signature-collection'
 
 const environment = getConfig
 
@@ -283,6 +284,7 @@ const environment = getConfig
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
+    SignatureCollectionModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
