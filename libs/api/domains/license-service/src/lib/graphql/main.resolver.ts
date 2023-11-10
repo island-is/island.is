@@ -7,7 +7,7 @@ import {
   Field,
   Mutation,
 } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { Header, Headers, UseGuards } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -29,6 +29,7 @@ import {
   GenericLicenseTypeType,
 } from '../licenceService.type'
 import { LicenseServiceService } from '../licenseService.service'
+import { logger } from '@island.is/logging'
 
 @InputType()
 export class GetGenericLicensesInput {
@@ -79,13 +80,22 @@ export class MainResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
   @Query(() => [GenericUserLicense])
+  @Header('X-Mountebank-ID', 'none')
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
+    @Headers('X-Mountebank-ID') mountebankId2?: string,
+    @Headers('Cache-control') cacheControl?: string,
   ) {
+    logger.warn('Called genericLicenses', {
+      input,
+      // mountebankId1,
+      mountebankId2,
+      cacheControl,
+    })
     const licenses = await this.licenseServiceService.getAllLicenses(
       user,
       locale,
