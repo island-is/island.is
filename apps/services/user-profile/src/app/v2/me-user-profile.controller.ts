@@ -74,10 +74,7 @@ export class MeUserProfileController {
           fields: Object.keys(userProfile),
         },
       },
-      this.userProfileService.patch(
-        user
-        userProfile,
-      ),
+      this.userProfileService.patch(user, userProfile),
     )
   }
 
