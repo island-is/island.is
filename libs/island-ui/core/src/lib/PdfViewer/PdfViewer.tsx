@@ -75,7 +75,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           onLoadSuccess={onDocumentLoadSuccess}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
-          error={errorComponent ?? pdfError}
+          //error={errorComponent ?? pdfError} //TODO: BK ADD BACK WHEN FINISHED
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (

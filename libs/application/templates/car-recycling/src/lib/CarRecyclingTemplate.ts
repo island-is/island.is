@@ -54,7 +54,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
   allowMultipleApplicationsInDraft: true,
-  requiredScopes: [ApiScope.recyclingFund],
+  //requiredScopes: [ApiScope.recyclingFund],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
