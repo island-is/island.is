@@ -14,6 +14,7 @@ export enum ServicePortalPath {
   ApplicationOpenApplications = '/umsoknir/opnar-umsoknir',
   ApplicationPrescription = '/umsoknir/lyfsedlar',
   ApplicationDrivingLicense = '/umsoknir/okuskirteini',
+  CarRecycling = '/umsoknir/skilavottord',
 
   // Settings
   SettingsRoot = '/stillingar',
@@ -92,6 +93,7 @@ export enum ServicePortalPath {
   TransportLowerAirfare = '/samgongur/loftbru',
   AssetsWorkMachines = '/samgongur/okutaeki/vinnuvelar',
   AssetsWorkMachinesDetail = '/samgongur/okutaeki/vinnuvelar/:regNumber/:id',
+
   // Education
   EducationHaskoli = '/menntun/haskoli',
   EducationDrivingLessons = '/menntun/okunam',

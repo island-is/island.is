@@ -2,8 +2,8 @@ const devConfig = {
   production: false,
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
-    audience: '@urvinnslusjodur.is/skilavottord',
     nextAuthCookieName: 'next-auth.session-token',
+    audience: ['@urvinnslusjodur.is/skilavottord', '@island.is'],
   },
   samgongustofa: {
     soapUrl:
@@ -29,7 +29,7 @@ const devConfig = {
     restUsername: process.env.FJARSYSLA_REST_USER ?? 'xxxxxxxxxxxxx',
     restPassword: process.env.FJARSYSLA_REST_PASS ?? 'xxxxxxxxx',
   },
-  backendUrl: 'http://localhost:3333',
+  backendUrl: 'http://localhost:3339',
 }
 
 const prodConfig = {

@@ -92,6 +92,8 @@ import { DrivingLearnersPermitService } from './driving-learners-permit/driving-
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { CarRecyclingModule } from './car-recycling/car-recycling.module'
+import { CarRecyclingService } from './car-recycling/car-recycling.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -142,6 +144,7 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
+  CarRecyclingModule,
 ]
 
 export const services = [
@@ -193,4 +196,5 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
+  CarRecyclingService,
 ]
