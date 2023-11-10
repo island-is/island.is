@@ -20,6 +20,8 @@ import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
 import { NUDGE_INTERVAL } from '../user-profile.service'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
+import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { EmailVerification } from '../../user-profile/emailVerification.model'
 
 const testUserProfile = {
   nationalId: createNationalId(),
@@ -31,7 +33,8 @@ const smsVerificationCode = createVerificationCode()
 const emailVerificationCode = createVerificationCode()
 
 const newEmail = faker.internet.email()
-const newPhoneNumber = formatPhoneNumber(createPhoneNumber())
+const newPhoneNumber = createPhoneNumber()
+const formattedNewPhoneNumber = formatPhoneNumber(newPhoneNumber)
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
@@ -178,6 +181,8 @@ describe('MeUserProfileController', () => {
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
         }),
+        // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
+        dbType: 'postgres',
       })
       server = request(app.getHttpServer())
       const fixtureFactory = new FixtureFactory(app)
@@ -222,7 +227,7 @@ describe('MeUserProfileController', () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         emailVerificationCode: emailVerificationCode,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
@@ -232,7 +237,7 @@ describe('MeUserProfileController', () => {
       expect(res.body).toMatchObject({
         email: newEmail,
         emailVerified: true,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
       })
 
@@ -243,13 +248,13 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.email).toBe(newEmail)
-      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
     })
 
     it('PATCH /v2/me should return 200 with changed mobile data in response', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -257,7 +262,7 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
       })
 
@@ -267,7 +272,7 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile.mobilePhoneNumber).toBe(newPhoneNumber)
+      expect(userProfile.mobilePhoneNumber).toBe(formattedNewPhoneNumber)
     })
 
     it('PATCH /v2/me should return 200 with changed email data in response', async () => {
@@ -304,10 +309,11 @@ describe('MeUserProfileController', () => {
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        detail: 'Email verification code does not match.',
+        title: 'Attempt Failed',
         status: 400,
-        title: 'Bad Request',
-        type: 'https://httpstatuses.org/400',
+        detail:
+          '2 attempts remaining. Validation issues found in field: emailVerificationCode',
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
       })
 
       // Assert Db records
@@ -317,22 +323,31 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.email).toBe(testUserProfile.email)
+
+      const verificationModel = app.get(getModelToken(EmailVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(verification.tries).toBe(1)
     })
 
     it('PATCH /v2/me should return 400 when mobile verification code is incorrect', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: '000',
       })
 
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
-        detail: 'SMS code is not a match. 5 tries remaining.',
+        title: 'Attempt Failed',
         status: 400,
-        title: 'Bad Request',
-        type: 'https://httpstatuses.org/400',
+        detail:
+          '2 attempts remaining. Validation issues found in field: smsVerificationCode',
+        remainingAttempts: 2,
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
       })
 
       // Assert Db records
@@ -344,6 +359,13 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
+
+      const verificationModel = app.get(getModelToken(SmsVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      expect(verification.tries).toBe(1)
     })
 
     it('PATCH /v2/me should return 400 when there is no email verification code', async () => {
@@ -365,13 +387,66 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 400 when there is no sms verification code', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
       })
 
       // Assert
       expect(res.status).toEqual(400)
       expect(res.body).toMatchObject({
         detail: 'Mobile phone number verification code is required',
+        status: 400,
+        title: 'Bad Request',
+        type: 'https://httpstatuses.org/400',
+      })
+    })
+
+    it('PATCH /v2/me should return 400 when to many failed sms attempts have occurred', async () => {
+      // Arrange
+      const verificationModel = app.get(getModelToken(SmsVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      verification.tries = 3
+      await verification.save()
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        mobilePhoneNumber: formattedNewPhoneNumber,
+        mobilePhoneNumberVerificationCode: '000',
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        detail: '0 attempts remaining.',
+        status: 400,
+        title: 'Attempt Failed',
+        type: 'https://docs.devland.is/reference/problems/attempt-failed',
+      })
+    })
+
+    it('PATCH /v2/me should return 400 when to many failed email attempts have occurred', async () => {
+      // Arrange
+      const verificationModel = app.get(getModelToken(EmailVerification))
+      const verification = await verificationModel.findOne({
+        where: { nationalId: testUserProfile.nationalId },
+      })
+
+      verification.tries = 3
+      await verification.save()
+
+      // Act
+      const res = await server.patch('/v2/me').send({
+        email: newEmail,
+        emailVerificationCode: '000',
+      })
+
+      // Assert
+      expect(res.status).toEqual(400)
+      expect(res.body).toMatchObject({
+        detail:
+          'Too many failed email verifications. Please restart verification.',
         status: 400,
         title: 'Bad Request',
         type: 'https://httpstatuses.org/400',
@@ -427,7 +502,7 @@ describe('MeUserProfileController', () => {
       const res = await server.patch('/v2/me').send({
         email: newEmail,
         emailVerificationCode: emailVerificationCode,
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -438,7 +513,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: newEmail,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })
@@ -446,7 +521,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
         email: newEmail,
         emailVerificationCode: emailVerificationCode,
@@ -459,7 +534,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: newEmail,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })
@@ -486,7 +561,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 200 and should call the islyklar put method with new mobilePhoneNumber and current email', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: newPhoneNumber,
+        mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerificationCode: smsVerificationCode,
       })
 
@@ -497,7 +572,7 @@ describe('MeUserProfileController', () => {
         user: {
           ssn: testUserProfile.nationalId,
           email: testUserProfile.email,
-          mobile: newPhoneNumber,
+          mobile: formattedNewPhoneNumber,
         },
       })
     })

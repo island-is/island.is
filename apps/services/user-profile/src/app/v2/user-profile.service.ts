@@ -5,6 +5,7 @@ import subMonths from 'date-fns/subMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed } from '@island.is/nest/problem'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -84,40 +85,58 @@ export class UserProfileService {
       )
     }
 
-    const formattedPhoneNumber = isMobilePhoneNumberDefined
-      ? formatPhoneNumber(userProfile.mobilePhoneNumber)
-      : undefined
-
     await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, transaction] as const
+      const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
-      const promises = await Promise.all(
-        [
-          shouldVerifyEmail &&
-            (await this.verificationService.confirmEmail(
-              {
-                email: userProfile.email,
-                hash: userProfile.emailVerificationCode,
-              },
-              ...commonArgs,
-            )),
+      if (shouldVerifyEmail) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmEmail(
+            {
+              email: userProfile.email,
+              hash: userProfile.emailVerificationCode,
+            },
+            ...commonArgs,
+          )
 
-          shouldVerifyMobilePhoneNumber &&
-            (await this.verificationService.confirmSms(
-              {
-                mobilePhoneNumber: formattedPhoneNumber,
-                code: userProfile.mobilePhoneNumberVerificationCode,
-              },
-              ...commonArgs,
-            )),
-        ].filter(Boolean),
-      )
-
-      promises.map(({ confirmed, message }) => {
-        if (confirmed === false) {
-          throw new BadRequestException(message)
+        if (!confirmed) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              emailVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
         }
-      })
+      }
+
+      if (shouldVerifyMobilePhoneNumber) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmSms(
+            {
+              mobilePhoneNumber: userProfile.mobilePhoneNumber,
+              code: userProfile.mobilePhoneNumberVerificationCode,
+            },
+            ...commonArgs,
+          )
+
+        if (confirmed === false) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              smsVerificationCode: 'Verification code does not match.',
+            })
+          } else if (remainingAttempts === -1) {
+            throw new AttemptFailed(0)
+          } else {
+            throw new BadRequestException(message)
+          }
+        }
+      }
+
+      const formattedPhoneNumber = isMobilePhoneNumberDefined
+        ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+        : undefined
 
       const update = {
         nationalId,

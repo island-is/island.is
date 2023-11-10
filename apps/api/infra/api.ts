@@ -36,6 +36,7 @@ import {
   OccupationalLicenses,
   ShipRegistry,
   DistrictCommissioners,
+  DirectorateOfImmigration,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -182,7 +183,6 @@ export const serviceSetup = (services: {
         staging: 'https://samradapi-test.devland.is',
         prod: 'https://samradapi.island.is',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
         dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
@@ -371,6 +371,7 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
+      DirectorateOfImmigration,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
