@@ -21,7 +21,7 @@ export const MedicineLicence = () => {
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}
-          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
+          span={['8/8']}
           intro={formatMessage(messages.medicineLicenseIntroText)}
           isSubheading
         />
@@ -63,7 +63,7 @@ export const MedicineLicence = () => {
                       url: certificate.id
                         ? HealthPaths.HealthMedicineCertificate.replace(
                             ':name',
-                            certificate.drugName ?? '',
+                            certificate.drugName ?? certificate.id.toString(),
                           ).replace(':id', certificate.id.toString())
                         : undefined,
                     }}
