@@ -54,12 +54,11 @@ export class InheritanceReportService extends BaseTemplateApiService {
     ])
     const estate = estateTransformer(estateResponse[0])
 
-    console.log('WE GOT ESTATE', JSON.stringify(estate, null, 2))
 
     return {
       success: true,
       estate,
-      relationOptions,
+      relationOptions: relationOptions.relations,
     }
   }
 

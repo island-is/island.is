@@ -67,7 +67,7 @@ export const ReportFieldsRepeater: FC<
   const taxFreeLimit = Number(
     formatMessage(m.taxFreeLimit).replace(/[^0-9]/, ''),
   )
-  const answersValues = getValueViaPath(answers, id) as Array<object>
+  const answersValues = getValueViaPath(answers, id) as Array<object> | undefined
 
   /* ------ Stocks ------ */
   const [rateOfExchange, setRateOfExchange] = useState(0)
@@ -82,7 +82,7 @@ export const ReportFieldsRepeater: FC<
   const [inheritanceTax, setInheritanceTax] = useState(0)
 
   /* ------ Total ------ */
-  const answersValuesTotal = answersValues.reduce(
+  const answersValuesTotal = (answersValues ??  []).reduce(
     (a: number, o: any) => a + Number(o[props.sumField]),
     0,
   )
