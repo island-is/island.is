@@ -18,3 +18,10 @@ export type SubmitResponse = {
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }
+
+export const CountryAreas = [
+  'Sunnlendingafjórðungur',
+  'Vestfirðingafjórðungur',
+  'Norðlendingafjórðungur',
+  'Austfirðingafjórðungur',
+]
