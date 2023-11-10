@@ -9,7 +9,13 @@ import {
   Button,
   Select,
 } from '@island.is/island-ui/core'
-import { UserInfoLine, formSubmit, m } from '@island.is/service-portal/core'
+import {
+  UserInfoLine,
+  amountFormat,
+  formSubmit,
+  m,
+  numberFormat,
+} from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
@@ -213,8 +219,10 @@ export const PaymentOverview = () => {
                               formatDateFns(item.date, 'dd.MM.yyyy')}
                           </T.Data>
                           <T.Data>{item.serviceType?.name}</T.Data>
-                          <T.Data>{item.totalAmount}</T.Data>
-                          <T.Data>{item.insuranceAmount}</T.Data>
+                          <T.Data>{amountFormat(item.totalAmount ?? 0)}</T.Data>
+                          <T.Data>
+                            {amountFormat(item.insuranceAmount ?? 0)}
+                          </T.Data>
                           <T.Data>
                             <Button
                               iconType="outline"
