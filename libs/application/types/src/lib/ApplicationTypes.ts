@@ -49,6 +49,7 @@ export enum ApplicationTypes {
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  CITIZENSHIP = 'Citizenship',
 }
 
 export const ApplicationConfigurations = {
@@ -251,5 +252,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
     slug: 'maela-med-lista',
     translation: 'sls.application',
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
   },
 }

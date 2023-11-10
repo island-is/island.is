@@ -127,6 +127,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/signature-collection/signature-list-signing'
     ),
+  [ApplicationTypes.CITIZENSHIP]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/citizenship'
+    ),
 }
 
 export default templates

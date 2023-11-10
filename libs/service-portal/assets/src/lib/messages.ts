@@ -793,6 +793,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
   },
+  searchForPlate: {
+    id: 'sp.vehicles:search-for-plate',
+    defaultMessage: 'Leita eftir bílnúmeri',
+  },
 })
 
 export const urls = defineMessages({

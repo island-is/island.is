@@ -81,8 +81,6 @@ export const RoseColoredProgressMeter = () => (
       label: 'Take to recycling company',
       variant: 'rose',
     }}
-    text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'text' }}
   />
 )
 
