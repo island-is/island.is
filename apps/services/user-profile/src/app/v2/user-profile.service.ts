@@ -1,17 +1,20 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { parsePhoneNumber } from 'libphonenumber-js'
 import { isEmail } from 'class-validator'
-import pick from 'lodash/pick'
+import subMonths from 'date-fns/subMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed } from '@island.is/nest/problem'
 
-import { UserProfileDto } from './dto/user-profileDto'
-import { PatchUserProfileDto } from './dto/patch-user-profileDto'
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
+import { formatPhoneNumber } from '../utils/format-phone-number'
+import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
+import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
+
+export const NUDGE_INTERVAL = 6
 
 @Injectable()
 export class UserProfileService {
@@ -24,9 +27,13 @@ export class UserProfileService {
     private sequelize: Sequelize,
   ) {}
 
-  async findById(nationalId: string): Promise<UserProfileDto> {
+  async findById(
+    nationalId: string,
+    useMaster = false,
+  ): Promise<UserProfileDto> {
     const userProfile = await this.userProfileModel.findOne({
       where: { nationalId },
+      useMaster,
     })
 
     if (!userProfile) {
@@ -38,7 +45,7 @@ export class UserProfileService {
         mobilePhoneNumberVerified: false,
         emailVerified: false,
         documentNotifications: true,
-        needsNudge: true,
+        needsNudge: null,
       }
     }
 
@@ -50,10 +57,7 @@ export class UserProfileService {
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
       documentNotifications: userProfile.documentNotifications,
-      needsNudge:
-        userProfile.lastNudge !== null
-          ? this.checkNeedsNudge(userProfile.lastNudge)
-          : null,
+      needsNudge: this.checkNeedsNudge(userProfile),
     }
   }
 
@@ -61,13 +65,12 @@ export class UserProfileService {
     nationalId: string,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
-    const isEmailDefined = userProfile.email !== undefined
-    const isMobilePhoneNumberDefined =
-      userProfile.mobilePhoneNumber !== undefined
+    const isEmailDefined = isDefined(userProfile.email)
+    const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
-    const shouldVerifyEmail = isEmailDefined && userProfile.email !== null
+    const shouldVerifyEmail = isEmailDefined && userProfile.email !== ''
     const shouldVerifyMobilePhoneNumber =
-      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== null
+      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== ''
 
     if (shouldVerifyEmail && !isDefined(userProfile.emailVerificationCode)) {
       throw new BadRequestException('Email verification code is required')
@@ -82,59 +85,75 @@ export class UserProfileService {
       )
     }
 
-    const { nationalNumber, parsedPhoneNumber } =
-      isMobilePhoneNumberDefined &&
-      userProfile.mobilePhoneNumber !== null &&
-      this.formatPhoneNumber(userProfile.mobilePhoneNumber)
+    await this.sequelize.transaction(async (transaction) => {
+      const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
-    return await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, transaction] as const
+      if (shouldVerifyEmail) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmEmail(
+            {
+              email: userProfile.email,
+              hash: userProfile.emailVerificationCode,
+            },
+            ...commonArgs,
+          )
 
-      const promises = await Promise.all(
-        [
-          shouldVerifyEmail &&
-            (await this.verificationService.confirmEmail(
-              {
-                email: userProfile.email,
-                hash: userProfile.emailVerificationCode,
-              },
-              ...commonArgs,
-            )),
-
-          shouldVerifyMobilePhoneNumber &&
-            (await this.verificationService.confirmSms(
-              {
-                mobilePhoneNumber: userProfile.mobilePhoneNumber,
-                code: userProfile.mobilePhoneNumberVerificationCode,
-              },
-              ...commonArgs,
-            )),
-        ].filter(Boolean),
-      )
-
-      promises.map(({ confirmed, message }) => {
-        if (confirmed === false) {
-          throw new BadRequestException(message)
+        if (!confirmed) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              emailVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
         }
-      })
+      }
+
+      if (shouldVerifyMobilePhoneNumber) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmSms(
+            {
+              mobilePhoneNumber: userProfile.mobilePhoneNumber,
+              code: userProfile.mobilePhoneNumberVerificationCode,
+            },
+            ...commonArgs,
+          )
+
+        if (confirmed === false) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              smsVerificationCode: 'Verification code does not match.',
+            })
+          } else if (remainingAttempts === -1) {
+            throw new AttemptFailed(0)
+          } else {
+            throw new BadRequestException(message)
+          }
+        }
+      }
+
+      const formattedPhoneNumber = isMobilePhoneNumberDefined
+        ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+        : undefined
 
       const update = {
         nationalId,
         ...(isEmailDefined && {
-          email: userProfile.email,
-          emailVerified: userProfile.email !== null,
+          email: userProfile.email || null,
+          emailVerified: userProfile.email !== '',
         }),
         ...(isMobilePhoneNumberDefined && {
-          mobilePhoneNumberVerified: userProfile.mobilePhoneNumber !== null,
-          mobilePhoneNumber:
-            userProfile.mobilePhoneNumber === null ? null : nationalNumber,
+          mobilePhoneNumber: formattedPhoneNumber || null,
+          mobilePhoneNumberVerified: formattedPhoneNumber !== '',
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
         }),
       }
 
-      const [userProfileUpdated] = await this.userProfileModel.upsert(
+      await this.userProfileModel.upsert(
         {
           ...update,
           lastNudge: new Date(),
@@ -142,14 +161,16 @@ export class UserProfileService {
         { transaction },
       )
 
-      await this.islykillService.upsertIslykillSettings({
-        nationalId,
-        phoneNumber: parsedPhoneNumber,
-        email: userProfile.email,
-      })
-
-      return pick(userProfileUpdated, Object.keys(update)) as typeof update
+      if (isEmailDefined || isMobilePhoneNumberDefined) {
+        await this.islykillService.upsertIslykillSettings({
+          nationalId,
+          phoneNumber: formattedPhoneNumber,
+          email: userProfile.email,
+        })
+      }
     })
+
+    return this.findById(nationalId, true)
   }
 
   async createEmailVerification({
@@ -172,12 +193,12 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const { nationalNumber } = this.formatPhoneNumber(mobilePhoneNumber)
+    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
 
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: nationalNumber,
+        mobilePhoneNumber: formattedPhoneNumber,
       },
       3,
     )
@@ -187,33 +208,29 @@ export class UserProfileService {
     await this.userProfileModel.upsert({ nationalId, lastNudge: new Date() })
   }
 
-  private checkNeedsNudge(lastNudge: NonNullable<Date>): boolean {
-    const sixMonthsAgoDate = new Date()
-    sixMonthsAgoDate.setMonth(sixMonthsAgoDate.getMonth() - 6)
+  private checkNeedsNudge(userProfile: UserProfile): boolean | null {
+    if (userProfile.lastNudge) {
+      const cutOffDate = subMonths(new Date(), NUDGE_INTERVAL)
 
-    return new Date(lastNudge) < sixMonthsAgoDate
-  }
+      if (!userProfile.email && !userProfile.mobilePhoneNumber) {
+        return userProfile.lastNudge < cutOffDate
+      }
 
-  private formatPhoneNumber(phoneNumber: string): {
-    nationalNumber: string
-    parsedPhoneNumber: string
-  } {
-    if (phoneNumber === '') {
-      return null
+      if (
+        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
+      ) {
+        return userProfile.lastNudge < cutOffDate
+      }
+    } else {
+      if (
+        (userProfile.email && userProfile.emailVerified) ||
+        (userProfile.mobilePhoneNumber && userProfile.mobilePhoneNumberVerified)
+      ) {
+        return true
+      }
     }
 
-    let nationalNumber = phoneNumber
-    const tempPhoneNumber = parsePhoneNumber(phoneNumber, 'IS')
-    if (tempPhoneNumber.country === 'IS') {
-      nationalNumber = tempPhoneNumber.nationalNumber as string
-    }
-
-    return {
-      nationalNumber,
-      parsedPhoneNumber: [
-        `+${tempPhoneNumber.countryCallingCode}`,
-        tempPhoneNumber.nationalNumber,
-      ].join('-'),
-    }
+    return null
   }
 }

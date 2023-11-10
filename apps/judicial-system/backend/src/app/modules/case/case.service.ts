@@ -122,6 +122,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -137,6 +138,7 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
   > {
   type?: CaseType
@@ -145,7 +147,6 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -154,17 +155,8 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
-  },
   { model: Institution, as: 'court' },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -175,7 +167,6 @@ export const include: Includeable[] = [
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'judge',
@@ -190,25 +181,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -229,6 +201,35 @@ export const include: Includeable[] = [
     model: User,
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Case,
+    as: 'parentCase',
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+      },
+    ],
+  },
+  { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
   },
 ]
 
@@ -819,7 +820,10 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)

@@ -123,7 +123,7 @@ const ContentBreadcrumbs: FC<React.PropsWithChildren<unknown>> = () => {
           {items.map((item, index) =>
             isDefined(item.path) && !item.hidden ? (
               isMobile && index === 0 ? (
-                <GoBack noUnderline={true} display="inline" />
+                <GoBack noUnderline={true} display="inline" key="goback" />
               ) : (
                 <Link className={styles.link} key={index} to={item.path}>
                   {index === 0

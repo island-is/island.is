@@ -64,6 +64,7 @@ const Webreader: FC<React.PropsWithChildren<WebReaderProps>> = ({
   useEffect(() => {
     if (!window.rsConf) {
       const el = document.createElement('script')
+      el.id = 'rs_req_Init'
       el.src = SCRIPT_URL
       el.type = 'text/javascript'
       document.body.appendChild(el)

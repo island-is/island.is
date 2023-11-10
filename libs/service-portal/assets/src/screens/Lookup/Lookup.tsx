@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useLazyQuery, gql } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   Accordion,
   AccordionItem,
@@ -27,41 +25,11 @@ import {
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import chunk from 'lodash/chunk'
-
-export const GET_USERS_VEHICLES_SEARCH_LIMIT = gql`
-  query GetUsersVehiclesSearchLimit {
-    vehiclesSearchLimit
-  }
-`
-
-export const GET_VEHICLES_SEARCH = gql`
-  query GetVehiclesSearch($input: GetVehicleSearchInput!) {
-    vehiclesSearch(input: $input) {
-      permno
-      regno
-      vin
-      type
-      color
-      firstregdate
-      latestregistration
-      nextInspection {
-        nextinspectiondate
-        nextinspectiondateIfPassedInspectionToday
-      }
-      currentOwner
-      currentOwnerAddress
-      currentOwnerIsAnonymous
-      useGroup
-      regtype
-      mass
-      massLaden
-      vehicleStatus
-      co
-      co2Wltp
-      weightedco2Wltp
-    }
-  }
-`
+import { displayWithUnit } from '../../utils/displayWithUnit'
+import {
+  useGetUsersVehiclesSearchLimitLazyQuery,
+  useGetVehiclesSearchLazyQuery,
+} from './Lookup.generated'
 
 const Lookup = () => {
   useNamespaces('sp.vehicles')
@@ -72,7 +40,7 @@ const Lookup = () => {
   const [
     getUsersVehicleSearchLimit,
     { loading, error, called: limitCalled, ...searchLimitData },
-  ] = useLazyQuery<Query>(GET_USERS_VEHICLES_SEARCH_LIMIT, {
+  ] = useGetUsersVehiclesSearchLimitLazyQuery({
     fetchPolicy: 'no-cache',
   })
 
@@ -84,7 +52,7 @@ const Lookup = () => {
       called: infoCalled,
       ...vehicleSearch
     },
-  ] = useLazyQuery<Query>(GET_VEHICLES_SEARCH, {
+  ] = useGetVehiclesSearchLazyQuery({
     variables: {
       input: {
         search: searchValue,
@@ -339,13 +307,9 @@ const Lookup = () => {
                   title: formatMessage(messages.nextInspection),
                   value: formatDate(nextInspection.nextinspectiondate),
                 },
-                co && {
-                  title: formatMessage(messages.co2),
-                  value: String(co),
-                },
                 mass && {
                   title: formatMessage(messages.vehicleWeightLong),
-                  value: String(mass),
+                  value: displayWithUnit(String(mass), 'kg'),
                 },
                 co2Wltp && {
                   title: formatMessage(messages.wltpWeighted),
@@ -353,7 +317,7 @@ const Lookup = () => {
                 },
                 massLaden && {
                   title: formatMessage(messages.vehicleTotalWeightLong),
-                  value: String(massLaden),
+                  value: displayWithUnit(String(massLaden), 'kg'),
                 },
                 weightedco2Wltp && {
                   title: formatMessage(messages.weightedWLTPCo2),
