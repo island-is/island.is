@@ -15,7 +15,7 @@ export const MedicineCertificate: React.FC = () => {
 
   const { formatMessage, formatDateFns } = useLocale()
 
-  const { data, error, loading } = useGetCertificateByIdQuery({
+  const { data } = useGetCertificateByIdQuery({
     variables: {
       input: {
         id: parseInt(params.id),
