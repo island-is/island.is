@@ -15,8 +15,10 @@ export function withErrorLog({
   treat400ResponsesAsErrors,
   logger,
 }: ErrorLogOptions): MiddlewareAPI {
-  return (request) => {
-    return fetch(request).catch((error: Error) => {
+  return async (request) => {
+    try {
+      return await fetch(request)
+    } catch (error) {
       const logLevel =
         error instanceof FetchError &&
         error.status < 500 &&
@@ -34,6 +36,11 @@ export function withErrorLog({
             : error.body
           : undefined
 
+      logger.info('My extras', {
+        request,
+        name,
+        treat400ResponsesAsErrors,
+      })
       logger.log(logLevel, {
         ...error,
         stack: error.stack,
@@ -45,7 +52,7 @@ export function withErrorLog({
         response: undefined,
       })
       throw error
-    })
+    }
   }
 }
 
