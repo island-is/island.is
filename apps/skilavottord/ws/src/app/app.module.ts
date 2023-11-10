@@ -15,10 +15,10 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
+  AppSysRecyclingReqModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
-import { SamgongustofaRestModule } from './modules/samgongustofaRest/samgongustofaRest.module'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -47,7 +47,7 @@ const autoSchemaFile = environment.production
     RecyclingPartnerModule,
     VehicleModule,
     VehicleOwnerModule,
-    SamgongustofaRestModule,
+    AppSysRecyclingReqModule,
   ],
 })
 export class AppModule {}
