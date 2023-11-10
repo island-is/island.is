@@ -26,13 +26,15 @@ import { ManualWrapper } from './components/ManualWrapper'
 import { generateOgTitle, getProps, ManualScreen } from './utils'
 import * as styles from './Manual.css'
 
-const createChapterItemNavigation = (chapterItem: OneColumnText) => {
-  const navigation = createNavigation(
-    (chapterItem?.content ?? []) as unknown as AllSlicesFragment[],
-    {
-      htmlTags: [BLOCKS.HEADING_3],
-    },
-  )
+type ChapterItem = OneColumnText & {
+  typename: 'OneColumnText'
+  content: AllSlicesFragment[]
+}
+
+const createChapterItemNavigation = (chapterItem: ChapterItem) => {
+  const navigation = createNavigation(chapterItem?.content ?? [], {
+    htmlTags: [BLOCKS.HEADING_3],
+  })
 
   // we'll hide the chapter item navigation if it's only one item
   return navigation.length > 1 ? navigation : []
@@ -42,7 +44,7 @@ const ChapterItemTableOfContents = ({
   chapterItem,
   title,
 }: {
-  chapterItem: OneColumnText
+  chapterItem: ChapterItem
   title: string
 }) => {
   const navigation = useMemo(
@@ -118,7 +120,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
               >
                 <Box paddingTop={2}>
                   <ChapterItemTableOfContents
-                    chapterItem={item as OneColumnText}
+                    chapterItem={item as ChapterItem}
                     title={tableOfContentsTitle}
                   />
                 </Box>
