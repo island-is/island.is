@@ -6,14 +6,12 @@ import { FC, useEffect, useState } from 'react'
 import { formatText } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
 import { InputController } from '@island.is/shared/form-fields'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-} from '../../lib/carRecyclingUtils'
+import { getApplicationExternalData } from '../../lib/carRecyclingUtils'
 import { carRecyclingMessages } from '../../lib/messages'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
 
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
-import { useFormContext } from 'react-hook-form'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage, locale } = useLocale()
@@ -24,46 +22,26 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
   >([])
   const [allVehiclesList, setAllVehiclesList] = useState<VehicleMiniDto[]>([])
 
-  const { setValue } = useFormContext()
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const onUpdateApplication = async (vehicles: VehicleMiniDto[]) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: { vehiclesList: vehicles },
+        },
+        locale,
+      },
+    })
+  }
 
   useEffect(() => {
     const { vehiclesList } = getApplicationExternalData(
       application.externalData,
     )
-
-    initSelectedList(vehiclesList)
-
     setAllVehiclesList(vehiclesList)
+    setVehiclesList(vehiclesList)
   }, [application.externalData])
-
-  function filterSelectedVehiclesFromList(
-    selectedList: VehicleMiniDto[],
-    allVehicles: VehicleMiniDto[],
-  ): VehicleMiniDto[] {
-    // Not show selected vehicles in filered list
-    return allVehicles.filter(
-      (vehicle1) =>
-        !selectedList.some((vehicle2) => vehicle1.permno === vehicle2.permno),
-    )
-  }
-
-  function filterVehiclesList(
-    vehicle: VehicleMiniDto,
-    list: VehicleMiniDto[],
-  ): VehicleMiniDto[] {
-    return list.filter((item) => item.permno !== vehicle.permno)
-  }
-
-  function initSelectedList(allVehicles: VehicleMiniDto[]) {
-    const { vehiclesList } = getApplicationAnswers(application.answers)
-
-    const filtedList = filterSelectedVehiclesFromList(vehiclesList, allVehicles)
-
-    console.log('initSelectedList', vehiclesList)
-
-    setVehiclesList(filtedList)
-    setSelectedVehiclesList(vehiclesList)
-  }
 
   function getRoleLabel(vechicle: VehicleMiniDto): string {
     if (vechicle.role === 'Eigandi') {
@@ -79,29 +57,24 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
     selectedVehiclesList.push(vehicle)
     setSelectedVehiclesList(selectedVehiclesList)
 
-    const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
+    const filterdVehiclesList = currentVehiclesList.filter(
+      (item) => item.permno !== vehicle.permno,
+    )
 
     setVehiclesList(filterdVehiclesList)
 
-    console.log('onRecycle', selectedVehiclesList)
-
-    // Save data to db
-    setValue('vehiclesList', selectedVehiclesList)
+    onUpdateApplication(selectedVehiclesList)
   }
 
   function onCancel(vehicle: VehicleMiniDto): void {
     currentVehiclesList.unshift(vehicle)
     setSelectedVehiclesList(currentVehiclesList)
 
-    const filteredSelectedVehiclesList = filterVehiclesList(
-      vehicle,
-      selectedVehiclesList,
+    const filteredSelectedVehiclesList = selectedVehiclesList.filter(
+      (item) => item.permno !== vehicle.permno,
     )
-
     setSelectedVehiclesList(filteredSelectedVehiclesList)
-
-    // Save data to db
-    setValue('vehiclesList', filteredSelectedVehiclesList)
+    onUpdateApplication(filteredSelectedVehiclesList)
   }
 
   return (
@@ -122,19 +95,13 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
                 ?.toLowerCase()
                 .includes(e.target.value.toLowerCase()),
             )
-            /*
+
             // Not show selected vehicles in filered list
             const result = filteredList.filter(
               (vehicle1) =>
                 !selectedVehiclesList.some(
                   (vehicle2) => vehicle1.permno === vehicle2.permno,
                 ),
-            )*/
-
-            // Not show selected vehicles in filered list
-            const result = filterSelectedVehiclesFromList(
-              selectedVehiclesList,
-              filteredList,
             )
 
             setVehiclesList(result)
