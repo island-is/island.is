@@ -490,7 +490,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                 title={n('fetchErrorTitle', 'Ekki tókst að sækja öll störf')}
                 message={n(
                   'fetchErrorMessage',
-                  'Villa kom upp við að sækja störf frá ytri kerfum og því er möguleiki að ekki öll auglýst séu sýnileg',
+                  'Villa kom upp við að sækja störf frá ytri kerfum og því er möguleiki að ekki öll auglýst störf séu sýnileg',
                 )}
               />
             </Box>
