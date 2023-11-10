@@ -24,7 +24,7 @@ defaults:
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
-  group: pullrequest-${{ github.head_ref || github.run_id }}-${{ github.workflow }}
+  group: ${{ github.event_name }}-${{ github.head_ref || github.run_id }}-${{ github.workflow }}-${{ join(github.event.pull_request.labels.*.name, '-') }}
   cancel-in-progress: true
 
 env:
@@ -74,6 +74,13 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+
+      - name: Info log
+        id: info-log
+        run: |
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "github.run_id: ${{ github.run_id }}"
+          echo "concurrency group: ${{ github.event_name }}-${{ github.head_ref || github.run_id }}-${{ github.workflow }}-${{ join(github.event.pull_request.labels.*.name, '-') }}"
 
       - name: Check if we want to run workflow
         id: should-run

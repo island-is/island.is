@@ -10,7 +10,7 @@ defaults:
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
-  group: pullrequest-${{ github.head_ref || github.run_id }}-${{ github.workflow }}
+  group: ${{ github.event_name }}-${{ github.head_ref || github.run_id }}-${{ github.workflow }}-${{ join(github.event.pull_request.labels.*.name, '-') }}
   cancel-in-progress: true
 
 env:
@@ -51,11 +51,6 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Check node version
-        run: |
-          node -v
-          ls -l `which node`
-
       - name: Checking out relevant branches
         run: |
           git checkout $GITHUB_HEAD_REF
@@ -68,6 +63,15 @@ jobs:
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
+
+      - name: Info log
+        id: info-log
+        run: |
+          echo "github.head_ref: ${{ github.head_ref }}"
+          echo "github.run_id: ${{ github.run_id }}"
+          echo "concurrency group: ${{ github.event_name }}-${{ github.head_ref || github.run_id }}-${{ github.workflow }}-${{ join(github.event.pull_request.labels.*.name, '-') }}"
+          node -v
+          ls -l `which node`
 
       - name: Keep PR run event
         uses: actions/upload-artifact@v2
