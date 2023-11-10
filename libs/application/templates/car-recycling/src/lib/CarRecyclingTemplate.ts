@@ -20,6 +20,7 @@ import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 import { ApiActions } from '../shared'
 import { CurrentVehiclesApi } from '../dataProviders'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -53,7 +54,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
   allowMultipleApplicationsInDraft: true,
-
+  requiredScopes: [ApiScope.recyclingFund],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
