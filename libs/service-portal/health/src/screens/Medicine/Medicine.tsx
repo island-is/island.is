@@ -1,6 +1,5 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Tabs } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import { useEffect, useState } from 'react'
 import { MedicinePurchase } from './TabPanes/MedicinePurchase'
@@ -8,6 +7,10 @@ import { MedicineTabs } from './constants'
 import { MedicineCalulator } from './TabPanes/MedicineCalculator'
 import { MedicineLicence } from './TabPanes/MedicineLicence'
 import { useLocation } from 'react-router-dom'
+import {
+  IntroHeader,
+  SJUKRATRYGGINGAR_ID,
+} from '@island.is/service-portal/core'
 
 const Medicine = () => {
   useNamespaces('sp.health')
@@ -74,6 +77,7 @@ const Medicine = () => {
       <IntroHeader
         title={formatMessage(messages.medicineTitle)}
         intro={formatMessage(messages.medicineTitleIntro)}
+        serviceProviderID={SJUKRATRYGGINGAR_ID}
       />
       {renderTabs(selectedTab)}
     </Box>
