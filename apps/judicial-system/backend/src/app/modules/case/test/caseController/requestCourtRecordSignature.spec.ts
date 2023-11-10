@@ -4,7 +4,11 @@ import { ForbiddenException } from '@nestjs/common'
 
 import { SigningServiceResponse } from '@island.is/dokobit-signing'
 
-import { User, UserRole } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -46,7 +50,11 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned judge', () => {
     const userId = uuid()
-    const user = { id: userId, role: UserRole.JUDGE } as User
+    const user = {
+      id: userId,
+      role: UserRole.DISTRICT_COURT_JUDGE,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: userId, registrarId: uuid() } as Case
     let then: Then
@@ -65,7 +73,11 @@ describe('CaseController - Request court record signature', () => {
 
   describe('the user is the assigned registrar', () => {
     const userId = uuid()
-    const user = { id: userId, role: UserRole.REGISTRAR } as User
+    const user = {
+      id: userId,
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
     const caseId = uuid()
     const theCase = { id: caseId, judgeId: uuid(), registrarId: userId } as Case
     let then: Then

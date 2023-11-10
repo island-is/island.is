@@ -23,8 +23,8 @@ describe('shouldHideNextButton', () => {
     role
     ${UserRole.ADMIN}
     ${UserRole.DEFENDER}
-    ${UserRole.JUDGE}
-    ${UserRole.REGISTRAR}
+    ${UserRole.DISTRICT_COURT_JUDGE}
+    ${UserRole.DISTRICT_COURT_REGISTRAR}
     ${UserRole.PRISON_SYSTEM_STAFF}
   `('should hide next button for user role: $role', ({ role }) => {
     const theCase = {} as Case
@@ -38,22 +38,22 @@ describe('shouldHideNextButton', () => {
     expect(res).toEqual(false)
   })
 
-  test('should show next button for user role: REGISTRAR if user is assinged registrar', () => {
+  test('should show next button for user role: DISTRICT_COURT_REGISTRAR if user is assinged registrar', () => {
     const userId = uuid()
     const theCase = { registrar: { id: userId } } as Case
     const res = shouldHideNextButton(theCase, {
       id: userId,
-      role: UserRole.REGISTRAR,
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
     } as User)
     expect(res).toEqual(false)
   })
 
-  test('should show next button for user role: JUDGE ig user is assigned judge', () => {
+  test('should show next button for user role: DISTRICT_COURT_JUDGE iF user is assigned judge', () => {
     const userId = uuid()
     const theCase = { judge: { id: userId } } as Case
     const res = shouldHideNextButton(theCase, {
       id: userId,
-      role: UserRole.JUDGE,
+      role: UserRole.DISTRICT_COURT_JUDGE,
     } as User)
     expect(res).toEqual(false)
   })
@@ -106,8 +106,8 @@ describe('getExtensionInfoText', () => {
     role
     ${UserRole.ADMIN}
     ${UserRole.DEFENDER}
-    ${UserRole.JUDGE}
-    ${UserRole.REGISTRAR}
+    ${UserRole.DISTRICT_COURT_JUDGE}
+    ${UserRole.DISTRICT_COURT_REGISTRAR}
     ${UserRole.PRISON_SYSTEM_STAFF}
   `('should return undefined for user role: $role', ({ role }) => {
     const theCase = {

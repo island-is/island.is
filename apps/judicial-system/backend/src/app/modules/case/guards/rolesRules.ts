@@ -48,7 +48,7 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'prosecutorStatementDate',
 ]
 
-const courtFields: (keyof UpdateCaseDto)[] = [
+const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'defenderName',
   'defenderNationalId',
   'defenderEmail',
@@ -85,6 +85,9 @@ const courtFields: (keyof UpdateCaseDto)[] = [
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+]
+
+const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
   'appealCaseNumber',
   'appealAssistantId',
   'appealJudge1Id',
@@ -111,25 +114,46 @@ export const prosecutorRepresentativeUpdateRule: RolesRule = {
   dtoFields: prosecutorFields,
 }
 
-// Allows judges to update a specific set of fields
-export const judgeUpdateRule: RolesRule = {
-  role: UserRole.JUDGE,
+// Allows district court judges to update a specific set of fields
+export const districtCourtJudgeUpdateRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD,
-  dtoFields: courtFields,
+  dtoFields: districtCourtFields,
 }
 
-// Allows registrars to update a specific set of fields
-export const registrarUpdateRule: RolesRule = {
-  role: UserRole.REGISTRAR,
+// Allows district court registrars to update a specific set of fields
+export const districtCourtRegistrarUpdateRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_REGISTRAR,
   type: RulesType.FIELD,
-  dtoFields: courtFields,
+  dtoFields: districtCourtFields,
 }
 
-// Allows assistants to update a specific set of fields
-export const assistantUpdateRule: RolesRule = {
-  role: UserRole.ASSISTANT,
+// Allows district court assistants to update a specific set of fields
+export const districtCourtAssistantUpdateRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD,
-  dtoFields: courtFields,
+  dtoFields: districtCourtFields,
+}
+
+// Allows court of appeals judges to update a specific set of fields
+export const courtOfAppealsJudgeUpdateRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
+  type: RulesType.FIELD,
+  dtoFields: courtOfAppealsFields,
+}
+
+// Allows court of appeals registrars to update a specific set of fields
+export const courtOfAppealsRegistrarUpdateRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_REGISTRAR,
+  type: RulesType.FIELD,
+  dtoFields: courtOfAppealsFields,
+}
+
+// Allows court of appeals assistants to update a specific set of fields
+export const courtOfAppealsAssistantUpdateRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+  type: RulesType.FIELD,
+  dtoFields: courtOfAppealsFields,
 }
 
 // Allows defenders to update a specific set of fields
@@ -207,8 +231,8 @@ export const defenderTransitionRule: RolesRule = {
 }
 
 // Allows judges to transition cases
-export const judgeTransitionRule: RolesRule = {
-  role: UserRole.JUDGE,
+export const districtCourtJudgeTransitionRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
@@ -218,8 +242,6 @@ export const judgeTransitionRule: RolesRule = {
     CaseTransition.DISMISS,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
-    CaseTransition.COMPLETE_APPEAL,
-    CaseTransition.REOPEN_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -237,8 +259,6 @@ export const judgeTransitionRule: RolesRule = {
         CaseTransition.DISMISS,
         CaseTransition.REOPEN,
         CaseTransition.RECEIVE_APPEAL,
-        CaseTransition.COMPLETE_APPEAL,
-        CaseTransition.REOPEN_APPEAL,
       ].includes(request.body.transition)
     ) {
       return false
@@ -249,8 +269,8 @@ export const judgeTransitionRule: RolesRule = {
 }
 
 // Allows registrars to transition cases
-export const registrarTransitionRule: RolesRule = {
-  role: UserRole.REGISTRAR,
+export const districtCourtRegistrarTransitionRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_REGISTRAR,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
@@ -258,8 +278,6 @@ export const registrarTransitionRule: RolesRule = {
     CaseTransition.ACCEPT,
     CaseTransition.REOPEN,
     CaseTransition.RECEIVE_APPEAL,
-    CaseTransition.COMPLETE_APPEAL,
-    CaseTransition.REOPEN_APPEAL,
   ],
   canActivate: (request) => {
     const theCase = request.case
@@ -280,12 +298,9 @@ export const registrarTransitionRule: RolesRule = {
     // Deny certain transitions on indictment cases
     if (
       isIndictmentCase(theCase.type) &&
-      [
-        CaseTransition.REOPEN,
-        CaseTransition.RECEIVE_APPEAL,
-        CaseTransition.COMPLETE_APPEAL,
-        CaseTransition.REOPEN_APPEAL,
-      ].includes(request.body.transition)
+      [CaseTransition.REOPEN, CaseTransition.RECEIVE_APPEAL].includes(
+        request.body.transition,
+      )
     ) {
       return false
     }
@@ -294,48 +309,47 @@ export const registrarTransitionRule: RolesRule = {
   },
 }
 
-// Allows assistants to transition cases
-export const assistantTransitionRule: RolesRule = {
-  role: UserRole.ASSISTANT,
+// Allows district court assistants to receive and accept indictment cases.
+export const districtCourtAssistantTransitionRule: RolesRule = {
+  role: UserRole.DISTRICT_COURT_ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [CaseTransition.RECEIVE, CaseTransition.ACCEPT],
+  // canActivate: no need for further restrictions as district court assistants can only access indictment cases
+}
+
+// Allows court of appeals judges to complete appeals.
+export const courtOfAppealsJudgeTransitionRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
   type: RulesType.FIELD_VALUES,
   dtoField: 'transition',
   dtoFieldValues: [
-    CaseTransition.RECEIVE,
-    CaseTransition.ACCEPT,
-    CaseTransition.RECEIVE_APPEAL,
     CaseTransition.COMPLETE_APPEAL,
     CaseTransition.REOPEN_APPEAL,
   ],
-  canActivate: (request) => {
-    const theCase = request.case
+  // canActivate: no need for further restrictions as court of appeals judges can only access appealed non-indictment cases
+}
 
-    // Deny if the case is missing - shuould never happen
-    if (!theCase) {
-      return false
-    }
+// Allows court of appeals registrars to complete appeals.
+export const courtOfAppealsRegistrarTransitionRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_REGISTRAR,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.COMPLETE_APPEAL,
+    CaseTransition.REOPEN_APPEAL,
+  ],
+  // canActivate: no need for further restrictions as court of appeals registrars can only access appealed non-indictment cases
+}
 
-    // Deny certain transactions on non indictment cases
-    if (
-      !isIndictmentCase(theCase.type) &&
-      [CaseTransition.RECEIVE, CaseTransition.ACCEPT].includes(
-        request.body.transition,
-      )
-    ) {
-      return false
-    }
-
-    // Deny certain transitions on indictment cases
-    if (
-      isIndictmentCase(theCase.type) &&
-      [
-        CaseTransition.RECEIVE_APPEAL,
-        CaseTransition.COMPLETE_APPEAL,
-        CaseTransition.REOPEN_APPEAL,
-      ].includes(request.body.transition)
-    ) {
-      return false
-    }
-
-    return true
-  },
+// Allows court of appeals assistants to complete appeals.
+export const courtOfAppealsAssistantTransitionRule: RolesRule = {
+  role: UserRole.COURT_OF_APPEALS_ASSISTANT,
+  type: RulesType.FIELD_VALUES,
+  dtoField: 'transition',
+  dtoFieldValues: [
+    CaseTransition.COMPLETE_APPEAL,
+    CaseTransition.REOPEN_APPEAL,
+  ],
+  // canActivate: no need for further restrictions as court of appeals assistants can only access appealed non-indictment cases
 }

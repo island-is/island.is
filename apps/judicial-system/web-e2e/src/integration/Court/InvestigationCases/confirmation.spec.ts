@@ -17,7 +17,7 @@ describe(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
       ruling,
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)

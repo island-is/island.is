@@ -4,7 +4,11 @@ import { uuid } from 'uuidv4'
 
 import { ForbiddenException } from '@nestjs/common'
 
-import { User } from '@island.is/judicial-system/types'
+import {
+  InstitutionType,
+  User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -72,8 +76,15 @@ describe('CaseController - Get court record signature confirmation', () => {
     ${'registrarId'}
   `.describe('given an assigned role', ({ assignedRole }) => {
     const userId = uuid()
-    const role = assignedRole === 'judgeId' ? 'JUDGE' : 'REGISTRAR'
-    const user = { id: userId, role: role } as User
+    const role =
+      assignedRole === 'judgeId'
+        ? UserRole.DISTRICT_COURT_JUDGE
+        : UserRole.DISTRICT_COURT_REGISTRAR
+    const user = {
+      id: userId,
+      role: role,
+      institution: { type: InstitutionType.DISTRICT_COURT },
+    } as User
     const caseId = uuid()
     const theCase = {
       id: caseId,
