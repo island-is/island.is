@@ -66,7 +66,11 @@ export const WithProgressMeter = () => (
       variant: 'blue',
     }}
     text="Toyota CHR"
-    cta={{ label: 'Continue process', variant: 'text' }}
+    progressMeter={{
+      currentProgress: 30,
+      maxProgress: 100,
+      withLabel: true,
+    }}
   />
 )
 
