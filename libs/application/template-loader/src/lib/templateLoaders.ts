@@ -120,7 +120,13 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: () =>
     import('@island.is/application/templates/european-health-insurance-card'),
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
-    import('@island.is/application/templates/signature-list-creation'),
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-creation'
+    ),
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-signing'
+    ),
 }
 
 export default templates

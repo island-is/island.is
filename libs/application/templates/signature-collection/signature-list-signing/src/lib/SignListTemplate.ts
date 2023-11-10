@@ -15,12 +15,12 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 
-const SignatureListTemplate: ApplicationTemplate<
+const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SIGNATURE_LIST_CREATION,
+  type: ApplicationTypes.SIGNATURE_LIST_SIGNING,
   name: m.applicationName,
   institution: m.institution,
   featureFlag: Features.signatureListCreation,
@@ -43,7 +43,7 @@ const SignatureListTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.createList,
+                  name: m.applicationName,
                   type: 'primary',
                 },
               ],
@@ -55,7 +55,7 @@ const SignatureListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: m.logListCreated,
+                logMessage: m.logListSigned,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -105,4 +105,4 @@ const SignatureListTemplate: ApplicationTemplate<
   },
 }
 
-export default SignatureListTemplate
+export default SignListTemplate
