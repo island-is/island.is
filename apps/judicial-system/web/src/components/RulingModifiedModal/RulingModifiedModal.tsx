@@ -2,9 +2,11 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { isAppealsCourtUser, User } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -14,22 +16,34 @@ import { strings } from './RulingModifiedModal.strings'
 interface Props {
   onCancel: () => void
   onContinue: () => void
+  continueDisabled?: boolean
 }
 
 const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   onCancel,
   onContinue,
+  continueDisabled = false,
 }) => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
   const [explanation, setExplanation] = useState(
-    formatMessage(strings.autofill),
+    formatMessage(
+      isAppealsCourtUser(user as unknown as User)
+        ? strings.appealRulingAutofill
+        : strings.rulingAutofill,
+    ),
   )
   const [errorMessage, setErrorMessage] = useState<string>('')
 
   const handleContinue = () => {
-    updateCase(workingCase.id, { rulingModifiedHistory: explanation })
+    updateCase(
+      workingCase.id,
+      isAppealsCourtUser(user as unknown as User)
+        ? { appealRulingModifiedHistory: explanation }
+        : { rulingModifiedHistory: explanation },
+    )
 
     onContinue()
   }
@@ -58,9 +72,14 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
     <Modal
       title={formatMessage(strings.title)}
       text={formatMessage(strings.text)}
-      primaryButtonText={formatMessage(strings.continue)}
+      primaryButtonText={formatMessage(
+        isAppealsCourtUser(user as unknown as User)
+          ? strings.appealRulingContinue
+          : strings.rulingContinue,
+      )}
       onPrimaryButtonClick={handleContinue}
       isPrimaryButtonDisabled={errorMessage !== ''}
+      isPrimaryButtonLoading={continueDisabled}
       secondaryButtonText={formatMessage(strings.cancel)}
       onSecondaryButtonClick={onCancel}
     >
