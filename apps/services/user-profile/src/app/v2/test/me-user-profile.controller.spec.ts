@@ -35,7 +35,7 @@ const emailVerificationCode = createVerificationCode()
 const newEmail = faker.internet.email()
 const newPhoneNumber = formatPhoneNumber(createPhoneNumber())
 
-const audKenniPhoneNumber = createPhoneNumber()
+const audkenniSimNumber = createPhoneNumber()
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
@@ -182,7 +182,7 @@ describe('MeUserProfileController', () => {
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
           scope: [UserProfileScope.read, UserProfileScope.write],
-          audkenniSimNumber: audKenniPhoneNumber,
+          audkenniSimNumber,
         }),
         // Using postgres here because incrementing the tries field for verification is handled differently in sqlite
         dbType: 'postgres',
@@ -285,7 +285,7 @@ describe('MeUserProfileController', () => {
     it('PATCH /v2/me should return 200 with changed mobile data in response and skip verification when when phone number matches audkenniSimNumber', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
-        mobilePhoneNumber: audKenniPhoneNumber,
+        mobilePhoneNumber: audkenniSimNumber,
         mobilePhoneNumberVerificationCode: '',
       })
 
@@ -293,7 +293,7 @@ describe('MeUserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        mobilePhoneNumber: formatPhoneNumber(audKenniPhoneNumber),
+        mobilePhoneNumber: formatPhoneNumber(audkenniSimNumber),
         mobilePhoneNumberVerified: true,
       })
 
@@ -304,7 +304,7 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.mobilePhoneNumber).toBe(
-        formatPhoneNumber(audKenniPhoneNumber),
+        formatPhoneNumber(audkenniSimNumber),
       )
 
       expect(confirmSmsSpy).toBeCalledTimes(0)

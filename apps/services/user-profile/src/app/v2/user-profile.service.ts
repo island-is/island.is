@@ -6,6 +6,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 import { AttemptFailed } from '@island.is/nest/problem'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -62,10 +63,10 @@ export class UserProfileService {
   }
 
   async patch(
-    nationalId: string,
+    user: User,
     userProfile: PatchUserProfileDto,
-    audkenniSimNumber?: string,
   ): Promise<UserProfileDto> {
+    const { nationalId, audkenniSimNumber } = user
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
@@ -260,9 +261,6 @@ export class UserProfileService {
      * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
      * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
      */
-    return (
-      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
-      audkenniSimNumber.replace(/-/g, '')
-    )
+    return mobilePhoneNumber.replace(/-/g, '').slice(-7) === audkenniSimNumber
   }
 }

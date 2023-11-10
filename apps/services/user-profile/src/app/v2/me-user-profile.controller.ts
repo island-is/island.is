@@ -75,9 +75,8 @@ export class MeUserProfileController {
         },
       },
       this.userProfileService.patch(
-        user.nationalId,
+        user
         userProfile,
-        user.audkenniSimNumber,
       ),
     )
   }
