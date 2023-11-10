@@ -23,7 +23,6 @@ import {
   NationalRegistrySpouse,
   Option,
 } from '@island.is/application/types'
-import { UserProfile } from '@island.is/api/schema'
 import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
@@ -52,7 +51,7 @@ import {
   isEarlyRetirement,
   isExistsCohabitantOlderThan25,
 } from '../lib/oldAgePensionUtils'
-import { BankInfo } from '../types'
+import { ApplicantInfo } from '../types'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -148,11 +147,13 @@ export const OldAgePensionForm: Form = buildForm({
                   title: oldAgePensionFormMessage.applicant.applicantInfoEmail,
                   width: 'half',
                   variant: 'email',
-                  required: true,
+                  backgroundColor: 'white',
+                  disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.email
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.emailAddress
                   },
                 }),
                 buildPhoneField({
@@ -162,9 +163,10 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   required: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.mobilePhoneNumber
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.phoneNumber
                   },
                 }),
                 buildDescriptionField({
@@ -265,10 +267,11 @@ export const OldAgePensionForm: Form = buildForm({
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
-                    const bankInfo = application.externalData
-                      .socialInsuranceAdministrationBankInfo.data as BankInfo
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
 
-                    return getBank(bankInfo)
+                    return getBank(data.bankAccount)
                   },
                 }),
                 buildRadioField({
@@ -303,7 +306,7 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   largeButtons: true,
                   space: 'containerGutter',
-                  condition: (answers, externalData) => {
+                  condition: (_, externalData) => {
                     const { hasSpouse } =
                       getApplicationExternalData(externalData)
                     if (hasSpouse) return true

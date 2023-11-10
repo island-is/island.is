@@ -17,20 +17,20 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { ApplicationType, NO } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getYesNOOptions,
 } from '../lib/oldAgePensionUtils'
 import {
   NationalRegistryResidenceHistoryApi,
   NationalRegistryCohabitantsApi,
-  SocialInsuranceAdministrationBankInfoApi,
-  SocialInsuranceAdministrationSpouseInNursingHomeApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -38,69 +38,13 @@ export const PrerequisitesForm: Form = buildForm({
   title: oldAgePensionFormMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'prerequisites',
       title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
-        buildSubSection({
-          id: 'externalData',
-          title: oldAgePensionFormMessage.pre.externalDataSubSection,
-          children: [
-            buildExternalDataProvider({
-              id: 'approveExternalData',
-              title: oldAgePensionFormMessage.pre.externalDataSubSection,
-              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
-              checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
-              dataProviders: [
-                buildDataProviderItem({
-                  provider: NationalRegistryUserApi,
-                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.skraInformationSubTitle,
-                }),
-                buildDataProviderItem({
-                  provider: UserProfileApi,
-                  title:
-                    oldAgePensionFormMessage.pre.userProfileInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre.userProfileInformationSubTitle,
-                }),
-                buildDataProviderItem({
-                  provider: ChildrenCustodyInformationApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistryResidenceHistoryApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistryCohabitantsApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistrySpouseApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationBankInfoApi,
-                  title:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationTitle,
-                  subTitle:
-                    oldAgePensionFormMessage.pre
-                      .socialInsuranceAdministrationInformationDescription,
-                }),
-                buildDataProviderItem({
-                  provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,
-                  title: '',
-                }),
-              ],
-            }),
-          ],
-        }),
         buildSubSection({
           id: 'applicationType',
           title: oldAgePensionFormMessage.pre.applicationTypeTitle,
@@ -140,8 +84,62 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'externalData',
+          title: oldAgePensionFormMessage.pre.externalDataSubSection,
+          children: [
+            buildExternalDataProvider({
+              id: 'approveExternalData',
+              title: oldAgePensionFormMessage.pre.externalDataSubSection,
+              subTitle: oldAgePensionFormMessage.pre.externalDataDescription,
+              checkboxLabel: oldAgePensionFormMessage.pre.checkboxProvider,
+              dataProviders: [
+                buildDataProviderItem({
+                  provider: NationalRegistryUserApi,
+                  title: oldAgePensionFormMessage.pre.skraInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre.skraInformationSubTitle,
+                }),
+                buildDataProviderItem({
+                  provider: ChildrenCustodyInformationApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryResidenceHistoryApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistryCohabitantsApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: NationalRegistrySpouseApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationApplicantApi,
+                  title:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationTitle,
+                  subTitle:
+                    oldAgePensionFormMessage.pre
+                      .socialInsuranceAdministrationInformationDescription,
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  title: '',
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
           id: 'questions',
           title: oldAgePensionFormMessage.pre.questionTitle,
+          condition: (_, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is eligible
+            return isEligible
+          },
           children: [
             buildMultiField({
               id: 'questions',
@@ -195,6 +193,29 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'unused',
               title: '',
               description: '',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: oldAgePensionFormMessage.pre.isNotEligibleLabel,
+          condition: (_, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is not eligible
+            return !isEligible
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible',
+              title: '',
+              description:
+                oldAgePensionFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
             }),
           ],
         }),

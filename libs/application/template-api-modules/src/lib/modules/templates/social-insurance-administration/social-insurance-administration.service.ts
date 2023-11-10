@@ -22,6 +22,7 @@ import {
   childCustodyLivesWithApplicant,
   getApplicationAnswers,
   isEarlyRetirement,
+  oldAgePensionFormMessage,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   Attachment,
@@ -285,27 +286,45 @@ export class OldAgePensionService extends BaseTemplateApiService {
     }
   }
 
-  async getBankInfo({ auth }: TemplateApiModuleActionProps) {
-    try {
-      const res = await this.siaClientService.getBankInfo(auth)
+  async getApplicant({ auth }: TemplateApiModuleActionProps) {
+    const res = await this.siaClientService.getApplicant(auth).catch(() => {
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    })
 
-      if (isRunningOnEnvironment('local')) {
-        if (!res.bank) {
-          ;(res.bank = '2222'),
-            (res.ledger = '00'),
-            (res.accountNumber = '123456')
-        }
+    // mock data since gervimenn don't have bank account registered at TR,
+    // and might also not have phone number and email address registered
+    if (isRunningOnEnvironment('local')) {
+      res.bankAccount!.bank = '2222'
+      res.bankAccount!.ledger = '00'
+      res.bankAccount!.accountNumber = '123456'
+
+      if (!res.emailAddress) {
+        res.emailAddress = 'mail@mail.is'
       }
 
-      return res
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+      if (!res.phoneNumber) {
+        res.phoneNumber = '888-8888'
+      }
     }
+
+    if (!res.emailAddress) {
+      throw new TemplateApiError(
+        {
+          title: oldAgePensionFormMessage.errorMessages.noEmailFound,
+          summary:
+            oldAgePensionFormMessage.errorMessages.noEmailFoundDescription,
+        },
+        500,
+      )
+    }
+
+    return res
   }
 
-  async getSpouseInNursingHome({ auth }: TemplateApiModuleActionProps) {
+  async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      return await this.siaClientService.getSpouseInNursingHome(auth)
+      const applicationType = getApplicationType(application).toLowerCase()
+      return await this.siaClientService.getIsEligible(auth, applicationType)
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }

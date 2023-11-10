@@ -69,18 +69,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Information about you, spouse and children. Information about residence, cohabitants and custody.',
     },
-    userProfileInformationTitle: {
-      id: 'oap.application:prerequisites.userprofile.title',
-      defaultMessage: 'Upplýsingar af mínum síðum á Ísland.is',
-      description: 'Information from your account at Ísland.is',
-    },
-    userProfileInformationSubTitle: {
-      id: 'oap.application:prerequisites.userprofile.subtitle',
-      defaultMessage:
-        'Upplýsingar um netfang og símanúmer eru sóttar á mínar síður á Ísland.is.',
-      description:
-        'Information about email address and phone number will be retrieved from your account at Ísland.is.',
-    },
     socialInsuranceAdministrationInformationTitle: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.title',
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
@@ -89,7 +77,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     socialInsuranceAdministrationInformationDescription: {
       id: 'oap.application:prerequisites.socialInsuranceAdministration.description#markdown',
       defaultMessage:
-        'TR sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur TR heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta TR vita þar sem það getur haft áhrif á greiðslur þínar.',
+        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description: 'english translation',
     },
     startApplication: {
@@ -161,6 +149,19 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Sá sem hefur stundað sjómennsku á lögskráðu íslensku skipi eða skipi gert út af íslenskum aðilum í 25 ár eða lengur getur átt rétt á ellilífeyri frá 60 ára aldri. Fjöldi lögskráðra daga á sjó þarf að vera að lágmarki 180 dagar að meðaltali á ári á 25 árum.',
       description:
         'Anyone who has practiced seamanship on a registered Icelandic ship or a ship built by Icelandic entities for 25 years or more can be entitled to a retirement pension from the age of 60. The number of legally registered days at sea must be a minimum of 180 days on average per year over 25 years.',
+    },
+
+    isNotEligibleLabel: {
+      id: 'oap.application:is.not.eligible.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á ellilífeyri',
+      description: 'Unfortunately, you are not entitled to old-age pension',
+    },
+    isNotEligibleDescription: {
+      id: 'oap.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ellilífeyrisþegi eða með umsókn um ellilífeyri í vinnslu.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following.\n* You are a pensioner or have an application for a old-age pension in progress.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
   }),
 
@@ -1151,6 +1152,17 @@ export const errorMessages = defineMessages({
     id: 'oap.application:error.period',
     defaultMessage: 'Tímabil þarf að vera gilt.',
     description: 'The period must be valid.',
+  },
+  noEmailFound: {
+    id: 'oap.application:error.no.email.found.title',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'english translation',
+  },
+  noEmailFoundDescription: {
+    id: 'oap.application:error.no.email.found.description#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/) og komdu svo aftur til að sækja um ellilífeyri.',
+    description: 'english translation',
   },
 })
 

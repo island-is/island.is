@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.0
+  version: 1.0.1
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -43,18 +43,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/OldAgePensionResponseError'
-  /application/bankinfo:
+  /Applicant:
     get:
       tags:
-        - Get bank info
-      operationId: Application_GetBankInfo
+        - Get applicant info
+      operationId: Application_GetApplicant
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BankInfo'
+                $ref: '#/components/schemas/Applicant'
         '401':
           description: Unauthorized
           content:
@@ -67,18 +67,26 @@ paths:
             application/json:
               schema:
                 type: string
-  /Applicant/spouseinnursinghome:
+  /Applicant/{applicationType}/eligible:
     get:
       tags:
-        - Get spouse in nursing home
-      operationId: Application_GetSpouseInNursingHome
+        - Get is applicant eligible
+      operationId: Applicant_GetIsEligible
+      parameters:
+        - name: applicationType
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
       responses:
         '200':
           description: ''
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SpouseInNursingHome'
+                $ref: '#/components/schemas/Eligible'
         '401':
           description: Unauthorized
           content:
@@ -285,6 +293,16 @@ components:
           type: string
         param:
           type: string
+    Applicant:
+      type: object
+      description: Return email, phone number and bank account from TR if applicant has them registered there
+      properties:
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        bankAccount:
+          $ref: '#/components/schemas/BankInfo'
     BankInfo:
       type: object
       description: Returns bank information from TR if applicant has one registered there
@@ -305,11 +323,11 @@ components:
           type: string
         currency:
           type: string
-    SpouseInNursingHome:
+    Eligible:
       type: object
-      description: Returns true if applicant has a spouse that is a resident at a nursing home
+      description: Returns true if applicant is eligible
       properties:
-        isSpouseInNursingHome:
+        isEligible:
           type: boolean
 security:
   - bearerAuth: []

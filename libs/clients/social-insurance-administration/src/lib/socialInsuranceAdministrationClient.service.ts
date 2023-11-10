@@ -4,29 +4,28 @@ import {
   OldAgePension,
   SendApplicationApi,
   OldAgePensionResponse,
-  BankInfo,
-  GetBankInfoApi,
-  SpouseInNursingHome,
-  GetSpouseInNursingHomeApi,
+  GetIsApplicantEligibleApi,
+  Eligible,
+  GetApplicantInfoApi,
+  Applicant,
 } from '../../gen/fetch'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
   constructor(
     private readonly sendApplicationApi: SendApplicationApi,
-    private readonly getBankInfoApi: GetBankInfoApi,
-    private readonly getSpouseInNursingHomeApi: GetSpouseInNursingHomeApi,
+    private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
+    private readonly getApplicantInfoApi: GetApplicantInfoApi,
   ) {}
 
   private sendAPIWithAuth = (user: User) =>
     this.sendApplicationApi.withMiddleware(new AuthMiddleware(user as Auth))
-  private bankInfoAPIWithAuth = (user: User) =>
-    this.getBankInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  private spouseInNursingHomeAPIWithAuth = (user: User) =>
-    this.getSpouseInNursingHomeApi.withMiddleware(
+  private isEligibleAPIWithAuth = (user: User) =>
+    this.getIsApplicantEligibleApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
+  private applicantAPIWithAuth = (user: User) =>
+    this.getApplicantInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async sendApplication(
     user: User,
@@ -39,13 +38,13 @@ export class SocialInsuranceAdministrationClientService {
     })
   }
 
-  async getBankInfo(user: User): Promise<BankInfo> {
-    return await this.bankInfoAPIWithAuth(user).applicationGetBankInfo()
+  async getApplicant(user: User): Promise<Applicant> {
+    return await this.applicantAPIWithAuth(user).applicationGetApplicant()
   }
 
-  async getSpouseInNursingHome(user: User): Promise<SpouseInNursingHome> {
-    return await this.spouseInNursingHomeAPIWithAuth(
-      user,
-    ).applicationGetSpouseInNursingHome()
+  async getIsEligible(user: User, applicationType: string): Promise<Eligible> {
+    return await this.isEligibleAPIWithAuth(user).applicantGetIsEligible({
+      applicationType,
+    })
   }
 }

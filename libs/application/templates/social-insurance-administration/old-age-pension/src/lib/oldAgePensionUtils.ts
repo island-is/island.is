@@ -341,8 +341,13 @@ export function getApplicationExternalData(
 
   const bankInfo = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationBankInfo.data',
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
   ) as BankInfo
+
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
 
   return {
     residenceHistory,
@@ -356,6 +361,7 @@ export function getApplicationExternalData(
     spouseName,
     spouseNationalId,
     maritalStatus,
+    isEligible,
     bankInfo,
   }
 }
@@ -820,8 +826,8 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBank = (bankInfo: BankInfo) => {
-  return bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+export const getBank = (bankInfo?: BankInfo) => {
+  return bankInfo?.bank && bankInfo?.ledger && bankInfo?.accountNumber
     ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
 }
