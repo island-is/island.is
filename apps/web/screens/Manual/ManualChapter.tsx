@@ -16,7 +16,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { ManualWrapper } from './components/ManualWrapper'
-import { getProps, ManualScreen } from './utils'
+import { generateOgTitle, getProps, ManualScreen } from './utils'
 import * as styles from './Manual.css'
 
 const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
@@ -28,7 +28,11 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   useContentfulId(manual?.id, manualChapter?.id)
 
   return (
-    <ManualWrapper manual={manual} namespace={namespace}>
+    <ManualWrapper
+      manual={manual}
+      namespace={namespace}
+      socialTitle={generateOgTitle(manual?.title, manualChapter?.title)}
+    >
       {manualChapter && (
         <Stack space={2}>
           <LinkV2
