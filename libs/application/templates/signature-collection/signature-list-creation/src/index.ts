@@ -5,4 +5,4 @@ import { dataSchema } from './lib/dataSchema'
 export const getFields = () => import('./fields')
 
 export default CreateListTemplate
-export type SignatureListSchema = z.TypeOf<typeof dataSchema>
+export type CreateListSchema = z.TypeOf<typeof dataSchema>
