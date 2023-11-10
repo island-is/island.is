@@ -140,7 +140,8 @@ const Editor = () => {
   }, [currentName])
 
   const onSubmit = async (formState: IcelandicNameType) => {
-    const { id, ...rest } = formState
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { id, __typename, ...rest } = formState
 
     const body: CreateIcelandicNameInput = {
       ...rest,
