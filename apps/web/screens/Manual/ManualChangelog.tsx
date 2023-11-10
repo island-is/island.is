@@ -18,7 +18,12 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { nlToBr } from '@island.is/web/utils/nlToBr'
 
 import { ManualWrapper } from './components/ManualWrapper'
-import { extractChangelogFromManual, getProps, ManualScreen } from './utils'
+import {
+  extractChangelogFromManual,
+  generateOgTitle,
+  getProps,
+  ManualScreen,
+} from './utils'
 import * as styles from './Manual.css'
 
 const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
@@ -34,8 +39,17 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
     return extractChangelogFromManual(manual)
   }, [manual])
 
+  const manualChangelogTitle = n(
+    'manualChangelogTitle',
+    activeLocale === 'is' ? 'Breytingasaga' : 'Changelog',
+  ) as string
+
   return (
-    <ManualWrapper manual={manual} namespace={namespace}>
+    <ManualWrapper
+      manual={manual}
+      namespace={namespace}
+      socialTitle={generateOgTitle(manual?.title, manualChangelogTitle)}
+    >
       <Stack space={2}>
         <LinkV2
           className={styles.smallLink}
@@ -52,10 +66,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
         <Box paddingTop={2}>
           <Stack space={2}>
             <Text variant="h2" as="h2">
-              {n(
-                'manualChangelogTitle',
-                activeLocale === 'is' ? 'Breytingasaga' : 'Changelog',
-              )}
+              {manualChangelogTitle}
             </Text>
             <Text>
               {nlToBr(

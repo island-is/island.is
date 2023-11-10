@@ -111,6 +111,11 @@ export const m = defineMessages({
     defaultMessage: 'Útrunnið',
     description: 'Some description',
   },
+  incorrectDomicileTage: {
+    id: 'pa.application:selectPassport.incorrectDomicileTage',
+    defaultMessage: 'Rangt lögheimili',
+    description: 'some description',
+  },
   orderedTag: {
     id: 'pa.application:selectPassport.orderedTag',
     defaultMessage: 'Í pöntun',

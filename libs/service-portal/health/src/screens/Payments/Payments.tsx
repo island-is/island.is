@@ -1,5 +1,5 @@
 import { lazy, useEffect, useState } from 'react'
-import { Box, Button, LinkV2, Tabs, Text } from '@island.is/island-ui/core'
+import { Box, Button, LinkV2, Tabs } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import {

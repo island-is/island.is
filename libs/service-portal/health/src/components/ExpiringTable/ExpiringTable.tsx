@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import LinkButton from '../LinkButton/LinkButton'
+import { LinkButton } from '@island.is/service-portal/core'
 
 interface Props {
   header: React.ReactNode

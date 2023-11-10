@@ -34,7 +34,6 @@ export const serviceSetup = (services: {
         staging: 'cdn.contentful.com',
         prod: 'cdn.contentful.com',
       },
-      NO_UPDATE_NOTIFIER: 'true',
     })
     .secrets({
       AUTH_JWT_SECRET: '/k8s/air-discount-scheme/api/AUTH_JWT_SECRET',

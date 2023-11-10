@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
+import { IslykillApiModule } from '@island.is/clients/islykill'
 import { EmailModule } from '@island.is/email-service'
 import { SmsModule } from '@island.is/nova-sms'
-import { IslykillApiModule } from '@island.is/clients/islykill'
 
 import environment from '../../environments/environment'
 import { MeUserProfileController } from './me-user-profile.controller'
