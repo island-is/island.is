@@ -3,7 +3,8 @@ const devConfig = {
   auth: {
     issuer: 'https://identity-server.dev01.devland.is',
     nextAuthCookieName: 'next-auth.session-token',
-    audience: ['@urvinnslusjodur.is/skilavottord', '@island.is'],
+    audience: '@urvinnslusjodur.is/skilavottord',
+    // audience: ['@urvinnslusjodur.is/skilavottord', '@island.is'],
   },
   samgongustofa: {
     soapUrl:
