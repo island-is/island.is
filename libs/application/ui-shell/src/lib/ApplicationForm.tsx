@@ -93,7 +93,6 @@ const ApplicationLoader: FC<
         />
       )
     }
-    console.log('error maaan')
     return <ErrorShell />
   }
 

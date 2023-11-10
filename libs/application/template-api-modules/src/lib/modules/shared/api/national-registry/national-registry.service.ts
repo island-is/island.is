@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../../types'
-import * as kennitala from 'kennitala'
 
 import {
   ApplicantChildCustodyInformation,
