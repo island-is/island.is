@@ -8,7 +8,7 @@ import {
   Table as T,
   Button,
 } from '@island.is/island-ui/core'
-import { UserInfoLine, m } from '@island.is/service-portal/core'
+import { UserInfoLine, m, numberFormat } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
@@ -99,16 +99,20 @@ export const PaymentPartication = () => {
           </Box>
           <Box marginBottom={SECTION_GAP}>
             <Text variant="small" marginTop={5} marginBottom={2}>
-              {formatMessage(messages.paymentParticationExplination)}
+              {formatMessage(messages.paymentParticationExplination, {
+                basePayment: numberFormat(status.basePayment ?? 0),
+              })}
             </Text>
           </Box>
         </Box>
       ) : (
-        <AlertMessage
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFound)}
-          type="warning"
-        />
+        <Box marginBottom={4}>
+          <AlertMessage
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFound)}
+            type="warning"
+          />
+        </Box>
       )}
       <Box marginBottom={SECTION_GAP}>
         {periodsError ? (
