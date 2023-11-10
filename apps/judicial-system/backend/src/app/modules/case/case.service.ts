@@ -204,14 +204,14 @@ export const include: Includeable[] = [
   {
     model: Case,
     as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
+    // include: [
+    //   {
+    //     model: CaseFile,
+    //     as: 'caseFiles',
+    //     required: false,
+    //     where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+    //   },
+    // ],
   },
   { model: Case, as: 'childCase' },
   { model: Defendant, as: 'defendants' },
