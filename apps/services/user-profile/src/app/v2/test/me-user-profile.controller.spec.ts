@@ -307,6 +307,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumber).toBe(
         formatPhoneNumber(audkenniSimNumber),
       )
+      expect(userProfile.mobilePhoneNumberVerified).toBe(true)
 
       expect(confirmSmsSpy).toBeCalledTimes(0)
     })
