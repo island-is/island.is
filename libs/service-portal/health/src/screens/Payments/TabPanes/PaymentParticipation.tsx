@@ -106,11 +106,13 @@ export const PaymentPartication = () => {
           </Box>
         </Box>
       ) : (
-        <AlertMessage
-          title={formatMessage(m.noData)}
-          message={formatMessage(m.noDataFound)}
-          type="warning"
-        />
+        <Box marginBottom={4}>
+          <AlertMessage
+            title={formatMessage(m.noData)}
+            message={formatMessage(m.noDataFound)}
+            type="warning"
+          />
+        </Box>
       )}
       <Box marginBottom={SECTION_GAP}>
         {periodsError ? (
