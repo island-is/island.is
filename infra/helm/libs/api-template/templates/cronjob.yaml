@@ -4,7 +4,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: "{{ .Chart.Name }}"
+  name: "{{ .Values.job.name }}"
   {{- if $.Values.namespace }}
   namespace: {{ $.Values.namespace }}
   {{- end }}
@@ -12,8 +12,8 @@ metadata:
     {{- include "api-template.labels" . | nindent 4 }}
     chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
     tags.datadoghq.com/env: {{ .Values.global.env.name }}
-    tags.datadoghq.com/service: {{ include "api-template.name" . }}
-    tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+    tags.datadoghq.com/service: {{ .Values.job.name }}
+    tags.datadoghq.com/version: {{ .Values.job.image.tag }}
 spec:
   concurrencyPolicy: {{ .Values.concurrencyPolicy | default "Allow" }}
   failedJobsHistoryLimit: {{ .Values.failedJobsHistoryLimit | default 1 }}
@@ -39,14 +39,14 @@ spec:
             {{- include "api-template.labels" . | nindent 12 }}
             chart: "{{ $.Chart.Name }}-{{ $.Chart.Version | replace "+" "_" }}"
             tags.datadoghq.com/env: {{ .Values.global.env.name }}
-            tags.datadoghq.com/service: {{ include "api-template.name" . }}
-            tags.datadoghq.com/version: {{ .Values.image.tag | default .Values.global.image.tag }}
+            tags.datadoghq.com/service: {{ .Values.job.name }}
+            tags.datadoghq.com/version: {{ .Values.job.image.tag }}
         spec:
           serviceAccountName: {{ include "api-template.serviceAccountName" $ }}
           securityContext:
             {{- toYaml $.Values.podSecurityContext | nindent 12 }}
           containers:
-          - image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag | default .Values.global.image.tag }}"
+          - image: "{{ $.Values.image.repository }}:{{ $.Values.job.image.tag }}"
             name: {{ .Chart.Name }}
             securityContext:
               {{- toYaml $.Values.securityContext | nindent 14 }}
@@ -80,7 +80,7 @@ spec:
                     key: {{ $key }}
               {{- end }}
               - name: APP_VERSION
-                value: {{ .Values.image.tag | default .Values.global.image.tag }}
+                value: {{ .Values.job.image.tag }}
               - name: DD_ENV
                 valueFrom:
                   fieldRef:
@@ -122,7 +122,7 @@ spec:
           {{- if not (empty .Values.files) }}
           - name: config-volume
             configMap:
-              name: {{ include "api-template.name" . }}
+              name: {{ .Values.job.name }}
           {{- end }}
           {{- if not (empty .Values.pvcs) }}
           {{- range .Values.pvcs }}
@@ -132,4 +132,5 @@ spec:
           {{- end }}
           {{- end }}
           restartPolicy: {{ .Values.restartPolicy | default "Never" }}
+{{- end }}
 {{- end }}
