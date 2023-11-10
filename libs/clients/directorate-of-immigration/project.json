@@ -36,13 +36,14 @@
         "cwd": "libs/clients/directorate-of-immigration"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/directorate-of-immigration/gen/fetch -i libs/clients/directorate-of-immigration/src/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
