@@ -162,6 +162,19 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'Anyone who has practiced seamanship on a registered Icelandic ship or a ship built by Icelandic entities for 25 years or more can be entitled to a retirement pension from the age of 60. The number of legally registered days at sea must be a minimum of 180 days on average per year over 25 years.',
     },
+
+    isNotEligibleLabel: {
+      id: 'oap.application:is.not.eligible.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á ellilífeyri',
+      description: 'Unfortunately, you are not entitled to old-age pension',
+    },
+    isNotEligibleDescription: {
+      id: 'oap.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ellilífeyrisþegi eða með umsókn um ellilífeyri í vinnslu.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following.\n* You are a pensioner or have an application for a old-age pension in progress.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
   }),
 
   applicant: defineMessages({

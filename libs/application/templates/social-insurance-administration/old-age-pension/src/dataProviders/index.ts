@@ -28,3 +28,9 @@ export const SocialInsuranceAdministrationSpouseInNursingHomeApi =
     action: 'getSpouseInNursingHome',
     externalDataId: 'socialInsuranceAdministrationSpouseInNursingHome',
   })
+
+export const SocialInsuranceAdministrationIsApplicantEligibleApi =
+  defineTemplateApi({
+    action: 'getIsEligible',
+    externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
+  })

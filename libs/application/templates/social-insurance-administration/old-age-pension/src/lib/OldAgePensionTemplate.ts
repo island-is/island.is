@@ -23,6 +23,7 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
   coreHistoryMessages,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import {
   Actions,
@@ -40,6 +41,7 @@ import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -66,15 +68,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
-          actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
-          },
+          lifecycle: EphemeralStateLifeCycle,
           progress: 0.25,
           //onExit: defineTemplateApi - kalla á TR
           roles: [
@@ -101,6 +95,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationBankInfoApi,
                 SocialInsuranceAdministrationSpouseInNursingHomeApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },
@@ -413,6 +408,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
+              read: 'all',
             },
           ],
         },

@@ -24,6 +24,7 @@ import { ApplicationType, NO } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,
+  getApplicationExternalData,
   getYesNOOptions,
 } from '../lib/oldAgePensionUtils'
 import {
@@ -31,6 +32,7 @@ import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationBankInfoApi,
   SocialInsuranceAdministrationSpouseInNursingHomeApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -38,13 +40,51 @@ export const PrerequisitesForm: Form = buildForm({
   title: oldAgePensionFormMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'prerequisites',
       title: oldAgePensionFormMessage.pre.prerequisitesSection,
       children: [
+        buildSubSection({
+          id: 'applicationType',
+          title: oldAgePensionFormMessage.pre.applicationTypeTitle,
+          children: [
+            buildRadioField({
+              id: 'applicationType.option',
+              title: oldAgePensionFormMessage.pre.applicationTypeTitle,
+              description:
+                oldAgePensionFormMessage.pre.applicationTypeDescription,
+              options: [
+                {
+                  value: ApplicationType.OLD_AGE_PENSION,
+                  label: oldAgePensionFormMessage.shared.applicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .retirementPensionApplicationDescription,
+                },
+                {
+                  value: ApplicationType.HALF_OLD_AGE_PENSION,
+                  label:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationDescription,
+                },
+                {
+                  value: ApplicationType.SAILOR_PENSION,
+                  label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .fishermenApplicationDescription,
+                },
+              ],
+              required: true,
+            }),
+          ],
+        }),
         buildSubSection({
           id: 'externalData',
           title: oldAgePensionFormMessage.pre.externalDataSubSection,
@@ -97,51 +137,22 @@ export const PrerequisitesForm: Form = buildForm({
                   provider: SocialInsuranceAdministrationSpouseInNursingHomeApi,
                   title: '',
                 }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  title: '',
+                }),
               ],
-            }),
-          ],
-        }),
-        buildSubSection({
-          id: 'applicationType',
-          title: oldAgePensionFormMessage.pre.applicationTypeTitle,
-          children: [
-            buildRadioField({
-              id: 'applicationType.option',
-              title: oldAgePensionFormMessage.pre.applicationTypeTitle,
-              description:
-                oldAgePensionFormMessage.pre.applicationTypeDescription,
-              options: [
-                {
-                  value: ApplicationType.OLD_AGE_PENSION,
-                  label: oldAgePensionFormMessage.shared.applicationTitle,
-                  subLabel:
-                    oldAgePensionFormMessage.pre
-                      .retirementPensionApplicationDescription,
-                },
-                {
-                  value: ApplicationType.HALF_OLD_AGE_PENSION,
-                  label:
-                    oldAgePensionFormMessage.pre
-                      .halfRetirementPensionApplicationTitle,
-                  subLabel:
-                    oldAgePensionFormMessage.pre
-                      .halfRetirementPensionApplicationDescription,
-                },
-                {
-                  value: ApplicationType.SAILOR_PENSION,
-                  label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
-                  subLabel:
-                    oldAgePensionFormMessage.pre
-                      .fishermenApplicationDescription,
-                },
-              ],
-              required: true,
             }),
           ],
         }),
         buildSubSection({
           id: 'questions',
           title: oldAgePensionFormMessage.pre.questionTitle,
+          condition: (_, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is eligible
+            return isEligible
+          },
           children: [
             buildMultiField({
               id: 'questions',
@@ -195,6 +206,29 @@ export const PrerequisitesForm: Form = buildForm({
               id: 'unused',
               title: '',
               description: '',
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: oldAgePensionFormMessage.pre.isNotEligibleLabel,
+          condition: (_, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is not eligible
+            return !isEligible
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible',
+              title: '',
+              description:
+                oldAgePensionFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
             }),
           ],
         }),
