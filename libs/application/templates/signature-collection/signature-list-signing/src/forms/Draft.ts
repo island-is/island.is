@@ -9,6 +9,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import {
+  DefaultEvents,
   Form,
   FormModes,
   NationalRegistryUserApi,
@@ -119,7 +120,7 @@ export const Draft: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  event: 'SUBMIT',
+                  event: DefaultEvents.SUBMIT,
                   name: m.signList,
                   type: 'primary',
                 },
