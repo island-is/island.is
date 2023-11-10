@@ -76,6 +76,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
           status: e.status,
           statusText: e.statusText,
           category: LOG_CATEGORY,
+          e,
         })
       } else {
         const unknownError = e as Error
@@ -88,6 +89,7 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
           status: e.status,
           statusText: e.statusText,
           category: LOG_CATEGORY,
+          e,
         })
       }
 
