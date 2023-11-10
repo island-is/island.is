@@ -28,11 +28,11 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      title: m.intoTitle,
+      title: m.intro,
       children: [
         buildMultiField({
           id: 'intro',
-          title: m.intoTitle,
+          title: m.introTitle,
           description: m.introDescription,
           children: [
             buildDescriptionField({
@@ -82,7 +82,7 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
             }),
             buildTextField({
-              id: 'applicant.name',
+              id: 'signee.name',
               title: m.name,
               width: 'full',
               readOnly: true,
@@ -90,7 +90,7 @@ export const Draft: Form = buildForm({
                 externalData.nationalRegistry?.data.fullName,
             }),
             buildTextField({
-              id: 'applicant.nationalId',
+              id: 'signee.nationalId',
               title: m.nationalId,
               width: 'full',
               readOnly: true,
@@ -98,14 +98,14 @@ export const Draft: Form = buildForm({
                 formatNationalId(application.applicant),
             }),
             buildTextField({
-              id: 'applicant.area',
+              id: 'signee.area',
               title: m.countryArea,
               width: 'half',
               readOnly: true,
               defaultValue: 'Sunnlendingafjórðungur',
             }),
             buildTextField({
-              id: 'applicant.address',
+              id: 'signee.address',
               title: m.countryArea,
               width: 'half',
               readOnly: true,

@@ -13,8 +13,13 @@ export const m = defineMessages({
   },
 
   /* Intro */
-  intoTitle: {
-    id: 'sls.application:intoTitle',
+  intro: {
+    id: 'sls.application:intro',
+    defaultMessage: 'Um söfnunina',
+    description: '',
+  },
+  introTitle: {
+    id: 'sls.application:introTitle',
     defaultMessage: 'Forsetakostningar 2024',
     description: '',
   },
