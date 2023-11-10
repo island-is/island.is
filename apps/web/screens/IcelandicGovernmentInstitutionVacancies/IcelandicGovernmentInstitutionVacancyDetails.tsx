@@ -12,6 +12,7 @@ import {
 import {
   HeadWithSocialSharing,
   InstitutionPanel,
+  Webreader,
 } from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
@@ -46,69 +47,71 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   return (
-    <Stack space={3}>
-      {vacancy?.institutionName && (
-        <InstitutionPanel
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          img={vacancy.logoUrl}
-          institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
-          institution={vacancy.institutionName}
-          locale={activeLocale}
-          imgContainerDisplay={['block', 'block', 'none', 'block']}
-        />
-      )}
-      <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
-        <Stack space={3}>
-          <Text variant="h3">
-            {n('informationAboutJob', 'Upplýsingar um starf')}
-          </Text>
-          <Box borderTopWidth="standard" borderColor="dark200" />
-          <Box>
-            <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
-            <Text variant="small">{vacancy?.title}</Text>
-          </Box>
-          {vacancy?.locations && vacancy.locations?.length > 0 && (
+    <Box className="rs_read">
+      <Stack space={3}>
+        {vacancy?.institutionName && (
+          <InstitutionPanel
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            img={vacancy.logoUrl}
+            institutionTitle={n('institutionCardTitle', 'Þjónustuaðili')}
+            institution={vacancy.institutionName}
+            locale={activeLocale}
+            imgContainerDisplay={['block', 'block', 'none', 'block']}
+          />
+        )}
+        <Box background="dark100" borderRadius="large" padding={[3, 3, 4]}>
+          <Stack space={3}>
+            <Text variant="h3">
+              {n('informationAboutJob', 'Upplýsingar um starf')}
+            </Text>
+            <Box borderTopWidth="standard" borderColor="dark200" />
             <Box>
-              <Text fontWeight="semiBold">
-                {vacancy.locations.length === 1
-                  ? n('location', 'Staðsetning')
-                  : n('locations', 'Staðsetningar')}
-              </Text>
-              {vacancy.locations.map((location, index) => (
-                <Text key={index} variant="small">
-                  {location.title}
+              <Text fontWeight="semiBold">{n('fieldOfWork', 'Starf')}</Text>
+              <Text variant="small">{vacancy?.title}</Text>
+            </Box>
+            {vacancy?.locations && vacancy.locations?.length > 0 && (
+              <Box>
+                <Text fontWeight="semiBold">
+                  {vacancy.locations.length === 1
+                    ? n('location', 'Staðsetning')
+                    : n('locations', 'Staðsetningar')}
                 </Text>
-              ))}
-            </Box>
-          )}
-          {vacancy?.jobPercentage && (
-            <Box>
-              <Text fontWeight="semiBold">
-                {n('jobPercentage', 'Starfshlutfall')}
-              </Text>
-              <Text variant="small">{vacancy.jobPercentage}</Text>
-            </Box>
-          )}
-          {vacancy?.applicationDeadlineFrom && (
-            <Box>
-              <Text fontWeight="semiBold">
-                {n('applicationDeadlineFrom', 'Starf skráð')}
-              </Text>
-              <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
-            </Box>
-          )}
-          {vacancy?.applicationDeadlineTo && (
-            <Box>
-              <Text fontWeight="semiBold">
-                {n('applicationDeadlineTo', 'Umsóknarfrestur')}
-              </Text>
-              <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
-            </Box>
-          )}
-        </Stack>
-      </Box>
-    </Stack>
+                {vacancy.locations.map((location, index) => (
+                  <Text key={index} variant="small">
+                    {location.title}
+                  </Text>
+                ))}
+              </Box>
+            )}
+            {vacancy?.jobPercentage && (
+              <Box>
+                <Text fontWeight="semiBold">
+                  {n('jobPercentage', 'Starfshlutfall')}
+                </Text>
+                <Text variant="small">{vacancy.jobPercentage}</Text>
+              </Box>
+            )}
+            {vacancy?.applicationDeadlineFrom && (
+              <Box>
+                <Text fontWeight="semiBold">
+                  {n('applicationDeadlineFrom', 'Starf skráð')}
+                </Text>
+                <Text variant="small">{vacancy.applicationDeadlineFrom}</Text>
+              </Box>
+            )}
+            {vacancy?.applicationDeadlineTo && (
+              <Box>
+                <Text fontWeight="semiBold">
+                  {n('applicationDeadlineTo', 'Umsóknarfrestur')}
+                </Text>
+                <Text variant="small">{vacancy.applicationDeadlineTo}</Text>
+              </Box>
+            )}
+          </Stack>
+        </Box>
+      </Stack>
+    </Box>
   )
 }
 
@@ -127,7 +130,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
   const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
 
   return (
-    <>
+    <Box className="rs_read">
       <HeadWithSocialSharing
         title={`${vacancy?.title ?? ''}${vacancy?.title ? ogTitlePostfix : ''}`}
         description={shortenText(
@@ -182,9 +185,16 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
               </Button>
             </LinkV2>
           </Hidden>
-          <Text variant="h1" as="h1">
-            {vacancy?.title}
-          </Text>
+          <Box>
+            <Text variant="h1" as="h1">
+              {vacancy?.title}
+            </Text>
+            <Webreader
+              marginBottom={0}
+              readId={undefined}
+              readClass="rs_read"
+            />
+          </Box>
           {vacancy?.intro && (
             <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
           )}
@@ -302,7 +312,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
           </Hidden>
         </Stack>
       </SidebarLayout>
-    </>
+    </Box>
   )
 }
 

@@ -21,7 +21,11 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { sortAlpha } from '@island.is/shared/utils'
-import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
+import {
+  FilterTag,
+  HeadWithSocialSharing,
+  Webreader,
+} from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacanciesQuery,
   GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
@@ -367,13 +371,18 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         )}
       />
       <GridContainer>
-        <Box>
+        <Box className="rs_read">
           <GridRow marginBottom={[5, 5, 5, 0]}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
               <Text marginTop={2} variant="h1" as="h1">
                 {mainTitle}
               </Text>
+              <Webreader
+                marginBottom={[0, 0, 0, 4]}
+                readId={undefined}
+                readClass="rs_read"
+              />
             </GridColumn>
             <GridColumn span="1/2">
               <Hidden below="lg">
@@ -481,7 +490,12 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           </GridRow>
         </Box>
       </GridContainer>
-      <Box paddingTop={3} paddingBottom={6} background="blue100">
+      <Box
+        paddingTop={3}
+        paddingBottom={6}
+        background="blue100"
+        className="rs_read"
+      >
         <GridContainer>
           <Box marginBottom={6}>
             <Text>
