@@ -1,21 +1,29 @@
+import { useEffect } from 'react'
 import getConfig from 'next/config'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
 
 const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
-let hasSentInitialLoadPageview = false
+let newestVisitedUrl = ''
 
 export const usePlausiblePageview = (domain?: string) => {
   const router = useRouter()
 
   useEffect(() => {
     const onRouteChangeComplete = () => {
-      // Only track pageviews in production
-      if (publicRuntimeConfig.environment !== 'prod' || !domain) return
+      if (
+        // Only track pageviews in production
+        publicRuntimeConfig.environment !== 'prod' ||
+        !domain ||
+        // Only track pageviews if we visit a page we weren't already on
+        newestVisitedUrl === window.location.href
+      ) {
+        return
+      }
+
+      newestVisitedUrl = window.location.href
 
       // Documentation: https://plausible.io/docs/events-api
-
       fetch('https://plausible.io/api/event', {
         method: 'POST',
         headers: {
@@ -34,15 +42,11 @@ export const usePlausiblePageview = (domain?: string) => {
     router.events.on('routeChangeComplete', onRouteChangeComplete)
 
     // Initial page load should trigger a pageview
-    const isInitialPageLoad = window.history?.state?.idx === 0
-
-    if (!hasSentInitialLoadPageview && isInitialPageLoad) {
-      onRouteChangeComplete()
-      hasSentInitialLoadPageview = true
-    }
+    onRouteChangeComplete()
 
     return () => {
       router.events.off('routeChangeComplete', onRouteChangeComplete)
+      newestVisitedUrl = ''
     }
   }, [domain, router.events])
 }

@@ -262,12 +262,12 @@ const AppealCase = () => {
         {modalVisible && (
           <Modal
             title={formatMessage(
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? strings.notificationsFailedModalHeading
                 : strings.modalHeading,
             )}
             text={formatMessage(
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? strings.notificationsFailedModalMessage
                 : strings.modalMessage,
             )}
@@ -278,7 +278,7 @@ const AppealCase = () => {
               sendNotifications()
             }}
             secondaryButtonText={
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? formatMessage(strings.notificationFailedModalSecondaryButton)
                 : undefined
             }
