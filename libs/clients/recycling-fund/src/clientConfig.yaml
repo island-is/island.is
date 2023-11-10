@@ -61,3 +61,5 @@ components:
       properties:
         nationalId:
           type: string
+security:
+  - bearerAuth: []
