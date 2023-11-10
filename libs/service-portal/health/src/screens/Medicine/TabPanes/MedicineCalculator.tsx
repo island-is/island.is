@@ -52,11 +52,7 @@ export const MedicineCalulator = () => {
     [search],
   )
 
-  const {
-    data: drugs,
-    loading: drugsLoading,
-    error,
-  } = useGetDrugsQuery({
+  const { data: drugs, loading: drugsLoading } = useGetDrugsQuery({
     variables: {
       input: {
         pageNumber: pageNumber - 1,
@@ -106,6 +102,7 @@ export const MedicineCalulator = () => {
     if (hasCalculated) {
       handleCalculate()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [[...selectedDrugList]])
 
   const { width } = useWindowSize()

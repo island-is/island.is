@@ -37,15 +37,10 @@ export const PaymentOverview = () => {
   const [endDate, setEndDate] = useState<Date>(new Date())
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
-  const [overview, setOverview] = useState<Omit<
-    RightsPortalPaymentOverview,
-    '__typename'
-  > | null>(null)
+  const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
 
-  const [document, setDocument] = useState<Omit<
-    RightsPortalPaymentOverviewDocument,
-    '__typename'
-  > | null>(null)
+  const [document, setDocument] =
+    useState<RightsPortalPaymentOverviewDocument>()
 
   const {
     data: serviceTypes,
@@ -59,11 +54,7 @@ export const PaymentOverview = () => {
   ] = useGetPaymentOverviewLazyQuery({
     onCompleted(data) {
       const item = data.rightsPortalPaymentOverview.items[0]
-      setOverview({
-        credit: item.credit,
-        debt: item.debt,
-        bills: item.bills,
-      })
+      setOverview(item)
     },
   })
 
@@ -98,6 +89,7 @@ export const PaymentOverview = () => {
 
   useEffect(() => {
     onFetchBills()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

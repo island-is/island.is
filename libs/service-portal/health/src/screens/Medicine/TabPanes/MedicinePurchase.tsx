@@ -63,7 +63,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   const [bills, setBills] = useState<RightsPortalDrugBill[] | null>(null)
   const [billsLoading, setBillsLoading] = useState<boolean>(false)
 
-  const { data, loading, error } = useGetDrugsDataQuery()
+  const { data, loading } = useGetDrugsDataQuery()
 
   const [getPaymentPeriodsQuery] = useGetDrugsBillsLazyQuery()
 
