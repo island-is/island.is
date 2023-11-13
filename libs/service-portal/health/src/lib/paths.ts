@@ -7,7 +7,7 @@ export enum HealthPaths {
   HealthDentists = '/heilsa/tannlaeknar',
   HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
   HealthCenter = '/heilsa/heilusgaesla',
-  HealthMedicine = '/heilsa/lyf/lyfjakaup',
+  HealthMedicinePurchase = '/heilsa/lyf/lyfjakaup',
   HealthMedicineCalculator = '/heilsa/lyf/lyfjareiknivel',
   HealthMedicineCertificates = '/heilsa/lyf/lyfjaskyrteini',
   HealthMedicineCertificate = '/heilsa/lyf/lyfjaskyrteini/:name/:id',

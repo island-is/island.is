@@ -16,12 +16,12 @@ import {
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../../lib/messages'
+import { messages } from '../../lib/messages'
 import {
   useGetDrugBillLineItemLazyQuery,
   useGetDrugsBillsLazyQuery,
   useGetDrugsDataQuery,
-} from '../Medicine.generated'
+} from './Medicine.generated'
 import {
   RightsPortalDrugBillLine,
   RightsPortalDrugBill,
@@ -29,20 +29,12 @@ import {
 } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
-import {
-  CONTENT_GAP,
-  DATE_FORMAT,
-  MedicineTabs,
-  SECTION_GAP,
-} from '../constants'
+import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { useIntl } from 'react-intl'
-import { MedicineWrapper } from '../components/MedicineWrapper/MedicineWrapper'
+import { MedicineWrapper } from './components/MedicineWrapper/MedicineWrapper'
+import { HealthPaths } from '../../lib/paths'
 
-type Props = {
-  onTabChange: (id: MedicineTabs) => void
-}
-
-export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
+export const MedicinePurchase = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, formatDateFns } = useLocale()
@@ -213,13 +205,14 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
             {formatMessage(messages.medicinePriceList)}
           </LinkV2>
         </Button>
-        <Button
-          variant="utility"
-          onClick={() => onTabChange(MedicineTabs.CALCULATOR)}
-          icon="calculator"
-          iconType="outline"
-        >
-          {formatMessage(messages.medicineCalculatorTitle)}
+
+        <Button variant="utility" icon="calculator" iconType="outline">
+          <LinkV2
+            href={'/minarsidur' + HealthPaths.HealthMedicineCalculator}
+            newTab
+          >
+            {formatMessage(messages.medicineCalculatorTitle)}
+          </LinkV2>
         </Button>
       </Box>
       <Box>
@@ -486,3 +479,5 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
     </MedicineWrapper>
   )
 }
+
+export default MedicinePurchase

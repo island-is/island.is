@@ -10,11 +10,11 @@ import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
 
 const medicineNavigation: PortalNavigationItem = {
   name: m.medicineTitle,
-  path: HealthPaths.HealthMedicine,
+  path: HealthPaths.HealthMedicinePurchase,
   children: [
     {
       name: m.medicinePurchaseTitle,
-      path: HealthPaths.HealthMedicine,
+      path: HealthPaths.HealthMedicinePurchase,
       activeIfExact: true,
     },
     {

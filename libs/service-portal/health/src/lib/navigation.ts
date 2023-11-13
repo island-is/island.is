@@ -50,7 +50,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.medicineTitle,
-      path: HealthPaths.HealthMedicine,
+      path: HealthPaths.HealthMedicinePurchase,
       children: [
         {
           name: messages.medicineCalculatorTitle,

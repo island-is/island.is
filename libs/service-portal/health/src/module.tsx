@@ -18,7 +18,11 @@ const Dentists = lazy(() => import('./screens/Dentists/Dentists'))
 
 const HealthCenter = lazy(() => import('./screens/HealthCenter/HealthCenter'))
 
-const Medicine = lazy(() => import('./screens/Medicine/Medicine'))
+const MedicinePurchase = lazy(() =>
+  import('./screens/Medicine/MedicinePurchase'),
+)
+
+const MedicineLicence = lazy(() => import('./screens/Medicine/MedicineLicense'))
 
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -29,7 +33,7 @@ const DentistRegistration = lazy(() =>
 )
 
 const MedicineCalculator = lazy(() =>
-  import('./screens/Medicine/Panes/MedicineCalculator'),
+  import('./screens/Medicine/MedicineCalculator'),
 )
 
 const MedicineCertificate = lazy(() =>
@@ -83,11 +87,18 @@ export const healthModule: PortalModule = {
       element: <HealthCenter />,
     },
     {
-      name: hm.medicineTitle,
-      path: HealthPaths.HealthMedicine,
+      name: hm.medicinePurchaseTitle,
+      path: HealthPaths.HealthMedicinePurchase,
       key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <Medicine />,
+      element: <MedicinePurchase />,
+    },
+    {
+      name: hm.medicineLicenseTitle,
+      path: HealthPaths.HealthMedicineCertificates,
+      key: 'HealthMedicine',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineLicence />,
     },
     {
       name: hm.medicineCalculatorTitle,

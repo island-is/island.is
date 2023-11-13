@@ -8,25 +8,25 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../../lib/messages'
-import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
+import { messages } from '../../lib/messages'
+import { CONTENT_GAP_LG, SECTION_GAP } from './constants'
 import { IntroHeader, m } from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
-} from '../Medicine.generated'
+} from './Medicine.generated'
 import {
   RightsPortalCalculatorRequestInput,
   RightsPortalDrug,
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
-import { EmptyTable } from '../components/EmptyTable/EmptyTable'
-import { DrugRow } from '../components/DrugRow/DrugRow'
+import { EmptyTable } from './components/EmptyTable/EmptyTable'
+import { DrugRow } from './components/DrugRow/DrugRow'
 import { useIntl } from 'react-intl'
-import { MedicineWrapper } from '../components/MedicineWrapper/MedicineWrapper'
+import { MedicineWrapper } from './components/MedicineWrapper/MedicineWrapper'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -104,7 +104,7 @@ export const MedicineCalulator = () => {
       handleCalculate()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [[...selectedDrugList]])
+  }, [selectedDrugList])
 
   const { width } = useWindowSize()
 
