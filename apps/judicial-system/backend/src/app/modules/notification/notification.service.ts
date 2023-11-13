@@ -116,6 +116,14 @@ export class NotificationService {
       })
   }
 
+  private async hasSentNotification(caseId: string, type: NotificationType) {
+    const previousNotifications = await this.notificationModel.findAll({
+      where: { caseId, type },
+    })
+
+    return previousNotifications.length > 0
+  }
+
   private async hasReceivedNotification(
     caseId: string,
     type: NotificationType | NotificationType[],
@@ -714,7 +722,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const linkSubject = `${
-      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
+      theCase.requestSharedWithDefender ? 'Krafa í máli' : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
@@ -1862,21 +1870,37 @@ export class NotificationService {
   private async sendAppealCompletedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    /**
+     * If anyone has received the APPEAL_COMPLETED notification before,
+     * we know that the case is being reopened.
+     */
+    const isReopened = await this.hasSentNotification(
+      theCase.id,
+      NotificationType.APPEAL_COMPLETED,
+    )
+
     const subject = this.formatMessage(
-      notifications.caseAppealCompleted.subject,
+      isReopened
+        ? notifications.caseAppealResent.subject
+        : notifications.caseAppealCompleted.subject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
         appealCaseNumber: theCase.appealCaseNumber,
       },
     )
 
-    const html = this.formatMessage(notifications.caseAppealCompleted.body, {
-      userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
-      appealCaseNumber: theCase.appealCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
+    const html = this.formatMessage(
+      isReopened
+        ? notifications.caseAppealResent.body
+        : notifications.caseAppealCompleted.body,
+      {
+        userHasAccessToRVG: true,
+        courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber,
+        linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
 
     const promises = [
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),

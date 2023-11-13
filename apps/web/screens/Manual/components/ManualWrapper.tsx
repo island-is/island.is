@@ -3,7 +3,6 @@ import { PropsWithChildren } from 'react'
 import {
   Box,
   Button,
-  GridColumn,
   GridContainer,
   Hidden,
   LinkV2,
@@ -13,6 +12,7 @@ import { HeadWithSocialSharing } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
+import SidebarLayout from '../../Layouts/SidebarLayout'
 import { ManualType } from '../utils'
 import { ManualHeader } from './ManualHeader'
 
@@ -59,15 +59,16 @@ export const ManualWrapper = ({
               </Box>
             </Hidden>
 
-            <GridColumn
-              offset={['0', '0', '0', '0', '1/9']}
-              span={['9/9', '9/9', '9/9', '9/9', '7/9']}
+            <SidebarLayout
+              flexDirection="rowReverse"
+              paddingTop={0}
+              sidebarContent={null}
             >
               <Stack space={3}>
                 <ManualHeader manual={manual} namespace={namespace} />
                 {children}
               </Stack>
-            </GridColumn>
+            </SidebarLayout>
           </Stack>
         </Box>
       </GridContainer>
