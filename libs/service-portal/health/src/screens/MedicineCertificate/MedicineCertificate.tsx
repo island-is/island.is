@@ -11,7 +11,7 @@ type UseParams = {
   id: string
 }
 
-export const MedicineCertificate: React.FC = () => {
+export const MedicineCertificate = () => {
   const params = useParams() as UseParams
 
   const { formatMessage, formatDateFns } = useLocale()

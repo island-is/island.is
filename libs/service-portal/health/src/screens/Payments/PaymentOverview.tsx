@@ -27,10 +27,7 @@ import {
 import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  RightsPortalPaymentOverview,
-  RightsPortalPaymentOverviewDocument,
-} from '@island.is/api/schema'
+import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentOverview = () => {
@@ -44,9 +41,6 @@ export const PaymentOverview = () => {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
   const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
-
-  const [document, setDocument] =
-    useState<RightsPortalPaymentOverviewDocument>()
 
   const {
     data: serviceTypes,
