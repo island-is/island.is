@@ -1,6 +1,8 @@
 import { Locale } from 'locale'
+import { uuid } from 'uuidv4'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
-import { storageFactory, stringHash } from '@island.is/shared/utils'
+import { storageFactory } from '@island.is/shared/utils'
 import initApollo from '@island.is/web/graphql/client'
 import {
   Query,
@@ -12,7 +14,8 @@ const emailInputId = 'utlendingastofnun-chat-email'
 const nameInputId = 'utlendingastofnun-chat-name'
 const submitButtonId = 'utlendingastofnun-chat-submit-button'
 
-const storage = storageFactory(() => sessionStorage)
+const storageForSession = storageFactory(() => sessionStorage)
+const storageForReturningUsers = storageFactory(() => localStorage)
 
 const getTranslations = (
   namespace: Record<string, string>,
@@ -62,10 +65,16 @@ const getTranslations = (
 }
 
 const getUserID = () => {
-  const email = storage.getItem(emailInputId)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
+  const storageID = 'watsonChatUserID'
+
+  let userID = storageForReturningUsers.getItem(storageID)
+
+  if (!userID) {
+    userID = uuid()
+    storageForReturningUsers.setItem(storageID, userID)
+  }
+
+  return userID
 }
 
 const getUserInformation = async (
@@ -76,8 +85,8 @@ const getUserInformation = async (
   activeLocale: Locale,
   callback: (userInfo: { name: string; email: string }) => void,
 ) => {
-  const storedName = storage.getItem(nameInputId)
-  const storedEmail = storage.getItem(emailInputId)
+  const storedName = storageForSession.getItem(nameInputId)
+  const storedEmail = storageForSession.getItem(emailInputId)
 
   // If we have stored the user information previously we simply return that
   if (storedName && storedEmail) {
@@ -155,8 +164,8 @@ const getUserInformation = async (
         return
       }
 
-      storage.setItem(emailInputId, email)
-      storage.setItem(nameInputId, name)
+      storageForSession.setItem(emailInputId, email)
+      storageForSession.setItem(nameInputId, name)
 
       callback({ email, name })
 
@@ -164,6 +173,25 @@ const getUserInformation = async (
     }
   }
 }
+
+const fetchIdentityToken = async (
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  userID: string,
+  name: string,
+  email: string,
+) => {
+  return apolloClient.query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
+    query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
+    variables: {
+      input: {
+        name,
+        email,
+        userID,
+      },
+    },
+  })
+}
+
 export const onDirectorateOfImmigrationChatLoad = (
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -179,23 +207,31 @@ export const onDirectorateOfImmigrationChatLoad = (
     // @ts-ignore make web strict
     handler: (event) => {
       return new Promise((resolve, reject) => {
+        // Make sure we are authenticated from the start
+        // Because if not then the connection will timeout in 30 seconds
+        if (
+          !(
+            storageForSession.getItem(nameInputId) &&
+            storageForSession.getItem(emailInputId)
+          )
+        ) {
+          fetchIdentityToken(apolloClient, getUserID(), '', '')
+            .then((response) => {
+              const token = response.data.watsonAssistantChatIdentityToken.token
+              instance.updateIdentityToken(token)
+              event.identityToken = token
+              resolve(token)
+            })
+            .catch(reject)
+          return
+        }
+
         getUserInformation(
           instance,
           namespace,
           activeLocale,
           ({ email, name }) => {
-            apolloClient
-              .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-                query:
-                  GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
-                variables: {
-                  input: {
-                    name,
-                    email,
-                    userID: getUserID(),
-                  },
-                },
-              })
+            fetchIdentityToken(apolloClient, getUserID(), name, email)
               .then((response) => {
                 const token =
                   response.data.watsonAssistantChatIdentityToken.token
@@ -213,29 +249,23 @@ export const onDirectorateOfImmigrationChatLoad = (
   instance.on({
     type: 'window:open',
     handler: () => {
-      if (storage.getItem(nameInputId) && storage.getItem(emailInputId)) return
+      if (
+        storageForSession.getItem(nameInputId) &&
+        storageForSession.getItem(emailInputId)
+      )
+        return
 
       getUserInformation(
         instance,
         namespace,
         activeLocale,
         ({ email, name }) => {
-          apolloClient
-            .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-              query:
-                GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
-              variables: {
-                input: {
-                  name,
-                  email,
-                  userID: getUserID(),
-                },
-              },
-            })
-            .then((response) => {
+          fetchIdentityToken(apolloClient, getUserID(), name, email).then(
+            (response) => {
               const token = response.data.watsonAssistantChatIdentityToken.token
               instance.updateIdentityToken(token)
-            })
+            },
+          )
         },
       )
     },
