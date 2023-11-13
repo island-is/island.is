@@ -99,12 +99,12 @@ export const m = defineMessages({
   },
   collectionDateFrom: {
     id: 'slc.application:collectionDateFrom',
-    defaultMessage: 'Upphafs dagsetning',
+    defaultMessage: 'Upphafsdagsetning',
     description: '',
   },
   collectionDateTil: {
     id: 'slc.application:collectionDateTil',
-    defaultMessage: 'Loka dagsetning',
+    defaultMessage: 'Lokadagsetning',
     description: '',
   },
 
