@@ -10,3 +10,7 @@ export enum ApiActions {
 export enum Actions {
   SEND_APPLICATION = 'sendApplication',
 }
+
+export enum AnswerValidationConstants {
+  VEHICLES_LIST = 'vehiclesList',
+}
