@@ -50,6 +50,7 @@ auth-admin-web:
         - host: 'innskra.island.is'
           paths:
             - '/admin'
+  jobs: []
   namespace: 'identity-server-admin'
   progressDeadlineSeconds: 1200
   pvcs: []
@@ -152,6 +153,7 @@ identity-server:
         - host: 'innskra.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'identity-server'
   podSecurityContext:
     fsGroup: 65534
@@ -248,6 +250,7 @@ services-auth-admin-api:
         - host: 'innskra.island.is'
           paths:
             - '/backend'
+  jobs: []
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:
@@ -324,6 +327,7 @@ services-auth-delegation-api:
         - host: 'auth-delegation-api.internal.innskra.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'identity-server-delegation'
   pvcs: []
   replicaCount:
@@ -433,6 +437,7 @@ services-auth-ids-api:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+  jobs: []
   namespace: 'identity-server'
   pvcs: []
   replicaCount:
@@ -498,6 +503,7 @@ services-auth-personal-representative:
         - host: 'personal-representative-xrd.internal.innskra.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'personal-representative'
   pvcs: []
   replicaCount:
@@ -567,6 +573,7 @@ services-auth-personal-representative-public:
         - host: 'personal-representative-public-xrd.internal.innskra.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'personal-representative'
   pvcs: []
   replicaCount:
@@ -650,6 +657,7 @@ services-auth-public-api:
         - host: 'innskra.island.is'
           paths:
             - '/api(/|$)(.*)'
+  jobs: []
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:
