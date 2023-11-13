@@ -202,16 +202,14 @@ export const MedicineCalulator = () => {
                         <Button
                           size="small"
                           variant="text"
-                          icon="pencil"
-                          onClick={() =>
-                            drug?.name &&
-                            drug.strength &&
+                          icon="add"
+                          disabled={
+                            !drug?.name ||
                             selectedDrugList.find(
                               (d) => d.nordicCode === drug.nordicCode,
-                            ) === undefined
-                              ? handleAddDrug(drug)
-                              : undefined
+                            ) !== undefined
                           }
+                          onClick={() => handleAddDrug(drug)}
                         >
                           {formatMessage(messages.medicineSelect)}
                         </Button>
