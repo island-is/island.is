@@ -168,7 +168,7 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v3',
-      defaultMessage: 'Gögn í máli {courtCaseNumber}',
+      defaultMessage: 'Krafa í máli {courtCaseNumber}',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
