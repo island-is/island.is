@@ -26,6 +26,7 @@ import * as styles from './Medicine.css'
 import { EmptyTable } from '../components/EmptyTable/EmptyTable'
 import { DrugRow } from '../components/DrugRow/DrugRow'
 import { useIntl } from 'react-intl'
+import { MedicineWrapper } from '../components/MedicineWrapper/MedicineWrapper'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -126,7 +127,7 @@ export const MedicineCalulator = () => {
   }
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
@@ -367,6 +368,8 @@ export const MedicineCalulator = () => {
           {formatMessage(messages.medicineCalculatorFooter)}
         </Text>
       </Box>
-    </Box>
+    </MedicineWrapper>
   )
 }
+
+export default MedicineCalulator

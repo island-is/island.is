@@ -53,7 +53,17 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthMedicine,
       children: [
         {
-          name: 'name',
+          name: messages.medicineCalculatorTitle,
+          path: HealthPaths.HealthMedicineCalculator,
+          // navHide: true,
+        },
+        {
+          name: messages.medicineLicenseIntroTitle,
+          path: HealthPaths.HealthMedicineCertificates,
+          // navHide: true,
+        },
+        {
+          name: messages.medicineLicenseTitle,
           path: HealthPaths.HealthMedicineCertificate,
           navHide: true,
         },

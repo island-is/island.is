@@ -3,8 +3,8 @@ import { lazy } from 'react'
 import { ApiScope } from '@island.is/auth/scopes'
 import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
-import { Features } from '@island.is/feature-flags'
 import { messages as hm } from './lib/messages'
+import { m } from '@island.is/service-portal/core'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -28,6 +28,10 @@ const DentistRegistration = lazy(() =>
   import('./screens/DentistRegistration/DentistRegistration'),
 )
 
+const MedicineCalculator = lazy(() =>
+  import('./screens/Medicine/Panes/MedicineCalculator'),
+)
+
 const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
@@ -39,40 +43,40 @@ export const healthModule: PortalModule = {
   enabled: ({ isCompany }) => !isCompany,
   routes: ({ userInfo }) => [
     {
-      name: 'Heilsa',
+      name: m.health,
       path: HealthPaths.HealthRoot,
       key: 'HealthOverview',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <HealthOverview />,
     },
     {
-      name: 'Þjálfun',
+      name: hm.therapyTitle,
       path: HealthPaths.HealthTherapies,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Therapies />,
     },
     {
-      name: 'Hjálpartæki og næring',
+      name: hm.aidsAndNutritionTitle,
       path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <AidsAndNutrition />,
     },
     {
-      name: 'Greiðslur',
+      name: hm.payments,
       path: HealthPaths.HealthPayments,
       key: 'HealthPayment',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Payments />,
     },
     {
-      name: 'Tannlæknar',
+      name: hm.dentistsTitle,
       path: HealthPaths.HealthDentists,
       key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Dentists />,
     },
     {
-      name: 'Heilsugæsla',
+      name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenter,
       key: 'HealthCenter',
       enabled: userInfo.scopes.includes(ApiScope.health),
@@ -84,6 +88,13 @@ export const healthModule: PortalModule = {
       key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Medicine />,
+    },
+    {
+      name: hm.medicineCalculatorTitle,
+      path: HealthPaths.HealthMedicineCalculator,
+      key: 'HealthMedicine',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineCalculator />,
     },
     {
       name: hm.medicineLicenseTitle,

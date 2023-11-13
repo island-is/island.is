@@ -10,6 +10,7 @@ import { useGetDrugCertificatesQuery } from '../Medicine.generated'
 import { SECTION_GAP } from '../constants'
 import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../../lib/paths'
+import { MedicineWrapper } from '../components/MedicineWrapper/MedicineWrapper'
 
 export const MedicineLicence = () => {
   const { formatMessage } = useLocale()
@@ -17,7 +18,7 @@ export const MedicineLicence = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}
@@ -74,6 +75,6 @@ export const MedicineLicence = () => {
           )}
         </Box>
       )}
-    </Box>
+    </MedicineWrapper>
   )
 }

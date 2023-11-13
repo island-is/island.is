@@ -36,6 +36,7 @@ import {
   SECTION_GAP,
 } from '../constants'
 import { useIntl } from 'react-intl'
+import { MedicineWrapper } from '../components/MedicineWrapper/MedicineWrapper'
 
 type Props = {
   onTabChange: (id: MedicineTabs) => void
@@ -98,7 +99,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   }, [data])
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
@@ -482,6 +483,6 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           )
         )}
       </Box>
-    </Box>
+    </MedicineWrapper>
   )
 }

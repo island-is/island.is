@@ -2,10 +2,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import { useEffect, useState } from 'react'
-import { MedicinePurchase } from './TabPanes/MedicinePurchase'
+import { MedicinePurchase } from './Panes/MedicinePurchase'
 import { MedicineTabs } from './constants'
-import { MedicineCalulator } from './TabPanes/MedicineCalculator'
-import { MedicineLicence } from './TabPanes/MedicineLicence'
+import { MedicineCalulator } from './Panes/MedicineCalculator'
+import { MedicineLicence } from './Panes/MedicineLicence'
 import { useLocation } from 'react-router-dom'
 import {
   IntroHeader,
