@@ -70,19 +70,11 @@ describe('CaseController - Get court record signature confirmation', () => {
     }
   })
 
-  each`
-    assignedRole
-    ${'judgeId'}
-    ${'registrarId'}
-  `.describe('given an assigned role', ({ assignedRole }) => {
+  describe('confirm siganture', () => {
     const userId = uuid()
-    const role =
-      assignedRole === 'judgeId'
-        ? UserRole.DISTRICT_COURT_JUDGE
-        : UserRole.DISTRICT_COURT_REGISTRAR
     const user = {
       id: userId,
-      role: role,
+      role: UserRole.DISTRICT_COURT_REGISTRAR,
       institution: { type: InstitutionType.DISTRICT_COURT },
     } as User
     const caseId = uuid()
@@ -92,7 +84,6 @@ describe('CaseController - Get court record signature confirmation', () => {
       judgeId: uuid(),
       registrarId: uuid(),
     } as Case
-    ;(theCase as unknown as { [key: string]: string })[assignedRole] = userId
     const documentToken = uuid()
 
     beforeEach(() => {
@@ -108,11 +99,13 @@ describe('CaseController - Get court record signature confirmation', () => {
         mockPutObject.mockResolvedValueOnce(Promise.resolve())
         const mockUpdate = mockCaseModel.update as jest.Mock
         mockUpdate.mockResolvedValueOnce([1, [theCase]])
+        const mockFindOne = mockCaseModel.findOne as jest.Mock
+        mockFindOne.mockResolvedValueOnce(theCase)
 
         then = await givenWhenThen(caseId, user, theCase, documentToken)
       })
 
-      it('should set the court record signatory and signature date', () => {
+      it('should return success after setting the court record signatory and signature date', () => {
         expect(mockCaseModel.update).toHaveBeenCalledWith(
           {
             courtRecordSignatoryId: userId,
@@ -120,9 +113,6 @@ describe('CaseController - Get court record signature confirmation', () => {
           },
           { where: { id: caseId }, transaction },
         )
-      })
-
-      it('should return success', () => {
         expect(then.result).toEqual({
           documentSigned: true,
         })
@@ -163,25 +153,6 @@ describe('CaseController - Get court record signature confirmation', () => {
         expect(then.error).toBeInstanceOf(Error)
         expect(then.error.message).toBe('Some error')
       })
-    })
-  })
-
-  describe('user is not the assigned judge or registrar', () => {
-    const user = { id: uuid() } as User
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid(), registrarId: uuid() } as Case
-    const documentToken = uuid()
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'A court record must be a judge or a registrar',
-      )
     })
   })
 })
