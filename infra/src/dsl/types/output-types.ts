@@ -1,4 +1,9 @@
-import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
+import {
+  Hash,
+  JobForEnv,
+  ServiceDefinition,
+  ServiceDefinitionForEnv,
+} from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
@@ -131,6 +136,7 @@ export interface HelmService {
   image: DockerImage
   extra?: Hash
   files?: string[]
+  jobs: JobForEnv | []
 }
 
 export interface LocalrunService {

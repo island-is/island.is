@@ -1,9 +1,10 @@
 import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
-import { SerializeSuccess, HelmService } from './types/output-types'
-import { EnvironmentConfig } from './types/charts'
-import { renderers } from './upstream-dependencies'
 import { generateOutputOne } from './processing/rendering-pipeline'
+import { EnvironmentConfig } from './types/charts'
+import { Job, JobForEnv, JobItem } from './types/input-types'
+import { HelmService, SerializeSuccess } from './types/output-types'
+import { renderers } from './upstream-dependencies'
 
 const Dev: EnvironmentConfig = {
   auroraHost: 'a',
@@ -17,89 +18,53 @@ const Dev: EnvironmentConfig = {
   awsAccountRegion: 'eu-west-1',
   global: {},
 }
-describe('Job support', () => {
-  const sut: ServiceBuilder<'api'> = service('api').job(
-    {
-      name: 'something',
-      size: '1Gi',
-      accessModes: 'ReadOnly',
-      mountPath: '/storage_one',
-    },
-    {
-      name: 'somethingelse',
-      size: '1Gi',
-      accessModes: 'ReadWrite',
-      mountPath: '/storage_two',
-    },
-  )
-  const sutVolumeRef: ServiceBuilder<'api-extra'> = service(
-    'api-extra',
-  ).volumes({
-    ...sut.serviceDef.volumes[0],
-    useExisting: true,
+
+const jobTemplate: Job = [
+  {
+    name: 'job1',
+    containers: [
+      {
+        command: 'node',
+      },
+    ],
+  },
+  {
+    name: 'job2',
+    containers: [
+      {
+        command: 'node',
+      },
+    ],
+  },
+]
+
+const jobEnvTemplate: Job = {
+  dev: jobTemplate,
+  staging: [],
+  prod: [],
+}
+
+describe('Job helm values', () => {
+  const sutJobWithEnv: ServiceBuilder<'api'> = service('api').jobs({
+    ...jobEnvTemplate,
   })
-  let stagingWithVolumes: SerializeSuccess<HelmService>
+  const sutJobWithoutEnv: ServiceBuilder<'api'> =
+    service('api').jobs(jobTemplate)
+
+  let devWithJobs: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    stagingWithVolumes = (await generateOutputOne({
+    devWithJobs = (await generateOutputOne({
       outputFormat: renderers.helm,
-      service: sut,
+      service: sutJobWithEnv,
       runtime: new Kubernetes(Dev),
       env: Dev,
     })) as SerializeSuccess<HelmService>
   })
-  it('Support multi volume definitions', () => {
-    expect(stagingWithVolumes.serviceDef[0].pvcs![0]).toEqual({
-      name: 'something',
-      size: '1Gi',
-      accessModes: 'ReadOnlyMany',
-      useExisting: false,
-      mountPath: '/storage_one',
-      storageClass: 'efs-csi',
-    }),
-      expect(stagingWithVolumes.serviceDef[0].pvcs![1]).toEqual({
-        name: 'somethingelse',
-        size: '1Gi',
-        useExisting: false,
-        accessModes: 'ReadWriteMany',
-        mountPath: '/storage_two',
-        storageClass: 'efs-csi',
-      })
+
+  it('Job with envs', () => {
+    expect(sutJobWithEnv.serviceDef!.jobs).toEqual(jobEnvTemplate)
   })
-  it('Support default name for volumes', async () => {
-    const sut: ServiceBuilder<'api'> = service('api').volumes({
-      size: '1Gi',
-      accessModes: 'ReadOnly',
-      mountPath: '/storage_one',
-    })
-    const stagingWithDefaultVolume = (await generateOutputOne({
-      outputFormat: renderers.helm,
-      service: sut,
-      runtime: new Kubernetes(Dev),
-      env: Dev,
-    })) as SerializeSuccess<HelmService>
-    expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
-      name: 'api',
-      size: '1Gi',
-      useExisting: false,
-      accessModes: 'ReadOnlyMany',
-      mountPath: '/storage_one',
-      storageClass: 'efs-csi',
-    })
-  })
-  it('Support volume reference from another service', async () => {
-    const stagingWithDefaultVolume = (await generateOutputOne({
-      outputFormat: renderers.helm,
-      service: sutVolumeRef,
-      runtime: new Kubernetes(Dev),
-      env: Dev,
-    })) as SerializeSuccess<HelmService>
-    expect(stagingWithDefaultVolume.serviceDef[0].pvcs![0]).toEqual({
-      name: 'something',
-      size: '1Gi',
-      useExisting: true,
-      accessModes: 'ReadOnlyMany',
-      mountPath: '/storage_one',
-      storageClass: 'efs-csi',
-    })
+  it('Job without envs', () => {
+    expect(sutJobWithoutEnv.serviceDef!.jobs).toEqual(jobTemplate)
   })
 })

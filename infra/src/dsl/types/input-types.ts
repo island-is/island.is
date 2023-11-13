@@ -121,6 +121,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   redis?: RedisInfo
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
+  jobs?: Job
 }
 
 /**
@@ -129,6 +130,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
 export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   initContainers?: InitContainersForEnv
   env: EnvironmentVariablesForEnv
+  jobs?: JobForEnv
   ingress: { [name: string]: IngressForEnv }
   postgres?: PostgresInfoForEnv
   redis?: RedisInfoForEnv
@@ -211,34 +213,22 @@ export type InitContainersForEnv = {
   postgres?: PostgresInfoForEnv
 }
 
-export type Jobs = {
-  envs: EnvironmentVariables
-  secrets: Secrets
-  backoffLimit: number,
-  completions: number,
-  parallelism: number,
-  restartPolicy:
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+export type JobItem = {
+  envs?: EnvironmentVariables
+  secrets?: Secrets
+  name: string
+  backoffLimit?: number
+  restartPolicy?: 'Never' | 'OnFailure'
+  ttlSecondsAfterFinished?: number
+  containers: Container[]
 }
 
-export type JobsForEnv = {
-  envs: EnvironmentVariablesForEnv
-  secrets: Secrets
-  features: Partial<Features>
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+type EnvJobs = { [K in OpsEnv]?: JobItem[] }
+type AtLeastOneEnvJob = {
+  [K in OpsEnv]: EnvJobs[K] extends never ? never : JobItem[]
 }
+export type Job = AtLeastOneEnvJob | JobItem[]
+export type JobForEnv = JobItem[]
 
 export interface Context {
   featureDeploymentName?: string

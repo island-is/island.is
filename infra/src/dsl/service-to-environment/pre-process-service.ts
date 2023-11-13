@@ -6,8 +6,12 @@ import {
   Features,
   Hash,
   IngressForEnv,
+  Job,
+  JobForEnv,
+  JobItem,
   localFromDev,
   MissingSetting,
+  OpsEnv,
   OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
@@ -120,6 +124,12 @@ export const prepareServiceForEnv = (
   }
   if (serviceDef.redis) {
     result.redis = getEnvRedis(serviceDef.redis, env)
+  }
+  if (serviceDef.jobs) {
+    result.jobs =
+      serviceDef.jobs !== undefined
+        ? getEnvJobs(serviceDef.jobs, env)
+        : undefined
   }
   // extra attributes
   if (serviceDef.extraAttributes) {
@@ -296,6 +306,14 @@ function getEnvRedis(
 ): RedisInfoForEnv {
   return {
     host: redis.host?.[localFromDev(env.type)],
+  }
+}
+
+function getEnvJobs(jobs: Job, env: EnvironmentConfig): JobItem[] {
+  if (Array.isArray(jobs)) {
+    return jobs
+  } else {
+    return jobs[localFromDev(env.type)] ?? []
   }
 }
 

@@ -78,6 +78,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       },
     },
     securityContext,
+    jobs: serviceDef.jobs ?? [],
   }
 
   // command and args
