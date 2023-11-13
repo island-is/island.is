@@ -3,32 +3,10 @@ import { Box } from '@island.is/island-ui/core'
 import {
   IntroHeader,
   SJUKRATRYGGINGAR_ID,
+  TabNavigation,
 } from '@island.is/service-portal/core'
 import { messages as m } from '../../../../lib/messages'
-import { HealthPaths } from '../../../../lib/paths'
-import { PortalNavigation, PortalNavigationItem } from '@island.is/portals/core'
-
-const medicineNavigation: PortalNavigationItem = {
-  name: m.medicineTitle,
-  path: HealthPaths.HealthMedicinePurchase,
-  children: [
-    {
-      name: m.medicinePurchaseTitle,
-      path: HealthPaths.HealthMedicinePurchase,
-      activeIfExact: true,
-    },
-    {
-      name: m.medicineCalculatorTitle,
-      path: HealthPaths.HealthMedicineCalculator,
-      activeIfExact: true,
-    },
-    {
-      name: m.medicineLicenseTitle,
-      path: HealthPaths.HealthMedicineCertificates,
-      activeIfExact: true,
-    },
-  ],
-}
+import { healthNavigation } from '../../../../lib/navigation'
 
 export const MedicineWrapper = ({
   children,
@@ -44,7 +22,13 @@ export const MedicineWrapper = ({
         intro={formatMessage(m.medicineTitleIntro)}
         serviceProviderID={SJUKRATRYGGINGAR_ID}
       />
-      <PortalNavigation navigation={medicineNavigation} />
+      <TabNavigation
+        label="test"
+        items={
+          healthNavigation.children?.find((itm) => itm.name === m.medicineTitle)
+            ?.children ?? []
+        }
+      />
       <Box paddingY={4}>{children}</Box>
     </Box>
   )

@@ -53,19 +53,29 @@ export const healthNavigation: PortalNavigationItem = {
       path: HealthPaths.HealthMedicinePurchase,
       children: [
         {
+          name: messages.medicinePurchaseTitle,
+          path: HealthPaths.HealthMedicinePurchase,
+          navHide: true,
+        },
+        {
           name: messages.medicineCalculatorTitle,
           path: HealthPaths.HealthMedicineCalculator,
-          // navHide: true,
+          activeIfExact: true,
+          navHide: true,
         },
         {
           name: messages.medicineLicenseIntroTitle,
           path: HealthPaths.HealthMedicineCertificates,
-          // navHide: true,
-        },
-        {
-          name: messages.medicineLicenseTitle,
-          path: HealthPaths.HealthMedicineCertificate,
+          activeIfExact: true,
           navHide: true,
+          children: [
+            {
+              name: messages.medicineLicenseTitle,
+              path: HealthPaths.HealthMedicineCertificate,
+              activeIfExact: true,
+              navHide: true,
+            },
+          ],
         },
       ],
     },

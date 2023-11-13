@@ -207,10 +207,7 @@ export const MedicinePurchase = () => {
         </Button>
 
         <Button variant="utility" icon="calculator" iconType="outline">
-          <LinkV2
-            href={'/minarsidur' + HealthPaths.HealthMedicineCalculator}
-            newTab
-          >
+          <LinkV2 href={'/minarsidur' + HealthPaths.HealthMedicineCalculator}>
             {formatMessage(messages.medicineCalculatorTitle)}
           </LinkV2>
         </Button>
