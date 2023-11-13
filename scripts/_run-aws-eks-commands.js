@@ -199,4 +199,10 @@ async function main() {
   }
 }
 
-main()
+module.exports = {
+  runProxy,
+  restartService,
+}
+if (require.main === module) {
+  main()
+}
