@@ -106,7 +106,7 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
-        "cwd": "libs/auth-api-lib"
+        "cwd": "{workspaceRoot}/libs/auth-api-lib"
       }
     },
     "migrate/generate": {
@@ -125,6 +125,40 @@
         ],
         "parallel": false,
         "cwd": "libs/auth-api-lib"
+      }
+    },
+    "ids-get-secrets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets services-auth-ids-api services-user-profile services-sessions --reset && grep -v 'DB_PASS' .env.secret > .env.secret.tmp && mv .env.secret.tmp .env.secret"
+        ],
+        "parallel": false
+      }
+    },
+    "ids-dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-auth-ids-api:dev-services",
+          "yarn nx run services-user-profile:dev-services",
+          "echo \"Waiting for databases to start...\" && sleep 4",
+          "yarn nx run services-auth-ids-api:migrate",
+          "yarn nx run services-auth-ids-api:seed",
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "ids-dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-auth-ids-api",
+          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-user-profile"
+        ],
+        "parallel": true
       }
     }
   },
