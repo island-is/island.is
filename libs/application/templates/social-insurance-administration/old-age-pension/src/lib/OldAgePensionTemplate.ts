@@ -12,7 +12,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
-  ChildrenCustodyInformationApi,
   InstitutionNationalIds,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -29,7 +28,6 @@ import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
-  NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
@@ -75,8 +73,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryResidenceHistoryApi,
-                NationalRegistryCohabitantsApi,
-                ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
               ],
@@ -89,12 +85,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: [
-          'clearHouseholdSupplement',
-          'clearChildPension',
-          'clearChildPensionAddChild',
-          'clearChildPensionChildSupport',
-        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',

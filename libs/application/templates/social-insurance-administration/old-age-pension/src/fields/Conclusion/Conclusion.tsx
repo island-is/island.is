@@ -51,7 +51,11 @@ const Conclusion: FC<FieldBaseProps> = ({ application, field }) => {
             label: formatMessage(
               oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
             ),
-            onClick: () => console.log('Click! - Not implemented'), // TODO: Implement when Income plan is ready?
+            onClick: () =>
+              window.open(
+                'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+                '_blank',
+              ),
           }}
           heading={formatMessage(
             oldAgePensionFormMessage.conclusionScreen.incomePlanCardHeading,
@@ -62,7 +66,7 @@ const Conclusion: FC<FieldBaseProps> = ({ application, field }) => {
           backgroundColor="blue"
         />
         <AccordionCard
-          startExpanded={true}
+          startExpanded={false}
           id={`conclusion-card-${field.id}`}
           label={formatMessage(
             oldAgePensionFormMessage.conclusionScreen.nextStepsLabel,
@@ -85,6 +89,29 @@ const Conclusion: FC<FieldBaseProps> = ({ application, field }) => {
             >
               {formatMessage(
                 oldAgePensionFormMessage.conclusionScreen.bulletList,
+              )}
+            </Markdown>
+          </BulletList>
+        </AccordionCard>
+        <AccordionCard
+          startExpanded={true}
+          id={`conclusion-card-${field.id}`}
+          label={formatMessage(
+            oldAgePensionFormMessage.conclusionScreen.entitledToLabel,
+          )}
+        >
+          <BulletList space="gutter" type="ul">
+            <Markdown
+              options={{
+                overrides: {
+                  li: {
+                    component: Bullet,
+                  },
+                },
+              }}
+            >
+              {formatMessage(
+                oldAgePensionFormMessage.conclusionScreen.entitledToBulletList,
               )}
             </Markdown>
           </BulletList>

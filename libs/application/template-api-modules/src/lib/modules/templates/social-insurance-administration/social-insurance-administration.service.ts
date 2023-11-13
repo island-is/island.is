@@ -178,22 +178,23 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const attachments = await this.getAttachments(application)
+      // const attachments = await this.getAttachments(application)
 
-      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
-        application,
-        attachments,
-      )
+      // const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+      //   application,
+      //   attachments,
+      // )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+      // const applicationType = getApplicationType(application).toLowerCase()
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
+      return
+      // const response = await this.siaClientService.sendApplication(
+      //   auth,
+      //   oldAgePensionDTO,
+      //   applicationType,
+      // )
 
-      return response
+      // return response
     } catch (e) {
       this.logger.error('Failed to send the old age pension application', e)
       throw this.parseErrors(e)

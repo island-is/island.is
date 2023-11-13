@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
@@ -21,7 +20,6 @@ import {
   FormModes,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
-  Option,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
