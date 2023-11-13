@@ -1,12 +1,11 @@
 import { z } from 'zod'
-import { isValidPhoneNumber } from './utils'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: z.object({
     name: z.string(),
     nationalId: z.string(),
-    phone: z.string().refine((v) => isValidPhoneNumber(v)),
+    phone: z.string().min(1),
     email: z.string().email(),
   }),
   collection: z.object({
