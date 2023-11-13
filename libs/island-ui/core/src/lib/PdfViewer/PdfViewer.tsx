@@ -67,8 +67,6 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
     return errorComponent ?? <AlertMessage type="error" title={pdfError} />
   }
 
-  console.log('!!!!!!!!!!!   BK ADD BACK ERROR    !!!!!!!!!!!!')
-
   if (pdfLib) {
     return (
       <>
@@ -77,7 +75,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           onLoadSuccess={onDocumentLoadSuccess}
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
-          //error={errorComponent ?? pdfError} //TODO: BK ADD BACK WHEN FINISHED
+          error={errorComponent ?? pdfError}
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
