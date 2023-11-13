@@ -16,7 +16,24 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.therapies,
-      path: HealthPaths.HealthTherapies,
+      path: HealthPaths.HealthTherapiesPhysical,
+      children: [
+        {
+          name: messages.physicalTherapy,
+          path: HealthPaths.HealthTherapiesPhysical,
+          navHide: true,
+        },
+        {
+          name: messages.speechTherapy,
+          path: HealthPaths.HealthTherapiesSpeech,
+          navHide: true,
+        },
+        {
+          name: messages.occupationalTherapy,
+          path: HealthPaths.HealthTherapiesOccupational,
+          navHide: true,
+        },
+      ],
     },
     {
       name: m.payments,

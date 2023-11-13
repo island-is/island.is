@@ -9,7 +9,15 @@ import { m } from '@island.is/service-portal/core'
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
 )
-const Therapies = lazy(() => import('./screens/Therapies/Therapies'))
+const TherapiesPhysical = lazy(() =>
+  import('./screens/Therapies/TherapiesPhysical'),
+)
+const TherapiesSpeech = lazy(() =>
+  import('./screens/Therapies/TherapiesSpeech'),
+)
+const TherapiesOccupational = lazy(() =>
+  import('./screens/Therapies/TherapiesOccupational'),
+)
 
 const AidsAndNutrition = lazy(() =>
   import('./screens/AidsAndNutrition/AidsAndNutrition'),
@@ -54,10 +62,22 @@ export const healthModule: PortalModule = {
       element: <HealthOverview />,
     },
     {
-      name: hm.therapyTitle,
-      path: HealthPaths.HealthTherapies,
+      name: hm.physicalTherapy,
+      path: HealthPaths.HealthTherapiesPhysical,
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <Therapies />,
+      element: <TherapiesPhysical />,
+    },
+    {
+      name: hm.speechTherapy,
+      path: HealthPaths.HealthTherapiesSpeech,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TherapiesSpeech />,
+    },
+    {
+      name: hm.occupationalTherapy,
+      path: HealthPaths.HealthTherapiesOccupational,
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <TherapiesOccupational />,
     },
     {
       name: hm.aidsAndNutritionTitle,
