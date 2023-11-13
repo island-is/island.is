@@ -184,6 +184,17 @@ export const m = defineMessages({
     defaultMessage: 'Afrita hlekk',
     description: '',
   },
+  linkFieldButtonTitle: {
+    id: 'slc.application:linkFieldButtonTitle',
+    defaultMessage: 'Mínar síður',
+    description: '',
+  },
+  linkFieldMessage: {
+    id: 'slc.application:linkFieldMessage',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus.',
+    description: '',
+  },
 
   /* Action Card History logs */
   logListCreated: {

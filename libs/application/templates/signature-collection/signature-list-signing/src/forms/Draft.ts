@@ -45,7 +45,7 @@ export const Draft: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'externalDataSection',
+      id: 'approveExternalData',
       title: m.dataCollection,
       children: [
         buildExternalDataProvider({
@@ -129,6 +129,11 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'done',
+      title: m.listSigned,
+      children: [],
     }),
   ],
 })

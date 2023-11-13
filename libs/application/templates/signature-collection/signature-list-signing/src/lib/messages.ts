@@ -114,13 +114,24 @@ export const m = defineMessages({
   /* List Signed */
   listSigned: {
     id: 'sls.application:listSigned',
-    defaultMessage: 'Þú hefur sett nafn þitt á listann',
+    defaultMessage: 'Þú hefur mælt með lista',
     description: '',
   },
   listSignedDescription: {
     id: 'sls.application:listSignedDescription',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus, vestibulum imperdiet neque elementum ut.',
+    description: '',
+  },
+  linkFieldButtonTitle: {
+    id: 'sls.application:linkFieldButtonTitle',
+    defaultMessage: 'Áfram',
+    description: '',
+  },
+  linkFieldMessage: {
+    id: 'sls.application:linkFieldMessage',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum facilisis feugiat metus.',
     description: '',
   },
 

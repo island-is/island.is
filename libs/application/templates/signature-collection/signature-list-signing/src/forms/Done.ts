@@ -14,9 +14,21 @@ export const Done: Form = buildForm({
   title: '',
   mode: FormModes.COMPLETED,
   children: [
+    /* Sections for the stepper */
+    buildSection({
+      id: 'screen1',
+      title: m.dataCollection,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen2',
+      title: m.information,
+      children: [],
+    }),
+    /* ------------------------ */
     buildSection({
       id: 'doneScreen',
-      title: '',
+      title: m.listSigned,
       children: [
         buildMultiField({
           id: 'doneScreen',
@@ -30,10 +42,10 @@ export const Done: Form = buildForm({
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
-              title: '',
-              url: '/minarsidur/umsoknir',
-              buttonTitle: coreMessages.openServicePortalButtonTitle,
-              message: coreMessages.openServicePortalMessageText,
+              title: 'Gott að vita',
+              url: '/minarsidur/min-gogn/listar',
+              buttonTitle: m.linkFieldButtonTitle,
+              message: m.linkFieldMessage,
             }),
           ],
         }),

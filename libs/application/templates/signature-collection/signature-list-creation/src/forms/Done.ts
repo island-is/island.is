@@ -64,8 +64,8 @@ export const Done: Form = buildForm({
               id: 'done.goToServicePortal',
               title: '',
               url: '/minarsidur/umsoknir',
-              buttonTitle: coreMessages.openServicePortalButtonTitle,
-              message: coreMessages.openServicePortalMessageText,
+              buttonTitle: m.linkFieldButtonTitle,
+              message: m.linkFieldMessage,
             }),
             buildDescriptionField({
               id: 'space',
