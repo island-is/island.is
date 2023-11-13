@@ -115,7 +115,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
               </Box>
             )}
-             {workingCase.appealRulingModifiedHistory && (
+          {workingCase.appealRulingModifiedHistory && (
             <Box marginBottom={5}>
               <AlertMessage
                 type="info"
