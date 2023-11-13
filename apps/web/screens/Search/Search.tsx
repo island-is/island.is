@@ -385,8 +385,7 @@ const Search: Screen<CategoryProps> = ({
   ).map((item) => ({
     typename: item.__typename,
     title: item.title,
-    parentTitle:
-      item.parent?.title ?? (referencedBy ? undefined : item.manual?.title),
+    parentTitle: item.parent?.title ?? item.manual?.title,
     description:
       item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
     link: getItemLink(item),
