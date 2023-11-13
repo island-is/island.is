@@ -5,6 +5,7 @@ import { HealthPaths } from './lib/paths'
 import { PortalModule } from '@island.is/portals/core'
 import { messages as hm } from './lib/messages'
 import { m } from '@island.is/service-portal/core'
+import { Navigate } from 'react-router-dom'
 
 const HealthOverview = lazy(() =>
   import('./screens/HealthOverview/HealthOverview'),
@@ -65,6 +66,12 @@ export const healthModule: PortalModule = {
       element: <HealthOverview />,
     },
     {
+      name: hm.therapyTitle,
+      path: HealthPaths.HealthTherapies,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <Navigate to={HealthPaths.HealthTherapiesPhysical} replace />,
+    },
+    {
       name: hm.physicalTherapy,
       path: HealthPaths.HealthTherapiesPhysical,
       enabled: userInfo.scopes.includes(ApiScope.health),
@@ -87,6 +94,12 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthAidsAndNutrition,
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <AidsAndNutrition />,
+    },
+    {
+      name: hm.payments,
+      path: HealthPaths.HealthPayments,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <Navigate to={HealthPaths.HealthPaymentParticipation} replace />,
     },
     {
       name: hm.paymentParticipation,
@@ -117,6 +130,12 @@ export const healthModule: PortalModule = {
       element: <HealthCenter />,
     },
     {
+      name: hm.medicineTitle,
+      path: HealthPaths.HealthMedicine,
+      enabled: userInfo.scopes.includes(ApiScope.education),
+      element: <Navigate to={HealthPaths.HealthMedicinePurchase} replace />,
+    },
+    {
       name: hm.medicinePurchaseTitle,
       path: HealthPaths.HealthMedicinePurchase,
       key: 'HealthMedicine',
@@ -124,18 +143,18 @@ export const healthModule: PortalModule = {
       element: <MedicinePurchase />,
     },
     {
-      name: hm.medicineLicenseTitle,
-      path: HealthPaths.HealthMedicineCertificates,
-      key: 'HealthMedicine',
-      enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <MedicineLicence />,
-    },
-    {
       name: hm.medicineCalculatorTitle,
       path: HealthPaths.HealthMedicineCalculator,
       key: 'HealthMedicine',
       enabled: userInfo.scopes.includes(ApiScope.health),
       element: <MedicineCalculator />,
+    },
+    {
+      name: hm.medicineLicenseTitle,
+      path: HealthPaths.HealthMedicineCertificates,
+      key: 'HealthMedicine',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <MedicineLicence />,
     },
     {
       name: hm.medicineLicenseTitle,
