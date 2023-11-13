@@ -45,7 +45,6 @@ import {
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
   GetSearchResultsTotalQuery,
-  GetSingleEventQueryVariables,
   Image,
   LifeEventPage,
   Link as LinkItem,
@@ -54,7 +53,6 @@ import {
   OrganizationPage,
   OrganizationSubpage,
   ProjectPage,
-  Query,
   QueryGetNamespaceArgs,
   QuerySearchResultsArgs,
   SearchableContentTypes,
@@ -134,7 +132,7 @@ const connectedTypes: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
-  webManual: ['WebManual'],
+  webManual: ['WebManual', 'WebManualChapterItem'],
 }
 
 const stringToArray = (value: string | string[]) =>
@@ -297,6 +295,7 @@ const Search: Screen<CategoryProps> = ({
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
       webManual: n('webManual', 'Handbækur'),
+      webManualChapterItem: n('webManual', 'Handbækur'),
     }),
     [n],
   )
@@ -386,7 +385,8 @@ const Search: Screen<CategoryProps> = ({
   ).map((item) => ({
     typename: item.__typename,
     title: item.title,
-    parentTitle: item.parent?.title,
+    parentTitle:
+      item.parent?.title ?? (referencedBy ? undefined : item.manual?.title),
     description:
       item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
     link: getItemLink(item),
