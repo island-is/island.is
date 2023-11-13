@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { execSync } from 'child_process'
-import yargs from 'yargs/yargs'
-import { hideBin } from 'yargs/helpers'
-import { runProxy } from './_run-aws-eks-commands' // Importing runProxy
+const { execSync } = require('child_process')
+const yargs = require('yargs/yargs')
+const { hideBin } = require('yargs/helpers')
+const { runProxy } = require('./_run-aws-eks-commands')
 
 /**
  * Executes a given shell command synchronously.
@@ -28,6 +28,7 @@ function executeCommand(command) {
  * @returns {string} The container command tool.
  */
 function determineContainerTool() {
+  if (!process.env.NO_DRY) return 'echo DRY: podman'
   try {
     execSync('command -v podman', { stdio: 'ignore' })
     return 'podman'
@@ -95,19 +96,8 @@ function removeContainer(containerName, force) {
   executeCommand(`${containerTool} rm ${force ? '-f' : ''} ${containerName}`)
 }
 
-async function main() {
-  const proxies = ['db', 'es', 'soffia', 'xroad', 'redis', 'all']
-  const argv = yargs(hideBin(process.argv))
-    .option('proxy', {
-      type: 'option',
-      description: 'Run only the specified proxy',
-      choices: proxies,
-      default: 'all',
-    })
-    // Add other options here as in the original script
-    .showHelpOnFail(true)
-    .help().argv
-
+const startProxies = (args) => {
+  const proxies = args.proxyies
   const selectedProxies = proxies.filter(
     (proxy) =>
       argv[proxy] || argv.proxy.includes(proxy) || argv.proxy.includes('all'),
@@ -119,6 +109,71 @@ async function main() {
       removeContainers: argv.removeContainers,
     })
   }
+}
+
+async function main() {
+  const proxies = ['db', 'es', 'soffia', 'xroad', 'redis', 'all']
+  // .demandCommand()
+  const argv = yargs(hideBin(process.argv))
+  // const argv = yargs(process.argv.slice(2))
+
+  await argv
+    .command(
+      'proxy',
+      'Run proxy',
+      (yargs) =>
+        yargs
+          .option('profile', {
+            description: 'AWS profile to use',
+          })
+          .demandOption('service', 'Name of the Kubernetes service')
+          .check(function (argv) {
+            if (!['docker', 'podman'].includes(argv.builder)) {
+              throw new Error('Only docker or podman allowed')
+            }
+            return true
+          }),
+      startProxies,
+    )
+    .showHelpOnFail(true)
+    .demandCommand().argv
+  const args = yargs(hideBin(process.argv)).command(
+    'proxy',
+    'Start proxies',
+    (yargs) =>
+      yargs
+
+        // .command(
+        //   'proxy',
+        //   'Start proxies',
+        //   (yargs) =>
+        //     yargs
+        .option('proxies', {
+          description: 'Name of the proxy to start',
+          default: 'all',
+          choices: proxies,
+        })
+        .alias('proxy')
+        .option('interval', {
+          description: 'Seconds between proxy restarts',
+          default: 60,
+        })
+        .option('port', {
+          description:
+            'Port number on which the Kubernetes service is listening on',
+          default: 80,
+        })
+        .option('builder', {
+          description: 'docker or podman',
+          default: 'docker',
+        })
+        // startProxies,
+        // )
+        .showHelpOnFail(true)
+        .help().argv,
+  )
+
+  // startProxies(args)
 }
 
 if (require.main === module) {
