@@ -8,16 +8,16 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 import { mapManual } from '../../models/manual.model'
 
+export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
+  entry.sys.contentType.sys.id === 'manual' && !!entry.fields.title
+
 @Injectable()
 export class ManualSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
     logger.info('Processing sync data for manuals')
 
     // only process manuals that we consider not to be empty
-    return entries.filter(
-      (entry: Entry<IManualFields>): entry is IManual =>
-        entry.sys.contentType.sys.id === 'manual' && !!entry.fields.title,
-    )
+    return entries.filter(isManual)
   }
 
   doMapping(entries: IManual[]) {

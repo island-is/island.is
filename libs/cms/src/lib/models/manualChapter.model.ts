@@ -1,9 +1,10 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
-import { IManualChapter } from '../generated/contentfulTypes'
+import { IManual, IManualChapter } from '../generated/contentfulTypes'
 import { CacheField } from '@island.is/nest/graphql'
-import { OneColumnText, mapOneColumnText } from './oneColumnText.model'
+import { OneColumnText } from './oneColumnText.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
+import { mapManualChapterItem } from './manualChapterItem.model'
 
 @ObjectType()
 class ManualChapterChangelog {
@@ -42,16 +43,22 @@ export class ManualChapter {
 }
 
 export const mapManualChapter = ({
-  sys,
-  fields,
-}: IManualChapter): SystemMetadata<ManualChapter> => {
+  chapter,
+  manual,
+}: {
+  chapter: IManualChapter
+  manual: IManual
+}): SystemMetadata<ManualChapter> => {
+  const { sys, fields } = chapter
   return {
     typename: 'ManualChapter',
     id: sys.id,
     slug: fields.slug,
     title: fields.title,
     chapterItems: fields.chapterItems
-      ? fields.chapterItems.map(mapOneColumnText)
+      ? fields.chapterItems.map((item) =>
+          mapManualChapterItem({ item, manual, chapter }),
+        )
       : [],
     changelog: fields.changelog as ManualChapterChangelog,
     description: fields.description
