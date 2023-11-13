@@ -323,6 +323,9 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     try {
+      if (isRunningOnEnvironment('local')) {
+        return { isEligible: true }
+      }
       const applicationType = getApplicationType(application).toLowerCase()
       return await this.siaClientService.getIsEligible(auth, applicationType)
     } catch (e) {
