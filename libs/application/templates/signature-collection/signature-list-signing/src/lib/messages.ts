@@ -63,8 +63,7 @@ export const m = defineMessages({
   },
   userProfileProviderSubtitle: {
     id: 'sls.application:userProfileProviderSubtitle',
-    defaultMessage:
-      'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
 
