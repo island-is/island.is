@@ -67,6 +67,8 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
     return errorComponent ?? <AlertMessage type="error" title={pdfError} />
   }
 
+  console.log('!!!!!!!!!!!   BK ADD BACK ERROR    !!!!!!!!!!!!')
+
   if (pdfLib) {
     return (
       <>
