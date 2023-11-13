@@ -207,8 +207,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
+                import('../forms/ReviewSeller').then((module) =>
+                  Promise.resolve(module.ReviewSellerForm),
                 ),
               write: {
                 answers: [],

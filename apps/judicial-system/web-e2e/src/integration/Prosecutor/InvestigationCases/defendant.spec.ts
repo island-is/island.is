@@ -1,10 +1,12 @@
 import faker from 'faker'
 
 import { CREATE_INVESTIGATION_CASE_ROUTE } from '@island.is/judicial-system/consts'
+import { UserRole } from '@island.is/judicial-system/types'
 
 describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
   beforeEach(() => {
     cy.stubAPIResponses()
+    cy.login(UserRole.PROSECUTOR)
     cy.visit(CREATE_INVESTIGATION_CASE_ROUTE)
   })
 
@@ -126,6 +128,9 @@ describe(CREATE_INVESTIGATION_CASE_ROUTE, () => {
     cy.getByTestid('continueButton').should('be.disabled')
     cy.getByTestid('defenderPhoneNumber').clear()
     cy.getByTestid('defenderPhoneNumber').type('1234567')
+    cy.get('#react-select-defenderName-input').type('John Doe')
+    cy.get('#react-select-defenderName-input').type('{enter}')
+    cy.get("[name='defender-access']").check()
     cy.getByTestid('continueButton').should('not.be.disabled')
   })
 

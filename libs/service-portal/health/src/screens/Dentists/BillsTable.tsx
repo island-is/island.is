@@ -46,7 +46,7 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.refundDate)}
+                {formatMessage(messages.repaid)}
               </Text>
             </T.HeadData>
             <T.HeadData>

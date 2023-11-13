@@ -75,7 +75,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
         ?.filter((item) => !item.navHide)
         .map(
           (navRoot, index) =>
-            navRoot.path !== ServicePortalPath.MinarSidurRoot && (
+            navRoot.path !== ServicePortalPath.MinarSidurRoot &&
+            navRoot.path && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
                 span={['12/12', '6/12', '6/12', '6/12', '6/12']}
@@ -220,6 +221,8 @@ export const Dashboard: FC<React.PropsWithChildren<{}>> = () => {
                         img={getOrganizationLogoUrl(
                           doc.senderName,
                           organizations,
+                          60,
+                          'none',
                         )}
                         documentLine={doc}
                         active={false}
