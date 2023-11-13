@@ -22,7 +22,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://api.syslumenn.is/dev/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' > src/clientConfig.json"
+          "curl https://api.syslumenn.is/staging/swagger/v1/swagger.json -H 'Accept: application/json' | jq '.paths[][].tags = [\"Syslumenn\"]' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/syslumenn"

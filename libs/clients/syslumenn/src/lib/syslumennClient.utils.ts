@@ -20,6 +20,7 @@ import {
   Erfingar,
   Malsvari,
   Meistaraleyfi,
+  Okutaeki,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -48,6 +49,7 @@ import {
   Broker,
   Advocate,
   MasterLicence,
+  VehicleRegistration,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -307,6 +309,15 @@ export const mapAssetName = (
   response: VedbandayfirlitReguverkiSvarSkeyti,
 ): AssetName => {
   return { name: response.heiti ?? '' }
+}
+
+export const mapVehicle = (response: Okutaeki): VehicleRegistration => {
+  return {
+    licensePlate: response.numerOkutaekis,
+    modelName: response.framleidandaGerd,
+    manufacturer: response.framleidandi,
+    color: response.litur,
+  }
 }
 
 export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {

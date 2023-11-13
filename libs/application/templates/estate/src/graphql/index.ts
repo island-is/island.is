@@ -25,3 +25,14 @@ export const SEARCH_FOR_PROPERTY_QUERY = gql`
     }
   }
 `
+
+export const GET_VEHICLE_QUERY = gql`
+  query GetVehicle($input: GetVehicleInput!) {
+    syslumennGetVehicle(input: $input) {
+      modelName
+      manufacturer
+      licensePlate
+      color
+    }
+  }
+`

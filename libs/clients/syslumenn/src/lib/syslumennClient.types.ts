@@ -288,3 +288,10 @@ export interface MasterLicence {
   profession?: string
   office?: string
 }
+
+export interface VehicleRegistration {
+  modelName?: string
+  manufacturer?: string
+  licensePlate?: string
+  color?: string
+}

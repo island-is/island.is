@@ -7,7 +7,7 @@
     "version": "v1"
   },
   "host": "api.syslumenn.is",
-  "basePath": "/dev",
+  "basePath": "/staging",
   "schemes": ["https"],
   "produces": ["text/plain", "application/json", "text/json"],
   "paths": {
@@ -1012,6 +1012,59 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/AlgengTengsl"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "Not found",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/DanarbuAlgengTengslUmsaekjanda/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "DanarbuAlgengTengslUmsaekjanda_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AlgengUmsaekjandaTengsl"
               }
             }
           },
@@ -3378,6 +3431,19 @@
       }
     },
     "AlgengTengsl": {
+      "type": "object",
+      "required": ["oid"],
+      "properties": {
+        "oid": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "heiti": {
+          "type": "string"
+        }
+      }
+    },
+    "AlgengUmsaekjandaTengsl": {
       "type": "object",
       "required": ["oid"],
       "properties": {

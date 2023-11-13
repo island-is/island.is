@@ -94,22 +94,11 @@ export const estateAssets = buildSection({
               titleVariant: 'h3',
               marginBottom: 2,
             }),
-            buildCustomField(
-              {
-                title: '',
-                id: 'estate.vehicles',
-                component: 'AssetsRepeater',
-              },
-              {
-                assetName: 'vehicles',
-                texts: {
-                  assetTitle: m.vehiclesTitle,
-                  assetNumber: m.vehicleNumberLabel,
-                  assetType: m.vehicleTypeLabel,
-                  addAsset: m.addVehicle,
-                },
-              },
-            ),
+            buildCustomField({
+              title: '',
+              id: 'estate.vehicles',
+              component: 'VehicleRepeater',
+            }),
           ],
         }),
       ],

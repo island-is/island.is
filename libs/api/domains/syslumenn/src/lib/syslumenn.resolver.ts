@@ -12,6 +12,7 @@ import { PaginatedOperatingLicenses } from './models/paginatedOperatingLicenses'
 import { CertificateInfoResponse } from './models/certificateInfo'
 import { DistrictCommissionerAgencies } from './models/districtCommissionerAgencies'
 import { AssetName } from './models/assetName'
+import { VehicleRegistration } from './models/vehicleRegistration'
 import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PropertyDetail } from '@island.is/api/domains/assets'
@@ -28,6 +29,7 @@ import { EstateRelations } from './models/relations'
 import { AlcoholLicence } from './models/alcoholLicence'
 import { TemporaryEventLicence } from './models/temporaryEventLicence'
 import { MasterLicencesResponse } from './models/masterLicence'
+import { GetVehicleInput } from './dto/getVehicle.input'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -135,6 +137,23 @@ export class SyslumennResolver {
     @Args('input') licenseNumber: string,
   ): Promise<Array<AssetName>> {
     return this.syslumennService.getVehicleType(licenseNumber)
+  }
+
+  @Query(() => VehicleRegistration)
+  syslumennGetVehicle(
+    @Args('input') input: GetVehicleInput,
+  ): Promise<VehicleRegistration> {
+    const response = this.syslumennService
+      .getVehicle(input.vehicleId)
+      .catch((e) => {
+        console.log(e)
+        return Promise.resolve({
+          licenseNumber: '',
+          manufacturer: '',
+          color: '',
+        })
+      })
+    return response
   }
 
   @Query(() => PropertyDetail, { nullable: true })
