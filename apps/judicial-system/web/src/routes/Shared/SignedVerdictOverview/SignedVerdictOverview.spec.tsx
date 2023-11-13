@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 import { CaseDecision, CaseState } from '@island.is/judicial-system/types'
 import {
   CaseType,
+  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -17,18 +18,23 @@ import {
 window.scrollTo = jest.fn()
 
 describe('shouldHideNextButton', () => {
-  const prosecutor = { id: uuid(), role: UserRole.PROSECUTOR } as User
+  const prosecutor = {
+    id: uuid(),
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+  } as User
 
   it.each`
-    role
-    ${UserRole.ADMIN}
-    ${UserRole.DEFENDER}
-    ${UserRole.DISTRICT_COURT_JUDGE}
-    ${UserRole.DISTRICT_COURT_REGISTRAR}
-    ${UserRole.PRISON_SYSTEM_STAFF}
-  `('should hide next button for user role: $role', ({ role }) => {
+    user
+    ${{ id: uuid(), role: UserRole.ADMIN }}
+    ${{ id: uuid(), role: UserRole.DEFENDER }}
+    ${{ id: uuid(), role: UserRole.DISTRICT_COURT_JUDGE, institution: { type: InstitutionType.DISTRICT_COURT } }}
+    ${{ id: uuid(), role: UserRole.DISTRICT_COURT_REGISTRAR, institution: { type: InstitutionType.DISTRICT_COURT } }}
+    ${{ id: uuid(), role: UserRole.PRISON_SYSTEM_STAFF, institution: { type: InstitutionType.PRISON } }}
+    ${{ id: uuid(), role: UserRole.PRISON_SYSTEM_STAFF, institution: { type: InstitutionType.PRISON_ADMIN } }}
+  `('should hide next button for user: $user', ({ user }) => {
     const theCase = {} as Case
-    const res = shouldHideNextButton(theCase, { id: uuid(), role } as User)
+    const res = shouldHideNextButton(theCase, user)
     expect(res).toEqual(true)
   })
 
@@ -97,7 +103,10 @@ describe('getExtensionInfoText', () => {
     onError: jest.fn,
   }).formatMessage
 
-  const prosecutor = { role: UserRole.PROSECUTOR } as User
+  const prosecutor = {
+    role: UserRole.PROSECUTOR,
+    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+  } as User
 
   const fn = (theCase: Case, user?: User) =>
     getExtensionInfoText(formatMessage, theCase, user)

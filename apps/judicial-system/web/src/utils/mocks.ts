@@ -34,6 +34,7 @@ export const mockProsecutor = {
   title: 'saksóknari',
   institution: {
     id: '1337',
+    type: InstitutionType.PROSECUTORS_OFFICE,
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
