@@ -2,7 +2,7 @@ import { service, ServiceBuilder } from './dsl'
 import { Kubernetes } from './kubernetes-runtime'
 import { generateOutputOne } from './processing/rendering-pipeline'
 import { EnvironmentConfig } from './types/charts'
-import { Job, JobForEnv, JobItem } from './types/input-types'
+import { Job } from './types/input-types'
 import { HelmService, SerializeSuccess } from './types/output-types'
 import { renderers } from './upstream-dependencies'
 

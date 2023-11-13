@@ -223,11 +223,19 @@ export type JobItem = {
   containers: Container[]
 }
 
-type EnvJobs = { [K in OpsEnv]?: JobItem[] }
-type AtLeastOneEnvJob = {
-  [K in OpsEnv]: EnvJobs[K] extends never ? never : JobItem[]
-}
-export type Job = AtLeastOneEnvJob | JobItem[]
+// type EnvJobs = { [K in OpsEnv]?: JobItem[] }
+// type AtLeastOneEnvJob = {
+//   [K in OpsEnv]: EnvJobs[K] extends never ? never : JobItem[]
+// }
+export type Job =
+  | Optional<
+      {
+        [idx in OpsEnvWithLocal]: JobItem[]
+      },
+      'local'
+    >
+  | JobItem[]
+
 export type JobForEnv = JobItem[]
 
 export interface Context {
