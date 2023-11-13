@@ -102,7 +102,7 @@ export const m = defineMessages({
   },
   countryArea: {
     id: 'sls.application:countryArea',
-    defaultMessage: 'Lanfdsfjörðungur',
+    defaultMessage: 'Landsfjórðungur',
     description: '',
   },
   signList: {
