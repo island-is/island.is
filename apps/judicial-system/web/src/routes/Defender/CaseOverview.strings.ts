@@ -89,6 +89,7 @@ export const strings = defineMessages({
   rulingModifiedTitle: {
     id: 'judicial.system.core:defender_case_overview.ruling_modified_title',
     defaultMessage: 'Úrskurður leiðréttur',
-    description:'Notaður sem titill á modal þegar úrskurður er leiðréttur á yfirlitsskjá verjanda.',
+    description:
+      'Notaður sem titill á modal þegar úrskurður er leiðréttur á yfirlitsskjá verjanda.',
   },
 })
