@@ -64,7 +64,7 @@ export const m = defineMessages({
   userProfileProviderSubtitle: {
     id: 'sls.application:userProfileProviderSubtitle',
     defaultMessage:
-      'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
+      'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
 
@@ -102,7 +102,7 @@ export const m = defineMessages({
   },
   countryArea: {
     id: 'sls.application:countryArea',
-    defaultMessage: 'Lanfdsfjörðungur',
+    defaultMessage: 'Landsfjórðungur',
     description: '',
   },
   signList: {

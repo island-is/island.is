@@ -46,7 +46,7 @@ export const m = defineMessages({
   userProfileProviderSubtitle: {
     id: 'slc.application:userProfileProviderSubtitle',
     defaultMessage:
-      'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
+      'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
 
@@ -99,12 +99,12 @@ export const m = defineMessages({
   },
   collectionDateFrom: {
     id: 'slc.application:collectionDateFrom',
-    defaultMessage: 'Upphafs dagsetning',
+    defaultMessage: 'Upphafsdagsetning',
     description: '',
   },
   collectionDateTil: {
     id: 'slc.application:collectionDateTil',
-    defaultMessage: 'Loka dagsetning',
+    defaultMessage: 'Lokadagsetning',
     description: '',
   },
 
