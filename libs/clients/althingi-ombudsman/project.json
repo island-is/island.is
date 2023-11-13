@@ -11,7 +11,7 @@
         "lintFilePatterns": ["libs/clients/althingi-ombudsman/**/*.ts"]
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/althingi-ombudsman/src/gen/fetch/dev -i libs/clients/althingi-ombudsman/src/clientConfig.yml"
