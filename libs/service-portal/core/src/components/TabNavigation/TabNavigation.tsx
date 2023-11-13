@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { Box, FocusableBox, LinkV2, Select } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Button, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
@@ -47,14 +47,17 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       <Box className={styles.tabList}>
         {items?.map((item, index) => (
           <FocusableBox
-            component={LinkV2}
+            component={Button}
+            type="button"
             key={index}
             id={item.path}
             justifyContent="center"
             className={cn(styles.tab, {
               [styles.tabSelected]: item.active,
             })}
-            href={'/minarsidur' + item.path}
+            onClick={item.path ? () => tabChangeHandler(item.path) : undefined}
+            // TODO: Refactor this to actual links
+            // href={'/minarsidur' + item.path}
           >
             {formatMessage(item.name)}
           </FocusableBox>

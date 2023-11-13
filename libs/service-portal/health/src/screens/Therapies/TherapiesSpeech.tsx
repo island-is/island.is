@@ -6,7 +6,7 @@ import { messages } from '../../lib/messages'
 import TherapiesTabContent from '../../components/TherapiesTabContent/TherapiesTabContent'
 import { SPEECH_THERAPY } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
-import { TherapiesWrapper } from './TherapiesWrapper'
+import { TherapiesWrapper } from './wrapper/TherapiesWrapper'
 
 const Therapies = () => {
   useNamespaces('sp.health')

@@ -10,7 +10,7 @@ import { useGetDrugCertificatesQuery } from './Medicine.generated'
 import { SECTION_GAP } from './constants'
 import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
-import { MedicineWrapper } from './components/MedicineWrapper/MedicineWrapper'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
 export const MedicineLicense = () => {
   const { formatMessage } = useLocale()

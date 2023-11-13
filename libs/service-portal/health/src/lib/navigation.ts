@@ -37,7 +37,19 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.payments,
-      path: HealthPaths.HealthPayments,
+      path: HealthPaths.HealthPaymentParticipation,
+      children: [
+        {
+          name: messages.paymentParticipation,
+          path: HealthPaths.HealthPaymentParticipation,
+          navHide: true,
+        },
+        {
+          name: messages.paymentOverview,
+          path: HealthPaths.HealthPaymentOverview,
+          navHide: true,
+        },
+      ],
     },
     {
       name: m.aidsAndNutrition,

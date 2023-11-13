@@ -8,8 +8,8 @@ import {
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
-import { messages } from '../../lib/messages'
-import { healthNavigation } from '../../lib/navigation'
+import { messages } from '../../../lib/messages'
+import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {
   children: React.ReactNode

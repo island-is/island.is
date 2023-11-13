@@ -26,7 +26,7 @@ import * as styles from './Medicine.css'
 import { EmptyTable } from './components/EmptyTable/EmptyTable'
 import { DrugRow } from './components/DrugRow/DrugRow'
 import { useIntl } from 'react-intl'
-import { MedicineWrapper } from './components/MedicineWrapper/MedicineWrapper'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8

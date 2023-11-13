@@ -31,7 +31,7 @@ import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { useIntl } from 'react-intl'
-import { MedicineWrapper } from './components/MedicineWrapper/MedicineWrapper'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 
 export const MedicinePurchase = () => {

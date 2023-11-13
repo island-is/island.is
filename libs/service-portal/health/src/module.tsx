@@ -48,7 +48,10 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const Payments = lazy(() => import('./screens/Payments/Payments'))
+const PaymentParticipation = lazy(() =>
+  import('./screens/Payments/PaymentParticipation'),
+)
+const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
 
 export const healthModule: PortalModule = {
   name: 'Heilsa',
@@ -86,11 +89,18 @@ export const healthModule: PortalModule = {
       element: <AidsAndNutrition />,
     },
     {
-      name: hm.payments,
-      path: HealthPaths.HealthPayments,
+      name: hm.paymentParticipation,
+      path: HealthPaths.HealthPaymentParticipation,
       key: 'HealthPayment',
       enabled: userInfo.scopes.includes(ApiScope.health),
-      element: <Payments />,
+      element: <PaymentParticipation />,
+    },
+    {
+      name: hm.paymentOverview,
+      path: HealthPaths.HealthPaymentOverview,
+      key: 'HealthPayment',
+      enabled: userInfo.scopes.includes(ApiScope.health),
+      element: <PaymentOverview />,
     },
     {
       name: hm.dentistsTitle,

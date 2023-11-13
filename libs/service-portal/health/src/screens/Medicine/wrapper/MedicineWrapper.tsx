@@ -5,8 +5,8 @@ import {
   SJUKRATRYGGINGAR_ID,
   TabNavigation,
 } from '@island.is/service-portal/core'
-import { messages as m } from '../../../../lib/messages'
-import { healthNavigation } from '../../../../lib/navigation'
+import { messages as m } from '../../../lib/messages'
+import { healthNavigation } from '../../../lib/navigation'
 
 export const MedicineWrapper = ({
   children,

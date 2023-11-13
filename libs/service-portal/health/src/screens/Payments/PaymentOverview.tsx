@@ -14,17 +14,16 @@ import {
   amountFormat,
   formSubmit,
   m,
-  numberFormat,
 } from '@island.is/service-portal/core'
-import { messages } from '../../../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { SECTION_GAP } from '../../Medicine/constants'
+import { SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
-} from '../Payments.generated'
+} from './Payments.generated'
 import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
 import { isDefined } from '@island.is/shared/utils'
@@ -32,6 +31,7 @@ import {
   RightsPortalPaymentOverview,
   RightsPortalPaymentOverviewDocument,
 } from '@island.is/api/schema'
+import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentOverview = () => {
   const intl = useIntl()
@@ -99,7 +99,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <Box paddingY={4} background="white">
+    <PaymentsWrapper>
       {error ? (
         <AlertMessage
           type="error"
@@ -254,7 +254,7 @@ export const PaymentOverview = () => {
           </Box>
         </Box>
       )}
-    </Box>
+    </PaymentsWrapper>
   )
 }
 
