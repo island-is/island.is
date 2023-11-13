@@ -12,16 +12,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import {
-  CardLoader,
-  EmptyState,
-  ErrorScreen,
-} from '@island.is/service-portal/core'
+import { EmptyState, ErrorScreen } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
-import {
-  useGetHealthCenterQuery,
-  useRightsPortalTransferHealthCenterMutation,
-} from './HealthCenterRegistration.generated'
 import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/service-portal/core'
 import groupBy from 'lodash/groupBy'
@@ -31,6 +23,10 @@ import { useNavigate } from 'react-router-dom'
 import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
 import { RegisterModal } from '../../components/RegisterModal'
+import {
+  useGetHealthCenterQuery,
+  useRightsPortalTransferHealthCenterMutation,
+} from './HealthCenterRegistration.generated'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
 
@@ -55,27 +51,26 @@ const HealthCenterRegistration = () => {
   const [selectedHealthCenter, setSelectedHealthCenter] =
     useState<SelectedHealthCenter | null>(null)
 
+  const handleOnError = () => {
+    setSelectedHealthCenter(null)
+    setLoadingTransfer(false)
+    setErrorTransfer(true)
+  }
+
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
-    onError: (e) => {
-      setSelectedHealthCenter(null)
-      setLoadingTransfer(false)
-      setErrorTransfer(true)
+    onError: () => {
+      handleOnError()
     },
     onCompleted: (data) => {
-      if (data.rightsPortalTransferHealthCenter.success) {
+      if (data.rightsPortalRegisterHealthCenter.success) {
         navigate(`${HealthPaths.HealthCenter}`, {
           state: {
             transferSuccess: true,
           },
         })
       } else {
-        setSelectedHealthCenter(null)
-        setLoadingTransfer(false)
-        setErrorTransfer(true)
+        handleOnError()
       }
-    },
-    variables: {
-      id: selectedHealthCenter?.id || '',
     },
   })
 
@@ -90,7 +85,17 @@ const HealthCenterRegistration = () => {
 
   const handleHealthCenterTransfer = async () => {
     setLoadingTransfer(true)
-    await transferHealthCenter()
+    if (selectedHealthCenter && selectedHealthCenter?.id) {
+      await transferHealthCenter({
+        variables: {
+          input: {
+            id: selectedHealthCenter.id,
+          },
+        },
+      })
+    } else {
+      handleOnError()
+    }
   }
 
   const healthCenterGroups = useMemo(() => {
