@@ -224,5 +224,11 @@ export const Draft: Form = buildForm({
         }),
       ],
     }),
+    /* Section setup for the stepper */
+    buildSection({
+      id: 'done',
+      title: m.listCreated,
+      children: [],
+    }),
   ],
 })

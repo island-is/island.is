@@ -15,9 +15,26 @@ export const Done: Form = buildForm({
   title: '',
   mode: FormModes.COMPLETED,
   children: [
+    /* Sections for the stepper */
+    buildSection({
+      id: 'screen1',
+      title: m.dataCollection,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen2',
+      title: m.information,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen3',
+      title: m.overview,
+      children: [],
+    }),
+    /* ------------------------ */
     buildSection({
       id: 'doneScreen',
-      title: '',
+      title: m.listCreated,
       children: [
         buildMultiField({
           id: 'doneScreen',
