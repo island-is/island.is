@@ -14,7 +14,34 @@ export const EXCLUDED_ENVIRONMENT_NAMES = [
   'REDIS_URL_NODE_01',
   'XROAD_NATIONAL_REGISTRY_REDIS_NODES',
   'COMPANY_REGISTRY_REDIS_NODES',
+  'XROAD_RSK_PROCURING_REDIS_NODES',
+  'APOLLO_CACHE_REDIS_NODES',
+  'HSN_WEB_FORM_RESPONSE_URL',
 ]
+
+const isLocalEnvInService = (
+  [name, val]: [string, string],
+  serviceNXName?: string,
+) => {
+  if (val.match(/^(https?:\/\/)?localhost/)) return true
+  if (EXCLUDED_ENVIRONMENT_NAMES.includes(name)) return false
+  const regMatch = val.match(/(https?:\/\/)?((\w|-)+\.)*(\w|-)+(:\d+)+/g)
+  if (regMatch) {
+    console.error(
+      `Secret ${name} ${
+        serviceNXName ? `(used in ${serviceNXName}) ` : ''
+      }references non-local environment variables:`,
+    )
+    console.error(`  ${regMatch.join(', ')}`)
+    console.error(`Ignoring it for now.`)
+    return false
+  }
+  return true
+}
+export const isLocalEnv = (args: [string, string]) => isLocalEnvInService(args)
+export const isLocalEnvWithService =
+  (serviceNXName: string) => (args: [string, string]) =>
+    isLocalEnvInService(args, serviceNXName)
 
 const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
   XROAD_BASE_PATH: 'http://localhost:8081',
@@ -51,7 +78,7 @@ export const renderServiceEnvVars = async (service: string) => {
     })
     .flat()
     // .reduce((p, c) => p.concat(c), [])
-    .filter(([envName]) => !EXCLUDED_ENVIRONMENT_NAMES.includes(envName))
+    .filter(isLocalEnv)
     .map((request) => {
       const envName = request[0]
       const ssmName = OVERRIDE_ENVIRONMENT_NAMES[envName]

@@ -182,7 +182,6 @@ export class ServiceBuilder<ServiceType> {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
-
     this.serviceDef.initContainers = {
       envs: {},
       secrets: {},
