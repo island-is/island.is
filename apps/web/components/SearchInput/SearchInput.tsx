@@ -129,6 +129,7 @@ const useSearch = (
                   SearchableContentTypes['WebOrganizationSubpage'],
                   SearchableContentTypes['WebDigitalIcelandService'],
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                  SearchableContentTypes['WebManual'],
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',

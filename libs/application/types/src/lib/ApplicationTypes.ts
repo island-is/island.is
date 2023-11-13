@@ -47,6 +47,7 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
+  CITIZENSHIP = 'Citizenship',
 }
 
 export const ApplicationConfigurations = {
@@ -241,5 +242,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.EUROPEAN_HEALTH_INSURANCE_CARD]: {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
   },
 }
