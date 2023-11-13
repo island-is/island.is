@@ -2104,7 +2104,7 @@ services-sessions:
       name: 'sessions-geoip-db'
       size: '1Gi'
       storageClass: 'efs-csi'
-      useExisting: true
+      useExisting: false
   replicaCount:
     default: 1
     max: 10
@@ -2139,9 +2139,10 @@ services-sessions-geoip-job:
     NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-    - 'identity-server'
+    - 'nginx-ingress-external'
+    - 'api-catalogue'
+    - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2158,16 +2159,14 @@ services-sessions-geoip-job:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 1
-        min: 1
+        max: 10
+        min: 3
   image:
     name: 'services-sessions'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
   jobs: []
-  namespace: 'services-sessions'
-  podSecurityContext:
-    fsGroup: 65534
+  namespace: 'islandis'
   pvcs:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
@@ -2176,9 +2175,9 @@ services-sessions-geoip-job:
       storageClass: 'efs-csi'
       useExisting: false
   replicaCount:
-    default: 1
-    max: 1
-    min: 1
+    default: 3
+    max: 10
+    min: 3
   resources:
     limits:
       cpu: '500m'
@@ -2192,11 +2191,6 @@ services-sessions-geoip-job:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/sessions-geoip'
-    create: true
-    name: 'sessions-geoip'
 services-sessions-worker:
   args:
     - 'main.js'

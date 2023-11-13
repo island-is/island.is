@@ -221,6 +221,18 @@ export type JobItem = {
   restartPolicy?: 'Never' | 'OnFailure'
   ttlSecondsAfterFinished?: number
   containers: Container[]
+  extraAttributes?: ExtraValues
+}
+
+export type JobItemForEnv = {
+  envs?: EnvironmentVariables
+  secrets?: Secrets
+  name: string
+  backoffLimit?: number
+  restartPolicy?: 'Never' | 'OnFailure'
+  ttlSecondsAfterFinished?: number
+  containers: Container[]
+  extraAttributes?: Hash
 }
 
 export type Job =
@@ -232,7 +244,7 @@ export type Job =
     >
   | JobItem[]
 
-export type JobForEnv = JobItem[]
+export type JobForEnv = JobItemForEnv[]
 
 export interface Context {
   featureDeploymentName?: string

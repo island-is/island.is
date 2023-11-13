@@ -483,6 +483,7 @@ const serviceMockDef = (options: {
       privileged: false,
       allowPrivilegeEscalation: false,
     },
+    jobs: [],
   }
   return result
 }

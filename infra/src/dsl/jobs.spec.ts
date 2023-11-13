@@ -19,6 +19,12 @@ const Dev: EnvironmentConfig = {
   global: {},
 }
 
+const extraAttributes = {
+  annotations: {
+    someAnnotation: 'annotation',
+  },
+}
+
 const jobTemplate: Job = [
   {
     name: 'job1',
@@ -51,9 +57,18 @@ describe('Job helm values', () => {
   const sutJobWithoutEnv: ServiceBuilder<'api'> =
     service('api').jobs(jobTemplate)
 
-  let devWithJobs: SerializeSuccess<HelmService>
+  const sutJobWithExtraAttributes: ServiceBuilder<'api'> = service('api').jobs({
+    ...jobTemplate.map((job) => {
+      return {
+        ...job,
+        extraAttributes: { dev: extraAttributes, staging: {}, prod: {} },
+      }
+    }),
+  })
+
+  let resultOne: SerializeSuccess<HelmService>
   beforeEach(async () => {
-    devWithJobs = (await generateOutputOne({
+    resultOne = (await generateOutputOne({
       outputFormat: renderers.helm,
       service: sutJobWithEnv,
       runtime: new Kubernetes(Dev),
@@ -61,10 +76,18 @@ describe('Job helm values', () => {
     })) as SerializeSuccess<HelmService>
   })
 
-  it('Job with envs', () => {
-    expect(sutJobWithEnv.serviceDef!.jobs).toEqual(jobEnvTemplate)
+  let resultTwo: SerializeSuccess<HelmService>
+  beforeEach(async () => {
+    resultTwo = (await generateOutputOne({
+      outputFormat: renderers.helm,
+      service: sutJobWithoutEnv,
+      runtime: new Kubernetes(Dev),
+      env: Dev,
+    })) as SerializeSuccess<HelmService>
   })
-  it('Job without envs', () => {
-    expect(sutJobWithoutEnv.serviceDef!.jobs).toEqual(jobTemplate)
+
+  it('Job values without envs', () => {
+    expect(resultOne.serviceDef[0].jobs).toEqual(jobTemplate)
+    expect(resultTwo.serviceDef[0].jobs).toEqual(jobTemplate)
   })
 })

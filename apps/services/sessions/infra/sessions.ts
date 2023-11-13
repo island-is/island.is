@@ -56,10 +56,7 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
     .secrets({
       GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
     })
-    .volumes({
-      ...geoipSetup().serviceDef.volumes[0],
-      useExisting: true,
-    })
+    .volumes(...geoipVolume)
     .readiness('/liveness')
     .liveness('/liveness')
     .replicaCount({
@@ -89,6 +86,37 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
       },
     })
     .grantNamespaces('nginx-ingress-internal', 'islandis', 'identity-server')
+// NOTE: testing new DSL Job support
+// .jobs([
+//   {
+//     name: 'geoip',
+//     containers: [
+//       {
+//         resources: {
+//           limits: {
+//             cpu: '500m',
+//             memory: '1Gi',
+//           },
+//           requests: {
+//             cpu: '500m',
+//             memory: '500Mi',
+//           },
+//         },
+//         command: 'node',
+//         args: [
+//           './node_modules/geoip-lite/scripts/updatedb.js',
+//           'license_key=$(GEOIP_LICENSE_KEY)',
+//         ],
+//       },
+//     ],
+//     envs: { GEODATADIR: geoDataDir, GEOTMPDIR: geoTmpDir },
+//     extraAttributes: {
+//       dev: { ...geoipAnnotations },
+//       staging: { ...geoipAnnotations },
+//       prod: { ...geoipAnnotations },
+//     },
+//   },
+// ])
 
 export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
   service('services-sessions-worker')
@@ -127,9 +155,6 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
 export const geoipSetup = (): ServiceBuilder<'services-sessions-geoip-job'> =>
   service('services-sessions-geoip-job')
     .image({ name: imageName })
-    .namespace(namespace)
-    .serviceAccount('sessions-geoip')
-    .replicaCount({ min: 1, max: 1, default: 1 })
     .command('node')
     .args(
       './node_modules/geoip-lite/scripts/updatedb.js',
