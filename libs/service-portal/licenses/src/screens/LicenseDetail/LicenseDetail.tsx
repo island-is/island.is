@@ -417,35 +417,32 @@ const LicenseDetail = () => {
             {genericLicense?.payload?.metadata?.links
               ?.map((link, index) => {
                 if (link.label && link.value) {
-                  if (link.type) {
-                    return (
-                      <a
-                        href={link.value}
-                        target="_blank"
-                        rel="noreferrer"
-                        download={
+                  return (
+                    <a
+                      href={link.value}
+                      target="_blank"
+                      rel="noreferrer"
+                      download={
+                        link.type === GenericUserLicenseMetaLinksType.Download
+                          ? link.name
+                          : false
+                      }
+                      key={licenseType + '_link_' + index}
+                    >
+                      <Button
+                        variant="utility"
+                        size="small"
+                        icon={
                           link.type === GenericUserLicenseMetaLinksType.Download
-                            ? link.name
-                            : ''
+                            ? 'download'
+                            : 'open'
                         }
-                        key={licenseType + '_link_' + index}
+                        iconType="outline"
                       >
-                        <Button
-                          variant="utility"
-                          size="small"
-                          icon={
-                            link.type ===
-                            GenericUserLicenseMetaLinksType.Download
-                              ? 'download'
-                              : 'open'
-                          }
-                          iconType="outline"
-                        >
-                          {link.label}
-                        </Button>
-                      </a>
-                    )
-                  }
+                        {link.label}
+                      </Button>
+                    </a>
+                  )
                 }
                 return null
               })
