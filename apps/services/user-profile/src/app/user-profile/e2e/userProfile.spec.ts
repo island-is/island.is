@@ -250,7 +250,7 @@ describe('User profile API', () => {
   })
 
   describe('POST /emailVerification/:nationalId', () => {
-    it('POST /emailVerification/:nationalId re-creates an email verfication in db', async () => {
+    it('POST /emailVerification/:nationalId re-creates an email verification in db', async () => {
       const sutProfile = {
         ...mockProfileNoEmailNoPhone,
         email,
@@ -505,7 +505,7 @@ describe('User profile API', () => {
   })
 
   describe('POST /smsVerification', () => {
-    it('POST /smsVerification/ creates a sms verfication in db', async () => {
+    it('POST /smsVerification/ creates a sms verification in db', async () => {
       // Act
       const spy = jest.spyOn(smsService, 'sendSms')
       await request(app.getHttpServer())
@@ -519,7 +519,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
 
@@ -542,7 +542,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
 
@@ -577,7 +577,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
 
@@ -625,7 +625,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
       jest.setSystemTime(new Date(2020, 5, 2))
@@ -660,7 +660,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
 
@@ -728,7 +728,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
       const response = await request(app.getHttpServer())
@@ -761,7 +761,7 @@ describe('User profile API', () => {
       const verification = await SmsVerification.findOne({
         where: {
           nationalId: mockProfile.nationalId,
-          mobilePhoneNumber: formatPhoneNumber(mockProfile.mobilePhoneNumber),
+          mobilePhoneNumber: mockProfile.mobilePhoneNumber,
         },
       })
 

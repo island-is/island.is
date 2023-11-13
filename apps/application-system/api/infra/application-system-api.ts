@@ -30,6 +30,7 @@ import {
   TransportAuthority,
   Vehicles,
   VehicleServiceFjsV1,
+  DirectorateOfImmigration,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -213,7 +214,6 @@ export const serviceSetup = (services: {
       ENDORSEMENTS_API_BASE_PATH: ref(
         (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
       ),
-      NO_UPDATE_NOTIFIER: 'true',
       XROAD_COURT_BANKRUPTCY_CERT_PATH: {
         dev: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
         staging: 'IS-DEV/GOV/10019/Domstolasyslan/JusticePortal-v1',
@@ -252,6 +252,7 @@ export const serviceSetup = (services: {
       Vehicles,
       Passports,
       EHIC,
+      DirectorateOfImmigration,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -291,9 +292,6 @@ export const serviceSetup = (services: {
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .postgres(postgresInfo)
     .liveness('/liveness')

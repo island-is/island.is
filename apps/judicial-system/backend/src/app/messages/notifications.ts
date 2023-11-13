@@ -676,6 +676,22 @@ export const notifications = {
       description: 'Texti í pósti til aðila máls þegar kæru er lokið',
     },
   }),
+  caseAppealResent: defineMessages({
+    subject: {
+      id: 'judicial.system.backend:notifications.case_appeal_resent.subject',
+      defaultMessage:
+        'Leiðréttur úrskurður í landsréttarmáli {appealCaseNumber} ({courtCaseNumber})',
+      description:
+        'Fyrirsögn í pósti til aðila máls þegar leiðréttur úrskurður er sendur',
+    },
+    body: {
+      id: 'judicial.system.backend:notifications.case_appeal_resent.body',
+      defaultMessage:
+        'Landsréttur hefur leiðrétt úrskurð í máli {appealCaseNumber} (héraðsdómsmál nr. {courtCaseNumber}). {userHasAccessToRVG, select, true {Hægt er að nálgast gögn málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt{linkEnd}} other {Hægt er að nálgast gögn málsins hjá {court} ef þau hafa ekki þegar verið afhent}}.',
+      description:
+        'Texti í pósti til aðila máls þegar leiðréttur úrskurður er sendur',
+    },
+  }),
   emailNames: defineMessages({
     prison: {
       id: 'judicial.system.backend:notifications.email_names.prison',
