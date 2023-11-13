@@ -1,12 +1,11 @@
 import {
   Box,
   Button,
-  LinkV2,
   ResponsiveProp,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { ServicePortalPath, m } from '../../'
+import { LinkResolver, m } from '../../'
 import * as styles from './GoBack.css'
 
 type GoBackProps = {
@@ -16,14 +15,19 @@ type GoBackProps = {
   noUnderline?: boolean
   truncate?: boolean
   marginBottom?: ResponsiveSpace
+  path?: string
+  label?: string
 }
 export const GoBack = ({
   display = ['none', 'none', 'block'],
   noUnderline,
   truncate,
   marginBottom = 3,
+  path = '/',
+  label,
 }: GoBackProps) => {
   const { formatMessage } = useLocale()
+
   return (
     <Box
       display={display}
@@ -31,7 +35,7 @@ export const GoBack = ({
       marginBottom={marginBottom}
       className={noUnderline ? styles.noUnderline : undefined}
     >
-      <LinkV2 href={ServicePortalPath.MinarSidurPath}>
+      <LinkResolver href={path}>
         <Button
           preTextIcon="arrowBack"
           preTextIconType="filled"
@@ -41,9 +45,9 @@ export const GoBack = ({
           truncate={truncate}
           as="span"
         >
-          {formatMessage(m.goBackToDashboard)}
+          {label ?? formatMessage(m.goBackToDashboard)}
         </Button>
-      </LinkV2>
+      </LinkResolver>
     </Box>
   )
 }

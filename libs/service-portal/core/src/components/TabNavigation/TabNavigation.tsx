@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { SubTabItem } from './SubTabItem'
 import * as styles from './TabNavigation.css'
+import LinkResolver from '../LinkResolver/LinkResolver'
 
 interface Props {
   pathname?: string
@@ -47,17 +48,14 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       <Box className={styles.tabList}>
         {items?.map((item, index) => (
           <FocusableBox
-            component={Button}
-            type="button"
+            component={LinkResolver}
             key={index}
             id={item.path}
             justifyContent="center"
             className={cn(styles.tab, {
               [styles.tabSelected]: item.active,
             })}
-            onClick={item.path ? () => tabChangeHandler(item.path) : undefined}
-            // TODO: Refactor this to actual links
-            // href={'/minarsidur' + item.path}
+            href={item.path}
           >
             {formatMessage(item.name)}
           </FocusableBox>

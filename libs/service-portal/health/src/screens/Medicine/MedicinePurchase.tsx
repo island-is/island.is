@@ -12,6 +12,7 @@ import {
   ExpandHeader,
   ExpandRow,
   IntroHeader,
+  LinkResolver,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
@@ -207,9 +208,9 @@ export const MedicinePurchase = () => {
         </Button>
 
         <Button variant="utility" icon="calculator" iconType="outline">
-          <LinkV2 href={'/minarsidur' + HealthPaths.HealthMedicineCalculator}>
+          <LinkResolver href={HealthPaths.HealthMedicineCalculator}>
             {formatMessage(messages.medicineCalculatorTitle)}
-          </LinkV2>
+          </LinkResolver>
         </Button>
       </Box>
       <Box>
