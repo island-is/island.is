@@ -44,7 +44,7 @@
     "generate": "nx generate",
     "get-secrets": "./scripts/get-secrets.sh",
     "create-secret": "./scripts/create-secret.sh",
-    "proxies": "node ./scripts/proxies.js",
+    "proxies": "./scripts/run-test-proxies.sh",
     "format": "nx format:write",
     "format:check": "nx format:check",
     "update": "nx migrate latest",
