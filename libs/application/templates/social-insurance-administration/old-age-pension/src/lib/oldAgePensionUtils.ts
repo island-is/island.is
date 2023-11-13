@@ -1,8 +1,5 @@
-import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  ConnectedApplications,
-  HouseholdSupplementHousing,
   oldAgePensionAge,
   YES,
   fishermenMinAge,
@@ -11,13 +8,11 @@ import {
   NO,
   ApplicationType,
   Employment,
-  RatioType,
   TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
 } from './constants'
 import {
-  ApplicantChildCustodyInformation,
   Option,
   Application,
   NationalRegistryResidenceHistory,
@@ -32,55 +27,21 @@ import addDays from 'date-fns/addDays'
 import {
   CombinedResidenceHistory,
   Employer,
-  ChildPensionRow,
   BankInfo,
+  IncompleteEmployer,
+  FileType,
+  SelfEmployed,
+  AdditionalInformation,
+  FileUpload,
+  Attachments,
 } from '../types'
-
-export interface FileType {
-  key: string
-  name: string
-}
-
-interface FileUpload {
-  earlyRetirement?: FileType[]
-  pension?: FileType[]
-  fishermen?: FileType[]
-}
-
-interface LeaseAgreementSchoolConfirmation {
-  leaseAgreement?: FileType[]
-  schoolConfirmation?: FileType[]
-}
-
-interface SelfEmployed {
-  SelfEmployedAttachment?: FileType[]
-}
-
-interface ChildPensionAttachments {
-  maintenance?: FileType[]
-  childSupport?: FileType[]
-}
-
-interface AdditionalInformation {
-  additionalDocuments?: FileType[]
-  additionalDocumentsRequired?: FileType[]
-}
 
 enum AttachmentTypes {
   PENSION = 'pension',
   EARLY_RETIREMENT = 'earlyRetirement',
   FISHERMAN = 'fishermen',
-  LEASE_AGREEMENT = 'leaseAgreement',
-  SCHOOL_CONFIRMATION = 'schoolConfirmation',
   SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
-  MAINTENANCE = 'maintenance',
-  CHILD_SUPPORT = 'childSupport',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
-
-interface Attachments {
-  attachments: FileType[]
-  label: MessageDescriptor
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -121,46 +82,13 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
-  const connectedApplications = getValueViaPath(
-    answers,
-    'connectedApplications',
-  ) as ConnectedApplications[]
-
-  const householdSupplementHousing = getValueViaPath(
-    answers,
-    'householdSupplement.housing',
-  ) as HouseholdSupplementHousing
-
   const employmentStatus = getValueViaPath(
     answers,
     'employment.status',
   ) as Employment
 
-  const householdSupplementChildren = getValueViaPath(
-    answers,
-    'householdSupplement.children',
-  ) as YesOrNo
-
   const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
   const employers = filterValidEmployers(rawEmployers)
-
-  const childPensionSelectedCustodyKids = getValueViaPath(
-    answers,
-    'childPension.custodyKids',
-    [],
-  ) as []
-
-  const childPensionAddChild = getValueViaPath(
-    answers,
-    'childPensionAddChild',
-    YES,
-  ) as YesOrNo
-
-  const childPension = getValueViaPath(
-    answers,
-    'childPensionRepeater',
-    [],
-  ) as ChildPensionRow[]
 
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
@@ -214,26 +142,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.earlyRetirement',
   ) as FileType[]
 
-  const leaseAgreementAttachments = getValueViaPath(
-    answers,
-    'fileUploadHouseholdSupplement.leaseAgreement',
-  ) as FileType[]
-
-  const schoolConfirmationAttachments = getValueViaPath(
-    answers,
-    'fileUploadHouseholdSupplement.schoolConfirmation',
-  ) as FileType[]
-
-  const maintenanceAttachments = getValueViaPath(
-    answers,
-    'fileUploadChildPension.maintenance',
-  ) as FileType[]
-
-  const notLivesWithApplicantAttachments = getValueViaPath(
-    answers,
-    'fileUploadChildPension.notLivesWithApplicant',
-  ) as FileType[]
-
   return {
     pensionFundQuestion,
     applicationType,
@@ -245,15 +153,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
     residenceHistoryQuestion,
     onePaymentPerYear,
     comment,
-    connectedApplications,
-    householdSupplementHousing,
-    householdSupplementChildren,
     employmentStatus,
     employers,
     rawEmployers,
-    childPensionSelectedCustodyKids,
-    childPensionAddChild,
-    childPension,
     personalAllowance,
     spouseAllowance,
     personalAllowanceUsage,
@@ -263,10 +165,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     fishermenAttachments,
     selfEmployedAttachments,
     earlyRetirementAttachments,
-    leaseAgreementAttachments,
-    schoolConfirmationAttachments,
-    maintenanceAttachments,
-    notLivesWithApplicantAttachments,
     taxLevel,
   }
 }
@@ -279,18 +177,6 @@ export function getApplicationExternalData(
     'nationalRegistryResidenceHistory.data',
     [],
   ) as NationalRegistryResidenceHistory[]
-
-  const custodyInformation = getValueViaPath(
-    externalData,
-    'childrenCustodyInformation.data',
-    [],
-  ) as ApplicantChildCustodyInformation[]
-
-  const cohabitants = getValueViaPath(
-    externalData,
-    'nationalRegistryCohabitants.data',
-    [],
-  ) as string[]
 
   const applicantName = getValueViaPath(
     externalData,
@@ -351,8 +237,6 @@ export function getApplicationExternalData(
 
   return {
     residenceHistory,
-    cohabitants,
-    custodyInformation,
     applicantName,
     applicantNationalId,
     applicantAddress,
@@ -539,12 +423,12 @@ export function getAttachments(application: Application) {
   const { answers, externalData } = application
   const {
     applicationType,
-    householdSupplementChildren,
-    householdSupplementHousing,
-    connectedApplications,
+    // householdSupplementChildren,
+    // householdSupplementHousing,
+    // connectedApplications,
     employmentStatus,
-    childPension,
-    childPensionAddChild,
+    // childPension,
+    // childPensionAddChild,
   } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
@@ -563,59 +447,12 @@ export function getAttachments(application: Application) {
     getAttachmentDetails(fileUpload?.fishermen, AttachmentTypes.FISHERMAN)
   }
 
-  // leaseAgreement, schoolAgreement
-  const leaseAgrSchoolConf =
-    answers.fileUploadHouseholdSupplement as LeaseAgreementSchoolConfirmation
-  const isHouseholdSupplement = connectedApplications?.includes(
-    ConnectedApplications.HOUSEHOLDSUPPLEMENT,
-  )
-  if (
-    householdSupplementHousing === HouseholdSupplementHousing.RENTER &&
-    isHouseholdSupplement
-  ) {
-    getAttachmentDetails(
-      leaseAgrSchoolConf?.leaseAgreement,
-      AttachmentTypes.LEASE_AGREEMENT,
-    )
-  }
-  if (householdSupplementChildren === YES && isHouseholdSupplement) {
-    getAttachmentDetails(
-      leaseAgrSchoolConf?.schoolConfirmation,
-      AttachmentTypes.SCHOOL_CONFIRMATION,
-    )
-  }
-
   // self-employed
   if (employmentStatus === Employment.SELFEMPLOYED) {
     const selfEmpoyed = answers.employment as SelfEmployed
     getAttachmentDetails(
       selfEmpoyed?.SelfEmployedAttachment,
       AttachmentTypes.SELF_EMPLOYED_ATTACHMENT,
-    )
-  }
-
-  // child pension attachments
-  const childPensionAttachments =
-    answers.fileUploadChildPension as ChildPensionAttachments
-  const isChildPension = connectedApplications?.includes(
-    ConnectedApplications.CHILDPENSION,
-  )
-
-  if (
-    childPension.length > 0 &&
-    isChildPension &&
-    childPensionAddChild !== NO
-  ) {
-    getAttachmentDetails(
-      childPensionAttachments?.maintenance,
-      AttachmentTypes.MAINTENANCE,
-    )
-  }
-
-  if (childCustodyLivesWithApplicant(answers, externalData) && isChildPension) {
-    getAttachmentDetails(
-      childPensionAttachments?.childSupport,
-      AttachmentTypes.CHILD_SUPPORT,
     )
   }
 
@@ -704,44 +541,6 @@ export function getTaxOptions() {
   return options
 }
 
-export function getChildPensionTitle(application: Application) {
-  const { custodyInformation } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  return custodyInformation.length !== 0
-    ? oldAgePensionFormMessage.connectedApplications.registerChildTitle
-    : oldAgePensionFormMessage.connectedApplications.childPension
-}
-
-export function getChildPensionDescription(application: Application) {
-  const { custodyInformation } = getApplicationExternalData(
-    application.externalData,
-  )
-
-  return custodyInformation.length !== 0
-    ? ''
-    : oldAgePensionFormMessage.connectedApplications.childPensionDescription
-}
-
-export function isExistsCohabitantOlderThan25(
-  externalData: Application['externalData'],
-) {
-  const { cohabitants, applicantNationalId } =
-    getApplicationExternalData(externalData)
-
-  let isOlderThan25 = false
-  cohabitants.forEach((cohabitant) => {
-    if (cohabitant !== applicantNationalId) {
-      if (kennitala.info(cohabitant).age > 25) {
-        isOlderThan25 = true
-      }
-    }
-  })
-
-  return isOlderThan25
-}
-
 export function isMoreThan2Year(answers: Application['answers']) {
   const { selectedMonth, selectedYear } = getApplicationAnswers(answers)
   const today = new Date()
@@ -765,34 +564,6 @@ function residenceMapper(
   return residence
 }
 
-// returns true if selected child DOES NOT live with applicant
-export function childCustodyLivesWithApplicant(
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-) {
-  let returnStatus = false
-  const { childPensionSelectedCustodyKids } = getApplicationAnswers(answers)
-  const { custodyInformation } = getApplicationExternalData(externalData)
-
-  childPensionSelectedCustodyKids.map((i) =>
-    custodyInformation.map((j) =>
-      i === j.nationalId && !j.livesWithApplicant
-        ? (returnStatus = true)
-        : (returnStatus = false),
-    ),
-  )
-
-  return returnStatus
-}
-
-interface IncompleteEmployer {
-  email?: string
-  phoneNumber?: string
-  ratioType?: RatioType
-  ratioYearly?: string
-  ratioMonthlyAvg?: string
-}
-
 export const filterValidEmployers = (
   employers: (IncompleteEmployer | Employer)[],
 ): Employer[] => {
@@ -810,11 +581,6 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
-}
-
-export function isOver18AtDate(dob: Date, minDate: Date) {
-  minDate.setFullYear(minDate.getFullYear() - 18)
-  return minDate > dob
 }
 
 export const formatBankInfo = (bankInfo: string) => {

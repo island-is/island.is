@@ -15,14 +15,11 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationType,
-  ConnectedApplications,
   Employment,
-  FileType,
-  HouseholdSupplementHousing,
-  childCustodyLivesWithApplicant,
   getApplicationAnswers,
   isEarlyRetirement,
   oldAgePensionFormMessage,
+  FileType,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   Attachment,
@@ -88,15 +85,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
       fishermenAttachments,
       selfEmployedAttachments,
       earlyRetirementAttachments,
-      leaseAgreementAttachments,
-      schoolConfirmationAttachments,
-      maintenanceAttachments,
-      notLivesWithApplicantAttachments,
-      childPensionAddChild,
       applicationType,
-      connectedApplications,
-      householdSupplementHousing,
-      householdSupplementChildren,
       employmentStatus,
     } = getApplicationAnswers(application.answers)
 
@@ -130,81 +119,6 @@ export class OldAgePensionService extends BaseTemplateApiService {
         'fileUpload.fishermen',
         'sailor',
         fishermenAttachments,
-      )
-    }
-
-    if (
-      leaseAgreementAttachments &&
-      leaseAgreementAttachments.length > 0 &&
-      connectedApplications?.includes(
-        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
-      ) &&
-      householdSupplementHousing === HouseholdSupplementHousing.RENTER
-    ) {
-      uploads.householdSupplement = await this.initAttachments(
-        application,
-        'fileUploadHouseholdSupplement.leaseAgreement',
-        'leaseAgreement',
-        leaseAgreementAttachments,
-      )
-    }
-
-    if (
-      schoolConfirmationAttachments &&
-      schoolConfirmationAttachments.length > 0 &&
-      connectedApplications?.includes(
-        ConnectedApplications.HOUSEHOLDSUPPLEMENT,
-      ) &&
-      householdSupplementChildren === YES
-    ) {
-      if (!uploads.householdSupplement) {
-        uploads.householdSupplement = []
-      }
-
-      uploads.householdSupplement.push(
-        ...(await this.initAttachments(
-          application,
-          'fileUploadHouseholdSupplement.schoolConfirmation',
-          'schoolConfirmation',
-          schoolConfirmationAttachments,
-        )),
-      )
-    }
-
-    if (
-      maintenanceAttachments &&
-      maintenanceAttachments.length > 0 &&
-      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
-      childPensionAddChild === YES
-    ) {
-      uploads.childPension = await this.initAttachments(
-        application,
-        'fileUploadChildPension.maintenance',
-        'maintenance',
-        maintenanceAttachments,
-      )
-    }
-
-    if (
-      notLivesWithApplicantAttachments &&
-      notLivesWithApplicantAttachments.length > 0 &&
-      connectedApplications?.includes(ConnectedApplications.CHILDPENSION) &&
-      childCustodyLivesWithApplicant(
-        application.answers,
-        application.externalData,
-      )
-    ) {
-      if (!uploads.childPension) {
-        uploads.childPension = []
-      }
-
-      uploads.childPension.push(
-        ...(await this.initAttachments(
-          application,
-          'fileUploadChildPension.notLivesWithApplicant',
-          'childSupport',
-          notLivesWithApplicantAttachments,
-        )),
       )
     }
 

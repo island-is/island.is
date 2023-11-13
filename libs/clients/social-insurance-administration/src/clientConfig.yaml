@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.1
+  version: 1.0.3
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:

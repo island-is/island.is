@@ -17,7 +17,6 @@ import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
 import { ResidenceHistory } from './review-groups/ResidenceHistory'
-import { ConnectedApplications } from './review-groups/ConnectedApplications'
 import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
@@ -49,8 +48,9 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { employmentStatus, applicationType, connectedApplications, comment } =
-    getApplicationAnswers(application.answers)
+  const { employmentStatus, applicationType, comment } = getApplicationAnswers(
+    application.answers,
+  )
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
@@ -192,9 +192,6 @@ export const Review: FC<ReviewScreenProps> = ({
         </ReviewGroup>
       )}
       <OnePaymentPerYear {...childProps} />
-      {connectedApplications.length > 0 && (
-        <ConnectedApplications {...childProps} />
-      )}
       {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>
