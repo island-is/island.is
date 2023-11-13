@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { HttpException, Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import type { ComplaintsToAlthingiOmbudsmanConfig } from './config'
 import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
@@ -52,9 +52,21 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
     )
     const attachments = [pdf, ...attachedFiles]
     const caseRequest = await applicationToCaseRequest(application, attachments)
-    await this.caseApi
+    const response = await this.caseApi
       .withMiddleware(this.tokenMiddleware)
       .createCase({ requestData: caseRequest })
+
+    /* 
+      This endpoint can return status code 200 with the succeeded property
+      as false, we need to handle that case explicitly
+    */
+    if (response.succeeded !== true) {
+      throw new HttpException(
+        response.message ?? 'Request returned an Error',
+        response.returnCode ?? 500,
+      )
+    }
+
     await this.sharedTemplateAPIService.sendEmail(
       (props) =>
         generateConfirmationEmail(
