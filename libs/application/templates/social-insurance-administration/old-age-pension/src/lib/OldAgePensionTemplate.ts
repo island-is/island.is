@@ -1,6 +1,7 @@
 import { assign } from 'xstate'
 import unset from 'lodash/unset'
 import set from 'lodash/set'
+import cloneDeep from 'lodash/cloneDeep'
 
 import {
   ApplicationTemplate,
@@ -106,6 +107,8 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'clearChildPension',
           'clearChildPensionAddChild',
           'clearChildPensionChildSupport',
+          'clearTemp',
+          'restoreAnswersFromTemp',
         ],
         meta: {
           name: States.DRAFT,
@@ -119,10 +122,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
-          onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -144,11 +143,70 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_ABORT },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_ABORT]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees', 'createTempAnswers'],
+        meta: {
+          name: States.TRYGGINGASTOFNUN_ABORT,
+          progress: 0.75,
+          status: 'inprogress',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: statesMessages.pendingTag,
+            },
+            pendingAction: {
+              title: statesMessages.tryggingastofnunSubmittedTitle,
+              content: statesMessages.tryggingastofnunSubmittedContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: statesMessages.applicationEdited,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: 'Breyta umsókn',
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGINISATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
         entry: ['assignOrganization'],
-        exit: ['clearAssignees'],
+        exit: ['clearAssignees', 'createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           progress: 0.75,
@@ -170,6 +228,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
               },
             ],
           },
+          onEntry: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -412,6 +474,57 @@ const OldAgePensionTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Copy the current answers to temp. If the user cancels the edits,
+       * we will restore the answers to their original state from temp.
+       */
+      createTempAnswers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempAnswers', cloneDeep(answers))
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the answers to their original state from temp.
+       */
+      restoreAnswersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+        const { tempAnswers } = getApplicationAnswers(answers)
+
+        if (answers.tempAnswers) {
+          Object.assign(answers, tempAnswers)
+          unset(answers, 'tempAnswers')
+        }
+
+        return context
+      }),
+      /**
+       * The edits were submitted. Clear out temp.
+       */
+      clearTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempAnswers')
+
+        return context
+      }),
       clearHouseholdSupplement: assign((context) => {
         const { application } = context
         const { connectedApplications } = getApplicationAnswers(

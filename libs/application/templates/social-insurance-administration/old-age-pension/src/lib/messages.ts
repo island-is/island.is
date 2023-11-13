@@ -580,6 +580,11 @@ export const oldAgePensionFormMessage: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
+    cancelButton: {
+      id: 'oap.application:cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
     bank: {
       id: 'oap.application:conformation.bank',
       defaultMessage: 'Banki',

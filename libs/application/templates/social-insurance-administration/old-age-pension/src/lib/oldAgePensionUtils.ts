@@ -234,6 +234,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadChildPension.notLivesWithApplicant',
   ) as FileType[]
 
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -268,6 +273,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     maintenanceAttachments,
     notLivesWithApplicantAttachments,
     taxLevel,
+    tempAnswers,
   }
 }
 
