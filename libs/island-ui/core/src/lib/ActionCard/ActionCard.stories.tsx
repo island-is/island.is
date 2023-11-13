@@ -74,16 +74,6 @@ export const WithProgressMeter = () => (
   />
 )
 
-export const RoseColoredProgressMeter = () => (
-  <ActionCard
-    heading="DB-J90"
-    tag={{
-      label: 'Take to recycling company',
-      variant: 'rose',
-    }}
-  />
-)
-
 export const ApplicationCardInProgressVariant = () => (
   <ActionCard
     date="16/03/2021"
