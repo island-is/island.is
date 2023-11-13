@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const { execSync, spawn } = require('child_process')
-const fs = require('fs')
-const yargs = require('yargs/yargs')
-const { hideBin } = require('yargs/helpers')
+import { execSync } from 'child_process'
+import yargs from 'yargs/yargs'
+import { hideBin } from 'yargs/helpers'
+import { runProxy } from './_run-aws-eks-commands' // Importing runProxy
 
 /**
  * Executes a given shell command synchronously.
@@ -50,39 +50,37 @@ function determineContainerTool() {
  * @param {Object} options - The options object containing interval and removeContainers flags.
  */
 function runProxyScript(proxy, options) {
-  const scriptPath = `./scripts/run-${proxy}-proxy.sh`
-  const containerName = getContainerNameFromScript(scriptPath, proxy)
+  const containerName = getContainerName(proxy)
 
   if (options.removeContainers) {
     removeContainer(containerName, options.removeContainers)
   }
 
   console.log(`Starting ${proxy} proxy`)
-  spawn(scriptPath, [], { detached: true, stdio: 'inherit' }).on(
-    'exit',
-    (code) => {
-      handleProxyExit(code, proxy, containerName, options)
-    },
-  )
+  const proxyArgs = {
+    namespace: options.namespace,
+    service: `proxy-${proxy}`,
+    port: options.port,
+    'proxy-port': options['proxy-port'],
+    cluster: process.env.CLUSTER || 'dev-cluster01',
+    builder: determineContainerTool(),
+  }
+
+  runProxy(proxyArgs).catch((err) => {
+    console.error(`Failed to run ${proxy} proxy: ${err.message}`)
+    process.exit(1)
+  })
 }
 
 /**
- * Extracts the container name from a given script file.
- * If the script file can't be read, the process exits with an error.
+ * Extracts the container name from a given proxy name.
+ * This is a simplified version of the original function.
  *
- * @param {string} scriptPath - The path to the script file.
  * @param {string} proxy - The name of the proxy.
- * @returns {string} The extracted container name.
+ * @returns {string} The container name.
  */
-function getContainerNameFromScript(scriptPath, proxy) {
-  try {
-    const scriptContent = fs.readFileSync(scriptPath, 'utf8')
-    const match = scriptContent.match(/(?<=--service )\S+/)
-    return match ? match[0] : proxy === 'es' ? 'es-proxy' : ''
-  } catch (error) {
-    console.error(`Error reading container name for ${proxy}`)
-    process.exit(1)
-  }
+function getContainerName(proxy) {
+  return proxy === 'es' ? 'es-proxy' : `${proxy}-proxy`
 }
 
 /**
@@ -97,40 +95,25 @@ function removeContainer(containerName, force) {
   executeCommand(`${containerTool} rm ${force ? '-f' : ''} ${containerName}`)
 }
 
-/**
- * Handles the exit of a proxy script, including restarting it after a specified interval.
- *
- * @param {number} code - The exit code of the proxy script.
- * @param {string} proxy - The name of the proxy.
- * @param {string} containerName - The name of the related container.
- * @param {Object} options - Options containing interval and removeContainers flags.
- */
-function handleProxyExit(code, proxy, containerName, options) {
-  console.log(`Exit code for ${proxy} proxy: ${code}`)
-  if (code === 1) process.exit(1)
-  console.log(`Restarting ${proxy} proxy in ${options.interval} seconds...`)
-  setTimeout(() => {
-    if (options.removeContainers) {
-      console.log(`Removing container ${containerName}...`)
-      removeContainer(containerName, options.removeContainers)
-    }
-  }, options.interval * 1000)
-}
-
-/**
- * Main function to process command line arguments and initiate proxy scripts.
- */
 async function main() {
+  const proxies = ['db', 'es', 'soffia', 'xroad', 'redis', 'all']
   const argv = yargs(hideBin(process.argv))
-    // Define options here as in the original script
+    .option('proxy', {
+      type: 'option',
+      description: 'Run only the specified proxy',
+      choices: proxies,
+      default: 'all',
+    })
+    // Add other options here as in the original script
+    .showHelpOnFail(true)
     .help().argv
 
-  const proxies = ['db', 'es', 'soffia', 'xroad', 'redis'].filter(
+  const selectedProxies = proxies.filter(
     (proxy) =>
-      argv[proxy] || (!argv.es && !argv.soffia && !argv.xroad && !argv.redis),
+      argv[proxy] || argv.proxy.includes(proxy) || argv.proxy.includes('all'),
   )
 
-  for (const proxy of proxies) {
+  for (const proxy of selectedProxies) {
     runProxyScript(proxy, {
       interval: argv.interval,
       removeContainers: argv.removeContainers,
@@ -138,4 +121,6 @@ async function main() {
   }
 }
 
-main()
+if (require.main === module) {
+  main()
+}
