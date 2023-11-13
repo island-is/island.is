@@ -9,7 +9,13 @@ import {
   Button,
   Select,
 } from '@island.is/island-ui/core'
-import { UserInfoLine, formSubmit, m } from '@island.is/service-portal/core'
+import {
+  UserInfoLine,
+  amountFormat,
+  formSubmit,
+  m,
+  numberFormat,
+} from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
@@ -37,15 +43,10 @@ export const PaymentOverview = () => {
   const [endDate, setEndDate] = useState<Date>(new Date())
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
-  const [overview, setOverview] = useState<Omit<
-    RightsPortalPaymentOverview,
-    '__typename'
-  > | null>(null)
+  const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
 
-  const [document, setDocument] = useState<Omit<
-    RightsPortalPaymentOverviewDocument,
-    '__typename'
-  > | null>(null)
+  const [document, setDocument] =
+    useState<RightsPortalPaymentOverviewDocument>()
 
   const {
     data: serviceTypes,
@@ -59,11 +60,7 @@ export const PaymentOverview = () => {
   ] = useGetPaymentOverviewLazyQuery({
     onCompleted(data) {
       const item = data.rightsPortalPaymentOverview.items[0]
-      setOverview({
-        credit: item.credit,
-        debt: item.debt,
-        bills: item.bills,
-      })
+      setOverview(item)
     },
   })
 
@@ -98,6 +95,7 @@ export const PaymentOverview = () => {
 
   useEffect(() => {
     onFetchBills()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -221,8 +219,10 @@ export const PaymentOverview = () => {
                               formatDateFns(item.date, 'dd.MM.yyyy')}
                           </T.Data>
                           <T.Data>{item.serviceType?.name}</T.Data>
-                          <T.Data>{item.totalAmount}</T.Data>
-                          <T.Data>{item.insuranceAmount}</T.Data>
+                          <T.Data>{amountFormat(item.totalAmount ?? 0)}</T.Data>
+                          <T.Data>
+                            {amountFormat(item.insuranceAmount ?? 0)}
+                          </T.Data>
                           <T.Data>
                             <Button
                               iconType="outline"

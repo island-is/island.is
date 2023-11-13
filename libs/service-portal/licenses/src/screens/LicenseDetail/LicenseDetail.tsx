@@ -102,6 +102,7 @@ const GenericLicenseQuery = gql`
           links {
             type
             label
+            name
             value
           }
         }
@@ -416,27 +417,35 @@ const LicenseDetail = () => {
             {genericLicense?.payload?.metadata?.links
               ?.map((link, index) => {
                 if (link.label && link.value) {
-                  return (
-                    <a
-                      href={link.value}
-                      target="_blank"
-                      rel="noreferrer"
-                      key={licenseType + '_link_' + index}
-                    >
-                      <Button
-                        variant="utility"
-                        size="small"
-                        icon={
+                  if (link.type) {
+                    return (
+                      <a
+                        href={link.value}
+                        target="_blank"
+                        rel="noreferrer"
+                        download={
                           link.type === GenericUserLicenseMetaLinksType.Download
-                            ? 'download'
-                            : 'open'
+                            ? link.name
+                            : ''
                         }
-                        iconType="outline"
+                        key={licenseType + '_link_' + index}
                       >
-                        {link.label}
-                      </Button>
-                    </a>
-                  )
+                        <Button
+                          variant="utility"
+                          size="small"
+                          icon={
+                            link.type ===
+                            GenericUserLicenseMetaLinksType.Download
+                              ? 'download'
+                              : 'open'
+                          }
+                          iconType="outline"
+                        >
+                          {link.label}
+                        </Button>
+                      </a>
+                    )
+                  }
                 }
                 return null
               })
