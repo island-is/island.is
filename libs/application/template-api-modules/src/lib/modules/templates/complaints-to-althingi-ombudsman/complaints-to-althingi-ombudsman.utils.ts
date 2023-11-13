@@ -43,8 +43,9 @@ const getContactInfo = (
   let contact = answers.applicant
   if (answers.complainedFor.decision == ComplainedForTypes.SOMEONEELSE) {
     contact = answers.complainedForInformation as typeof answers.applicant
+  } else {
+    contact = answers.applicant
   }
-  contact = answers.applicant
   return {
     name: contact.name,
     nationalId: contact.nationalId,

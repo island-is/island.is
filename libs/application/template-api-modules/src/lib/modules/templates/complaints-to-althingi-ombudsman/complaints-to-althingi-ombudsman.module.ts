@@ -3,7 +3,6 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman.service'
 import { COMPLAINTS_TO_ALTHINGI_OMBUDSMAN_CONFIG } from './config'
-import { FileStorageModule } from '@island.is/file-storage'
 import { ClientsAlthingiOmbudsmanModule } from '@island.is/clients/althingi-ombudsman'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 
@@ -25,7 +24,6 @@ export class ComplaintsToAlthingiOmbudsmanTemplateModule {
       module: ComplaintsToAlthingiOmbudsmanTemplateModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        FileStorageModule,
         ClientsAlthingiOmbudsmanModule,
       ],
       providers: [

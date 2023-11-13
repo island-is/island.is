@@ -15,7 +15,6 @@ export async function generateComplaintPdf(application: Application) {
     answers.complainedFor.decision === ComplainedForTypes.MYSELF
       ? 'Mig'
       : 'Annan'
-  console.log(answers.complainedForInformation)
   const doc = newDocument()
   const buffers: Buffer[] = []
 
