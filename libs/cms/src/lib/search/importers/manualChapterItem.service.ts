@@ -14,7 +14,7 @@ import { mapManualChapterItem } from '../../models/manualChapterItem.model'
 @Injectable()
 export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
   processSyncData(entries: processSyncDataInput<IManual>) {
-    logger.info('Processing sync data for manuals that contain chapter items')
+    logger.info('Processing sync data for manual chapter items')
 
     // only process manuals that contain chapter items
     return entries.filter((entry) => {
@@ -23,6 +23,8 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
         entry.fields.chapters.length > 0 &&
         entry.fields.chapters.some(
           (chapter) =>
+            chapter.fields.title &&
+            chapter.fields.slug &&
             chapter.fields.chapterItems &&
             chapter.fields.chapterItems.length > 0,
         )
@@ -31,10 +33,6 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
   }
 
   doMapping(entries: IManual[]) {
-    logger.info('Mapping manuals that contain chapter items', {
-      count: entries.length,
-    })
-
     // Gather all chapter items (assuming that no chapter item is reused between manuals)
     const chapterItems: {
       item: IOneColumnText
@@ -52,6 +50,10 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
         }
       }
     }
+
+    logger.info('Mapping manuals chapter items', {
+      count: chapterItems.length,
+    })
 
     return chapterItems
       .map<MappedData | boolean>(({ item, manual, chapter }) => {
@@ -77,6 +79,13 @@ export class ManualChapterItemSyncService implements CmsSyncProvider<IManual> {
             }),
             dateCreated: item.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
+            tags: [
+              {
+                key: manual.sys.id,
+                type: 'referencedBy',
+                value: manual.fields.title,
+              },
+            ],
           }
         } catch (error) {
           logger.warn('Failed to import manual chapter item', {

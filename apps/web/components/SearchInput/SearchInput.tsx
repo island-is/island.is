@@ -174,10 +174,18 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
   return useCallback(
     (item: SubmitType) => {
+      const query: Record<string, string | string[]> = {
+        q: item.string,
+      }
+
+      if (Router.query.referencedBy) {
+        query.referencedBy = Router.query.referencedBy
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q: item.string },
+          query,
         }),
         ...(item.type === 'link' && {
           pathname: item.string,

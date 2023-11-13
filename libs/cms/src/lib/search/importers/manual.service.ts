@@ -9,7 +9,9 @@ import { createTerms, extractStringsFromObject } from './utils'
 import { mapManual } from '../../models/manual.model'
 
 export const isManual = (entry: Entry<IManualFields>): entry is IManual =>
-  entry.sys.contentType.sys.id === 'manual' && !!entry.fields.title
+  entry.sys.contentType.sys.id === 'manual' &&
+  !!entry.fields.title &&
+  !!entry.fields.slug
 
 @Injectable()
 export class ManualSyncService implements CmsSyncProvider<IManual> {

@@ -84,10 +84,6 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
             ...AssetFields
             ...ImageFields
           }
-          link {
-            url
-            text
-          }
         }
       }
     }

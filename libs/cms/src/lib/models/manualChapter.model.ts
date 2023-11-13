@@ -2,9 +2,11 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { IManual, IManualChapter } from '../generated/contentfulTypes'
 import { CacheField } from '@island.is/nest/graphql'
-import { OneColumnText } from './oneColumnText.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
-import { mapManualChapterItem } from './manualChapterItem.model'
+import {
+  ManualChapterItem,
+  mapManualChapterItem,
+} from './manualChapterItem.model'
 
 @ObjectType()
 class ManualChapterChangelog {
@@ -35,8 +37,8 @@ export class ManualChapter {
   @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
 
-  @CacheField(() => [OneColumnText])
-  chapterItems!: OneColumnText[]
+  @CacheField(() => [ManualChapterItem])
+  chapterItems!: ManualChapterItem[]
 
   @CacheField(() => ManualChapterChangelog, { nullable: true })
   changelog?: ManualChapterChangelog | null
