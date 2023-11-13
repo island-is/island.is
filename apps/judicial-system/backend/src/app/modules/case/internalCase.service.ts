@@ -4,6 +4,7 @@ import { Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -444,6 +445,17 @@ export class InternalCaseService {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
       }
+    }
+
+    // If case is marked with heightened security, there needs to be a valid prosecutor
+    // assigned to it so that it doesn't get lost in the system
+    if (
+      caseToCreate.isHeightenedSecurityLevel &&
+      (!caseToCreate.prosecutorNationalId || !prosecutorId)
+    ) {
+      throw new BadRequestException(
+        'A valid prosecutor is required for heightened security cases',
+      )
     }
 
     return this.sequelize.transaction(async (transaction) => {

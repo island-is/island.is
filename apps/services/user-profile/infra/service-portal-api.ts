@@ -32,6 +32,8 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       EMAIL_FROM_NAME: '/k8s/service-portal/api/EMAIL_FROM_NAME',
       EMAIL_REPLY_TO: '/k8s/service-portal/api/EMAIL_REPLY_TO',
       EMAIL_REPLY_TO_NAME: '/k8s/service-portal/api/EMAIL_REPLY_TO_NAME',
+      ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
+      ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
@@ -44,6 +46,7 @@ export const serviceSetup = (): ServiceBuilder<'service-portal-api'> =>
       max: 30,
       min: 2,
     })
+    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
       internal: {
         host: {

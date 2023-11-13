@@ -1,5 +1,3 @@
-import dynamic from 'next/dynamic'
+import Header from './DefaultHeader'
 
-export const DefaultHeader = dynamic(() => import('./DefaultHeader'), {
-  ssr: true,
-})
+export const DefaultHeader = Header
