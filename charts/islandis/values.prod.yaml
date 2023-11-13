@@ -49,6 +49,7 @@ air-discount-scheme-api:
         - host: 'loftbru.island.is'
           paths:
             - '/api/graphql'
+  jobs: []
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -158,6 +159,7 @@ air-discount-scheme-backend:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  jobs: []
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
@@ -231,6 +233,7 @@ air-discount-scheme-web:
         - host: 'loftbru.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
@@ -409,6 +412,7 @@ api:
         - host: 'www.island.is'
           paths:
             - '/api'
+  jobs: []
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
@@ -668,6 +672,7 @@ application-system-api:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+  jobs: []
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
@@ -788,6 +793,7 @@ application-system-api-worker:
     name: 'application-system-api'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
@@ -878,6 +884,7 @@ application-system-form:
         - host: 'www.island.is'
           paths:
             - '/umsoknir'
+  jobs: []
   namespace: 'application-system'
   pvcs: []
   replicaCount:
@@ -947,6 +954,7 @@ consultation-portal:
         - host: 'www.island.is'
           paths:
             - '/samradsgatt'
+  jobs: []
   namespace: 'consultation-portal'
   pvcs: []
   replicaCount:
@@ -1006,6 +1014,7 @@ contentful-translation-extension:
         - host: 'contentful-translation-extension.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'contentful-translation-extension'
   pvcs: []
   replicaCount:
@@ -1080,6 +1089,7 @@ download-service:
         - host: 'api.island.is'
           paths:
             - '/download'
+  jobs: []
   namespace: 'download-service'
   pvcs: []
   replicaCount:
@@ -1188,6 +1198,7 @@ endorsement-system-api:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+  jobs: []
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
@@ -1300,6 +1311,7 @@ icelandic-names-registry-backend:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
+  jobs: []
   namespace: 'icelandic-names-registry'
   pvcs: []
   replicaCount:
@@ -1357,6 +1369,7 @@ island-ui-storybook:
         - host: 'ui.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'storybook'
   pvcs: []
   replicaCount:
@@ -1425,6 +1438,7 @@ license-api:
         - host: 'license-api-xrd.internal.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'license-api'
   pvcs: []
   replicaCount:
@@ -1530,6 +1544,7 @@ portals-admin:
         - host: 'www.island.is'
           paths:
             - '/stjornbord'
+  jobs: []
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
@@ -1618,6 +1633,7 @@ regulations-admin-backend:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+  jobs: []
   namespace: 'regulations-admin'
   pvcs: []
   replicaCount:
@@ -1742,6 +1758,7 @@ search-indexer-service:
     secrets:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
+  jobs: []
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
@@ -1822,6 +1839,7 @@ service-portal:
         - host: 'www.island.is'
           paths:
             - '/minarsidur'
+  jobs: []
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
@@ -1917,6 +1935,7 @@ service-portal-api:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+  jobs: []
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
@@ -2009,6 +2028,7 @@ services-documents:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+  jobs: []
   namespace: 'services-documents'
   pvcs: []
   replicaCount:
@@ -2076,6 +2096,7 @@ services-sessions:
         - host: 'sessions-api.internal.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'services-sessions'
   pvcs:
     - accessModes: 'ReadWriteMany'
@@ -2143,6 +2164,7 @@ services-sessions-geoip-job:
     name: 'services-sessions'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'services-sessions'
   podSecurityContext:
     fsGroup: 65534
@@ -2242,6 +2264,7 @@ services-sessions-worker:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+  jobs: []
   namespace: 'services-sessions'
   podSecurityContext:
     fsGroup: 65534
@@ -2313,6 +2336,7 @@ skilavottord-web:
         - host: 'www.island.is'
           paths:
             - '/app/skilavottord/'
+  jobs: []
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
@@ -2405,6 +2429,7 @@ skilavottord-ws:
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+  jobs: []
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
@@ -2481,6 +2506,7 @@ user-notification:
         - host: 'user-notification-xrd.internal.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -2549,6 +2575,7 @@ user-notification-worker:
     name: 'services-user-notification'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -2631,6 +2658,7 @@ web:
         - host: 'www.island.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'islandis'
   pvcs: []
   replicaCount:
@@ -2691,6 +2719,7 @@ xroad-collector:
     name: 'services-xroad-collector'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534

@@ -71,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -179,6 +180,7 @@ judicial-system-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -269,6 +271,7 @@ judicial-system-message-handler:
     name: 'judicial-system-message-handler'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -331,6 +334,7 @@ judicial-system-scheduler:
     name: 'judicial-system-scheduler'
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
     tag: 'latest_master'
+  jobs: []
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
@@ -393,6 +397,7 @@ judicial-system-web:
         - host: 'judicial-system.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
@@ -456,6 +461,7 @@ judicial-system-xrd-api:
         - host: 'judicial-system-xrd-api.internal.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
