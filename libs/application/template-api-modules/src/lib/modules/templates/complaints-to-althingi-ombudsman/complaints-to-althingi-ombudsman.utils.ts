@@ -83,7 +83,7 @@ export const gatherContacts = (
     phone: '',
     address: '',
     city: '',
-    idnumber: '',
+    idnumber: '0000000001',
     postalCode: '',
     role: ContactRole.GOVERNMENT,
     primary: 'false',
