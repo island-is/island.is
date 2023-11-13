@@ -38,24 +38,20 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
     <>
       <Box className={styles.tabList}>
         {items?.map((item, index) => (
-          <>
-            <FocusableBox
-              component={Button}
-              type="button"
-              key={index}
-              id={item.path}
-              justifyContent="center"
-              aria-label={formatMessage(item.name)}
-              className={cn(styles.tab, {
-                [styles.tabSelected]: item.active,
-              })}
-              onClick={
-                item.path ? () => tabChangeHandler(item.path) : undefined
-              }
-            >
-              {formatMessage(item.name)}
-            </FocusableBox>
-          </>
+          <FocusableBox
+            component={Button}
+            type="button"
+            key={index}
+            id={item.path}
+            justifyContent="center"
+            aria-label={formatMessage(item.name)}
+            className={cn(styles.tab, {
+              [styles.tabSelected]: item.active,
+            })}
+            onClick={item.path ? () => tabChangeHandler(item.path) : undefined}
+          >
+            {formatMessage(item.name)}
+          </FocusableBox>
         ))}
       </Box>
       {activeItem && activeItem.path && isMobile && (

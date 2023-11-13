@@ -12,7 +12,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  LinkV2,
   SkeletonLoader,
   Stack,
   Text,
@@ -51,6 +50,7 @@ export const HealthOverview = () => {
       }
     }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
