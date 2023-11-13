@@ -278,6 +278,10 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/templates/driving-license-book-update-instructor/                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
 
+/libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
+/libs/clients/directorate-of-immigration/                                                                @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
 
