@@ -3,11 +3,10 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/signature-collection/signature-list-signing/src",
   "projectType": "library",
-  "tags": ["scope:application-system", "lib:application-system"],
+  "generators": {},
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
           "libs/application/templates/signature-collection/signature-list-signing/**/*.{ts,tsx,js,jsx}"
@@ -16,19 +15,18 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": [
-        "{workspaceRoot}/coverage/libs/application/templates/signature-collection/signature-list-signing"
-      ],
       "options": {
         "jestConfig": "libs/application/templates/signature-collection/signature-list-signing/jest.config.ts",
         "passWithNoTests": true
-      }
+      },
+      "outputs": ["{workspaceRoot}/coverage/libs/application/templates/signature-collection/signature-list-signing"]
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/signature-collection/signature-list-signing/src/**/*.{js,ts,tsx}'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/signature-collection/signature-list-signing/src/lib/messages.ts"
       }
     }
-  }
+  },
+  "tags": ["lib:application-system", "scope:application-system"]
 }
