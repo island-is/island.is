@@ -1,6 +1,5 @@
 import { Table as T, Icon } from '@island.is/island-ui/core'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
-import { RightsPortalDrug } from '@island.is/api/schema'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../../../lib/messages'
