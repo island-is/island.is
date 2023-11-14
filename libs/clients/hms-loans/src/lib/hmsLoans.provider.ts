@@ -8,6 +8,7 @@ import {
 } from '@island.is/nest/config'
 import { Configuration, LibraApi } from '../../gen/fetch'
 import { HmsLoansClientConfig } from './hmsLoans.config'
+import { HmsScope } from '@island.is/auth/scopes'
 
 export const HmsLoansApiProvider: Provider<LibraApi> = {
   provide: LibraApi,
@@ -29,7 +30,7 @@ export const HmsLoansApiProvider: Provider<LibraApi> = {
                 issuer: idsClientConfig.issuer,
                 clientId: idsClientConfig.clientId,
                 clientSecret: idsClientConfig.clientSecret,
-                scope: config.tokenExchangeScope,
+                scope: [HmsScope.loans],
               }
             : undefined,
         }),
