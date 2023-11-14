@@ -1,4 +1,3 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -14,6 +13,7 @@ import { Features } from '@island.is/feature-flags'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
+import { WeekLifeCycle } from './utils'
 
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -32,7 +32,7 @@ const SignListTemplate: ApplicationTemplate<
         meta: {
           name: m.applicationName.defaultMessage,
           status: 'draft',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: WeekLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -70,10 +70,7 @@ const SignListTemplate: ApplicationTemplate<
           name: 'Done',
           status: 'completed',
           progress: 1,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: false,
-          },
+          lifecycle: WeekLifeCycle,
           /* Add when ready
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
