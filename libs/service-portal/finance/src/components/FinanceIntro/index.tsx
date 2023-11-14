@@ -1,10 +1,9 @@
-import React, { FC } from 'react'
 import { Column, Columns, GridContainer, Text } from '@island.is/island-ui/core'
 
 interface Props {
   text: string
 }
-const FinanceIntro: FC<React.PropsWithChildren<Props>> = ({ text }) => {
+const FinanceIntro = ({ text }: Props) => {
   return (
     <GridContainer>
       <Columns space={[2, 2, 3, 3]} collapseBelow="md">

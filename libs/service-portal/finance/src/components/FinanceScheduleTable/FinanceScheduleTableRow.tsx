@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import {
   ExpandRow,
   formSubmit,
@@ -16,9 +15,7 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
-  paymentSchedule,
-}) => {
+const FinanceScheduleTableRow = ({ paymentSchedule }: Props) => {
   const [getPaymentScheduleById, { loading, error, ...detailsQuery }] =
     useGetPaymentScheduleByIdLazyQuery()
   useNamespaces('sp.finance-schedule')

@@ -1,6 +1,14 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  fetchDocument: {
+    id: 'sp.health:fetch-document',
+    defaultMessage: 'Sækja skjal',
+  },
+  errorFetchPaymentInfo: {
+    id: 'sp.health:error-fetch-payment-info',
+    defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
+  },
   from: {
     id: 'sp.health:from',
     defaultMessage: 'Frá',
@@ -72,7 +80,12 @@ export const messages = defineMessages({
   paymentParticationExplination: {
     id: 'sp.health:payment-partication-info',
     defaultMessage:
-      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði 4.694 kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+  },
+  paymentParticationExplinationFooter: {
+    id: 'sp.health:payment-partication-info-footer',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
   },
   paymentParticationFooterExplination: {
     id: 'sp.health:payment-partication-footer-info',
@@ -95,6 +108,10 @@ export const messages = defineMessages({
   readAboutPaymentParticipationSystems: {
     id: 'sp.health:read-about-payment-participation-systems',
     defaultMessage: 'Lesa um greiðsluþátttökukerfi',
+  },
+  readAboutPaymentParticipationSystemsLink: {
+    id: 'sp.health:read-about-payment-participation-systems-link',
+    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
   },
   paymentOverview: {
     id: 'sp.health:payment-overview',
@@ -573,6 +590,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
   },
+  healthTooltip: {
+    id: 'service.portal:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
+  },
   healthCenterListSearchPlaceholder: {
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -669,6 +691,10 @@ export const messages = defineMessages({
   medicinePriceList: {
     id: 'sp.health:medicine-price-list',
     defaultMessage: 'Lyfjaverðskrá',
+  },
+  medicinePriceListLink: {
+    id: 'sp.health:medicine-price-list-link',
+    defaultMessage: 'https://rg.sjukra.is/lyfjaverdskra',
   },
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
