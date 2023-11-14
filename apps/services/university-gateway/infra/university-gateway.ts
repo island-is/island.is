@@ -55,9 +55,6 @@ export const serviceSetup =
           },
         ],
         postgres: postgresInfo,
-        envs: {
-          NO_UPDATE_NOTIFIER: 'true',
-        },
       })
       .ingress({
         primary: {
