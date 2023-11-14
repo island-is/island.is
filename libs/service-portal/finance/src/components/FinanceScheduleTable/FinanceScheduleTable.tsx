@@ -4,9 +4,9 @@ import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
-import { PaymentSchedule } from '@island.is/api/schema'
 import FinanceScheduleTableRow from './FinanceScheduleTableRow'
 import { m } from '../../lib/messages'
+import { PaymentSchedule } from '@island.is/service-portal/graphql'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
