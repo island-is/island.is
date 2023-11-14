@@ -10,16 +10,17 @@ export class HmsLoansClientService {
     this.loansApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getHmsLoansLoanOverview(user: User) {
+    /* TODO: Will be implemented in v2 api soon
     return this.apiWithAuth(user).apiVversionLibraLanayfirlitPost({
-      version: '1',
-      kennitala: user.nationalId,
+      version: '2',
     })
+    */
+    return null
   }
 
   async getHmsLoansPaymentOverview(user: User) {
     return this.apiWithAuth(user).apiVversionLibraGreidsluyfirlitPost({
-      version: '1',
-      kennitala: user.nationalId,
+      version: '2',
     })
   }
 }

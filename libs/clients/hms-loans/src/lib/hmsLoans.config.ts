@@ -18,6 +18,7 @@ export const HmsLoansClientConfig = defineConfig({
     ),
     tokenExchangeScope: env.optionalJSON('XROAD_HMS_LOANS_SCOPE') ?? [
       HmsScope.loans,
+      'api_resource.scope',
     ],
     fetchTimeout: env.optionalJSON('XROAD_HMS_LOANS_TIMEOUT') ?? 20000,
   }),

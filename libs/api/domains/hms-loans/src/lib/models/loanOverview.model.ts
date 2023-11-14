@@ -27,8 +27,8 @@ export class Medgreidendur {
   medGreidandi?: string | null
 }
 
-@ObjectType('HmsLoansLoanOverview')
-export class LoanOverview {
+@ObjectType('HmsLoansLoan')
+export class Loan {
   @Field(() => Number, { nullable: true })
   masterloanid?: number
 
