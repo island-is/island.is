@@ -275,10 +275,7 @@
   "components": {
     "schemas": {
       "ChargeType_DT": {
-        "required": [
-          "ID",
-          "name"
-        ],
+        "required": ["ID", "name"],
         "type": "object",
         "properties": {
           "ID": {
@@ -290,10 +287,7 @@
         }
       },
       "errors": {
-        "required": [
-          "detail",
-          "title"
-        ],
+        "required": ["detail", "title"],
         "type": "object",
         "properties": {
           "type": {
@@ -432,12 +426,7 @@
         }
       },
       "records": {
-        "required": [
-          "message",
-          "more",
-          "nextKey",
-          "records"
-        ],
+        "required": ["message", "more", "nextKey", "records"],
         "type": "object",
         "properties": {
           "message": {
@@ -458,9 +447,7 @@
         }
       },
       "chargeItemSubjectsByYearnationalIdassessmentYearchargeTypeID_GET_response": {
-        "required": [
-          "resultSubjectsByYearChargeType"
-        ],
+        "required": ["resultSubjectsByYearChargeType"],
         "type": "object",
         "properties": {
           "error": {
@@ -472,9 +459,7 @@
         }
       },
       "GetAssessmentYears_DT": {
-        "required": [
-          "year"
-        ],
+        "required": ["year"],
         "type": "object",
         "properties": {
           "year": {
@@ -486,9 +471,7 @@
         }
       },
       "ResultChargetypeByYearDetails_DT": {
-        "required": [
-          "chargeType"
-        ],
+        "required": ["chargeType"],
         "type": "object",
         "properties": {
           "chargeType": {
@@ -527,9 +510,7 @@
         }
       },
       "recordsByYearnationalIdassessmentYearchargeTypeIDchargeItemSubjectperiod_GET_response": {
-        "required": [
-          "resultRecordsByChargeTypePeriodSubject"
-        ],
+        "required": ["resultRecordsByChargeTypePeriodSubject"],
         "type": "object",
         "properties": {
           "error": {
@@ -541,12 +522,7 @@
         }
       },
       "periods": {
-        "required": [
-          "amount",
-          "description",
-          "lastMoveDate",
-          "period"
-        ],
+        "required": ["amount", "description", "lastMoveDate", "period"],
         "type": "object",
         "properties": {
           "period": {
@@ -565,9 +541,7 @@
         }
       },
       "ResultChargetypeByYear_DT": {
-        "required": [
-          "chargeType"
-        ],
+        "required": ["chargeType"],
         "type": "object",
         "properties": {
           "chargeType": {
@@ -579,11 +553,7 @@
         }
       },
       "ProblemDetails_DT": {
-        "required": [
-          "detail",
-          "status",
-          "title"
-        ],
+        "required": ["detail", "status", "title"],
         "type": "object",
         "properties": {
           "type": {
@@ -615,9 +585,7 @@
         }
       },
       "chargeTypesByYearnationalIdassessmentYear_GET_response": {
-        "required": [
-          "resultChargeTypeByYear"
-        ],
+        "required": ["resultChargeTypeByYear"],
         "type": "object",
         "properties": {
           "error": {
@@ -629,9 +597,7 @@
         }
       },
       "assessmentYearsnationalId_GET_response": {
-        "required": [
-          "ResultYears"
-        ],
+        "required": ["ResultYears"],
         "type": "object",
         "properties": {
           "error": {
@@ -643,11 +609,7 @@
         }
       },
       "ResultChargeTypeByYearItemSubject_DT": {
-        "required": [
-          "chargeItemSubjects",
-          "more",
-          "nextKey"
-        ],
+        "required": ["chargeItemSubjects", "more", "nextKey"],
         "type": "object",
         "properties": {
           "chargeItemSubjects": {
@@ -667,9 +629,7 @@
         }
       },
       "chargeTypesDetailsByYearnationalIdassessmentYearchargeTypeID_GET_response": {
-        "required": [
-          "resultChargeTypeDetails"
-        ],
+        "required": ["resultChargeTypeDetails"],
         "type": "object",
         "properties": {
           "error": {
