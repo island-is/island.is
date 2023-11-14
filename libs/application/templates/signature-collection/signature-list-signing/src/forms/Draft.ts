@@ -6,11 +6,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  Form,
-  FormModes,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
 import { Application } from '@island.is/api/schema'
