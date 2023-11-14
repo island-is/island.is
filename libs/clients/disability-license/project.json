@@ -19,11 +19,12 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/disability-license/gen/fetch -i libs/clients/disability-license/src/clientConfig.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

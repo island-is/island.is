@@ -46,17 +46,16 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PoliceRequestAccordionItem,
-  RestrictionTags,
+  ReopenModal,
   RulingAccordionItem,
-  RulingDateLabel,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
+import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
@@ -77,7 +76,6 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ReopenModal from './Components/ReopenModal/ReopenModal'
 import ShareCase from './Components/ShareCase/ShareCase'
 import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
@@ -451,19 +449,7 @@ export const SignedVerdictOverview: React.FC = () => {
                 {formatMessage(core.back)}
               </Button>
             </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader />
-                {workingCase.rulingDate && (
-                  <Box>
-                    <RulingDateLabel rulingDate={workingCase.rulingDate} />
-                  </Box>
-                )}
-              </Box>
-              <Box display="flex" flexDirection="column">
-                <RestrictionTags workingCase={workingCase} />
-              </Box>
-            </Box>
+            <CaseTitleInfoAndTags />
             {isRestrictionCase(workingCase.type) &&
               workingCase.decision !==
                 CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN &&

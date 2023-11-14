@@ -11,10 +11,9 @@
           "lint",
           "test",
           "e2e",
-          "schemas/build-openapi",
-          "schemas/openapi-generator",
-          "schemas/build-graphql-schema",
-          "schemas/codegen",
+          "codegen/backend-client",
+          "codegen/backend-schema",
+          "codegen/frontend-client",
           "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
@@ -111,6 +110,27 @@
     },
     "external-test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
+    },
+    "codegen/backend-client": {
+      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
+      "inputs": ["schema-files", "^schema-files"]
+    },
+    "codegen/backend-schema": {
+      "dependsOn": [
+        "codegen/backend-client",
+        "^codegen/backend-client",
+        "^codegen/backend-schema"
+      ],
+      "inputs": ["default", "^production"]
+    },
+    "codegen/frontend-client": {
+      "dependsOn": ["codegen/backend-schema"],
+      "inputs": ["graphql-files"],
+      "outputs": [
+        "{projectRoot}/**/schema.{ts,tsx}",
+        "{projectRoot}/**/fragmentTypes.json",
+        "{projectRoot}/**/*.generated.ts"
+      ]
     }
   },
   "namedInputs": {
@@ -130,6 +150,16 @@
       "!{projectRoot}/tsconfig.spec.json",
       "!{projectRoot}/jest.config.[jt]s",
       "!{projectRoot}/src/test-setup.[jt]s"
+    ],
+    "graphql-files": [
+      "{workspaceRoot}/apps/api/src/api.graphql",
+      "{projectRoot}/codegen.yml",
+      "{projectRoot}/**/*.graphql"
+    ],
+    "schema-files": [
+      "{projectRoot}/**/*openapi.yaml",
+      "{projectRoot}/**/openapi.json",
+      "{projectRoot}/**/clientConfig.json"
     ]
   }
 }

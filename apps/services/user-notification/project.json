@@ -70,14 +70,12 @@
         "cwd": "apps/services/user-notification"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/services/user-notification/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
   },

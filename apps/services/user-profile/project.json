@@ -62,7 +62,8 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/user-profile/jest.config.ts",
-        "passWithNoTests": true
+        "passWithNoTests": true,
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-profile"]
     },
@@ -73,18 +74,12 @@
         "cwd": "apps/services/user-profile"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS"
-      }
-    },
-    "schemas/build-openapi-internal": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/user-profile/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -104,7 +99,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": ["sequelize-cli db:seed:all --seeders-path ./seeders"],
-        "parallel": false,
         "cwd": "apps/services/user-profile/"
       }
     },

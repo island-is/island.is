@@ -89,12 +89,12 @@
         "parallel": false
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/sessions/tsconfig.app.json apps/services/sessions/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/sessions/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

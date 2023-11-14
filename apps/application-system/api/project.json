@@ -126,14 +126,12 @@
         "cwd": "apps/application-system/api"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/application-system/api/tsconfig.app.json apps/application-system/api/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/application-system/api/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
@@ -164,9 +162,7 @@
           "yarn get-secrets application-system-api",
           "yarn nx run application-system-api:dev-services",
           "yarn nx run application-system-api:migrate",
-          "yarn nx schemas/build-openapi application-system-api",
-          "yarn nx schemas/openapi-generator api-domains-application",
-          "yarn nx schemas/build-graphql-schema api",
+          "yarn nx codegen/backend-schema api",
           "yarn nx run services-user-profile:dev-init"
         ],
         "parallel": false

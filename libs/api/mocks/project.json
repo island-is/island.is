@@ -19,7 +19,7 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/mocks"]
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [

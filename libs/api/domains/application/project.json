@@ -21,13 +21,14 @@
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/application"]
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": ["{workspaceRoot}/libs/api/domains/application/gen/fetch"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["application-system-api"],
   "tags": ["lib:api", "scope:api"]
 }

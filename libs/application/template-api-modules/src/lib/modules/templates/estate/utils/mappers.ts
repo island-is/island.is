@@ -28,6 +28,7 @@ const estateMemberMapper = (element: EstateMember) => {
     enabled: true,
     phone: '',
     email: '',
+    relationWithApplicant: '',
     advocate: element.advocate
       ? {
           ...element.advocate,
@@ -36,6 +37,12 @@ const estateMemberMapper = (element: EstateMember) => {
         }
       : undefined,
   }
+}
+
+export const trueOrHasYes = (element: string | boolean): string => {
+  const elementString = element.toString().toLowerCase()
+  const value = elementString === 'yes' || elementString === 'true'
+  return value.toString()
 }
 
 export const estateTransformer = (estate: EstateInfo): EstateData => {
@@ -80,6 +87,7 @@ export const expandAssetFrames = (
       description: assetFrame.description ?? '',
       enabled: assetFrame.enabled ?? true,
       marketValue: assetFrame.marketValue ?? '',
+      share: assetFrame.share ?? '',
     })
   })
 
@@ -111,12 +119,19 @@ export const expandEstateMembers = (
       dateOfBirth: member.dateOfBirth ?? '',
       enabled: member.enabled ?? true,
       email: member.email ?? '',
-      foreignCitizenShip: member.foreignCitizenShip ?? 'no',
       // TODO: investigate better why nationalId and SSN is required
       nationalId: member.nationalId ?? '',
       ssn: member.ssn ?? '',
       phone: member.phone ?? '',
-      relation: member.relation ?? 'Óþekkt',
+      relation: member.relation ?? '',
+      relationWithApplicant: member.relationWithApplicant ?? '',
+      advocate: {
+        address: member.advocate?.address ?? '',
+        email: member.advocate?.email ?? '',
+        name: member.advocate?.name ?? '',
+        nationalId: member.advocate?.nationalId ?? '',
+        phone: member.advocate?.phone ?? '',
+      },
     })
   })
   return expandedMembers

@@ -97,4 +97,6 @@ apps/**/index.html
 # Next.js
 .next
 
-.nx/cache
+
+.nx/
+

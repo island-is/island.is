@@ -90,6 +90,12 @@
         "buildTarget": "financial-aid-web-veita:build:production"
       }
     },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/financial-aid/web-veita/codegen.yml"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {

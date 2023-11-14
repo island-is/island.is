@@ -22,7 +22,19 @@
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/template-api-modules"
       ]
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        ]
+      },
+      "outputs": [
+        "{projectRoot}/src/lib/modules/templates/general-petition/gen/fetch"
+      ]
     }
   },
+  "implicitDependencies": ["services-endorsements-api"],
   "tags": ["lib:application-system-api", "scope:application-system-api"]
 }

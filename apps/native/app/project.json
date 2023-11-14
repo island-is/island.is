@@ -32,12 +32,13 @@
         "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/graphql/types/schema.ts"]
     },
     "docker-native": {}
   },

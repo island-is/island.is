@@ -75,14 +75,12 @@
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/regulations-admin-backend/tsconfig.app.json apps/services/regulations-admin-backend/src/buildOpenApi.ts"
       },
-      "outputs": [
-        "{workspaceRoot}/apps/services/regulations-admin-backend/src/openapi.yaml"
-      ]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

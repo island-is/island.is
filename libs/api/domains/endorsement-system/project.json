@@ -28,8 +28,7 @@
       "options": {
         "commands": [
           "yarn nx run services-endorsements-api:dev-init $NX_OPTIONS",
-          "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn nx run api-domains-endorsement-system:schemas/openapi-generator $NX_OPTIONS"
+          "yarn nx run api-domains-endorsement-system:codegen/backend-client $NX_OPTIONS"
         ],
         "parallel": false
       }
@@ -44,15 +43,14 @@
         "parallel": true
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/api/domains/endorsement-system/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
       },
-      "outputs": [
-        "{workspaceRoot}/libs/api/domains/endorsement-system/gen/fetch"
-      ]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-endorsements-api"],
   "tags": ["lib:api", "scope:api"]
 }
