@@ -4,6 +4,22 @@ const yargs = require('yargs')
 const { execSync } = require('child_process')
 const { defaultProvider } = require('@aws-sdk/credential-provider-node')
 
+// Compare two objects and print the diff. Ignore access keys and tokens.
+function diffObjects(a, b) {
+  const diff = {}
+  for (const key of Object.keys(a)) {
+    if (key.match(/(key|token)/i)) {
+      continue
+    }
+    if (key === 'Expiration' && a[key] !== b[key]) {
+      diff[key] = [a[key], b[key]]
+    } else if (a[key] !== b[key]) {
+      diff[key] = [a[key], b[key]]
+    }
+  }
+  return !diff
+}
+
 /**
  * Asynchronously retrieves AWS credentials for a given profile.
  * If the credentials cannot be loaded, an error message is logged and the process is terminated.
@@ -32,6 +48,36 @@ const error = (errorMessage) => {
   process.exit(1)
 }
 
+async function mkRunCommand({
+  profile,
+  service,
+  builder,
+  cluster,
+  namespace,
+  port,
+  proxyPort,
+  containerImage,
+}) {
+  const credentials = await getCredentials(profile)
+  const cmd = [
+    builder,
+    `run`,
+    `--rm`,
+    `--name ${service}`,
+    `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
+    `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
+    `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
+    `-e CLUSTER="${cluster}"`,
+    `-e TARGET_SVC="${service}"`,
+    `-e TARGET_NAMESPACE="${namespace}"`,
+    `-e TARGET_PORT="${port}"`,
+    `-e PROXY_PORT="${proxyPort}"`,
+    `-p "${proxyPort}:${proxyPort}"`,
+    containerImage,
+  ]
+  return cmd
+}
+
 /**
  * This function builds a Docker image using the provided parameters.
  * It logs the start of the process and then executes a Docker build command.
@@ -45,9 +91,15 @@ function buildDockerImage(containerImage, builder, target) {
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
   const dirnameSafe = `"${__dirname}"`
-  execSync(
-    `${builder} build -f ${dirnameSafe}/Dockerfile.proxy --target ${target} -t ${containerImage} ${dirnameSafe}`,
-  )
+  const buildCmd = [
+    builder,
+    'build',
+    `-f ${dirnameSafe}/Dockerfile.proxy`,
+    `--target ${target}`,
+    `-t ${containerImage}`,
+    dirnameSafe,
+  ]
+  execSync(buildCmd.join(' '))
 }
 
 /**
@@ -66,15 +118,41 @@ function buildDockerImage(containerImage, builder, target) {
  * @param {string} args.cluster - The cluster in which the service is located.
  * @param {string} args.namespace - The namespace in which the service is located.
  */
-const restartService = async (args) => {
-  const credentials = await getCredentials(args.profile)
-  let containerImage = `restart-${args.service}`
+const restartService = async ({
+  profile,
+  service,
+  builder,
+  cluster,
+  namespace,
+}) => {
+  const credentials = await getCredentials(profile)
+  let containerImage = `restart-${service}`
   buildDockerImage(containerImage, `restart-deployment`)
   console.log(`Now running the restart - \uD83D\uDE31`)
-  execSync(
-    `${args.builder} run --rm --name ${args.service} -e AWS_ACCESS_KEY_ID=${credentials.accessKeyId} -e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey} -e AWS_SESSION_TOKEN=${credentials.sessionToken} -e CLUSTER=${args.cluster} -e TARGET_SVC=${args.service} -e TARGET_NAMESPACE=${args.namespace} ${containerImage}`,
-    { stdio: 'inherit' },
-  )
+  const runCmd = [
+    builder,
+    'run',
+    '--rm',
+    `--name ${service}`,
+    `-e AWS_ACCESS_KEY_ID=${credentials.accessKeyId}`,
+    `-e AWS_SECRET_ACCESS_KEY=${credentials.secretAccessKey}`,
+    `-e AWS_SESSION_TOKEN=${credentials.sessionToken}`,
+    `-e CLUSTER=${cluster}`,
+    `-e TARGET_SVC=${service}`,
+    `-e TARGET_NAMESPACE=${namespace}`,
+    containerImage,
+  ]
+  if (
+    !diffObjects(
+      mkRunCommand({ profile, service, builder, cluster, namespace }),
+      runCmd,
+    )
+  ) {
+    console.error(
+      'New run command does not match previous run command, debug plz...',
+    )
+  }
+  execSync(runCmd.join(' '), { stdio: 'inherit' })
 }
 
 /**
@@ -102,9 +180,7 @@ const runProxy = async ({
   namespace,
   port,
   proxyPort,
-  'proxy-port': proxyPortDash,
 }) => {
-  proxyPort = proxyPort || proxyPortDash
   const credentials = await getCredentials(profile)
   const dockerBuild = `proxy-${service}`
   buildDockerImage(dockerBuild, builder, 'proxy')
@@ -112,23 +188,16 @@ const runProxy = async ({
   console.log(
     `Proxy will be listening on http://localhost:${proxyPort} - \uD83D\uDC42`,
   )
-  const runCmd = [
+  const runCmd = await mkRunCommand({
+    profile,
+    service,
     builder,
-    `run`,
-    `--name ${service}`,
-    `--rm`,
-    `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
-    `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
-    `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
-    `-e CLUSTER="${cluster}"`,
-    `-e TARGET_SVC="${service}"`,
-    `-e TARGET_NAMESPACE="${namespace}"`,
-    `-e TARGET_PORT="${port}"`,
-    `-e PROXY_PORT="${proxyPort}"`,
-    `-p ${proxyPort}:${proxyPort}`,
-    dockerBuild,
-  ]
-  // console.debug('Args: ' + runCmd.join(' '))
+    cluster,
+    namespace,
+    port,
+    proxyPort,
+    containerImage: dockerBuild,
+  })
   try {
     execSync(runCmd.join(' '), { stdio: 'inherit' })
   } catch (err) {
@@ -202,6 +271,9 @@ async function main() {
             .demandOption('service', 'Name of the Kubernetes service'),
         restartService,
       )
+      .parserConfiguration({
+        'camel-case-expansion': true,
+      })
       .showHelpOnFail(true)
       .demandCommand().argv
   } catch (e) {
