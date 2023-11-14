@@ -7,7 +7,7 @@ const { defaultProvider } = require('@aws-sdk/credential-provider-node')
 function diffObjects(a, b) {
   const diff = { 'diff+': {}, 'diff-': {} }
   if (a === b) {
-    return diff
+    return null
   }
   if (typeof a !== typeof b) {
     diff['diff-']['type'] = typeof a
@@ -22,7 +22,6 @@ function diffObjects(a, b) {
     }
     a = [...a].sort()
     b = [...b].sort()
-    console.log('Sorted arrays', { a, b })
   }
 
   const secretPattern = /(key|token|secret)/i
@@ -40,6 +39,9 @@ function diffObjects(a, b) {
         diff['diff+'].push(b[i])
       }
     }
+    if (diff['diff-'].length === 0 && diff['diff+'].length === 0) {
+      return null
+    }
     return diff
   }
 
@@ -53,6 +55,12 @@ function diffObjects(a, b) {
       if (!secretPattern.test(b[key]) && a[key] !== b[key]) {
         diff['diff+'][key] = b[key]
       }
+    }
+    if (
+      Object.keys(diff['diff-']).length === 0 &&
+      Object.keys(diff['diff+']).length === 0
+    ) {
+      return null
     }
     return diff
   }
@@ -252,7 +260,10 @@ const runProxy = async ({
     `-e CLUSTER="${cluster}"`,
     `-e TARGET_SVC="${service}"`,
     `-e TARGET_NAMESPACE="${namespace}"`,
-    '-e iamold=true',
+    // Not in the old runCmd
+    `-e PROXY_PORT="${proxyPort}"`,
+    `-e TARGET_PORT="${port}"`,
+    `-p "${proxyPort}:${proxyPort}"`,
     dockerBuild,
   ]
   const cmdDiff = diffObjects(runCmd, oldRunCmd)
