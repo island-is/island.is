@@ -233,7 +233,7 @@ export class FinanceResolver {
   @Query(() => AssessmentYears)
   @Audit()
   async getAssessmentYears(@CurrentUser() user: User) {
-    return await this.financeServiceV2.getAssessmentYears(user.nationalId, user)
+    return await this.financeServiceV2.getAssessmentYears(user)
   }
 
   @Query(() => ChargeTypesByYear, { nullable: true })
@@ -242,11 +242,7 @@ export class FinanceResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypesByYearInput,
   ) {
-    return await this.financeServiceV2.getChargeTypesByYear(
-      user.nationalId,
-      input.year,
-      user,
-    )
+    return await this.financeServiceV2.getChargeTypesByYear(user, input.year)
   }
 
   @Query(() => FinanceChargeTypeDetails)
@@ -256,10 +252,9 @@ export class FinanceResolver {
     @Args('input') input: GetChargeTypesDetailsByYearInput,
   ) {
     return await this.financeServiceV2.getChargeTypesDetailsByYear(
-      user.nationalId,
+      user,
       input.year,
       input.typeId,
-      user,
     )
   }
 
@@ -270,11 +265,10 @@ export class FinanceResolver {
     @Args('input') input: GetChargeItemSubjectsByYearInput,
   ) {
     return await this.financeServiceV2.getChargeItemSubjectsByYear(
-      user.nationalId,
+      user,
       input.year,
       input.typeId,
       input.nextKey,
-      user,
     )
   }
 
@@ -285,12 +279,11 @@ export class FinanceResolver {
     @Args('input') input: GetChargeTypePeriodSubjectInput,
   ) {
     return await this.financeServiceV2.getChargeTypePeriodSubject(
-      user.nationalId,
+      user,
       input.year,
       input.typeId,
       input.subject,
       input.period,
-      user,
     )
   }
 }
