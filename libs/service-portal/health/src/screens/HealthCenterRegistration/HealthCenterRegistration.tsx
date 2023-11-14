@@ -58,7 +58,7 @@ const HealthCenterRegistration = () => {
   }
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
-    onError: (e) => {
+    onError: () => {
       handleOnError()
     },
     onCompleted: (data) => {
