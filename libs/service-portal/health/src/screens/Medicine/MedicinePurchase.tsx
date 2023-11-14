@@ -199,17 +199,22 @@ export const MedicinePurchase = () => {
         justifyContent="flexStart"
         columnGap={2}
       >
-        <Button variant="utility" icon="open" iconType="outline">
-          <LinkV2 href="https://rg.sjukra.is/lyfjaverdskra" newTab>
+        <LinkV2 href="https://rg.sjukra.is/lyfjaverdskra" newTab>
+          <Button variant="utility" icon="open" iconType="outline" as="span">
             {formatMessage(messages.medicinePriceList)}
-          </LinkV2>
-        </Button>
+          </Button>
+        </LinkV2>
 
-        <Button variant="utility" icon="calculator" iconType="outline">
-          <LinkResolver href={HealthPaths.HealthMedicineCalculator}>
+        <LinkResolver href={HealthPaths.HealthMedicineCalculator}>
+          <Button
+            variant="utility"
+            icon="calculator"
+            iconType="outline"
+            as="span"
+          >
             {formatMessage(messages.medicineCalculatorTitle)}
-          </LinkResolver>
-        </Button>
+          </Button>
+        </LinkResolver>
       </Box>
       <Box>
         <Text marginBottom={CONTENT_GAP} variant="h5">

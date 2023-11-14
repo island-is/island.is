@@ -28,8 +28,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const { width } = useWindowSize()
 
   useEffect(() => {
-    const activeItem =
-      items.filter((itm) => itm.active && !itm.navHide)?.[0] ?? undefined
+    const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
     setActiveItem(activeItem)
     setActiveItemChildren(
       activeItem?.children?.filter((itm) => itm.active && !itm.navHide),
