@@ -14,6 +14,7 @@ import { Features } from '@island.is/feature-flags'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: true,
@@ -39,7 +40,7 @@ const CreateListTemplate: ApplicationTemplate<
           status: 'draft',
           name: 'Prerequisites',
           progress: 0.1,
-          lifecycle: WeekLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
