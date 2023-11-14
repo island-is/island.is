@@ -1,7 +1,8 @@
-import { Tooltip } from 'recharts'
+import { Tooltip, TooltipProps } from 'recharts'
+
 import { formatValueForPresentation } from '../utils'
 
-export const CustomTooltipRenderer = (props) => {
+export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
   const { active, payload } = props
   const isActive = active && payload && payload.length
 
@@ -22,7 +23,7 @@ export const CustomTooltipRenderer = (props) => {
         <li>
           <span
             style={{
-              color: item?.stroke ?? item?.payload?.stroke ?? 'black',
+              color: (item as any)?.stroke ?? item?.payload?.stroke ?? 'black',
             }}
           >
             {item.name}

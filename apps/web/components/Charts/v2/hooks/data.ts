@@ -1,5 +1,5 @@
-import { useQuery } from '@apollo/client'
 import pick from 'lodash/pick'
+import { useQuery } from '@apollo/client'
 
 import {
   Chart,

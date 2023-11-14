@@ -1,12 +1,12 @@
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
+import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import {
   ChartComponentType,
   ChartComponentWithRenderProps,
   ChartData,
   ChartType,
 } from '../types'
-import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import { formatValueForPresentation } from '../utils'
 
 interface ChartComponentRendererProps {
@@ -27,7 +27,6 @@ export const renderChartComponent = ({
       <Bar
         {...commonProps}
         fill={component.fill}
-        opacity={0.7}
         radius={component.shouldRenderBorderRadius ? [6, 6, 0, 0] : undefined}
         barSize={25}
         stackId={component.stackId?.toString()}
@@ -39,7 +38,6 @@ export const renderChartComponent = ({
     return (
       <Line
         {...commonProps}
-        // connectNulls={component.connectNulls ?? false}
         stroke={component.color}
         strokeWidth={3}
         strokeDasharray={
@@ -75,7 +73,6 @@ const renderCustomizedLabel = ({
   midAngle,
   outerRadius,
   innerRadius,
-  // percent,
   payload,
 }: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.6

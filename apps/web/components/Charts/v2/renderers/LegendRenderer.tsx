@@ -1,5 +1,4 @@
 import { Legend, LegendProps } from 'recharts'
-import isNumber from 'lodash/isNumber'
 
 import { ChartComponentWithRenderProps, ChartData } from '../types'
 import { decideChartBase } from '../utils'

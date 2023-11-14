@@ -1,7 +1,8 @@
 import { Chart } from '@island.is/web/graphql/schema'
+
+import { DEFAULT_XAXIS_KEY } from '../constants'
 import { useGetChartData, useGetChartTableSettings } from '../hooks'
 import { ChartComponentWithRenderProps } from '../types'
-import { DEFAULT_XAXIS_KEY } from '../constants'
 import { formatDate } from '../utils'
 
 interface AccessibilityTableRendererProps {

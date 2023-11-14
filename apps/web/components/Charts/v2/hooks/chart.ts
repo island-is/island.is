@@ -1,19 +1,4 @@
 import { useMemo } from 'react'
-
-import { Chart, ChartComponent } from '@island.is/api/schema'
-
-import {
-  ChartComponentType,
-  ChartComponentWithRenderProps,
-  ChartType,
-} from '../types'
-import {
-  COMPONENT_TYPES_WITH_FILL,
-  DEFAULT_COLORS,
-  PREDEFINED_FILL_PATTERNS,
-  PREDEFINED_PIE_FILL_PATTERNS,
-} from '../constants'
-import { decideChartBase } from '../utils'
 import {
   AreaChart,
   BarChart,
@@ -21,6 +6,21 @@ import {
   LineChart,
   PieChart,
 } from 'recharts'
+
+import { Chart, ChartComponent } from '@island.is/api/schema'
+
+import {
+  COMPONENT_TYPES_WITH_FILL,
+  DEFAULT_COLORS,
+  PREDEFINED_FILL_PATTERNS,
+  PREDEFINED_PIE_FILL_PATTERNS,
+} from '../constants'
+import {
+  ChartComponentType,
+  ChartComponentWithRenderProps,
+  ChartType,
+} from '../types'
+import { decideChartBase } from '../utils'
 
 const componentHasFill = (component: ChartComponent) =>
   COMPONENT_TYPES_WITH_FILL.includes(component.type as ChartComponentType)

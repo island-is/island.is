@@ -1,12 +1,13 @@
+import { useMemo } from 'react'
 import round from 'lodash/round'
 
+import { Icon, SkeletonLoader } from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
-import * as styles from './NumberBox.css'
-import { useMemo } from 'react'
-import { formatValueForPresentation } from '../../utils'
+
 import { useGetChartData } from '../../hooks'
 import { ChartType } from '../../types'
-import { Icon, SkeletonLoader } from '@island.is/island-ui/core'
+import { formatValueForPresentation } from '../../utils'
+import * as styles from './NumberBox.css'
 
 type NumberBoxRendererProps = {
   slice: IChartNumberBox

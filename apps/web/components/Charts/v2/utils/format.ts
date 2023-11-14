@@ -8,7 +8,11 @@ export const formatDate = (date: number) => {
   }
 }
 
-export const formatValueForPresentation = (value: number | string) => {
+export const formatValueForPresentation = (value?: number | string) => {
+  if (value === undefined) {
+    return null
+  }
+
   try {
     if (typeof value === 'number' || !Number.isNaN(value)) {
       const isGreaterOrEqualToMillion = (value as number) >= 1e6

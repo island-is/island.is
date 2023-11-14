@@ -1,11 +1,6 @@
-import { Chart as IChart } from '@island.is/web/graphql/schema'
-import { decideChartBase, formatDate } from '../utils'
-import {
-  useGetChartBaseComponent,
-  useGetChartComponentsWithRenderProps,
-  useGetChartData,
-} from '../hooks'
+import React, { useState } from 'react'
 import { CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+
 import {
   AccordionCard,
   Box,
@@ -13,13 +8,20 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import { Chart as IChart } from '@island.is/web/graphql/schema'
+
+import {
+  useGetChartBaseComponent,
+  useGetChartComponentsWithRenderProps,
+  useGetChartData,
+} from '../hooks'
 import { ChartType } from '../types'
+import { decideChartBase, formatDate } from '../utils'
 import { AccessibilityTableRenderer } from './AccessibilityTableRenderer'
-import { renderMultipleFillPatterns } from './PatternRenderer'
-import { renderTooltip } from './TooltipRenderer'
 import { renderChartComponents } from './ChartComponentRenderer'
 import { renderLegend } from './LegendRenderer'
-import React, { useState } from 'react'
+import { renderMultipleFillPatterns } from './PatternRenderer'
+import { renderTooltip } from './TooltipRenderer'
 
 const CHART_HEIGHT = 500
 
