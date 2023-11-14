@@ -71,6 +71,7 @@ import {
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
+import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -247,6 +248,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    StatisticsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,

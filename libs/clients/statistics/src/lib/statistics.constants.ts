@@ -1,0 +1,31 @@
+// Used for parsing data source
+export const MONTH_NAMES = [
+  [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'ma',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'okt',
+    'nov',
+    'des',
+  ],
+  [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'ma',
+    'jún',
+    'júl',
+    'ág',
+    'sep',
+    'okt',
+    'nóv',
+    'des',
+  ],
+]
