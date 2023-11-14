@@ -10,7 +10,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { CONTENT_GAP_LG, SECTION_GAP } from './constants'
-import { IntroHeader, m } from '@island.is/service-portal/core'
+import { IntroHeader, amountFormat, m } from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
@@ -192,7 +192,7 @@ export const MedicineCalulator = () => {
                     <T.Data>{drug.form}</T.Data>
                     <T.Data>{drug.strength}</T.Data>
                     <T.Data>{drug.packaging}</T.Data>
-                    <T.Data>{drug.price}</T.Data>
+                    <T.Data>{amountFormat(drug.price ?? 0)}</T.Data>
                     <T.Data>
                       <Box
                         className={styles.saveButtonWrapperStyle({
@@ -205,6 +205,7 @@ export const MedicineCalulator = () => {
                           icon="add"
                           disabled={
                             !drug?.name ||
+                            !drug?.price ||
                             selectedDrugList.find(
                               (d) => d.nordicCode === drug.nordicCode,
                             ) !== undefined
