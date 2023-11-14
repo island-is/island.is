@@ -48,7 +48,7 @@ export class CourseService {
     })
   }
 
-  async getCourseDetails(id: string): Promise<Course> {
+  async getCourseById(id: string): Promise<Course> {
     const course = await this.courseModel.findByPk(id)
 
     if (!course) {

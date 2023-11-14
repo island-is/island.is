@@ -95,7 +95,7 @@ export class CourseController {
       },
     },
   })
-  getCourseDetails(@Param('id') id: string): Promise<Course> {
-    return this.courseService.getCourseDetails(id)
+  getCourseById(@Param('id') id: string): Promise<Course> {
+    return this.courseService.getCourseById(id)
   }
 }

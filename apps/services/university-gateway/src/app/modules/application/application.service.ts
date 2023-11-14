@@ -8,7 +8,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ApplicationService {
-  async getApplication(id: string, user: User): Promise<Application> {
+  async getApplicationById(id: string, user: User): Promise<Application> {
     throw Error('Not ready')
   }
 

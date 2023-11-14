@@ -42,11 +42,11 @@ export class ApplicationController {
       },
     },
   })
-  getApplication(
+  getApplicationById(
     @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    return this.applicationService.getApplication(id, user)
+    return this.applicationService.getApplicationById(id, user)
   }
 
   @Post()

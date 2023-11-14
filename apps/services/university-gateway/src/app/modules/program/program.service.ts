@@ -88,7 +88,7 @@ export class ProgramService {
     })
   }
 
-  async getProgramDetails(id: string): Promise<ProgramDetails> {
+  async getProgramById(id: string): Promise<ProgramDetails> {
     const program = await this.programModel.findByPk(id, {
       include: [
         {

@@ -120,8 +120,8 @@ export class ProgramController {
       },
     },
   })
-  getProgramDetails(@Param('id') id: string): Promise<ProgramDetails> {
-    return this.programService.getProgramDetails(id)
+  getProgramById(@Param('id') id: string): Promise<ProgramDetails> {
+    return this.programService.getProgramById(id)
   }
 
   @BypassAuth()
