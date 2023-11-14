@@ -3,11 +3,13 @@ import {
   buildCustomField,
   buildMultiField,
   buildSubmitField,
+  buildPaymentChargeOverviewField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { payment } from '../../lib/messages'
-import { getChargeItemCodesWithAnswers } from '../../utils'
-import { OrderVehicleLicensePlate } from '../../lib/dataSchema'
+import { getChargeItemCodes } from '../../utils'
+import { getChargeItemCodeWithAnswers } from '../../utils/getChargeItemCodes'
+import { ChangeCoOwnerOfVehicle } from '../../lib/dataSchema'
 
 export const paymentSection = buildSection({
   id: 'payment',
@@ -18,24 +20,34 @@ export const paymentSection = buildSection({
       title: payment.general.pageTitle,
       space: 1,
       children: [
-        buildCustomField({
-          id: 'PaymentChargeOverview',
+        buildPaymentChargeOverviewField({
+          id: 'uiForms.paymentChargeOverviewMultifield',
           title: '',
-          component: 'PaymentChargeOverview',
+          forPaymentLabel: payment.paymentChargeOverview.forPayment,
+          totalLabel: payment.paymentChargeOverview.total,
+          getSelectedChargeItems: (application) =>
+            getChargeItemCodes(application).map((x) => ({
+              chargeItemCode: x,
+            })),
+        }),
+        buildCustomField({
+          id: 'ValidationErrorMessages',
+          title: '',
+          component: 'ValidationErrorMessages',
         }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
-          title: payment.confirmation.confirm,
+          title: payment.general.confirm,
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: DefaultEvents.SUBMIT,
-              name: payment.confirmation.confirm,
+              name: payment.general.confirm,
               type: 'primary',
               condition: (formValue, externalData) => {
-                const chargeItemCodes = getChargeItemCodesWithAnswers(
-                  formValue as OrderVehicleLicensePlate,
+                const chargeItemCodes = getChargeItemCodeWithAnswers(
+                  formValue as ChangeCoOwnerOfVehicle,
                 )
                 const allItems = externalData?.payment?.data as [
                   {
