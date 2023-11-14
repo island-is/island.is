@@ -7,7 +7,35 @@ import { Configuration, RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { RecyclingFundClientService } from './RecyclingFundClient.service'
 
+import {
+  createEnhancedFetch,
+  EnhancedFetchOptions,
+} from '@island.is/clients/middlewares'
+import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
+
 const isRunningOnProduction = isRunningOnEnvironment('production')
+
+export interface BKApiConfig {
+  tokenExchangeScope: ['@urvinnslusjodur.is/skilavottord']
+  fetchOptions?: Partial<EnhancedFetchOptions>
+}
+
+const configFactory = (idsClientConfig: any) => ({
+  fetchApi: createEnhancedFetch({
+    name: 'recycling-fund',
+    organizationSlug: 'urvinnslusjodur',
+    autoAuth: {
+      mode: 'auto',
+      issuer: 'idsClientConfig.issuer',
+      clientId: 'idsClientConfig.clientId',
+      clientSecret: 'dsClientConfig.clientSecret',
+      scope: ['@island.is/applications/urvinnslusjodur'],
+      //   scope: ['@urvinnslusjodur.is/skilavottord'],
+    },
+    logErrorResponseBody: true,
+  }),
+  basePath: 'http://localhost:3339',
+})
 
 @Module({
   providers: [RecyclingFundClientService],
@@ -28,19 +56,28 @@ export class RecyclingFundClientModule {
     //   'X-Road-Client': config.xRoadClient,
     // }
 
-    const providerConfiguration = new Configuration({
+    /* const providerConfiguration = new Configuration({
       fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
     })
-
-    const exportedApis = [RecyclingFundGraphQLClientApi]
+*/
+    //const exportedApis = [RecyclingFundGraphQLClientApi]
 
     return {
       module: RecyclingFundClientModule,
-      providers: exportedApis.map((Api) => ({
-        provide: Api,
-        useFactory: () => new Api(providerConfiguration),
-      })),
-      exports: exportedApis,
+      providers: [
+        {
+          provide: RecyclingFundClientService,
+          //useFactory: () => {
+          useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) => {
+            const api = new RecyclingFundGraphQLClientApi(
+              new Configuration(configFactory(idsClientConfig)),
+            )
+
+            return new RecyclingFundClientService(api)
+          },
+        },
+      ],
+      exports: [RecyclingFundClientService],
     }
   }
 }

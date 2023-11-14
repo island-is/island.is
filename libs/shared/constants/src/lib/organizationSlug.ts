@@ -25,3 +25,4 @@ export type OrganizationSlugType =
   | 'syslumenn'
   | 'domsmalaraduneytid'
   | 'utlendingastofnun'
+  | 'urvinnslusjodur'
