@@ -20,9 +20,15 @@ import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import * as userProfile from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
+import { SequelizeModule } from '@nestjs/sequelize'
+// import notfication model
+import { Notification } from './notification.model'
 
 @Module({
   imports: [
+    SequelizeModule.forFeature([
+      Notification
+    ]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
