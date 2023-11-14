@@ -11,9 +11,6 @@ export class UniversityGatewayUniversity {
   @Field()
   contentfulKey!: string
 
-  @Field()
-  logoUrl!: string
-
-  @Field()
-  title!: string
+  @Field(() => String, { nullable: true })
+  contentfulLogoUrl?: string
 }
