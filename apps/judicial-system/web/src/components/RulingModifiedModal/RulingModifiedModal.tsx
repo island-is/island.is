@@ -28,11 +28,12 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
+
+  const isCOAUser = isAppealsCourtUser(user as unknown as User)
+
   const [explanation, setExplanation] = useState(
     formatMessage(
-      isAppealsCourtUser(user as unknown as User)
-        ? strings.appealRulingAutofill
-        : strings.rulingAutofill,
+      isCOAUser ? strings.appealRulingAutofill : strings.rulingAutofill,
     ),
   )
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -40,7 +41,7 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   const handleContinue = () => {
     updateCase(
       workingCase.id,
-      isAppealsCourtUser(user as unknown as User)
+      isCOAUser
         ? { appealRulingModifiedHistory: explanation }
         : { rulingModifiedHistory: explanation },
     )
@@ -71,11 +72,9 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(strings.text)}
+      text={formatMessage(isCOAUser ? strings.appealRulingText : strings.text)}
       primaryButtonText={formatMessage(
-        isAppealsCourtUser(user as unknown as User)
-          ? strings.appealRulingContinue
-          : strings.rulingContinue,
+        isCOAUser ? strings.appealRulingContinue : strings.rulingContinue,
       )}
       onPrimaryButtonClick={handleContinue}
       isPrimaryButtonDisabled={errorMessage !== ''}
