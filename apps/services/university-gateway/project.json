@@ -73,7 +73,7 @@
         "cwd": "apps/services/university-gateway"
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "outputPath": "apps/services/university-gateway/src/openapi.yaml",
