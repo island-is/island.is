@@ -2567,7 +2567,6 @@ services-university-gateway:
       DB_NAME: 'university_gateway'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
       DB_USER: 'university_gateway'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/university-gateway/DB_PASSWORD'
