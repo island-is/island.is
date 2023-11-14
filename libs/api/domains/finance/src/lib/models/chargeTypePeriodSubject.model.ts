@@ -54,8 +54,8 @@ export class ChargeTypePeriodSubjectData {
   accountReference!: string
 }
 
-@ObjectType('FinanceChargeTypePeriodSubjectModel')
-export class ChargeTypePeriodSubjectModel {
+@ObjectType('FinanceChargeTypePeriodSubject')
+export class ChargeTypePeriodSubject {
   @Field({ nullable: true })
   message?: string
 

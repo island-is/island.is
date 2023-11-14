@@ -30,8 +30,8 @@ export class ChargeItemSubjectsByYearData {
   periods!: ChargeItemSubjectsByYearPeriodData[]
 }
 
-@ObjectType('FinanceChargeItemSubjectsByYearModel')
-export class ChargeItemSubjectsByYearModel {
+@ObjectType('FinanceChargeItemSubjectsByYear')
+export class ChargeItemSubjectsByYear {
   @Field(() => [ChargeItemSubjectsByYearData])
   chargeItemSubjects!: ChargeItemSubjectsByYearData[]
 
