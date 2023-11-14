@@ -5,19 +5,20 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../../lib/messages'
-import { useGetDrugCertificatesQuery } from '../Medicine.generated'
-import { SECTION_GAP } from '../constants'
+import { messages } from '../../lib/messages'
+import { useGetDrugCertificatesQuery } from './Medicine.generated'
+import { SECTION_GAP } from './constants'
 import { ActionCard, IntroHeader, m } from '@island.is/service-portal/core'
-import { HealthPaths } from '../../../lib/paths'
+import { HealthPaths } from '../../lib/paths'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
-export const MedicineLicence = () => {
+export const MedicineLicense = () => {
   const { formatMessage } = useLocale()
 
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}
@@ -74,6 +75,8 @@ export const MedicineLicence = () => {
           )}
         </Box>
       )}
-    </Box>
+    </MedicineWrapper>
   )
 }
+
+export default MedicineLicense

@@ -19,7 +19,6 @@ import {
 import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
-import { PaymentTabs } from '../Payments/Payments'
 import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -158,12 +157,7 @@ export const HealthOverview = () => {
                       })}
                     </Text>
                     {enabledPaymentPage && (
-                      <Link
-                        to={HealthPaths.HealthPaymentsWithHash.replace(
-                          ':hash',
-                          `#${PaymentTabs.PAYMENT_OVERVIEW}`,
-                        )}
-                      >
+                      <Link to={HealthPaths.HealthPaymentOverview}>
                         <Button
                           icon="open"
                           iconType="outline"

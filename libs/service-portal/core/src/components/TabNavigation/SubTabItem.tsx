@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Button, ResponsiveSpace } from '@island.is/island-ui/core'
 
 interface Props {
