@@ -36,5 +36,6 @@
       "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-university-gateway"],
   "tags": ["lib:client", "scope:client"]
 }
