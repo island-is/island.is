@@ -7,6 +7,7 @@ import {
   SkeletonLoader,
   Table as T,
   LinkV2,
+  Hyphen,
 } from '@island.is/island-ui/core'
 import {
   ExpandHeader,
@@ -231,8 +232,12 @@ export const MedicinePurchase = () => {
                   { value: formatMessage(m.date) },
                   { value: formatMessage(m.explanationNote) },
                   {
-                    value: formatMessage(
-                      messages.medicinePaymentParticipationPrice,
+                    value: (
+                      <Hyphen>
+                        {formatMessage(
+                          messages.medicinePaymentParticipationPrice,
+                        )}
+                      </Hyphen>
                     ),
                   },
                   { value: formatMessage(messages.medicinePaidByCustomer) },
@@ -328,14 +333,20 @@ export const MedicinePurchase = () => {
                               </T.HeadData>
                               <T.HeadData>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaymentParticipationPrice,
-                                  )}
+                                  <Hyphen>
+                                    {formatMessage(
+                                      messages.medicinePaymentParticipationPrice,
+                                    )}
+                                  </Hyphen>
                                 </span>
                               </T.HeadData>
                               <T.HeadData>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineExcessPrice)}
+                                  <Hyphen>
+                                    {formatMessage(
+                                      messages.medicineExcessPrice,
+                                    )}
+                                  </Hyphen>
                                 </span>
                               </T.HeadData>
                               <T.HeadData>
