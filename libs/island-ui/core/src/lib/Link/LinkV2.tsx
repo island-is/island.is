@@ -1,6 +1,6 @@
 import * as React from 'react'
 import cn from 'classnames'
-import NextLink, { LinkProps as NextLinkProps } from 'next/link'
+import { LinkProps as NextLinkProps } from 'next/link'
 
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
@@ -55,30 +55,16 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
 
   if (isInternal) {
     return (
-      <NextLink
-        href={href}
-        as={as}
-        shallow={shallow}
-        scroll={scroll}
-        passHref
-        prefetch={prefetch}
+      <a
+        className={classNames}
         data-testid={dataTestId}
-        legacyBehavior
+        href={href as string}
+        {...linkProps}
+        {...(newTab && { target: '_blank' })}
+        tabIndex={skipTab ? -1 : undefined}
       >
-        {pureChildren ? (
-          children
-        ) : (
-          <a
-            className={classNames}
-            data-testid={dataTestId}
-            {...linkProps}
-            {...(newTab && { target: '_blank' })}
-            tabIndex={skipTab ? -1 : undefined}
-          >
-            {children}
-          </a>
-        )}
-      </NextLink>
+        {children}
+      </a>
     )
   } else {
     return (
