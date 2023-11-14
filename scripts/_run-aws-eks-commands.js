@@ -92,30 +92,40 @@ const restartService = async (args) => {
  * @param {string} args.cluster - The AWS cluster to use.
  * @param {string} args.namespace - The namespace to use.
  * @param {string} args.port - The port to use.
- * @param {string} args['proxy-port'] - The port for the proxy to listen on.
+ * @param {string} args.proxyPort - The port for the proxy to listen on.
  */
-const runProxy = async (args) => {
-  const credentials = await getCredentials(args.profile)
-  const dockerBuild = `proxy-${args.service}`
-  buildDockerImage(dockerBuild, args.builder, 'proxy')
+const runProxy = async ({
+  profile,
+  service,
+  builder,
+  cluster,
+  namespace,
+  port,
+  proxyPort,
+  'proxy-port': proxyPortDash,
+}) => {
+  proxyPort = proxyPort || proxyPortDash
+  const credentials = await getCredentials(profile)
+  const dockerBuild = `proxy-${service}`
+  buildDockerImage(dockerBuild, builder, 'proxy')
   console.log(`Now running the proxy - \uD83D\uDE31`)
   console.log(
-    `Proxy will be listening on http://localhost:${args['proxy-port']} - \uD83D\uDC42`,
+    `Proxy will be listening on http://localhost:${proxyPort} - \uD83D\uDC42`,
   )
   const runCmd = [
-    args.builder,
+    builder,
     `run`,
-    `--name ${args.service}`,
+    `--name ${service}`,
     `--rm`,
     `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
     `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
     `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
-    `-e CLUSTER="${args.cluster}"`,
-    `-e TARGET_SVC="${args.service}"`,
-    `-e TARGET_NAMESPACE="${args.namespace}"`,
-    `-e TARGET_PORT="${args.port}"`,
-    `-e PROXY_PORT="${args['proxy-port']}"`,
-    `-p ${args['proxy-port']}:${args['proxy-port']}`,
+    `-e CLUSTER="${cluster}"`,
+    `-e TARGET_SVC="${service}"`,
+    `-e TARGET_NAMESPACE="${namespace}"`,
+    `-e TARGET_PORT="${port}"`,
+    `-e PROXY_PORT="${proxyPort}"`,
+    `-p ${proxyPort}:${proxyPort}`,
     dockerBuild,
   ]
   // console.debug('Args: ' + runCmd.join(' '))
@@ -124,7 +134,7 @@ const runProxy = async (args) => {
   } catch (err) {
     console.error("Couldn't run the proxy - \uD83D\uDE31")
     console.error(`If the proxy is already running, try stopping it first with`)
-    console.error(`\n    ${args.builder} stop ${args.service}\n`)
+    console.error(`\n    ${builder} stop ${service}\n`)
   }
 }
 
