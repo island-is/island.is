@@ -14,10 +14,6 @@ import { MONTH_NAMES } from './statistics.constants'
 
 const DEFAULT_NUMBER_OF_DATA_POINTS = 6
 
-const DATA_SOURCES = [
-  /** redacted */
-]
-
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {
     return null
@@ -124,38 +120,43 @@ const processDataFromSource = (data: string) => {
 
 type ResponseData = Record<string, SourceValue[]>
 
-let fetchStatisticsPromise: any = null
+let fetchStatisticsPromise: Promise<StatisticSourceData> | undefined
 
-export const getStatisticsFromSource =
-  async (): Promise<StatisticSourceData> => {
-    if (fetchStatisticsPromise !== null) {
-      return await fetchStatisticsPromise
-    }
-
-    let _resolveReference
-    fetchStatisticsPromise = new Promise((resolve) => {
-      _resolveReference = resolve
-    })
-
-    const responses = await Promise.all<AxiosResponse<ResponseData>>(
-      DATA_SOURCES.map((source) => axios.get(source)),
-    )
-
-    const result = responses.reduce((result: any, response: any) => {
-      const processed = processDataFromSource(response.data)
-      return {
-        ...result,
-        data: {
-          ...result.data,
-          ...processed.data,
-        },
-      }
-    }, {} as StatisticSourceData)
-
-    _resolveReference!(result)
-
-    return result
+export const getStatisticsFromSource = async (
+  dataSources: string[],
+): Promise<StatisticSourceData> => {
+  if (fetchStatisticsPromise) {
+    return await fetchStatisticsPromise
   }
+
+  let _resolveReference
+  fetchStatisticsPromise = new Promise((resolve) => {
+    _resolveReference = resolve
+  })
+
+  const responses = await Promise.all<AxiosResponse<ResponseData>>(
+    dataSources.map((source) => axios.get(source)),
+  )
+
+  const result = responses.reduce((result: any, response: any) => {
+    const processed = processDataFromSource(response.data)
+    return {
+      ...result,
+      data: {
+        ...result.data,
+        ...processed.data,
+      },
+    }
+  }, {} as StatisticSourceData)
+
+  _resolveReference!(result)
+
+  setTimeout(() => {
+    fetchStatisticsPromise = undefined
+  }, 1000)
+
+  return result
+}
 
 const _valueIsNotDefined = (item: SourceValue) => {
   return typeof item.value !== 'number'

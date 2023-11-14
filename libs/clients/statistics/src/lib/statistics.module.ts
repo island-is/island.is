@@ -6,10 +6,6 @@ import { StatisticsClientConfig } from './statistics.config'
 
 const CACHE_TTL = 15 * 60 * 1000 // 15 minutes
 
-export interface Config {
-  baseApiUrl: string
-}
-
 @Module({
   imports: [
     CacheModule.register({
