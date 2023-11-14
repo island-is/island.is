@@ -88,15 +88,8 @@ export class InternalCourseService {
           try {
             // Map to courseModel object
             const courseObj = {
+              ...course,
               universityId,
-              externalId: course.externalId,
-              nameIs: course.nameIs,
-              nameEn: course.nameEn,
-              credits: course.credits,
-              descriptionIs: course.descriptionIs,
-              descriptionEn: course.descriptionEn,
-              externalUrlIs: course.externalUrlIs,
-              externalUrlEn: course.externalUrlEn,
             }
 
             // 1. UPSERT course
@@ -111,11 +104,9 @@ export class InternalCourseService {
 
             // Map to programCourseModel object
             const programCourseObj = {
+              ...course,
               programId,
               courseId,
-              requirement: course.requirement,
-              semesterYear: course.semesterYear,
-              semesterSeason: course.semesterSeason,
             }
 
             // 2. UPSERT program course
