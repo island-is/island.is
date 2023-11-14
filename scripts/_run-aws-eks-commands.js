@@ -6,20 +6,61 @@ const { defaultProvider } = require('@aws-sdk/credential-provider-node')
 
 function diffObjects(a, b) {
   const diff = { 'diff+': {}, 'diff-': {} }
-
-  for (let key in a) {
-    if (!/(key|token)/i.test(key) && a[key] !== b[key]) {
-      diff['diff-'][key] = a[key]
+  if (a === b) {
+    return diff
+  }
+  if (typeof a !== typeof b) {
+    diff['diff-']['type'] = typeof a
+    diff['diff+']['type'] = typeof b
+    return diff
+  }
+  // Check if objects are arrays
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) {
+      diff['diff-']['length'] = a.length
+      diff['diff+']['length'] = b.length
     }
+    a = [...a].sort()
+    b = [...b].sort()
+    console.log('Sorted arrays', { a, b })
   }
 
-  for (let key in b) {
-    if (!/(key|token)/i.test(key) && a[key] !== b[key]) {
-      diff['diff+'][key] = b[key]
+  const secretPattern = /(key|token|secret)/i
+
+  const arrayDiff = (a, b) => {
+    diff['diff-'] = []
+    diff['diff+'] = []
+    for (const i in a) {
+      if (!secretPattern.test(a[i]) && !b.includes(a[i])) {
+        diff['diff-'].push(a[i])
+      }
     }
+    for (const i in b) {
+      if (!secretPattern.test(b[i]) && !a.includes(b[i])) {
+        diff['diff+'].push(b[i])
+      }
+    }
+    return diff
   }
 
-  return diff
+  const objectDiff = (a, b) => {
+    for (let key in a) {
+      if (!secretPattern.test(a[key]) && a[key] !== b[key]) {
+        diff['diff-'][key] = a[key]
+      }
+    }
+    for (let key in b) {
+      if (!secretPattern.test(b[key]) && a[key] !== b[key]) {
+        diff['diff+'][key] = b[key]
+      }
+    }
+    return diff
+  }
+
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return arrayDiff(a, b)
+  }
+  return objectDiff(a, b)
 }
 
 /**
