@@ -29,7 +29,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://libraloanapi-stg.hms.is/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
+          "curl https://libraloanapi-stg.hms.is/swagger/v2.0/swagger.json -H 'Accept: application/json' > src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/hms-loans"

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HmsLoansPaymentOverview')
-export class PaymentOverview {
+@ObjectType('HmsLoansPayment')
+export class Payment {
   @Field(() => Date, { nullable: true })
   gjalddagi?: Date
 
