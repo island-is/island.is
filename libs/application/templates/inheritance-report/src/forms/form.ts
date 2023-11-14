@@ -13,6 +13,7 @@ import { heirs } from './sections/heirs'
 import { funeralCost } from './sections/funeralCost'
 import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
+import { deceased } from './sections/deceased'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -21,6 +22,7 @@ export const form: Form = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
+    deceased,
     dataCollection,
     applicant,
     assets,
