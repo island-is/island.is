@@ -82,11 +82,9 @@ export class UniversityGatewayApi {
   async getProgramById(
     input: UniversityGatewayGetPogramInput,
   ): Promise<UniversityGatewayProgramDetails> {
-    const res = await this.programApi.programControllerGetProgramDetails({
+    const item = await this.programApi.programControllerGetProgramDetails({
       id: input.id,
     })
-
-    const item = res.data
 
     return {
       id: item.id,
