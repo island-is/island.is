@@ -17,11 +17,16 @@ export const Done: Form = buildForm({
     /* Sections for the stepper */
     buildSection({
       id: 'screen1',
-      title: m.dataCollection,
+      title: m.intro,
       children: [],
     }),
     buildSection({
       id: 'screen2',
+      title: m.dataCollection,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen3',
       title: m.information,
       children: [],
     }),
