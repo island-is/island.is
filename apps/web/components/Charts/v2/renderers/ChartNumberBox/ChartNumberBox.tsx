@@ -7,13 +7,13 @@ import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema
 import { useGetChartData } from '../../hooks'
 import { ChartType } from '../../types'
 import { formatValueForPresentation } from '../../utils'
-import * as styles from './NumberBox.css'
+import * as styles from './ChartNumberBox.css'
 
-type NumberBoxRendererProps = {
+type ChartNumberBoxRendererProps = {
   slice: IChartNumberBox
 }
 
-interface NumberBoxData {
+interface ChartNumberBoxData {
   title: string
   sourceDataKey: string
   sourceDataIndex: number
@@ -22,7 +22,7 @@ interface NumberBoxData {
   valueType: 'number' | 'percentage'
 }
 
-export const NumberBoxRenderer = ({ slice }: NumberBoxRendererProps) => {
+export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
   const numberOfDataPoints = slice.displayChangeYearOverYear
     ? 13
     : slice.displayChangeMonthOverMonth
@@ -35,7 +35,7 @@ export const NumberBoxRenderer = ({ slice }: NumberBoxRendererProps) => {
   })
 
   const boxData = useMemo(() => {
-    const result: NumberBoxData[] = [
+    const result: ChartNumberBoxData[] = [
       {
         title: slice.title,
         sourceDataKey: slice.sourceDataKey,
@@ -46,7 +46,7 @@ export const NumberBoxRenderer = ({ slice }: NumberBoxRendererProps) => {
           : 0,
         description: slice.numberBoxDescription,
         value: 13,
-        valueType: slice.valueType as NumberBoxData['valueType'],
+        valueType: slice.valueType as ChartNumberBoxData['valueType'],
       },
     ]
 

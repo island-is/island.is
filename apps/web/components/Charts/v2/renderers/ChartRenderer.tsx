@@ -29,7 +29,7 @@ type ChartProps = {
   slice: IChart
 }
 
-export const ChartRenderer = ({ slice }: ChartProps) => {
+export const Chart = ({ slice }: ChartProps) => {
   const chartType = decideChartBase(slice.components)
   const queryResult = useGetChartData({
     ...slice,
