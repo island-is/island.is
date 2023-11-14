@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -8,13 +11,19 @@ import {
   ApplicationTypes,
   DefaultEvents,
   NationalRegistryUserApi,
+  StateLifeCycle,
   UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { WeekLifeCycle } from './utils'
+
+const WeekLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24 * 7,
+}
 
 const CreateListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -27,8 +36,41 @@ const CreateListTemplate: ApplicationTemplate<
   featureFlag: Features.signatureListCreation,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          status: 'draft',
+          name: 'Prerequisites',
+          progress: 0.1,
+          lifecycle: WeekLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: m.applicationName.defaultMessage,
@@ -44,13 +86,12 @@ const CreateListTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: m.createList,
+                  name: m.applicationName,
                   type: 'primary',
                 },
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
           actionCard: {

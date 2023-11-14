@@ -13,8 +13,14 @@ import { Features } from '@island.is/feature-flags'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
-import { WeekLifeCycle } from './utils'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import { StateLifeCycle } from '@island.is/application/types'
+
+export const WeekLifeCycle: StateLifeCycle = {
+  shouldBeListed: true,
+  shouldBePruned: true,
+  whenToPrune: 1000 * 3600 * 24 * 7,
+}
 
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,

@@ -28,6 +28,11 @@ export const m = defineMessages({
     defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
     description: '',
   },
+  dataCollectionSubmit: {
+    id: 'slc.application:dataCollectionSubmit',
+    defaultMessage: 'Staðfesta',
+    description: '',
+  },
   nationalRegistryProviderTitle: {
     id: 'slc.application:nationalRegistryProviderTitle',
     defaultMessage: 'Persónuupplýsingar um þig',

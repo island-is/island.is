@@ -1,9 +1,7 @@
 import {
   buildCustomField,
-  buildDataProviderItem,
   buildDescriptionField,
   buildDividerField,
-  buildExternalDataProvider,
   buildForm,
   buildKeyValueField,
   buildMultiField,
@@ -12,13 +10,7 @@ import {
   buildSubmitField,
   buildTextField,
 } from '@island.is/application/core'
-import {
-  DefaultEvents,
-  Form,
-  FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 
@@ -33,28 +25,9 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'externalDataSection',
+      id: 'screen1',
       title: m.dataCollection,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: m.dataCollection,
-          subTitle: m.dataCollectionSubtitle,
-          checkboxLabel: m.dataCollectionCheckbox,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.nationalRegistryProviderTitle,
-              subTitle: m.nationalRegistryProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'listInformationSection',
