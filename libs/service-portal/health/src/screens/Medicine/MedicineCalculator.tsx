@@ -8,24 +8,25 @@ import {
   LoadingDots,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { messages } from '../../../lib/messages'
-import { CONTENT_GAP_LG, SECTION_GAP } from '../constants'
-import { IntroHeader, m } from '@island.is/service-portal/core'
+import { messages } from '../../lib/messages'
+import { CONTENT_GAP_LG, SECTION_GAP } from './constants'
+import { IntroHeader, amountFormat, m } from '@island.is/service-portal/core'
 import { useEffect, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
 import {
   useGetDrugCalculationMutation,
   useGetDrugsQuery,
-} from '../Medicine.generated'
+} from './Medicine.generated'
 import {
   RightsPortalCalculatorRequestInput,
   RightsPortalDrug,
   RightsPortalDrugCalculatorResponse,
 } from '@island.is/api/schema'
 import * as styles from './Medicine.css'
-import { EmptyTable } from '../components/EmptyTable/EmptyTable'
-import { DrugRow } from '../components/DrugRow/DrugRow'
+import { EmptyTable } from './components/EmptyTable/EmptyTable'
+import { DrugRow } from './components/DrugRow/DrugRow'
 import { useIntl } from 'react-intl'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -103,7 +104,7 @@ export const MedicineCalulator = () => {
       handleCalculate()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [[...selectedDrugList]])
+  }, [selectedDrugList])
 
   const { width } = useWindowSize()
 
@@ -126,7 +127,7 @@ export const MedicineCalulator = () => {
   }
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
@@ -191,7 +192,7 @@ export const MedicineCalulator = () => {
                     <T.Data>{drug.form}</T.Data>
                     <T.Data>{drug.strength}</T.Data>
                     <T.Data>{drug.packaging}</T.Data>
-                    <T.Data>{drug.price}</T.Data>
+                    <T.Data>{amountFormat(drug.price ?? 0)}</T.Data>
                     <T.Data>
                       <Box
                         className={styles.saveButtonWrapperStyle({
@@ -201,16 +202,15 @@ export const MedicineCalulator = () => {
                         <Button
                           size="small"
                           variant="text"
-                          icon="pencil"
-                          onClick={() =>
-                            drug?.name &&
-                            drug.strength &&
+                          icon="add"
+                          disabled={
+                            !drug?.name ||
+                            !drug?.price ||
                             selectedDrugList.find(
                               (d) => d.nordicCode === drug.nordicCode,
-                            ) === undefined
-                              ? handleAddDrug(drug)
-                              : undefined
+                            ) !== undefined
                           }
+                          onClick={() => handleAddDrug(drug)}
                         >
                           {formatMessage(messages.medicineSelect)}
                         </Button>
@@ -367,6 +367,8 @@ export const MedicineCalulator = () => {
           {formatMessage(messages.medicineCalculatorFooter)}
         </Text>
       </Box>
-    </Box>
+    </MedicineWrapper>
   )
 }
+
+export default MedicineCalulator
