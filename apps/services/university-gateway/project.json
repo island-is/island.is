@@ -76,9 +76,9 @@
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/university-gateway/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/university-gateway/tsconfig.app.json apps/services/university-gateway/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",
