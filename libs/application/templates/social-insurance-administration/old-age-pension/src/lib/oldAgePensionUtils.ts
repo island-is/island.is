@@ -39,7 +39,6 @@ import {
 export interface FileType {
   key: string
   name: string
-  sent?: boolean
 }
 
 interface FileUpload {
