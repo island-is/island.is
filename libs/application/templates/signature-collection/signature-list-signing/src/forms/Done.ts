@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildMessageWithLinkButtonField,
   buildMultiField,
@@ -45,6 +46,16 @@ export const Done: Form = buildForm({
               url: '/minarsidur/min-gogn/listar',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
+            }),
+            buildDescriptionField({
+              id: 'space',
+              title: '',
+              space: 'containerGutter',
+            }),
+            buildDescriptionField({
+              id: 'space1',
+              title: '',
+              space: 'containerGutter',
             }),
           ],
         }),

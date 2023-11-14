@@ -129,7 +129,7 @@ export const m = defineMessages({
   },
   linkFieldButtonTitle: {
     id: 'sls.application:linkFieldButtonTitle',
-    defaultMessage: 'Áfram',
+    defaultMessage: 'Mínar Síður',
     description: '',
   },
   linkFieldMessage: {
