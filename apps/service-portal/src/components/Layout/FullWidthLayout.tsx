@@ -114,6 +114,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                           : undefined
                       }
                       backgroundColor="white"
+                      tooltipVariant="white"
                     />
                   </GridColumn>
                 </GridRow>
