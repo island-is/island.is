@@ -12,13 +12,9 @@ import {
   DatePicker,
   FilterInput,
   FilterMultiChoice,
-  Text,
   Hidden,
   SkeletonLoader,
   Stack,
-  Column,
-  Columns,
-  GridContainer,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -91,11 +87,13 @@ const FinanceTransactions = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getAllChargeTypes() {
