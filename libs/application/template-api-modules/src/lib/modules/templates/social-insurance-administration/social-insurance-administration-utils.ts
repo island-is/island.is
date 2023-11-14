@@ -1,9 +1,8 @@
 import { Application, YES, YesOrNo } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
-  //Child,
   OldAgePension,
-  Uploads,
+  Attachment,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
@@ -16,7 +15,7 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
-  uploads: Uploads,
+  uploads: Attachment[],
 ): OldAgePension => {
   const {
     applicationType,
@@ -50,8 +49,17 @@ export const transformApplicationToOldAgePensionDTO = (
       month: getMonthNumber(selectedMonth),
     },
     comment: comment,
-    paymentInfo: {
-      bank: bank === bankNumber ? '' : bank,
+    // domesticBankInfo: {
+    //   bank: bank === bankNumber ? '' : bank, // TODO: Passa að þarf að formatta bankanúmer áður en sendi
+    // },
+    // foreignBankInfo: {
+    //   iban: '',
+    //   swift: '',
+    //   foreignBankName: '',
+    //   foreignBankAddress: '',
+    //   foreignCurrency: '',
+    // },
+    taxInfo: {
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
       spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
