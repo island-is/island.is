@@ -12,9 +12,7 @@ export const Vehicles = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
-  const [{ vehiclesList }] = useStatefulAnswers(application)
-
-  console.log('vehiclesList', vehiclesList)
+  const [{ selectedVehicles }] = useStatefulAnswers(application)
 
   return (
     <ReviewGroup
@@ -28,7 +26,7 @@ export const Vehicles = ({
         </Label>
       </Box>
 
-      {vehiclesList.map((vehicle, index) => {
+      {selectedVehicles.map((vehicle, index) => {
         return (
           <Box
             key={index}

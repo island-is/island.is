@@ -20,10 +20,7 @@ import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 import { ApiActions } from '../shared'
 import { CurrentVehiclesApi } from '../dataProviders'
-import { ApiScope } from '@island.is/auth/scopes'
 import { answerValidators } from './answerValidators'
-import { assign } from 'xstate'
-import set from 'lodash/set'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -105,8 +102,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['assignVehicleArray'],
-        exit: [],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -152,16 +147,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
     },
   },
   stateMachineOptions: {
-    actions: {
-      assignVehicleArray: assign((context) => {
-        const { application } = context
-
-        console.log('assignVehicleArray')
-        set(application.answers, 'vehiclesList', [])
-
-        return context
-      }),
-    },
+    actions: {},
   },
   mapUserToRole(
     nationalId: string,

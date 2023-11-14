@@ -12,5 +12,5 @@ export enum Actions {
 }
 
 export enum AnswerValidationConstants {
-  VEHICLES_LIST = 'vehiclesList',
+  VEHICLES = 'vehicles',
 }
