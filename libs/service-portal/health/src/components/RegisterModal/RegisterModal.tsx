@@ -13,7 +13,7 @@ type RegisterModalProps = {
   isVisible?: boolean
 }
 
-export const RegisterModal: React.FC<RegisterModalProps> = ({
+export const RegisterModal = ({
   id,
   onAccept,
   onClose,
@@ -21,7 +21,7 @@ export const RegisterModal: React.FC<RegisterModalProps> = ({
   description,
   buttonLoading = false,
   isVisible = false,
-}) => {
+}: RegisterModalProps) => {
   const { formatMessage } = useLocale()
 
   return (

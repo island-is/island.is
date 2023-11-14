@@ -86,4 +86,10 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti ef ekkert málsnúmer héraðsdóms er skráð á yfirlitsskjá verjanda.',
   },
+  rulingModifiedTitle: {
+    id: 'judicial.system.core:defender_case_overview.ruling_modified_title',
+    defaultMessage: 'Úrskurður leiðréttur',
+    description:
+      'Notaður sem titill á modal þegar úrskurður er leiðréttur á yfirlitsskjá verjanda.',
+  },
 })
