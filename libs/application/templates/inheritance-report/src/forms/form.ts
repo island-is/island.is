@@ -32,11 +32,11 @@ export const form: Form = buildForm({
     heirs,
     buildSection({
       id: 'finalStep',
-      title: 'Skila inn erfðafjárskýrslu',
+      title: m.readyToSubmit,
       children: [
         buildMultiField({
           id: 'finalStep',
-          title: 'Skila inn erfðafjárskýrslu',
+          title: m.readyToSubmit,
           description: '',
           children: [
             buildSubmitField({

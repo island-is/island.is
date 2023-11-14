@@ -973,6 +973,11 @@ export const m = defineMessages({
   },
 
   // Done
+  readyToSubmit: {
+    id: 'ir.application:readyToSubmit',
+    defaultMessage: 'Skila inn erfðafjárskýrslu',
+    description: '',
+  },
   submitReport: {
     id: 'ir.application:submitReport',
     defaultMessage: 'Senda inn skýrslu',
