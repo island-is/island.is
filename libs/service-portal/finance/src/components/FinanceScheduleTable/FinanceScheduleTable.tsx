@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,14 +13,12 @@ interface Props {
   recordsArray: PaymentSchedule[]
 }
 
-const compare = function (a: any, b: any) {
+const compare = function (a: string, b: string) {
   if (a > b) return +1
   if (a < b) return -1
   return 0
 }
-const FinanceScheduleTable: FC<React.PropsWithChildren<Props>> = ({
-  recordsArray,
-}) => {
+const FinanceScheduleTable = ({ recordsArray }: Props) => {
   useNamespaces('sp.finance-schedule')
 
   const [page, setPage] = useState(1)

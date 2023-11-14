@@ -1,7 +1,7 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Accordion,
@@ -48,12 +48,12 @@ interface Props {
   defaultDateRangeMonths?: number
 }
 
-const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
+const DocumentScreen = ({
   title,
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
