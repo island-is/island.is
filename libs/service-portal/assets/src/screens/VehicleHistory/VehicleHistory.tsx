@@ -116,6 +116,7 @@ const VehiclesHistory = () => {
               <Checkbox
                 label={formatMessage(messages.showDeregistered)}
                 checked={checkbox}
+                id="showDeregistered"
                 onChange={({ target }) => {
                   setCheckbox(target.checked)
                 }}
