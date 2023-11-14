@@ -108,13 +108,15 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           </LinkV2>
           <IconTitleCard
             heading={
-              universities.filter((x) => x.id === data.universityId)[0].title
+              universities.filter((x) => x.id === data.universityId)[0]
+                .contentfulTitle
             }
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             href="/"
             imgSrc={
-              universities.filter((x) => x.id === data.universityId)[0].logoUrl
+              universities.filter((x) => x.id === data.universityId)[0]
+                .contentfulLogoUrl
             }
             alt="University infomation"
           />

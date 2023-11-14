@@ -14,6 +14,9 @@ import {
   LogoUrl,
   OrganizationLogoDataLoader,
   OrganizationLogoLoader,
+  OrganizationShortTitleDataLoader,
+  OrganizationShortTitleLoader,
+  ShortTitle,
 } from '@island.is/cms'
 
 @Resolver()
@@ -44,6 +47,15 @@ export class MainResolver {
     @Parent() university: UniversityGatewayUniversity,
   ): Promise<LogoUrl> {
     return organizationLogoLoader.load(university.contentfulKey)
+  }
+
+  @ResolveField('contentfulTitle', () => String, { nullable: true })
+  async resolveContentfulTitle(
+    @Loader(OrganizationShortTitleLoader)
+    organizationTitleLoader: OrganizationShortTitleDataLoader,
+    @Parent() university: UniversityGatewayUniversity,
+  ): Promise<ShortTitle> {
+    return organizationTitleLoader.load(university.contentfulKey)
   }
 
   @Query(() => [UniversityGatewayProgramFilter])

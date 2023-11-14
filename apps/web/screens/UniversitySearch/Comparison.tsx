@@ -75,7 +75,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
         id: item.id,
         nameIs: item.nameIs,
         iconSrc: universities.filter((x) => x.id === item.universityId)[0]
-          .logoUrl,
+          .contentfulLogoUrl,
       }
     })
     localStorage.setItem('comparison', JSON.stringify(parsedData))
@@ -142,7 +142,7 @@ const Comparison: Screen<UniversityComparisonProps> = ({
                       <Text variant="eyebrow">
                         {
                           universities.filter((x) => x.id === i.universityId)[0]
-                            .title
+                            .contentfulTitle
                         }
                       </Text>
                       <Button
