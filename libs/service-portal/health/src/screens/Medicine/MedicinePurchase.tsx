@@ -7,21 +7,23 @@ import {
   SkeletonLoader,
   Table as T,
   LinkV2,
+  Hyphen,
 } from '@island.is/island-ui/core'
 import {
   ExpandHeader,
   ExpandRow,
   IntroHeader,
+  LinkResolver,
   UserInfoLine,
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../../lib/messages'
+import { messages } from '../../lib/messages'
 import {
   useGetDrugBillLineItemLazyQuery,
   useGetDrugsBillsLazyQuery,
   useGetDrugsDataQuery,
-} from '../Medicine.generated'
+} from './Medicine.generated'
 import {
   RightsPortalDrugBillLine,
   RightsPortalDrugBill,
@@ -29,19 +31,12 @@ import {
 } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
-import {
-  CONTENT_GAP,
-  DATE_FORMAT,
-  MedicineTabs,
-  SECTION_GAP,
-} from '../constants'
+import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
 import { useIntl } from 'react-intl'
+import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { HealthPaths } from '../../lib/paths'
 
-type Props = {
-  onTabChange: (id: MedicineTabs) => void
-}
-
-export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
+export const MedicinePurchase = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, formatDateFns } = useLocale()
@@ -49,9 +44,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
-  const [fetchedLineItems, setFetchedLineItems] = useState<
-    Map<string, RightsPortalDrugBillLine[]>
-  >(new Map())
+  const fetchedLineItems = new Map<string, RightsPortalDrugBillLine[]>()
   const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
     if (!dateFrom || !dateTo) return ''
     return `${formatDateFns(dateFrom, DATE_FORMAT)} - ${formatDateFns(
@@ -98,7 +91,7 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
   }, [data])
 
   return (
-    <Box paddingY={4}>
+    <MedicineWrapper>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
@@ -207,19 +200,22 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
         justifyContent="flexStart"
         columnGap={2}
       >
-        <Button variant="utility" icon="open" iconType="outline">
-          <LinkV2 href="https://rg.sjukra.is/lyfjaverdskra" newTab>
+        <LinkV2 href={formatMessage(messages.medicinePriceListLink)} newTab>
+          <Button variant="utility" icon="open" iconType="outline" as="span">
             {formatMessage(messages.medicinePriceList)}
-          </LinkV2>
-        </Button>
-        <Button
-          variant="utility"
-          onClick={() => onTabChange(MedicineTabs.CALCULATOR)}
-          icon="calculator"
-          iconType="outline"
-        >
-          {formatMessage(messages.medicineCalculatorTitle)}
-        </Button>
+          </Button>
+        </LinkV2>
+
+        <LinkResolver href={HealthPaths.HealthMedicineCalculator}>
+          <Button
+            variant="utility"
+            icon="calculator"
+            iconType="outline"
+            as="span"
+          >
+            {formatMessage(messages.medicineCalculatorTitle)}
+          </Button>
+        </LinkResolver>
       </Box>
       <Box>
         <Text marginBottom={CONTENT_GAP} variant="h5">
@@ -236,8 +232,12 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                   { value: formatMessage(m.date) },
                   { value: formatMessage(m.explanationNote) },
                   {
-                    value: formatMessage(
-                      messages.medicinePaymentParticipationPrice,
+                    value: (
+                      <Hyphen>
+                        {formatMessage(
+                          messages.medicinePaymentParticipationPrice,
+                        )}
+                      </Hyphen>
                     ),
                   },
                   { value: formatMessage(messages.medicinePaidByCustomer) },
@@ -333,14 +333,20 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
                               </T.HeadData>
                               <T.HeadData>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaymentParticipationPrice,
-                                  )}
+                                  <Hyphen>
+                                    {formatMessage(
+                                      messages.medicinePaymentParticipationPrice,
+                                    )}
+                                  </Hyphen>
                                 </span>
                               </T.HeadData>
                               <T.HeadData>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineExcessPrice)}
+                                  <Hyphen>
+                                    {formatMessage(
+                                      messages.medicineExcessPrice,
+                                    )}
+                                  </Hyphen>
                                 </span>
                               </T.HeadData>
                               <T.HeadData>
@@ -482,6 +488,8 @@ export const MedicinePurchase: React.FC<Props> = ({ onTabChange }) => {
           )
         )}
       </Box>
-    </Box>
+    </MedicineWrapper>
   )
 }
+
+export default MedicinePurchase
