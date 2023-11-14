@@ -173,7 +173,7 @@ export const MedicinePurchase = () => {
               <UserInfoLine
                 paddingY={3}
                 label={formatMessage(messages.medicinePaymentStatus)}
-                content={amountFormat(selectedPeriod?.paidAmount ?? 0)}
+                content={amountFormat(selectedPeriod?.paymentStatus ?? 0)}
               />
               <UserInfoLine
                 paddingY={3}
