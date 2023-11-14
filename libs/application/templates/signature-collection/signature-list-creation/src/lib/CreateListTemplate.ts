@@ -1,8 +1,4 @@
 import {
-  DefaultStateLifeCycle,
-  EphemeralStateLifeCycle,
-} from '@island.is/application/core'
-import {
   Application,
   ApplicationContext,
   ApplicationRole,
