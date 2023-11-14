@@ -2,13 +2,14 @@ import { Inject, Injectable } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache } from 'cache-manager'
 
+import type { ConfigType } from '@island.is/nest/config'
+
 import {
   getMultipleStatistics as _getMultipleStatistics,
   getStatisticsFromSource,
 } from './statistics.utils'
 import { GetStatisticsQuery, StatisticSourceData } from './types'
 import { StatisticsClientConfig } from './statistics.config'
-import { ConfigType } from '@island.is/nest/config'
 
 const CACHE_ID = 'getStatistics'
 
