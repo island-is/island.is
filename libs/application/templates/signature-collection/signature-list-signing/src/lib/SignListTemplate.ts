@@ -14,6 +14,7 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { WeekLifeCycle } from './utils'
+import { EphemeralStateLifeCycle } from '@island.is/application/core'
 
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -26,8 +27,41 @@ const SignListTemplate: ApplicationTemplate<
   featureFlag: Features.signatureListCreation,
   dataSchema,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
+      [States.PREREQUISITES]: {
+        meta: {
+          status: 'draft',
+          name: 'Prerequisites',
+          progress: 0.1,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: async () =>
+                import('../forms/Prerequisites').then((val) =>
+                  Promise.resolve(val.Prerequisites),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: {
+            target: States.DRAFT,
+          },
+        },
+      },
       [States.DRAFT]: {
         meta: {
           name: m.applicationName.defaultMessage,
@@ -49,7 +83,6 @@ const SignListTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
             },
           ],
           actionCard: {

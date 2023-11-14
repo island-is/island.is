@@ -1,7 +1,5 @@
 import {
-  buildDataProviderItem,
   buildDescriptionField,
-  buildExternalDataProvider,
   buildForm,
   buildMultiField,
   buildSection,
@@ -12,8 +10,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
@@ -28,45 +24,14 @@ export const Draft: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     buildSection({
-      id: 'intro',
+      id: 'screen1',
       title: m.intro,
-      children: [
-        buildMultiField({
-          id: 'intro',
-          title: m.introTitle,
-          description: m.introDescription,
-          children: [
-            buildDescriptionField({
-              id: 'introText',
-              title: '',
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
     buildSection({
-      id: 'approveExternalData',
+      id: 'screen2',
       title: m.dataCollection,
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: m.dataCollection,
-          subTitle: m.dataCollectionSubtitle,
-          checkboxLabel: m.dataCollectionCheckbox,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title: m.nationalRegistryProviderTitle,
-              subTitle: m.nationalRegistryProviderSubtitle,
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.userProfileProviderTitle,
-              subTitle: m.userProfileProviderSubtitle,
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'signeeInfo',

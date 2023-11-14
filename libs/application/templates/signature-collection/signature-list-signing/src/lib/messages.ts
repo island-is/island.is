@@ -46,6 +46,11 @@ export const m = defineMessages({
     defaultMessage: 'Ég skil að ofangreindra gagna verður aflað',
     description: '',
   },
+  dataCollectionSubmit: {
+    id: 'sls.application:dataCollectionSubmit',
+    defaultMessage: 'Staðfesta',
+    description: '',
+  },
   nationalRegistryProviderTitle: {
     id: 'sls.application:nationalRegistryProviderTitle',
     defaultMessage: 'Persónuupplýsingar um þig',
