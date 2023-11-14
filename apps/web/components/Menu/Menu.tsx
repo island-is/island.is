@@ -104,9 +104,9 @@ export const Menu = ({
       }
       renderLink={({ className, text, href }, closeModal) => {
         return (
-          <Link href={href} onClick={closeModal}>
+          <a href={href} onClick={closeModal}>
             <span className={className}>{text}</span>
-          </Link>
+          </a>
         )
       }}
       renderMyPagesButton={(button) => {
