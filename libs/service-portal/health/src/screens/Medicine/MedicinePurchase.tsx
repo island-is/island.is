@@ -15,6 +15,7 @@ import {
   IntroHeader,
   LinkResolver,
   UserInfoLine,
+  amountFormat,
   m,
 } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -32,7 +33,6 @@ import {
 import { useEffect, useState } from 'react'
 import * as styles from './Medicine.css'
 import { CONTENT_GAP, DATE_FORMAT, SECTION_GAP } from './constants'
-import { useIntl } from 'react-intl'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 import { HealthPaths } from '../../lib/paths'
 
@@ -40,7 +40,6 @@ export const MedicinePurchase = () => {
   useNamespaces('sp.health')
 
   const { formatMessage, formatDateFns } = useLocale()
-  const intl = useIntl()
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
@@ -174,11 +173,7 @@ export const MedicinePurchase = () => {
               <UserInfoLine
                 paddingY={3}
                 label={formatMessage(messages.medicinePaymentStatus)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: selectedPeriod?.paidAmount
-                    ? intl.formatNumber(selectedPeriod?.paidAmount)
-                    : selectedPeriod?.paidAmount,
-                })}
+                content={amountFormat(selectedPeriod?.paidAmount ?? 0)}
               />
               <UserInfoLine
                 paddingY={3}
@@ -253,24 +248,10 @@ export const MedicinePurchase = () => {
                         { value: formatDateFns(bill.date, DATE_FORMAT) },
                         { value: bill.description ?? '' },
                         {
-                          value: formatMessage(
-                            messages.medicinePaymentPaidAmount,
-                            {
-                              amount: bill.totalCopaymentAmount
-                                ? intl.formatNumber(bill.totalCopaymentAmount)
-                                : bill.totalCopaymentAmount,
-                            },
-                          ),
+                          value: amountFormat(bill.totalCopaymentAmount ?? 0),
                         },
                         {
-                          value: formatMessage(
-                            messages.medicinePaymentPaidAmount,
-                            {
-                              amount: bill.totalCustomerAmount
-                                ? intl.formatNumber(bill.totalCustomerAmount)
-                                : bill.totalCustomerAmount,
-                            },
-                          ),
+                          value: amountFormat(bill.totalCustomerAmount ?? 0),
                         },
                       ]}
                       onExpandCallback={() => {
@@ -371,51 +352,19 @@ export const MedicinePurchase = () => {
                                     <T.Data>{lineItem.quantity}</T.Data>
                                     <T.Data>{lineItem.units}</T.Data>
                                     <T.Data>
-                                      {formatMessage(
-                                        messages.medicinePaymentPaidAmount,
-                                        {
-                                          amount: lineItem.salesPrice
-                                            ? intl.formatNumber(
-                                                lineItem.salesPrice,
-                                              )
-                                            : lineItem.salesPrice,
-                                        },
+                                      {amountFormat(lineItem.salesPrice ?? 0)}
+                                    </T.Data>
+                                    <T.Data>
+                                      {amountFormat(
+                                        lineItem.copaymentAmount ?? 0,
                                       )}
                                     </T.Data>
                                     <T.Data>
-                                      {formatMessage(
-                                        messages.medicinePaymentPaidAmount,
-                                        {
-                                          amount: lineItem.copaymentAmount
-                                            ? intl.formatNumber(
-                                                lineItem.copaymentAmount,
-                                              )
-                                            : lineItem.copaymentAmount,
-                                        },
-                                      )}
+                                      {amountFormat(lineItem.excessAmount ?? 0)}
                                     </T.Data>
                                     <T.Data>
-                                      {formatMessage(
-                                        messages.medicinePaymentPaidAmount,
-                                        {
-                                          amount: lineItem.excessAmount
-                                            ? intl.formatNumber(
-                                                lineItem.excessAmount,
-                                              )
-                                            : lineItem.excessAmount,
-                                        },
-                                      )}
-                                    </T.Data>
-                                    <T.Data>
-                                      {formatMessage(
-                                        messages.medicinePaymentPaidAmount,
-                                        {
-                                          amount: lineItem.customerAmount
-                                            ? intl.formatNumber(
-                                                lineItem.customerAmount,
-                                              )
-                                            : lineItem.customerAmount,
-                                        },
+                                      {amountFormat(
+                                        lineItem.customerAmount ?? 0,
                                       )}
                                     </T.Data>
                                   </T.Row>
@@ -436,44 +385,17 @@ export const MedicinePurchase = () => {
                               <T.Data></T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaymentPaidAmount,
-                                    {
-                                      amount: bill.totalCopaymentAmount
-                                        ? intl.formatNumber(
-                                            bill.totalCopaymentAmount,
-                                          )
-                                        : bill.totalCopaymentAmount,
-                                    },
-                                  )}
+                                  {amountFormat(bill.totalCopaymentAmount ?? 0)}
                                 </span>
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaymentPaidAmount,
-                                    {
-                                      amount: bill.totalExcessAmount
-                                        ? intl.formatNumber(
-                                            bill.totalExcessAmount,
-                                          )
-                                        : bill.totalExcessAmount,
-                                    },
-                                  )}
+                                  {amountFormat(bill.totalExcessAmount ?? 0)}
                                 </span>
                               </T.Data>
                               <T.Data>
                                 <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaymentPaidAmount,
-                                    {
-                                      amount: bill.totalCustomerAmount
-                                        ? intl.formatNumber(
-                                            bill.totalCustomerAmount,
-                                          )
-                                        : bill.totalCustomerAmount,
-                                    },
-                                  )}
+                                  {amountFormat(bill.totalCustomerAmount ?? 0)}
                                 </span>
                               </T.Data>
                             </T.Row>

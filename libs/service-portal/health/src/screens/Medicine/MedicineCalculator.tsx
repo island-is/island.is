@@ -25,7 +25,6 @@ import {
 import * as styles from './Medicine.css'
 import { EmptyTable } from './components/EmptyTable/EmptyTable'
 import { DrugRow } from './components/DrugRow/DrugRow'
-import { useIntl } from 'react-intl'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
 
 const DEFAULT_PAGE_NUMBER = 1
@@ -41,8 +40,6 @@ export const MedicineCalulator = () => {
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
   >([])
-
-  const intl = useIntl()
 
   useDebounce(
     () => {
@@ -337,20 +334,10 @@ export const MedicineCalulator = () => {
                   <T.Data></T.Data>
                   <T.Data></T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalPrice
-                        ? intl.formatNumber(calculatorResults.totalPrice)
-                        : calculatorResults.totalPrice,
-                    })}
+                    {amountFormat(calculatorResults.totalPrice ?? 0)}
                   </T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalCustomerPrice
-                        ? intl.formatNumber(
-                            calculatorResults.totalCustomerPrice,
-                          )
-                        : calculatorResults.totalCustomerPrice,
-                    })}
+                    {amountFormat(calculatorResults.totalCustomerPrice ?? 0)}
                   </T.Data>
                   <T.Data></T.Data>
                 </tr>

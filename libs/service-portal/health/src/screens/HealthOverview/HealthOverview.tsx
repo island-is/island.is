@@ -5,6 +5,7 @@ import {
   ICELAND_ID,
   IntroHeader,
   UserInfoLine,
+  amountFormat,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -149,13 +150,7 @@ export const HealthOverview = () => {
                     width="full"
                     justifyContent="spaceBetween"
                   >
-                    <Text>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: insurance.maximumPayment
-                          ? intl.formatNumber(insurance.maximumPayment)
-                          : insurance.maximumPayment,
-                      })}
-                    </Text>
+                    <Text>{amountFormat(insurance.maximumPayment ?? 0)}</Text>
                     {enabledPaymentPage && (
                       <Link to={HealthPaths.HealthPaymentOverview}>
                         <Button
