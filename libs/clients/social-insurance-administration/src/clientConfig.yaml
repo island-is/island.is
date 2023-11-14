@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.1
+  version: 1.0.3
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -124,8 +124,12 @@ components:
           $ref: '#/components/schemas/Period'
         comment:
           type: string
-        paymentInfo:
-          $ref: '#/components/schemas/PaymentInfo'
+        domesticBankInfo:
+          $ref: '#/components/schemas/DomesticBankInfo'
+        foreignBankInfo:
+          $ref: '#/components/schemas/ForeignBankInfo'
+        taxInfo:
+          $ref: '#/components/schemas/TaxInfo'
         applicantInfo:
           $ref: '#/components/schemas/ApplicantInfo'
         hasAbroadResidence:
@@ -136,16 +140,6 @@ components:
           type: boolean
         isEarlyPension:
           type: boolean
-        householdSupplement:
-          $ref: '#/components/schemas/HouseholdSupplement'
-        children:
-          type: array
-          items:
-            $ref: '#/components/schemas/Child'
-        connectedApplications:
-          type: array
-          items:
-            type: string
         uploads:
           $ref: '#/components/schemas/Uploads'
 
@@ -162,28 +156,6 @@ components:
         month:
           type: integer
           format: int32e
-    PaymentInfo:
-      type: object
-      additionalProperties: false
-      required:
-        - bank
-        - spouseAllowance
-        - personalAllowance
-      properties:
-        bank:
-          type: string
-        spouseAllowance:
-          type: boolean
-        personalAllowance:
-          type: boolean
-        spouseAllowanceUsage:
-          type: number
-          format: float
-        personalAllowanceUsage:
-          type: number
-          format: float
-        taxLevel:
-          type: number
     ApplicantInfo:
       type: object
       additionalProperties: false
@@ -195,61 +167,10 @@ components:
           type: string
         phonenumber:
           type: string
-    HouseholdSupplement:
-      type: object
-      additionalProperties: false
-      required:
-        - isRental
-        - childrenUnder18
-      properties:
-        isRental:
-          type: boolean
-        childrenUnder18:
-          type: boolean
-    Child:
-      type: object
-      additionalProperties: false
-      required:
-        - nationalIdOrBirthDate
-      properties:
-        name:
-          type: string
-        nationalIdOrBirthDate:
-          type: string
-        childDoesNotHaveNationalId:
-          type: boolean
     Uploads:
-      type: object
-      additionalProperties: false
-      properties:
-        pension:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        additional:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        childPension:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        earlyRetirement:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        sailorPension:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        householdSupplement:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
-        halfOldAgePension:
-          type: array
-          items:
-            $ref: '#/components/schemas/Attachment'
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
     Attachment:
       type: object
       additionalProperties: false
@@ -262,6 +183,12 @@ components:
           type: string
         type:
           type: string
+          enum:
+            - pension
+            - other
+            - retirement
+            - sailor
+            - selfEmployed
         file:
           type: string
     OldAgePensionResponse:
@@ -329,5 +256,53 @@ components:
       properties:
         isEligible:
           type: boolean
+    DomesticBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - bank
+      properties:
+        bank:
+          type: string
+    ForeignBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - iban
+        - swift
+        - foreignBankName
+        - foreignBankAddress
+        - foreignCurrency
+      properties:
+        iban:
+          type: string
+        swift:
+          type: string
+        foreignBankName:
+          type: string
+        foreignBankAddress:
+          type: string
+        foreignCurrency:
+          type: string
+    TaxInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - spouseAllowance
+        - personalAllowance
+        - taxLevel
+      properties:
+        spouseAllowance:
+          type: boolean
+        personalAllowance:
+          type: boolean
+        spouseAllowanceUsage:
+          type: number
+          format: float
+        personalAllowanceUsage:
+          type: number
+          format: float
+        taxLevel:
+          type: number
 security:
   - bearerAuth: []

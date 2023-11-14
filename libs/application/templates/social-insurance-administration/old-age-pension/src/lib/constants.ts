@@ -73,25 +73,12 @@ export enum States {
   APPROVED = 'approved', // AFGREIDD = 563
 }
 
-export enum ConnectedApplications {
-  HOUSEHOLDSUPPLEMENT = 'householdSupplement',
-  CHILDPENSION = 'childPension',
-}
-
-export enum HouseholdSupplementHousing {
-  HOUSEOWNER = 'houseOwner',
-  RENTER = 'renter',
-}
-
 export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOAD = 'fileUpload',
-  FILEUPLOADHOUSEHOLDSUPPLEMENT = 'fileUploadHouseholdSupplement',
-  FILEUPLOADCHILDPENSION = 'fileUploadChildPension',
   EMPLOYMENT = 'employment',
   VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
-  VALIDATE_LATEST_CHILD = 'childPensionRepeater',
 }
 
 export enum TaxLevelOptions {
@@ -113,13 +100,8 @@ export const AttachmentLabel: {
   pension: oldAgePensionFormMessage.review.pensionAttachment,
   earlyRetirement: oldAgePensionFormMessage.review.earlyRetirementAttachment,
   fishermen: oldAgePensionFormMessage.review.fishermenAttachment,
-  leaseAgreement: oldAgePensionFormMessage.review.leaseAgreementAttachment,
-  schoolConfirmation:
-    oldAgePensionFormMessage.review.schoolConfirmationAttachment,
   selfEmployedAttachment:
     oldAgePensionFormMessage.review.selfEmployedAttachment,
-  maintenance: oldAgePensionFormMessage.review.maintenanceAttachment,
-  childSupport: oldAgePensionFormMessage.review.childSupportAttachment,
   additionalDocuments:
     oldAgePensionFormMessage.review.additionalDocumentsAttachment,
 }

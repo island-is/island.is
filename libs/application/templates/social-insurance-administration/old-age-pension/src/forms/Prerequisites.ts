@@ -11,7 +11,6 @@ import {
   buildSubSection,
 } from '@island.is/application/core'
 import {
-  ChildrenCustodyInformationApi,
   DefaultEvents,
   Form,
   FormModes,
@@ -28,7 +27,6 @@ import {
 } from '../lib/oldAgePensionUtils'
 import {
   NationalRegistryResidenceHistoryApi,
-  NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
@@ -100,15 +98,7 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre.skraInformationSubTitle,
                 }),
                 buildDataProviderItem({
-                  provider: ChildrenCustodyInformationApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
                   provider: NationalRegistryResidenceHistoryApi,
-                  title: '',
-                }),
-                buildDataProviderItem({
-                  provider: NationalRegistryCohabitantsApi,
                   title: '',
                 }),
                 buildDataProviderItem({
@@ -224,13 +214,6 @@ export const PrerequisitesForm: Form = buildForm({
     buildSection({
       id: 'applicant',
       title: oldAgePensionFormMessage.applicant.applicantSection,
-      children: [],
-    }),
-    buildSection({
-      id: 'relatedApplications',
-      title:
-        oldAgePensionFormMessage.connectedApplications
-          .connectedApplicationsSection,
       children: [],
     }),
     buildSection({

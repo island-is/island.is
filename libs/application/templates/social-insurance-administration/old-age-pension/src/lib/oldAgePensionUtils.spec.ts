@@ -16,8 +16,6 @@ import {
   getAgeBetweenTwoDates,
   getApplicationExternalData,
   isEarlyRetirement,
-  isExistsCohabitantOlderThan25,
-  childCustodyLivesWithApplicant,
   filterValidEmployers,
   getBank,
 } from './oldAgePensionUtils'
@@ -239,77 +237,6 @@ describe('isEarlyRetirement', () => {
   })
 })
 
-describe('isExistsCohabitantOlderThan25', () => {
-  it('should return true if user has cohabitant older than 25', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
-          data: ['2605791429'],
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = isExistsCohabitantOlderThan25(application.externalData)
-
-    expect(res).toEqual(true)
-  })
-
-  it('should return false if user has cohabitant older than 25', () => {
-    const application = buildApplication({
-      externalData: {
-        nationalRegistryCohabitants: {
-          // eslint-disable-next-line local-rules/disallow-kennitalas
-          data: ['0212181460'],
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = isExistsCohabitantOlderThan25(application.externalData)
-
-    expect(res).toEqual(false)
-  })
-})
-
-describe('childCustodyLivesWithApplicant', () => {
-  it('should return true if children < 18 DOES NOT live with applicant', () => {
-    const application = buildApplication({
-      answers: {
-        childPension: {
-          custodyKids: ['0703111430'],
-        },
-      },
-      externalData: {
-        childrenCustodyInformation: {
-          data: [
-            {
-              fullName: 'Ljósbrá ÞÍ Ívarsdóttir',
-              genderCode: '4',
-              // eslint-disable-next-line local-rules/disallow-kennitalas
-              nationalId: '0703111430',
-              livesWithApplicant: false,
-              livesWithBothParents: false,
-            },
-          ],
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = childCustodyLivesWithApplicant(
-      application.answers,
-      application.externalData,
-    )
-
-    expect(res).toEqual(true)
-  })
-})
-
 describe('filterValidEmployers', () => {
   it('should return true filtered employers list', () => {
     const application = buildApplication({
@@ -387,11 +314,13 @@ describe('getBank', () => {
   it('should return icelandic bank number if bank, ledger and account number is returned', () => {
     const application = buildApplication({
       externalData: {
-        socialInsuranceAdministrationBankInfo: {
+        socialInsuranceAdministrationApplicant: {
           data: {
-            bank: '2222',
-            ledger: '00',
-            accountNumber: '123456',
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
           },
           date: new Date(),
           status: 'success',

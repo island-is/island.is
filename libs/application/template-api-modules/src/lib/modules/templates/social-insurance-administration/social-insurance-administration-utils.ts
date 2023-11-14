@@ -1,14 +1,11 @@
 import { Application, YES, YesOrNo } from '@island.is/application/types'
 import parse from 'date-fns/parse'
 import {
-  Child,
   OldAgePension,
-  Uploads,
+  Attachment,
 } from '@island.is/clients/social-insurance-administration'
 import {
   ApplicationType,
-  ConnectedApplications,
-  HouseholdSupplementHousing,
   getApplicationAnswers,
   getApplicationExternalData,
   isEarlyRetirement,
@@ -18,7 +15,7 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
-  uploads: Uploads,
+  uploads: Attachment[],
 ): OldAgePension => {
   const {
     applicationType,
@@ -29,12 +26,6 @@ export const transformApplicationToOldAgePensionDTO = (
     bank,
     onePaymentPerYear,
     comment,
-    connectedApplications,
-    householdSupplementHousing,
-    householdSupplementChildren,
-    childPensionSelectedCustodyKids,
-    childPension,
-    childPensionAddChild,
     personalAllowance,
     spouseAllowance,
     personalAllowanceUsage,
@@ -58,8 +49,17 @@ export const transformApplicationToOldAgePensionDTO = (
       month: getMonthNumber(selectedMonth),
     },
     comment: comment,
-    paymentInfo: {
-      bank: bank === bankNumber ? '' : bank,
+    // domesticBankInfo: {
+    //   bank: bank === bankNumber ? '' : bank, // TODO: Passa að þarf að formatta bankanúmer áður en sendi
+    // },
+    // foreignBankInfo: {
+    //   iban: '',
+    //   swift: '',
+    //   foreignBankName: '',
+    //   foreignBankAddress: '',
+    //   foreignCurrency: '',
+    // },
+    taxInfo: {
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
       spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
@@ -78,25 +78,7 @@ export const transformApplicationToOldAgePensionDTO = (
       application.answers,
       application.externalData,
     ),
-    connectedApplications: connectedApplications,
     uploads,
-  }
-
-  if (
-    connectedApplications?.includes(ConnectedApplications.HOUSEHOLDSUPPLEMENT)
-  ) {
-    oldAgePensionDTO.householdSupplement = {
-      isRental: householdSupplementHousing == HouseholdSupplementHousing.RENTER,
-      childrenUnder18: YES === householdSupplementChildren,
-    }
-  }
-
-  if (connectedApplications?.includes(ConnectedApplications.CHILDPENSION)) {
-    oldAgePensionDTO.children = initChildrens(
-      childPensionSelectedCustodyKids,
-      childPension,
-      childPensionAddChild === YES,
-    )
   }
 
   return oldAgePensionDTO
@@ -106,27 +88,6 @@ export const getMonthNumber = (monthName: string): number => {
   // Parse the month name and get the month number (0-based)
   const monthNumber = parse(monthName, 'MMMM', new Date())
   return monthNumber.getMonth() + 1
-}
-
-export const initChildrens = (
-  childPensionSelectedCustodyKids: string[],
-  childPension: Child[],
-  childPensionAddChild: boolean,
-): Child[] => {
-  // Map the custody kids to the correct format
-  const custodyKids = childPensionSelectedCustodyKids.map((value) => ({
-    name: '',
-    nationalIdOrBirthDate: value,
-    childDoesNotHaveNationalId: false,
-  }))
-
-  // If applicant is not adding children then not send childPension data to TR
-  if (childPensionAddChild) {
-    // Map both children arrays together
-    return [...custodyKids, ...childPension]
-  }
-
-  return custodyKids
 }
 
 export const getApplicationType = (application: Application): string => {

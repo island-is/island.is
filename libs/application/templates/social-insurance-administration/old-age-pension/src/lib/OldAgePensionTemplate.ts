@@ -1,5 +1,4 @@
 import { assign } from 'xstate'
-import unset from 'lodash/unset'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -14,7 +13,6 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
-  ChildrenCustodyInformationApi,
   InstitutionNationalIds,
   defineTemplateApi,
 } from '@island.is/application/types'
@@ -25,28 +23,16 @@ import {
   coreHistoryMessages,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import {
-  Actions,
-  ConnectedApplications,
-  Events,
-  NO,
-  Roles,
-  States,
-} from './constants'
+import { Actions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
 import {
   NationalRegistryResidenceHistoryApi,
-  NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
-import {
-  childCustodyLivesWithApplicant,
-  getApplicationAnswers,
-} from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -88,8 +74,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryResidenceHistoryApi,
-                NationalRegistryCohabitantsApi,
-                ChildrenCustodyInformationApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
               ],
@@ -102,14 +86,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: [
-          'clearHouseholdSupplement',
-          'clearChildPension',
-          'clearChildPensionAddChild',
-          'clearChildPensionChildSupport',
-          'clearTemp',
-          'restoreAnswersFromTemp',
-        ],
+        exit: ['clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -387,32 +364,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           ],
         },
       },
-      // // TODO: Not implemented in Smári yet
-      // [States.DISMISSED]: {
-      //   meta: {
-      //     name: States.DISMISSED,
-      //     progress: 1,
-      //     status: 'rejected',
-      //     actionCard: {
-      //       pendingAction: {
-      //         title: statesMessages.applicationDismissed,
-      //         content: statesMessages.applicationDismissedDescription,
-      //         displayStatus: 'error',
-      //       },
-      //     },
-      //     lifecycle: DefaultStateLifeCycle,
-      //     roles: [
-      //       {
-      //         id: Roles.APPLICANT,
-      //         formLoader: () =>
-      //           import('../forms/InReview').then((val) =>
-      //             Promise.resolve(val.InReview),
-      //           ),
-      //         read: 'all',
-      //       },
-      //     ],
-      //   },
-      // },
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
@@ -525,23 +476,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
         return context
       }),
-      clearHouseholdSupplement: assign((context) => {
-        const { application } = context
-        const { connectedApplications } = getApplicationAnswers(
-          application.answers,
-        )
-
-        if (
-          !connectedApplications?.includes(
-            ConnectedApplications.HOUSEHOLDSUPPLEMENT,
-          )
-        ) {
-          unset(application.answers, 'householdSupplement')
-          unset(application.answers, 'fileUploadHouseholdSupplement')
-        }
-
-        return context
-      }),
       assignOrganization: assign((context) => {
         const { application } = context
         const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
@@ -554,49 +488,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           } else {
             set(application, 'assignees', [TR_ID])
           }
-        }
-
-        return context
-      }),
-      clearChildPension: assign((context) => {
-        const { application } = context
-        const { connectedApplications } = getApplicationAnswers(
-          application.answers,
-        )
-
-        if (
-          !connectedApplications?.includes(ConnectedApplications.CHILDPENSION)
-        ) {
-          unset(application.answers, 'childPensionAddChild')
-          unset(application.answers, 'childPensionRepeater')
-          unset(application.answers, 'childPension')
-          unset(application.answers, 'fileUploadChildPension')
-        }
-
-        return context
-      }),
-      clearChildPensionChildSupport: assign((context) => {
-        const { application } = context
-
-        const doesNotLiveWithApplicant = childCustodyLivesWithApplicant(
-          application.answers,
-          application.externalData,
-        )
-
-        if (!doesNotLiveWithApplicant)
-          unset(application.answers, 'fileUploadChildPension.childSupport')
-
-        return context
-      }),
-      clearChildPensionAddChild: assign((context) => {
-        const { application } = context
-        const { childPensionAddChild } = getApplicationAnswers(
-          application.answers,
-        )
-
-        if (childPensionAddChild === NO) {
-          unset(application.answers, 'childPensionRepeater')
-          unset(application.answers, 'fileUploadChildPension.maintenance')
         }
 
         return context

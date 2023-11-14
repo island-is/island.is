@@ -1,12 +1,6 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import {
-  ApplicationType,
-  HouseholdSupplementHousing,
-  NO,
-  YES,
-  TaxLevelOptions,
-} from './constants'
+import { ApplicationType, NO, YES, TaxLevelOptions } from './constants'
 import { errorMessages } from './messages'
 import { formatBankInfo } from './oldAgePensionUtils'
 
@@ -47,13 +41,6 @@ export const dataSchema = z.object({
   onePaymentPerYear: z.object({
     question: z.enum([YES, NO]),
   }),
-  householdSupplement: z.object({
-    housing: z.enum([
-      HouseholdSupplementHousing.HOUSEOWNER,
-      HouseholdSupplementHousing.RENTER,
-    ]),
-    children: z.enum([YES, NO]),
-  }),
   paymentInfo: z.object({
     bank: z.string().refine(
       (b) => {
@@ -73,7 +60,6 @@ export const dataSchema = z.object({
       TaxLevelOptions.THIRD_LEVEL,
     ]),
   }),
-  childPensionAddChild: z.enum([YES, NO]),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
