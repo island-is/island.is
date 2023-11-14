@@ -57,8 +57,8 @@ export enum ServicePortalPath {
   PetitionList = '/min-gogn/listar/:listId',
   PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
 
-  PetitionsAdminView = '/min-gogn/listar-admin',
-  PetitionListAdmin = '/min-gogn/listar-admin/:listId',
+  // Signature Collection Lists
+  SignatureCollectionLists = '/min-gogn/medmaelalistar',
 
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 

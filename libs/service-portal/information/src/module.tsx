@@ -65,6 +65,14 @@ export const informationModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
     },
+    {
+      name: m.signatureCollectionLists,
+      path: InformationPaths.SignatureCollectionLists,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: (
+        <Navigate to={InformationPaths.SignatureCollectionLists} replace />
+      ),
+    },
     ...sharedRoutes(userInfo),
   ],
   companyRoutes: ({ userInfo }) => [

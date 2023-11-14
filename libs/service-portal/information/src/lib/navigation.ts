@@ -49,6 +49,10 @@ export const informationNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: m.signatureCollectionLists,
+      path: InformationPaths.SignatureCollectionLists,
+    },
   ],
   description: m.userInfoDescription,
 }

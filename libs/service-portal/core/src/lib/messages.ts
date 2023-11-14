@@ -457,6 +457,10 @@ export const m = defineMessages({
     id: 'service.portal:viewPetition',
     defaultMessage: 'Nánar um lista',
   },
+  signatureCollectionLists: {
+    id: 'service.portal:signatureCollectionLists',
+    defaultMessage: 'Meðmælalistar',
+  },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
     defaultMessage: 'Meðmæli - Admin',
