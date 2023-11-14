@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/petition"],
       "options": {
-        "jestConfig": "libs/portals/admin/petition/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/petition/jest.config.ts"
       }
     },
     "codegen/frontend-client": {

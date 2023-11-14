@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/disability-license"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/disability-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/disability-license/jest.config.ts"
       }
     }
   },

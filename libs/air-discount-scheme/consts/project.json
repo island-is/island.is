@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/air-discount-scheme/consts/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/air-discount-scheme/consts/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/air-discount-scheme/consts"]
     }

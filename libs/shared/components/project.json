@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/components"],
       "options": {
-        "jestConfig": "libs/shared/components/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/components/jest.config.ts"
       }
     },
     "codegen/frontend-client": {

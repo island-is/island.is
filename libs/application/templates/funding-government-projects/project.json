@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/funding-government-projects"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/funding-government-projects/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/funding-government-projects/jest.config.ts"
       }
     },
     "extract-strings": {

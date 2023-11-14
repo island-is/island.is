@@ -82,7 +82,6 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]

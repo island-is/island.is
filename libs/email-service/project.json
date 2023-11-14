@@ -20,8 +20,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/email-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/email-service/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/email-service"]
     }

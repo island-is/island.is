@@ -92,8 +92,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-next-app/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/reference-next-app/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-next-app"]
     },

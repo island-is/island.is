@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-owner-change"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-owner-change/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-owner-change/jest.config.ts"
       }
     },
     "update-openapi-document": {

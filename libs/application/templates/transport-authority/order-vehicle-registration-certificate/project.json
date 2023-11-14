@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/transport-authority/order-vehicle-registration-certificate"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-registration-certificate/jest.config.ts"
       }
     },
     "extract-strings": {

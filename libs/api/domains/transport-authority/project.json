@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/transport-authority"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/transport-authority/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/transport-authority/jest.config.ts"
       }
     }
   },

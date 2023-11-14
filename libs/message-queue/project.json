@@ -15,7 +15,6 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "libs/message-queue/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/libs/message-queue"]

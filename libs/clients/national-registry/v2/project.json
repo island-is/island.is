@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v2"],
       "options": {
-        "jestConfig": "libs/clients/national-registry/v2/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/national-registry/v2/jest.config.ts"
       }
     },
     "update-openapi-document": {

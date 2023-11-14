@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/template-loader/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/template-loader/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/template-loader"]
     }

@@ -16,8 +16,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/aircraft-registry"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/aircraft-registry/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/aircraft-registry/jest.config.ts"
       }
     }
   },

@@ -24,8 +24,7 @@
         "{workspaceRoot}/coverage/libs/portals/admin/application-system"
       ],
       "options": {
-        "jestConfig": "libs/portals/admin/application-system/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/application-system/jest.config.ts"
       }
     },
     "codegen/frontend-client": {

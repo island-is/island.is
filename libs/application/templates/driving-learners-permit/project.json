@@ -17,8 +17,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/driving-learners-permit/jest.config.js"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/driving-learners-permit"

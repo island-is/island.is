@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/api/history"],
       "options": {
-        "jestConfig": "libs/application/api/history/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/api/history/jest.config.ts"
       }
     }
   },

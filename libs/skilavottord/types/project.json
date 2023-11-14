@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/skilavottord/types/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/skilavottord/types/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/skilavottord/types"]
     }

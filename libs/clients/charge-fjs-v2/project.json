@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/charge-fjs-v2"],
       "options": {
-        "jestConfig": "libs/clients/charge-fjs-v2/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/charge-fjs-v2/jest.config.ts"
       }
     },
     "update-openapi-document": {

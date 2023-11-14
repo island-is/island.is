@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/european-health-insurance-card"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/european-health-insurance-card/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/european-health-insurance-card/jest.config.ts"
       }
     },
     "extract-strings": {

@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/message"],
       "options": {
-        "jestConfig": "libs/judicial-system/message/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/judicial-system/message/jest.config.ts"
       }
     }
   },

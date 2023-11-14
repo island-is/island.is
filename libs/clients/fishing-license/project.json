@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/fishing-license"],
       "options": {
-        "jestConfig": "libs/clients/fishing-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/fishing-license/jest.config.ts"
       }
     },
     "update-openapi-document": {

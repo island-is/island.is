@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/education/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/education/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/education"]
     },

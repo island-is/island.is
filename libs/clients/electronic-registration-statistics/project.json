@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/electronic-registration-statistics"
       ],
       "options": {
-        "jestConfig": "libs/clients/electronic-registration-statistics/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/electronic-registration-statistics/jest.config.ts"
       }
     },
     "update-openapi-document": {

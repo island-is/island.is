@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/translations"],
       "options": {
-        "jestConfig": "libs/shared/translations/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/translations/jest.config.ts"
       }
     },
     "extract-strings": {

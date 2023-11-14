@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-plate-renewal"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-plate-renewal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-plate-renewal/jest.config.ts"
       }
     },
     "update-openapi-document": {

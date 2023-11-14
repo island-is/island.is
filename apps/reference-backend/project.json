@@ -55,8 +55,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/reference-backend/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },

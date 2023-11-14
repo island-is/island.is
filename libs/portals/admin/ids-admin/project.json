@@ -24,8 +24,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/ids-admin"],
       "options": {
-        "jestConfig": "libs/portals/admin/ids-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/ids-admin/jest.config.ts"
       }
     }
   },

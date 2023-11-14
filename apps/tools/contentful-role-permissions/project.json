@@ -48,8 +48,7 @@
         "{workspaceRoot}/coverage/apps/tools/contentful-role-permissions"
       ],
       "options": {
-        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/tools/contentful-role-permissions/jest.config.ts"
       }
     },
     "lint": {

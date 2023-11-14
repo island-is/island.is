@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/mortgage-certificate"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.ts"
       }
     }
   },

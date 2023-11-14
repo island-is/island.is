@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/nova-sms/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nova-sms/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/nova-sms"]
     }

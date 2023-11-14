@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/auth-admin"],
       "options": {
-        "jestConfig": "libs/api/domains/auth-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/auth-admin/jest.config.ts"
       }
     }
   },

@@ -107,8 +107,7 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/application-system/api/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/api"]
     },

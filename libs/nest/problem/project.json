@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/problem"],
       "options": {
-        "jestConfig": "libs/nest/problem/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/problem/jest.config.ts"
       }
     }
   },

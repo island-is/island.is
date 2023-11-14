@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/licenses"],
       "options": {
-        "jestConfig": "libs/service-portal/licenses/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/licenses/jest.config.ts"
       }
     },
     "extract-strings": {

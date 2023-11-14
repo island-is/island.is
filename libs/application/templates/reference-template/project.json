@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/reference-template/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/reference-template/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/reference-template"

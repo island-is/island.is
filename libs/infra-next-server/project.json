@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/infra-next-server/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/infra-next-server/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/infra-next-server"]
     }

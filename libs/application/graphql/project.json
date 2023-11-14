@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/graphql/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/graphql/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/graphql"]
     }

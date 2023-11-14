@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/core"],
       "options": {
-        "jestConfig": "libs/portals/admin/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/core/jest.config.ts"
       }
     },
     "extract-strings": {

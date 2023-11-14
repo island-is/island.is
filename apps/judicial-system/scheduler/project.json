@@ -40,8 +40,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/scheduler"],
       "options": {
-        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/scheduler/jest.config.ts"
       }
     },
     "docker-express": {}

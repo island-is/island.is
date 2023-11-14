@@ -45,8 +45,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/license-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/license-api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/license-api"]
     },

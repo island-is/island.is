@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-operators"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-operators/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-operators/jest.config.ts"
       }
     },
     "update-openapi-document": {

@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/residence-history"],
       "options": {
-        "jestConfig": "libs/residence-history/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/residence-history/jest.config.ts"
       }
     }
   },

@@ -48,8 +48,7 @@
         "{workspaceRoot}/coverage/apps/judicial-system/message-handler"
       ],
       "options": {
-        "jestConfig": "apps/judicial-system/message-handler/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/message-handler/jest.config.ts"
       }
     },
     "dev-services": {

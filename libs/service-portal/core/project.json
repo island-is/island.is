@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/core/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/core"]
     },

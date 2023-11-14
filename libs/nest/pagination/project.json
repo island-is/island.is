@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/pagination"],
       "options": {
-        "jestConfig": "libs/nest/pagination/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/pagination/jest.config.ts"
       }
     }
   },

@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/institution-collaboration/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/institution-collaboration/jest.config.ts"
       }
     },
     "extract-strings": {

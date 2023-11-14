@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/shared/pii"],
       "options": {
-        "jestConfig": "libs/shared/pii/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/pii/jest.config.ts"
       }
     }
   },

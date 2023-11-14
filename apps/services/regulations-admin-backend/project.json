@@ -64,8 +64,7 @@
         "{workspaceRoot}/coverage/apps/services/regulations-admin-backend"
       ],
       "options": {
-        "jestConfig": "apps/services/regulations-admin-backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/regulations-admin-backend/jest.config.ts"
       }
     },
     "dev-services": {

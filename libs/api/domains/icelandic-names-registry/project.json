@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/icelandic-names-registry/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/icelandic-names-registry/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/api/domains/icelandic-names-registry"

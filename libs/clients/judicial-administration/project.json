@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/clients/judicial-administration"
       ],
       "options": {
-        "jestConfig": "libs/clients/judicial-administration/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/judicial-administration/jest.config.ts"
       }
     },
     "update-openapi-document": {

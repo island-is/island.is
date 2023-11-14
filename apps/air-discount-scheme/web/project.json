@@ -94,8 +94,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/air-discount-scheme/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/web"]
     },

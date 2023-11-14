@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/eligibility/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/eligibility/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/eligibility"]
     }

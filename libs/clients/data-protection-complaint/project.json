@@ -25,8 +25,7 @@
         "{workspaceRoot}/coverage/libs/clients/data-protection-complaint"
       ],
       "options": {
-        "jestConfig": "libs/clients/data-protection-complaint/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/data-protection-complaint/jest.config.ts"
       }
     }
   },

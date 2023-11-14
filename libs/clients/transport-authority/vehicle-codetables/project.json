@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-codetables"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.ts"
       }
     },
     "update-openapi-document": {

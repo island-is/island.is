@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/public-debt-payment-plan"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/public-debt-payment-plan/jest.config.ts"
       }
     },
     "extract-strings": {

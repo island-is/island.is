@@ -56,8 +56,7 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/financial-aid/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/backend"]
     },

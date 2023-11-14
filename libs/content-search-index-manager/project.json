@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-index-manager/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/content-search-index-manager/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/content-search-index-manager"]
     }

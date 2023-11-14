@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/inna"],
       "options": {
-        "jestConfig": "libs/clients/inna/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/inna/jest.config.ts"
       }
     },
     "codegen/backend-client": {

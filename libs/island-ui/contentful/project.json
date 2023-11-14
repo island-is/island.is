@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/island-ui/contentful/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/island-ui/contentful/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/island-ui/contentful"]
     }

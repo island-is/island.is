@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/aircraft-registry"],
       "options": {
-        "jestConfig": "libs/clients/aircraft-registry/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/aircraft-registry/jest.config.ts"
       }
     },
     "update-openapi-document": {

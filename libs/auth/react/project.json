@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/auth/react"],
       "options": {
-        "jestConfig": "libs/auth/react/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth/react/jest.config.ts"
       }
     }
   },

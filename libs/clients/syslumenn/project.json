@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/syslumenn"],
       "options": {
-        "jestConfig": "libs/clients/syslumenn/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/syslumenn/jest.config.ts"
       }
     },
     "update-openapi-document": {

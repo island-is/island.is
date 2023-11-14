@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/mocking/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/mocking/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared/mocking"]
     }

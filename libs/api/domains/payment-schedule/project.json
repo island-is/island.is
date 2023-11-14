@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/payment-schedule"],
       "options": {
-        "jestConfig": "libs/api/domains/payment-schedule/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/payment-schedule/jest.config.ts"
       }
     }
   },

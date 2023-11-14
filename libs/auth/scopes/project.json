@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/auth/scopes"],
       "options": {
-        "jestConfig": "libs/auth/scopes/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth/scopes/jest.config.ts"
       }
     }
   },

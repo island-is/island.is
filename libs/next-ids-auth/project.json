@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/next-ids-auth/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/next-ids-auth/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/next-ids-auth"]
     }

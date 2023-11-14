@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/air-discount-scheme"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.ts"
       }
     },
     "dev-init": {

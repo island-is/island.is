@@ -71,8 +71,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/search-indexer/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/search-indexer/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/search-indexer"]
     },

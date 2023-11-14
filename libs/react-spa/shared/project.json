@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/react-spa/shared"],
       "options": {
-        "jestConfig": "libs/react-spa/shared/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/react-spa/shared/jest.config.ts"
       }
     },
     "codegen/frontend-client": {

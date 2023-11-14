@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/file-storage/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/file-storage/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/file-storage"]
     }

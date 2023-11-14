@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/passports"],
       "options": {
-        "jestConfig": "libs/clients/passports/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/passports/jest.config.ts"
       }
     },
     "codegen/backend-client": {

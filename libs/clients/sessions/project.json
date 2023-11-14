@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/sessions"],
       "options": {
-        "jestConfig": "libs/clients/sessions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/sessions/jest.config.ts"
       }
     },
     "codegen/backend-client": {

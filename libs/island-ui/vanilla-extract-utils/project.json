@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/island-ui/vanilla-extract-utils"
       ],
       "options": {
-        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/island-ui/vanilla-extract-utils/jest.config.ts"
       }
     }
   },

@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/electronic-registration-statistics"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/electronic-registration-statistics/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/electronic-registration-statistics/jest.config.ts"
       }
     }
   },

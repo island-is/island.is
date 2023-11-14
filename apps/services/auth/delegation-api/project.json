@@ -39,7 +39,6 @@
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/delegation-api"],
       "options": {
         "jestConfig": "apps/services/auth/delegation-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       }
     },

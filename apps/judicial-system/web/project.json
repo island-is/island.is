@@ -92,8 +92,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
     },

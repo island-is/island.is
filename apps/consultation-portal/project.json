@@ -94,8 +94,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/consultation-portal"],
       "options": {
-        "jestConfig": "apps/consultation-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/consultation-portal/jest.config.ts"
       }
     },
     "lint": {

@@ -43,7 +43,6 @@
       ],
       "options": {
         "jestConfig": "apps/services/auth/personal-representative/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       }
     },

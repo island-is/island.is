@@ -92,8 +92,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/auth-admin-web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/auth-admin-web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
     },

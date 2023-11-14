@@ -62,8 +62,7 @@
       "outputs": ["{workspaceRoot}/coverage/apps/services/endorsements/api"],
       "options": {
         "jestConfig": "apps/services/endorsements/api/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       }
     },
     "dev-services": {

@@ -15,8 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/ehic-client-v1"],
       "options": {
-        "jestConfig": "libs/clients/ehic-client-v1/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/ehic-client-v1/jest.config.ts"
       }
     },
     "codegen/backend-client": {

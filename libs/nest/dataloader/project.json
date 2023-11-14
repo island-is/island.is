@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/dataloader"],
       "options": {
-        "jestConfig": "libs/nest/dataloader/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/dataloader/jest.config.ts"
       }
     }
   },

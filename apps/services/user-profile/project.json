@@ -62,7 +62,6 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/user-profile/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-profile"]

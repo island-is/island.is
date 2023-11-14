@@ -15,8 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/disability-license"],
       "options": {
-        "jestConfig": "libs/clients/disability-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/disability-license/jest.config.ts"
       }
     },
     "codegen/backend-client": {

@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/mortgage-certificate"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/mortgage-certificate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/mortgage-certificate/jest.config.ts"
       }
     },
     "extract-strings": {

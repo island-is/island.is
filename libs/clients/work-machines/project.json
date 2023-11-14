@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/work-machines"],
       "options": {
-        "jestConfig": "libs/clients/work-machines/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/work-machines/jest.config.ts"
       }
     },
     "update-openapi-document": {

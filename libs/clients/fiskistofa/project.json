@@ -15,8 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/fiskistofa"],
       "options": {
-        "jestConfig": "libs/clients/fiskistofa/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/fiskistofa/jest.config.ts"
       }
     },
     "update-openapi-document": {

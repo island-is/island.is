@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/dokobit-signing/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/dokobit-signing/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/dokobit-signing"]
     }

@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/clients/municipalities-financial-aid"
       ],
       "options": {
-        "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/municipalities-financial-aid/jest.config.ts"
       }
     },
     "codegen/backend-client": {

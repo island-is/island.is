@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/license-client"],
       "options": {
-        "jestConfig": "libs/clients/license-client/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/license-client/jest.config.ts"
       }
     }
   },

@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/portals/admin/document-provider/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/document-provider/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/portals/admin/document-provider"

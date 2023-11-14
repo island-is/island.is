@@ -87,8 +87,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/application-system/form/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/application-system/form/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/application-system/form"]
     },

@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/petitions/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/petitions/jest.config.js"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/petitions"]
     },

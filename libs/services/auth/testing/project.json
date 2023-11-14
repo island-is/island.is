@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/services/auth/testing"],
       "options": {
-        "jestConfig": "libs/services/auth/testing/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/services/auth/testing/jest.config.ts"
       }
     }
   },

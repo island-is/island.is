@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/relationships"],
       "options": {
-        "jestConfig": "libs/clients/rsk/relationships/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/rsk/relationships/jest.config.ts"
       }
     },
     "update-openapi-document": {

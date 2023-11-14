@@ -59,8 +59,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-notification"],
       "options": {
-        "jestConfig": "apps/services/user-notification/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/user-notification/jest.config.ts"
       }
     },
     "dev-services": {

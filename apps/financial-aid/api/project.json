@@ -39,8 +39,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/financial-aid/api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/financial-aid/api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/api"]
     },

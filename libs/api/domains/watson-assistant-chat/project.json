@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/watson-assistant-chat"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/watson-assistant-chat/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/watson-assistant-chat/jest.config.ts"
       }
     }
   },

@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/testing/fixtures"],
       "options": {
-        "jestConfig": "libs/testing/fixtures/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/testing/fixtures/jest.config.ts"
       }
     }
   },

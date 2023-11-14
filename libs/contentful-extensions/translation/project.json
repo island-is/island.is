@@ -8,8 +8,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/contentful-extensions/translation/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/contentful-extensions/translation/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/contentful-translation-extension"

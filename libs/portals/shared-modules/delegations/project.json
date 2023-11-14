@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/portals/shared-modules/delegations"
       ],
       "options": {
-        "jestConfig": "libs/portals/shared-modules/delegations/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/shared-modules/delegations/jest.config.ts"
       }
     },
     "extract-strings": {

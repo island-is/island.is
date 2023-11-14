@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/criminal-record"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/criminal-record/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/criminal-record/jest.config.ts"
       }
     },
     "extract-strings": {

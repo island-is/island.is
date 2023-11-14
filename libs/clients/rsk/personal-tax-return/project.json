@@ -18,8 +18,7 @@
         "{workspaceRoot}/coverage/libs/clients/rsk/personal-tax-return"
       ],
       "options": {
-        "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/rsk/personal-tax-return/jest.config.ts"
       }
     }
   },

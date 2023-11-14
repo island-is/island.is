@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/transport-authority/license-plate-renewal"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/license-plate-renewal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/transport-authority/license-plate-renewal/jest.config.ts"
       }
     },
     "extract-strings": {

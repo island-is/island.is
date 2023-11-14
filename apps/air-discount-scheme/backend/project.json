@@ -58,8 +58,7 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/air-discount-scheme/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/backend"]
     },

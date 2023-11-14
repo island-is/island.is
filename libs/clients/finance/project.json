@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/finance"],
       "options": {
-        "jestConfig": "libs/clients/finance/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/finance/jest.config.ts"
       }
     }
   },

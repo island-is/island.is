@@ -42,7 +42,6 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/admin-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/admin-api"]

@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/portals/admin/regulations-admin"
       ],
       "options": {
-        "jestConfig": "libs/portals/admin/regulations-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/regulations-admin/jest.config.ts"
       }
     },
     "extract-strings": {

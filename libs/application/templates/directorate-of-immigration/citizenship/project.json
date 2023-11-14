@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/directorate-of-immigration/citizenship"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/directorate-of-immigration/citizenship/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/directorate-of-immigration/citizenship/jest.config.ts"
       }
     },
     "extract-strings": {

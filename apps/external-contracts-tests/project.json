@@ -33,8 +33,7 @@
     "external-test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/external-contracts-tests/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/external-contracts-tests/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/external-contracts-tests"]
     },

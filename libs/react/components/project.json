@@ -15,8 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/react/components"],
       "options": {
-        "jestConfig": "libs/react/components/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/react/components/jest.config.ts"
       }
     }
   },

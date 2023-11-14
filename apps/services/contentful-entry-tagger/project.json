@@ -42,8 +42,7 @@
         "{workspaceRoot}/coverage/apps/services/contentful-entry-tagger"
       ],
       "options": {
-        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts"
       }
     },
     "docker-express": {}

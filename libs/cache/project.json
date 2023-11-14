@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/cache/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/cache/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/cache"]
     }

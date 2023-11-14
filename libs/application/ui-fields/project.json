@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/ui-fields/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-fields/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-fields"]
     }

@@ -29,8 +29,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/consent"],
       "options": {
-        "jestConfig": "libs/service-portal/consent/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/consent/jest.config.ts"
       }
     }
   }

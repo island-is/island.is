@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/zendesk"],
       "options": {
-        "jestConfig": "libs/clients/zendesk/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/zendesk/jest.config.ts"
       }
     }
   },

@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-printing"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-printing/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-printing/jest.config.ts"
       }
     },
     "update-openapi-document": {

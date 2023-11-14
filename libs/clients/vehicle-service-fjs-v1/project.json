@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/clients/vehicle-service-fjs-v1"
       ],
       "options": {
-        "jestConfig": "libs/clients/vehicle-service-fjs-v1/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/vehicle-service-fjs-v1/jest.config.ts"
       }
     },
     "update-openapi-document": {

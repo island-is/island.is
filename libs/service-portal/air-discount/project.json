@@ -18,8 +18,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/air-discount"],
       "options": {
-        "jestConfig": "libs/service-portal/air-discount/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/air-discount/jest.config.ts"
       }
     },
     "extract-strings": {

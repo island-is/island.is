@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/clients/university-of-iceland"
       ],
       "options": {
-        "jestConfig": "libs/clients/university-of-iceland/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/university-of-iceland/jest.config.ts"
       }
     },
     "codegen/backend-client": {

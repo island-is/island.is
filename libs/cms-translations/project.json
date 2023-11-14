@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/cms-translations/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/cms-translations/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/cms-translations"]
     }

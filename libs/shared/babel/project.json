@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/babel/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/babel/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared/babel"]
     }

@@ -19,7 +19,8 @@
         "{workspaceRoot}/coverage/libs/application/templates/financial-aid"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/financial-aid/jest.config.ts"
+        "jestConfig": "libs/application/templates/financial-aid/jest.config.ts",
+        "passWithNoTests": false
       }
     },
     "extract-strings": {

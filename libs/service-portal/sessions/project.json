@@ -31,8 +31,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/sessions"],
       "options": {
-        "jestConfig": "libs/service-portal/sessions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/sessions/jest.config.ts"
       }
     }
   }

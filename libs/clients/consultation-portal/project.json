@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/consultation-portal"],
       "options": {
-        "jestConfig": "libs/clients/consultation-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/consultation-portal/jest.config.ts"
       }
     },
     "codegen/backend-client": {

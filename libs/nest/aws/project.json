@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/aws"],
       "options": {
-        "jestConfig": "libs/nest/aws/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/aws/jest.config.ts"
       }
     }
   },

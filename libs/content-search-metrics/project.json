@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-metrics/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/content-search-metrics/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/content-search-metrics"]
     }

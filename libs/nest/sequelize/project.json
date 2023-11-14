@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/sequelize"],
       "options": {
-        "jestConfig": "libs/nest/sequelize/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/sequelize/jest.config.ts"
       }
     }
   },

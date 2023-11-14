@@ -20,8 +20,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/transport-authority/order-vehicle-license-plate"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-license-plate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/transport-authority/order-vehicle-license-plate/jest.config.ts"
       }
     },
     "extract-strings": {

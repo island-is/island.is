@@ -30,8 +30,7 @@
         "{workspaceRoot}/coverage/libs/clients/adr-and-machine-license"
       ],
       "options": {
-        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.ts"
       }
     },
     "codegen/backend-client": {

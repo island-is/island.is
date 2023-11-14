@@ -16,8 +16,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/parental-leave/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/parental-leave/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/parental-leave"

@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/clients/icelandic-health-insurance/rights-portal"
       ],
       "options": {
-        "jestConfig": "libs/clients/icelandic-health-insurance/rights-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/icelandic-health-insurance/rights-portal/jest.config.ts"
       }
     },
     "codegen/backend-client": {

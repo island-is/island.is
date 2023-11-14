@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/consts/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/judicial-system/consts/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/consts"]
     }

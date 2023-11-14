@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/driving-license-book"],
       "options": {
-        "jestConfig": "libs/clients/driving-license-book/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/driving-license-book/jest.config.ts"
       }
     },
     "update-openapi-document": {

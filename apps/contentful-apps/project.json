@@ -86,8 +86,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/contentful-apps"],
       "options": {
-        "jestConfig": "apps/contentful-apps/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/contentful-apps/jest.config.ts"
       }
     },
     "lint": {

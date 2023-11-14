@@ -16,8 +16,7 @@
         "{workspaceRoot}/coverage/libs/clients/financial-statements-inao"
       ],
       "options": {
-        "jestConfig": "libs/clients/financial-statements-inao/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/financial-statements-inao/jest.config.ts"
       }
     }
   },

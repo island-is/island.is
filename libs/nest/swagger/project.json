@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/swagger"],
       "options": {
-        "jestConfig": "libs/nest/swagger/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/swagger/jest.config.ts"
       }
     }
   },

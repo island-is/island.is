@@ -108,9 +108,6 @@
     "test": {
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
-    "external-test": {
-      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
-    },
     "codegen/backend-client": {
       "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
       "inputs": ["schema-files", "^schema-files"]
@@ -131,6 +128,19 @@
         "{projectRoot}/**/fragmentTypes.json",
         "{projectRoot}/**/*.generated.ts"
       ]
+    },
+    "@nx/jest:jest": {
+      "cache": true,
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
     }
   },
   "namedInputs": {

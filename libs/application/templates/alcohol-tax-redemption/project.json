@@ -19,8 +19,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/alcohol-tax-redemption"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/alcohol-tax-redemption/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/alcohol-tax-redemption/jest.config.ts"
       }
     },
     "extract-strings": {

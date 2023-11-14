@@ -16,8 +16,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v1"],
       "options": {
-        "jestConfig": "libs/clients/national-registry/v1/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/national-registry/v1/jest.config.ts"
       }
     }
   },

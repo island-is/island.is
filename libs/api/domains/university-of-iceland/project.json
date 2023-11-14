@@ -17,8 +17,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/university-of-iceland"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/university-of-iceland/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/university-of-iceland/jest.config.ts"
       }
     }
   },

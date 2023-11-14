@@ -14,8 +14,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/plausible/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/plausible/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/plausible"]
     }

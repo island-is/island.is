@@ -38,8 +38,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/download-service"],
       "options": {
-        "jestConfig": "apps/download-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/download-service/jest.config.ts"
       }
     },
     "docker-express": {}

@@ -15,8 +15,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-forms"],
       "options": {
-        "jestConfig": "libs/application/ui-forms/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-forms/jest.config.ts"
       }
     },
     "extract-strings": {

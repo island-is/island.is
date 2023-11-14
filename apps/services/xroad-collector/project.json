@@ -41,8 +41,7 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/xroad-collector/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/xroad-collector/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/xroad-collector"]
     },

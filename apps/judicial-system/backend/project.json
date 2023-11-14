@@ -60,7 +60,6 @@
       "options": {
         "jestConfig": "apps/judicial-system/backend/jest.config.ts",
         "logHeapUsage": true,
-        "passWithNoTests": true,
         "workerIdleMemoryLimit": "1028"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/backend"]

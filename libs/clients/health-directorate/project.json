@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/health-directorate"],
       "options": {
-        "jestConfig": "libs/clients/health-directorate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/health-directorate/jest.config.ts"
       }
     },
     "update-openapi-document": {

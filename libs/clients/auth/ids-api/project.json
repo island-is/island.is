@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/ids-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/auth/ids-api/jest.config.ts"
       }
     },
     "codegen/backend-client": {

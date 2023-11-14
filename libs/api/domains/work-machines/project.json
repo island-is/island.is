@@ -14,8 +14,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/work-machines"],
       "options": {
-        "jestConfig": "libs/api/domains/work-machines/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/work-machines/jest.config.ts"
       }
     }
   },
