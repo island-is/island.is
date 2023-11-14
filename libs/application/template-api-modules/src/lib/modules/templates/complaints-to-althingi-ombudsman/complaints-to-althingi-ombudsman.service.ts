@@ -67,15 +67,15 @@ export class ComplaintsToAlthingiOmbudsmanTemplateService extends BaseTemplateAp
       )
     }
 
-    // await this.sharedTemplateAPIService.sendEmail(
-    //   (props) =>
-    //     generateConfirmationEmail(
-    //       props,
-    //       this.complaintConfig.applicationSenderName,
-    //       this.complaintConfig.applicationSenderEmail,
-    //     ),
-    //   application,
-    // )
+    await this.sharedTemplateAPIService.sendEmail(
+      (props) =>
+        generateConfirmationEmail(
+          props,
+          this.complaintConfig.applicationSenderName,
+          this.complaintConfig.applicationSenderEmail,
+        ),
+      application,
+    )
     return null
   }
 }
