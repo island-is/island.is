@@ -3,8 +3,9 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { CourseController } from './course.controller'
 import { CourseService } from './course.service'
 import { Course } from './model/course'
-import { University } from '../university'
-import { ProgramCourse, ProgramTable } from '../program'
+import { University } from '../university/model/university'
+import { ProgramCourse } from '../program/model/programCourse'
+import { ProgramTable } from '../program/model/program'
 
 @Module({
   imports: [

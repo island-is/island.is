@@ -7,8 +7,8 @@ import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
-import { Course } from '../course'
-import { University } from '../university'
+import { Course } from '../course/model/course'
+import { University } from '../university/model/university'
 
 @Module({
   imports: [

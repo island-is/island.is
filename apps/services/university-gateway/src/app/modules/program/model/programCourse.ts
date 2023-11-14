@@ -13,7 +13,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Course } from '../../course'
+import { Course } from '../../course/model/course'
 import { ProgramTable } from './program'
 import { Requirement, Season } from '@island.is/university-gateway'
 
@@ -86,13 +86,6 @@ export class ProgramCourse extends Model {
     allowNull: false,
   })
   semesterSeason!: Season
-
-  // @ApiHideProperty()
-  // @Column({
-  //   type: DataType.BOOLEAN,
-  //   allowNull: false,
-  // })
-  // tmpActive!: boolean
 
   @ApiHideProperty()
   @CreatedAt
