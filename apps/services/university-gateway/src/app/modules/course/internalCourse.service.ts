@@ -98,20 +98,15 @@ export class InternalCourseService {
               externalUrlEn: course.externalUrlEn,
             }
 
-            // 1. CREATE or UPDATE course
-            let courseId: string | undefined
+            // 1. UPSERT course
             const oldCourseObj = await this.courseModel.findOne({
               attributes: ['id'],
               where: { externalId: courseObj.externalId },
             })
-            if (oldCourseObj) {
-              courseId = oldCourseObj.id
-              await this.courseModel.update(courseObj, {
-                where: { id: courseId },
-              })
-            } else {
-              courseId = (await this.courseModel.create(courseObj)).id
-            }
+            const [{ id: courseId }] = await this.courseModel.upsert({
+              ...courseObj,
+              id: oldCourseObj?.id,
+            })
 
             // Map to programCourseModel object
             const programCourseObj = {
@@ -122,21 +117,15 @@ export class InternalCourseService {
               semesterSeason: course.semesterSeason,
             }
 
-            // 2. CREATE or UPDATE program course
+            // 2. UPSERT program course
             const oldProgramCourseObj = await this.programCourseModel.findOne({
               attributes: ['id'],
-              where: {
-                programId,
-                courseId,
-              },
+              where: { programId, courseId },
             })
-            if (oldProgramCourseObj) {
-              await this.programCourseModel.update(programCourseObj, {
-                where: { id: oldProgramCourseObj.id },
-              })
-            } else {
-              await this.programCourseModel.create(programCourseObj)
-            }
+            await this.programCourseModel.upsert({
+              ...programCourseObj,
+              id: oldProgramCourseObj?.id,
+            })
 
             activeCourseIdList.push(courseId)
           } catch (e) {

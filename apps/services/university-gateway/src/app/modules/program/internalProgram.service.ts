@@ -143,8 +143,6 @@ export class InternalProgramService {
           const modeOfDeliveryList = program.modeOfDelivery || []
           const extraApplicationFieldList = program.extraApplicationFields || []
 
-          // 2. CREATE or UPDATE program (make sure tmpActive becomes true)
-          let programId: string | undefined
           const programWhere: {
             externalId: string
             specializationExternalId?: string
@@ -152,18 +150,16 @@ export class InternalProgramService {
           if (specialization?.externalId) {
             programWhere.specializationExternalId = specialization.externalId
           }
+
+          // 2. UPSERT program (make sure tmpActive becomes true)
           const oldProgramObj = await this.programModel.findOne({
             attributes: ['id'],
             where: programWhere,
           })
-          if (oldProgramObj) {
-            programId = oldProgramObj.id
-            await this.programModel.update(programObj, {
-              where: { id: programId },
-            })
-          } else {
-            programId = (await this.programModel.create(programObj)).id
-          }
+          const [{ id: programId }] = await this.programModel.upsert({
+            ...programObj,
+            id: oldProgramObj?.id,
+          })
 
           // 3a. DELETE program tag
           await this.programTagModel.destroy({
