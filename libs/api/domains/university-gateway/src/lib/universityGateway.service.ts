@@ -79,7 +79,7 @@ export class UniversityGatewayApi {
   async getProgramById(
     input: UniversityGatewayGetPogramInput,
   ): Promise<UniversityGatewayProgramDetails> {
-    const item = await this.programApi.programControllerGetProgramDetails({
+    const item = await this.programApi.programControllerGetProgramById({
       id: input.id,
     })
 
