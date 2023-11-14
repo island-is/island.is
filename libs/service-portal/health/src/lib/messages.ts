@@ -700,10 +700,6 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-payment-status',
     defaultMessage: 'Greiðslustaða',
   },
-  medicinePaymentPaidAmount: {
-    id: 'sp.health:medicine-payment-paid-amount',
-    defaultMessage: '{amount} kr.',
-  },
   medicineStep: {
     id: 'sp.health:medicine-step',
     defaultMessage: 'Þrepastaða',
