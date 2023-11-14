@@ -200,7 +200,7 @@ export const MedicinePurchase = () => {
         justifyContent="flexStart"
         columnGap={2}
       >
-        <LinkV2 href="https://rg.sjukra.is/lyfjaverdskra" newTab>
+        <LinkV2 href={formatMessage(messages.medicinePriceListLink)} newTab>
           <Button variant="utility" icon="open" iconType="outline" as="span">
             {formatMessage(messages.medicinePriceList)}
           </Button>

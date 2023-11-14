@@ -26,8 +26,6 @@ export const MedicineCertificate = () => {
 
   const certificate = data?.rightsPortalGetCertificateById
 
-  console.log({ certificate })
-
   return (
     <Box paddingTop={4}>
       <Stack dividers="blueberry200" space={1}>

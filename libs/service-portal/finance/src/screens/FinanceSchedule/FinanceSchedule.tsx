@@ -139,6 +139,7 @@ const FinanceSchedule = () => {
                     size="default"
                     type="button"
                     variant="utility"
+                    as="span"
                   >
                     {applicationButtonText}
                   </Button>

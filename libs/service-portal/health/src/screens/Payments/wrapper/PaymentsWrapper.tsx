@@ -24,8 +24,18 @@ export const PaymentsWrapper = ({ children }: Props) => {
           intro={formatMessage(messages.paymentsIntro)}
           serviceProviderID={SJUKRATRYGGINGAR_ID}
         />
-        <LinkV2 href="#">
-          <Button size="small" variant="text" icon="open" iconType="outline">
+        <LinkV2
+          href={formatMessage(
+            messages.readAboutPaymentParticipationSystemsLink,
+          )}
+        >
+          <Button
+            size="small"
+            variant="text"
+            icon="open"
+            iconType="outline"
+            as="span"
+          >
             {formatMessage(messages.readAboutPaymentParticipationSystems)}
           </Button>
         </LinkV2>

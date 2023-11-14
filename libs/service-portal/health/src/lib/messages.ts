@@ -109,6 +109,10 @@ export const messages = defineMessages({
     id: 'sp.health:read-about-payment-participation-systems',
     defaultMessage: 'Lesa um greiðsluþátttökukerfi',
   },
+  readAboutPaymentParticipationSystemsLink: {
+    id: 'sp.health:read-about-payment-participation-systems-link',
+    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
+  },
   paymentOverview: {
     id: 'sp.health:payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
@@ -687,6 +691,10 @@ export const messages = defineMessages({
   medicinePriceList: {
     id: 'sp.health:medicine-price-list',
     defaultMessage: 'Lyfjaverðskrá',
+  },
+  medicinePriceListLink: {
+    id: 'sp.health:medicine-price-list-link',
+    defaultMessage: 'https://rg.sjukra.is/lyfjaverdskra',
   },
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
