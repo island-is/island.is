@@ -309,7 +309,7 @@ export const districtCourtRegistrarTransitionRule: RolesRule = {
   },
 }
 
-// Allows district court assistants to receive and accept indictment cases.
+// Allows district court assistants to transition cases.
 export const districtCourtAssistantTransitionRule: RolesRule = {
   role: UserRole.DISTRICT_COURT_ASSISTANT,
   type: RulesType.FIELD_VALUES,
@@ -318,7 +318,7 @@ export const districtCourtAssistantTransitionRule: RolesRule = {
   // canActivate: no need for further restrictions as district court assistants can only access indictment cases
 }
 
-// Allows court of appeals judges to complete appeals.
+// Allows court of appeals judges to transition cases.
 export const courtOfAppealsJudgeTransitionRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_JUDGE,
   type: RulesType.FIELD_VALUES,
@@ -330,7 +330,7 @@ export const courtOfAppealsJudgeTransitionRule: RolesRule = {
   // canActivate: no need for further restrictions as court of appeals judges can only access appealed non-indictment cases
 }
 
-// Allows court of appeals registrars to complete appeals.
+// Allows court of appeals registrars to transition cases.
 export const courtOfAppealsRegistrarTransitionRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_REGISTRAR,
   type: RulesType.FIELD_VALUES,
@@ -342,7 +342,7 @@ export const courtOfAppealsRegistrarTransitionRule: RolesRule = {
   // canActivate: no need for further restrictions as court of appeals registrars can only access appealed non-indictment cases
 }
 
-// Allows court of appeals assistants to complete appeals.
+// Allows court of appeals assistants to transition cases.
 export const courtOfAppealsAssistantTransitionRule: RolesRule = {
   role: UserRole.COURT_OF_APPEALS_ASSISTANT,
   type: RulesType.FIELD_VALUES,
