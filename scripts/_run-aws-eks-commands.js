@@ -4,20 +4,22 @@ const yargs = require('yargs')
 const { execSync } = require('child_process')
 const { defaultProvider } = require('@aws-sdk/credential-provider-node')
 
-// Compare two objects and print the diff. Ignore access keys and tokens.
 function diffObjects(a, b) {
-  const diff = {}
-  for (const key of Object.keys(a)) {
-    if (key.match(/(key|token)/i)) {
-      continue
-    }
-    if (key === 'Expiration' && a[key] !== b[key]) {
-      diff[key] = [a[key], b[key]]
-    } else if (a[key] !== b[key]) {
-      diff[key] = [a[key], b[key]]
+  const diff = { 'diff+': {}, 'diff-': {} }
+
+  for (let key in a) {
+    if (!/(key|token)/i.test(key) && a[key] !== b[key]) {
+      diff['diff-'][key] = a[key]
     }
   }
-  return !diff
+
+  for (let key in b) {
+    if (!/(key|token)/i.test(key) && a[key] !== b[key]) {
+      diff['diff+'][key] = b[key]
+    }
+  }
+
+  return diff
 }
 
 /**
@@ -143,7 +145,7 @@ const restartService = async ({
     containerImage,
   ]
   if (
-    !diffObjects(
+    diffObjects(
       mkRunCommand({ profile, service, builder, cluster, namespace }),
       runCmd,
     )
@@ -198,6 +200,27 @@ const runProxy = async ({
     proxyPort,
     containerImage: dockerBuild,
   })
+  const oldRunCmd = [
+    builder,
+    'run',
+    '--rm',
+    `--name ${service}`,
+    `-e AWS_ACCESS_KEY_ID="${credentials.accessKeyId}"`,
+    `-e AWS_SECRET_ACCESS_KEY="${credentials.secretAccessKey}"`,
+    `-e AWS_SESSION_TOKEN="${credentials.sessionToken}"`,
+    `-e CLUSTER="${cluster}"`,
+    `-e TARGET_SVC="${service}"`,
+    `-e TARGET_NAMESPACE="${namespace}"`,
+    '-e iamold=true',
+    dockerBuild,
+  ]
+  const cmdDiff = diffObjects(runCmd, oldRunCmd)
+  if (cmdDiff) {
+    console.error(
+      'New run command does not match previous run command, debug plz...',
+      { cmdDiff },
+    )
+  }
   try {
     execSync(runCmd.join(' '), { stdio: 'inherit' })
   } catch (err) {
