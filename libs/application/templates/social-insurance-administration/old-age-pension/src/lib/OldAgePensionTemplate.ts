@@ -1,4 +1,5 @@
 import { assign } from 'xstate'
+import unset from 'lodash/unset'
 import set from 'lodash/set'
 import cloneDeep from 'lodash/cloneDeep'
 
@@ -33,6 +34,7 @@ import {
   SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { getApplicationAnswers } from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
