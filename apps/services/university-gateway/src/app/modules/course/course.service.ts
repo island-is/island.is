@@ -6,7 +6,6 @@ import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 import { NoContentException } from '@island.is/nest/problem'
 import { CourseResponse } from './dto/courseResponse'
-import { CourseDetailsResponse } from './dto/courseDetailsResponse'
 
 @Injectable()
 export class CourseService {
@@ -49,13 +48,13 @@ export class CourseService {
     })
   }
 
-  async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
+  async getCourseDetails(id: string): Promise<Course> {
     const course = await this.courseModel.findByPk(id)
 
     if (!course) {
       throw new NoContentException()
     }
 
-    return { data: course }
+    return course
   }
 }

@@ -9,7 +9,7 @@ import { CourseService } from './course.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { CourseResponse } from './dto/courseResponse'
-import { CourseDetailsResponse } from './dto/courseDetailsResponse'
+import { Course } from './model/course'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')
@@ -83,7 +83,7 @@ export class CourseController {
     description: 'Get course by ID',
     response: {
       status: 200,
-      type: CourseDetailsResponse,
+      type: Course,
     },
     request: {
       params: {
@@ -95,7 +95,7 @@ export class CourseController {
       },
     },
   })
-  getCourseDetails(@Param('id') id: string): Promise<CourseDetailsResponse> {
+  getCourseDetails(@Param('id') id: string): Promise<Course> {
     return this.courseService.getCourseDetails(id)
   }
 }

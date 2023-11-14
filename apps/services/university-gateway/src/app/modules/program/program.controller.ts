@@ -9,7 +9,7 @@ import { ProgramService } from './program.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { ProgramResponse } from './dto/programResponse'
-import { ProgramDetailsResponse } from './dto/programDetailsResponse'
+import { ProgramDetails } from './model/program'
 import { TagResponse } from './dto/tagResponse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
@@ -108,7 +108,7 @@ export class ProgramController {
     description: 'Get program (and courses) by ID',
     response: {
       status: 200,
-      type: ProgramDetailsResponse,
+      type: ProgramDetails,
     },
     request: {
       params: {
@@ -120,7 +120,7 @@ export class ProgramController {
       },
     },
   })
-  getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
+  getProgramDetails(@Param('id') id: string): Promise<ProgramDetails> {
     return this.programService.getProgramDetails(id)
   }
 

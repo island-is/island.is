@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { ProgramTable } from './model/program'
+import { ProgramDetails, ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { ProgramResponse } from './dto/programResponse'
-import { ProgramDetailsResponse } from './dto/programDetailsResponse'
 import { TagResponse } from './dto/tagResponse'
 import { Course } from '../course'
 import { University } from '../university'
@@ -89,7 +88,7 @@ export class ProgramService {
     })
   }
 
-  async getProgramDetails(id: string): Promise<ProgramDetailsResponse> {
+  async getProgramDetails(id: string): Promise<ProgramDetails> {
     const program = await this.programModel.findByPk(id, {
       include: [
         {
@@ -124,7 +123,7 @@ export class ProgramService {
       throw new NoContentException()
     }
 
-    return { data: program }
+    return program
   }
 
   async getTags(): Promise<TagResponse> {
