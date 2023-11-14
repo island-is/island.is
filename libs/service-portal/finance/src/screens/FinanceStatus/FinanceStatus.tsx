@@ -1,10 +1,7 @@
 import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
@@ -14,7 +11,6 @@ import {
   SkeletonLoader,
   Stack,
   Table as T,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -39,23 +35,10 @@ import {
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/auth/react'
 import FinanceIntro from '../../components/FinanceIntro'
-
-const GetFinanceStatusQuery = gql`
-  query GetFinanceStatusQuery {
-    getFinanceStatus
-  }
-`
-
-const GetDebtStatusQuery = gql`
-  query FinanceStatusGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
+import {
+  useGetDebtStatusQuery,
+  useGetFinanceStatusQuery,
+} from './FinanceStatus.generated'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
@@ -64,12 +47,10 @@ const FinanceStatus = () => {
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
-  const { loading, error, ...statusQuery } = useQuery<Query>(
-    GetFinanceStatusQuery,
-  )
+  const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
   const { data: debtStatusData, loading: debtStatusLoading } =
-    useQuery<Query>(GetDebtStatusQuery)
+    useGetDebtStatusQuery()
 
   const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
