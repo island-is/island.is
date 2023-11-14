@@ -2,21 +2,61 @@
 
 const yargs = require('yargs')
 const { exec } = require('child_process')
-const { sleep } = require('util').promisify(setTimeout)
-const { runProxy, restartService } = require('./_run-aws-eks-commands')
+const { execSync } = require('child_process')
+const {
+  runProxy,
+  restartService,
+  containerer,
+} = require('./_run-aws-eks-commands')
+
+const proxies = ['es', 'soffia', 'xroad', 'redis']
+const proxyConfig = {
+  es: {
+    namespace: 'es-proxy',
+    containerName: 'es-proxy',
+    port: 9200,
+    proxyPort: 9200,
+  },
+  soffia: {
+    namespace: 'socat',
+    containerName: 'socat-soffia',
+    port: 443,
+    proxyPort: 8443,
+  },
+  xroad: {
+    namespace: 'socat',
+    containerName: 'socat-xroad',
+    port: 80,
+    proxyPort: 8081,
+  },
+  db: {
+    namespace: 'socat',
+    containerName: 'socat-db',
+    port: 5432,
+    proxyPort: 5432,
+  },
+  redis: {
+    namespace: 'socat',
+    containerName: 'socat-redis',
+    port: 6379,
+    proxyPort: 6379,
+  },
+}
 
 // Define your CLI arguments using yargs
 const argv = yargs
   .option('remove-containers-on-start', {
-    alias: 'f',
+    alias: 's',
     type: 'boolean',
     description: 'Remove containers on start',
   })
   .option('remove-containers-on-fail', {
+    alias: 'e',
     type: 'boolean',
-    description: 'Remove containers on failure',
+    description: 'Remove containers on fail',
   })
   .option('remove-containers-force', {
+    alias: 'f',
     type: 'boolean',
     description: 'Force remove containers',
   })
@@ -25,74 +65,103 @@ const argv = yargs
     type: 'number',
     default: 3,
     description: 'Restart interval time',
-  }).argv
+  })
+  .option('cluster', {
+    type: 'string',
+    description: 'Name of Kubernetes cluster',
+    choices: [
+      'dev-cluster01',
+      'staging-cluster01',
+      'prod-cluster01',
+      'shared-cluster01',
+    ],
+    default: 'dev-cluster01',
+  })
+  .option('builder', {
+    type: 'string',
+    description: 'docker or podman',
+    default: 'docker',
+  })
+  .option('service', {
+    type: 'array',
+    default: proxies,
+    description: 'Name of the proxies',
+    choices: proxies,
+  })
+  .help()
+  .alias('help', 'h')
+  .check((args) => args.service.length > 0).argv
 
-// Determine the command for container operations
-const containerCmd = (() => {
-  return 'podman'
-  if (commandExistsSync('podman')) {
-    return 'podman'
-  } else if (commandExistsSync('docker')) {
-    return 'docker'
-  }
-  console.error('Please install podman or docker')
-  process.exit(1)
-})()
-
-function commandExistsSync(cmd) {
-  try {
-    execSync(`command -v ${cmd}`)
-    return true
-  } catch {
-    return false
-  }
+if (argv.removeContainersForce) {
+  argv.removeContainersOnFail = true
+  argv.removeContainersOnStart = true
 }
 
 // Main function
 async function main() {
-  const proxies = ['es', 'soffia', 'xroad', 'redis']
-
   for (const proxy of proxies) {
-    const containerName = `proxy-${proxy}`
-
+    if (!argv.service.includes(proxy)) continue
     if (argv.removeContainersOnStart) {
-      console.log('Removing containers...')
-      execSync(
-        `${containerCmd} rm ${
-          argv.removeContainersForce ? '-f' : ''
-        } ${containerName}`,
-      )
+      await removeProxy(proxy)
     }
 
     console.log(`Starting ${proxy} proxy`)
-    startProxy(proxy, containerName)
+    startProxy(proxy, argv)
   }
 }
 
-function startProxy(proxy, containerName) {
-  runProxy({})
+async function removeProxy(proxy) {
+  if (!proxy) {
+    throw new Error('No proxy specified')
+  }
+  const containerName = proxyConfig[proxy].containerName
 
-  const process = exec(`./scripts/run-${proxy}-proxy.sh ...`) // Pass the required arguments
+  const listContainersCmd = [containerer, 'ps', '-a']
+  const containerExists = execSync(listContainersCmd.join(' '))
+    .toString()
+    .match(containerName)
 
-  process.on('exit', (code) => {
-    console.log(`Exit code for ${proxy} proxy: ${code}`)
-    if (code === 1) process.exit(1)
+  if (!containerExists) {
+    return
+  }
 
-    console.log(
-      `Restarting ${proxy} proxy in ${argv.restartIntervalTime} seconds...`,
-    )
-    setTimeout(() => {
-      if (argv.removeContainersOnFail) {
-        console.log(`Removing container ${containerName}...`)
-        execSync(
-          `${containerCmd} rm ${
-            argv.removeContainersForce ? '-f' : ''
-          } ${containerName}`,
-        )
-      }
-      startProxy(proxy, containerName)
-    }, argv.restartIntervalTime * 1000)
+  console.log('Removing containers...')
+  const stopContainerCmd = [
+    containerer,
+    'stop',
+    argv.removeContainersForce ? '-f' : '',
+    containerName,
+  ]
+  const removeContainerCmd = [
+    containerer,
+    'rm',
+    argv.removeContainersForce ? '-f' : '',
+    containerName,
+  ]
+  console.log('Executing: ', stopContainerCmd)
+  execSync(stopContainerCmd.join(' '))
+  console.log('Executing: ', stopContainerCmd)
+  execSync(removeContainerCmd.join(' '))
+}
+
+async function startProxy(proxy, args) {
+  await runProxy({
+    ...args,
+    namespace: proxyConfig[proxy].namespace,
+    service: proxy,
+    ...proxyConfig[proxy],
   })
+
+  console.log(
+    `Restarting ${proxy} proxy in ${argv.restartIntervalTime} seconds...`,
+  )
+  setTimeout(() => {
+    if (argv.removeContainersOnFail) {
+      console.log(`Removing proxy ${proxy}...`)
+      removeProxy(proxy)
+    }
+    startProxy(proxy, args)
+  }, argv.restartIntervalTime * 1000)
 }
 
 main()

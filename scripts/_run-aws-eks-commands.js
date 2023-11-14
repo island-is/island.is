@@ -4,6 +4,26 @@ const yargs = require('yargs')
 const { execSync } = require('child_process')
 const { defaultProvider } = require('@aws-sdk/credential-provider-node')
 
+function commandExistsSync(cmd) {
+  try {
+    execSync(`command -v ${cmd}`)
+    return true
+  } catch {
+    return false
+  }
+}
+// Determine the command for container operations
+const containerer = (() => {
+  if (commandExistsSync('podman')) {
+    return 'podman'
+  } else if (commandExistsSync('docker')) {
+    return 'docker'
+  }
+  console.error('Please install podman or docker')
+  return 'podman'
+  // process.exit(1)
+})()
+
 function diffObjects(a, b) {
   const diff = { 'diff+': {}, 'diff-': {} }
   if (a === b) {
@@ -111,7 +131,7 @@ async function mkRunCommand({
 }) {
   const credentials = await getCredentials(profile)
   const cmd = [
-    builder,
+    builder ?? containerer,
     `run`,
     `--rm`,
     `--name ${service}`,
@@ -138,6 +158,9 @@ async function mkRunCommand({
  * @param {string} target - The target stage in the Dockerfile to build.
  */
 function buildDockerImage(containerImage, builder, target) {
+  if (!builder) {
+    builder = containerer
+  }
   console.log(
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
@@ -232,6 +255,19 @@ const runProxy = async ({
   port,
   proxyPort,
 }) => {
+  if (!builder) {
+    builder = containerer
+  }
+  if (!port || !proxyPort) {
+    throw new Error(
+      `Missing required arguments for running the proxy (port=${port}, proxyPort=${proxyPort})`,
+    )
+  }
+  if (!service) {
+    throw new Error(
+      `Missing required argument for running the proxy (service=${service})`,
+    )
+  }
   const credentials = await getCredentials(profile)
   const dockerBuild = `proxy-${service}`
   buildDockerImage(dockerBuild, builder, 'proxy')
@@ -359,6 +395,7 @@ async function main() {
 module.exports = {
   runProxy,
   restartService,
+  containerer,
 }
 if (require.main === module) {
   main()
