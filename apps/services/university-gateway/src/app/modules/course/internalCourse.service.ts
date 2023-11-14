@@ -79,19 +79,6 @@ export class InternalCourseService {
       const programId = program.id
 
       try {
-        // 1. Mark all program courses for this program as "temporarily inactive",
-        // so we know in the end which courses (and program courses) should actually be deleted
-        // This is done to make sure not all courses for the university are deleted
-        // while we are updating the list of courses
-        await this.programCourseModel.update(
-          {
-            tmpActive: false,
-          },
-          {
-            where: { programId },
-          },
-        )
-
         const courseList = await getCourses(program.externalId)
 
         for (let j = 0; j < courseList.length; j++) {
@@ -111,7 +98,7 @@ export class InternalCourseService {
               externalUrlEn: course.externalUrlEn,
             }
 
-            // 2. CREATE or UPDATE course
+            // 1. CREATE or UPDATE course
             let courseId: string | undefined
             const oldCourseObj = await this.courseModel.findOne({
               attributes: ['id'],
@@ -128,7 +115,6 @@ export class InternalCourseService {
 
             // Map to programCourseModel object
             const programCourseObj = {
-              tmpActive: true,
               programId,
               courseId,
               requirement: course.requirement,
@@ -136,7 +122,7 @@ export class InternalCourseService {
               semesterSeason: course.semesterSeason,
             }
 
-            // 3. CREATE or UPDATE program course (make sure tmpActive becomes true)
+            // 2. CREATE or UPDATE program course
             const oldProgramCourseObj = await this.programCourseModel.findOne({
               attributes: ['id'],
               where: {
@@ -166,13 +152,10 @@ export class InternalCourseService {
           e,
         )
       }
-      // 4. DELETE all program courses for this program that are "temporarily inactive"
-      await this.programCourseModel.destroy({
-        where: { programId, tmpActive: false },
-      })
     }
 
-    // 5. DELETE all courses for this university that are not being used
+    // 3. DELETE all courses for this university that are not being used
+    // Note: this should also delete all necessary program course items since we have set onDelete=CASCADE
     await this.courseModel.destroy({
       where: {
         universityId,

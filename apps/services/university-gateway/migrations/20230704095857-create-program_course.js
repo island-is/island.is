@@ -22,6 +22,7 @@ module.exports = {
           },
           course_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             references: {
               model: 'course',
               key: 'id',
@@ -42,10 +43,6 @@ module.exports = {
           },
           semester_season: {
             type: Sequelize.ENUM('FALL', 'SPRING', 'SUMMER'),
-            allowNull: false,
-          },
-          tmp_active: {
-            type: Sequelize.BOOLEAN,
             allowNull: false,
           },
           created: {
