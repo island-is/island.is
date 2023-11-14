@@ -7,7 +7,7 @@ import { SignatureCollectionPaths } from './lib/paths'
 
 const SignatureLists = lazy(() => import('./screens/SignatureLists'))
 
-export const petitionsModule: PortalModule = {
+export const signatureCollectionModule: PortalModule = {
   name: 'Undirskriftalistar',
   featureFlag: Features.servicePortalPetitionsModule,
   routes: ({ userInfo }) => {
