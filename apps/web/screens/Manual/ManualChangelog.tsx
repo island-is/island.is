@@ -65,7 +65,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
         <Divider />
         <Box paddingTop={2}>
           <Stack space={2}>
-            <Text variant="h2" as="h2">
+            <Text variant="h2" as="h1">
               {manualChangelogTitle}
             </Text>
             <Text>
@@ -97,6 +97,7 @@ const ManualChangelog: ManualScreen = ({ manual, namespace }) => {
         <Accordion>
           {changelog.map(({ year, dates }) => (
             <AccordionItem
+              labelUse="h2"
               key={year}
               id={year.toString()}
               label={year.toString()}
