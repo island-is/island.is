@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { processEntryFields } from './fragments'
 
 export const GET_SEARCH_RESULTS_QUERY = gql`
@@ -44,6 +45,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           organizationPage {
             slug
           }
+        }
+        ... on Manual {
+          id
+          title
+          slug
         }
       }
     }
@@ -246,6 +252,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         }
 
         ... on Manual {
+          id
           title
           slug
         }

@@ -28,6 +28,7 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
+
   const [explanation, setExplanation] = useState(
     formatMessage(
       isCourtOfAppealsUser(user)
@@ -71,7 +72,11 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(strings.text)}
+      text={formatMessage(
+        isCourtOfAppealsUser(user)
+          ? strings.appealRulingText
+          : strings.rulingText,
+      )}
       primaryButtonText={formatMessage(
         isCourtOfAppealsUser(user)
           ? strings.appealRulingContinue

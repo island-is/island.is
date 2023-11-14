@@ -1,5 +1,6 @@
 export enum EventType {
   APPEAL_RESULT_ACCESSED = 'APPEAL_RESULT_ACCESSED',
+  LOGIN = 'LOGIN',
 }
 
 export interface EventLog {
