@@ -12,7 +12,6 @@ import { ApplicationService } from './application.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Application } from './model/application'
-import { ApplicationResponse } from './dto/applicationResponse'
 import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 
@@ -31,7 +30,7 @@ export class ApplicationController {
     description: 'Get application by ID',
     response: {
       status: 200,
-      type: ApplicationResponse,
+      type: Application,
     },
     request: {
       params: {
@@ -43,11 +42,11 @@ export class ApplicationController {
       },
     },
   })
-  getApplication(
+  getApplicationById(
     @Param('id') id: string,
     @CurrentUser() user: User,
-  ): Promise<ApplicationResponse> {
-    return this.applicationService.getApplication(id, user)
+  ): Promise<Application> {
+    return this.applicationService.getApplicationById(id, user)
   }
 
   @Post()

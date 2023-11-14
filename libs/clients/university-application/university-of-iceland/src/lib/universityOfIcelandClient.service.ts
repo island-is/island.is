@@ -39,7 +39,7 @@ export class UniversityOfIcelandApplicationClient {
             Season,
           ),
           applicationStartDate: program.applicationStartDate || new Date(),
-          applicationEndDate: new Date(), //TODO missing in api
+          applicationEndDate: program.applicationEndDate || new Date(),
           schoolAnswerDate: undefined, //TODO will not be used yet
           studentAnswerDate: undefined, //TODO will not be used yet
           degreeType: mapStringToEnum(program.degreeType, DegreeType),
@@ -82,7 +82,11 @@ export class UniversityOfIcelandApplicationClient {
               uploadAcceptedFileType: field.uploadAcceptedFileType,
             }),
           ),
-          minors: [], //TODO missing in api
+          specializations: program.kjorsvid?.map((k) => ({
+            externalId: k.id?.toString() || '',
+            nameIs: k.heiti || '',
+            nameEn: k.heitiEn || '',
+          })),
         })
       } catch (e) {
         logger.error(
@@ -98,6 +102,7 @@ export class UniversityOfIcelandApplicationClient {
   async getCourses(externalId: string): Promise<ICourse[]> {
     const res = await this.coursesApi.programExternalIdCoursesGet({
       externalId,
+      // specializationExternalId // TODO missing in api
     })
 
     const mappedRes = []
@@ -153,7 +158,6 @@ export class UniversityOfIcelandApplicationClient {
 
         mappedRes.push({
           externalId: externalId,
-          // minorExternalId: course.minorId, //TODO missing in api
           nameIs: course.nameIs || '',
           nameEn: course.nameEn || '',
           credits: Number(course.credits?.replace(',', '.')) || 0,

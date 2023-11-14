@@ -25,17 +25,17 @@
         }
       }
     },
-    "schemas/openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "nx run services-university-gateway:schemas/build-openapi $NX_OPTIONS",
           "yarn openapi-generator -o libs/clients/university-gateway-api/gen/fetch -i apps/services/university-gateway/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
         ],
         "parallel": false
       },
-      "outputs": ["{workspaceRoot}/libs/clients/university-gateway-api/gen"]
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-university-gateway"],
   "tags": ["lib:client", "scope:client"]
 }

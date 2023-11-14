@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
+import { AuditModule } from '@island.is/nest/audit'
+import { environment } from '../environments'
 
 @Module({
   imports: [
@@ -16,6 +18,7 @@ import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/u
     CourseModule,
     ProgramModule,
     UniversityModule,
+    AuditModule.forRoot(environment.audit),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

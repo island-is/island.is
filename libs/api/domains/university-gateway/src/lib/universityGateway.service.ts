@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import {
   ProgramApi,
+  University,
   UniversityApi,
 } from '@island.is/clients/university-gateway-api'
-import { CmsContentfulService } from '@island.is/cms'
 import {
   UniversityGatewayGetPogramInput,
   UniversityGatewayProgramsPaginated,
@@ -19,13 +19,11 @@ import {
   Season,
 } from '@island.is/university-gateway'
 
-const defaultLang = 'is'
 @Injectable()
 export class UniversityGatewayApi {
   constructor(
     private readonly programApi: ProgramApi,
     private readonly universityApi: UniversityApi,
-    private readonly cmsContentfulService: CmsContentfulService,
   ) {}
 
   async getActivePrograms(): Promise<UniversityGatewayProgramsPaginated> {
@@ -37,11 +35,14 @@ export class UniversityGatewayApi {
       totalCount: res.totalCount,
       pageInfo: res.pageInfo,
       data: res.data.map((item) => ({
+        active: item.active,
         id: item.id,
         externalId: item.externalId,
-        active: item.active,
         nameIs: item.nameIs,
         nameEn: item.nameEn,
+        specializationExternalId: item.specializationExternalId,
+        specializationNameIs: item.specializationNameIs,
+        specializationNameEn: item.specializationNameEn,
         universityId: item.universityId,
         universityContentfulKey: item.universityDetails.contentfulKey,
         departmentNameIs: item.departmentNameIs,
@@ -78,11 +79,9 @@ export class UniversityGatewayApi {
   async getProgramById(
     input: UniversityGatewayGetPogramInput,
   ): Promise<UniversityGatewayProgramDetails> {
-    const res = await this.programApi.programControllerGetProgramDetails({
+    const item = await this.programApi.programControllerGetProgramDetails({
       id: input.id,
     })
-
-    const item = res.data
 
     return {
       id: item.id,
@@ -149,41 +148,7 @@ export class UniversityGatewayApi {
 
   async getUniversities(): Promise<UniversityGatewayUniversity[]> {
     const res = await this.universityApi.universityControllerGetUniversities()
-
-    const referenceIdentifierSet = res.data?.map((i: any) => i.contentfulKey)
-
-    // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
-    const organizationsResponse =
-      await this.cmsContentfulService.getOrganizations({
-        lang: defaultLang,
-        referenceIdentifiers: referenceIdentifierSet,
-      })
-
-    // // Create a mapping for reference identifier -> organization data
-    const organizationMap = new Map<
-      string,
-      { logoUrl: string | undefined; title: string }
-    >()
-
-    for (const organization of organizationsResponse?.items ?? []) {
-      if (organization?.referenceIdentifier) {
-        organizationMap.set(organization.referenceIdentifier, {
-          logoUrl: organization.logo?.url,
-          title: organization.shortTitle || organization.title,
-        })
-      }
-    }
-
-    return res.data.map((item: any) => {
-      const info = organizationMap.get(item.contentfulKey)
-      return {
-        id: item.id,
-        nationalId: item.nationalId,
-        contentfulKey: item.contentfulKey,
-        title: info?.title ? info?.title : 'Fannst ekki',
-        logoUrl: info?.logoUrl ? info?.logoUrl : '',
-      }
-    })
+    return res.data
   }
 
   async getProgramFilters(): Promise<UniversityGatewayProgramFilter[]> {
@@ -204,7 +169,7 @@ export class UniversityGatewayApi {
         field: 'universityId',
         options: (
           await this.universityApi.universityControllerGetUniversities()
-        ).data.map((item: any) => item.id),
+        ).data.map((item: University) => item.id),
       },
       {
         field: 'durationInYears',

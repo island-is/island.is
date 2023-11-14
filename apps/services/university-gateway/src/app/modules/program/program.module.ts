@@ -7,15 +7,11 @@ import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
-import { ProgramMinor } from './model/programMinor'
-import { Course } from '../course'
-import { University } from '../university'
-import { AuditModule } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
+import { Course } from '../course/model/course'
+import { University } from '../university/model/university'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
     SequelizeModule.forFeature([
       University,
       Course,
@@ -24,7 +20,6 @@ import { environment } from '../../../environments'
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
-      ProgramMinor,
     ]),
   ],
   controllers: [ProgramController],

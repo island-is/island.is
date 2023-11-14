@@ -8,8 +8,8 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { CourseService } from './course.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { CourseResponse } from './dto/courseResponse'
-import { CourseDetailsResponse } from './dto/courseDetailsResponse'
+import { CoursesResponse } from './dto/coursesResponse'
+import { Course } from './model/course'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Course')
@@ -26,7 +26,7 @@ export class CourseController {
     description: 'Get all courses',
     response: {
       status: 200,
-      type: CourseResponse,
+      type: CoursesResponse,
     },
     request: {
       query: {
@@ -66,15 +66,13 @@ export class CourseController {
     @Query('before') before: string,
     @Query('after') after: string,
     @Query('programId') programId: string,
-    @Query('programMinorId') programMinorId: string,
     @Query('universityId') universityId: string,
-  ): Promise<CourseResponse> {
+  ): Promise<CoursesResponse> {
     return this.courseService.getCourses(
       limit,
       after,
       before,
       programId,
-      programMinorId,
       universityId,
     )
   }
@@ -85,7 +83,7 @@ export class CourseController {
     description: 'Get course by ID',
     response: {
       status: 200,
-      type: CourseDetailsResponse,
+      type: Course,
     },
     request: {
       params: {
@@ -97,7 +95,7 @@ export class CourseController {
       },
     },
   })
-  getCourseDetails(@Param('id') id: string): Promise<CourseDetailsResponse> {
-    return this.courseService.getCourseDetails(id)
+  getCourseById(@Param('id') id: string): Promise<Course> {
+    return this.courseService.getCourseById(id)
   }
 }

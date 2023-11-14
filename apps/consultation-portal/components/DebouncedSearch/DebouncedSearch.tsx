@@ -14,6 +14,7 @@ interface Props {
   localStorageId?: string
   label?: string
   isSubscriptions?: boolean
+  filtersLoaded?: boolean
 }
 
 const loc = localization.debouncedSearch
@@ -27,10 +28,17 @@ const DebouncedSearch = ({
   localStorageId,
   label = loc.label,
   isSubscriptions,
+  filtersLoaded,
 }: Props) => {
   const [value, setValue] = useState(
     isSubscriptions ? searchValue : filters?.searchQuery,
   )
+
+  useEffect(() => {
+    if (filtersLoaded && !isSubscriptions) {
+      setValue(filters?.searchQuery)
+    }
+  }, [filtersLoaded])
 
   const debouncedHandleSearch = useDebounce(() => {
     if (isSubscriptions) {

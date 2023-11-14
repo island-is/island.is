@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Application } from './model/application'
-import { ApplicationResponse } from './dto/applicationResponse'
 import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 import { User } from '@island.is/auth-nest-tools'
@@ -9,7 +8,7 @@ import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class ApplicationService {
-  async getApplication(id: string, user: User): Promise<ApplicationResponse> {
+  async getApplicationById(id: string, user: User): Promise<Application> {
     throw Error('Not ready')
   }
 

@@ -1,20 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { ProgramTable } from './model/program'
+import { ProgramDetails, ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
-import { ProgramResponse } from './dto/programResponse'
-import { ProgramDetailsResponse } from './dto/programDetailsResponse'
-import { TagResponse } from './dto/tagResponse'
-import { Course } from '../course'
-import { University } from '../university'
+import { ProgramsResponse } from './dto/programsResponse'
+import { TagsResponse } from './dto/tagsResponse'
+import { Course } from '../course/model/course'
+import { University } from '../university/model/university'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 import { DegreeType, Season } from '@island.is/university-gateway'
 import { NoContentException } from '@island.is/nest/problem'
-import { ProgramMinor } from './model/programMinor'
 
 @Injectable()
 export class ProgramService {
@@ -35,7 +33,7 @@ export class ProgramService {
     season?: Season,
     universityId?: string,
     degreeType?: DegreeType,
-  ): Promise<ProgramResponse> {
+  ): Promise<ProgramsResponse> {
     const where: {
       active?: boolean
       startingSemesterYear?: number
@@ -69,7 +67,6 @@ export class ProgramService {
           'costInformationEn',
           'courses',
           'extraApplicationFields',
-          'minors',
         ],
       },
       include: [
@@ -91,7 +88,7 @@ export class ProgramService {
     })
   }
 
-  async getProgramDetails(id: string): Promise<ProgramDetailsResponse> {
+  async getProgramById(id: string): Promise<ProgramDetails> {
     const program = await this.programModel.findByPk(id, {
       include: [
         {
@@ -119,9 +116,6 @@ export class ProgramService {
         {
           model: ProgramExtraApplicationField,
         },
-        {
-          model: ProgramMinor,
-        },
       ],
     })
 
@@ -129,10 +123,10 @@ export class ProgramService {
       throw new NoContentException()
     }
 
-    return { data: program }
+    return program
   }
 
-  async getTags(): Promise<TagResponse> {
+  async getTags(): Promise<TagsResponse> {
     const tags = await this.tagModel.findAll()
     return { data: tags }
   }

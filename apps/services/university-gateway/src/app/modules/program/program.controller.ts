@@ -8,9 +8,9 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ProgramService } from './program.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { ProgramResponse } from './dto/programResponse'
-import { ProgramDetailsResponse } from './dto/programDetailsResponse'
-import { TagResponse } from './dto/tagResponse'
+import { ProgramsResponse } from './dto/programsResponse'
+import { ProgramDetails } from './model/program'
+import { TagsResponse } from './dto/tagsResponse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -27,7 +27,7 @@ export class ProgramController {
     description: 'Get all programs',
     response: {
       status: 200,
-      type: ProgramResponse,
+      type: ProgramsResponse,
     },
     request: {
       query: {
@@ -89,7 +89,7 @@ export class ProgramController {
     @Query('season') season?: Season,
     @Query('universityId') universityId?: string,
     @Query('degreeType') degreeType?: DegreeType,
-  ): Promise<ProgramResponse> {
+  ): Promise<ProgramsResponse> {
     return this.programService.getPrograms(
       limit,
       after,
@@ -108,7 +108,7 @@ export class ProgramController {
     description: 'Get program (and courses) by ID',
     response: {
       status: 200,
-      type: ProgramDetailsResponse,
+      type: ProgramDetails,
     },
     request: {
       params: {
@@ -120,8 +120,8 @@ export class ProgramController {
       },
     },
   })
-  getProgramDetails(@Param('id') id: string): Promise<ProgramDetailsResponse> {
-    return this.programService.getProgramDetails(id)
+  getProgramById(@Param('id') id: string): Promise<ProgramDetails> {
+    return this.programService.getProgramById(id)
   }
 
   @BypassAuth()
@@ -130,10 +130,10 @@ export class ProgramController {
     description: 'Get all tags',
     response: {
       status: 200,
-      type: TagResponse,
+      type: TagsResponse,
     },
   })
-  getTags(): Promise<TagResponse> {
+  getTags(): Promise<TagsResponse> {
     return this.programService.getTags()
   }
 
