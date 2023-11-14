@@ -27,12 +27,9 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PdfButton,
-  RestrictionTags,
-  RulingDateLabel,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -83,7 +80,8 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
         <PageHeader title={formatMessage(titles.defender.caseOverview)} />
         <FormContentContainer>
           {!completedCaseStates.includes(workingCase.state) &&
-            workingCase.caseResentExplanation && (
+            workingCase.caseResentExplanation &&
+            workingCase.requestSharedWithDefender && (
               <Box marginBottom={5}>
                 <CaseResentExplanation
                   explanation={workingCase.caseResentExplanation}
