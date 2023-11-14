@@ -9,18 +9,19 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { UserInfoLine, m, numberFormat } from '@island.is/service-portal/core'
-import { messages } from '../../../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-import { CONTENT_GAP, SECTION_GAP } from '../../Medicine/constants'
+import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
   useGetCopaymentBillsQuery,
-} from '../Payments.generated'
+} from './Payments.generated'
 import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
+import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentPartication = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -64,7 +65,7 @@ export const PaymentPartication = () => {
   const bills = billsData?.rightsPortalCopaymentBills.items
 
   return (
-    <Box paddingY={4} background="white">
+    <PaymentsWrapper>
       {error ? (
         <AlertMessage
           type="error"
@@ -363,7 +364,7 @@ export const PaymentPartication = () => {
           {formatMessage(messages.paymentParticationExplinationFooter)}
         </Text>
       </Box>
-    </Box>
+    </PaymentsWrapper>
   )
 }
 

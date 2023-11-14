@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { Box, Button, FocusableBox, Select } from '@island.is/island-ui/core'
+import { Box, FocusableBox, Button, Select } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { theme } from '@island.is/island-ui/theme'
 import cn from 'classnames'
@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { SubTabItem } from './SubTabItem'
 import * as styles from './TabNavigation.css'
+import LinkResolver from '../LinkResolver/LinkResolver'
 
 interface Props {
   pathname?: string
@@ -20,11 +21,18 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const [activeItem, setActiveItem] = useState<
     PortalNavigationItem | undefined
   >()
+  const [activeItemChildren, setActiveItemChildren] = useState<
+    PortalNavigationItem[] | undefined
+  >()
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
   useEffect(() => {
-    setActiveItem(items.filter((item) => item.active)?.[0] ?? undefined)
+    const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
+    setActiveItem(activeItem)
+    setActiveItemChildren(
+      activeItem?.children?.filter((itm) => itm.active && !itm.navHide),
+    )
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
@@ -39,16 +47,14 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
       <Box className={styles.tabList}>
         {items?.map((item, index) => (
           <FocusableBox
-            component={Button}
-            type="button"
+            component={LinkResolver}
             key={index}
             id={item.path}
             justifyContent="center"
-            aria-label={formatMessage(item.name)}
             className={cn(styles.tab, {
               [styles.tabSelected]: item.active,
             })}
-            onClick={item.path ? () => tabChangeHandler(item.path) : undefined}
+            href={item.path}
           >
             {formatMessage(item.name)}
           </FocusableBox>
@@ -73,7 +79,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           />
         </Box>
       )}
-      {activeItem && activeItem?.children && activeItem.children.length > 0 ? (
+      {activeItem && activeItemChildren?.length ? (
         <Box
           display="flex"
           flexDirection="row"
@@ -82,7 +88,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
         >
           <SubTabItem
             colorScheme={
-              activeItem.children.filter((item) => item.active).length === 0
+              activeItemChildren.filter((item) => item.active).length === 0
                 ? 'default'
                 : 'light'
             }
@@ -94,7 +100,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
             }
             marginLeft={0}
           />
-          {activeItem.children?.map((itemChild, ii) => (
+          {activeItemChildren?.map((itemChild, ii) => (
             <SubTabItem
               key={`subnav-${ii}`}
               onClick={

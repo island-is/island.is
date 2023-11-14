@@ -85,11 +85,13 @@ const FinanceTransactions = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getAllChargeTypes() {
