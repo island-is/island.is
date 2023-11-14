@@ -9,12 +9,9 @@ import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { Course } from '../course'
 import { University } from '../university'
-import { AuditModule } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
     SequelizeModule.forFeature([
       University,
       Course,

@@ -5,12 +5,9 @@ import { CourseService } from './course.service'
 import { Course } from './model/course'
 import { University } from '../university'
 import { ProgramCourse, ProgramTable } from '../program'
-import { AuditModule } from '@island.is/nest/audit'
-import { environment } from '../../../environments'
 
 @Module({
   imports: [
-    AuditModule.forRoot(environment.audit),
     SequelizeModule.forFeature([
       University,
       Course,
