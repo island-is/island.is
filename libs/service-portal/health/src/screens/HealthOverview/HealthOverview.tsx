@@ -12,7 +12,6 @@ import {
   AlertMessage,
   Box,
   Button,
-  LinkV2,
   SkeletonLoader,
   Stack,
   Text,
@@ -23,6 +22,8 @@ import { HealthPaths } from '../../lib/paths'
 import { PaymentTabs } from '../Payments/Payments'
 import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
@@ -33,6 +34,24 @@ export const HealthOverview = () => {
   const { data, error, loading } = useGetInsuranceOverviewQuery()
 
   const intl = useIntl()
+
+  const featureFlagClient = useFeatureFlagClient()
+
+  const [enabledPaymentPage, setEnabledPaymentPage] = useState<boolean>(false)
+
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalHealthPaymentPageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnabledPaymentPage(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
@@ -138,21 +157,23 @@ export const HealthOverview = () => {
                           : insurance.maximumPayment,
                       })}
                     </Text>
-                    <Link
-                      to={HealthPaths.HealthPaymentsWithHash.replace(
-                        ':hash',
-                        `#${PaymentTabs.PAYMENT_OVERVIEW}`,
-                      )}
-                    >
-                      <Button
-                        icon="open"
-                        iconType="outline"
-                        variant="text"
-                        size="small"
+                    {enabledPaymentPage && (
+                      <Link
+                        to={HealthPaths.HealthPaymentsWithHash.replace(
+                          ':hash',
+                          `#${PaymentTabs.PAYMENT_OVERVIEW}`,
+                        )}
                       >
-                        {formatMessage(messages.seeMore)}
-                      </Button>
-                    </Link>
+                        <Button
+                          icon="open"
+                          iconType="outline"
+                          variant="text"
+                          size="small"
+                        >
+                          {formatMessage(messages.seeMore)}
+                        </Button>
+                      </Link>
+                    )}
                   </Box>
                 }
               />

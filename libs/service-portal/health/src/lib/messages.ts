@@ -1,6 +1,22 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  fetchDocument: {
+    id: 'sp.health:fetch-document',
+    defaultMessage: 'Sækja skjal',
+  },
+  errorFetchPaymentInfo: {
+    id: 'sp.health:error-fetch-payment-info',
+    defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
+  },
+  from: {
+    id: 'sp.health:from',
+    defaultMessage: 'Frá',
+  },
+  to: {
+    id: 'sp.health:to',
+    defaultMessage: 'Til',
+  },
   calculate: {
     id: 'sp.health:calculate',
     defaultMessage: 'Reikna',
@@ -8,18 +24,6 @@ export const messages = defineMessages({
   chooseMedicineTabs: {
     id: 'sp.health:choose-medicine-tabs',
     defaultMessage: 'Veldu flokk',
-  },
-  month: {
-    id: 'service.portal:month',
-    defaultMessage: 'Mánuður',
-  },
-  dateOfOnvoiceShort: {
-    id: 'service.portal:date-of-invoice',
-    defaultMessage: 'Dags. reiknings',
-  },
-  totalPrice: {
-    id: 'service.portal:total-price',
-    defaultMessage: 'Heildarverð',
   },
   typeofService: {
     id: 'sp.health:typeof-service',
@@ -76,7 +80,12 @@ export const messages = defineMessages({
   paymentParticationExplination: {
     id: 'sp.health:payment-partication-info',
     defaultMessage:
-      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði 4.694 kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+  },
+  paymentParticationExplinationFooter: {
+    id: 'sp.health:payment-partication-info-footer',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
   },
   paymentParticationFooterExplination: {
     id: 'sp.health:payment-partication-footer-info',
@@ -621,7 +630,7 @@ export const messages = defineMessages({
   medicineTitleIntro: {
     id: 'sp.health:medicine-title-intro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
   },
   medicinePurchacePeriod: {
     id: 'sp.health:medicine-purchase-period',
@@ -632,13 +641,13 @@ export const messages = defineMessages({
     defaultMessage: 'Lyfjakaup þrepstaða',
   },
   medicinePurchaseIntroTitle: {
-    id: 'sp.health:medicine-purchase-title',
+    id: 'sp.health:medicine-purchase-intro-title',
     defaultMessage: 'Þrepastaða þín',
   },
   medicinePurchaseIntroText: {
-    id: 'sp.health:medicine-purchase-intro',
+    id: 'sp.health:medicine-purchase-intro-text',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore aliqua.',
+      'Greiðsluþátttökukerfið vegna lyfjakaupa byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Tólf mánaða greiðslutímabil hefst við fyrstu lyfjakaup eftir að seinna tólf mánaða tímabili lýkur.',
   },
   medicineCalculatorTitle: {
     id: 'sp.health:medicine-calculator-title',

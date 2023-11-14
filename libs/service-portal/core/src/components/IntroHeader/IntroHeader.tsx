@@ -24,6 +24,7 @@ interface Props {
   span?: GridColumnProps['span']
   narrow?: boolean
   loading?: boolean
+  backgroundColor?: 'purple100' | 'blue100' | 'white'
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -71,8 +72,9 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             loading={loading}
             linkHref={currentOrganization?.link ?? ''}
             img={currentOrganization?.logo?.url ?? ''}
-            imgContainerDisplay="block"
+            imgContainerDisplay={isMobile ? 'block' : 'flex'}
             tooltipText={props.serviceProviderTooltip}
+            backgroundColor={props.backgroundColor}
           />
         </GridColumn>
       )}

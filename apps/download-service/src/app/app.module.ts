@@ -43,7 +43,11 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-
+import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import {
+  RightsPortalClientConfig,
+  RightsPortalClientModule,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 @Module({
   controllers: [
     DocumentController,
@@ -54,6 +58,7 @@ import {
     RegulationDocumentsController,
     WorkMachinesController,
     OccupationalLicensesEducationController,
+    HealthPaymentsOverviewController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -71,6 +76,7 @@ import {
     RegulationsClientModule,
     WorkMachinesClientModule,
     MMSClientModule,
+    RightsPortalClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -83,6 +89,7 @@ import {
         RegulationsClientConfig,
         WorkMachinesClientConfig,
         MMSClientConfig,
+        RightsPortalClientConfig,
       ],
     }),
   ],

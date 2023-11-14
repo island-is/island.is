@@ -273,6 +273,9 @@
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-immigration/citizenship": [
+        "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
@@ -476,6 +479,9 @@
       ],
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
+      ],
+      "@island.is/clients/directorate-of-immigration": [
+        "libs/clients/directorate-of-immigration/src/index.ts"
       ],
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
