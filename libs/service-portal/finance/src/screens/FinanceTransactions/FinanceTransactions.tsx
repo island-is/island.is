@@ -10,13 +10,9 @@ import {
   DatePicker,
   FilterInput,
   FilterMultiChoice,
-  Text,
   Hidden,
   SkeletonLoader,
   Stack,
-  Column,
-  Columns,
-  GridContainer,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
