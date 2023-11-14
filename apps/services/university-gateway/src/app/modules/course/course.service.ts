@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model/course'
-import { ProgramCourse } from '../program'
+import { ProgramCourse } from '../program/model/programCourse'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 import { NoContentException } from '@island.is/nest/problem'
-import { CourseResponse } from './dto/courseResponse'
-import { CourseDetailsResponse } from './dto/courseDetailsResponse'
+import { CoursesResponse } from './dto/coursesResponse'
 
 @Injectable()
 export class CourseService {
@@ -23,24 +22,16 @@ export class CourseService {
     after: string,
     before?: string,
     programId?: string,
-    programMinorId?: string,
     universityId?: string,
-  ): Promise<CourseResponse> {
+  ): Promise<CoursesResponse> {
     const where: {
       id?: { [Op.in]: string[] }
       universityId?: string
     } = {}
-    if (programId && !programMinorId) {
+    if (programId) {
       const courseList = await this.programCourseModel.findAll({
         attributes: ['courseId'],
         where: { programId },
-      })
-      where.id = { [Op.in]: courseList.map((c) => c.courseId) }
-    }
-    if (programId && programMinorId) {
-      const courseList = await this.programCourseModel.findAll({
-        attributes: ['courseId'],
-        where: { programId, programMinorId },
       })
       where.id = { [Op.in]: courseList.map((c) => c.courseId) }
     }
@@ -57,13 +48,13 @@ export class CourseService {
     })
   }
 
-  async getCourseDetails(id: string): Promise<CourseDetailsResponse> {
+  async getCourseById(id: string): Promise<Course> {
     const course = await this.courseModel.findByPk(id)
 
     if (!course) {
       throw new NoContentException()
     }
 
-    return { data: course }
+    return course
   }
 }

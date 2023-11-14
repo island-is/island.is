@@ -71,6 +71,7 @@ export { UserProvider, UserContext } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
   ViewportContext,
+  type Rect,
 } from './ViewportProvider/ViewportProvider'
 export { default as FileNotFoundModal } from './FileNotFoundModal/FileNotFoundModal'
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
@@ -79,5 +80,5 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './RulingDateLabel/RulingDateLabel'
 export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
-
-export type { Rect } from './ViewportProvider/ViewportProvider'
+export { default as ReopenModal } from './ReopenModal/ReopenModal'
+export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from './model/application'
-import { ApplicationResponse } from './dto/applicationResponse'
 import { CreateApplicationDto } from './dto/createApplicationDto'
 import { UpdateApplicationDto } from './dto/updateApplicationDto'
 import { User } from '@island.is/auth-nest-tools'
@@ -12,8 +11,10 @@ import {
   IApplication,
   UniversityNationalIds,
 } from '@island.is/university-gateway'
-import { University } from '../university'
-import { ProgramModeOfDelivery, ProgramTable } from '../program'
+import { University } from '../university/model/university'
+import { ProgramModeOfDelivery } from '../program/model/programModeOfDelivery'
+import { ProgramTable } from '../program/model/program'
+import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
 export class ApplicationService {
@@ -35,19 +36,17 @@ export class ApplicationService {
     private universityModel: typeof University,
   ) {}
 
-  async getApplication(id: string, user: User): Promise<ApplicationResponse> {
+  async getApplicationById(id: string, user: User): Promise<Application> {
     const application = await this.applicationModel.findOne({
       attributes: ['status'],
       where: { id: id, nationalId: user.nationalId },
     })
 
     if (!application) {
-      throw new Error(
-        `Application with id ${id} and for user with national id ${user.nationalId} not found`,
-      )
+      throw new NoContentException()
     }
 
-    return { data: application }
+    return application
   }
 
   async createApplication(

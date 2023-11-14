@@ -17,15 +17,12 @@ import { environment } from '../../environments'
 import { InternalProgramService } from '../modules/program/internalProgram.service'
 import { InternalCourseService } from '../modules/course/internalCourse.service'
 import { InternalApplicationService } from '../modules/application/internalApplication.service'
-import { University } from '../modules/university'
-import { Course } from '../modules/course'
+import { University } from '../modules/university/model/university'
+import { Course } from '../modules/course/model/course'
 import { Tag } from '../modules/program/model/tag'
-import {
-  ProgramCourse,
-  ProgramMinor,
-  ProgramModeOfDelivery,
-  ProgramTable,
-} from '../modules/program'
+import { ProgramCourse } from '../modules/program/model/programCourse'
+import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
+import { ProgramTable } from '../modules/program/model/program'
 import { ProgramTag } from '../modules/program/model/programTag'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
 import { LoggingModule } from '@island.is/logging'
@@ -46,7 +43,6 @@ import { LoggingModule } from '@island.is/logging'
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
       ProgramCourse,
-      ProgramMinor,
     ]),
     ReykjavikUniversityApplicationClientModule,
     UniversityOfIcelandApplicationClientModule,

@@ -4,9 +4,8 @@ import { Tag } from './model/tag'
 import { ProgramTable } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
-import { ProgramMinor } from './model/programMinor'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
-import { University } from '../university'
+import { University } from '../university/model/university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import { IProgram, UniversityNationalIds } from '@island.is/university-gateway'
@@ -36,9 +35,6 @@ export class InternalProgramService {
 
     @InjectModel(ProgramExtraApplicationField)
     private programExtraApplicationFieldModel: typeof ProgramExtraApplicationField,
-
-    @InjectModel(ProgramMinor)
-    private programMinorModel: typeof ProgramMinor,
   ) {}
 
   async updatePrograms(): Promise<void> {
@@ -95,144 +91,111 @@ export class InternalProgramService {
     // CREATE/UPDATE all programs for this university (make then active again)
     for (let i = 0; i < programList.length; i++) {
       const program = programList[i]
+      const specializationList = program.specializations || []
 
-      try {
-        // Map to programModel object
-        const programObj = {
-          active: true,
-          tmpActive: true,
-          universityId: universityId,
-          externalId: program.externalId,
-          nameIs: program.nameIs,
-          nameEn: program.nameEn,
-          departmentNameIs: program.departmentNameIs,
-          departmentNameEn: program.departmentNameEn,
-          startingSemesterYear: program.startingSemesterYear,
-          startingSemesterSeason: program.startingSemesterSeason,
-          applicationStartDate: program.applicationStartDate,
-          applicationEndDate: program.applicationEndDate,
-          schoolAnswerDate: program.schoolAnswerDate,
-          studentAnswerDate: program.studentAnswerDate,
-          degreeType: program.degreeType,
-          degreeAbbreviation: program.degreeAbbreviation,
-          credits: program.credits,
-          descriptionIs: program.descriptionIs,
-          descriptionEn: program.descriptionEn,
-          durationInYears: program.durationInYears,
-          costPerYear: program.costPerYear,
-          iscedCode: program.iscedCode,
-          externalUrlIs: program.externalUrlIs,
-          externalUrlEn: program.externalUrlEn,
-          languages: program.languages,
-          searchKeywords: program.searchKeywords,
-          admissionRequirementsIs: program.admissionRequirementsIs,
-          admissionRequirementsEn: program.admissionRequirementsEn,
-          studyRequirementsIs: program.studyRequirementsIs,
-          studyRequirementsEn: program.studyRequirementsEn,
-          costInformationIs: program.costInformationIs,
-          costInformationEn: program.costInformationEn,
-        }
+      // Added Math.max to make sure we enter the loop at least once (once for programs with no specialization)
+      const specializationListLength = Math.max(specializationList.length, 1)
 
-        const tagList = program.tag || []
-        const modeOfDeliveryList = program.modeOfDelivery || []
-        const extraApplicationFieldList = program.extraApplicationFields || []
-        const minorList = program.minors || []
+      for (let j = 0; j < specializationListLength; j++) {
+        const specialization = specializationList[j]
 
-        // 2. CREATE or UPDATE program (make sure tmpActive becomes true)
-        let programId: string | undefined
-        const oldProgramObj = await this.programModel.findOne({
-          attributes: ['id'],
-          where: {
-            externalId: programObj.externalId,
-          },
-        })
-        if (oldProgramObj) {
-          programId = oldProgramObj.id
-          await this.programModel.update(programObj, {
-            where: { id: programId },
-          })
-        } else {
-          programId = (await this.programModel.create(programObj)).id
-        }
+        try {
+          // Map to programModel object
+          const programObj = {
+            ...program,
+            active: true,
+            tmpActive: true,
+            specializationExternalId: specialization?.externalId,
+            specializationNameIs: specialization?.nameIs,
+            specializationNameEn: specialization?.nameEn,
+            universityId,
+          }
 
-        // 3a. DELETE program tag
-        await this.programTagModel.destroy({
-          where: { programId: programId },
-        })
+          const tagList = program.tag || []
+          const modeOfDeliveryList = program.modeOfDelivery || []
+          const extraApplicationFieldList = program.extraApplicationFields || []
 
-        // 3b. CREATE program tag
-        for (let j = 0; j < tagList.length; j++) {
-          const tag = await this.tagModel.findOne({
+          const programWhere: {
+            externalId: string
+            specializationExternalId?: string
+          } = { externalId: programObj.externalId }
+          if (specialization?.externalId) {
+            programWhere.specializationExternalId = specialization.externalId
+          }
+
+          // 2. UPSERT program (make sure tmpActive becomes true)
+          const oldProgramObj = await this.programModel.findOne({
             attributes: ['id'],
-            where: { code: tagList[j].code },
+            where: programWhere,
+          })
+          const [{ id: programId }] = await this.programModel.upsert({
+            ...programObj,
+            id: oldProgramObj?.id,
           })
 
-          if (!tag) continue
-
-          await this.programTagModel.create({
-            programId: programId,
-            tagId: tag?.id,
+          // 3a. DELETE program tag
+          await this.programTagModel.destroy({
+            where: { programId: programId },
           })
+
+          // 3b. CREATE program tag
+          for (let k = 0; k < tagList.length; k++) {
+            const tag = await this.tagModel.findOne({
+              attributes: ['id'],
+              where: { code: tagList[k].code },
+            })
+
+            if (!tag) continue
+
+            await this.programTagModel.create({
+              programId: programId,
+              tagId: tag?.id,
+            })
+          }
+
+          // 4a. DELETE program mode of delivery
+          await this.programModeOfDeliveryModel.destroy({
+            where: { programId: programId },
+          })
+
+          // 4b. CREATE program mode of delivery
+          for (let k = 0; k < modeOfDeliveryList.length; k++) {
+            await this.programModeOfDeliveryModel.create({
+              programId: programId,
+              modeOfDelivery: modeOfDeliveryList[k],
+            })
+          }
+
+          // 5a. DELETE program extra application field
+          await this.programExtraApplicationFieldModel.destroy({
+            where: { programId: programId },
+          })
+
+          // 5b. CREATE program extra application field
+          for (let k = 0; k < extraApplicationFieldList.length; k++) {
+            await this.programExtraApplicationFieldModel.create({
+              programId: programId,
+              externalId: extraApplicationFieldList[k].externalId,
+              nameIs: extraApplicationFieldList[k].nameIs,
+              nameEn: extraApplicationFieldList[k].nameEn,
+              descriptionIs: extraApplicationFieldList[k].descriptionIs,
+              descriptionEn: extraApplicationFieldList[k].descriptionEn,
+              required: extraApplicationFieldList[k].required,
+              fieldType: extraApplicationFieldList[k].fieldType,
+              uploadAcceptedFileType:
+                extraApplicationFieldList[k].uploadAcceptedFileType,
+            })
+          }
+        } catch (e) {
+          logger.error(
+            `Failed to update program with externalId ${program.externalId} and specializationExternalId ${specializationList[j]?.externalId}, reason:`,
+            e,
+          )
         }
-
-        // 4a. DELETE program mode of delivery
-        await this.programModeOfDeliveryModel.destroy({
-          where: { programId: programId },
-        })
-
-        // 4b. CREATE program mode of delivery
-        for (let j = 0; j < modeOfDeliveryList.length; j++) {
-          await this.programModeOfDeliveryModel.create({
-            programId: programId,
-            modeOfDelivery: modeOfDeliveryList[j],
-          })
-        }
-
-        // 5a. DELETE program extra application field
-        await this.programExtraApplicationFieldModel.destroy({
-          where: { programId: programId },
-        })
-
-        // 5b. CREATE program extra application field
-        for (let j = 0; j < extraApplicationFieldList.length; j++) {
-          await this.programExtraApplicationFieldModel.create({
-            programId: programId,
-            externalId: extraApplicationFieldList[j].externalId,
-            nameIs: extraApplicationFieldList[j].nameIs,
-            nameEn: extraApplicationFieldList[j].nameEn,
-            descriptionIs: extraApplicationFieldList[j].descriptionIs,
-            descriptionEn: extraApplicationFieldList[j].descriptionEn,
-            required: extraApplicationFieldList[j].required,
-            fieldType: extraApplicationFieldList[j].fieldType,
-            uploadAcceptedFileType:
-              extraApplicationFieldList[j].uploadAcceptedFileType,
-          })
-        }
-
-        // 6a. DELETE program minor
-        await this.programMinorModel.destroy({
-          where: { programId: programId },
-          logging: false,
-        })
-
-        // 6b. CREATE program minor
-        for (let j = 0; j < minorList.length; j++) {
-          await this.programMinorModel.create({
-            programId: programId,
-            externalId: minorList[j].externalId,
-            nameIs: minorList[j].nameIs,
-            nameEn: minorList[j].nameEn,
-          })
-        }
-      } catch (e) {
-        logger.error(
-          `Failed to update program with externalId ${program.externalId}, reason:`,
-          e,
-        )
       }
     }
 
-    // 7. UPDATE all programs for this university and make them inactive
+    // 6. UPDATE all programs for this university and make them inactive
     await this.programModel.update(
       {
         active: false,

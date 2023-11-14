@@ -42,7 +42,7 @@ localhost:3380/api/swagger
 ## Regenerate the OpenAPI file
 
 ```bash
-yarn nx run services-university-gateway:schemas/build-openapi
+yarn nx run services-university-gateway:codegen/backend-schema
 ```
 
 ### Worker

@@ -3,19 +3,28 @@ import { Field, ObjectType } from '@nestjs/graphql'
 @ObjectType('UniversityGatewayProgram')
 export class UniversityGatewayProgram {
   @Field()
+  active!: boolean
+
+  @Field()
   id!: string
 
   @Field()
   externalId!: string
 
   @Field()
-  active!: boolean
-
-  @Field()
   nameIs!: string
 
   @Field()
   nameEn!: string
+
+  @Field({ nullable: true })
+  specializationExternalId?: string
+
+  @Field({ nullable: true })
+  specializationNameIs?: string
+
+  @Field({ nullable: true })
+  specializationNameEn?: string
 
   @Field()
   universityId!: string

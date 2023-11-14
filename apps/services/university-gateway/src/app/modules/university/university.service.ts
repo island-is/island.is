@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { University } from './model/university'
-import { UniversityResponse } from './dto/universityResponse'
+import { UniversitiesResponse } from './dto/universitiesResponse'
 import { InjectModel } from '@nestjs/sequelize'
 
 @Injectable()
@@ -10,7 +10,7 @@ export class UniversityService {
     private universityModel: typeof University,
   ) {}
 
-  async getUniversities(): Promise<UniversityResponse> {
+  async getUniversities(): Promise<UniversitiesResponse> {
     return { data: await this.universityModel.findAll() }
   }
 }

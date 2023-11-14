@@ -12,7 +12,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { University } from '../../university'
+import { University } from '../../university/model/university'
 
 @Table({
   tableName: 'course',

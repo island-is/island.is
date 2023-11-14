@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from './model/application'
-import { University } from '../university'
+import { University } from '../university/model/university'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import {

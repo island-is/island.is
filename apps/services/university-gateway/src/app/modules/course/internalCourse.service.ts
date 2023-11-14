@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model/course'
-import { University } from '../university'
-import { ProgramCourse, ProgramMinor, ProgramTable } from '../program'
+import { University } from '../university/model/university'
+import { ProgramCourse } from '../program/model/programCourse'
+import { ProgramTable } from '../program/model/program'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import { ICourse, UniversityNationalIds } from '@island.is/university-gateway'
@@ -27,9 +28,6 @@ export class InternalCourseService {
 
     @InjectModel(ProgramCourse)
     private programCourseModel: typeof ProgramCourse,
-
-    @InjectModel(ProgramMinor)
-    private programMinorModel: typeof ProgramMinor,
   ) {}
 
   async updateCourses(): Promise<void> {
@@ -82,86 +80,44 @@ export class InternalCourseService {
       const programId = program.id
 
       try {
-        // 1. Mark all program courses for this program as "temporarily inactive",
-        // so we know in the end which courses (and program courses) should actually be deleted
-        // This is done to make sure not all courses for the university are deleted
-        // while we are updating the list of courses
-        await this.programCourseModel.update(
-          {
-            tmpActive: false,
-          },
-          {
-            where: { programId },
-          },
-        )
-
         const courseList = await getCourses(program.externalId)
 
         for (let j = 0; j < courseList.length; j++) {
           const course = courseList[j]
 
-          let programMinor: ProgramMinor | null = null
-          if (course.minorExternalId) {
-            programMinor = await this.programMinorModel.findOne({
-              where: { externalId: course.minorExternalId },
-            })
-          }
-
           try {
             // Map to courseModel object
             const courseObj = {
+              ...course,
               universityId,
-              externalId: course.externalId,
-              nameIs: course.nameIs,
-              nameEn: course.nameEn,
-              credits: course.credits,
-              descriptionIs: course.descriptionIs,
-              descriptionEn: course.descriptionEn,
-              externalUrlIs: course.externalUrlIs,
-              externalUrlEn: course.externalUrlEn,
             }
 
-            // 2. CREATE or UPDATE course
-            let courseId: string | undefined
+            // 1. UPSERT course
             const oldCourseObj = await this.courseModel.findOne({
               attributes: ['id'],
               where: { externalId: courseObj.externalId },
             })
-            if (oldCourseObj) {
-              courseId = oldCourseObj.id
-              await this.courseModel.update(courseObj, {
-                where: { id: courseId },
-              })
-            } else {
-              courseId = (await this.courseModel.create(courseObj)).id
-            }
+            const [{ id: courseId }] = await this.courseModel.upsert({
+              ...courseObj,
+              id: oldCourseObj?.id,
+            })
 
             // Map to programCourseModel object
             const programCourseObj = {
-              tmpActive: true,
+              ...course,
               programId,
-              programMinorId: programMinor?.id,
               courseId,
-              requirement: course.requirement,
-              semesterYear: course.semesterYear,
-              semesterSeason: course.semesterSeason,
             }
 
-            // 3. CREATE or UPDATE program course (make sure tmpActive becomes true)
+            // 2. UPSERT program course
             const oldProgramCourseObj = await this.programCourseModel.findOne({
               attributes: ['id'],
-              where: {
-                programId,
-                courseId,
-              },
+              where: { programId, courseId },
             })
-            if (oldProgramCourseObj) {
-              await this.programCourseModel.update(programCourseObj, {
-                where: { id: oldProgramCourseObj.id },
-              })
-            } else {
-              await this.programCourseModel.create(programCourseObj)
-            }
+            await this.programCourseModel.upsert({
+              ...programCourseObj,
+              id: oldProgramCourseObj?.id,
+            })
 
             activeCourseIdList.push(courseId)
           } catch (e) {
@@ -177,13 +133,10 @@ export class InternalCourseService {
           e,
         )
       }
-      // 4. DELETE all program courses for this program that are "temporarily inactive"
-      await this.programCourseModel.destroy({
-        where: { programId, tmpActive: false },
-      })
     }
 
-    // 5. DELETE all courses for this university that are not being used
+    // 3. DELETE all courses for this university that are not being used
+    // Note: this should also delete all necessary program course items since we have set onDelete=CASCADE
     await this.courseModel.destroy({
       where: {
         universityId,

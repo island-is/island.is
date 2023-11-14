@@ -8,7 +8,7 @@ import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { UniversityResponse } from './dto/universityResponse'
+import { UniversitiesResponse } from './dto/universitiesResponse'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')
@@ -25,10 +25,10 @@ export class UniversityController {
     description: 'Get all universities',
     response: {
       status: 200,
-      type: UniversityResponse,
+      type: UniversitiesResponse,
     },
   })
-  getUniversities(): Promise<UniversityResponse> {
+  getUniversities(): Promise<UniversitiesResponse> {
     return this.universityService.getUniversities()
   }
 }
