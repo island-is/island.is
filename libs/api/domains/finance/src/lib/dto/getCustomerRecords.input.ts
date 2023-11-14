@@ -1,6 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
+@InputType('FinanceCustomerRecordsInput')
 export class GetCustomerRecordsInput {
   @Field(() => [String], { nullable: true })
   chargeTypeID!: Array<string>

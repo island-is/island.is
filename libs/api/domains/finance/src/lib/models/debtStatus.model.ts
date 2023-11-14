@@ -1,12 +1,12 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('FinanceDebtStatusModel')
 export class DebtStatusModel {
   @Field(() => [DebtStatus])
   myDebtStatus!: DebtStatus[]
 }
 
-@ObjectType()
+@ObjectType('FinanceDebtStatus')
 export class DebtStatus {
   @Field()
   totalAmount!: number
