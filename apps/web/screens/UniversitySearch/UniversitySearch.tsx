@@ -426,7 +426,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             if (str === 'universityId') {
                               keyField = universities.filter(
                                 (x) => x.id === option,
-                              )[0].title
+                              )[0].contentfulTitle
                             }
                             if (keyField !== 'OTHER') {
                               return (
@@ -550,11 +550,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .title
+                                      .contentfulTitle
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .title
+                                      .contentfulTitle
                                   : item,
                               )}
                             </Tag>
@@ -612,7 +612,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   if (str === 'universityId') {
                                     keyField = universities.filter(
                                       (x) => x.id === option,
-                                    )[0].title
+                                    )[0].contentfulTitle
                                   }
                                   return {
                                     label: `${n(keyField, keyField)}${
@@ -713,7 +713,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].logoUrl
+                                  )[0].contentfulLogoUrl
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
@@ -735,7 +735,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         : dataItem.nameIs,
                                     iconSrc: universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].logoUrl,
+                                    )[0].contentfulLogoUrl,
                                   })
                                 }
                                 checked={
@@ -870,7 +870,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].logoUrl
+                                    )[0].contentfulLogoUrl
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'
@@ -888,7 +888,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       : dataItem.nameIs,
                                   iconSrc: universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].logoUrl,
+                                  )[0].contentfulLogoUrl,
                                 })
                               }
                               checked={

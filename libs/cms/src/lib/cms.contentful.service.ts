@@ -202,6 +202,35 @@ export class CmsContentfulService {
     })
   }
 
+  async getOrganizationStortTitles(
+    organizationTitles: string[],
+  ): Promise<Array<string | null>> {
+    const params = {
+      ['content_type']: 'organization',
+      select: 'fields.shortTitle,fields.title',
+      'fields.title[in]': organizationTitles.join(','),
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(null, params)
+      .catch(errorHandler('getOrganizationsShortTitle'))
+
+    return organizationTitles.map((title) => {
+      if (!result.items) {
+        return null
+      } else {
+        const organization = result.items.find(
+          (item) => item.fields.title === title,
+        )
+
+        const shortTitle =
+          organization?.fields.shortTitle || organization?.fields.title
+
+        return shortTitle ? shortTitle : null
+      }
+    })
+  }
+
   async getAdgerdirTags(lang = 'is-IS'): Promise<AdgerdirTags> {
     const params = {
       ['content_type']: 'vidspyrnaTag',
