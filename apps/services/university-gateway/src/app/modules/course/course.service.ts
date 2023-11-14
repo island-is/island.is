@@ -5,7 +5,7 @@ import { ProgramCourse } from '../program'
 import { paginate } from '@island.is/nest/pagination'
 import { Op } from 'sequelize'
 import { NoContentException } from '@island.is/nest/problem'
-import { CourseResponse } from './dto/courseResponse'
+import { CoursesResponse } from './dto/coursesResponse'
 
 @Injectable()
 export class CourseService {
@@ -23,7 +23,7 @@ export class CourseService {
     before?: string,
     programId?: string,
     universityId?: string,
-  ): Promise<CourseResponse> {
+  ): Promise<CoursesResponse> {
     const where: {
       id?: { [Op.in]: string[] }
       universityId?: string

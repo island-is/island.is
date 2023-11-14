@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { PageInfoDto } from '@island.is/nest/pagination'
 import { Course } from '../model/course'
 
-export class CourseResponse {
+export class CoursesResponse {
   @ApiProperty({
     description: 'Course data',
     type: [Course],

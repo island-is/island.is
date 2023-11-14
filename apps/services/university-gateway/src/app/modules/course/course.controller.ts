@@ -8,7 +8,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common'
 import { CourseService } from './course.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { CourseResponse } from './dto/courseResponse'
+import { CoursesResponse } from './dto/coursesResponse'
 import { Course } from './model/course'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -26,7 +26,7 @@ export class CourseController {
     description: 'Get all courses',
     response: {
       status: 200,
-      type: CourseResponse,
+      type: CoursesResponse,
     },
     request: {
       query: {
@@ -67,7 +67,7 @@ export class CourseController {
     @Query('after') after: string,
     @Query('programId') programId: string,
     @Query('universityId') universityId: string,
-  ): Promise<CourseResponse> {
+  ): Promise<CoursesResponse> {
     return this.courseService.getCourses(
       limit,
       after,

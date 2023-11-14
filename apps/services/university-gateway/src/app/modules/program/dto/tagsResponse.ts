@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Tag } from '../model/tag'
 
-export class TagResponse {
+export class TagsResponse {
   @ApiProperty({
     description: 'Tag data',
     type: [Tag],

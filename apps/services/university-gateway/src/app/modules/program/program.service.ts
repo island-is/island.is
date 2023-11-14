@@ -5,8 +5,8 @@ import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
-import { ProgramResponse } from './dto/programResponse'
-import { TagResponse } from './dto/tagResponse'
+import { ProgramsResponse } from './dto/programsResponse'
+import { TagsResponse } from './dto/tagsResponse'
 import { Course } from '../course'
 import { University } from '../university'
 import { InjectModel } from '@nestjs/sequelize'
@@ -33,7 +33,7 @@ export class ProgramService {
     season?: Season,
     universityId?: string,
     degreeType?: DegreeType,
-  ): Promise<ProgramResponse> {
+  ): Promise<ProgramsResponse> {
     const where: {
       active?: boolean
       startingSemesterYear?: number
@@ -126,7 +126,7 @@ export class ProgramService {
     return program
   }
 
-  async getTags(): Promise<TagResponse> {
+  async getTags(): Promise<TagsResponse> {
     const tags = await this.tagModel.findAll()
     return { data: tags }
   }
