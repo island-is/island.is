@@ -16,8 +16,8 @@ export class VehicleOwnerAppSysResolver {
     @Args('name') name: string,
   ) {
     const vm = new VehicleOwnerModel()
-    vm.nationalId = user.nationalId
-    // vm.nationalId = '1234567890'
+    // vm.nationalId = user.nationalId
+    vm.nationalId = '1234567890'
     vm.personname = name
     return await this.vehicleOwnerService.create(vm)
   }
