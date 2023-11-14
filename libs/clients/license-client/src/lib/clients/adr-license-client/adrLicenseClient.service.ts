@@ -32,6 +32,9 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
     private adrApi: AdrApi,
     private smartApi: SmartSolutionsApi,
   ) {}
+
+  clientSupportsPkPass = true
+
   private checkLicenseValidityForPkPass(
     licenseInfo: AdrDto,
   ): LicensePkPassAvailability {
@@ -120,10 +123,6 @@ export class AdrLicenseClient implements LicenseClient<FlattenedAdrDto> {
       ok: true,
       data: parsedData,
     }
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<FlattenedAdrDto | null>> {
-    return this.getLicense(user)
   }
 
   private async createPkPassPayload(

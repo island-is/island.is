@@ -74,12 +74,13 @@ global:
   env:
     AUDIT_GROUP_NAME: '/identity-server/audit-log'
     AWS_REGION: 'eu-west-1'
-    NO_UPDATE_NOTIFIER: 'true'
+    NPM_CONFIG_UPDATE_NOTIFIER: 'false'
     PORT: '3333'
     name: 'staging'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 identity-server:
   annotations:
     ad.datadoghq.com/identity-server.check_names: '["openmetrics"]'
@@ -106,8 +107,8 @@ identity-server:
     IdentityServer__EnableFeatureDeploymentWildcards: 'true'
     IdentityServer__KeyManagement__Enabled: 'true'
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
+    MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843'
-    NO_UPDATE_NOTIFIER: 'true'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
@@ -273,7 +274,7 @@ services-auth-delegation-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -327,10 +328,10 @@ services-auth-delegation-api:
   resources:
     limits:
       cpu: '400m'
-      memory: '256Mi'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '192Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'

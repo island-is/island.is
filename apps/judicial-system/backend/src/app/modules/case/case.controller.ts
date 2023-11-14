@@ -235,12 +235,27 @@ export class CaseController {
     }
 
     if (update.caseResentExplanation) {
+      // We want to overwrite certain fields that the court sees so they're always seeing
+      // the correct information post resend
       update.courtCaseFacts = `Í greinargerð sóknaraðila er atvikum lýst svo: ${theCase.caseFacts}`
       update.courtLegalArguments = `Í greinargerð er krafa sóknaraðila rökstudd þannig: ${theCase.legalArguments}`
+      update.prosecutorDemands = update.demands ?? theCase.demands
+      if (!theCase.decision) {
+        update.validToDate =
+          update.requestedValidToDate ?? theCase.requestedValidToDate
+      }
     }
 
     if (update.prosecutorStatementDate) {
       update.prosecutorStatementDate = nowFactory()
+    }
+
+    if (update.appealRulingModifiedHistory) {
+      const history = theCase.appealRulingModifiedHistory
+        ? `${theCase.appealRulingModifiedHistory}\n\n`
+        : ''
+      const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
+      update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined

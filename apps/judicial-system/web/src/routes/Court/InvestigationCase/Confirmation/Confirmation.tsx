@@ -23,11 +23,11 @@ import {
   PdfButton,
   PoliceRequestAccordionItem,
   RulingAccordionItem,
+  RulingModifiedModal,
   SigningModal,
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import { RulingModifiedModal } from '@island.is/judicial-system-web/src/routes/Court/components'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { confirmation as strings } from './Confirmation.strings'

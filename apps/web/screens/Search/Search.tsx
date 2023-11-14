@@ -1,74 +1,76 @@
 // LINE TO TRIGGER WEB IN DEPLOY-FEATURE BUILD - TO BE REMOVED
 import React, {
-  useRef,
-  useEffect,
-  useState,
   FC,
+  useEffect,
   useMemo,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import { useLazyQuery } from '@apollo/client'
-import Head from 'next/head'
 import { useWindowSize } from 'react-use'
-import { NextRouter, useRouter } from 'next/router'
+import Head from 'next/head'
 import NextLink from 'next/link'
-import { theme } from '@island.is/island-ui/theme'
+import { NextRouter, useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   Box,
-  Text,
-  Stack,
   Breadcrumbs,
-  Pagination,
-  Link,
-  LinkContext,
+  Button,
   ColorSchemeContext,
-  Inline,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Inline,
+  Link,
+  LinkContext,
+  Pagination,
+  Stack,
   Tag,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
-import { useNamespace } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { Card, CardTagsProps, SearchInput } from '@island.is/web/components'
 import {
-  Image,
-  Tag as TagType,
+  AdgerdirPage,
+  Article,
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSearchCountTagsQuery,
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
-  GetSearchCountTagsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  Article,
+  GetSearchResultsTotalQuery,
+  Image,
   LifeEventPage,
+  Link as LinkItem,
   News,
+  OrganizationPage,
+  OrganizationSubpage,
+  ProjectPage,
+  QueryGetNamespaceArgs,
+  QuerySearchResultsArgs,
   SearchableContentTypes,
   SearchableTags,
-  AdgerdirPage,
   SubArticle,
-  GetSearchResultsTotalQuery,
-  OrganizationSubpage,
-  OrganizationPage,
-  Link as LinkItem,
-  ProjectPage,
+  Tag as TagType,
 } from '@island.is/web/graphql/schema'
-import { AnchorPageType } from '@island.is/web/utils/anchorPage'
-import { ActionType, reducer, initialState } from './Search.state'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { AnchorPageType } from '@island.is/web/utils/anchorPage'
+
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
-  GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_RESULTS_TOTAL,
 } from '../queries'
-
-import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
+import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
+import { ActionType, initialState, reducer } from './Search.state'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 const PERPAGE = 10
 
@@ -91,7 +93,7 @@ type TagsList = {
   key: string
 }
 
-type SearchType = Article &
+export type SearchEntryType = Article &
   LifeEventPage &
   News &
   AdgerdirPage &
@@ -118,6 +120,7 @@ const connectedTypes: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
+  webManual: ['WebManual'],
 }
 
 const stringToArray = (value: string | string[]) =>
@@ -206,7 +209,7 @@ const Search: Screen<CategoryProps> = ({
     ],
   )
 
-  const getLabels = (item: SearchType) => {
+  const getLabels = (item: SearchEntryType) => {
     const labels = []
 
     switch (item.__typename) {
@@ -232,7 +235,7 @@ const Search: Screen<CategoryProps> = ({
         break
     }
 
-    if (checkForProcessEntries(item)) {
+    if (item.__typename === 'Article' && hasProcessEntries(item)) {
       labels.push(n('applicationForm'))
     }
 
@@ -271,6 +274,7 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+      webManual: n('webManual', 'Handbækur'),
     }),
     [n],
   )
@@ -307,21 +311,7 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const checkForProcessEntries = (item: SearchType) => {
-    if (item.__typename === 'Article') {
-      const hasMainProcessEntry =
-        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = !!item.body?.filter((content) => {
-        return content.__typename === 'ProcessEntry'
-      }).length
-
-      return hasMainProcessEntry || hasProcessEntryInBody
-    }
-
-    return false
-  }
-
-  const getItemLink = (item: SearchType) => {
+  const getItemLink = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -333,7 +323,7 @@ const Search: Screen<CategoryProps> = ({
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
-  const getItemImages = (item: SearchType) => {
+  const getItemImages = (item: SearchEntryType) => {
     if (
       item.__typename === 'LifeEventPage' &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
@@ -357,22 +347,23 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
-    (item) => ({
-      typename: item.__typename,
-      title: item.title,
-      parentTitle: item.parent?.title,
-      description:
-        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: getItemLink(item),
-      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-      category: item.category ?? item.parent?.category,
-      hasProcessEntry: checkForProcessEntries(item),
-      group: item.group,
-      ...getItemImages(item),
-      labels: getLabels(item),
-    }),
-  )
+  const searchResultsItems = (
+    searchResults.items as Array<SearchEntryType>
+  ).map((item) => ({
+    typename: item.__typename,
+    title: item.title,
+    parentTitle: item.parent?.title,
+    description:
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+    link: getItemLink(item),
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
+    hasProcessEntry:
+      item.__typename === 'Article' && hasProcessEntries(item as Article),
+    group: item.group,
+    ...getItemImages(item),
+    labels: getLabels(item),
+  }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const noUncategorized = (item) => {
@@ -771,6 +762,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webOrganizationSubpage',
     'webOrganizationPage',
     'webProjectPage',
+    'webManual',
   ]
 
   const ensureContentTypeExists = (

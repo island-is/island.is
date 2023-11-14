@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m, formatDate, amountFormat } from '@island.is/service-portal/core'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
@@ -14,7 +13,7 @@ type TotalBills = {
   totalCovered: number
 }
 
-const BillsTable: FC<Props> = ({ bills }: Props) => {
+const BillsTable = ({ bills }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -46,7 +45,7 @@ const BillsTable: FC<Props> = ({ bills }: Props) => {
             </T.HeadData>
             <T.HeadData>
               <Text variant="medium" fontWeight="medium">
-                {formatMessage(m.refundDate)}
+                {formatMessage(messages.repaid)}
               </Text>
             </T.HeadData>
             <T.HeadData>

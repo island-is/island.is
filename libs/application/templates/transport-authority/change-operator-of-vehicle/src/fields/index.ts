@@ -1,7 +1,7 @@
-export { PaymentChargeOverview } from './Payment/PaymentChargeOverview'
 export { VehiclesField } from './VehiclesField'
 export { CoOwner } from './CoOwner'
 export { OperatorRepeater } from './OperatorRepeater'
 export { Review } from './Review'
 export { RejectedConclusion } from './RejectedConclusion'
 export { ValidationErrorMessages } from './ValidationErrorMessages'
+export { Conclusion } from './Conclusion'

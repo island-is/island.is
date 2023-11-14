@@ -32,6 +32,8 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     private smartApi: SmartSolutionsApi,
   ) {}
 
+  clientSupportsPkPass = true
+
   private checkLicenseValidity(
     license: DriversLicense,
   ): LicensePkPassAvailability {
@@ -142,10 +144,6 @@ export class DrivingLicenseClient implements LicenseClient<DriversLicense> {
     }
 
     return licenseResponse
-  }
-
-  async getLicenseDetail(user: User): Promise<Result<DriversLicense | null>> {
-    return this.getLicense(user)
   }
 
   async getPkPass(user: User): Promise<Result<Pass>> {

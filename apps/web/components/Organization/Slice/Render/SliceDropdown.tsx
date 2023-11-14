@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
-import { SliceMachine } from '@island.is/web/components'
+import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
 import {
   BoxProps,
   GridColumn,
   GridContainer,
   GridRow,
   Select,
+  Stack,
 } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import slugify from '@sindresorhus/slugify'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { SliceMachine } from '@island.is/web/components'
+import { Slice } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slices: Slice[]
@@ -61,7 +63,7 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   const selectedSlice = slices.find((x) => x.id === selectedId)
 
   return (
-    <>
+    <Stack space={5}>
       <GridContainer>
         <GridRow marginBottom={dropdownMarginBottom}>
           <GridColumn span={gridSpan} offset={gridOffset}>
@@ -102,6 +104,6 @@ export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
           fullWidth={slicesAreFullWidth}
         />
       )}
-    </>
+    </Stack>
   )
 }

@@ -1087,11 +1087,7 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
-  healthTooltip: {
-    id: 'service.portal:health-tooltip',
-    defaultMessage:
-      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
-  },
+
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
     defaultMessage:
@@ -1174,5 +1170,17 @@ export const m = defineMessages({
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
+  },
+  month: {
+    id: 'service.portal:month',
+    defaultMessage: 'Mánuður',
+  },
+  dateOfInvoiceShort: {
+    id: 'service.portal:date-of-invoice',
+    defaultMessage: 'Dags. reiknings',
+  },
+  totalPrice: {
+    id: 'service.portal:total-price',
+    defaultMessage: 'Heildarverð',
   },
 })

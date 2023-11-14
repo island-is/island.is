@@ -7,6 +7,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseOrigin,
   CaseState,
   CaseTransition,
   completedCaseStates,
@@ -287,6 +288,7 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.APPEAL}          | ${CaseState.ACCEPTED}        | ${undefined}                 | ${CaseAppealState.APPEALED}
       ${CaseTransition.RECEIVE_APPEAL}  | ${CaseState.ACCEPTED}        | ${CaseAppealState.APPEALED}  | ${CaseAppealState.RECEIVED}
       ${CaseTransition.COMPLETE_APPEAL} | ${CaseState.ACCEPTED}        | ${CaseAppealState.RECEIVED}  | ${CaseAppealState.COMPLETED}
+      ${CaseTransition.REOPEN_APPEAL}   | ${CaseState.ACCEPTED}        | ${CaseAppealState.COMPLETED} | ${CaseAppealState.RECEIVED}
     `.describe(
     '$transition $caseState case transitioning from $currentAppealState to $newAppealState appeal state',
     ({ transition, caseState, currentAppealState, newAppealState }) => {
@@ -330,6 +332,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: currentAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           const updatedCase = {
@@ -338,6 +341,7 @@ describe('CaseController - Transition', () => {
             state: caseState,
             caseFiles,
             appealState: newAppealState,
+            origin: CaseOrigin.LOKE,
           } as Case
 
           beforeEach(async () => {
@@ -354,11 +358,9 @@ describe('CaseController - Transition', () => {
               {
                 appealState: newAppealState,
                 prosecutorPostponedAppealDate:
-                  newAppealState === CaseAppealState.APPEALED
-                    ? date
-                    : undefined,
+                  transition === CaseTransition.APPEAL ? date : undefined,
                 appealReceivedByCourtDate:
-                  newAppealState === CaseAppealState.RECEIVED
+                  transition === CaseTransition.RECEIVE_APPEAL
                     ? date
                     : undefined,
               },
@@ -429,7 +431,7 @@ describe('CaseController - Transition', () => {
                   caseId,
                 },
                 {
-                  type: MessageType.DELIVER_CASE_TO_POLICE,
+                  type: MessageType.DELIVER_APPEAL_TO_POLICE,
                   user: defaultUser,
                   caseId: theCase.id,
                 },

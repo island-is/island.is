@@ -24,6 +24,7 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
   PhoneField,
   RadioField,
@@ -539,5 +540,22 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
+    data
+  return {
+    children: undefined,
+    id,
+    title,
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
   }
 }

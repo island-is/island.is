@@ -1,5 +1,7 @@
 import gql from 'graphql-tag'
 
+import { processEntryFields } from './fragments'
+
 export const GET_SEARCH_RESULTS_QUERY = gql`
   query GetSearchResults($query: SearcherInput!) {
     searchResults(query: $query) {
@@ -43,6 +45,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           organizationPage {
             slug
           }
+        }
+        ... on Manual {
+          id
+          title
+          slug
         }
       }
     }
@@ -111,14 +118,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           slug
           intro
           body {
-            ... on ProcessEntry {
-              __typename
-              processTitle
-              processLink
-            }
-          }
-          processEntry {
-            id
+            ...ProcessEntryFields
           }
           group {
             title
@@ -139,8 +139,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             slug
           }
           processEntry {
-            id
-            processTitle
+            ...ProcessEntryFields
           }
         }
 
@@ -251,6 +250,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           intro
           labels
         }
+
+        ... on Manual {
+          id
+          title
+          slug
+        }
       }
       tagCounts {
         key
@@ -264,4 +269,5 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
       processEntryCount
     }
   }
+  ${processEntryFields}
 `
