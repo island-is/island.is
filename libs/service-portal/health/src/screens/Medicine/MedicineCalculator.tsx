@@ -35,7 +35,6 @@ export const MedicineCalulator = () => {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
-  const [hasCalculated, setHasCalculated] = useState(false)
   const [hoveredDrug, setHoveredDrug] = useState(-1)
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
@@ -72,7 +71,10 @@ export const MedicineCalulator = () => {
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
 
   const handleCalculate = () => {
-    if (!hasCalculated) setHasCalculated(true)
+    if (selectedDrugList.length === 0) {
+      setCalculatorResults(null)
+      return
+    }
     const input = {
       drugCalculatorRequestDTO: {
         drugs: selectedDrugList.map((d) => ({
@@ -96,10 +98,7 @@ export const MedicineCalulator = () => {
   }
 
   useEffect(() => {
-    if (selectedDrugList.length === 0) setCalculatorResults(null)
-    if (hasCalculated) {
-      handleCalculate()
-    }
+    handleCalculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDrugList])
 
@@ -251,18 +250,6 @@ export const MedicineCalulator = () => {
           flexWrap="wrap"
         >
           <Text variant="h5">{formatMessage(messages.medicineResults)}</Text>
-          <Button
-            dataTestId="calculate-button"
-            size="medium"
-            variant="primary"
-            disabled={CALCULATOR_DISABLED}
-            onClick={() => {
-              if (!hasCalculated) setHasCalculated(true)
-              handleCalculate()
-            }}
-          >
-            {formatMessage(messages.calculate)}
-          </Button>
         </Box>
         <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
           <T.Table>
