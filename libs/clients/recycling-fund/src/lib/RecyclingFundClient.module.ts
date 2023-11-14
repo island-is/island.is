@@ -25,7 +25,7 @@ const configFactory = (idsClientConfig: any) => ({
     name: 'recycling-fund',
     organizationSlug: 'urvinnslusjodur',
     autoAuth: {
-      mode: 'auto',
+      mode: 'tokenExchange',
       issuer: 'idsClientConfig.issuer',
       clientId: 'idsClientConfig.clientId',
       clientSecret: 'dsClientConfig.clientSecret',
