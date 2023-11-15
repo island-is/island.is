@@ -1,5 +1,5 @@
-import { SEOProps } from '../../../../types/interfaces'
 import Head from 'next/head'
+import { SEOProps } from '../../../../types/interfaces'
 import localization from '../../Layout.json'
 
 const SEO = ({ title, image, url, description, keywords }: SEOProps) => {
