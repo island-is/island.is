@@ -509,6 +509,7 @@
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
