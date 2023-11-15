@@ -14,7 +14,10 @@ export default {
   component: Filter,
 }
 
-const RenderVariant = (variant: FilterProps['variant']) => {
+const RenderVariant = (
+  variant: FilterProps['variant'],
+  inputButton?: boolean,
+) => {
   const [isMobile, setIsMobile] = useState(false)
   const { width } = useWindowSize()
   useEffect(() => {
@@ -66,7 +69,7 @@ const RenderVariant = (variant: FilterProps['variant']) => {
     },
   ]
 
-  const renderDefaultFilter = (asDialog?: boolean) => (
+  const renderDefaultFilter = (asDialog?: boolean, inputButton?: boolean) => (
     <Filter
       labelClearAll="Hreinsa allar síur"
       labelClear="Hreinsa síu"
@@ -89,6 +92,14 @@ const RenderVariant = (variant: FilterProps['variant']) => {
           placeholder="Sía eftir leitarorði"
           value={filter.input}
           onChange={(value) => setFilter({ ...filter, input: value })}
+          button={
+            inputButton
+              ? {
+                  label: 'Search',
+                  onClick: () => undefined,
+                }
+              : undefined
+          }
         />
       }
     >
@@ -113,7 +124,7 @@ const RenderVariant = (variant: FilterProps['variant']) => {
 
   return (
     <Box padding={2} background="blue100">
-      {renderDefaultFilter(isMobile)}
+      {renderDefaultFilter(isMobile, inputButton)}
     </Box>
   )
 }
@@ -121,6 +132,18 @@ const RenderVariant = (variant: FilterProps['variant']) => {
 export const Default = () => (
   <>
     <Box marginBottom={4}>{RenderVariant('default')}</Box>
+    <Box padding={2} background="blue100">
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
+      suscipit non, facilis vero architecto accusantium cupiditate odit dolore
+      repellendus ab ex, dicta debitis explicabo culpa rerum reprehenderit atque
+      reiciendis fuga!
+    </Box>
+  </>
+)
+
+export const InputButton = () => (
+  <>
+    <Box marginBottom={4}>{RenderVariant('default', true)}</Box>
     <Box padding={2} background="blue100">
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Consectetur
       suscipit non, facilis vero architecto accusantium cupiditate odit dolore

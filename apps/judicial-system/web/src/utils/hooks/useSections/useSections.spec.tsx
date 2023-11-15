@@ -100,8 +100,7 @@ describe('useSections getSections', () => {
     ])
   })
 
-  // TODO: Remove .skip when the Court of Appeals is ready
-  it.skip('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
+  it('should return the correct sections for appealed restriction cases when the court of appeals has made a ruling', () => {
     const { result } = renderHook(() => useSections(), { wrapper })
     const c: Case = {
       origin: CaseOrigin.RVG,

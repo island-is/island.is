@@ -31,7 +31,7 @@ export const getThemeConfig = (
     (projectPage?.footerItems ?? []).length > 0 ? 'organization' : 'default'
 
   let showHeader = true
-  if (theme === 'gagnasidur-fiskistofu') {
+  if (theme === 'gagnasidur-fiskistofu' || theme === 'directorate-of-health') {
     showHeader = false
   }
 

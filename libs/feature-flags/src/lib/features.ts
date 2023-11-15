@@ -17,6 +17,7 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  citizenship = 'isCitizenshipEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -28,6 +29,9 @@ export enum Features {
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
   servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
+  servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
+  servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
+  servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

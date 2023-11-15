@@ -7,21 +7,14 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { BackgroundImage, DataLinkCard } from '@island.is/web/components'
-
-interface LinkCardProps {
-  title: string
-  body: string
-  link?: string
-  id?: string
-  linkTitle?: string
-}
+import type { LinkCard } from '@island.is/web/graphql/schema'
 
 interface DataLinkSectionProps {
   title?: string
   titleId?: string
   description?: string
   image?: { title: string; url: string }
-  cards: LinkCardProps[]
+  cards: LinkCard[]
 }
 
 export const DataLinkSection = ({

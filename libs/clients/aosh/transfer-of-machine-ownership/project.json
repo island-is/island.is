@@ -36,13 +36,14 @@
         "cwd": "libs/clients/aosah/transfer-of-machine-ownership"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/aosah/transfer-of-machine-ownership/gen/fetch -i libs/clients/aosah/transfer-of-machine-ownership/src/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]
