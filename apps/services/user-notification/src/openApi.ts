@@ -1,5 +1,5 @@
 import { DocumentBuilder } from '@nestjs/swagger'
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { NotificationsScope, UserProfileScope } from '@island.is/auth/scopes'
 import { environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
@@ -18,6 +18,10 @@ export const openApi = new DocumentBuilder()
           ['profile']: '',
           [NotificationsScope.read]: '',
           [NotificationsScope.write]: '',
+          [UserProfileScope.admin]: 'Get user device tokens',
+          [UserProfileScope.read]: 'Get a single user profile.',
+          [UserProfileScope.write]:
+            'Update and email/sms varifications for a single user profile.',
         },
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,

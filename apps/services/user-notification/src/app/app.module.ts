@@ -13,10 +13,10 @@ import {
 
 @Module({
   imports: [
-    // AuthModule.register({
-    //   issuer: 'https://identity-server.dev01.devland.is',
-    //   audience: ['@island.is', '@admin.island.is'],
-    // } as AuthConfig),
+    AuthModule.register({
+      issuer: 'https://identity-server.dev01.devland.is',
+      // audience: ['@island.is', '@admin.island.is'],
+    } as AuthConfig), // TODO: get from env
 
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

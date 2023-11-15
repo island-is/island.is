@@ -46,7 +46,10 @@ import { Notification } from './notification.model'
       },
     }),
   ],
-  controllers: [NotificationsController, MeNotificationsController],
+  controllers: [
+    NotificationsController, 
+    MeNotificationsController
+  ],
   providers: [
     NotificationsService,
     NotificationDispatchService,
