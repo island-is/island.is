@@ -48,6 +48,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   CITIZENSHIP = 'Citizenship',
+  ENERGY_FUNDS = 'EnergyFunds',
 }
 
 export const ApplicationConfigurations = {
@@ -246,5 +247,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
   },
 }

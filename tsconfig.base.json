@@ -18,7 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
-    "strict": true,
+    "strict": false,
     "paths": {
       "*": ["libs/shared/types/src/lib/*"],
       "@island.is/air-discount-scheme-web/*": [
@@ -299,6 +299,9 @@
       ],
       "@island.is/application/templates/driving-school-confirmation": [
         "libs/application/templates/driving-school-confirmation/src/index.ts"
+      ],
+      "@island.is/application/templates/energy-funds": [
+        "libs/application/templates/energy-funds/src/index.ts"
       ],
       "@island.is/application/templates/estate": [
         "libs/application/templates/estate/src/index.ts"

@@ -123,6 +123,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
     ),
+  [ApplicationTypes.ENERGY_FUNDS]: () =>
+    import('@island.is/application/templates/energy-funds'),
 }
 
 export default templates
