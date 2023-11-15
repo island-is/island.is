@@ -25,6 +25,7 @@ export const Index = ({ types }: HomeProps) => {
   const loc = localization['home']
   const locSeo = loc['seo']
 
+  const { statistics } = useFetchStatistics()
   const {
     cases,
     total,
@@ -40,8 +41,6 @@ export const Index = ({ types }: HomeProps) => {
   } = useFrontPageFilters({
     types: types,
   })
-
-  const { statistics } = useFetchStatistics()
 
   return (
     <Layout
