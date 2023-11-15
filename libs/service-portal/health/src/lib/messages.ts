@@ -111,7 +111,8 @@ export const messages = defineMessages({
   },
   readAboutPaymentParticipationSystemsLink: {
     id: 'sp.health:read-about-payment-participation-systems-link',
-    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
   },
   paymentOverview: {
     id: 'sp.health:payment-overview',
