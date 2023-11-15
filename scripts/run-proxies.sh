@@ -32,6 +32,12 @@ parse_cli() {
       REMOVE_CONTAINERS_ON_FAIL=true
       REMOVE_CONTAINERS_FORCE=true
       ;;
+    -s | --remove-containers-on-start)
+      REMOVE_CONTAINERS_ON_START=true
+      ;;
+    -x | --remove-containers-on-fail)
+      REMOVE_CONTAINERS_ON_FAIL=true
+      ;;
     -i | --interval)
       RESTART_INTERVAL_TIME="${opt}"
       shift
@@ -52,11 +58,11 @@ parse_cli() {
 parse_cli "$@"
 
 main() {
-  for proxy in es soffia xroad redis; do
+  for proxy in es soffia xroad redis db; do
     local container_name
     container_name="$(grep -oP '(?<=--service )\S+' ./scripts/run-$proxy-proxy.sh)"
     if [ "$proxy" == "es" ]; then container_name="es-proxy"; fi
-    if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ]; then
+    if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ] && containerer ps -a | grep -q "$container_name"; then
       echo "Removing containers..."
       containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name"
     fi
