@@ -1543,12 +1543,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/debug@npm:4.1.7":
-  version: 4.1.7
-  resolution: "@types/debug@npm:4.1.7"
+"@types/debug@npm:4.1.12":
+  version: 4.1.12
+  resolution: "@types/debug@npm:4.1.12"
   dependencies:
     "@types/ms": "*"
-  checksum: 0a7b89d8ed72526858f0b61c6fd81f477853e8c4415bb97f48b1b5545248d2ae389931680b94b393b993a7cfe893537a200647d93defe6d87159b96812305adc
+  checksum: 47876a852de8240bfdaf7481357af2b88cb660d30c72e73789abf00c499d6bc7cd5e52f41c915d1b9cd8ec9fef5b05688d7b7aef17f7f272c2d04679508d1053
   languageName: node
   linkType: hard
 
@@ -1704,7 +1704,7 @@ __metadata:
     "@octokit/action": ^4.0.8
     "@octokit/core": ^3.5.1
     "@octokit/rest": 19.0.4
-    "@types/debug": 4.1.7
+    "@types/debug": 4.1.12
     "@types/jest": ^27.4.1
     debug: 4.3.4
     esbuild: 0.15.10

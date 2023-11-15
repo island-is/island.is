@@ -17,7 +17,7 @@
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.208.0",
     "@octokit/rest": "19.0.4",
-    "@types/debug": "4.1.7",
+    "@types/debug": "4.1.12",
     "@types/jest": "^27.4.1",
     "debug": "4.3.4",
     "esbuild": "0.15.10",
