@@ -16,7 +16,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/energy-funds"
+      ],
       "options": {
         "jestConfig": "libs/application/templates/energy-funds/jest.config.ts",
         "passWithNoTests": true
