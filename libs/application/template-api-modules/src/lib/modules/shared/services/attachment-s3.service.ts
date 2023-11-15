@@ -25,22 +25,16 @@ export class AttachmentS3Service {
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
 
-    for (let i = 0; i < attachmentAnswerKeys.length; i++) {
-      const answers = getValueViaPath(
-        application.answers,
-        attachmentAnswerKeys[i],
-      ) as Array<{
+    attachmentAnswerKeys.forEach(async (key) => {
+      const answers = getValueViaPath(application.answers, key) as Array<{
         key: string
         name: string
       }>
-      if (!answers) continue
-      const list = await this.toDocumentDataList(
-        answers,
-        attachmentAnswerKeys[i],
-        application,
-      )
+      if (!answers) return
+      const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
-    }
+    })
+
     return attachments
   }
 
@@ -87,7 +81,6 @@ export class AttachmentS3Service {
       const fileContent = file.Body as Buffer
       return fileContent?.toString('base64')
     } catch (error) {
-      logger.log('error ', error)
       logger.error(error)
       return undefined
     }
