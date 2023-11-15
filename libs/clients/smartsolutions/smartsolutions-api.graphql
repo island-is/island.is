@@ -1,16 +1,7 @@
 """
 Makes sure that the user is authenticated and has access to the query / mutation
 """
-directive @authenticated(
-  action: String!
-  actionDescription: String!
-  admin: Boolean!
-  customResource: String!
-  permission: [UserPermission!]!
-  role: UserRole!
-  scannerRoute: ScannerAuthenticatedOptions!
-  status: [IssuerStatus!]!
-) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | SCHEMA | UNION
+directive @authenticated(action: String!, actionDescription: String!, admin: Boolean!, customResource: String!, permission: [UserPermission!]!, role: UserRole!, scannerRoute: ScannerAuthenticatedOptions!, status: [IssuerStatus!]!) on ARGUMENT_DEFINITION | ENUM | ENUM_VALUE | FIELD_DEFINITION | INPUT_FIELD_DEFINITION | INPUT_OBJECT | INTERFACE | OBJECT | SCALAR | SCHEMA | UNION
 
 type AddOnPassTemplate {
   addOnpassTemplate: UUID!
@@ -148,6 +139,7 @@ interface BaseModel {
 type BillingInfo implements BaseModel {
   cancelDate: LocalDate
   id: UUID!
+  issuerDiscounts: [IssuerDiscount!]
   issuerStatus: IssuerStatus
   passTemplatesPrice: [PassTemplatePrice!]!
   trialEndDate: LocalDate!
@@ -415,6 +407,18 @@ input DImageInput {
   width: Int!
 }
 
+input DIssuerDiscountInput {
+  deleted: Boolean!
+  discount: Float!
+  endDate: Instant
+  id: UUID!
+  issuer: DIssuerInput!
+  startDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
 input DIssuerInput {
   address: String
   automations: [DAutomationInput!]!
@@ -425,6 +429,7 @@ input DIssuerInput {
   contactPhone: String
   deleted: Boolean!
   demoEmails: [DDemoEmailInput!]
+  discounts: [DIssuerDiscountInput!]
   id: UUID!
   idNumber: String
   images: [DImageInput!]!
@@ -522,10 +527,8 @@ type DKPlusCompanyType {
 input DLocationInput {
   deleted: Boolean!
   id: UUID!
-  issuer: DIssuerInput!
-  name: String!
-  passTemplates: [DPassTemplateInput!]
-  relevantText: String
+  passTemplates: DPassTemplateInput!
+  relevantText: String!
   version: Long!
   whenCreated: Instant!
   whenModified: Instant!
@@ -758,6 +761,7 @@ input DPassTemplateInput {
   expirationDate: Instant
   expirationType: ExpirationType
   externalAPIs: [DExternalAPIInput!]!
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean!
   externalAuthIdField: DPassInputFieldInput
   externalAuthNameField: DPassInputFieldInput
@@ -1189,6 +1193,7 @@ input ExpenceDataInput {
 }
 
 type Expense implements BaseModel {
+  discount: Float!
   expenseType: MonthlyFeeType!
   id: UUID!
   monthlyPrice: Float!
@@ -1403,9 +1408,7 @@ input ImageDataInput {
   width: Int
 }
 
-"""
-A type representing a formatted java.util.Instant
-"""
+"""A type representing a formatted java.util.Instant"""
 scalar Instant
 
 type IntRangeInfo {
@@ -1430,6 +1433,7 @@ type Issuer implements BaseModel {
   contactName: String
   contactPhone: String
   currentPlanSubscription: PlanSubscription
+  discounts: [IssuerDiscount!]
   id: UUID!
   idNumber: String
   invoiceEmail: String
@@ -1468,6 +1472,24 @@ input IssuerDataInput {
   termsAndConditions: Boolean
   town: String
   zipcode: String
+}
+
+type IssuerDiscount implements BaseModel {
+  discount: Float!
+  endDate: Instant
+  id: UUID!
+  startDate: Instant
+  version: Long!
+  whenCreated: Instant!
+  whenModified: Instant!
+}
+
+input IssuerDiscountDataInput {
+  discount: Float!
+  endDate: String
+  id: String
+  issuerId: String!
+  startDate: String
 }
 
 type IssuerPageInfo implements PaginationInfo {
@@ -1560,17 +1582,14 @@ type LastRedeemed {
   date: String!
 }
 
-"""
-A type representing a formatted java.util.ZonedDateTime
-"""
+"""A type representing a formatted java.util.ZonedDateTime"""
 scalar LocalDate
 
 type Location {
   id: UUID!
   latitude: Float!
   longitude: Float!
-  name: String!
-  relevantText: String
+  relevantText: String!
 }
 
 input LocationDataInput {
@@ -1581,9 +1600,7 @@ input LocationDataInput {
   relevantText: String
 }
 
-"""
-A type representing a formatted Kotlin.Long
-"""
+"""A type representing a formatted Kotlin.Long"""
 scalar Long
 
 type Money {
@@ -1622,9 +1639,7 @@ type Mutation {
   cancelSubscription: Boolean!
   changePassword(currentPassword: String!, newPassword: String!): Boolean!
   changeUserRole(
-    """
-    ID of issuer, only available to System Admins
-    """
+    """ID of issuer, only available to System Admins"""
     issuerId: String
     roleId: String!
     userId: String
@@ -1632,11 +1647,7 @@ type Mutation {
   changeUserStatus(userId: String!): Boolean!
   clearExternalIdentifiers(passTemplateId: String!): Int!
   confirmEmail(token: String!): Boolean!
-  confirmOrDenyIssuerInvite(
-    accepted: Boolean!
-    issuerId: String!
-    switchIssuer: Boolean
-  ): Boolean!
+  confirmOrDenyIssuerInvite(accepted: Boolean!, issuerId: String!, switchIssuer: Boolean): Boolean!
   confirmSubscription: Boolean!
   createFeatureFlag(key: String!): FeatureFlag!
   deactivateAllDevicePassInstances(passId: String!): Boolean!
@@ -1644,12 +1655,10 @@ type Mutation {
   deleteAllUnclaimedPasses(before: String, passTemplateId: String!): Boolean!
   deleteApiKey(id: String!): Boolean!
   deleteAppPassInstance(id: String!): Boolean!
-  deleteExternalIdentifier(
-    externalIdentifier: String!
-    passTemplateId: String!
-  ): PassTemplate!
+  deleteExternalIdentifier(externalIdentifier: String!, passTemplateId: String!): PassTemplate!
   deleteFeatureFlag(key: String!): Boolean!
   deleteIssuer(id: String!): Boolean!
+  deleteIssuerDiscount(id: String!): Boolean!
   deleteIssuerSecret(id: String!): Boolean!
   deleteIssuerUserSecret(id: String!): Boolean!
   deleteIssuerUserSecretValue(id: String!): Boolean!
@@ -1660,18 +1669,11 @@ type Mutation {
   deleteScanner(id: String!): Boolean!
   deleteScannerGroup(id: String!): Boolean!
   deleteStoragePass(passId: String!): Boolean!
-  deleteUniquePass(
-    passTemplateId: String!
-    values: [PassInputFieldValueDataInput!]!
-  ): Boolean!
+  deleteUniquePass(passTemplateId: String!, values: [PassInputFieldValueDataInput!]!): Boolean!
   deleteUser(id: String!, shouldPermanentlyDelete: Boolean): Boolean!
   disguiseAs(id: String!): Issuer
   dkPlusLoginStep1(password: String!, username: String!): [DKPlusCompanyType!]!
-  dkPlusLoginStep2(
-    companyId: String!
-    password: String!
-    username: String!
-  ): Boolean!
+  dkPlusLoginStep2(companyId: String!, password: String!, username: String!): Boolean!
   duplicatePassTemplate(passTemplateId: String!): PassTemplate!
   executeAutomation(id: String!, nodeId: String!): String!
   expireIssuer(id: String!): Boolean!
@@ -1682,23 +1684,10 @@ type Mutation {
   inviteUserToIssuer(email: String!, roleId: String!): Boolean!
   login(email: String!, password: String!): User
   loginSmartScanner(email: String!, password: String!): UserOld
-  loginSmartScannerQR(
-    code: String!
-    deviceId: String!
-    deviceName: String
-  ): Scanner!
-  loginSmartScannerV3(
-    deviceId: String!
-    deviceName: String
-    email: String!
-    password: String!
-  ): Scanner!
+  loginSmartScannerQR(code: String!, deviceId: String!, deviceName: String): Scanner!
+  loginSmartScannerV3(deviceId: String!, deviceName: String, email: String!, password: String!): Scanner!
   logout: Boolean!
-  posDistributionPass(
-    code: String!
-    distributionToken: String!
-    passTemplateId: String!
-  ): Pass!
+  posDistributionPass(code: String!, distributionToken: String!, passTemplateId: String!): Pass!
   reactivateDevicePassInstance(id: String!): Boolean!
   redeemPassbuilderPass(passId: String!): Boolean!
   redeemPassbuilderPunchPass(passId: String!, punches: Int!): PassbuilderPass!
@@ -1712,17 +1701,9 @@ type Mutation {
   resendUserInvite(id: String!): Boolean!
   resetPassword(password: String!, token: String!): Boolean!
   restoreUser(id: String!): Boolean!
-  scanAction(
-    scannerData: ScannerActionDataInput!
-    transactionId: String!
-  ): Boolean!
+  scanAction(scannerData: ScannerActionDataInput!, transactionId: String!): Boolean!
   sendDaysLeftOfDemo(daysLeft: Int!): Boolean!
-  sendPassEmails(
-    content: String!
-    passIds: [String!]
-    passTemplateId: String
-    subject: String!
-  ): SendPassEmailsResponse!
+  sendPassEmails(content: String!, passIds: [String!], passTemplateId: String, subject: String!): SendPassEmailsResponse!
   sendWelcomeEmail(issuerId: String!): Boolean!
   setActivePlanForIssuer(issuerId: String!, planId: String!): PlanSubscription!
   setActivePlanSubscription(planId: String!): PlanSubscription!
@@ -1736,89 +1717,49 @@ type Mutation {
   unvoidPassTemplate(id: String!): Boolean!
   updateCount(count: Int!, id: String!): Pass!
   updateFeatureFlagStatus(
-    """
-    Only used when status=active
-    """
+    """Only used when status=active"""
     activeWhen: String
     key: String!
     status: Boolean!
   ): Boolean!
   updateIssuer(data: IssuerDataInput!): Issuer!
   updateIssuerInfo(data: IssuerDataInput!, issuerId: String!): Issuer!
-  updatePass(
-    expirationDate: String
-    passId: String
-    passTemplateId: String!
-    thumbnail: ImageDataInput
-    values: [PassInputFieldValueDataInput!]
-  ): Pass!
-  updatePassAuthenticationTokenStatus(
-    id: String!
-    status: PassAuthenticationTokenStatus!
-  ): PassAuthenticationToken!
+  updatePass(expirationDate: String, passId: String, passTemplateId: String!, thumbnail: ImageDataInput, values: [PassInputFieldValueDataInput!]): Pass!
+  updatePassAuthenticationTokenStatus(id: String!, status: PassAuthenticationTokenStatus!): PassAuthenticationToken!
   updatePassByScannerAction(scannerData: ScannerActionDataInput!): Boolean!
-  updateQrCodeImage(
-    passTemplateId: String!
-    qrCodeImage: ImageDataInput
-  ): PassTemplate!
+  updateQrCodeImage(passTemplateId: String!, qrCodeImage: ImageDataInput): PassTemplate!
   updateStamps(id: String!, stampsLeft: Int!): Pass!
   updateStatusOnPass(amountToSubtract: Int, passId: String!, stamps: Int): Pass!
-  updateStatusOnPassWithDynamicBarcode(
-    amountToSubtract: Int
-    dynamicBarcodeData: DynamicBarcodeDataInput!
-    stamps: Int
-  ): Pass!
+  updateStatusOnPassWithDynamicBarcode(amountToSubtract: Int, dynamicBarcodeData: DynamicBarcodeDataInput!, stamps: Int): Pass!
   updateTrialEndDate(issuerId: String, trialEndDate: String!): Boolean!
   upsertApiKey(data: ApiKeyDataInput!): ApiKey!
   upsertAppPassInstance(data: AppPassInstanceDataInput!): AppPassInstance!
   upsertAppUser(data: AppUserDataInput!): User!
   upsertAutomation(data: AutomationDataInput!): Automation!
-  upsertAutomationFromEditor(
-    data: AutomationEditorDataInput!
-  ): AutomationEditor!
+  upsertAutomationFromEditor(data: AutomationEditorDataInput!): AutomationEditor!
   upsertDistributionPass(data: PassDataInput!): Pass!
   upsertFixedMonthlyFee(data: FixedMonthlyFeeDataInput!): FixedMonthlyFee!
-  upsertFixedMonthlyFees(
-    data: [FixedMonthlyFeeDataInput!]!
-  ): [FixedMonthlyFee!]!
-  upsertIntegration(
-    amountToChange: Int
-    enable: Boolean!
-    integrationType: MonthlyFeeType!
-    issuerId: String
-  ): Boolean!
+  upsertFixedMonthlyFees(data: [FixedMonthlyFeeDataInput!]!): [FixedMonthlyFee!]!
+  upsertIntegration(amountToChange: Int, enable: Boolean!, integrationType: MonthlyFeeType!, issuerId: String): Boolean!
+  upsertIssuerDiscount(data: IssuerDiscountDataInput!): IssuerDiscount!
   upsertIssuerSecret(data: IssuerSecretDataInput!): IssuerSecret!
   upsertIssuerUserSecret(data: IssuerUserSecretDataInput!): IssuerUserSecret!
-  upsertIssuerUserSecretValue(
-    data: IssuerUserSecretValueDataInput!
-  ): IssuerUserSecretValue!
-  upsertLocation(data: LocationDataInput!): Location
+  upsertIssuerUserSecretValue(data: IssuerUserSecretValueDataInput!): IssuerUserSecretValue!
+  upsertLocation(data: LocationDataInput!): Location @deprecated(reason: "Not used, replace with Use inside pass template")
   upsertNode(data: NodeDataInput!): Node!
   upsertNodes(automationId: String!, data: [NodeDataInput!]!): [Node!]!
-  upsertNodesFromEditor(
-    automationId: String!
-    data: [NodeEditorDataInput!]!
-  ): [Node!]!
+  upsertNodesFromEditor(automationId: String!, data: [NodeEditorDataInput!]!): [Node!]!
   upsertNumberOfPasses(numberOfPasses: Int!, passTemplateId: String!): Int!
   upsertOption(data: NodeOptionDataInput!, nodeId: String!): NodeOption!
   upsertOrderInfo(data: OrderInfoDataInput!, issuer: DIssuerInput!): OrderInfo!
-  upsertOtherExpenses(
-    data: SubscriptionDataInput!
-    month: Int!
-    year: Int!
-  ): Subscription!
+  upsertOtherExpenses(data: SubscriptionDataInput!, month: Int!, year: Int!): Subscription!
   upsertPass(data: PassDataInput!): Pass!
   upsertPassIntegration(data: PassIntegrationDataInput!): PassIntegration!
-  upsertPassIntegrations(
-    data: [PassIntegrationDataInput!]!
-  ): [PassIntegration!]!
+  upsertPassIntegrations(data: [PassIntegrationDataInput!]!): [PassIntegration!]!
   upsertPassPricing(data: PassPricingDataInput!): PassPricing!
   upsertPassPricings(data: [PassPricingDataInput!]!): [PassPricing!]!
   upsertPassTemplate(data: PassTemplateDataInput!): PassTemplate!
-  upsertPassTemplateExternalIdentifiers(
-    externalIdentifiers: [String!]!
-    passTemplateId: String!
-  ): Int!
+  upsertPassTemplateExternalIdentifiers(externalIdentifiers: [String!]!, passTemplateId: String!): Int!
   upsertPasses(data: [PassDataInput!]!): [Pass!]!
   upsertPaymentInfo(data: PaymentInfoDataInput!): PaymentInfo!
   upsertPlan(data: PlanDataInput!): Plan!
@@ -1828,17 +1769,10 @@ type Mutation {
   upsertScannerGroup(data: ScannerGroupDataInput!): ScannerGroup!
   upsertUser(data: UserDataInput!): User!
   upsertUserAsAdmin(data: UserDataInput!): User!
-  upsertUserOption(
-    option: String!
-    userId: String
-    value: String!
-  ): [UserOptionData!]!
+  upsertUserOption(option: String!, userId: String, value: String!): [UserOptionData!]!
   voidPass(id: String!): Boolean!
   voidPassTemplate(id: String!): Boolean!
-  voidUniquePass(
-    passTemplateId: String!
-    values: [PassInputFieldValueDataInput!]!
-  ): Boolean!
+  voidUniquePass(passTemplateId: String!, values: [PassInputFieldValueDataInput!]!): Boolean!
 }
 
 type Node {
@@ -1998,9 +1932,7 @@ input PaginationInput {
 type Pass implements BaseModel {
   alreadyPaid: Boolean!
   appPassInstances: [AppPassInstance!]!
-  authenticationTokens(
-    pagination: PaginationInput
-  ): PassAuthenticationTokenPageInfo!
+  authenticationTokens(pagination: PaginationInput): PassAuthenticationTokenPageInfo!
   deliveryPageUrl: String!
   devicePassInstances: [DevicePassInstance!]!
   distributionQRCode: String!
@@ -2010,6 +1942,7 @@ type Pass implements BaseModel {
   expirationDateWithoutTime: String!
   expirationTime: String!
   externalIdentifier: String
+  hasMissingExternalAuthentication: Boolean!
   hasMissingMemberInputFieldValues: Boolean!
   id: UUID!
   inputFieldValues: [PassInputFieldValue!]!
@@ -2188,6 +2121,7 @@ type PassInputField implements BaseModel {
   format: PassInputFieldFormat!
   id: UUID!
   identifier: String!
+  isExternalAuthField: Boolean!
   label: String!
   mandatory: Boolean!
   type: PassInputFieldType!
@@ -2328,6 +2262,7 @@ type PassTemplate implements BaseModel {
   expirationTime: String!
   expirationType: ExpirationType
   externalAPIs: [ExternalAPI!]!
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean!
   externalAuthIdField: PassInputField
   externalAuthNameField: PassInputField
@@ -2347,7 +2282,7 @@ type PassTemplate implements BaseModel {
   isSharingProhibited: Boolean!
   issuer: Issuer
   labelColor: String
-  locations: [Location!]
+  locations: [PassTemplateLocation!]!
   lockInputFields: Boolean!
   logScansOnBack: Boolean!
   logo: Image
@@ -2416,6 +2351,7 @@ input PassTemplateDataInput {
   expirationTime: String
   expirationType: ExpirationType
   externalAPIs: [ExternalAPIDataInput!]
+  externalAuthAgeVerification: Int
   externalAuthEnablePOS: Boolean
   externalAuthIdFieldId: String
   externalAuthNameFieldId: String
@@ -2434,7 +2370,7 @@ input PassTemplateDataInput {
   isNFC: Boolean
   isSharingProhibited: Boolean
   labelColor: String
-  locationIds: [String!]
+  locations: [PassTemplateLocationDataInput!]
   lockInputFields: Boolean
   logScansOnBack: Boolean
   logo: ImageDataInput
@@ -2471,6 +2407,20 @@ input PassTemplateDataInput {
   thumbnail: ImageDataInput
   unstampedImage: ImageDataInput
   useExternalAuth: Boolean
+}
+
+type PassTemplateLocation {
+  id: UUID!
+  latitude: Float!
+  longitude: Float!
+  relevantText: String!
+}
+
+input PassTemplateLocationDataInput {
+  id: String
+  latitude: Float!
+  longitude: Float!
+  relevantText: String!
 }
 
 type PassTemplatePageInfo implements PaginationInfo {
@@ -2768,10 +2718,7 @@ type Pricing implements BaseModel {
 }
 
 type Query {
-  allowCreatingPassBecauseOfTotalPasses(
-    distributionToken: String!
-    passTemplateId: String!
-  ): Boolean!
+  allowCreatingPassBecauseOfTotalPasses(distributionToken: String!, passTemplateId: String!): Boolean!
   apiKey(id: String!): ApiKey
   apiKeys: ApiKeyPageInfo!
   appPasses: [Pass!]!
@@ -2782,9 +2729,7 @@ type Query {
     filter: AutomationLogFilterInput
     id: String!
 
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
     pagination: PaginationInput
@@ -2794,19 +2739,10 @@ type Query {
   bulkEmailPreview(passTemplateId: String!): String!
   checkQuantityRestriction(passTemplateId: String!): Boolean!
   countDeviceTypesOfPasses: [DeviceTypeCount!]!
-  countOfPassesIssuedByPassTemplate(
-    daysBack: Long
-    maxTemplates: Int
-  ): [PassesIssuedByPassTemplate!]!
+  countOfPassesIssuedByPassTemplate(daysBack: Long, maxTemplates: Int): [PassesIssuedByPassTemplate!]!
   distributionPass(distributionToken: String!, passId: String!): Pass
-  distributionPassTemplate(
-    distributionToken: String!
-    passTemplateId: String!
-  ): PassTemplate
-  externalIdentifiers(
-    pagination: PaginationInput
-    passTemplateId: String!
-  ): ExternalIdentifierPageInfo!
+  distributionPassTemplate(distributionToken: String!, passTemplateId: String!): PassTemplate
+  externalIdentifiers(pagination: PaginationInput, passTemplateId: String!): ExternalIdentifierPageInfo!
   featureFlags: [FeatureFlag!]!
   fixedMonthlyFee: [FixedMonthlyFee!]!
   fixedMonthlyFees(planId: String): [FixedMonthlyFee!]!
@@ -2814,26 +2750,12 @@ type Query {
   getInvite(id: String!): Invite!
   getNextExternalId(passTemplateId: String!): ExternalIdentifier!
   getNextIssuerId(exceptIssuerId: String!): String
-  getPassByScannedData(
-    metadata: ScanMetadataInput
-    scanData: String!
-  ): ScannedDataResponse
-  getSaltPayCheckHash(
-    distributionUrl: String!
-    passTemplateId: String!
-  ): SaltpayHashInfo!
-  getScanHistoryDataForPass(passId: String!): [ScanTransaction!]!
-    @deprecated(
-      reason: "Deprecated method. Please refer to scanTransactions query, replace with query scanTransactions"
-    )
-  getScannerHistory(scannerId: String): [ScanTransaction!]!
-    @deprecated(
-      reason: "Deprecated method for normal use, only used for SmartScanner, replace with query scanTransactions"
-    )
+  getPassByScannedData(metadata: ScanMetadataInput, scanData: String!): ScannedDataResponse
+  getSaltPayCheckHash(distributionUrl: String!, passTemplateId: String!): SaltpayHashInfo!
+  getScanHistoryDataForPass(passId: String!): [ScanTransaction!]! @deprecated(reason: "Deprecated method. Please refer to scanTransactions query, replace with query scanTransactions")
+  getScannerHistory(scannerId: String): [ScanTransaction!]! @deprecated(reason: "Deprecated method for normal use, only used for SmartScanner, replace with query scanTransactions")
 
-  """
-  Not Implemented
-  """
+  """Not Implemented"""
   getSettingsForScanner: Boolean!
   globalStatistics: StatisticResponse!
   globalUsers(pagination: PaginationInput, showDeleted: Boolean): UserPageInfo!
@@ -2848,15 +2770,13 @@ type Query {
   issuerUserSecretValues: [IssuerUserSecretValue!]!
   issuerUserSecrets: [IssuerUserSecret!]!
   issuers(
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
     pagination: PaginationInput
   ): IssuerPageInfo!
   issuersOfUser: [Issuer!]!
-  locations: [Location!]!
+  locations: [Location!]! @deprecated(reason: "Not used, replace with Use inside pass template")
   me: User
   meScanner: Scanner
   mostRecentlySentMail(passId: String!): Email
@@ -2867,17 +2787,12 @@ type Query {
   mostValuableFields(id: String!): [PassInputField!]!
   nodeTypes: [NodeType!]!
   orders(
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
   ): [OrderInfo!]!
   pass(id: String!): Pass
-  passAuthenticationTokens(
-    pagination: PaginationInput
-    passId: String!
-  ): PassAuthenticationTokenPageInfo!
+  passAuthenticationTokens(pagination: PaginationInput, passId: String!): PassAuthenticationTokenPageInfo!
   passDeviceHistory(passId: String!): [DevicePassInstance!]!
   passHistory(passId: String!): [PassHistoryEntry!]!
   passIntegration: [PassIntegration!]!
@@ -2888,16 +2803,7 @@ type Query {
   passTemplates(pagination: PaginationInput): PassTemplatePageInfo!
   passToApp(id: String!): Pass
   passbuilderPass(passId: String!, templateId: String!): PassbuilderPass!
-  passes(
-    cheap: Boolean
-    hideByStatus: HideByStatusTypeInput
-    inputFieldOrder: [GenericOrderMultiInput!]
-    order: GenericOrderInput
-    orderMultiple: [GenericOrderMultiInput!]
-    pagination: PaginationInput
-    passTemplateId: String
-    search: PassSearchDataInput
-  ): PassPageInfo!
+  passes(cheap: Boolean, hideByStatus: HideByStatusTypeInput, inputFieldOrder: [GenericOrderMultiInput!], order: GenericOrderInput, orderMultiple: [GenericOrderMultiInput!], pagination: PaginationInput, passTemplateId: String, search: PassSearchDataInput): PassPageInfo!
   passesCsv(passTemplateId: String!): String!
   passesOfDevice(id: String!): [Pass!]!
   passesPricing: [Pricing!]!
@@ -2905,9 +2811,7 @@ type Query {
   pendingUsers: [PendingUser!]!
   plan(id: String!): Plan
   plans(
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
     pagination: PaginationInput
@@ -2918,19 +2822,8 @@ type Query {
   role(id: String!): Role!
   roles(issuerId: String): [Role!]!
   scanTransaction(id: String!): ScanTransaction!
-  scanTransactions(
-    filter: ScanTransactionsFilterInput
-    order: ScanTransactionOrderInput
-    pagination: PaginationInput
-  ): ScanTransactionPageInfo!
-  scanTransactionsByLocation(
-    lat: Float!
-    lng: Float!
-    radius: Int!
-  ): [ScanTransaction!]!
-    @deprecated(
-      reason: "Experimental method, may be removed without notice, replace with query scanTransactions"
-    )
+  scanTransactions(filter: ScanTransactionsFilterInput, order: ScanTransactionOrderInput, pagination: PaginationInput): ScanTransactionPageInfo!
+  scanTransactionsByLocation(lat: Float!, lng: Float!, radius: Int!): [ScanTransaction!]! @deprecated(reason: "Experimental method, may be removed without notice, replace with query scanTransactions")
   scanner(id: String!): Scanner
   scannerGroup(id: String!): ScannerGroup
   scannerGroupCode(id: String!): String!
@@ -2942,9 +2835,7 @@ type Query {
   totalPasses: Int!
   totalPassesWithDeleted: Int!
   unclaimedPasses(
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
     pagination: PaginationInput
@@ -2954,10 +2845,9 @@ type Query {
   user(id: String!): User
   userDistributionContactInfo(token: String!): UserDistributionContactInfo
   userDistributionToken(passTemplateId: String!): UserDistributionToken
+  userOption(option: String!): UserOptionData
   users(
-    """
-    Single order field is deprecated, please use orderMultiple
-    """
+    """Single order field is deprecated, please use orderMultiple"""
     order: GenericOrderInput
     orderMultiple: [GenericOrderMultiInput!]
     pagination: PaginationInput
@@ -3097,11 +2987,7 @@ type ScanTransaction {
   scanType: ScanType
   scanner: Scanner
   scannerGroup: ScannerGroup
-  similarScans(
-    limit: Int
-    radius: Int
-    showSimilar: Boolean
-  ): [ScanTransaction!]!
+  similarScans(limit: Int, radius: Int, showSimilar: Boolean): [ScanTransaction!]!
   stampsUsed: Int
   user: User
 }
@@ -3128,14 +3014,10 @@ type ScanTransactionPageInfo implements PaginationInfo {
 }
 
 input ScanTransactionsFilterInput {
-  """
-  Format of YYYY-MM-DDTHH:MM:SS.000Z
-  """
+  """Format of YYYY-MM-DDTHH:MM:SS.000Z"""
   dateEnd: String
 
-  """
-  Format of YYYY-MM-DDTHH:MM:SS.000Z
-  """
+  """Format of YYYY-MM-DDTHH:MM:SS.000Z"""
   dateStart: String
   passId: String
   passTemplateId: String
@@ -3169,9 +3051,7 @@ type Scanner implements BaseModel {
   issuer: Issuer!
   name: String
 
-  """
-  Templates scannable by scanner
-  """
+  """Templates scannable by scanner"""
   scannableTemplates: [PassTemplate!]!
   scannerGroup: ScannerGroup
   version: Long!
@@ -3318,6 +3198,7 @@ type StatisticResponse {
 }
 
 type Subscription implements BaseModel {
+  discount: Float!
   expenses: [Expense!]
   id: UUID!
   month: Int!
@@ -3342,9 +3223,7 @@ input ThumbnailDataInput {
   thumbnail: ImageDataInput!
 }
 
-"""
-A type representing a formatted java.util.UUID
-"""
+"""A type representing a formatted java.util.UUID"""
 scalar UUID
 
 type User implements BaseModel {
