@@ -63,6 +63,9 @@ const InstitutionOverview = () => {
     variables: {
       input: {
         nationalId: userInfo.profile.nationalId,
+        applicantNationalId: filters.nationalId
+          ? filters.nationalId.replace('-', '')
+          : '',
       },
     },
     onCompleted: (q) => {
@@ -92,7 +95,7 @@ const InstitutionOverview = () => {
   })
 
   const handleSearchChange = (nationalId: string) => {
-    if (nationalId.length === 11) {
+    if (nationalId.length === 11 || nationalId.length === 0) {
       setFilters((prev) => ({
         ...prev,
         nationalId,

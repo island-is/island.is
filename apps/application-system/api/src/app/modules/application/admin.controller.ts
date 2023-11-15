@@ -118,18 +118,25 @@ export class AdminController {
           description:
             'To filter applications by status. Comma-separated for multiple values.',
         },
+        applicantNationalId: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by applicant nationalId.',
+        },
       },
     },
   })
   async findAllInstitutionAdmin(
     @Param('nationalId') nationalId: string,
     @Query('status') status?: string,
+    @Query('applicantNationalId') applicantNationalId?: string,
   ) {
     this.logger.debug(`Getting institution applications with status ${status}`)
 
     return this.applicationService.findAllByInstitutionAndFilters(
       nationalId,
       status,
+      applicantNationalId,
     )
   }
 }

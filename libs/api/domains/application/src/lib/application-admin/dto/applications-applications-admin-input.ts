@@ -24,4 +24,8 @@ export class ApplicationApplicationsAdminInput extends PartialType(
 export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   ApplicationApplicationsAdminInput,
   ['typeId'],
-) {}
+) {
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  applicantNationalId?: string
+}
