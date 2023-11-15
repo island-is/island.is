@@ -1,7 +1,7 @@
 import { Box, Hidden, Text } from '@island.is/island-ui/core'
 import { useOrganization } from '@island.is/service-portal/graphql'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
-import { ProviderSlugType } from '../../utils/constants'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 type Note = {
   text: string
@@ -11,7 +11,7 @@ type Note = {
 
 interface Props {
   notes?: Note[]
-  serviceProviderSlug?: ProviderSlugType
+  serviceProviderSlug?: OrganizationSlugType
 }
 
 export const FootNote = ({ notes, serviceProviderSlug }: Props) => {

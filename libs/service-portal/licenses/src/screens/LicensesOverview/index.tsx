@@ -23,6 +23,7 @@ import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useState, useEffect } from 'react'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -174,7 +175,7 @@ export const LicensesOverview = () => {
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
         marginBottom={4}
-        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
@@ -218,7 +219,9 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
-      <FootNote serviceProviderSlug={ISLAND_SYSLUMENN_SLUG} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </>
   )
 }

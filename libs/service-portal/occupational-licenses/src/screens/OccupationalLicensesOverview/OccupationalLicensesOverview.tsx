@@ -20,6 +20,7 @@ import {
   OccupationalLicensesError,
   OccupationalLicensesErrorStatus,
 } from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -78,7 +79,7 @@ const OccupationalLicensesOverview = () => {
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
-        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}
       />
       {data?.occupationalLicenses?.errors.map((err) => {
@@ -122,7 +123,9 @@ const OccupationalLicensesOverview = () => {
           )}
         </Stack>
       </Box>
-      <FootNote serviceProviderSlug={ISLAND_SYSLUMENN_SLUG} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </Box>
   )
 }

@@ -11,10 +11,10 @@ import { useOrganization } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
-import { ProviderSlugType } from '../../utils/constants'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 interface Props {
-  serviceProviderSlug?: ProviderSlugType
+  serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
   span?: GridColumnProps['span']
   narrow?: boolean

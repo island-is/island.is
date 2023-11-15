@@ -2,7 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  ICELAND_SLUG,
+  SYSLUMENN_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
@@ -73,7 +73,7 @@ export const HealthOverview = () => {
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={ICELAND_SLUG}
+          serviceProviderSlug={SYSLUMENN_SLUG}
         />
       </Box>
       {loading ? (

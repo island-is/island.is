@@ -4,15 +4,15 @@ import {
   IntroHeader,
   UserInfoLine,
   FootNote,
-  ProviderSlugType,
 } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
 import { OccupationalLicenseStatus } from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 type LicenseDetailProps = {
   title?: string | null
   intro?: string | null
-  serviceProviderSlug?: ProviderSlugType
+  serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
   name?: string | null
   dateOfBirth?: string | null
