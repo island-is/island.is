@@ -1,3 +1,3 @@
 export enum SignatureCollectionPaths {
-  Lists = '/min-gogn/meðmaelalistar',
+  Lists = '/min-gogn/medmaelalistar',
 }
