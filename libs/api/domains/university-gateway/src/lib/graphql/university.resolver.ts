@@ -2,11 +2,8 @@ import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
-import {
-  LogoUrl,
-  OrganizationLogoDataLoader,
-  OrganizationLogoLoader,
-} from '@island.is/cms'
+import { OrganizationLogoLoader } from '@island.is/cms'
+import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
 
 @Resolver(UniversityGatewayUniversity)
 export class UniversityResolver {
