@@ -6,7 +6,4 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
   action: 'nationalRegistry',
   externalDataId: 'individual',
   namespace: 'NationalRegistry',
-  params: {
-    validateAlreadyHasIcelandicCitizenship: true,
-  },
 })
