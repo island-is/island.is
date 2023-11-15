@@ -8,14 +8,14 @@ import { SignatureCollectionPaths } from './lib/paths'
 const SignatureLists = lazy(() => import('./screens/SignatureLists'))
 
 export const signatureCollectionModule: PortalModule = {
-  name: 'Undirskriftalistar',
-  featureFlag: Features.servicePortalPetitionsModule,
+  name: m.signatureCollectionLists,
+  //featureFlag: Features.servicePortalPetitionsModule,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
-        name: m.petitions,
+        name: m.signatureCollectionLists,
         path: SignatureCollectionPaths.Lists,
-        enabled: userInfo.scopes.includes(EndorsementsScope.main),
+        //enabled: userInfo.scopes.includes(EndorsementsScope.main),
         element: <SignatureLists />,
       },
     ]
