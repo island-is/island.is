@@ -10,10 +10,12 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { LinkResolver } from '@island.is/service-portal/core'
+import { LinkResolver, Modal } from '@island.is/service-portal/core'
 import { mockLists } from '../../lib/utils'
+import { useState } from 'react'
 
 const SignatureLists = () => {
+  const [modalIsOpen, setModalIsOpen] = useState(false)
   const { formatMessage } = useLocale()
 
   return (
@@ -53,13 +55,13 @@ const SignatureLists = () => {
           {mockLists.map((list) => {
             return (
               <LinkResolver
+                key={list.id}
                 href={SignatureCollectionPaths.ViewList.replace(
                   ':listId',
                   list.id,
                 )}
               >
                 <ActionCard
-                  key={list.id}
                   backgroundColor="white"
                   heading={list.name}
                   eyebrow="Lokadagur: 15.05.2024"
@@ -81,9 +83,30 @@ const SignatureLists = () => {
         </Stack>
       </Box>
       <Box marginTop={10} display={'flex'} justifyContent={'center'}>
-        <Button variant="ghost" size="small">
-          {formatMessage(m.cancelCollectionButton)}
-        </Button>
+        <Modal
+          id="cancelCollection"
+          isVisible={modalIsOpen}
+          toggleClose={false}
+          initialVisibility={false}
+          disclosure={
+            <Button
+              variant="ghost"
+              size="small"
+              onClick={() => setModalIsOpen(true)}
+            >
+              {formatMessage(m.cancelCollectionButton)}
+            </Button>
+          }
+        >
+          <Text variant="h1" paddingTop={5}>
+            {formatMessage(m.modalMessage)}
+          </Text>
+          <Box marginTop={10} display="flex" justifyContent="center">
+            <Button onClick={() => setModalIsOpen(false)}>
+              {formatMessage(m.modalConfirmButton)}
+            </Button>
+          </Box>
+        </Modal>
       </Box>
     </Box>
   )

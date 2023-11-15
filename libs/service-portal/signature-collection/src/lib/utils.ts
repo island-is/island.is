@@ -45,3 +45,15 @@ export const mockLists = [
     progress: 35,
   },
 ]
+
+export const mockList = {
+  name: 'Vestfirðingafjórðungur',
+  votes: 80,
+  period: '2.04.2024-25.04.2024',
+  people: [
+    'Siggi Sævarsson',
+    'Jón Jónsson',
+    'Guðmundur Guðmundsson',
+    'Jón Jónsson',
+  ],
+}
