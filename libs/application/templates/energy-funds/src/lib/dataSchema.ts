@@ -32,6 +32,11 @@ export const UserInformationSchema = z.intersection(
 export const EnergyFundsSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   userInformation: UserInformationSchema,
+  selectVehicle: z.object({
+    vehicle: z.string().optional(),
+    plate: z.string().min(1),
+    color: z.string().optional(),
+  }),
 })
 
 export type EnergyFunds = z.TypeOf<typeof EnergyFundsSchema>

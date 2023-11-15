@@ -2,7 +2,9 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import { Logo } from '../../assets/Logo'
-import { confirmation } from '../../lib/messages/confirmation'
+import { vehicleSubSection } from './VehicleSelection'
+import { information } from '../../lib/messages/information'
+import { userInformationSubSection } from './UserInformation'
 
 export const EnergyFundsForm: Form = buildForm({
   id: 'EnergyFundsFormDraft',
@@ -18,9 +20,9 @@ export const EnergyFundsForm: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'confirmation',
-      title: confirmation.general.sectionTitle,
-      children: [],
+      id: 'information',
+      title: information.general.sectionTitle,
+      children: [vehicleSubSection, userInformationSubSection],
     }),
   ],
 })

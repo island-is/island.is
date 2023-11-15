@@ -7,3 +7,13 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
   externalDataId: 'individual',
   namespace: 'NationalRegistry',
 })
+
+export const CurrentVehiclesApi = defineTemplateApi({
+  action: 'currentVehicles',
+  externalDataId: 'currentVehicles',
+  namespace: 'VehiclesShared',
+  params: {
+    showOwned: true,
+    showCoOwned: true,
+  },
+})

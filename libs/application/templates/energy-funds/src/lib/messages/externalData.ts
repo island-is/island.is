@@ -17,11 +17,6 @@ export const externalData = {
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki.',
       description: 'External data sub title',
     },
-    description: {
-      id: 'ef.application:externalData.dataProvider.description',
-      defaultMessage: ``,
-      description: 'External data description',
-    },
     checkboxLabel: {
       id: 'ef.application:externalData.dataProvider.checkboxLabel',
       defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',

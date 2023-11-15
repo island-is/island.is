@@ -8,10 +8,12 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import {
+  CurrentVehiclesApi,
   NationalRegistryIndividualApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { confirmation } from '../../lib/messages/confirmation'
+import { information } from '../../lib/messages/information'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -32,7 +34,6 @@ export const Prerequisites: Form = buildForm({
           title: externalData.dataProvider.pageTitle,
           id: 'approveExternalData',
           subTitle: externalData.dataProvider.subTitle,
-          description: externalData.dataProvider.description,
           checkboxLabel: externalData.dataProvider.checkboxLabel,
           submitField: buildSubmitField({
             id: 'submit',
@@ -58,13 +59,18 @@ export const Prerequisites: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
+            buildDataProviderItem({
+              provider: CurrentVehiclesApi,
+              title: 'TODO',
+              subTitle: 'TODO',
+            }),
           ],
         }),
       ],
     }),
     buildSection({
       id: 'selectVehicle',
-      title: 'TODO',
+      title: information.labels.pickVehicle.title,
       children: [],
     }),
     buildSection({

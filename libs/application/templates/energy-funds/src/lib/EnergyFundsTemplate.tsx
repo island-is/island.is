@@ -20,7 +20,11 @@ import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { EnergyFundsSchema } from './dataSchema'
-import { UserProfileApi, NationalRegistryIndividualApi } from '../dataProviders'
+import {
+  UserProfileApi,
+  NationalRegistryIndividualApi,
+  CurrentVehiclesApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -70,7 +74,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryIndividualApi, UserProfileApi],
+              api: [
+                NationalRegistryIndividualApi,
+                UserProfileApi,
+                CurrentVehiclesApi,
+              ],
             },
           ],
         },
