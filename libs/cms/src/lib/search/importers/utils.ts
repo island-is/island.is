@@ -145,21 +145,7 @@ export const pruneEntryHyperlink = (node: any) => {
         },
       },
     }
-  }
-  // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
-  else if (target?.fields) {
-    node.data.target = {
-      ...target,
-      fields: extractPrimitiveFields(target.fields),
-    }
-  }
-}
-
-export const pruneEmbeddedInlineEntry = (node: any) => {
-  const target = node?.data?.target
-  const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
-
-  if (contentTypeId === 'price' && target.fields?.organization?.fields) {
+  } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
     node.data.target = {
       ...target,
       fields: {
@@ -171,13 +157,21 @@ export const pruneEmbeddedInlineEntry = (node: any) => {
       },
     }
   }
+  // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
+  else if (target?.fields) {
+    node.data.target = {
+      ...target,
+      fields: extractPrimitiveFields(target.fields),
+    }
+  }
 }
 
 export const removeEntryHyperlinkFields = (node: any) => {
-  if (node?.nodeType === 'entry-hyperlink') {
+  if (
+    node?.nodeType === 'entry-hyperlink' ||
+    node?.nodeType === 'embedded-entry-inline'
+  ) {
     pruneEntryHyperlink(node)
-  } else if (node?.nodeType === 'embedded-entry-inline') {
-    pruneEmbeddedInlineEntry(node)
   } else if (node?.content && node.content.length > 0) {
     for (const contentNode of node.content) {
       removeEntryHyperlinkFields(contentNode)
