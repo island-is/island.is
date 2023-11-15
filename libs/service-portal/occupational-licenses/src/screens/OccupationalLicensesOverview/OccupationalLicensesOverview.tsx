@@ -7,7 +7,7 @@ import {
   FootNote,
   m,
   ErrorScreen,
-  ISLAND_SYSLUMENN_ID,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -78,7 +78,7 @@ const OccupationalLicensesOverview = () => {
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
-        serviceProviderID={ISLAND_SYSLUMENN_ID}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG}
         serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}
       />
       {data?.occupationalLicenses?.errors.map((err) => {
@@ -122,7 +122,7 @@ const OccupationalLicensesOverview = () => {
           )}
         </Stack>
       </Box>
-      <FootNote serviceProviderID={ISLAND_SYSLUMENN_ID} />
+      <FootNote serviceProviderSlug={ISLAND_SYSLUMENN_SLUG} />
     </Box>
   )
 }

@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 
-import { FootNote, IntroHeader } from '../..'
+import { FootNote, IntroHeader, PROVIDER_SLUG_MAP } from '../..'
 import * as styles from './NavigationOverviewScreen.css'
 
 interface Props {
@@ -41,7 +41,7 @@ export const NavigationOverviewScreen: FC<React.PropsWithChildren<Props>> = ({
       <IntroHeader
         title={title}
         intro={intro}
-        serviceProviderID={serviceProviderID}
+        serviceProviderSlug={PROVIDER_SLUG_MAP[serviceProviderID ?? '']}
       />
 
       {navigation.map((nav, index) => (
@@ -68,7 +68,9 @@ export const NavigationOverviewScreen: FC<React.PropsWithChildren<Props>> = ({
           </GridColumn>
         </GridRow>
       ))}
-      <FootNote serviceProviderID={serviceProviderID} />
+      <FootNote
+        serviceProviderSlug={PROVIDER_SLUG_MAP[serviceProviderID ?? '']}
+      />
     </Box>
   )
 }

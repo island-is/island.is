@@ -4,6 +4,7 @@ import {
   IntroHeader,
   UserInfoLine,
   FootNote,
+  ProviderSlugType,
 } from '@island.is/service-portal/core'
 import { olMessage as om } from '../lib/messages'
 import { OccupationalLicenseStatus } from '@island.is/api/schema'
@@ -11,7 +12,8 @@ import { OccupationalLicenseStatus } from '@island.is/api/schema'
 type LicenseDetailProps = {
   title?: string | null
   intro?: string | null
-  serviceProviderID?: string | null
+  serviceProviderSlug?: ProviderSlugType
+  serviceProviderTooltip?: string
   name?: string | null
   dateOfBirth?: string | null
   profession?: string | null
@@ -25,7 +27,8 @@ type LicenseDetailProps = {
 export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   title,
   intro,
-  serviceProviderID,
+  serviceProviderSlug,
+  serviceProviderTooltip,
   buttonGroup,
   name,
   dateOfBirth,
@@ -42,7 +45,8 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
-        serviceProviderID={serviceProviderID ?? undefined}
+        serviceProviderSlug={serviceProviderSlug}
+        serviceProviderTooltip={serviceProviderTooltip}
         children={buttonGroup}
       />
       <Stack dividers space="auto">
@@ -144,7 +148,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           />
         )}
       </Stack>
-      <FootNote serviceProviderID={serviceProviderID ?? undefined} />
+      <FootNote serviceProviderSlug={serviceProviderSlug} />
     </Box>
   )
 }

@@ -2,7 +2,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  ICELAND_ID,
+  ICELAND_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
@@ -21,7 +21,6 @@ import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
 import { Link } from 'react-router-dom'
-import { useIntl } from 'react-intl'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
 
@@ -32,8 +31,6 @@ export const HealthOverview = () => {
   const user = useUserInfo()
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
-  const intl = useIntl()
 
   const featureFlagClient = useFeatureFlagClient()
 
@@ -76,7 +73,7 @@ export const HealthOverview = () => {
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderID={ICELAND_ID}
+          serviceProviderSlug={ICELAND_SLUG}
         />
       </Box>
       {loading ? (

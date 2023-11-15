@@ -17,7 +17,7 @@ import {
   IntroHeader,
   m,
   NotFound,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
@@ -67,6 +67,7 @@ const FamilyMember = () => {
       setUseNatRegV3(ffEnabled)
     }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -119,7 +120,7 @@ const FamilyMember = () => {
           title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
-          serviceProviderID={THJODSKRA_ID}
+          serviceProviderSlug={THJODSKRA_SLUG}
           serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
@@ -149,7 +150,7 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
-      <FootNote serviceProviderID={THJODSKRA_ID} />
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }

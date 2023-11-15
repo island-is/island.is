@@ -21,6 +21,7 @@ import {
   ExcludesFalse,
   SAMGONGUSTOFA_ID,
   FootNote,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
@@ -134,7 +135,7 @@ const Lookup = () => {
         <IntroHeader
           title={messages.vehiclesLookup}
           intro={messages.searchIntro}
-          serviceProviderID={SAMGONGUSTOFA_ID}
+          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <GridRow>
@@ -329,7 +330,7 @@ const Lookup = () => {
           />
         </>
       )}
-      <FootNote serviceProviderID={SAMGONGUSTOFA_ID} />
+      <FootNote serviceProviderSlug={SAMGONGUSTOFA_SLUG} />
     </>
   )
 }

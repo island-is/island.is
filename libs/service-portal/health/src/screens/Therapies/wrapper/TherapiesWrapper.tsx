@@ -4,7 +4,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
@@ -45,7 +45,7 @@ export const TherapiesWrapper = ({
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
       {activeTherapies ? (

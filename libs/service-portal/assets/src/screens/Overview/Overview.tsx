@@ -17,7 +17,7 @@ import {
   formSubmit,
   IntroHeader,
   m,
-  SAMGONGUSTOFA_ID,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -160,7 +160,7 @@ const VehiclesOverview = () => {
       <IntroHeader
         title={messages.title}
         intro={messages.intro}
-        serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
       />
 
@@ -293,7 +293,7 @@ const VehiclesOverview = () => {
         )}
       </Stack>
 
-      <FootNote serviceProviderID={SAMGONGUSTOFA_ID} />
+      <FootNote serviceProviderSlug={SAMGONGUSTOFA_SLUG} />
     </>
   )
 }

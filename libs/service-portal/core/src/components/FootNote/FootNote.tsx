@@ -1,11 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Box, Hidden, Stack, Text } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom'
-import {
-  Organization,
-  useOrganizations,
-} from '@island.is/service-portal/graphql'
+import { Box, Hidden, Text } from '@island.is/island-ui/core'
+import { useOrganization } from '@island.is/service-portal/graphql'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
+import { ProviderSlugType } from '../../utils/constants'
 
 type Note = {
   text: string
@@ -15,25 +11,12 @@ type Note = {
 
 interface Props {
   notes?: Note[]
-  serviceProviderID?: string
+  serviceProviderSlug?: ProviderSlugType
 }
 
-export const FootNote = ({ notes, serviceProviderID }: Props) => {
-  const [currentOrganization, setCurrentOrganization] = useState<
-    Organization | undefined
-  >(undefined)
-  const { pathname } = useLocation()
-  const { data: organizations, loading } = useOrganizations()
+export const FootNote = ({ notes, serviceProviderSlug }: Props) => {
+  const { data: organization, loading } = useOrganization(serviceProviderSlug)
 
-  useEffect(() => {
-    if (organizations && Array.isArray(organizations) && !loading) {
-      const org = organizations.find(
-        (org: Organization) => org.id === serviceProviderID,
-      )
-      if (org) setCurrentOrganization(org)
-      else setCurrentOrganization(undefined)
-    }
-  }, [loading, pathname])
   return (
     <Box style={{ pageBreakBefore: 'always' }}>
       {notes?.map((item, index) => {
@@ -48,14 +31,14 @@ export const FootNote = ({ notes, serviceProviderID }: Props) => {
         )
       })}
       <Hidden above="sm">
-        {currentOrganization && (
+        {organization && (
           <Box paddingY={3}>
             <InstitutionPanel
               loading={loading}
-              linkHref={currentOrganization?.link ?? ''}
-              img={currentOrganization?.logo?.url ?? ''}
+              linkHref={organization?.link ?? ''}
+              img={organization?.logo?.url ?? ''}
               imgContainerDisplay="block"
-              title={currentOrganization.title}
+              title={organization.title}
             />
           </Box>
         )}
