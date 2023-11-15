@@ -5,6 +5,7 @@ import {
   ICELAND_ID,
   IntroHeader,
   UserInfoLine,
+  amountFormat,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -19,7 +20,6 @@ import {
 import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
-import { PaymentTabs } from '../Payments/Payments'
 import { Link } from 'react-router-dom'
 import { useIntl } from 'react-intl'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -150,20 +150,9 @@ export const HealthOverview = () => {
                     width="full"
                     justifyContent="spaceBetween"
                   >
-                    <Text>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: insurance.maximumPayment
-                          ? intl.formatNumber(insurance.maximumPayment)
-                          : insurance.maximumPayment,
-                      })}
-                    </Text>
+                    <Text>{amountFormat(insurance.maximumPayment ?? 0)}</Text>
                     {enabledPaymentPage && (
-                      <Link
-                        to={HealthPaths.HealthPaymentsWithHash.replace(
-                          ':hash',
-                          `#${PaymentTabs.PAYMENT_OVERVIEW}`,
-                        )}
-                      >
+                      <Link to={HealthPaths.HealthPaymentOverview}>
                         <Button
                           icon="open"
                           iconType="outline"
