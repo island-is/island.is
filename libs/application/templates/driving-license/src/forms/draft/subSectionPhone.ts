@@ -3,13 +3,12 @@ import {
   buildMultiField,
   buildPhoneField,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
 
 export const subSectionPhone = buildSubSection({
-  id: 'user',
+  id: 'phone',
   title: m.phoneNumberTitle,
   children: [
     buildMultiField({
