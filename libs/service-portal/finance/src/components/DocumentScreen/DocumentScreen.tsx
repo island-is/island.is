@@ -88,9 +88,10 @@ const DocumentScreen = ({
       loadDocumentsList({
         variables: {
           input: {
-            dayFrom: format(fromDate, 'yyyy-MM-dd'),
+            /*dayFrom: format(fromDate, 'yyyy-MM-dd'),
             dayTo: format(toDate, 'yyyy-MM-dd'),
-            listPath: listPath,
+            listPath: listPath,*/
+            documentID: '1',
           },
         },
       })

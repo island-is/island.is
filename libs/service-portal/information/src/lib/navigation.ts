@@ -53,6 +53,13 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.signatureCollectionLists,
       path: SignatureCollectionPaths.Lists,
+      children: [
+        {
+          name: m.viewSignatureList,
+          navHide: true,
+          path: SignatureCollectionPaths.ViewList,
+        },
+      ],
     },
   ],
   description: m.userInfoDescription,

@@ -22,3 +22,26 @@ export function paginate(
 export function pages(petitionsLength: number) {
   return Math.ceil(petitionsLength / PAGE_SIZE)
 }
+
+export const mockLists = [
+  {
+    id: '1',
+    name: 'Vestfirðingafjórðungur',
+    progress: 40,
+  },
+  {
+    id: '2',
+    name: 'Norðlendingafjórðungur',
+    progress: 90,
+  },
+  {
+    id: '3',
+    name: 'Austfirðingafjórðungur',
+    progress: 185,
+  },
+  {
+    id: '4',
+    name: 'Sunnlendingafjórðungur',
+    progress: 35,
+  },
+]
