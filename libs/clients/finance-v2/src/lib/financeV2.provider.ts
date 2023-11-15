@@ -9,7 +9,7 @@ import {
 import { Configuration, DefaultApi } from '../../gen/fetch'
 import { FinanceClientV2Config } from './financeV2.config'
 
-export const HmsLoansApiProvider: Provider<DefaultApi> = {
+export const FinanceClientV2Provider: Provider<DefaultApi> = {
   provide: DefaultApi,
   scope: LazyDuringDevScope,
   useFactory: (
