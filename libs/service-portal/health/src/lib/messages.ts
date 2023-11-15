@@ -111,7 +111,8 @@ export const messages = defineMessages({
   },
   readAboutPaymentParticipationSystemsLink: {
     id: 'sp.health:read-about-payment-participation-systems-link',
-    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
   },
   paymentOverview: {
     id: 'sp.health:payment-overview',
@@ -699,10 +700,6 @@ export const messages = defineMessages({
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
     defaultMessage: 'Greiðslustaða',
-  },
-  medicinePaymentPaidAmount: {
-    id: 'sp.health:medicine-payment-paid-amount',
-    defaultMessage: '{amount} kr.',
   },
   medicineStep: {
     id: 'sp.health:medicine-step',

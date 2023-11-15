@@ -68,7 +68,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.therapyTitle,
       path: HealthPaths.HealthTherapies,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Navigate to={HealthPaths.HealthTherapiesPhysical} replace />,
     },
     {
@@ -98,7 +98,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.payments,
       path: HealthPaths.HealthPayments,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Navigate to={HealthPaths.HealthPaymentParticipation} replace />,
     },
     {
@@ -132,7 +132,7 @@ export const healthModule: PortalModule = {
     {
       name: hm.medicineTitle,
       path: HealthPaths.HealthMedicine,
-      enabled: userInfo.scopes.includes(ApiScope.education),
+      enabled: userInfo.scopes.includes(ApiScope.health),
       element: <Navigate to={HealthPaths.HealthMedicinePurchase} replace />,
     },
     {

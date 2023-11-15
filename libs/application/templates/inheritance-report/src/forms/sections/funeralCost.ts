@@ -7,7 +7,7 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 
 export const funeralCost = buildSection({
@@ -23,11 +23,6 @@ export const funeralCost = buildSection({
           title: m.funeralCostTitle,
           description: m.funeralCostDescription,
           children: [
-            buildDescriptionField({
-              id: 'funeralCostHeader',
-              title: m.funeralCostTitle,
-              titleVariant: 'h3',
-            }),
             buildTextField({
               id: 'funeralCostAmount',
               title: m.amount,
