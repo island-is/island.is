@@ -17,7 +17,6 @@ import {
   formatDate,
   IntroHeader,
   EmptyState,
-  SAMGONGUSTOFA_ID,
   FootNote,
   LinkResolver,
   SAMGONGUSTOFA_SLUG,

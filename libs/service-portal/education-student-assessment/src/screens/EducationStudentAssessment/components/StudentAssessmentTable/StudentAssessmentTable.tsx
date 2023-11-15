@@ -16,7 +16,6 @@ import {
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
-import { MENNTAMALASTOFNUN_ID } from '@island.is/service-portal/core'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {

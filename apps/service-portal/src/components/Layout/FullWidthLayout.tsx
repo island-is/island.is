@@ -10,7 +10,7 @@ import {
 import {
   m,
   ModuleAlertBannerSection,
-  PROVIDER_SLUG_MAP,
+  ProviderSlugType,
   TabNavigation,
 } from '@island.is/service-portal/core'
 import * as styles from './Layout.css'
@@ -112,7 +112,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
                       serviceProviderSlug={
-                        PROVIDER_SLUG_MAP[activeParent?.serviceProvider ?? '']
+                        activeParent?.serviceProvider as ProviderSlugType
                       }
                       serviceProviderTooltip={
                         activeParent?.description

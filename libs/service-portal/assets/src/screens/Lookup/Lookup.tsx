@@ -19,7 +19,6 @@ import {
   formatDate,
   ErrorScreen,
   ExcludesFalse,
-  SAMGONGUSTOFA_ID,
   FootNote,
   SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
