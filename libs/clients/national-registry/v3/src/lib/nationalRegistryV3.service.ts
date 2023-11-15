@@ -12,12 +12,16 @@ import {
   EinstaklingurDTONafnAllt,
   EinstaklingurDTORikisfang,
   EinstaklingurDTOTru,
+  GerviEinstaklingarApi,
 } from '../../gen/fetch'
 import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
-  constructor(private individualApi: EinstaklingarApi) {}
+  constructor(
+    private individualApi: EinstaklingarApi,
+    private fakeApi: GerviEinstaklingarApi,
+  ) {}
 
   getAddress(nationalId: string): Promise<EinstaklingurDTOHeimili | null> {
     return this.individualApi.midlunV02EinstaklingarNationalIdHeimilisfangGet({
@@ -28,9 +32,11 @@ export class NationalRegistryV3ClientService {
   getAllDataIndividual(
     nationalId: string,
   ): Promise<EinstaklingurDTOAllt | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdGet({
-      nationalId,
-    })
+    return process.env.NODE_ENV === 'production'
+      ? this.individualApi.midlunV02EinstaklingarNationalIdGet({ nationalId })
+      : this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
+          nationalId,
+        })
   }
 
   getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {

@@ -115,6 +115,18 @@ const SubjectInfo = () => {
           }}
         />
         <Divider />
+        <UserInfoLine
+          label={m.residence}
+          content={
+            error
+              ? formatMessage(dataNotFoundMessage)
+              : formatAddress(
+                  nationalRegistryPerson?.housing?.residence ?? null,
+                ) || ''
+          }
+          loading={loading}
+        />
+        <Divider />
         <Box marginY={3} />
         <UserInfoLine
           title={formatMessage(m.baseInfo)}

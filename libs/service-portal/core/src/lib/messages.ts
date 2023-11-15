@@ -728,6 +728,10 @@ export const m = defineMessages({
     id: 'service.portal:legal-residence',
     defaultMessage: 'Lögheimili',
   },
+  residence: {
+    id: 'service.portal:residence',
+    defaultMessage: 'Aðsetur',
+  },
   birthPlace: {
     id: 'service.portal:birth-place',
     defaultMessage: 'Fæðingarstaður',

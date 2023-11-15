@@ -33,6 +33,11 @@ query NationalRegistryPerson($api: String) {
         postalCode
         city
       }
+      residence {
+        streetAddress
+        postalCode
+        city
+      }
     }
   }
 }
