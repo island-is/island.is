@@ -17895,7 +17895,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16, @types/react@npm:^18.0.24":
+"@types/react@npm:*, @types/react@npm:18.2.13, @types/react@npm:>=16, @types/react@npm:^18.0.24":
   version: 18.2.13
   resolution: "@types/react@npm:18.2.13"
   dependencies:
@@ -17925,17 +17925,6 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 4b49644466c72c4fc2eafa16f8c787eac09d84117b3ab7d17d547f938cdb7bdce7cac92cb12c94d860bbdc0316802eca5af01afd7ed4ef06f6009b4bae8a494b
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:18.2.14":
-  version: 18.2.14
-  resolution: "@types/react@npm:18.2.14"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: a6a5e8cc78f486b9020d1ad009aa6c56943c68c7c6376e0f8399e9cbcd950b7b8f5d73f00200f5379f5e58d31d57d8aed24357f301d8e86108cd438ce6c8b3dd
   languageName: node
   linkType: hard
 
@@ -33611,7 +33600,6 @@ __metadata:
     "@nx/eslint-plugin": 16.9.0
     "@nx/express": 16.9.0
     "@nx/jest": 16.9.0
-    "@nx/js": 16.9.0
     "@nx/linter": 16.9.0
     "@nx/nest": 16.9.0
     "@nx/next": 16.9.0
@@ -33671,7 +33659,7 @@ __metadata:
     "@types/pdfkit": 0.11.2
     "@types/pg": 8.6.4
     "@types/pubsub-js": 1.8.1
-    "@types/react": 18.2.14
+    "@types/react": 18.2.13
     "@types/react-csv": 1.1.1
     "@types/react-datepicker": 4.10.0
     "@types/react-dom": 18.2.6
@@ -33906,7 +33894,7 @@ __metadata:
     ts-jest: 29.1.0
     ts-morph: 16.0.0
     ts-node: 10.9.1
-    tslib: ^2.3.0
+    tslib: 1.14.1
     type-fest: 1.1.3
     typescript: 5.1.6
     ua-parser-js: 1.0.33
@@ -51060,6 +51048,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:1.14.1, tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
+  languageName: node
+  linkType: hard
+
 "tslib@npm:1.9.3":
   version: 1.9.3
   resolution: "tslib@npm:1.9.3"
@@ -51092,13 +51087,6 @@ __metadata:
   version: 2.6.0
   resolution: "tslib@npm:2.6.0"
   checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
   languageName: node
   linkType: hard
 
@@ -53619,17 +53607,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@npm:0.1.27":
-  version: 0.1.27
-  resolution: "xmldom@npm:0.1.27"
-  checksum: a61ad9bd04c87f6df1dc69e88c0f14e3a761d85a9e3f5047b89c2db2b84491ebe25e1ac9a69e4bfc2a9d142b78614a476cc256932606b8a4bb91f342d43f034a
-  languageName: node
-  linkType: hard
-
-"xmldom@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "xmldom@npm:0.3.0"
-  checksum: a4d1e48dc7fa5f5e460c24e26d9d2d98edc52cdfcbf3b2c0edbb61d1808d1af986bc3ef7f4cafa673edf3f08130ed2def9ec6d0a993e2f33c2804b1726cab100
+"xmldom@github:xmldom/xmldom#0.7.0":
+  version: 0.7.0
+  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
+  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
   languageName: node
   linkType: hard
 

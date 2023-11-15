@@ -63,8 +63,7 @@
       },
       "library": {
         "style": "scss",
-        "linter": "eslint",
-        "unitTestRunner": "jest"
+        "linter": "eslint"
       }
     },
     "@nx/node": {
