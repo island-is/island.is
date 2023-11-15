@@ -37,11 +37,7 @@ const Therapies = () => {
   )
 
   return (
-    <TherapiesWrapper
-      loading={loading}
-      error={!!error}
-      activeTherapies={therapiesData.length > 0}
-    >
+    <TherapiesWrapper loading={loading} error={!!error}>
       <TherapiesTabContent
         data={physioTherapyData}
         link={formatMessage(messages.physioDescriptionLink)}
