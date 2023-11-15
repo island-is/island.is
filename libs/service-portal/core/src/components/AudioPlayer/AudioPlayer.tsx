@@ -5,6 +5,7 @@ import {
   GridContainer,
   GridRow,
   Icon,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import format from 'date-fns/format'
@@ -16,7 +17,7 @@ interface Props {
   title?: string
 }
 
-export const AudioPlayer: FC<Props> = ({ url, title }) => {
+export const AudioPlayer = ({ url, title }: Props) => {
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -62,83 +63,94 @@ export const AudioPlayer: FC<Props> = ({ url, title }) => {
     return format(date, 'm:ss')
   }
 
+  console.log(isReady)
+  if (!isReady) {
+    //return <SkeletonLoader />
+  }
+
   return (
-    <GridContainer className={styles.container}>
-      <GridRow className={styles.audio} align="center" alignItems="center">
-        <GridColumn span="1/12">
-          <audio
-            ref={audioRef}
-            preload="metadata"
-            muted={isMuted}
-            onEnded={() => setHasEnded(true)}
-            onDurationChange={(e) => setDuration(e.currentTarget.duration)}
-            onTimeUpdate={(e) => setTrackProgress(e.currentTarget.currentTime)}
-            onCanPlay={() => setIsReady(true)}
-            title={title}
-          >
-            <source type="audio/mp3" src={url} />
-          </audio>
-          <Box display="flex" justifyContent="center">
-            {isReady && (
-              <button
-                disabled={!isReady}
-                title={
-                  hasEnded
-                    ? 'Replay audio'
-                    : isPlaying
-                    ? 'Pause audio'
-                    : 'Play audio'
+    <>
+      <SkeletonLoader display={!isReady ? 'inlineBlock' : 'none'} />
+      <Box display={isReady ? 'block' : 'none'}>
+        <GridContainer className={styles.container}>
+          <GridRow className={styles.audio} align="center" alignItems="center">
+            <GridColumn span="1/12">
+              <Box display={'flex'} justifyContent="center">
+                {
+                  <button
+                    title={
+                      hasEnded
+                        ? 'Replay audio'
+                        : isPlaying
+                        ? 'Pause audio'
+                        : 'Play audio'
+                    }
+                    onClick={toggleAudio}
+                  >
+                    <Icon
+                      icon={
+                        hasEnded
+                          ? 'reload'
+                          : isPlaying
+                          ? 'pauseCircle'
+                          : 'playCircle'
+                      }
+                      size="large"
+                      color="blue400"
+                    />
+                  </button>
                 }
-                onClick={toggleAudio}
-              >
-                <Icon
-                  icon={
-                    hasEnded
-                      ? 'reload'
-                      : isPlaying
-                      ? 'pauseCircle'
-                      : 'playCircle'
-                  }
-                  size="large"
-                  color="blue400"
-                />
-              </button>
-            )}
-          </Box>
-        </GridColumn>
-        <GridColumn span="2/12">
-          <Text variant="small">{`${formatTime(trackProgress)} / ${formatTime(
-            duration,
-          )}`}</Text>
-        </GridColumn>
-        <GridColumn span="6/12">
-          <ProgressBar
-            progress={audioProgress}
-            onClick={setTimeChange}
-            renderProgressBar={isReady}
-            variant
-          />
-        </GridColumn>
-        <GridColumn span="1/12">
-          <Box display="flex" justifyContent="center">
-            <button
-              title={isMuted ? 'Unmute audio' : 'Mute audio'}
-              onClick={() => setIsMuted(!isMuted)}
-            >
-              <Icon
-                icon={isMuted ? 'volumeMute' : 'volumeHigh'}
-                size="large"
-                color="blue400"
+              </Box>
+            </GridColumn>
+            <GridColumn span="2/12">
+              <Text variant="small">{`${formatTime(
+                trackProgress,
+              )} / ${formatTime(duration)}`}</Text>
+            </GridColumn>
+            <GridColumn span="7/12">
+              <ProgressBar
+                progress={audioProgress}
+                onClick={setTimeChange}
+                renderProgressBar={isReady}
+                variant
               />
-            </button>
-          </Box>
-        </GridColumn>
-        <GridColumn span="1/12">
-          <Box display="flex" justifyContent="center">
-            <Icon icon="ellipsisVertical" color="blue400" />
-          </Box>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
+            </GridColumn>
+            <GridColumn span="1/12">
+              <Box display="flex" justifyContent="center">
+                <button
+                  title={isMuted ? 'Unmute audio' : 'Mute audio'}
+                  onClick={() => setIsMuted(!isMuted)}
+                >
+                  <Icon
+                    icon={isMuted ? 'volumeMute' : 'volumeHigh'}
+                    size="large"
+                    color="blue400"
+                  />
+                </button>
+              </Box>
+            </GridColumn>
+            {/*}
+    <GridColumn span="1/12">
+      <Box display="flex" justifyContent="center">
+        <Icon icon="ellipsisVertical" color="blue400" />
+      </Box>
+    </GridColumn>
+      */}
+          </GridRow>
+        </GridContainer>
+      </Box>
+      <audio
+        ref={audioRef}
+        preload="auto"
+        muted={isMuted}
+        onEnded={() => setHasEnded(true)}
+        onDurationChange={(e) => setDuration(e.currentTarget.duration)}
+        onTimeUpdate={(e) => setTrackProgress(e.currentTarget.currentTime)}
+        onCanPlay={() => setIsReady(true)}
+        title={title}
+      >
+        <source type="audio/mp3" src={url} />
+      </audio>
+    </>
   )
 }

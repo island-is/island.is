@@ -2,7 +2,8 @@ import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
-  width: '546px',
+  maxWidth: '546px',
+  marginLeft: 0,
 })
 
 export const audio = style({
@@ -10,4 +11,5 @@ export const audio = style({
   background: theme.color.blue100,
   paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[1],
+  margin: 0,
 })
