@@ -7,8 +7,8 @@ export const transactionFilter = (
   data: CustomerRecordsDetails[],
   query: string,
 ) => {
+  if (!query) return data
   const filteredArray = data.filter((item) => {
-    if (!query) return true
     if (
       item.accountReference.toLowerCase().includes(query.toLowerCase()) ||
       item.actionCategory?.toLowerCase().includes(query.toLowerCase()) ||
@@ -31,13 +31,14 @@ export const transactionFilter = (
     ) {
       return true
     }
+    return false
   })
   return filteredArray
 }
 
 export const billsFilter = (data: DocumentsListItemTypes[], query: string) => {
+  if (!query) return data
   const filteredArray = data.filter((item) => {
-    if (!query) return true
     if (
       item.note?.toLowerCase().includes(query.toLowerCase()) ||
       item.sender.toLowerCase().includes(query.toLowerCase()) ||
@@ -47,6 +48,7 @@ export const billsFilter = (data: DocumentsListItemTypes[], query: string) => {
     ) {
       return true
     }
+    return false
   })
   return filteredArray
 }

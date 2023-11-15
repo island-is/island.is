@@ -14,27 +14,22 @@ import {
   amountFormat,
   formSubmit,
   m,
-  numberFormat,
 } from '@island.is/service-portal/core'
-import { messages } from '../../../lib/messages'
+import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { SECTION_GAP } from '../../Medicine/constants'
+import { SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
-} from '../Payments.generated'
-import { useIntl } from 'react-intl'
+} from './Payments.generated'
 import sub from 'date-fns/sub'
 import { isDefined } from '@island.is/shared/utils'
-import {
-  RightsPortalPaymentOverview,
-  RightsPortalPaymentOverviewDocument,
-} from '@island.is/api/schema'
+import { RightsPortalPaymentOverview } from '@island.is/api/schema'
+import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentOverview = () => {
-  const intl = useIntl()
   const { formatMessage, formatDateFns } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
@@ -44,9 +39,6 @@ export const PaymentOverview = () => {
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null)
 
   const [overview, setOverview] = useState<RightsPortalPaymentOverview>()
-
-  const [document, setDocument] =
-    useState<RightsPortalPaymentOverviewDocument>()
 
   const {
     data: serviceTypes,
@@ -99,7 +91,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <Box paddingY={4} background="white">
+    <PaymentsWrapper>
       {error ? (
         <AlertMessage
           type="error"
@@ -120,19 +112,11 @@ export const PaymentOverview = () => {
                 title={formatMessage(messages.statusOfRights)}
                 titlePadding={2}
                 label={formatMessage(messages.credit)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: overview?.credit
-                    ? intl.formatNumber(overview.credit)
-                    : overview?.credit,
-                })}
+                content={amountFormat(overview?.credit ?? 0)}
               />
               <UserInfoLine
                 label={formatMessage(messages.debit)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: overview?.debt
-                    ? intl.formatNumber(overview.debt)
-                    : overview?.debt,
-                })}
+                content={amountFormat(overview?.debt ?? 0)}
               />
             </Stack>
           </Box>
@@ -254,7 +238,7 @@ export const PaymentOverview = () => {
           </Box>
         </Box>
       )}
-    </Box>
+    </PaymentsWrapper>
   )
 }
 

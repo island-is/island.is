@@ -8,19 +8,24 @@ import {
   Table as T,
   Button,
 } from '@island.is/island-ui/core'
-import { UserInfoLine, m, numberFormat } from '@island.is/service-portal/core'
-import { messages } from '../../../lib/messages'
+import {
+  UserInfoLine,
+  amountFormat,
+  m,
+  numberFormat,
+} from '@island.is/service-portal/core'
+import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
-import { CONTENT_GAP, SECTION_GAP } from '../../Medicine/constants'
+import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
   useGetCopaymentBillsQuery,
-} from '../Payments.generated'
-import { useIntl } from 'react-intl'
+} from './Payments.generated'
 import sub from 'date-fns/sub'
+import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const PaymentPartication = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -29,7 +34,6 @@ export const PaymentPartication = () => {
     sub(new Date(), { years: 1 }),
   )
   const [endDate, setEndDate] = useState<Date>(new Date())
-  const intl = useIntl()
   const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null)
   const [hoverPeriodId, setHoverPeriodId] = useState<number | null>(null)
 
@@ -64,7 +68,7 @@ export const PaymentPartication = () => {
   const bills = billsData?.rightsPortalCopaymentBills.items
 
   return (
-    <Box paddingY={4} background="white">
+    <PaymentsWrapper>
       {error ? (
         <AlertMessage
           type="error"
@@ -81,19 +85,11 @@ export const PaymentPartication = () => {
                 title={formatMessage(messages.statusOfRights)}
                 titlePadding={2}
                 label={formatMessage(messages.maximumMonthlyPayment)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.maximumMonthlyPayment
-                    ? intl.formatNumber(status?.maximumMonthlyPayment)
-                    : status?.maximumMonthlyPayment,
-                })}
+                content={amountFormat(status?.maximumMonthlyPayment ?? 0)}
               />
               <UserInfoLine
                 label={formatMessage(messages.paymentTarget)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: status?.maximumPayment
-                    ? intl.formatNumber(status?.maximumPayment)
-                    : status?.maximumPayment,
-                })}
+                content={amountFormat(status?.maximumPayment ?? 0)}
               />
             </Stack>
           </Box>
@@ -187,33 +183,13 @@ export const PaymentPartication = () => {
                         <T.Data>{period.status?.display}</T.Data>
                         <T.Data>{period.month}</T.Data>
                         <T.Data>
-                          {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: period.maximumPayment
-                              ? intl.formatNumber(period.maximumPayment)
-                              : period.maximumPayment,
-                          })}
+                          {amountFormat(period.maximumPayment ?? 0)}
                         </T.Data>
                         <T.Data>
-                          {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: period.monthPayment
-                              ? intl.formatNumber(period.monthPayment)
-                              : period.monthPayment,
-                          })}
+                          {amountFormat(period.monthPayment ?? 0)}
                         </T.Data>
-                        <T.Data>
-                          {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: period.overpaid
-                              ? intl.formatNumber(period.overpaid)
-                              : period.overpaid,
-                          })}
-                        </T.Data>
-                        <T.Data>
-                          {formatMessage(messages.medicinePaymentPaidAmount, {
-                            amount: period.repaid
-                              ? intl.formatNumber(period.repaid)
-                              : period.repaid,
-                          })}
-                        </T.Data>
+                        <T.Data>{amountFormat(period.overpaid ?? 0)}</T.Data>
+                        <T.Data>{amountFormat(period.repaid ?? 0)}</T.Data>
                         <T.Data>
                           <div
                             className={styles.selectButton({
@@ -277,34 +253,10 @@ export const PaymentPartication = () => {
                   <tr className={styles.tableRowStyle} key={bill.id}>
                     <T.Data>{bill.serviceType}</T.Data>
                     <T.Data>{formatDateFns(bill.date, 'dd.MM.yyyy')}</T.Data>
-                    <T.Data>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: bill.totalAmount
-                          ? intl.formatNumber(bill.totalAmount)
-                          : bill.totalAmount,
-                      })}
-                    </T.Data>
-                    <T.Data>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: bill.insuranceAmount
-                          ? intl.formatNumber(bill.insuranceAmount)
-                          : bill.insuranceAmount,
-                      })}
-                    </T.Data>
-                    <T.Data>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: bill.ownAmount
-                          ? intl.formatNumber(bill.ownAmount)
-                          : bill.ownAmount,
-                      })}
-                    </T.Data>
-                    <T.Data>
-                      {formatMessage(messages.medicinePaymentPaidAmount, {
-                        amount: bill.overpaid
-                          ? intl.formatNumber(bill.overpaid)
-                          : bill.overpaid,
-                      })}
-                    </T.Data>
+                    <T.Data>{amountFormat(bill.totalAmount ?? 0)}</T.Data>
+                    <T.Data>{amountFormat(bill.insuranceAmount ?? 0)}</T.Data>
+                    <T.Data>{amountFormat(bill.ownAmount ?? 0)}</T.Data>
+                    <T.Data>{amountFormat(bill.overpaid ?? 0)}</T.Data>
                   </tr>
                 ))}
               </T.Body>
@@ -317,40 +269,32 @@ export const PaymentPartication = () => {
                   </T.Data>
                   <T.Data></T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: intl.formatNumber(
-                        bills?.reduce((a, b) => {
-                          return a + (b?.totalAmount ?? 0)
-                        }, 0),
-                      ),
-                    })}
+                    {amountFormat(
+                      bills?.reduce((a, b) => {
+                        return a + (b?.totalAmount ?? 0)
+                      }, 0) ?? 0,
+                    )}
                   </T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: intl.formatNumber(
-                        bills?.reduce((a, b) => {
-                          return a + (b?.insuranceAmount ?? 0)
-                        }, 0),
-                      ),
-                    })}
+                    {amountFormat(
+                      bills?.reduce((a, b) => {
+                        return a + (b?.insuranceAmount ?? 0)
+                      }, 0) ?? 0,
+                    )}
                   </T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: intl.formatNumber(
-                        bills?.reduce((a, b) => {
-                          return a + (b?.ownAmount ?? 0)
-                        }, 0),
-                      ),
-                    })}
+                    {amountFormat(
+                      bills?.reduce((a, b) => {
+                        return a + (b?.ownAmount ?? 0)
+                      }, 0) ?? 0,
+                    )}
                   </T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: intl.formatNumber(
-                        bills?.reduce((a, b) => {
-                          return a + (b?.overpaid ?? 0)
-                        }, 0),
-                      ),
-                    })}
+                    {amountFormat(
+                      bills?.reduce((a, b) => {
+                        return a + (b?.overpaid ?? 0)
+                      }, 0) ?? 0,
+                    )}
                   </T.Data>
                 </T.Row>
               </T.Foot>
@@ -363,7 +307,7 @@ export const PaymentPartication = () => {
           {formatMessage(messages.paymentParticationExplinationFooter)}
         </Text>
       </Box>
-    </Box>
+    </PaymentsWrapper>
   )
 }
 
