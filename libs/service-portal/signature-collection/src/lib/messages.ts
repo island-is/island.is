@@ -66,6 +66,11 @@ export const m = defineMessages({
     defaultMessage: 'Umboðsaðilar:',
     description: '',
   },
+  copyLink: {
+    id: 'sp.information:copyLink',
+    defaultMessage: 'Afrita tengil',
+    description: '',
+  },
   signeesHeader: {
     id: 'sp.information:signeesHeader',
     defaultMessage: 'Yfirlit meðmæla',

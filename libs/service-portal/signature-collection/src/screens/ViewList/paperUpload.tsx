@@ -15,7 +15,7 @@ const PaperUpload = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginTop={10}>
+    <Box marginTop={5}>
       <Box
         background={withPaperUpload ? 'purple100' : 'white'}
         padding={withPaperUpload ? 5 : 0}

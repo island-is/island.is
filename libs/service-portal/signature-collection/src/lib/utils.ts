@@ -51,9 +51,19 @@ export const mockList = {
   votes: 80,
   period: '2.04.2024-25.04.2024',
   people: [
-    'Siggi Sævarsson',
-    'Jón Jónsson',
-    'Guðmundur Guðmundsson',
-    'Jón Jónsson',
+    {
+      name: 'Siggi Sævarsson',
+    },
+    {
+      name: 'Jón Sævarsson',
+      paper: true,
+    },
+    {
+      name: 'Siggi Sævarsson',
+    },
+    {
+      name: 'Guðmundur Ólafsson',
+      paper: true,
+    },
   ],
 }
