@@ -1,8 +1,4 @@
-import {
-  Box,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, LoadingDots, Text } from '@island.is/island-ui/core'
 import * as styles from './StatisticBox.css'
 import localization from '../../../../Home.json'
 import { useIsMobile } from '../../../../../../hooks'
