@@ -697,6 +697,117 @@
         }
       }
     },
+    "/api/MachineStatusChange": {
+      "post": {
+        "tags": ["MachineStatusChange"],
+        "summary": "Changes the status of the machine.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStatusUpdateDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStatusUpdateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStatusUpdateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStatusUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/MachineStreetRegistration": {
+      "post": {
+        "tags": ["MachineStreetRegistration"],
+        "summary": "Register a machine for street use.",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStreetRegistrationCreateDto"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStreetRegistrationCreateDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStreetRegistrationCreateDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineStreetRegistrationCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Client Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/MachineSupervisorChange": {
       "post": {
         "tags": ["MachineSupervisorChange"],
@@ -706,22 +817,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/SupervisorUpdateDto"
+                "$ref": "#/components/schemas/MachineSupervisorChangeDto"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupervisorUpdateDto"
+                "$ref": "#/components/schemas/MachineSupervisorChangeDto"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SupervisorUpdateDto"
+                "$ref": "#/components/schemas/MachineSupervisorChangeDto"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SupervisorUpdateDto"
+                "$ref": "#/components/schemas/MachineSupervisorChangeDto"
               }
             }
           }
@@ -953,6 +1064,10 @@
             "type": "string",
             "nullable": true
           },
+          "dateLastInspection": {
+            "type": "string",
+            "nullable": true
+          },
           "_links": {
             "type": "array",
             "items": {
@@ -976,6 +1091,10 @@
           "machineId": {
             "type": "string",
             "format": "uuid"
+          },
+          "ownerNationalId": {
+            "type": "string",
+            "nullable": true
           },
           "delegateNationalId": {
             "type": "string",
@@ -1022,6 +1141,39 @@
           "machineId": {
             "type": "string",
             "format": "uuid"
+          },
+          "buyerNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "delegateNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "supervisorNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "supervisorEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "supervisorPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "machineAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "machinePostalCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "machineMoreInfo": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1063,6 +1215,125 @@
             "nullable": true
           },
           "emails": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineStatus": {
+        "enum": [3, 4],
+        "type": "integer",
+        "description": "Hvaða stöður eru leyfilegar í MachineStatusChange endapunktinum.",
+        "format": "int32"
+      },
+      "MachineStatusUpdateDto": {
+        "type": "object",
+        "properties": {
+          "machineId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "delegateNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfStatusChange": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "fateOfMachine": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/MachineStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineStreetRegistrationCreateDto": {
+        "type": "object",
+        "properties": {
+          "machineId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "delegateNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "plateSize": {
+            "$ref": "#/components/schemas/PlateSize"
+          },
+          "contactPhoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "recipient": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineSupervisorChangeDto": {
+        "type": "object",
+        "properties": {
+          "machineId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "delegateNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "supervisorNationalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "moreInfo": {
             "type": "string",
             "nullable": true
           }
@@ -1121,6 +1392,11 @@
         },
         "additionalProperties": false
       },
+      "PlateSize": {
+        "enum": [65, 66, 68],
+        "type": "integer",
+        "format": "int32"
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -1142,40 +1418,6 @@
             "nullable": true
           },
           "instance": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SupervisorUpdateDto": {
-        "type": "object",
-        "properties": {
-          "machineId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "delegateNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "ownerNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "supervisorNationalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "machineLocation": {
             "type": "string",
             "nullable": true
           }

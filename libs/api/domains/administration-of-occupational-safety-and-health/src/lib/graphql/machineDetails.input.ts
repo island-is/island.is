@@ -1,4 +1,4 @@
-// aosah.graphql
+// aosh.graphql
 import { ObjectType, Field, ID, InputType } from '@nestjs/graphql'
 
 @ObjectType()

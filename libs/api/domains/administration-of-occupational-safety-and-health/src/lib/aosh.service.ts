@@ -1,16 +1,16 @@
 import { User } from '@island.is/auth-nest-tools'
-import {
-  TransferOfMachineOwnershipClientModule,
-  TransferOfMachineOwnershipClient,
-  MachineDetails,
-} from '@island.is/clients/aosah/transfer-of-machine-ownership'
+
 import { Injectable } from '@nestjs/common'
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
 import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
 import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input'
+import {
+  MachineDetails,
+  TransferOfMachineOwnershipClient,
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 @Injectable()
-export class AosahApi {
+export class AoshApi {
   constructor(
     //private readonly machinesApi: MachinesApi,
     private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
@@ -55,21 +55,21 @@ export class AosahApi {
     auth: User,
     confirmChange: ConfirmOwnerChange,
   ): Promise<void> {
-    await this.transferOfMachineOwnershipClient.conformOwnerChange(
+    await this.transferOfMachineOwnershipClient.confirmOwnerChange(
       auth,
       confirmChange,
     )
   }
 
-  async changeMachineSupervisor(
-    auth: User,
-    changeSupervisor: ChangeMachineSupervisor,
-  ): Promise<void> {
-    await this.transferOfMachineOwnershipClient.changeMachineSupervisor(
-      auth,
-      changeSupervisor,
-    )
-  }
+  // async changeMachineSupervisor(
+  //   auth: User,
+  //   changeSupervisor: ChangeMachineSupervisor,
+  // ): Promise<void> {
+  //   await this.transferOfMachineOwnershipClient.changeMachineSupervisor(
+  //     auth,
+  //     changeSupervisor,
+  //   )
+  // }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
     return (

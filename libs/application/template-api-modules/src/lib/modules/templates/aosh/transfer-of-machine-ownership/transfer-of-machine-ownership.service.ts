@@ -3,10 +3,7 @@ import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ChangeMachineOwner,
-  TransferOfMachineOwnershipClient,
-} from '@island.is/clients/aosah/transfer-of-machine-ownership'
+
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { EmailRecipient, EmailRole } from './types'
@@ -17,6 +14,10 @@ import { getRecipients } from './transfer-of-machine-ownership.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
+import {
+  ChangeMachineOwner,
+  TransferOfMachineOwnershipClient,
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
@@ -97,6 +98,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
     //Promise<Array<EmailRecipient>> {
     // 1. Validate payment
+    console.log('InitReview')
 
     // 1a. Make sure a paymentUrl was created
     const { paymentUrl, id: paymentId } = application.externalData.createCharge
@@ -121,41 +123,38 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     } else if (payment?.fulfilled) {
       console.log('Payment fulfilled')
 
+      const answers = application.answers as TransferOfMachineOwnerShipAnswers
+      console.log('answers', answers)
       const ownerChange: ChangeMachineOwner = {
         id: application.id,
-        machineId: getValueViaPath(application.answers, 'machine.id'),
-        buyerNationalId: getValueViaPath(
-          application.answers,
-          'buyer.nationalId',
-        ),
-        sellerNationalId: getValueViaPath(
-          application.answers,
-          'seller.nationalId',
-        ),
-        delegateNationalId: getValueViaPath(
-          application.answers,
-          'seller.nationalId',
-        ),
+        machineId: answers.machine.id,
+        buyerNationalId: answers.buyer.nationalId,
+        sellerNationalId: answers.seller.nationalId,
+        delegateNationalId: answers.seller.nationalId,
         dateOfOwnerChange: new Date(),
         paymentId: paymentId,
-        phoneNumber: getValueViaPath(application.answers, 'buyer.phone'),
-        email: getValueViaPath(application.answers, 'buyer.email'),
+        phoneNumber: answers.buyer.phone,
+        email: answers.buyer.email,
       }
       console.log('ownerChange', ownerChange)
-      await this.transferOfMachineOwnershipClient.changeMachineOwner(
-        auth,
-        ownerChange,
-      )
+
+      try {
+        await this.transferOfMachineOwnershipClient.changeMachineOwner(
+          auth,
+          ownerChange,
+        )
+      } catch (error) {
+        console.log('Error in initReview: ', error)
+      }
     }
+    console.log('Before getRecipients')
 
     const answers = application.answers as TransferOfMachineOwnerShipAnswers
     const recipientList = getRecipients(answers, [
-      EmailRole.sellerCoOwner,
       EmailRole.buyer,
-      EmailRole.buyerCoOwner,
       EmailRole.buyerOperator,
     ])
-
+    console.log('recipientList', recipientList)
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {
@@ -187,9 +186,5 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     }
 
     return recipientList
-    return ''
-    // 2. Notify users that need to review
-
-    // return recipientList
   }
 }

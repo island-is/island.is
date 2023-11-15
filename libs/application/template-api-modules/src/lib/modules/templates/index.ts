@@ -92,8 +92,8 @@ import { DrivingLearnersPermitService } from './driving-learners-permit/driving-
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { TransferOfMachineOwnershipTemplateService } from './aosah/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
-import { TransferOfMachineOwnershipTemplateModule } from './aosah/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
+import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
+import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 
 export const modules = [
   ReferenceTemplateModule,

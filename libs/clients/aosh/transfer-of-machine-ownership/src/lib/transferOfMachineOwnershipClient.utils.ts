@@ -4,7 +4,7 @@ import {
   ApiMachineOwnerChangePostRequest,
   MachineOwnerChangeCreateDto,
   ApiMachineSupervisorChangePostRequest,
-  SupervisorUpdateDto,
+  MachineSupervisorChangeDto,
 } from '../../gen/fetch'
 import {
   ConfirmOwnerChange,
@@ -18,6 +18,14 @@ export const confirmChangeToApiRequest = (
   const machineOwnerChangeCompleteDto: MachineOwnerChangeCompleteDto = {
     id: confirmChange.id || undefined,
     machineId: confirmChange.machineId || undefined,
+    buyerNationalId: confirmChange.buyerNationalId || null,
+    delegateNationalId: confirmChange.delegateNationalId || null,
+    supervisorNationalId: confirmChange.supervisorNationalId || null,
+    supervisorEmail: confirmChange.supervisorEmail || null,
+    supervisorPhoneNumber: confirmChange.supervisorPhoneNumber || null,
+    machineAddress: confirmChange.machineAddress || null,
+    machineMoreInfo: confirmChange.machineMoreInfo || null,
+    machinePostalCode: confirmChange.machinePostalCode || null,
   }
 
   return { machineOwnerChangeCompleteDto }
@@ -41,18 +49,17 @@ export const apiChangeMachineOwnerToApiRequest = (
   return { machineOwnerChangeCreateDto }
 }
 
-export const apiChangeMachineSupervisorToApiRequest = (
-  changeMachineSupervisor: ChangeMachineSupervisor,
-): ApiMachineSupervisorChangePostRequest => {
-  const supervisorUpdateDto: SupervisorUpdateDto = {
-    machineId: changeMachineSupervisor.machineId || undefined,
-    delegateNationalId: changeMachineSupervisor.delegateNationalId || null,
-    ownerNationalId: changeMachineSupervisor.ownerNationalId || null,
-    supervisorNationalId: changeMachineSupervisor.supervisorNationalId || null,
-    phoneNumber: changeMachineSupervisor.phoneNumber || null,
-    email: changeMachineSupervisor.email || null,
-    machineLocation: changeMachineSupervisor.machineLocation || null,
-  }
+// export const apiChangeMachineSupervisorToApiRequest = (
+//   changeMachineSupervisor: ChangeMachineSupervisor,
+// ): ApiMachineSupervisorChangePostRequest => {
+//   const supervisorUpdateDto: MachineSupervisorChangeDto = {
+//     machineId: changeMachineSupervisor.machineId || undefined,
+//     delegateNationalId: changeMachineSupervisor.delegateNationalId || null,
+//     ownerNationalId: changeMachineSupervisor.ownerNationalId || null,
+//     supervisorNationalId: changeMachineSupervisor.supervisorNationalId || null,
+//     phoneNumber: changeMachineSupervisor.phoneNumber || null,
+//     email: changeMachineSupervisor.email || null,
+//   }
 
-  return { supervisorUpdateDto }
-}
+//   return { supervisorUpdateDto }
+// }

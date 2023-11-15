@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config'
 import {
   TransferOfMachineOwnershipClientConfig,
   TransferOfMachineOwnershipClientModule,
-} from '@island.is/clients/aosah/transfer-of-machine-ownership'
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 export class TransferOfMachineOwnershipTemplateModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {

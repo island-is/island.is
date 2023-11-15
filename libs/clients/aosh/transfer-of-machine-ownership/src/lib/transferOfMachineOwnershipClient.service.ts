@@ -16,7 +16,6 @@ import {
 import { CustomMachineApi } from './customMachineApi'
 import {
   apiChangeMachineOwnerToApiRequest,
-  apiChangeMachineSupervisorToApiRequest,
   confirmChangeToApiRequest,
 } from './transferOfMachineOwnershipClient.utils'
 
@@ -149,7 +148,7 @@ export class TransferOfMachineOwnershipClient {
     )
   }
 
-  public async conformOwnerChange(
+  public async confirmOwnerChange(
     auth: Auth,
     confirmChange: ConfirmOwnerChange,
   ) {
@@ -160,14 +159,14 @@ export class TransferOfMachineOwnershipClient {
     )
   }
 
-  public async changeMachineSupervisor(
-    auth: Auth,
-    supervisorChange: ChangeMachineSupervisor,
-  ) {
-    const input = apiChangeMachineSupervisorToApiRequest(supervisorChange)
+  //   public async changeMachineSupervisor(
+  //     auth: Auth,
+  //     supervisorChange: ChangeMachineSupervisor,
+  //   ) {
+  //     const input = apiChangeMachineSupervisorToApiRequest(supervisorChange)
 
-    await this.machineSupervisorChangeApiWithAuth(
-      auth,
-    ).apiMachineSupervisorChangePost(input)
-  }
+  //     await this.machineSupervisorChangeApiWithAuth(
+  //       auth,
+  //     ).apiMachineSupervisorChangePost(input)
+  //   }
 }

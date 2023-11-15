@@ -60,21 +60,21 @@ export const MachineRadioField: FC<
       }).then((response) => {
         const disabled = isCurrentMachineDisabled(currentMachine?.status)
         console.log('currentMachine', currentMachine)
+        console.log('response', response)
         setValue(
           'machine.regNumber',
           response.machineDetails.registrationNumber,
         )
         setValue('machine.category', response.machineDetails.category)
-        setValue(
-          'machine.type',
-          response.machineDetails?.type?.split(' ')[0].trim(),
-        )
-        setValue(
-          'machine.subType',
-          response.machineDetails?.type?.split(' ')[1].trim(),
-        )
+        const [type, ...subType] =
+          currentMachine.type?.split(' - ') ||
+          response.machineDetails.type?.split(' ') ||
+          []
+        setValue('machine.type', type || '')
+        setValue('machine.subType', subType || '')
         setValue('machine.plate', response.machineDetails.licensePlateNumber)
         setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
+        setValue('machine.id', currentMachine.id)
         setPlate(disabled ? '' : currentMachine.registrationNumber || '')
 
         setIsLoading(false)

@@ -10,7 +10,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { AosahApi } from './aosah.service'
+import { AoshApi } from './aosh.service'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
@@ -20,8 +20,8 @@ import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
-export class AosahResolver {
-  constructor(private readonly aosahApi: AosahApi) {}
+export class AoshResolver {
+  constructor(private readonly aosahApi: AoshApi) {}
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => MachineDetails)
@@ -73,18 +73,18 @@ export class AosahResolver {
     }
   }
 
-  @Mutation(() => Boolean)
-  async changeMachineSupervisor(
-    @CurrentUser() auth: User,
-    @Args('input') input: ChangeMachineSupervisor,
-  ): Promise<boolean> {
-    try {
-      await this.aosahApi.changeMachineSupervisor(auth, input)
-      return true // Operation was successful
-    } catch (error) {
-      console.log('changeMachineSupervisor Error: ', error)
-      // Handle errors here
-      return false // Operation failed
-    }
-  }
+  //   @Mutation(() => Boolean)
+  //   async changeMachineSupervisor(
+  //     @CurrentUser() auth: User,
+  //     @Args('input') input: ChangeMachineSupervisor,
+  //   ): Promise<boolean> {
+  //     try {
+  //       await this.aosahApi.changeMachineSupervisor(auth, input)
+  //       return true // Operation was successful
+  //     } catch (error) {
+  //       console.log('changeMachineSupervisor Error: ', error)
+  //       // Handle errors here
+  //       return false // Operation failed
+  //     }
+  //   }
 }

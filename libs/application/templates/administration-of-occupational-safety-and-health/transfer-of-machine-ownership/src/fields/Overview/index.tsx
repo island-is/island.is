@@ -21,7 +21,6 @@ import {
   VehicleSection,
   SellerSection,
   BuyerSection,
-  CoOwnersSection,
   OperatorSection,
   InsuranceSection,
 } from './sections'
@@ -38,15 +37,14 @@ import {
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  OwnerChangeAnswers,
   OwnerChangeValidationMessage,
   //ConfirmOwnerChange,
 } from '@island.is/api/schema'
+import { APPROVE_OWNER_CHANGE } from '../../graphql/queries'
 import {
-  VALIDATE_VEHICLE_OWNER_CHANGE,
-  APPROVE_OWNER_CHANGE,
-} from '../../graphql/queries'
-import { AdministrationOfOccupationalSafetyAndHealthAnswers } from '../..'
+  AdministrationOfOccupationalSafetyAndHealthAnswers,
+  TransferOfMachineOwnerShipAnswers,
+} from '../..'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -58,8 +56,8 @@ export const Overview: FC<
   ...props
 }) => {
   const { application, refetch, location = undefined } = props
-  const answers =
-    application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
+  //const answers =
+  //application.answers as AdministrationOfOccupationalSafetyAndHealthAnswers
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] =
@@ -83,7 +81,7 @@ export const Overview: FC<
   const [loading, setLoading] = useState(false)
 
   const isBuyer =
-    (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
+    (getValueViaPath(application.answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
   const doApproveAndSubmit = async () => {
@@ -135,7 +133,22 @@ export const Overview: FC<
             reviewerNationalId,
             updatedApplication2.answers,
           )
-
+          console.log('is Last!!!!!!')
+          const answers =
+            application.answers as TransferOfMachineOwnerShipAnswers
+          changeMachineOwnerMutation({
+            variables: {
+              input: {
+                id: application.id,
+                machineId: answers.machine.id,
+                machineMoreInfo: answers.location.moreInfo,
+                machinePostalCode: answers.location.postCode,
+                machineAddress: answers.location.address,
+                buyerNationalId: answers.buyer.nationalId,
+                delegateNationalId: reviewerNationalId,
+              },
+            },
+          })
           const resSubmit = await submitApplication({
             variables: {
               input: {
@@ -166,19 +179,14 @@ export const Overview: FC<
       onCompleted: async (data) => {
         console.log(data)
         if (data && data.confirmOwnerChange) {
-          await doApproveAndSubmit()
-          // call change machineSupervisorMutation
           console.log('Change machine owner was successful')
         } else {
           // The operation failed
-          // Handle errors here
           console.log('Change machine owner failed')
         }
       },
     },
   )
-
-  // change machinesupervisorMutation
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -189,51 +197,10 @@ export const Overview: FC<
   }
 
   const onApproveButtonClick = async () => {
-    if (location) {
-      // update location
-    }
-    // check supervisor/Operator and add if there is any with the /api/MachineSupervisorChange endpoint
-    // Add supervisor/Operator if there
+    setNoInsuranceError(false)
+    setLoading(true)
 
-    if (isBuyer && !location) {
-      setNoInsuranceError(true)
-    } else {
-      setNoInsuranceError(false)
-      setLoading(true)
-
-      if (isBuyer) {
-        // Need to get updated application, in case buyer has changed co-owner
-        const applicationInfo = await getApplicationInfo({
-          variables: {
-            input: {
-              id: application.id,
-            },
-            locale: 'is',
-          },
-          fetchPolicy: 'no-cache',
-        })
-        const updatedApplication = applicationInfo?.data?.applicationApplication
-
-        if (updatedApplication) {
-          const machineId = getValueViaPath(
-            updatedApplication.answers,
-            'machine.id',
-            '',
-          ) as string
-
-          changeMachineOwnerMutation({
-            variables: {
-              input: {
-                id: application.id,
-                machineId: machineId,
-              },
-            },
-          })
-        }
-      } else {
-        await doApproveAndSubmit()
-      }
-    }
+    await doApproveAndSubmit()
   }
 
   return (

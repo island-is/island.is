@@ -107,14 +107,13 @@ export const MachineSelectField: FC<
             response.machineDetails.registrationNumber,
           )
           setValue('machine.category', response.machineDetails.category)
-          setValue(
-            'machine.type',
-            response.machineDetails?.type?.split(' ')[0].trim() || '',
-          )
-          setValue(
-            'machine.subType',
-            response.machineDetails?.type?.split(' ')[1].trim() || '',
-          )
+          const [type, ...subType] =
+            currentMachine.type?.split(' - ') ||
+            response.machineDetails.type?.split(' ') ||
+            []
+
+          setValue('machine.type', type || '')
+          setValue('machine.subType', subType || '')
           setValue('machine.plate', response.machineDetails.licensePlateNumber)
           setValue('machine.ownerNumber', response.machineDetails.ownerNumber)
           setValue('machine.id', currentMachine.id)
@@ -136,6 +135,7 @@ export const MachineSelectField: FC<
       'Umráðamannaskipti í gangi',
       'Afskráð tímabundið',
       'Afskráð endanlega',
+      '',
     ]
     if (status === undefined) return true
     if (disabledStatuses.includes(status)) {

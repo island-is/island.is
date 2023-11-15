@@ -1,3 +1,3 @@
-export enum AosahScope {
-  aosah = '@ver.is/umsyslavinnuvela',
+export enum AoshScope {
+  aosh = '@ver.is/umsyslavinnuvela',
 }

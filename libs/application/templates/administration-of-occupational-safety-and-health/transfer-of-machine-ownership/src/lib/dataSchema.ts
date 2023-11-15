@@ -130,7 +130,7 @@ export const MachineAnswersSchema = z.object({
   }),
   location: z.object({
     address: z.string(),
-    postCode: z.string(),
+    postCode: z.number(),
     moreInfo: z.string(),
   }),
   buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),

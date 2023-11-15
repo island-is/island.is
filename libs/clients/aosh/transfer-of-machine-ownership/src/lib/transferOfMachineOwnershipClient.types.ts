@@ -58,6 +58,14 @@ export type ChangeMachineOwner = {
 export type ConfirmOwnerChange = {
   id?: string
   machineId?: string | null
+  machineMoreInfo?: string | null
+  machinePostalCode?: number | null
+  buyerNationalId?: string | null
+  delegateNationalId?: string | null
+  supervisorNationalId?: string | null
+  supervisorEmail?: string | null
+  supervisorPhoneNumber?: string | null
+  machineAddress?: string | null
 }
 
 export type ChangeMachineSupervisor = {
@@ -67,5 +75,4 @@ export type ChangeMachineSupervisor = {
   supervisorNationalId?: string | null
   phoneNumber?: string | null
   email?: string | null
-  machineLocation?: string | null
 }

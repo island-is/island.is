@@ -1,5 +1,5 @@
-import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
-import { FieldBaseProps, Option } from '@island.is/application/types'
+import { getValueViaPath } from '@island.is/application/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import {
   Box,
   Button,
@@ -10,16 +10,9 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { insurance, review, error, information } from '../../lib/messages'
-import {
-  InputController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import {
-  InsuranceCompany,
-  MachineLocation,
-  ReviewScreenProps,
-} from '../../shared'
+import { insurance, review, error } from '../../lib/messages'
+import { InputController } from '@island.is/shared/form-fields'
+import { MachineLocation, ReviewScreenProps } from '../../shared'
 import { useFormContext } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
@@ -39,7 +32,7 @@ export const Location: FC<
 
   const [selectedValue, setSelectedValue] = useState<MachineLocation>({
     address: savedSelectedValue?.address || '',
-    postCode: savedSelectedValue?.postCode || '',
+    postCode: savedSelectedValue?.postCode || 0,
     moreInfo: savedSelectedValue?.moreInfo || '',
   })
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
@@ -124,10 +117,10 @@ export const Location: FC<
             onChange={(event) => {
               setSelectedValue({
                 ...selectedValue,
-                postCode: event.target.value,
+                postCode: parseInt(event.target.value),
               })
             }}
-            defaultValue={selectedValue.postCode}
+            defaultValue={selectedValue.postCode?.toString()}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1']} paddingTop={2}>

@@ -123,6 +123,6 @@ export type MachineDetails = {
 
 export type MachineLocation = {
   address?: string
-  postCode?: string
+  postCode?: number
   moreInfo?: string
 }

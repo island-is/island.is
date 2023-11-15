@@ -1,11 +1,11 @@
 import {
   TransferOfMachineOwnershipClientConfig,
   TransferOfMachineOwnershipClientModule,
-} from '@island.is/clients/aosah/transfer-of-machine-ownership'
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 import { Module } from '@nestjs/common'
-import { AosahApi } from './aosah.service'
+import { AoshApi } from './aosh.service'
 import { ConfigModule } from '@nestjs/config'
-import { AosahResolver } from './aosah.resolver'
+import { AoshResolver } from './aosh.resolver'
 
 @Module({
   imports: [
@@ -15,7 +15,7 @@ import { AosahResolver } from './aosah.resolver'
       load: [TransferOfMachineOwnershipClientConfig],
     }),
   ],
-  providers: [AosahResolver, AosahApi],
-  exports: [AosahApi],
+  providers: [AoshResolver, AoshApi],
+  exports: [AoshApi],
 })
-export class AosahModule {}
+export class AoshModule {}

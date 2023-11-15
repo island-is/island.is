@@ -1,3 +1,3 @@
-export * from './lib/aosah.resolver'
-export * from './lib/aosah.service'
-export * from './lib/aosah.module'
+export * from './lib/aosh.resolver'
+export * from './lib/aosh.service'
+export * from './lib/aosh.module'

@@ -3,61 +3,61 @@ import { defineMessages } from 'react-intl'
 export const externalData = {
   dataProvider: defineMessages({
     sectionTitle: {
-      id: 'aosah.application:externalData.dataProvider.sectionTitle',
+      id: 'aosh.application:externalData.dataProvider.sectionTitle',
       defaultMessage: 'Gagnaöflun',
       description: 'Title of external data section',
     },
     pageTitle: {
-      id: 'aosah.application:externalData.dataProvider.pageTitle',
+      id: 'aosh.application:externalData.dataProvider.pageTitle',
       defaultMessage: 'Tilkynning um eigendaskipti',
       description: `Application's name`,
     },
     subTitle: {
-      id: 'aosah.application:externalData.dataProvider.subTitle',
+      id: 'aosh.application:externalData.dataProvider.subTitle',
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
       description: 'he following data will be retrieved electronically',
     },
     checkboxLabel: {
-      id: 'aosah.application:externalData.dataProvider.checkboxLabel',
+      id: 'aosh.application:externalData.dataProvider.checkboxLabel',
       defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
       description: 'I understand',
     },
     getDataSuccess: {
-      id: 'aosah.application:externalData.dataProvider.getDataSuccess',
+      id: 'aosh.application:externalData.dataProvider.getDataSuccess',
       defaultMessage: 'Tókst að sækja gögn',
       description: 'Was able to get data',
     },
     getDataSuccessDescription: {
-      id: 'aosah.application:externalData.dataProvider.getDataSuccessDescription',
+      id: 'aosh.application:externalData.dataProvider.getDataSuccessDescription',
       defaultMessage: 'Með gagnaöflun tókst að sækja eftirfarandi gögn:',
       description: 'Was able to get data description',
     },
     submitButton: {
-      id: 'aosah.application:externalData.dataProvider.submitButton',
+      id: 'aosh.application:externalData.dataProvider.submitButton',
       defaultMessage: 'Hefja umsókn',
       description: 'Continue to application',
     },
   }),
   nationalRegistry: defineMessages({
     title: {
-      id: 'aosah.application:externalData.nationalRegistry.title',
+      id: 'aosh.application:externalData.nationalRegistry.title',
       defaultMessage: 'Upplýsingar úr Þjóðskrá',
       description: 'Information from the National Registry/Company Registry',
     },
     subTitle: {
-      id: 'aosah.application:externalData.nationalRegistry.subTitle',
+      id: 'aosh.application:externalData.nationalRegistry.subTitle',
       defaultMessage: 'Hér sækjum við nafn, kennitölu og heimilisfang',
       description: 'We will fetch name, national id and address',
     },
   }),
   userProfile: defineMessages({
     title: {
-      id: 'aosah.application:externalData.userProfile.title',
+      id: 'aosh.application:externalData.userProfile.title',
       defaultMessage: 'Netfang og símanúmer úr þínum stillingum',
       description: 'Your user profile information',
     },
     subTitle: {
-      id: 'aosah.application:externalData.userProfile.subTitle',
+      id: 'aosh.application:externalData.userProfile.subTitle',
       defaultMessage:
         'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
       description:
@@ -66,13 +66,13 @@ export const externalData = {
   }),
   myMachines: defineMessages({
     title: {
-      id: 'aosah.application:externalData.myMachines.title',
+      id: 'aosh.application:externalData.myMachines.title',
       defaultMessage:
         'Upplýsingar um vélar og tæki í þinni eigu og stöðu þeirra',
       description: 'Your machines',
     },
     subTitle: {
-      id: 'aosah.application:externalData.myMachines.subTitle',
+      id: 'aosh.application:externalData.myMachines.subTitle',
       defaultMessage:
         'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar vélar, tæki og stöðu þeirra.',
       description: 'To make stuff easier',

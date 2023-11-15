@@ -245,6 +245,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH]: {
     slug: 'vinnueftirlitid',
-    translation: 'aosah.application',
+    translation: 'aosh.application',
   },
 }
