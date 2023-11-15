@@ -49,6 +49,9 @@ export enum Features {
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
+
+  // Userprofile Collection
+  isIASSpaPagesEnabled = 'isiasspapagesenabled',
 }
 
 export enum ServerSideFeature {
