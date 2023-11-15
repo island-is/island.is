@@ -155,9 +155,29 @@ export const pruneEntryHyperlink = (node: any) => {
   }
 }
 
+export const pruneEmbeddedInlineEntry = (node: any) => {
+  const target = node?.data?.target
+  const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
+
+  if (contentTypeId === 'price' && target.fields?.organization?.fields) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.organization,
+          fields: extractPrimitiveFields(target.fields.organization.fields),
+        },
+      },
+    }
+  }
+}
+
 export const removeEntryHyperlinkFields = (node: any) => {
   if (node?.nodeType === 'entry-hyperlink') {
     pruneEntryHyperlink(node)
+  } else if (node?.nodeType === 'embedded-entry-inline') {
+    pruneEmbeddedInlineEntry(node)
   } else if (node?.content && node.content.length > 0) {
     for (const contentNode of node.content) {
       removeEntryHyperlinkFields(contentNode)
