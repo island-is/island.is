@@ -1,9 +1,8 @@
 import dynamic from 'next/dynamic'
 
-export const IcelandicNaturalDisasterInsuranceHeader = dynamic(
-  () => import('./IcelandicNaturalDisasterInsuranceHeader'),
-  { ssr: true },
-)
+import Header from './IcelandicNaturalDisasterInsuranceHeader'
+
+export const IcelandicNaturalDisasterInsuranceHeader = Header
 export const IcelandicNaturalDisasterInsuranceFooter = dynamic(
   () => import('./IcelandicNaturalDisasterInsuranceFooter'),
   { ssr: true },

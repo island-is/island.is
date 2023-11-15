@@ -51,4 +51,7 @@ export const NationalRegistryBirthplaceApi = defineTemplateApi({
   action: 'getBirthplace',
   externalDataId: 'nationalRegistryBirthplace',
   namespace: 'NationalRegistry',
+  params: {
+    validateNotEmpty: true,
+  },
 })
