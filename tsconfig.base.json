@@ -273,6 +273,9 @@
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
       ],
+      "@island.is/application/templates/directorate-of-immigration/citizenship": [
+        "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
+      ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
       ],
@@ -387,6 +390,12 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/signature-collection/signature-list-creation": [
+        "libs/application/templates/signature-collection/signature-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/signature-list-signing": [
+        "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -477,6 +486,9 @@
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-immigration": [
+        "libs/clients/directorate-of-immigration/src/index.ts"
+      ],
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
       ],
@@ -497,6 +509,7 @@
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],

@@ -467,6 +467,20 @@ export const SignedVerdictOverview: React.FC = () => {
                   }
                 />
               )}
+            {workingCase.appealRulingModifiedHistory && (
+              <Box marginBottom={5} marginTop={5}>
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(strings.rulingModifiedTitle)}
+                  message={
+                    <MarkdownWrapper
+                      markdown={workingCase.appealRulingModifiedHistory}
+                      textProps={{ variant: 'small' }}
+                    />
+                  }
+                />
+              </Box>
+            )}
           </Box>
           {workingCase.caseModifiedExplanation && (
             <Box marginBottom={5}>
