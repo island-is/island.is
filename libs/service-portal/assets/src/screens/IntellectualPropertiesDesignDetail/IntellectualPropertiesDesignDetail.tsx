@@ -5,6 +5,7 @@ import {
   ErrorScreen,
   Gallery,
   GalleryItem,
+  HUGVERKASTOFAN_ID,
   IntroHeader,
   TableGrid,
   UserInfoLine,
@@ -64,7 +65,13 @@ const IntellectualPropertiesDesignDetail = () => {
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader title={id} />
+        <IntroHeader
+          title={id}
+          serviceProviderID={HUGVERKASTOFAN_ID}
+          serviceProviderTooltip={formatMessage(
+            m.intellectualPropertiesTooltip,
+          )}
+        />
       </Box>
 
       <Stack space="containerGutter">

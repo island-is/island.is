@@ -5,6 +5,7 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  HUGVERKASTOFAN_ID,
   IntroHeader,
   NotFound,
   TableGrid,
@@ -72,7 +73,13 @@ const IntellectualPropertiesTrademarkDetail = () => {
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader title={id} intro={ip?.text ?? ''} />
+        <IntroHeader
+          title={id}
+          serviceProviderID={HUGVERKASTOFAN_ID}
+          serviceProviderTooltip={formatMessage(
+            m.intellectualPropertiesTooltip,
+          )}
+        />
       </Box>
       <Stack space="containerGutter">
         <Box marginBottom={3} paddingRight={2}>

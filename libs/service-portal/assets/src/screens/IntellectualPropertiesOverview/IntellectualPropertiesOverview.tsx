@@ -5,12 +5,13 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  HUGVERKASTOFAN_ID,
+  IntroHeader,
   ServicePortalPath,
   m,
 } from '@island.is/service-portal/core'
 import { Box } from '@island.is/island-ui/core'
-import { IntroHeader } from '@island.is/portals/core'
-import { ipMessages as messages } from '../../lib/messages'
+import { ipMessages, ipMessages as messages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -63,8 +64,10 @@ const IntellectualPropertiesOverview = () => {
   return (
     <Box marginBottom={[6, 6, 10]}>
       <IntroHeader
-        title={formatMessage(messages.title)}
-        intro={formatMessage(messages.description)}
+        title={ipMessages.title}
+        intro={ipMessages.description}
+        serviceProviderID={HUGVERKASTOFAN_ID}
+        serviceProviderTooltip={formatMessage(m.intellectualPropertiesTooltip)}
       />
       {loading && (
         <Box marginBottom={2}>

@@ -1135,6 +1135,10 @@ export const m = defineMessages({
     id: 'service.portal:finance-tooltip',
     defaultMessage: 'Fjársýslan hefur umsjón með gögnum um fjármál.',
   },
+  intellectualPropertiesTooltip: {
+    id: 'service.portal:intellectualProperties-tooltip',
+    defaultMessage: 'Hugverkastofan tooltip.',
+  },
   consent: {
     id: 'service.portal:consent',
     defaultMessage: 'Gagnaöflun',

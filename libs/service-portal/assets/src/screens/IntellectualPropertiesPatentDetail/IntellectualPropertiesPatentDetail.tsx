@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import {
   ErrorScreen,
   ExcludesFalse,
+  HUGVERKASTOFAN_ID,
   IntroHeader,
   NotFound,
   TableGrid,
@@ -67,8 +68,11 @@ const IntellectualPropertiesPatentDetail = () => {
     <>
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
-          title={ip?.patentName || 'SOME PATENT'}
-          intro="Lorem ipsum dolor sit amet consectetur arcu quam quis consequat."
+          title={id}
+          serviceProviderID={HUGVERKASTOFAN_ID}
+          serviceProviderTooltip={formatMessage(
+            m.intellectualPropertiesTooltip,
+          )}
         />
       </Box>
       <Stack space="containerGutter">
