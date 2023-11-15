@@ -81,7 +81,7 @@ export const ReportFieldsRepeater: FC<
   const [inheritanceTax, setInheritanceTax] = useState(0)
 
   /* ------ Total ------ */
-  const answersValuesTotal = answersValues.reduce(
+  const answersValuesTotal = answersValues?.reduce(
     (a: number, o: any) => a + Number(o[props.sumField]),
     0,
   )

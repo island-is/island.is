@@ -71,7 +71,7 @@ const Dentists = () => {
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
         serviceProviderID={SJUKRATRYGGINGAR_ID}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
       {!loading && !dentist && (
