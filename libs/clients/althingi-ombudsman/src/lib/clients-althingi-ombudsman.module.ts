@@ -14,8 +14,8 @@ import { SecurityApi } from '../gen/fetch/dev'
       provide: TokenMiddleware,
       useFactory: (
         config: ConfigType<typeof AlthingiOmbudsmanClientConfig>,
-        exportedApis,
-      ) => new TokenMiddleware(config.password, config.username, exportedApis),
+        securityApi,
+      ) => new TokenMiddleware(config.password, config.username, securityApi),
       inject: [AlthingiOmbudsmanClientConfig.KEY, SecurityApi],
     },
     ...exportedApis,
