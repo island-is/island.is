@@ -109,6 +109,10 @@ export const messages = defineMessages({
     id: 'sp.health:read-about-payment-participation-systems',
     defaultMessage: 'Lesa um greiðsluþátttökukerfi',
   },
+  readAboutPaymentParticipationSystemsLink: {
+    id: 'sp.health:read-about-payment-participation-systems-link',
+    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
+  },
   paymentOverview: {
     id: 'sp.health:payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
@@ -586,6 +590,11 @@ export const messages = defineMessages({
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
   },
+  healthTooltip: {
+    id: 'service.portal:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
+  },
   healthCenterListSearchPlaceholder: {
     id: 'sp.health:health-center-list-search-placeholder',
     defaultMessage: 'Sláðu inn leitarorð',
@@ -683,13 +692,13 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-price-list',
     defaultMessage: 'Lyfjaverðskrá',
   },
+  medicinePriceListLink: {
+    id: 'sp.health:medicine-price-list-link',
+    defaultMessage: 'https://rg.sjukra.is/lyfjaverdskra',
+  },
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
     defaultMessage: 'Greiðslustaða',
-  },
-  medicinePaymentPaidAmount: {
-    id: 'sp.health:medicine-payment-paid-amount',
-    defaultMessage: '{amount} kr.',
   },
   medicineStep: {
     id: 'sp.health:medicine-step',
