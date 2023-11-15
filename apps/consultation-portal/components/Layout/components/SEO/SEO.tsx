@@ -26,6 +26,7 @@ const SEO = ({ title, image, url, description, keywords }: SEOProps) => {
       <meta property="og:description" content={desc} key="ogdesc" />
       <meta name="description" content={desc} />
       <meta name="keywords" content={kwords} />
+      <meta name="theme-color" content="#ffffff" />
     </Head>
   )
 }
