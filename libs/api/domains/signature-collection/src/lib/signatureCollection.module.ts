@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common'
 import { SignatureCollectionResolver } from './signatureCollection.resolver'
+import { SignatureCollectionService } from './signatureCollection.service'
 
 @Module({
   controllers: [],
-  providers: [SignatureCollectionResolver],
+  providers: [ SignatureCollectionService, SignatureCollectionResolver],
   exports: [],
 })
 export class SignatureCollectionModule {}

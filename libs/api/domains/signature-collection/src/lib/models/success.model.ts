@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 
 @ObjectType()
-export class Test {
+export class Success {
   @Field()
   success?: boolean
 
