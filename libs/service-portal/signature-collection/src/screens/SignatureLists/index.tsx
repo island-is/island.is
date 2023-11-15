@@ -7,12 +7,10 @@ const SignatureLists = () => {
   const { formatMessage } = useLocale()
 
   return (
-    
-      <IntroHeader
-        title={formatMessage(m.pageTitle)}
-        intro={formatMessage(m.pageDescription)}
-      >
-      </IntroHeader>
+    <IntroHeader
+      title={formatMessage(m.pageTitle)}
+      intro={formatMessage(m.pageDescription)}
+    ></IntroHeader>
   )
 }
 

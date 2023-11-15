@@ -8,7 +8,8 @@ export const m = defineMessages({
   },
   pageDescription: {
     id: 'sp.information:description#markdown',
-    defaultMessage: 'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
+    defaultMessage:
+      'Upplýsingar um það hvernig umboð er veitt - hvernig aðgangsstýringarnar virka. Linkur á aðgangsstýringu.',
     description: '',
   },
 })
