@@ -14,6 +14,7 @@ import {
   Parent,
   Query,
   ResolveField,
+  ResolveProperty,
   Resolver,
 } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -27,9 +28,11 @@ import {
   Spouse,
 } from '../shared/models'
 import { NationalRegistryService } from '../nationalRegistry.service'
-import type { SharedPerson } from '../shared/types'
+import type { SharedChildCustody, SharedPerson } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
+import { ChildCustody } from '../shared/models/childCustody.model'
+
 const namespace = '@island.is/api/national-registry'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard, ScopesGuard)
@@ -90,14 +93,14 @@ export class PersonResolver {
     )
   }
 
-  @ResolveField('childCustody', () => [Person], {
+  @ResolveProperty('childCustody', () => [ChildCustody], {
     nullable: true,
   })
   async resolveChildCustody(
     @Context('req') { user }: { user: User },
     @Parent() person: SharedPerson,
     @Args('childNationalId', { nullable: true }) childNationalId?: string,
-  ): Promise<Array<SharedPerson> | null> {
+  ): Promise<Array<SharedChildCustody> | null> {
     if (user.nationalId !== person.nationalId) {
       //might be unnecessary, but better safe than sorry
       return Promise.reject('User and person being queried do not match')
@@ -115,15 +118,12 @@ export class PersonResolver {
       person,
     )
 
-    if (!custodyInfo) {
-      return []
+    if (childNationalId) {
+      const child = custodyInfo?.find((c) => c.nationalId === childNationalId)
+      return child ? [child] : null
     }
 
-    const singleChild = (custodyInfo as SharedPerson[]).find(
-      (c) => c.nationalId === childNationalId,
-    )
-
-    return singleChild ? [singleChild as SharedPerson] : custodyInfo
+    return custodyInfo
   }
 
   @ResolveField('birthplace', () => Birthplace, {
