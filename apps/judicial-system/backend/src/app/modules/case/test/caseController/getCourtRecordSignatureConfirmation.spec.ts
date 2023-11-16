@@ -67,7 +67,7 @@ describe('CaseController - Get court record signature confirmation', () => {
     }
   })
 
-  describe('confirm siganture', () => {
+  describe('confirm signature', () => {
     const userId = uuid()
     const user = {
       id: userId,
