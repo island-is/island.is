@@ -17,7 +17,6 @@ interface ChartNumberBoxData {
   title: string
   sourceDataKey: string
   sourceDataIndex: number
-  value: number
   description?: string
   valueType: 'number' | 'percentage'
 }
@@ -45,7 +44,6 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
           ? 1
           : 0,
         description: slice.numberBoxDescription,
-        value: 13,
         valueType: slice.valueType as ChartNumberBoxData['valueType'],
       },
     ]
@@ -55,7 +53,6 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
         title: 'Breyting milli mánaða',
         sourceDataKey: slice.sourceDataKey,
         sourceDataIndex: numberOfDataPoints - 2,
-        value: 0.01,
         valueType: 'percentage',
       })
     }
@@ -65,7 +62,6 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
         title: 'Breyting milli ára',
         sourceDataKey: slice.sourceDataKey,
         sourceDataIndex: 0,
-        value: 0.03,
         valueType: 'percentage',
       })
     }
