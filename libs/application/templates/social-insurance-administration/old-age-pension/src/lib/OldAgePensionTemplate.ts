@@ -1,5 +1,6 @@
 import { assign } from 'xstate'
 import set from 'lodash/set'
+import unset from 'lodash/unset'
 
 import {
   ApplicationTemplate,
@@ -32,6 +33,7 @@ import {
   SocialInsuranceAdministrationApplicantApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { getApplicationAnswers } from './oldAgePensionUtils'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -404,17 +406,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           mergedAdditionalDocumentRequired,
         )
         unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
-
-        return context
-      }),
-        const { application } = context
-        const { additionalAttachmentsRequired, additionalAttachments } =
-          getApplicationAnswers(application.answers)
-
-        additionalAttachmentsRequired.forEach((val) => {
-          additionalAttachments.push(val)
-        })
-        additionalAttachmentsRequired.length = 0
 
         return context
       }),
