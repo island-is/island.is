@@ -14,3 +14,9 @@ export enum Actions {
 export enum AnswerValidationConstants {
   VEHICLES = 'vehicles',
 }
+
+export enum States {
+  PREREQUISITES = 'prerequisites',
+  DRAFT = 'draft',
+  APPROVED = 'approved',
+}

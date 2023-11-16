@@ -1,4 +1,5 @@
 import {
+  DefaultStateLifeCycle,
   coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -150,7 +151,31 @@ const CarRecyclingTemplate: ApplicationTemplate<
           SUBMIT: [{ target: States.SUBMITTED }],
         },
       },
-      [States.SUBMITTED]: {},
+      [States.SUBMITTED]: {
+        meta: {
+          name: States.SUBMITTED,
+          progress: 1,
+          status: 'approved',
+          actionCard: {
+            pendingAction: {
+              title: 'statesMessages.applicationApproved',
+              content: 'statesMessages.applicationApprovedDescription',
+              displayStatus: 'success',
+            },
+          },
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
+        },
+      },
     },
   },
   stateMachineOptions: {

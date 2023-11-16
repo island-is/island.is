@@ -223,3 +223,11 @@ export const errorMessages = defineMessages({
     description: 'Please select a vehicle then continue',
   },
 })
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'rf.cr.application:inReview.formTitle',
+    defaultMessage: 'Skilavottorð',
+    description: 'Application for car recycle',
+  },
+})

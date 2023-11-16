@@ -8,6 +8,7 @@ import { BaseInformation } from './review-groups/BaseInformation'
 
 import { carRecyclingMessages } from '../../lib/messages'
 import { Vehicles } from './review-groups/Vehicles'
+import { States } from '../../shared/constants'
 
 interface ReviewScreenProps {
   application: Application
@@ -40,35 +41,39 @@ export const Review: FC<ReviewScreenProps> = ({
     goToScreen,
   }
 
+  const { state } = application
+
   return (
     <>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box>
-          <Box marginBottom={2}>
-            <Text variant="h2">
-              {formatMessage(carRecyclingMessages.review.confirmSectionTitle)}
-            </Text>
+      {state === `${States.DRAFT}` && (
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box>
+            <Box marginBottom={2}>
+              <Text variant="h2">
+                {formatMessage(carRecyclingMessages.review.confirmSectionTitle)}
+              </Text>
+            </Box>
+            <Box marginBottom={10}>
+              <Text variant="default">
+                {formatMessage(
+                  carRecyclingMessages.review.confirmationDescription,
+                )}
+              </Text>
+            </Box>
           </Box>
-          <Box marginBottom={10}>
-            <Text variant="default">
-              {formatMessage(
-                carRecyclingMessages.review.confirmationDescription,
-              )}
-            </Text>
+          <Box>
+            <Button
+              variant="utility"
+              icon="print"
+              onClick={(e) => {
+                e.preventDefault()
+                window.print()
+              }}
+            />
           </Box>
         </Box>
-        <Box>
-          <Button
-            variant="utility"
-            icon="print"
-            onClick={(e) => {
-              e.preventDefault()
-              window.print()
-            }}
-          />
-        </Box>
-      </Box>
-      <BaseInformation {...childProps} />
+      )}
+      {state === `${States.DRAFT}` && <BaseInformation {...childProps} />}
       <Vehicles {...childProps} />
     </>
   )
