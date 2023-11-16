@@ -14,7 +14,8 @@ import {
   ReturnTypeMessage,
   RootPostRequest,
 } from '@island.is/clients/vehicles-mileage'
-import type { Auth, User, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
+import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
