@@ -213,6 +213,12 @@ export class OldAgePensionService extends BaseTemplateApiService {
         res.bankAccount.bank = '2222'
         res.bankAccount.ledger = '00'
         res.bankAccount.accountNumber = '123456'
+
+        // ;(res.bankAccount.iban = 'RU02 0445 2560 0407 0281 0412 3456 7890 1'),
+        //   (res.bankAccount.swift = 'BARC GB 22 XXX'),
+        //   (res.bankAccount.foreignBankAddress = 'mosagata'),
+        //   (res.bankAccount.foreignBankName = 'banki'),
+        //   (res.bankAccount.currency = 'AUD')
       }
 
       if (!res.emailAddress) {
@@ -245,6 +251,14 @@ export class OldAgePensionService extends BaseTemplateApiService {
       }
       const applicationType = getApplicationType(application).toLowerCase()
       return await this.siaClientService.getIsEligible(auth, applicationType)
+    } catch (e) {
+      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    }
+  }
+
+  async getCurrencies({ auth }: TemplateApiModuleActionProps) {
+    try {
+      return await this.siaClientService.getCurrencies(auth)
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
     }

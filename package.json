@@ -184,6 +184,7 @@
     "http-cache-semantics": "4.1.1",
     "http-proxy-middleware": "2.0.6",
     "hypher": "0.2.5",
+    "ibantools": "4.3.5",
     "identicon.js": "2.3.3",
     "intl": "1.2.5",
     "intl-locales-supported": "1.8.12",

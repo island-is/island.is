@@ -29,6 +29,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -116,6 +117,10 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
                 buildDataProviderItem({
                   provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+                  title: '',
+                }),
+                buildDataProviderItem({
+                  provider: SocialInsuranceAdministrationCurrenciesApi,
                   title: '',
                 }),
               ],
