@@ -19,7 +19,7 @@ import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 import { useUserInfo } from '@island.is/auth/react'
-import { m } from '../../lib/messages'
+import { messages } from '../../lib/messages'
 import FinanceIntro from '../../components/FinanceIntro'
 import { useGetPaymentScheduleQuery } from './FinanceSchedule.generated'
 
@@ -39,7 +39,7 @@ const FinanceSchedule = () => {
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
-  const applicationButtonText = formatMessage(m.scheduleApplication)
+  const applicationButtonText = formatMessage(messages.scheduleApplication)
 
   if (paymentSchedulesError && !paymentSchedulesLoading) {
     return (

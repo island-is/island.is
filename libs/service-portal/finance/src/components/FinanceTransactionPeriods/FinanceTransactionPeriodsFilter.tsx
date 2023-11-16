@@ -27,6 +27,7 @@ import {
   ChargeTypesDetailsByYear,
 } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
+import { messages } from '../../lib/messages'
 
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()
@@ -279,7 +280,7 @@ const FinanceTransactionPeriodsFilter = () => {
                 variant="h3"
                 paddingBottom={2}
               >
-                {formatMessage(m.selectedPeriods)}
+                {formatMessage(messages.selectedPeriods)}
               </Text>
               {financeTransactionPeriodsState.selectedPeriods?.map((period) => {
                 return (

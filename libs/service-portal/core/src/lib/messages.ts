@@ -73,38 +73,12 @@ export const m = defineMessages({
     id: 'service.portal:action-category',
     defaultMessage: 'Aðgerðarflokkur',
   },
-  feeCategory: {
-    id: 'service.portal:fee-category',
-    defaultMessage: 'Gjaldflokkur / stofnun',
-  },
-  feeBase: {
-    id: 'service.portal:fee-base',
-    defaultMessage: 'Gjaldgrunnur',
-  },
-  feeBasePlural: {
-    id: 'service.portal:fee-base-plural',
-    defaultMessage: 'Gjaldgrunnar',
-  },
-  feeBasePlaceholder: {
-    id: 'service.portal:fee-base-placeholder',
-    defaultMessage: 'Veldu gjaldgrunna',
-  },
-  feeBaseDescription: {
-    id: 'service.portal:fee-category-description',
-    defaultMessage: 'Skýring á gjaldgrunni',
-  },
+
   period: {
     id: 'service.portal:period',
     defaultMessage: 'Tímabil',
   },
-  selectedPeriods: {
-    id: 'service.portal:selected-periods',
-    defaultMessage: 'Valin tímabil',
-  },
-  lastMovement: {
-    id: 'service.portal:last-movement',
-    defaultMessage: 'Síðasta hreyfing',
-  },
+
   guardian: {
     id: 'service.portal:guardian',
     defaultMessage: 'Þjónustuaðili',

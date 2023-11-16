@@ -8,6 +8,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
+import { messages } from '../../lib/messages'
 
 const ITEMS_ON_PAGE = 20
 
@@ -32,7 +33,7 @@ const FinanceTransactionsTable = ({ recordsArray }: Props) => {
             { value: formatMessage(m.date) },
             { value: formatMessage(m.chargeType) },
             { value: formatMessage(m.feeItem) },
-            { value: formatMessage(m.feeBase) },
+            { value: formatMessage(messages.feeBase) },
             { value: formatMessage(m.period) },
             { value: formatMessage(m.amount), align: 'right' },
           ]}

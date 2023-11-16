@@ -39,6 +39,7 @@ import {
   useGetDebtStatusQuery,
   useGetFinanceStatusQuery,
 } from './FinanceStatus.generated'
+import { messages } from '../../lib/messages'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
@@ -221,7 +222,7 @@ const FinanceStatus = () => {
                 <ExpandHeader
                   data={[
                     { value: '', align: 'left' },
-                    { value: formatMessage(m.feeCategory) },
+                    { value: formatMessage(messages.feeCategory) },
                     { value: formatMessage(m.guardian) },
                     { value: formatMessage(m.status), align: 'right' },
                   ]}

@@ -22,6 +22,7 @@ import {
   SelectedPeriod,
 } from './FinanceTransactionPeriodsTypes'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
+import { messages } from '../../lib/messages'
 
 interface Props {
   typeId: string
@@ -115,8 +116,8 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
         <Box padding={2} paddingBottom={4} width="half">
           <Select
             name="filter-subjects"
-            label={formatMessage(m.feeBasePlural)}
-            placeholder={formatMessage(m.feeBasePlaceholder)}
+            label={formatMessage(messages.feeBasePlural)}
+            placeholder={formatMessage(messages.feeBasePlaceholder)}
             value={activeSubjects.filter((v) =>
               subjectsFilter.includes(v.value),
             )}
@@ -141,7 +142,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
           >
             <Box paddingBottom={2}>
               <Text fontWeight="semiBold" variant="medium" as="span">
-                {formatMessage(m.feeBase)} -{' '}
+                {formatMessage(messages.feeBase)} -{' '}
               </Text>
               <Text variant="medium" as="span">
                 {item.chargeItemSubject}
@@ -164,7 +165,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
                   </T.HeadData>
                   <T.HeadData>
                     <Text variant="small" fontWeight="semiBold">
-                      {formatMessage(m.lastMovement)}
+                      {formatMessage(messages.lastMovement)}
                     </Text>
                   </T.HeadData>
                   <T.HeadData align="right" width="15%">

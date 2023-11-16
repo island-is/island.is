@@ -23,6 +23,7 @@ import {
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import * as styles from './FinanceStatusDetailTable.css'
+import { messages } from '../../lib/messages'
 
 interface Props {
   organization: FinanceStatusOrganizationType
@@ -40,7 +41,7 @@ const FinanceStatusDetailTable = ({
   const { formatMessage } = useLocale()
 
   const headerArray = [
-    { value: formatMessage(m.feeBase) },
+    { value: formatMessage(messages.feeBase) },
     { value: formatMessage(m.yearAndSeason) },
     { value: formatMessage(m.dueDate) },
     { value: formatMessage(m.finalDueDate) },
