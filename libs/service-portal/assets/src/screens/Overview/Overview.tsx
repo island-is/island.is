@@ -182,6 +182,7 @@ const VehiclesOverview = () => {
             >
               <Button
                 as="span"
+                unfocusable
                 colorScheme="default"
                 icon="open"
                 iconType="outline"
@@ -200,6 +201,7 @@ const VehiclesOverview = () => {
             >
               <Button
                 as="span"
+                unfocusable
                 variant="utility"
                 size="small"
                 icon="reader"
@@ -217,6 +219,7 @@ const VehiclesOverview = () => {
             >
               <Button
                 as="span"
+                unfocusable
                 variant="utility"
                 size="small"
                 icon="eyeOff"

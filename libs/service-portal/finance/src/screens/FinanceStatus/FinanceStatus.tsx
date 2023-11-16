@@ -135,6 +135,7 @@ const FinanceStatus = () => {
                         type="button"
                         variant="utility"
                         as="span"
+                        unfocusable
                       >
                         {formatMessage({
                           id: 'sp.finance-status:make-payment-schedule',

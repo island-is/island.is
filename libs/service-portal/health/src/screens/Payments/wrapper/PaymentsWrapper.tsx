@@ -35,6 +35,7 @@ export const PaymentsWrapper = ({ children }: Props) => {
             icon="open"
             iconType="outline"
             as="span"
+            unfocusable
           >
             {formatMessage(messages.readAboutPaymentParticipationSystems)}
           </Button>

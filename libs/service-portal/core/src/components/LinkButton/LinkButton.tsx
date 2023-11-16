@@ -29,12 +29,13 @@ export const LinkButton: FC<React.PropsWithChildren<Props>> = ({
       rel="noreferrer"
     >
       {skipIcon ? (
-        <Button as="span" size="small" variant="text">
+        <Button as="span" size="small" variant="text" unfocusable>
           {text}
         </Button>
       ) : (
         <Button
           as="span"
+          unfocusable
           size="small"
           variant="text"
           icon="open"
