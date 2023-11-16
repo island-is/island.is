@@ -114,18 +114,22 @@ const SubjectInfo = () => {
             url: formatMessage(urls.editResidence),
           }}
         />
-        <Divider />
-        <UserInfoLine
-          label={m.residence}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : formatAddress(
-                  nationalRegistryPerson?.housing?.residence ?? null,
-                ) || ''
-          }
-          loading={loading}
-        />
+        {nationalRegistryPerson?.housing?.residence && (
+          <>
+            <Divider />
+            <UserInfoLine
+              label={m.residence}
+              content={
+                error
+                  ? formatMessage(dataNotFoundMessage)
+                  : formatAddress(
+                      nationalRegistryPerson?.housing?.residence ?? null,
+                    ) || ''
+              }
+              loading={loading}
+            />
+          </>
+        )}
         <Divider />
         <Box marginY={3} />
         <UserInfoLine
