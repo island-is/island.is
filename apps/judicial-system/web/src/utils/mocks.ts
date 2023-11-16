@@ -34,13 +34,14 @@ export const mockProsecutor = {
   title: 'saksóknari',
   institution: {
     id: '1337',
+    type: InstitutionType.PROSECUTORS_OFFICE,
     name: 'Lögreglustjórinn á höfuðborgarsvæðinu',
   },
 } as User
 
 export const mockJudge = {
   id: 'judge_1',
-  role: UserRole.JUDGE,
+  role: UserRole.DISTRICT_COURT_JUDGE,
   name: 'Wonder Woman',
   title: 'héraðsdómari',
   institution: mockCourt,
@@ -48,7 +49,7 @@ export const mockJudge = {
 
 export const mockCourtOfAppealsUser = {
   id: 'hc_1',
-  role: UserRole.JUDGE,
+  role: UserRole.COURT_OF_APPEALS_JUDGE,
   name: 'Lalli Landsréttardómari',
   title: 'dómari',
   institution: mockCourtOfAppeals,

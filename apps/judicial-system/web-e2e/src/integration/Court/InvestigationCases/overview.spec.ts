@@ -34,7 +34,7 @@ describe(`${INVESTIGATION_CASE_OVERVIEW_ROUTE}/:id`, () => {
   const caseFilesComments = faker.lorem.words(5)
 
   beforeEach(() => {
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     const caseData = mockCase(CaseType.INTERNET_USAGE)
     const caseDataAddition: Case = {
       ...caseData,
