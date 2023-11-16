@@ -343,6 +343,87 @@ paths:
         - Users
       security:
         - bearer: []
+  /api/public/newDiscounts/{discountCode}/user:
+    get:
+      operationId: PublicNewDiscountController_getUserByDiscountCode
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AirlineUser'
+      tags:
+        - Users
+      security:
+        - bearer: []
+  /api/private/users/{nationalId}/newDiscounts/current:
+    get:
+      operationId: PrivateNewDiscountController_getCurrentDiscountByNationalId
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewDiscountViewModel'
+      tags:
+        - Users
+      security:
+        - bearer: []
+  /api/private/users/{nationalId}/newDiscounts:
+    post:
+      operationId: PrivateNewDiscountController_createDiscountCode
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewDiscountViewModel'
+      tags:
+        - Users
+      security:
+        - bearer: []
+  /api/private/users/createExplicitNewDiscountCode:
+    post:
+      operationId: PrivateNewDiscountAdminController_createExplicitDiscountCode
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExplicitDiscountCodeParams'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewDiscountViewModel'
+      tags:
+        - Admin
+      security:
+        - bearer: []
 info:
   title: Air Discount Scheme
   description: |2
@@ -836,3 +917,85 @@ components:
       required:
         - period
         - age
+    AirDiscountViewModel:
+      type: object
+      properties:
+        id:
+          type: string
+        code:
+          type: string
+        comment:
+          type: string
+        explicit:
+          type: boolean
+        employeeId:
+          type: string
+        active:
+          type: boolean
+        isConnectionCode:
+          type: boolean
+        validUntil:
+          type: string
+        usedAt:
+          type: string
+      required:
+        - id
+        - code
+        - explicit
+        - active
+        - isConnectionCode
+        - validUntil
+    DiscountedFlightLegViewModel:
+      type: object
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+      required:
+        - id
+        - origin
+        - destination
+    DiscountedFlightViewModel:
+      type: object
+      properties:
+        id:
+          type: string
+        isConnectionFlight:
+          type: boolean
+        discount:
+          $ref: '#/components/schemas/AirDiscountViewModel'
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscountedFlightLegViewModel'
+      required:
+        - id
+        - isConnectionFlight
+        - discount
+        - flightLegs
+    NewDiscountViewModel:
+      type: object
+      properties:
+        id:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+        nationalId:
+          type: string
+        active:
+          type: boolean
+        usedAt:
+          type: string
+        discountedFlights:
+          type: array
+          items:
+            $ref: '#/components/schemas/DiscountedFlightViewModel'
+      required:
+        - id
+        - user
+        - nationalId
+        - active
+        - discountedFlights
