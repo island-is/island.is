@@ -128,6 +128,7 @@ export const AssetsOverview = () => {
                 >
                   <Button
                     as="span"
+                    unfocusable
                     colorScheme="default"
                     icon="document"
                     iconType="filled"
