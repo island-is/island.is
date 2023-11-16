@@ -1,7 +1,7 @@
 {
-  "name": "clients-aosah-transfer-of-machine-ownership",
+  "name": "clients-aosh-transfer-of-machine-ownership",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/aosah/transfer-of-machine-ownership/src",
+  "sourceRoot": "libs/clients/aosh/transfer-of-machine-ownership/src",
   "projectType": "library",
   "targets": {
     "lint": {
@@ -9,17 +9,17 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
-          "libs/clients/aosah/transfer-of-machine-ownership/**/*.{ts,tsx,js,jsx}"
+          "libs/clients/aosh/transfer-of-machine-ownership/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": [
-        "{workspaceRoot}/coverage/libs/clients/aosah/transfer-of-machine-ownership"
+        "{workspaceRoot}/coverage/libs/clients/aosh/transfer-of-machine-ownership"
       ],
       "options": {
-        "jestConfig": "libs/clients/aosah/transfer-of-machine-ownership/jest.config.ts",
+        "jestConfig": "libs/clients/aosh/transfer-of-machine-ownership/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -33,14 +33,14 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/aosah/transfer-of-machine-ownership"
+        "cwd": "libs/clients/aosh/transfer-of-machine-ownership"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn openapi-generator -o libs/clients/aosah/transfer-of-machine-ownership/gen/fetch -i libs/clients/aosah/transfer-of-machine-ownership/src/clientConfig.json"
+          "yarn openapi-generator -o libs/clients/aosh/transfer-of-machine-ownership/gen/fetch -i libs/clients/aosh/transfer-of-machine-ownership/src/clientConfig.json"
         ]
       },
       "outputs": ["{projectRoot}/gen/fetch"]

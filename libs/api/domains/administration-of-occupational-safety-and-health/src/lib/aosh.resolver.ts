@@ -21,7 +21,7 @@ import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class AoshResolver {
-  constructor(private readonly aosahApi: AoshApi) {}
+  constructor(private readonly aoshApi: AoshApi) {}
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
   @Query(() => MachineDetails)
@@ -30,7 +30,7 @@ export class AoshResolver {
     @CurrentUser() auth: User,
     @Args('input') input: MachineDetailsInput,
   ) {
-    return await this.aosahApi.getMachineDetails(auth, input.id)
+    return await this.aoshApi.getMachineDetails(auth, input.id)
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
@@ -40,7 +40,7 @@ export class AoshResolver {
     @CurrentUser() auth: User,
     @Args('input') regNumber: string,
   ) {
-    return await this.aosahApi.isPaymentRequired(auth, regNumber)
+    return await this.aoshApi.isPaymentRequired(auth, regNumber)
   }
 
   @Mutation(() => Boolean)
@@ -49,7 +49,7 @@ export class AoshResolver {
     @Args('input') input: ChangeMachineOwner,
   ): Promise<boolean> {
     try {
-      await this.aosahApi.changeMachineOwner(auth, input)
+      await this.aoshApi.changeMachineOwner(auth, input)
       return true // Operation was successful
     } catch (error) {
       console.log('changeOwnerChange Error: ', error)
@@ -64,7 +64,7 @@ export class AoshResolver {
     @Args('input') input: ConfirmOwnerChange,
   ): Promise<boolean> {
     try {
-      await this.aosahApi.confirmOwnerChange(auth, input)
+      await this.aoshApi.confirmOwnerChange(auth, input)
       return true // Operation was successful
     } catch (error) {
       console.log('confirmOwnerChange Error: ', error)
@@ -79,7 +79,7 @@ export class AoshResolver {
   //     @Args('input') input: ChangeMachineSupervisor,
   //   ): Promise<boolean> {
   //     try {
-  //       await this.aosahApi.changeMachineSupervisor(auth, input)
+  //       await this.aoshApi.changeMachineSupervisor(auth, input)
   //       return true // Operation was successful
   //     } catch (error) {
   //       console.log('changeMachineSupervisor Error: ', error)

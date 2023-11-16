@@ -19,7 +19,7 @@ export const getApplicationPruneDateStr = (
 }
 
 export const pathToAsset = (file: string) => {
-  return join(__dirname, `./aosah-transfer-of-machine-ownership-assets/${file}`)
+  return join(__dirname, `./aosh-transfer-of-machine-ownership-assets/${file}`)
 }
 
 export const getRecipients = (

@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-aosah-transfer-of-machine-ownership',
+  displayName: 'clients-aosh-transfer-of-machine-ownership',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {
@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
   coverageDirectory:
-    '../../../../coverage/libs/clients/aosah/transfer-of-machine-ownership',
+    '../../../../coverage/libs/clients/aosh/transfer-of-machine-ownership',
 }

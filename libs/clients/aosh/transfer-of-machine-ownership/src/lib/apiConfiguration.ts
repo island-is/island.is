@@ -14,7 +14,7 @@ export const configFactory = (
   acceptHeader: string,
 ) => ({
   fetchApi: createEnhancedFetch({
-    name: 'clients-aosah-transfer-of-machine-ownership',
+    name: 'clients-aosh-transfer-of-machine-ownership',
     autoAuth: idsClientConfig.isConfigured
       ? {
           mode: 'tokenExchange',
