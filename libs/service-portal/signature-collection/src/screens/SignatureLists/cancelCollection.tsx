@@ -26,11 +26,11 @@ const CancelCollection = () => {
         }
       >
         <Text variant="h1" paddingTop={5}>
-          {formatMessage(m.modalMessage)}
+          {formatMessage(m.cancelCollectionModalMessage)}
         </Text>
         <Box marginTop={10} display="flex" justifyContent="center">
           <Button onClick={() => setModalIsOpen(false)}>
-            {formatMessage(m.modalConfirmButton)}
+            {formatMessage(m.cancelCollectionModalConfirmButton)}
           </Button>
         </Box>
       </Modal>

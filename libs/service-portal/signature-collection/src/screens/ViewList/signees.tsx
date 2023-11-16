@@ -73,13 +73,13 @@ const Signees = () => {
                     box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
-                    {'temp'}
+                    {formatMessage(m.tempMessage)}
                   </T.Data>
                   <T.Data
                     box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
-                    {'temp'}
+                    {formatMessage(m.tempMessage)}
                   </T.Data>
                   <T.Data box={{ background: boxColor }}>
                     {person.paper && (
