@@ -25,16 +25,15 @@ export class AttachmentS3Service {
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
 
-    attachmentAnswerKeys.forEach(async (key) => {
+    for (const key of attachmentAnswerKeys) {
       const answers = getValueViaPath(application.answers, key) as Array<{
         key: string
         name: string
       }>
-      if (!answers) return
+      if (!answers) continue
       const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
-    })
-
+    }
     return attachments
   }
 
