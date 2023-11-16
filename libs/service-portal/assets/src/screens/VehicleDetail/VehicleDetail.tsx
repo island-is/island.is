@@ -27,6 +27,7 @@ import {
   FootNote,
   SAMGONGUSTOFA_ID,
   IntroHeader,
+  LinkResolver,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -175,6 +176,29 @@ const VehicleDetail = () => {
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
               <Box display="flex" justifyContent="flexStart" printHidden>
+                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                  <Button
+                    colorScheme="default"
+                    icon="pencil"
+                    iconType="outline"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    <LinkResolver
+                      href={
+                        id
+                          ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                              ':id',
+                              id.toString(),
+                            )
+                          : ''
+                      }
+                    >
+                      {formatMessage(messages.vehicleMilageInputTitle)}
+                    </LinkResolver>
+                  </Button>
+                </Box>
                 <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                   <Button
                     colorScheme="default"

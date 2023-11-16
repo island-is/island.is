@@ -2,18 +2,14 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net6.0 - Release-2 : 20230919.1",
+    "description": "Mileage reading API developed in .Net6.0 - Release-3 : 20231114.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
     },
     "version": "1.0"
   },
-  "servers": [
-    {
-      "url": "/vehicle/mileagereading"
-    }
-  ],
+  "servers": [{ "url": "/vehicle/mileagereading" }],
   "paths": {
     "/authenticate": {
       "post": {
@@ -23,57 +19,37 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "text/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             },
             "application/*+xml": {
-              "schema": {
-                "$ref": "#/components/schemas/AuthenticateModel"
-              }
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
             }
           }
         },
@@ -82,59 +58,37 @@
             "description": "Success",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
+                "schema": { "$ref": "#/components/schemas/User" }
               },
-              "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
+              "text/xml": { "schema": { "$ref": "#/components/schemas/User" } }
             }
           },
           "401": {
             "description": "Unauthorized",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               },
               "text/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -149,19 +103,13 @@
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "requestBody": {
@@ -204,19 +152,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
           "201": {
             "description": "Created",
             "content": {
@@ -231,9 +166,7 @@
             "description": "Bad Request",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           },
@@ -241,90 +174,7 @@
             "description": "Unauthorized",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/{permno}/{readdate}/{mileage}": {
-      "delete": {
-        "tags": ["MileageReading"],
-        "parameters": [
-          {
-            "name": "permno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "readdate",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "mileage",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "header",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          },
-          {
-            "name": "api-version",
-            "in": "query",
-            "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/ReturnTypeMessage"
-                  }
-                }
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
               }
             }
           }
@@ -340,27 +190,19 @@
             "name": "permno",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "api-version",
             "in": "header",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           },
           {
             "name": "api-version",
             "in": "query",
             "description": "The requested API version",
-            "schema": {
-              "type": "string",
-              "default": "1.0"
-            }
+            "schema": { "type": "string", "default": "1.0" }
           }
         ],
         "responses": {
@@ -370,9 +212,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MileageReadingDto"
-                  }
+                  "items": { "$ref": "#/components/schemas/MileageReadingDto" }
                 }
               }
             }
@@ -387,14 +227,8 @@
         "required": ["password", "username"],
         "type": "object",
         "properties": {
-          "username": {
-            "minLength": 1,
-            "type": "string"
-          },
-          "password": {
-            "minLength": 1,
-            "type": "string"
-          }
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
         },
         "additionalProperties": false
       },
@@ -421,13 +255,18 @@
             "type": "string",
             "description": "Mileage reading",
             "nullable": true
+          },
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D)",
+            "nullable": true
           }
         },
         "additionalProperties": false,
         "description": "Mileage data transfer object"
       },
       "PostMileageReadingModel": {
-        "required": ["mileage", "originCode", "permno", "readDate"],
+        "required": ["mileage", "originCode", "permno"],
         "type": "object",
         "properties": {
           "permno": {
@@ -438,8 +277,10 @@
           },
           "readDate": {
             "type": "string",
-            "description": "Date of mileage reading",
-            "format": "date-time"
+            "description": "Date of mileage reading, is always sysdate",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
           },
           "originCode": {
             "maxLength": 10,
@@ -452,6 +293,12 @@
             "minLength": 1,
             "type": "string",
             "description": "Mileage reading"
+          },
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D), is always I for Insert",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false,
@@ -460,27 +307,11 @@
       "ProblemDetails": {
         "type": "object",
         "properties": {
-          "type": {
-            "type": "string",
-            "nullable": true
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "instance": {
-            "type": "string",
-            "nullable": true
-          }
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -492,18 +323,9 @@
             "format": "int32",
             "nullable": true
           },
-          "warnSever": {
-            "type": "string",
-            "nullable": true
-          },
-          "errorMess": {
-            "type": "string",
-            "nullable": true
-          },
-          "permno": {
-            "type": "string",
-            "nullable": true
-          },
+          "warnSever": { "type": "string", "nullable": true },
+          "errorMess": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
           "warningSerialNumber": {
             "type": "integer",
             "format": "int32",
@@ -515,79 +337,29 @@
       "User": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedUserName": {
-            "type": "string",
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "normalizedEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "emailConfirmed": {
-            "type": "boolean"
-          },
-          "passwordHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "securityStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "concurrencyStamp": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumberConfirmed": {
-            "type": "boolean"
-          },
-          "twoFactorEnabled": {
-            "type": "boolean"
-          },
+          "id": { "type": "string", "nullable": true },
+          "userName": { "type": "string", "nullable": true },
+          "normalizedUserName": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "normalizedEmail": { "type": "string", "nullable": true },
+          "emailConfirmed": { "type": "boolean" },
+          "passwordHash": { "type": "string", "nullable": true },
+          "securityStamp": { "type": "string", "nullable": true },
+          "concurrencyStamp": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "phoneNumberConfirmed": { "type": "boolean" },
+          "twoFactorEnabled": { "type": "boolean" },
           "lockoutEnd": {
             "type": "string",
             "format": "date-time",
             "nullable": true
           },
-          "lockoutEnabled": {
-            "type": "boolean"
-          },
-          "accessFailedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "username": {
-            "type": "string",
-            "nullable": true
-          },
-          "password": {
-            "type": "string",
-            "nullable": true
-          },
-          "jwtToken": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "type": "string",
-            "nullable": true
-          }
+          "lockoutEnabled": { "type": "boolean" },
+          "accessFailedCount": { "type": "integer", "format": "int32" },
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true },
+          "jwtToken": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       }
@@ -601,9 +373,5 @@
       }
     }
   },
-  "security": [
-    {
-      "Bearer": []
-    }
-  ]
+  "security": [{ "Bearer": [] }]
 }

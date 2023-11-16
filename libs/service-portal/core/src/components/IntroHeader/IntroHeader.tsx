@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import {
   GridColumn,
   GridRow,
@@ -25,6 +25,7 @@ interface Props {
   narrow?: boolean
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
+  introComponent?: ReactNode
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -62,6 +63,11 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
         {props.intro && (
           <Text variant="default" paddingTop={1}>
             {formatMessage(props.intro)}
+          </Text>
+        )}
+        {props.introComponent && (
+          <Text variant="default" paddingTop={1}>
+            {props.introComponent}
           </Text>
         )}
         {props.children}

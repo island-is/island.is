@@ -179,7 +179,7 @@ export const vehicleMessage = defineMessages({
   },
   vehicleMilageIntro: {
     id: 'sp.vehicles:vehicle-milage-intro',
-    defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár`,
+    defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil, <href>sjá nánar um það hér.</href>`,
   },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
@@ -201,6 +201,10 @@ export const vehicleMessage = defineMessages({
   category: {
     id: 'sp.vehicles:category',
     defaultMessage: 'flokkur',
+  },
+  postSuccess: {
+    id: 'sp.vehicles:post-mileage-success',
+    defaultMessage: 'Skráning tókst!',
   },
   type: {
     id: 'sp.vehicles:type',

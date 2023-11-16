@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { InputController } from '@island.is/shared/form-fields'
 import { Controller, useForm } from 'react-hook-form'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
 import {
   Box,
   Button,
@@ -8,10 +10,12 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  LoadingDots,
   SkeletonLoader,
   Stack,
   Table,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -20,18 +24,24 @@ import {
   SAMGONGUSTOFA_ID,
   IntroHeader,
   formatDate,
+  icelandLocalTime,
 } from '@island.is/service-portal/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
-import { useGetUsersMileageQuery } from './VehicleDetail.generated'
+import {
+  useGetUsersMileageQuery,
+  usePostVehicleMileageMutation,
+} from './VehicleDetail.generated'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import * as styles from './VehicleMileage.css'
+
+const ORIGIN_CODE = 'ISLAND.IS'
 
 type UseParams = {
   id: string
 }
 
 interface FormData {
-  date: Date
   odometerStatus: number
 }
 
@@ -46,104 +56,127 @@ const VehicleMilage = () => {
   } = useForm<FormData>()
 
   const handleSubmitForm = async (submitData: FormData) => {
-    console.log({ submitData })
+    postAction({
+      variables: {
+        input: {
+          permno: id,
+          originCode: ORIGIN_CODE,
+          mileage: String(submitData.odometerStatus),
+        },
+      },
+    })
   }
 
-  const { data, loading, error } = useGetUsersMileageQuery({
+  const { data, loading, error, updateQuery } = useGetUsersMileageQuery({
     variables: { input: { permno: id } },
   })
 
-  console.log({ data })
+  const [postAction, { loading: postActionLoading }] =
+    usePostVehicleMileageMutation({
+      onError: (e) => {
+        console.log('e', e)
+        toast.error(formatMessage(m.errorTitle))
+      },
+      onCompleted: (mutationData) => {
+        // Update useGetUsersMileageQuery on mutation success.
+        const updatedMileage = mutationData.vehicleMileagePost
+        toast.success(formatMessage(messages.postSuccess))
+
+        updateQuery((prevData) => {
+          const prevDetails = prevData.vehicleMileageDetails ?? []
+
+          const updatedDetails = updatedMileage
+            ? [updatedMileage, ...prevDetails]
+            : prevDetails
+
+          return {
+            vehicleMileageDetails: updatedDetails,
+          }
+        })
+      },
+    })
+
+  const details = data?.vehicleMileageDetails
+  const hasData = details && details?.length > 0
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
         <IntroHeader
           title={m.vehicleMilage}
-          intro={messages.vehicleMilageIntro}
+          introComponent={formatMessage(messages.vehicleMilageIntro, {
+            href: (str: any) => (
+              <span>
+                <a
+                  href="https://island.is/flokkur/akstur-og-bifreidar"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={styles.link}
+                >
+                  {str}
+                </a>
+              </span>
+            ),
+          })}
           serviceProviderID={SAMGONGUSTOFA_ID}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <Stack space={6}>
-          {/* {!loading && !error && vehicles.length > 0 && ( */}
-          {id && (
-            <form onSubmit={handleSubmit(handleSubmitForm)}>
-              <GridContainer>
-                <GridRow marginBottom={2}>
-                  <GridColumn span="1/1">
-                    <Text as="h3" variant="h5">
-                      {formatMessage(messages.vehicleMilageInputTitle)}
-                    </Text>
-                  </GridColumn>
-                </GridRow>
-                <GridRow rowGap={[1, 1, 2, 2, 'smallGutter']}>
-                  <GridColumn span={['1/1', '7/9', '6/9', '5/9', '3/9']}>
-                    <InputController
-                      control={control}
-                      id="odometerStatus"
-                      name="odometerStatus"
-                      required
-                      type="number"
-                      suffix=" km"
-                      thousandSeparator
-                      backgroundColor="blue"
-                      size="xs"
-                      maxLength={13}
-                      label={formatMessage(messages.vehicleMilageInputLabel)}
-                      placeholder={formatMessage(
-                        messages.vehicleMilageInputPlaceholder,
-                      )}
-                    />
-                  </GridColumn>
-                  <GridColumn
-                    span={['1/1', '7/9', '6/9', '5/9', '4/9']}
-                    paddingTop={[1, 1, 2, 0, 0]}
+          <form onSubmit={handleSubmit(handleSubmitForm)}>
+            <GridContainer>
+              <GridRow marginBottom={2}>
+                <GridColumn span="1/1">
+                  <Text as="h3" variant="h5">
+                    {formatMessage(messages.vehicleMilageInputTitle)}
+                  </Text>
+                </GridColumn>
+              </GridRow>
+              <GridRow rowGap={[1, 1, 2, 2, 'smallGutter']}>
+                <GridColumn span={['1/1', '7/9', '6/9', '5/9', '3/9']}>
+                  <InputController
+                    control={control}
+                    id="odometerStatus"
+                    name="odometerStatus"
+                    required
+                    type="number"
+                    suffix=" km"
+                    thousandSeparator
+                    backgroundColor="blue"
+                    size="xs"
+                    maxLength={12}
+                    error={errors.odometerStatus?.message}
+                    label={formatMessage(messages.vehicleMilageInputLabel)}
+                    placeholder={formatMessage(
+                      messages.vehicleMilageInputPlaceholder,
+                    )}
+                  />
+                </GridColumn>
+                <GridColumn
+                  span={['1/1', '7/9', '6/9', '5/9', '2/9']}
+                  offset={['0', '0', '0', '0', '0']}
+                  paddingBottom={[1, 1, 2, 0, 0]}
+                >
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    textAlign="center"
+                    height="full"
+                    paddingTop={'p5'}
                   >
-                    <Controller
-                      name="date"
-                      control={control}
-                      rules={{ required: true }}
-                      render={({ field: { onChange, value } }) => (
-                        <DatePicker
-                          selected={value}
-                          locale={lang}
-                          label={formatMessage(messages.date)}
-                          placeholderText={formatMessage(m.chooseDate)}
-                          handleChange={onChange}
-                          required
-                          backgroundColor="blue"
-                          id="date"
-                          size="xs"
-                        />
-                      )}
-                    />
-                  </GridColumn>
-                  <GridColumn
-                    span={['1/1', '7/9', '6/9', '5/9', '2/9']}
-                    offset={['0', '0', '0', '0', '0']}
-                    paddingBottom={[1, 1, 2, 0, 0]}
-                  >
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      textAlign="center"
-                      height="full"
-                      paddingTop={'p5'}
+                    <Button
+                      variant="primary"
+                      size="small"
+                      fluid
+                      type="submit"
+                      loading={postActionLoading}
                     >
-                      <Button
-                        variant="primary"
-                        size="small"
-                        fluid
-                        type="submit"
-                        // loading={loading}
-                      >
-                        {formatMessage(m.save)}
-                      </Button>
-                    </Box>
-                  </GridColumn>
-                </GridRow>
-              </GridContainer>
-            </form>
-          )}
+                      {formatMessage(m.save)}
+                    </Button>
+                  </Box>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </form>
           {loading && (
             <Box marginTop={2}>
               <SkeletonLoader
@@ -155,7 +188,7 @@ const VehicleMilage = () => {
               />
             </Box>
           )}
-          {!loading && (
+          {!loading && !error && hasData && (
             <GridContainer>
               <GridRow marginBottom={2}>
                 <GridColumn span="1/1">
@@ -179,10 +212,12 @@ const VehicleMilage = () => {
                       </Table.Row>
                     </Table.Head>
                     <Table.Body>
-                      {data?.vehicleMileageDetails?.map((item, i) => (
+                      {details?.map((item, i) => (
                         <Table.Row key={i}>
                           <Table.Data>
-                            {item.readDate ? formatDate(item.readDate) : ''}
+                            {item.readDate
+                              ? icelandLocalTime(item.readDate)
+                              : ''}
                           </Table.Data>
                           <Table.Data align="center">
                             {item.originCode}

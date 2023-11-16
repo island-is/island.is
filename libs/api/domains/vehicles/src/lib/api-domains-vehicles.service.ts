@@ -10,12 +10,16 @@ import {
 import {
   GetMileageReadingRequest,
   MileageReadingApi,
+  PostMileageReadingModel,
+  ReturnTypeMessage,
+  RootPostRequest,
 } from '@island.is/clients/vehicles-mileage'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class VehiclesService {
@@ -99,8 +103,18 @@ export class VehiclesService {
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
     })
-    if (!res) return null
+    return res
+  }
 
+  async postMileageReading(
+    auth: User,
+    input: RootPostRequest['postMileageReadingModel'],
+  ): Promise<PostMileageReadingModel | ReturnTypeMessage[] | null> {
+    if (!input) return null
+
+    const res = await this.getMileageWithAuth(auth).rootPost({
+      postMileageReadingModel: input,
+    })
     return res
   }
 }

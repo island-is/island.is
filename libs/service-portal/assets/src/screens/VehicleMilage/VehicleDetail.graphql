@@ -1,8 +1,18 @@
+fragment VehicleMileageDetail on VehicleMileageDetail {
+  permno
+  readDate
+  originCode
+  mileage
+}
+
 query GetUsersMileage($input: GetVehicleMileageInput!) {
   vehicleMileageDetails(input: $input) {
-    permno
-    readDate
-    originCode
-    mileage
+    ...VehicleMileageDetail
+  }
+}
+
+mutation PostVehicleMileage($input: PostVehicleMileageInput!) {
+  vehicleMileagePost(input: $input) {
+    ...VehicleMileageDetail
   }
 }

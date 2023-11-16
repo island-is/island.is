@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {
@@ -25,6 +25,7 @@ import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.mo
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
 import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
+import { PostVehicleMileageInput } from '../dto/postVehicleMileageInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -82,6 +83,19 @@ export class VehiclesResolver {
     @CurrentUser() user: User,
   ) {
     return await this.vehiclesService.getVehicleMileage(user, input)
+  }
+
+  @Scopes(ApiScope.vehicles)
+  @Mutation(() => VehicleMileageDetail, {
+    name: 'vehicleMileagePost',
+    nullable: true,
+  })
+  @Audit()
+  async postVehicleMileageReading(
+    @Args('input') input: PostVehicleMileageInput,
+    @CurrentUser() user: User,
+  ) {
+    return await this.vehiclesService.postMileageReading(user, input)
   }
 
   @Scopes(
