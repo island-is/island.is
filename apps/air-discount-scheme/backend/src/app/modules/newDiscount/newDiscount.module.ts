@@ -9,7 +9,12 @@ import { NewDiscountService } from './newDiscount.service'
 import { NationalRegistryModule } from '../nationalRegistry'
 import { FlightModule } from '../flight'
 import { UserModule } from '../user'
-import {NewDiscount, AirDiscount, DiscountedFlight, DiscountedFlightLeg} from './newDiscount.model'
+import {
+  NewDiscount,
+  AirDiscount,
+  DiscountedFlight,
+  DiscountedFlightLeg,
+} from './newDiscount.model'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({

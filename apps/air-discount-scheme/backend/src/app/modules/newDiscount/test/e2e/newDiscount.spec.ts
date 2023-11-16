@@ -12,7 +12,7 @@ import { User } from '@island.is/air-discount-scheme/types'
 import { AuthGuard } from '../../../common'
 import { setup } from '../../../../../../test/setup'
 import { NewDiscount } from '../../newDiscount.model'
-import {mockDiscount} from './mocks'
+import { mockDiscount } from './mocks'
 import { NewDiscountService } from '../../newDiscount.service'
 
 let app: INestApplication

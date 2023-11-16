@@ -9,7 +9,6 @@ export class CreateDiscountCodeParams {
 }
 
 export class CreateNewDiscountCodeBody {
-
   @IsString()
   readonly origin!: string
 

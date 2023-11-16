@@ -129,7 +129,7 @@ export class PrivateNewDiscountController {
       params.nationalId,
       body.origin,
       body.destination,
-      body.isRoundTrip
+      body.isRoundTrip,
     )
     if (!newDiscount) {
       throw new NotImplementedException(`Could not create discount`)
@@ -159,7 +159,6 @@ export class PrivateNewDiscountAdminController {
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<NewDiscountViewModel> {
-
     const discount = await this.discountService.createNewExplicitDiscountCode(
       auth,
       body.nationalId,

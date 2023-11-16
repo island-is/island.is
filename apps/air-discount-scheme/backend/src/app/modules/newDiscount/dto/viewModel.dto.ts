@@ -1,6 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { NewDiscount, DiscountedFlight, DiscountedFlightLeg, AirDiscount } from '../newDiscount.model'
+import {
+  NewDiscount,
+  DiscountedFlight,
+  DiscountedFlightLeg,
+  AirDiscount,
+} from '../newDiscount.model'
 import { User } from '../../user/user.model'
 
 export class AirDiscountViewModel {
@@ -42,7 +47,6 @@ export class AirDiscountViewModel {
 
   @ApiPropertyOptional()
   readonly usedAt?: string
-
 }
 
 export class DiscountedFlightLegViewModel {
@@ -60,10 +64,7 @@ export class DiscountedFlightLegViewModel {
 
   @ApiProperty()
   readonly destination: string
-
 }
-
-
 
 export class DiscountedFlightViewModel {
   constructor(flight: DiscountedFlight) {
@@ -83,7 +84,6 @@ export class DiscountedFlightViewModel {
 
   @ApiProperty()
   readonly discount: AirDiscountViewModel
-
 
   @ApiProperty({ type: [DiscountedFlightLegViewModel] })
   readonly flightLegs: DiscountedFlightLegViewModel[]
@@ -113,10 +113,8 @@ export class NewDiscountViewModel {
   @ApiProperty()
   readonly active: boolean
 
-
   @ApiPropertyOptional()
   readonly usedAt?: string
-
 
   @ApiProperty({ type: [DiscountedFlightViewModel] })
   readonly discountedFlights: DiscountedFlightViewModel[]

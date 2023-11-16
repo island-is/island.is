@@ -6,39 +6,39 @@ export const mockDiscount = {
       isConnectionFlight: true,
       flightLegs: [
         {
-          origin: "GRY",
-          destination: "AEY"
+          origin: 'GRY',
+          destination: 'AEY',
         },
         {
-          origin: "AEY",
-          destination: "GRY"
-        }
+          origin: 'AEY',
+          destination: 'GRY',
+        },
       ],
       discount: {
-        code : 'ASDJAD123',
+        code: 'ASDJAD123',
         active: true,
         isConnectionCode: true,
-      }
+      },
     },
     {
       isConnectionFlight: false,
       flightLegs: [
         {
-          origin: "AEY",
-          destination: "RKV"
+          origin: 'AEY',
+          destination: 'RKV',
         },
         {
-          origin: "RKV",
-          destination: "AEY"
-        }
+          origin: 'RKV',
+          destination: 'AEY',
+        },
       ],
       discount: {
-        code : 'ASDJAD1456',
+        code: 'ASDJAD1456',
         active: true,
         isConnectionCode: false,
-      }
-    }
-  ]
+      },
+    },
+  ],
 }
 
 export const mockExplicitDiscount = {
@@ -49,40 +49,39 @@ export const mockExplicitDiscount = {
       isConnectionFlight: true,
       flightLegs: [
         {
-          origin: "GRY",
-          destination: "AEY"
+          origin: 'GRY',
+          destination: 'AEY',
         },
         {
-          origin: "AEY",
-          destination: "GRY"
-        }
+          origin: 'AEY',
+          destination: 'GRY',
+        },
       ],
       discount: {
-        code : 'ASDJAD123',
+        code: 'ASDJAD123',
         active: true,
         isConnectionCode: true,
-        explicit: true
-      }
+        explicit: true,
+      },
     },
     {
       isConnectionFlight: false,
       flightLegs: [
         {
-          origin: "AEY",
-          destination: "RKV"
+          origin: 'AEY',
+          destination: 'RKV',
         },
         {
-          origin: "RKV",
-          destination: "AEY"
-        }
+          origin: 'RKV',
+          destination: 'AEY',
+        },
       ],
       discount: {
-        code : 'ASDJAD1456',
+        code: 'ASDJAD1456',
         active: true,
         isConnectionCode: false,
-        explicit: true
-      }
-    }
-  ]
+        explicit: true,
+      },
+    },
+  ],
 }
-

@@ -25,7 +25,10 @@ export class NewDiscountResolver {
     return this.newDiscountService.getCurrentDiscounts(user)
   }
 
-  @Query(() => NewDiscount, { name: 'airDiscountSchemeNewDiscount', nullable: true })
+  @Query(() => NewDiscount, {
+    name: 'airDiscountSchemeNewDiscount',
+    nullable: true,
+  })
   @Audit()
   async getDiscountByNationalId(
     @CurrentUser() user: User,

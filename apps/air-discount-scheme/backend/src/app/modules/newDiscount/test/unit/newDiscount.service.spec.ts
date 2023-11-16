@@ -1,9 +1,7 @@
 import { Test } from '@nestjs/testing'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
 
-import {
-  NewDiscountService,
-} from '../../newDiscount.service'
+import { NewDiscountService } from '../../newDiscount.service'
 import { createTestUser } from '../../../../../../test/createTestUser'
 import { getModelToken } from '@nestjs/sequelize'
 import {
@@ -14,9 +12,7 @@ import {
 } from '../../newDiscount.model'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import {
-  NationalRegistryService,
-} from '../../../nationalRegistry'
+import { NationalRegistryService } from '../../../nationalRegistry'
 import { UserService } from '../../../user/user.service'
 import { FlightService } from '../../../flight'
 

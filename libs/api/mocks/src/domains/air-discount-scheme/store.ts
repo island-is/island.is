@@ -4,7 +4,11 @@ import {
   AirDiscountSchemeFlightLeg,
   AirDiscountSchemeNewDiscount,
 } from '../../types'
-import { getAirNewDiscountsData, getAirDiscountsData, getFlights } from './static'
+import {
+  getAirNewDiscountsData,
+  getAirDiscountsData,
+  getFlights,
+} from './static'
 export const store = createStore(() => {
   const airDiscounts: AirDiscountSchemeDiscount[] = getAirDiscountsData
   const airNewDiscounts: AirDiscountSchemeNewDiscount[] = getAirNewDiscountsData
