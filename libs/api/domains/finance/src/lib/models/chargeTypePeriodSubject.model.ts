@@ -62,8 +62,8 @@ export class ChargeTypePeriodSubject {
   @Field({ nullable: true })
   nextKey?: string
 
-  @Field()
-  more!: boolean
+  @Field({ nullable: true })
+  more?: boolean
 
   @Field(() => [ChargeTypePeriodSubjectData])
   records!: ChargeTypePeriodSubjectData[]

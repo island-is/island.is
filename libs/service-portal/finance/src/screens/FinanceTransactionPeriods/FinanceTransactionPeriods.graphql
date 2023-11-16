@@ -7,7 +7,7 @@ query getAssessmentYears {
 query GetChargeTypesByYear($input: GetChargeTypesByYearInput!) {
   getChargeTypesByYear(input: $input) {
     chargeType {
-      ID
+      iD
       name
     }
   }
@@ -16,7 +16,7 @@ query GetChargeTypesByYear($input: GetChargeTypesByYearInput!) {
 query GetChargeTypesDetailsByYear($input: GetChargeTypesDetailsByYearInput!) {
   getChargeTypesDetailsByYear(input: $input) {
     chargeType {
-      ID
+      iD
       name
       chargeItemSubjects
       chargeItemSubjectDescription

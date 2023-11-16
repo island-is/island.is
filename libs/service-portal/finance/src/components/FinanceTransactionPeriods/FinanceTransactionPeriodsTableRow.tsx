@@ -22,7 +22,7 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
 
   return (
     <ExpandRow
-      key={`${record.ID}-${record.chargeItemSubjects}-${record.lastMovementDate}`}
+      key={`${record.iD}-${record.chargeItemSubjects}-${record.lastMovementDate}`}
       data={[
         { value: record.name },
         { value: cropText(record.chargeItemSubjects, 24) },
@@ -36,7 +36,7 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
           variables: {
             input: {
               nextKey: '',
-              typeId: record.ID,
+              typeId: record.iD,
               year: financeTransactionPeriodsState.year ?? '',
             },
           },
@@ -48,7 +48,7 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
       {chargeItemSubjects.length ? (
         <FinanceTransactionPeriodsTableDetail
           data={chargeItemSubjects}
-          typeId={record.ID}
+          typeId={record.iD}
         />
       ) : null}
     </ExpandRow>

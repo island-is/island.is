@@ -32,7 +32,7 @@ const FinanceTransactionPeriodsTable = ({ records }: Props) => {
           .reverse()
           .map((record) => (
             <FinanceTransactionPeriodsTableRow
-              key={record.ID}
+              key={record.iD}
               record={record}
             />
           ))}
