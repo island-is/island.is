@@ -449,6 +449,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           title: attachments.title,
           introduction: attachments.introduction,
           uploadHeader: attachments.uploadHeader,
+          uploadMultiple: true,
           uploadAccept: UPLOAD_ACCEPT,
           uploadDescription: attachments.uploadDescription,
           uploadButtonLabel: attachments.uploadButtonLabel,
