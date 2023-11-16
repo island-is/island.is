@@ -46,7 +46,7 @@ export const mockLists = [
   },
 ]
 
-export const mockList = {
+export const mockSingleList = {
   name: 'Vestfirðingafjórðungur',
   votes: 80,
   period: '2.04.2024-25.04.2024',

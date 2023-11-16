@@ -1,6 +1,6 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { mockList } from '../../lib/utils'
+import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import Signees from './signees'
 import PaperUpload from './paperUpload'
@@ -12,25 +12,25 @@ const ViewList = () => {
   return (
     <Stack space={5}>
       <Box>
-        <Text variant="h3">{mockList.name}</Text>
+        <Text variant="h3">{mockSingleList.name}</Text>
       </Box>
       <Box display={['block', 'flex']} justifyContent="spaceBetween">
         <Box>
           <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
-          <Text>{mockList.period}</Text>
+          <Text>{mockSingleList.period}</Text>
         </Box>
         <Box marginTop={[2, 0]}>
           <Text variant="h5">{formatMessage(m.numberOfSigns)}</Text>
-          <Text>{mockList.votes}</Text>
+          <Text>{mockSingleList.votes}</Text>
         </Box>
         <Box marginTop={[2, 0]}>
           <Text variant="h5">{formatMessage('Eitthvað meir:')}</Text>
-          <Text>{'Lorem'}</Text>
+          <Text>{formatMessage(m.tempMessage)}</Text>
         </Box>
       </Box>
       <Box>
         <Text variant="h5">{formatMessage(m.coOwners)}</Text>
-        {mockList.people.map((person) => (
+        {mockSingleList.people.map((person) => (
           <Box
             key={person.name}
             width="half"

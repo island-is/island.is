@@ -10,12 +10,11 @@ import { useLocale } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
 import { m } from '../../lib/messages'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { LinkResolver, Modal } from '@island.is/service-portal/core'
+import { LinkResolver } from '@island.is/service-portal/core'
 import { mockLists } from '../../lib/utils'
-import { useState } from 'react'
+import CancelCollection from './cancelCollection'
 
 const SignatureLists = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false)
   const { formatMessage } = useLocale()
 
   return (
@@ -82,32 +81,7 @@ const SignatureLists = () => {
           })}
         </Stack>
       </Box>
-      <Box marginTop={10} display={'flex'} justifyContent={'center'}>
-        <Modal
-          id="cancelCollection"
-          isVisible={modalIsOpen}
-          toggleClose={false}
-          initialVisibility={false}
-          disclosure={
-            <Button
-              variant="ghost"
-              size="small"
-              onClick={() => setModalIsOpen(true)}
-            >
-              {formatMessage(m.cancelCollectionButton)}
-            </Button>
-          }
-        >
-          <Text variant="h1" paddingTop={5}>
-            {formatMessage(m.modalMessage)}
-          </Text>
-          <Box marginTop={10} display="flex" justifyContent="center">
-            <Button onClick={() => setModalIsOpen(false)}>
-              {formatMessage(m.modalConfirmButton)}
-            </Button>
-          </Box>
-        </Modal>
-      </Box>
+      <CancelCollection />
     </Box>
   )
 }

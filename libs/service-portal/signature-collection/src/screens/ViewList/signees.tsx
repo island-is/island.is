@@ -8,7 +8,7 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { mockList } from '../../lib/utils'
+import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { useState } from 'react'
@@ -33,7 +33,7 @@ const Signees = () => {
             icon={{ name: 'search' }}
             backgroundColor="blue"
             size="sm"
-            value={''}
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </Box>
@@ -53,36 +53,35 @@ const Signees = () => {
             </T.Row>
           </T.Head>
           <T.Body>
-            {mockList.people.map((person) => {
+            {mockSingleList.people.map((person) => {
+              const boxColor = person.paper ? 'purple100' : 'white'
               return (
                 <T.Row key={person.name}>
                   <T.Data
-                    box={{ background: person.paper ? 'purple100' : 'white' }}
+                    box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
                     {format(new Date(), 'dd.MM.yyyy')}
                   </T.Data>
                   <T.Data
-                    box={{ background: person.paper ? 'purple100' : 'white' }}
+                    box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
                     {person.name}
                   </T.Data>
                   <T.Data
-                    box={{ background: person.paper ? 'purple100' : 'white' }}
+                    box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
                     {'temp'}
                   </T.Data>
                   <T.Data
-                    box={{ background: person.paper ? 'purple100' : 'white' }}
+                    box={{ background: boxColor }}
                     text={{ variant: 'medium' }}
                   >
                     {'temp'}
                   </T.Data>
-                  <T.Data
-                    box={{ background: person.paper ? 'purple100' : 'white' }}
-                  >
+                  <T.Data box={{ background: boxColor }}>
                     {person.paper && (
                       <Icon icon="document" type="outline" color="blue400" />
                     )}

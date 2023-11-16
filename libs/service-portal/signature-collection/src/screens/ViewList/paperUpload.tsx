@@ -45,8 +45,8 @@ const PaperUpload = () => {
               header={formatMessage(m.uploadHeader)}
               description={formatMessage(m.uploadText)}
               buttonLabel={formatMessage(m.uploadButton)}
-              onChange={() => console.log('æði!')}
-              onRemove={() => console.log('onRemove')}
+              onChange={() => console.log('todo')}
+              onRemove={() => console.log('todo')}
             />
             <Box marginTop={10}>
               <Text variant="h4" marginBottom={1}>
@@ -58,7 +58,7 @@ const PaperUpload = () => {
                   labelVariant="default"
                   label={formatMessage(m.nationalIdsSuccess)}
                 >
-                  <Text>{'todo'}</Text>
+                  <Text>{formatMessage(m.tempMessage)}</Text>
                 </AccordionItem>
                 <AccordionItem
                   id="uploadError"
@@ -66,7 +66,7 @@ const PaperUpload = () => {
                   labelColor="red600"
                   label={formatMessage(m.nationalIdsError)}
                 >
-                  <Text>{'todo'}</Text>
+                  <Text>{formatMessage(m.tempMessage)}</Text>
                 </AccordionItem>
               </Accordion>
             </Box>

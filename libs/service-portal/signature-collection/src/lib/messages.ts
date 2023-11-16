@@ -154,4 +154,9 @@ export const m = defineMessages({
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
     description: '',
   },
+  tempMessage: {
+    id: 'sp.information:tempMessage',
+    defaultMessage: 'Tempus facilisis',
+    description: '',
+  },
 })
