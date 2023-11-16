@@ -98,7 +98,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             instance,
             namespace,
             activeLocale,
-
             'directorateOfImmigration',
           )
         }
