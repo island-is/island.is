@@ -26,104 +26,54 @@ import { environment } from '../../../environments/environment'
 import { Documentation } from '@island.is/nest/swagger'
 import { Notification } from './notification.model'
 
+import { CreateNotificationDto } from './dto/create-notification.dto'
+import { UpdateNotificationDto } from './dto/update-notification.dto'
+
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
   path: 'me/notifications',
+  version: '1',
 })
 export class MeNotificationsController {
   constructor(
     // @Inject(LOGGER_PROVIDER) private logger: Logger,
-    // private readonly notificationsService: NotificationsService,
+    private readonly notificationService: NotificationsService,
   ) {}
-
-  // @Get('')
-  // @Documentation({
-  //   summary: 'Returns a cursor based paginated list of notifications for the current user',
-  // })
-  // @Scopes(NotificationsScope.read)
-  // @ApiSecurity('oauth2', [NotificationsScope.read])
-  // @ApiTags('user notification')
-  // @Version('1')
-  // async findAll(@Query('cursor') cursor: number): Promise<any> {
-  //   return this.notificationsService.findAll(cursor)
-  // }
-
-  // @Get(':id')
-  // @Documentation({
-  //   summary: 'Returns a notification for the current user',
-  // })
-  // @Scopes(NotificationsScope.read)
-  // @ApiSecurity('oauth2', [NotificationsScope.read])
-  // @ApiTags('user notification')
-  // @Version('1')
-  // async findOne(@Param('id') id: number): Promise<Notification> {
-  //   return this.notificationsService.findOne(id)
-  // }
-
-
-  
-
-
-
-  // @Patch(':id')
-  // @Documentation({
-  //   summary: 'Updates a notification for the current user',
-  // })
-  // @Scopes(NotificationsScope.write)
-  // @ApiSecurity('oauth2', [NotificationsScope.write])
-  // @ApiTags('user notification')
-  // @Version('1')
-  // async update(@Param('id') id: number): Promise<Notification> {
-  //   return this.notificationsService.update(id)
-  // }
-
   // @Post()
-  // create(@Body() notification: Partial<Notification>) {
-  //   return this.notificationsService.create(notification);
+  // create(@Body() createNotificationDto: CreateNotificationDto) {
+  //   return this.notificationService.create(createNotificationDto);
   // }
 
-
-
-
-
-
-
-  @Get("")
-  @Scopes(NotificationsScope.write)
-  @ApiSecurity('oauth2', [NotificationsScope.write])
-
-  // @Scopes(UserProfileScope.read)
-  // @ApiSecurity('oauth2', [UserProfileScope.read])
-  // @ApiTags('user notification')
-  @Version('1')
-  findAll(
-    // @CurrentUser() user: User
-  ) {
-
-    return 1
-
-
-    // return this.notificationsService.findAll();
+  @Get()
+  @Scopes(NotificationsScope.read)
+  @ApiTags("user-notification")
+  @ApiSecurity('oauth2', [NotificationsScope.read])
+  findAll(@CurrentUser() user: User, @Query('cursor') cursor?: number, @Query('limit') limit?: number) {
+    return this.notificationService.findAll(cursor, limit);
   }
 
+  @Get(':id')
+  @Scopes(NotificationsScope.read)
+  @ApiTags("user-notification")
+  @ApiSecurity('oauth2', [NotificationsScope.read])
+  findOne(@Param('id') id: number) {
+    return this.notificationService.findOne(id);
+  }
 
-
-
-
-
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.notificationsService.findOne(+id);
-  // }
-
-  // // @Put(':id')
-  // // update(@Param('id') id: string, @Body() notification: Partial<Notification>) {
-  // //   return this.notificationsService.update(+id, notification);
-  // // }
+  @Patch(':id')
+  @Scopes(NotificationsScope.write)
+  @ApiTags("user-notification")
+  @ApiSecurity('oauth2', [NotificationsScope.write])
+  update(@Param('id') id: number, @Body() updateNotificationDto: UpdateNotificationDto) {
+    return this.notificationService.update(id, updateNotificationDto);
+  }
 
   // @Delete(':id')
+  // @Scopes(NotificationsScope.write)
+  // @ApiTags("user-notification")
+  // @ApiSecurity('oauth2', [NotificationsScope.write])
   // remove(@Param('id') id: string) {
-  //   return this.notificationsService.remove(+id);
+  //   return this.notificationService.remove(id);
   // }
+
 }

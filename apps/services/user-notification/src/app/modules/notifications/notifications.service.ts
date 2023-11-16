@@ -15,6 +15,12 @@ import axios from 'axios'
 import { Notification } from './notification.model'
 import { InjectModel } from '@nestjs/sequelize'
 
+
+// 
+
+import { CreateNotificationDto } from './dto/create-notification.dto'
+import { UpdateNotificationDto } from './dto/update-notification.dto'
+
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -157,134 +163,143 @@ export class NotificationsService {
     return template
   }
 
-  // async findOne(id: number): Promise<any> {
-  //   // return await this.notificationModel.findByPk(id);
-  //   return {
-  //     id: 2,
-  //     nationalId: 'B789012',
-  //     templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-  //     args: [
-  //       {
-  //         key: 'organization',
-  //         value: 'Hnipp Dev Team',
-  //       },
-  //       {
-  //         key: 'documentId',
-  //         value: 'efgh-efgh-efgh-efgh',
-  //       },
-  //     ],
-  //     compiled: {
-  //       title: 'Document Update Alert',
-  //       body: 'An existing document has been updated by Hnipp Dev Team.',
-  //       click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-  //     },
-  //     created: '2023-10-23T10:10:10.000Z',
-  //     modified: '2023-10-23T10:12:12.000Z',
-  //     state: 'read',
-  //   }
-  // }
-
-  // async findAll(cursor?: number, limit = 10): Promise<any[]> {
-  //   // return await this.notificationModel.findAll({
-  //   //   where: cursor ? { id: { [Op.gt]: cursor } } : {},
-  //   //   limit: limit,
-  //   // });
-  //   return [
-  //     {
-  //       id: 1,
-  //       nationalId: 'A123456',
-  //       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-  //       args: [
-  //         {
-  //           key: 'organization',
-  //           value: 'Hnipp Test Crew',
-  //         },
-  //         {
-  //           key: 'documentId',
-  //           value: 'abcd-abcd-abcd-abcd',
-  //         },
-  //       ],
-  //       compiled: {
-  //         title: 'New Document Alert',
-  //         body: 'A new document has been uploaded by Hnipp Test Crew.',
-  //         click_action: 'https://example.com/documents/abcd-abcd-abcd-abcd',
-  //       },
-  //       created: '2023-10-24T14:15:22.000Z',
-  //       modified: '2023-10-24T14:15:22.000Z',
-  //       state: 'unread',
-  //     },
-  //     {
-  //       id: 2,
-  //       nationalId: 'B789012',
-  //       templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-  //       args: [
-  //         {
-  //           key: 'organization',
-  //           value: 'Hnipp Dev Team',
-  //         },
-  //         {
-  //           key: 'documentId',
-  //           value: 'efgh-efgh-efgh-efgh',
-  //         },
-  //       ],
-  //       compiled: {
-  //         title: 'Document Update Alert',
-  //         body: 'An existing document has been updated by Hnipp Dev Team.',
-  //         click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-  //       },
-  //       created: '2023-10-23T10:10:10.000Z',
-  //       modified: '2023-10-23T10:12:12.000Z',
-  //       state: 'read',
-  //     },
-  //     // ... more notifications ...
-  //   ]
-  // }
-
-  // async update(id: number): Promise<any> {
-  //   // return await this.notificationModel.findByPk(id);
-  //   return {
-  //     id: 2,
-  //     nationalId: 'B789012',
-  //     templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
-  //     args: [
-  //       {
-  //         key: 'organization',
-  //         value: 'Hnipp Dev Team',
-  //       },
-  //       {
-  //         key: 'documentId',
-  //         value: 'efgh-efgh-efgh-efgh',
-  //       },
-  //     ],
-  //     compiled: {
-  //       title: 'Document Update Alert',
-  //       body: 'An existing document has been updated by Hnipp Dev Team.',
-  //       click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
-  //     },
-  //     created: '2023-10-23T10:10:10.000Z',
-  //     modified: '2023-10-23T10:12:12.000Z',
-  //     state: 'read',
-  //   }
-  // }
-
-  async create(task: Partial<Notification>): Promise<any> {
-    return this.notificationModel.create(task);
-  }
-
-  async findAll(): Promise<any[]> {
-    return this.notificationModel.findAll();
-  }
-
   async findOne(id: number): Promise<any> {
-    return this.notificationModel.findByPk(id);
+    // return await this.notificationModel.findByPk(id);
+    return {
+      id: 2,
+      nationalId: 'B789012',
+      templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+      args: [
+        {
+          key: 'organization',
+          value: 'Hnipp Dev Team',
+        },
+        {
+          key: 'documentId',
+          value: 'efgh-efgh-efgh-efgh',
+        },
+      ],
+      compiled: {
+        title: 'Document Update Alert',
+        body: 'An existing document has been updated by Hnipp Dev Team.',
+        click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+      },
+      created: '2023-10-23T10:10:10.000Z',
+      modified: '2023-10-23T10:12:12.000Z',
+      state: 'read',
+    }
   }
 
-  // async update(id: number, task: Partial<Notification>): Promise<[number, Notification[]]> {
-  //   return this.notificationModel.update(task, { where: { id } });
+  async findAll(cursor?: number, limit = 10): Promise<any[]> {
+    // return await this.notificationModel.findAll({
+    //   where: cursor ? { id: { [Op.gt]: cursor } } : {},
+    //   limit: limit,
+    // });
+    return [
+      {
+        id: 1,
+        nationalId: 'A123456',
+        templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        args: [
+          {
+            key: 'organization',
+            value: 'Hnipp Test Crew',
+          },
+          {
+            key: 'documentId',
+            value: 'abcd-abcd-abcd-abcd',
+          },
+        ],
+        compiled: {
+          title: 'New Document Alert',
+          body: 'A new document has been uploaded by Hnipp Test Crew.',
+          click_action: 'https://example.com/documents/abcd-abcd-abcd-abcd',
+        },
+        created: '2023-10-24T14:15:22.000Z',
+        modified: '2023-10-24T14:15:22.000Z',
+        state: 'unread',
+      },
+      {
+        id: 2,
+        nationalId: 'B789012',
+        templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+        args: [
+          {
+            key: 'organization',
+            value: 'Hnipp Dev Team',
+          },
+          {
+            key: 'documentId',
+            value: 'efgh-efgh-efgh-efgh',
+          },
+        ],
+        compiled: {
+          title: 'Document Update Alert',
+          body: 'An existing document has been updated by Hnipp Dev Team.',
+          click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+        },
+        created: '2023-10-23T10:10:10.000Z',
+        modified: '2023-10-23T10:12:12.000Z',
+        state: 'read',
+      },
+      // ... more notifications ...
+    ]
+  }
+
+  async update(id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
+    // return await this.notificationModel.findByPk(id);
+    return {
+      id: 2,
+      nationalId: 'B789012',
+      templateId: 'HNIPP.POSTHOLF.UPDATED_DOCUMENT',
+      args: [
+        {
+          key: 'organization',
+          value: 'Hnipp Dev Team',
+        },
+        {
+          key: 'documentId',
+          value: 'efgh-efgh-efgh-efgh',
+        },
+      ],
+      compiled: {
+        title: 'Document Update Alert',
+        body: 'An existing document has been updated by Hnipp Dev Team.',
+        click_action: 'https://example.com/documents/efgh-efgh-efgh-efgh',
+      },
+      created: '2023-10-23T10:10:10.000Z',
+      modified: '2023-10-23T10:12:12.000Z',
+      state: 'read',
+    }
+  }
+
+  // create(createNotificationDto: CreateNotificationDto) {
+  //   return this.notificationModel.create(createNotificationDto);
   // }
 
-  async remove(id: number): Promise<void> {
-    const task = await this.findOne(id);
-    await task.destroy();
-  }
+  // async findAll(cursor?: string, limit = 10) {
+  //   const where = cursor ? { id: { $gt: cursor } } : undefined;
+  //   return this.notificationModel.findAll({
+  //     // where,
+  //     limit,
+  //     order: [['id', 'ASC']],
+  //   });
+  // }
+
+  // findOne(id: string) {
+  //   return this.notificationModel.findByPk(id);
+  // }
+
+  // async update(id: string, updateNotificationDto: UpdateNotificationDto) {
+  //   const [numberOfAffectedRows, [updatedNotification]] = await this.notificationModel.update(updateNotificationDto, {
+  //     where: { id },
+  //     returning: true,
+  //   });
+
+  //   return updatedNotification;
+  // }
+
+  // remove(id: string) {
+  //   return this.notificationModel.destroy({ where: { id } });
+  // }
 }

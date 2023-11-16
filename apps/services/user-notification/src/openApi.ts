@@ -18,10 +18,6 @@ export const openApi = new DocumentBuilder()
           ['profile']: '',
           [NotificationsScope.read]: '',
           [NotificationsScope.write]: '',
-          [UserProfileScope.admin]: 'Get user device tokens',
-          [UserProfileScope.read]: 'Get a single user profile.',
-          [UserProfileScope.write]:
-            'Update and email/sms varifications for a single user profile.',
         },
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,

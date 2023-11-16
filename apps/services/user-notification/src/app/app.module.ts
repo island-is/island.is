@@ -15,7 +15,7 @@ import {
   imports: [
     AuthModule.register({
       issuer: 'https://identity-server.dev01.devland.is',
-      // audience: ['@island.is', '@admin.island.is'],
+      // audience: ['@island.is', '@admin.island.is'], // REMOVE THIS ... WE ARE NOT USING THIS ... THAT IS THE PLAN
     } as AuthConfig), // TODO: get from env
 
     SequelizeModule.forRootAsync({
