@@ -1,9 +1,9 @@
 import { AnswerValidator } from '@island.is/application/core'
 import { AnswerValidationConstants } from '../shared/constants'
-import { vehiclesList } from './answerValidationSections/vehicleList'
+import { vehicles } from './answerValidationSections/vehicles'
 
-const { VEHICLES_LIST } = AnswerValidationConstants
+const { VEHICLES } = AnswerValidationConstants
 
 export const answerValidators: Record<string, AnswerValidator> = {
-  [VEHICLES_LIST]: vehiclesList,
+  [VEHICLES]: vehicles,
 }

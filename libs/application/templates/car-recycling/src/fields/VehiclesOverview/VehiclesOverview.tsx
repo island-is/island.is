@@ -1,5 +1,5 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { ActionCard, Box } from '@island.is/island-ui/core'
+import { ActionCard, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 
@@ -15,8 +15,8 @@ import { carRecyclingMessages } from '../../lib/messages'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { useFormContext } from 'react-hook-form'
 
-const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
-  const { formatMessage, locale } = useLocale()
+const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => {
+  const { formatMessage } = useLocale()
 
   const [currentVehiclesList, setVehiclesList] = useState<VehicleMiniDto[]>([])
   const [selectedVehiclesList, setSelectedVehiclesList] = useState<
@@ -27,14 +27,26 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
   const { setValue } = useFormContext()
 
   useEffect(() => {
+    const { selectedVehicles, allVehicles } = getApplicationAnswers(application.answers)
     const { vehiclesList } = getApplicationExternalData(
       application.externalData,
     )
 
-    initSelectedList(vehiclesList)
-
+    if (selectedVehicles.length > 0) setSelectedVehiclesList(selectedVehicles)
     setAllVehiclesList(vehiclesList)
-  }, [application.externalData])
+
+    if (allVehicles.length > 0) {
+      setVehiclesList(allVehicles)
+    }
+    else {
+      setVehiclesList(vehiclesList)
+    }
+  }, [])
+
+  useEffect(() => {
+    setValue('vehicles.selectedVehicles', selectedVehiclesList)
+    setValue('vehicles.allVehicles', currentVehiclesList)
+  }, [selectedVehiclesList, setValue])
 
   function filterSelectedVehiclesFromList(
     selectedList: VehicleMiniDto[],
@@ -54,17 +66,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
     return list.filter((item) => item.permno !== vehicle.permno)
   }
 
-  function initSelectedList(allVehicles: VehicleMiniDto[]) {
-    const { vehiclesList } = getApplicationAnswers(application.answers)
-
-    const filtedList = filterSelectedVehiclesFromList(vehiclesList, allVehicles)
-
-    console.log('initSelectedList', vehiclesList)
-
-    setVehiclesList(filtedList)
-    setSelectedVehiclesList(vehiclesList)
-  }
-
   function getRoleLabel(vechicle: VehicleMiniDto): string {
     if (vechicle.role === 'Eigandi') {
       return formatMessage(carRecyclingMessages.cars.owner)
@@ -76,39 +77,27 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
   }
 
   function onRecycle(vehicle: VehicleMiniDto): void {
-    selectedVehiclesList.push(vehicle)
-    setSelectedVehiclesList(selectedVehiclesList)
+    setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle}])
 
     const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
 
     setVehiclesList(filterdVehiclesList)
-
-    console.log('onRecycle', selectedVehiclesList)
-
-    // Save data to db
-    setValue('vehiclesList', selectedVehiclesList)
   }
 
   function onCancel(vehicle: VehicleMiniDto): void {
-    currentVehiclesList.unshift(vehicle)
-    setSelectedVehiclesList(currentVehiclesList)
-
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
     )
 
     setSelectedVehiclesList(filteredSelectedVehiclesList)
-
-    // Save data to db
-    setValue('vehiclesList', filteredSelectedVehiclesList)
   }
 
   return (
-    <Box>
+    <Box id='vehicles'>
       <Box paddingTop={2}>
         <InputController
-          id="{nameFieldId}"
+          id="vehiclesList.input"
           defaultValue=""
           backgroundColor="blue"
           label={formatText(
@@ -152,7 +141,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
       </Box>
       {selectedVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
-          <Box marginBottom={2} key={index}>
+          <Box marginBottom={2} key={index} id='vehicles.selectedVehicles'>
             <ActionCard
               key={vehicle.permno}
               cta={{
@@ -178,7 +167,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
 
       {currentVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
-          <Box marginBottom={2} key={index + '_currentbox'}>
+          <Box marginBottom={2} key={index + '_currentbox'} id='vehicles.allVehicles'>
             <ActionCard
               key={vehicle.permno}
               tag={{
@@ -209,6 +198,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field }) => {
           </Box>
         )
       })}
+      {
+        error && <Box marginBottom={2}>
+          <Text color='red600'>{error}</Text>
+        </Box>
+      }
     </Box>
   )
 }

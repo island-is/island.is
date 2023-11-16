@@ -4,14 +4,21 @@ import { Application } from '@island.is/application/types'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const vehiclesList = getValueViaPath(
+  const selectedVehicles = getValueViaPath(
     answers,
-    'vehiclesList',
+    'vehicles.selectedVehicles',
+    [],
+  ) as VehicleMiniDto[]
+
+  const allVehicles = getValueViaPath(
+    answers,
+    'vehicles.allVehicles',
     [],
   ) as VehicleMiniDto[]
 
   return {
-    vehiclesList,
+    selectedVehicles,
+    allVehicles,
   }
 }
 

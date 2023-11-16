@@ -186,3 +186,11 @@ export const statesMessages = defineMessages({
     description: 'Description of the state - draft',
   },
 })
+
+export const errorMessages = defineMessages({
+  mustSelectACar: {
+    id: 'rf.cr.application:validator.mustSelectACar',
+    defaultMessage: 'Vinsamlegast velur minnsta kosti eitt ökutæki til að halda áfram.',
+    description: 'Please select a vehicle then continue',
+  },
+})

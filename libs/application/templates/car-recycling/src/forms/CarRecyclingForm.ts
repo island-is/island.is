@@ -27,8 +27,8 @@ export const CarRecyclingForm: Form = buildForm({
       children: [
         buildCustomField(
           {
-            id: 'vehiclesOverview',
-            //childInputIds: ['vehiclesList'],
+            id: 'vehicles',
+            childInputIds: ['vehicles.selectedVehicles', 'vehicles.allVehicles'],
             title: carRecyclingMessages.cars.sectionTitle,
             component: 'VehiclesOverview',
           },
