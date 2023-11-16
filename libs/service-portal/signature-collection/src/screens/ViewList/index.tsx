@@ -4,7 +4,6 @@ import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import Signees from './signees'
 import PaperUpload from './paperUpload'
-import { CopyLink } from '@island.is/application/ui-components'
 
 const ViewList = () => {
   const { formatMessage } = useLocale()
@@ -42,10 +41,6 @@ const ViewList = () => {
           </Box>
         ))}
       </Box>
-      <CopyLink
-        linkUrl={`${document.location.origin}/umsoknir/maela-med-lista/`}
-        buttonTitle={formatMessage(m.copyLink)}
-      />
       <Signees />
       <PaperUpload />
     </Stack>
