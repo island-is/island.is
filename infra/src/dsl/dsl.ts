@@ -182,15 +182,9 @@ export class ServiceBuilder<ServiceType> {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
+
     this.serviceDef.initContainers = {
-      envs: {
-        NPM_CONFIG_UPDATE_NOTIFIER: {
-          local: 'true',
-          dev: 'false',
-          staging: 'false',
-          prod: 'false',
-        },
-      },
+      envs: {},
       secrets: {},
       features: {},
       ...ic,

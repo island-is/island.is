@@ -1095,11 +1095,7 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
-  healthTooltip: {
-    id: 'service.portal:health-tooltip',
-    defaultMessage:
-      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
-  },
+
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
     defaultMessage:

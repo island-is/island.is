@@ -139,6 +139,7 @@ import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
+import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
 const environment = getConfig
 
@@ -311,6 +312,7 @@ const environment = getConfig
         DownloadServiceConfig,
         FeatureFlagConfig,
         FinanceClientConfig,
+        FinanceClientV2Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,

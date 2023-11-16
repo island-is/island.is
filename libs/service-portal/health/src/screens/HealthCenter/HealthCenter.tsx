@@ -78,7 +78,7 @@ const HealthCenter = () => {
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
         serviceProviderID={SJUKRATRYGGINGAR_ID}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
       {!loading && !healthCenterData?.current && (

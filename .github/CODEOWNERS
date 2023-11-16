@@ -82,6 +82,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
+/libs/application/templates/signature-collection                                                         @island-is/juni
+/libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -134,6 +136,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
+/libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                             @island-is/hugsmidjan
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
@@ -278,6 +281,10 @@ libs/clients/rsk/relationships/                                                 
 
 /libs/application/templates/driving-license-book-update-instructor/                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
+
+/libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
+/libs/clients/directorate-of-immigration/                                                                @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa

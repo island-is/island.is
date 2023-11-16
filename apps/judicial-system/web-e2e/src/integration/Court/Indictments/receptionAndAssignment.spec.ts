@@ -31,7 +31,7 @@ describe(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/:id`, () => {
       court: makeCourt(),
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/test`)
