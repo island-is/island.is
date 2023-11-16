@@ -49,7 +49,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
-/libs/api/domains/education/                                                                             @island-is/juni
+/libs/api/domains/education/                                                                             @island-is/juni @island-is/hugsmidjan
 /libs/application/templates/estate/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/estate                                  @island-is/juni
 /libs/application/templates/general-petition/                                                            @island-is/juni
