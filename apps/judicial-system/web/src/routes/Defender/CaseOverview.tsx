@@ -4,11 +4,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   completedCaseStates,
@@ -27,12 +23,9 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PdfButton,
-  RestrictionTags,
-  RulingDateLabel,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
