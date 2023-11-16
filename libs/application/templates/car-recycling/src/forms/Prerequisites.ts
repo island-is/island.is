@@ -64,12 +64,12 @@ export const Prerequisites: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'pre-carsList',
+      id: 'vehiclesOverviewSection',
       title: carRecyclingMessages.cars.list,
       children: [],
     }),
     buildSection({
-      id: 'confirm',
+      id: 'confirmation',
       title: carRecyclingMessages.review.confirmSectionTitle,
       children: [],
     }),

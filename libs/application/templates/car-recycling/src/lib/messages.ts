@@ -177,6 +177,34 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Vehicles selected for recycling',
     },
   }),
+  conclusionScreen: defineMessages({
+    title: {
+      id: 'rf.cr.application:conclusion.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Car recycling application recieved',
+    },
+    alertTitle: {
+      id: 'rf.cr.application:conclusion.screen.title',
+      defaultMessage:
+        'Ökutæki er tilbúið til afskráningar. Til að klára afskráningu þarf að fara með ökutækið til móttökuaðila. Greiðsla til eiganda kemur sjálfkrafa er bifreið hefur verið afhent til endurvinnslu.',
+      description: 'Vehicles ready for deregistration',
+    },
+    bulletList: {
+      id: `rf.cr.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Þú ferð með ökutæki til móttökuaðila.\n* Móttökuaðili tekur á móti ökutæki og afskráir.\n* Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.`,
+      description: 'BulletList',
+    },
+    nextStepsLabel: {
+      id: 'rf.cr.application:conclusionScreen.nextStepsLabel',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'What happens next?',
+    },
+    buttonsViewApplication: {
+      id: 'rf.cr.application:conclusionScreen.buttonsViewApplication',
+      defaultMessage: 'Skoða umsókn',
+      description: 'View application',
+    },
+  }),
 }
 
 export const statesMessages = defineMessages({
@@ -190,7 +218,8 @@ export const statesMessages = defineMessages({
 export const errorMessages = defineMessages({
   mustSelectACar: {
     id: 'rf.cr.application:validator.mustSelectACar',
-    defaultMessage: 'Vinsamlegast velur minnsta kosti eitt ökutæki til að halda áfram.',
+    defaultMessage:
+      'Vinsamlegast veldu að minnsta kosti eitt ökutæki til að halda áfram.',
     description: 'Please select a vehicle then continue',
   },
 })

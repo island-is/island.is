@@ -21,11 +21,14 @@ import { carRecyclingMessages, statesMessages } from './messages'
 import { ApiActions } from '../shared'
 import { CurrentVehiclesApi } from '../dataProviders'
 import { answerValidators } from './answerValidators'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
   IN_REVIEW = 'inReview',
+  SUBMITTED = 'submitted',
 }
 type ReferenceTemplateEvent =
   | { type: DefaultEvents.APPROVE }
@@ -53,8 +56,9 @@ const CarRecyclingTemplate: ApplicationTemplate<
   institution: carRecyclingMessages.institutionName,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
+  allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   allowMultipleApplicationsInDraft: true,
-  //requiredScopes: [ApiScope.recyclingFund],
+  requiredScopes: [ApiScope.recyclingFund],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -142,8 +146,11 @@ const CarRecyclingTemplate: ApplicationTemplate<
             },
           ],
         },
-        on: {},
+        on: {
+          SUBMIT: [{ target: States.SUBMITTED }],
+        },
       },
+      [States.SUBMITTED]: {},
     },
   },
   stateMachineOptions: {

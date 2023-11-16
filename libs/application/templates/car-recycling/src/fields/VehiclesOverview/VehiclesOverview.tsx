@@ -15,7 +15,11 @@ import { carRecyclingMessages } from '../../lib/messages'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { useFormContext } from 'react-hook-form'
 
-const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => {
+const VehiclesOverview: FC<FieldBaseProps> = ({
+  application,
+  field,
+  error,
+}) => {
   const { formatMessage } = useLocale()
 
   const [currentVehiclesList, setVehiclesList] = useState<VehicleMiniDto[]>([])
@@ -27,7 +31,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    const { selectedVehicles, allVehicles } = getApplicationAnswers(application.answers)
+    const { selectedVehicles, allVehicles } = getApplicationAnswers(
+      application.answers,
+    )
     const { vehiclesList } = getApplicationExternalData(
       application.externalData,
     )
@@ -37,8 +43,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
 
     if (allVehicles.length > 0) {
       setVehiclesList(allVehicles)
-    }
-    else {
+    } else {
       setVehiclesList(vehiclesList)
     }
   }, [])
@@ -77,7 +82,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
   }
 
   function onRecycle(vehicle: VehicleMiniDto): void {
-    setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle}])
+    setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle }])
 
     const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
 
@@ -85,6 +90,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
   }
 
   function onCancel(vehicle: VehicleMiniDto): void {
+    currentVehiclesList.unshift(vehicle)
+    setSelectedVehiclesList(currentVehiclesList)
+
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
@@ -94,7 +102,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
   }
 
   return (
-    <Box id='vehicles'>
+    <Box id="vehicles">
       <Box paddingTop={2}>
         <InputController
           id="vehiclesList.input"
@@ -111,14 +119,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
                 ?.toLowerCase()
                 .includes(e.target.value.toLowerCase()),
             )
-            /*
-            // Not show selected vehicles in filered list
-            const result = filteredList.filter(
-              (vehicle1) =>
-                !selectedVehiclesList.some(
-                  (vehicle2) => vehicle1.permno === vehicle2.permno,
-                ),
-            )*/
 
             // Not show selected vehicles in filered list
             const result = filterSelectedVehiclesFromList(
@@ -141,7 +141,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
       </Box>
       {selectedVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
-          <Box marginBottom={2} key={index} id='vehicles.selectedVehicles'>
+          <Box marginBottom={2} key={index} id="vehicles.selectedVehicles">
             <ActionCard
               key={vehicle.permno}
               cta={{
@@ -167,7 +167,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
 
       {currentVehiclesList.map((vehicle: VehicleMiniDto, index) => {
         return (
-          <Box marginBottom={2} key={index + '_currentbox'} id='vehicles.allVehicles'>
+          <Box
+            marginBottom={2}
+            key={index + '_currentbox'}
+            id="vehicles.allVehicles"
+          >
             <ActionCard
               key={vehicle.permno}
               tag={{
@@ -198,11 +202,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, field, error }) => 
           </Box>
         )
       })}
-      {
-        error && <Box marginBottom={2}>
-          <Text color='red600'>{error}</Text>
+      {error && (
+        <Box marginBottom={2}>
+          <Text color="red600">{error}</Text>
         </Box>
-      }
+      )}
     </Box>
   )
 }

@@ -28,7 +28,10 @@ export const CarRecyclingForm: Form = buildForm({
         buildCustomField(
           {
             id: 'vehicles',
-            childInputIds: ['vehicles.selectedVehicles', 'vehicles.allVehicles'],
+            childInputIds: [
+              'vehicles.selectedVehicles',
+              'vehicles.allVehicles',
+            ],
             title: carRecyclingMessages.cars.sectionTitle,
             component: 'VehiclesOverview',
           },
@@ -39,21 +42,21 @@ export const CarRecyclingForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmSection',
+      id: 'confirmation',
       title: carRecyclingMessages.review.confirmSectionTitle,
       children: [
         buildSubSection({
-          id: 'confirmSubSection',
+          id: '',
           title: '',
           children: [
             buildMultiField({
-              id: 'reviews',
+              id: 'confirmation',
               title: '',
               description: '',
               children: [
                 buildCustomField(
                   {
-                    id: 'confirmScreen',
+                    id: 'confirmationScreen',
                     title: carRecyclingMessages.review.confirmSectionTitle,
                     component: 'Review',
                   },
@@ -79,7 +82,7 @@ export const CarRecyclingForm: Form = buildForm({
         }),
         buildCustomField({
           id: 'thankYou',
-          title: 'oldAgePensionFormMessage.conclusionScreen.title',
+          title: carRecyclingMessages.conclusionScreen.title,
           component: 'Conclusion',
         }),
       ],
