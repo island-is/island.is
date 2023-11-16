@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { NationalRegistryModule as ADSNationalRegistryModule } from './modules/nationalRegistry'
 import { DiscountModule } from './modules/discount'
+import { NewDiscountModule } from './modules/newDiscount'
 import { FlightModule } from './modules/flight'
 import { UserModule } from './modules/user'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -17,6 +18,7 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
     }),
     AuthNestModule.register(environment.identityServerAuth),
     DiscountModule,
+    NewDiscountModule,
     FlightModule,
     UserModule,
     ADSNationalRegistryModule,
