@@ -20,7 +20,7 @@ const containerer = (() => {
     return 'docker'
   }
   console.error('Please install podman or docker')
-  return 'podman'
+  return 'docker'
   // process.exit(1)
 })()
 
