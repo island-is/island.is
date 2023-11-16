@@ -20,18 +20,21 @@ export interface BKApiConfig {
   fetchOptions?: Partial<EnhancedFetchOptions>
 }
 
-const configFactory = (idsClientConfig: any) => ({
+const configFactory = (
+  idsClientConfig?: ConfigType<typeof IdsClientConfig>,
+) => ({
   fetchApi: createEnhancedFetch({
-    name: 'recycling-fund',
+    name: 'clients-recycling-fund',
     organizationSlug: 'urvinnslusjodur',
-    autoAuth: {
-      mode: 'tokenExchange',
-      issuer: 'idsClientConfig.issuer',
-      clientId: 'idsClientConfig.clientId',
-      clientSecret: 'dsClientConfig.clientSecret',
-      scope: ['@island.is/applications/urvinnslusjodur'],
-      //   scope: ['@urvinnslusjodur.is/skilavottord'],
-    },
+    autoAuth: idsClientConfig?.isConfigured
+      ? {
+          mode: 'tokenExchange',
+          issuer: idsClientConfig.issuer,
+          clientId: idsClientConfig.clientId,
+          clientSecret: idsClientConfig.clientSecret,
+          scope: ['@urvinnslusjodur.is/skilavottord'],
+        }
+      : undefined,
     logErrorResponseBody: true,
   }),
   basePath: 'http://localhost:3339',
