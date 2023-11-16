@@ -42,8 +42,7 @@ parse_cli() {
     else
       value=true
     fi
-    echo "DEBUG: arg=$arg opt=$opt value=$value negative=$negative"
-
+    # echo "DEBUG: arg=$arg opt=$opt value=$value negative=$negative"
     case $arg in
     -f | --remove-containers | --force)
       REMOVE_CONTAINERS_ON_START="$value"
@@ -71,6 +70,11 @@ parse_cli() {
     esac
     shift
   done
+  # echo "DEBUG: PROXIES=${PROXIES[*]}"
+  # echo "DEBUG: ARGS=${ARGS[*]}"
+  # echo "DEBUG: REMOVE_CONTAINERS_ON_START=${REMOVE_CONTAINERS_ON_START}"
+  # echo "DEBUG: REMOVE_CONTAINERS_ON_FAIL=${REMOVE_CONTAINERS_ON_FAIL}"
+  # echo "DEBUG: REMOVE_CONTAINERS_FORCE=${REMOVE_CONTAINERS_FORCE}"
   if [ ${#PROXIES} -eq 0 ]; then return; fi
   local unknown_proxies
   unknown_proxies=()
