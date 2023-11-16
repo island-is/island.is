@@ -236,7 +236,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                         @island-is/deloitte
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
-/libs/application/templates/old-age-pension/                                                             @island-is/deloitte
+/libs/application/templates/social-insurance-administration/old-age-pension/                             @island-is/deloitte
 /libs/clients/social-insurance-administration/                                                           @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
