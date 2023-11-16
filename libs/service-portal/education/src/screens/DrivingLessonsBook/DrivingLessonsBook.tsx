@@ -205,7 +205,7 @@ const DrivingLessonsBook = () => {
           <EmptyState />
           <Box display="flex" alignItems="center" justifyContent="center">
             <LinkResolver href={formatMessage(urls.licenseApplication)}>
-              <Button type="button">
+              <Button as="span">
                 {formatMessage(messages.signupToDrivingSchool)}
               </Button>
             </LinkResolver>
