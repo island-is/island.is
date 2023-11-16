@@ -8,7 +8,7 @@ import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import { onDirectorateOfImmigrationChatLoad } from './directorateOfImmigrationChatUtils'
+import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -90,10 +90,17 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           instance.updateLanguagePack(languagePack)
         }
         if (
+          // Askur - Útlendingastofnun
           props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54' ||
           props.integrationID === '53c6e788-8178-448d-94c3-f5d71ec3b80e'
         ) {
-          onDirectorateOfImmigrationChatLoad(instance, namespace, activeLocale)
+          onAuthenticatedWatsonAssistantChatLoad(
+            instance,
+            namespace,
+            activeLocale,
+
+            'directorateOfImmigration',
+          )
         }
 
         if (onLoad) {
