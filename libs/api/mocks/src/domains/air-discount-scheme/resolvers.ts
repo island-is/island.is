@@ -9,6 +9,9 @@ export const resolvers: Resolvers = {
   },
 
   Query: {
+    airDiscountSchemeNewDiscounts: () => {
+      return store.airNewDiscounts
+    },
     airDiscountSchemeDiscounts: () => {
       return store.airDiscounts
     },

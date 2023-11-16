@@ -1,3 +1,47 @@
+export const getAirNewDiscountsData = [
+  {
+    nationalId: '0101013019',
+    active: true,
+    usedAt: '12-12-12',
+    discountedFlights: [
+      {
+        discountId: '1111',
+        isConnectionFlight: true,
+        usedAt: '12-12-12',
+        flightLegs: [
+          {
+            origin: 'AEY',
+            destination: 'REK',
+          },
+        ],
+        discount: {
+          nationalId: '0101013019',
+          code: 'code',
+          validUntil: '12-12-12',
+          usedAt: '12-12-12',
+          active: true,
+          isConnectionCode: true,
+          explicit: false,
+          comment: '',
+          employeeId: '123',
+        },
+      },
+    ],
+    user: {
+      name: 'Foreldri Reykjavík',
+      fund: {
+        credit: 10,
+        total: 20,
+        used: 10,
+      },
+      meetsADSRequirements: true,
+      mobile: '123',
+      nationalId: '123',
+      role: '123',
+    },
+  },
+]
+
 export const getAirDiscountsData = [
   {
     connectionDiscountCodes: [
