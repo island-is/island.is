@@ -9,7 +9,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -508,7 +508,7 @@ export const assets = buildSection({
     }),
     buildSubSection({
       id: 'assetOverview',
-      title: m.overview,
+      title: m.assetOverview,
       children: [
         buildMultiField({
           id: 'assetOverview',
