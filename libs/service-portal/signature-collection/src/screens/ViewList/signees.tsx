@@ -7,7 +7,7 @@ import {
   Button,
   Icon,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
@@ -15,8 +15,9 @@ import { useState } from 'react'
 import * as styles from '../styles.css'
 
 const Signees = () => {
-  const [searchTerm, setSearchTerm] = useState('')
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const [searchTerm, setSearchTerm] = useState('')
 
   return (
     <Box marginTop={5}>

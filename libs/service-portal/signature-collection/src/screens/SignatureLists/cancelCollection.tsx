@@ -1,12 +1,13 @@
 import { Box, Button, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
 
 const CancelCollection = () => {
-  const [modalIsOpen, setModalIsOpen] = useState(false)
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const [modalIsOpen, setModalIsOpen] = useState(false)
 
   return (
     <Box marginTop={10} display={'flex'} justifyContent={'center'}>

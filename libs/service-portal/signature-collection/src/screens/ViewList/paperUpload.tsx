@@ -6,13 +6,14 @@ import {
   Text,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useState } from 'react'
 
 const PaperUpload = () => {
-  const [withPaperUpload, setWithPaperUpload] = useState(false)
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const [withPaperUpload, setWithPaperUpload] = useState(false)
 
   return (
     <Box marginTop={5}>

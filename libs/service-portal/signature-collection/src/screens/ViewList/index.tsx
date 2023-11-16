@@ -1,11 +1,12 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import Signees from './signees'
 import PaperUpload from './paperUpload'
 
 const ViewList = () => {
+  useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
   return (
