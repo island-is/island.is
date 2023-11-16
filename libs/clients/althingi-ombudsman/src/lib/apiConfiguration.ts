@@ -25,7 +25,7 @@ export const ApiConfiguration = {
               issuer: idsClientConfig.issuer,
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,
-              scope: config.scope,
+              scope: [],
             }
           : undefined,
       }),
