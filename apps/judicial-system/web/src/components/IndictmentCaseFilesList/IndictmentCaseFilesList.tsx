@@ -7,7 +7,7 @@ import {
   CaseFile,
   CaseFileCategory,
   completedCaseStates,
-  isExtendedCourtRole,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import {
   FileNotFoundModal,
@@ -190,7 +190,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
           ))}
         </Box>
 
-        {(user && isExtendedCourtRole(user.role)) ||
+        {isDistrictCourtUser(user) ||
         completedCaseStates.includes(workingCase.state) ? (
           <>
             {courtRecords && courtRecords.length > 0 && (
