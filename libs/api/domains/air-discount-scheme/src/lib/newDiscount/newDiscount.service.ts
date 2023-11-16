@@ -31,7 +31,7 @@ export class NewDiscountService {
   }
 
   discountIsValid(discount: TDiscount): boolean {
-    const TWO_HOURS = "7200"
+    const TWO_HOURS = '7200'
     if (JSON.stringify(discount.expiresIn) < TWO_HOURS) {
       return false
     }
@@ -82,7 +82,6 @@ export class NewDiscountService {
     }
   }
 
-
   async getCurrentDiscounts(auth: User): Promise<DiscountModel[]> {
     const relations: TUser[] = await this.getUserRelations(auth)
     const discounts: DiscountModel[] = []
@@ -100,19 +99,6 @@ export class NewDiscountService {
             name: relation.firstName,
             fund: discount.user.fund,
           },
-        })
-        continue
-      }
-
-      const createdDiscount = await this.createDiscount(
-        auth,
-        relation.nationalId,
-      )
-
-      if (createdDiscount) {
-        discounts.push({
-          ...createdDiscount,
-          user: { ...relation, name: relation.firstName },
         })
       }
     }
@@ -137,10 +123,18 @@ export class NewDiscountService {
   private async createDiscount(
     auth: User,
     nationalId: string,
+    origin: string,
+    destination: string,
+    isRoundTrip: boolean,
   ): Promise<TNewDiscount | null> {
     const createDiscountResponse = await this.getADSWithAuth(auth)
       .privateNewDiscountControllerCreateDiscountCode({
         nationalId,
+        body: {
+          origin,
+          destination,
+          isRoundTrip,
+        },
       })
       .catch((e) => {
         this.handle4xx(e)

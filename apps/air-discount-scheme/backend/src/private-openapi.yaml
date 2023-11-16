@@ -392,6 +392,12 @@ paths:
           in: path
           schema:
             type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNewDiscountCodeBody'
       responses:
         '200':
           description: ''
@@ -999,3 +1005,6 @@ components:
         - nationalId
         - active
         - discountedFlights
+    CreateNewDiscountCodeBody:
+      type: object
+      properties: {}
