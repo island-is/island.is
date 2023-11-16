@@ -4,6 +4,13 @@ export type {
   ExplicitCode,
 } from './lib/discount'
 export type {
+  NewDiscount,
+  AirDiscount,
+  DiscountedFlight,
+  DiscountedFlightLeg,
+} from './lib/newDiscount'
+
+export type {
   FlightLeg,
   UserInfo,
   Flight,
