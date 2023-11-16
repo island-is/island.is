@@ -36,7 +36,7 @@ export const GrindavikProjectHeader = ({
     return JSON.parse(projectPage.namespace?.fields || '{}')
   }, [projectPage])
 
-  const n = useNamespace(namespace)
+  const n = useNamespace(namespace ?? {})
 
   return (
     <Box className={styles.headerWrapper}>
