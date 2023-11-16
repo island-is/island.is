@@ -497,6 +497,25 @@ const OldAgePensionTemplate: ApplicationTemplate<
       })),
       moveAdditionalDocumentRequired: assign((context) => {
         const { application } = context
+        const { answers } = application
+        const { additionalAttachmentsRequired, additionalAttachments } =
+          getApplicationAnswers(answers)
+
+        const mergedAdditionalDocumentRequired = [
+          ...additionalAttachments,
+          ...additionalAttachmentsRequired,
+        ]
+
+        set(
+          answers,
+          'fileUploadAdditionalFiles.additionalDocuments',
+          mergedAdditionalDocumentRequired,
+        )
+        unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
+
+        return context
+      }),
+        const { application } = context
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(application.answers)
 
