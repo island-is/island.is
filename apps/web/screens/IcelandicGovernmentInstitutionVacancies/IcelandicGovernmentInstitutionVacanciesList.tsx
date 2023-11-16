@@ -371,13 +371,15 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         )}
       />
       <GridContainer>
-        <Box className="rs_read">
+        <Box>
           <GridRow marginBottom={[5, 5, 5, 0]}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-              <Text marginTop={2} variant="h1" as="h1">
-                {mainTitle}
-              </Text>
+              <Box className="rs_read" marginTop={2}>
+                <Text variant="h1" as="h1">
+                  {mainTitle}
+                </Text>
+              </Box>
               <Webreader
                 marginBottom={[0, 0, 0, 4]}
                 readId={undefined}
@@ -497,7 +499,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
         className="rs_read"
       >
         <GridContainer>
-          <Box marginBottom={6}>
+          <Box className="rs_read" marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
               {filteredVacancies.length % 10 === 1 &&
@@ -546,7 +548,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                       padding={[3, 3, 'containerGutter']}
                       overflow="hidden"
                     >
-                      <Box width="full">
+                      <Box className="rs_read" width="full">
                         <GridRow
                           rowGap={[2, 2, 2, 5]}
                           direction={['column', 'column', 'column', 'row']}
