@@ -181,11 +181,11 @@ const VehiclesOverview = () => {
               rel="noopener noreferrer"
             >
               <Button
+                as="span"
                 colorScheme="default"
                 icon="open"
                 iconType="outline"
                 size="default"
-                type="button"
                 variant="utility"
               >
                 {formatMessage(messages.changeOfOwnership)}
@@ -199,6 +199,7 @@ const VehiclesOverview = () => {
               rel="noopener noreferrer"
             >
               <Button
+                as="span"
                 variant="utility"
                 size="small"
                 icon="reader"
@@ -215,6 +216,7 @@ const VehiclesOverview = () => {
               rel="noopener noreferrer"
             >
               <Button
+                as="span"
                 variant="utility"
                 size="small"
                 icon="eyeOff"

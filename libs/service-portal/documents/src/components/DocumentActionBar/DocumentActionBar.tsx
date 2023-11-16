@@ -133,6 +133,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
                 aria-label={formatMessage(m.getDocument)}
               >
                 <Button
+                  as="span"
                   circle
                   icon="download"
                   iconType="outline"

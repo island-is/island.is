@@ -127,11 +127,11 @@ export const AssetsOverview = () => {
                   rel="noreferrer"
                 >
                   <Button
+                    as="span"
                     colorScheme="default"
                     icon="document"
                     iconType="filled"
                     size="default"
-                    type="button"
                     variant="utility"
                   >
                     {formatMessage(m.mortageCertificate)}
