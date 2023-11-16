@@ -8,7 +8,7 @@ export interface GetStatisticsQuery {
 
 export interface SourceValue {
   date: Date
-  value: number
+  value: number | null
 }
 
 export interface GetSingleStatisticQuery {

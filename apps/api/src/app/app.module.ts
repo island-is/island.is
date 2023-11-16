@@ -139,6 +139,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { StatisticsClientConfig } from '@island.is/clients/statistics'
 
 const environment = getConfig
 
@@ -347,6 +348,7 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        StatisticsClientConfig,
       ],
     }),
   ],

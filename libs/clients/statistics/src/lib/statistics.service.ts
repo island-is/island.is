@@ -1,43 +1,48 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache } from 'cache-manager'
+import { Cache, caching } from 'cache-manager'
 
 import type { ConfigType } from '@island.is/nest/config'
+import {
+  createEnhancedFetch,
+  EnhancedFetchAPI,
+} from '@island.is/clients/middlewares'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,
   getStatisticsFromSource,
 } from './statistics.utils'
-import { GetStatisticsQuery, StatisticSourceData } from './types'
+import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
-
-const CACHE_ID = 'getStatistics'
+import { FetchWithCache } from './fetchConfig'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class StatisticsClientService {
   constructor(
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
     @Inject(StatisticsClientConfig.KEY)
     private config: ConfigType<typeof StatisticsClientConfig>,
+    @Inject(FetchWithCache)
+    private fetch: EnhancedFetchAPI,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   async getMultipleStatistics(query: GetStatisticsQuery) {
-    let sourceData = await (this.cacheManager.get(
-      CACHE_ID,
-    ) as Promise<StatisticSourceData>)
-
-    if (!sourceData) {
-      sourceData = await getStatisticsFromSource(
+    try {
+      const sourceData = await getStatisticsFromSource(
+        this.fetch,
         this.config?.sourceDataPaths?.split(','),
       )
-      await this.cacheManager.set(CACHE_ID, sourceData)
-    }
 
-    const statistics = await _getMultipleStatistics(query, sourceData)
+      const statistics = await _getMultipleStatistics(query, sourceData)
 
-    return {
-      statistics,
+      return {
+        statistics,
+      }
+    } catch (e) {
+      this.logger.error(e)
+      throw new Error('Could not get multiple statistics')
     }
   }
 }

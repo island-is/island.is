@@ -24,49 +24,50 @@ export const AccessibilityTableRenderer = ({
   const xAxisValueType = chart.xAxisValueType ?? DEFAULT_XAXIS_KEY
 
   return (
-    <div className="visually-hidden" id={id}>
-      <table summary={chart.alternativeDescription}>
-        <caption>{chart.title}</caption>
-        {tableSettings !== null && (
-          <>
-            <thead>
-              <tr>
-                {tableSettings.tableHeadWithAxis.map((th) => (
-                  <th scope="col" key={th}>
-                    {componentsWithAddedProps.find(
-                      (c) => c.sourceDataKey === th,
-                    )?.label ?? th}
+    <table className="visually-hidden" id={id}>
+      <caption>
+        {chart.title}
+        <br />
+        {chart.alternativeDescription}
+      </caption>
+      {tableSettings !== null && (
+        <>
+          <thead>
+            <tr>
+              {tableSettings.tableHeadWithAxis.map((th) => (
+                <th scope="col" key={th}>
+                  {componentsWithAddedProps.find((c) => c.sourceDataKey === th)
+                    ?.label ?? th}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row) => {
+              // eslint-disable-next-line
+              // @ts-ignore
+              const xAxisValue = row[xAxisKey]
+
+              return (
+                <tr>
+                  <th scope="row">
+                    {xAxisValueType === 'date'
+                      ? formatDate(xAxisValue)
+                      : xAxisValue}
                   </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row) => {
-                // eslint-disable-next-line
-                // @ts-ignore
-                const xAxisValue = row[xAxisKey]
+                  {tableSettings.tableHead.map((key) => {
+                    // eslint-disable-next-line
+                    // @ts-ignore
+                    const rowValue = row[key]
 
-                return (
-                  <tr>
-                    <th scope="row">
-                      {xAxisValueType === 'date'
-                        ? formatDate(xAxisValue)
-                        : xAxisValue}
-                    </th>
-                    {tableSettings.tableHead.map((key) => {
-                      // eslint-disable-next-line
-                      // @ts-ignore
-                      const rowValue = row[key]
-
-                      return <td>{rowValue}</td>
-                    })}
-                  </tr>
-                )
-              })}
-            </tbody>
-          </>
-        )}
-      </table>
-    </div>
+                    return <td>{rowValue}</td>
+                  })}
+                </tr>
+              )
+            })}
+          </tbody>
+        </>
+      )}
+    </table>
   )
 }

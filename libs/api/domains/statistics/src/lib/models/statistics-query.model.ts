@@ -7,7 +7,7 @@ class StatisticKeyValue {
   key!: string
 
   @Field(() => Number, { nullable: true })
-  value?: number
+  value!: number | null
 }
 
 @ObjectType('StatisticsKeyValuesOnDate')

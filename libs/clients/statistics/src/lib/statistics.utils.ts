@@ -1,4 +1,3 @@
-import axios, { AxiosResponse } from 'axios'
 import get from 'lodash/get'
 import dropWhile from 'lodash/dropWhile'
 import dropRightWhile from 'lodash/dropRightWhile'
@@ -11,6 +10,7 @@ import {
   StatisticSourceData,
 } from './types'
 import { MONTH_NAMES } from './statistics.constants'
+import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 
 const DEFAULT_NUMBER_OF_DATA_POINTS = 6
 
@@ -59,8 +59,7 @@ const processDataFromSource = (data: string) => {
   const headers = lines[0].split(',')
   const dataLines = lines.slice(1).map((line) => line.split(','))
 
-  const dataByDate: Record<string, any[]> = {}
-  const dataByKey: Record<string, any> = {}
+  const result: StatisticSourceData['data'] = {}
 
   // Start at i = 3 to start at dates
   for (let i = 3; i < headers.length; i += 1) {
@@ -72,10 +71,6 @@ const processDataFromSource = (data: string) => {
       continue
     }
 
-    const currentDateString = asDate.toISOString()
-
-    dataByDate[currentDateString] = []
-
     for (const lineColumns of dataLines) {
       const key = lineColumns[0]
 
@@ -83,8 +78,8 @@ const processDataFromSource = (data: string) => {
         continue
       }
 
-      if (!dataByKey[key]) {
-        dataByKey[key] = []
+      if (!result[key]) {
+        result[key] = []
       }
 
       const isPercentage = lineColumns[i].endsWith('%')
@@ -106,56 +101,69 @@ const processDataFromSource = (data: string) => {
             : valueAsNumber
           : null
 
-      dataByKey[key].push({
-        date: currentDateString,
+      result[key].push({
+        date: asDate,
         value,
       })
     }
   }
 
   return {
-    data: dataByKey,
+    data: result,
   }
 }
 
-type ResponseData = Record<string, SourceValue[]>
+const handleResponse = (response: Response) => {
+  if (!response.ok) {
+    throw new Error('Could not fetch statistic source data')
+  }
+  return response.text()
+}
+
+const processResponse = (result: StatisticSourceData, response: string) => {
+  const processed = processDataFromSource(response)
+  return {
+    ...result,
+    data: {
+      ...result.data,
+      ...processed.data,
+    },
+  }
+}
 
 let fetchStatisticsPromise: Promise<StatisticSourceData> | undefined
 
-export const getStatisticsFromSource = async (
+export const getStatisticsFromSource = (
+  fetchClient: EnhancedFetchAPI,
   dataSources: string[],
 ): Promise<StatisticSourceData> => {
   if (fetchStatisticsPromise) {
-    return await fetchStatisticsPromise
+    return fetchStatisticsPromise
   }
 
-  let _resolveReference
-  fetchStatisticsPromise = new Promise((resolve) => {
-    _resolveReference = resolve
+  // Let subsequent requests that arrive while the request
+  // is in progress reuse the same promise
+  fetchStatisticsPromise = new Promise((resolve, reject) => {
+    Promise.all<Promise<string>[]>(
+      dataSources.map((source) => fetchClient(source).then(handleResponse)),
+    )
+      .then((responses) =>
+        resolve(
+          responses.reduce(
+            (result, response) => processResponse(result, response),
+            {} as StatisticSourceData,
+          ),
+        ),
+      )
+      .catch((e) => reject(e))
+      .finally(() => {
+        // Reset the promise for when the next request
+        // comes in after the cache expires
+        fetchStatisticsPromise = undefined
+      })
   })
 
-  const responses = await Promise.all<AxiosResponse<ResponseData>>(
-    dataSources.map((source) => axios.get(source)),
-  )
-
-  const result = responses.reduce((result: any, response: any) => {
-    const processed = processDataFromSource(response.data)
-    return {
-      ...result,
-      data: {
-        ...result.data,
-        ...processed.data,
-      },
-    }
-  }, {} as StatisticSourceData)
-
-  _resolveReference!(result)
-
-  setTimeout(() => {
-    fetchStatisticsPromise = undefined
-  }, 1000)
-
-  return result
+  return fetchStatisticsPromise
 }
 
 const _valueIsNotDefined = (item: SourceValue) => {
@@ -168,8 +176,6 @@ export const getStatistics = ({
   dateTo,
   sourceData,
 }: GetSingleStatisticQuery): SourceValue[] => {
-  // const statisticsSource = await getStatisticsFromSource()
-
   const allSourceDataForKey = get(sourceData.data, sourceDataKey) as
     | SourceValue[]
     | undefined
@@ -237,7 +243,7 @@ export const getMultipleStatistics = async (
       result[dateAsString][sourceDataKey] = dataPoint.value
     }
     return result
-  }, {} as Record<string, Record<string, number>>)
+  }, {} as Record<string, Record<string, SourceValue['value']>>)
 
   const dates = Object.keys(byDate)
   dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
@@ -250,7 +256,7 @@ export const getMultipleStatistics = async (
     date: new Date(d),
   }))
 
-  const dropIncompleteEntries = (item: any) =>
+  const dropIncompleteEntries = (item: typeof result[number]) =>
     item.statisticsForDate.length !== query.sourceDataKeys.length
 
   // Trim from both ends results that do not have data for all keys
