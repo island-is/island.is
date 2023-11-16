@@ -39,7 +39,7 @@ import {
   useGetDebtStatusQuery,
   useGetFinanceStatusQuery,
 } from './FinanceStatus.generated'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')

@@ -2,7 +2,7 @@ import { formSubmit, amountFormat } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 interface Props {
   paymentSchedule: PaymentSchedule

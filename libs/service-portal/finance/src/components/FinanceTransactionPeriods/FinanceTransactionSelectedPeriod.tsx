@@ -17,7 +17,7 @@ import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransac
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
 import format from 'date-fns/format'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 export default function FinanceTransactionSelectedPeriod({
   period,

@@ -22,7 +22,7 @@ import {
   SelectedPeriod,
 } from './FinanceTransactionPeriodsTypes'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 interface Props {
   typeId: string

@@ -27,7 +27,7 @@ import {
   ChargeTypesDetailsByYear,
 } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()

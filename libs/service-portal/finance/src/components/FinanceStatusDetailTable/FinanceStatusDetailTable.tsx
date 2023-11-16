@@ -23,7 +23,7 @@ import {
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
 import * as styles from './FinanceStatusDetailTable.css'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 interface Props {
   organization: FinanceStatusOrganizationType

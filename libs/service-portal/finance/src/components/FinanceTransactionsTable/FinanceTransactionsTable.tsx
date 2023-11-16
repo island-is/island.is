@@ -8,7 +8,7 @@ import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 const ITEMS_ON_PAGE = 20
 

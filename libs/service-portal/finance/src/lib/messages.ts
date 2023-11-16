@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const messages = defineMessages({
+export const m = defineMessages({
   scheduleApplication: {
     id: 'sp.finance-schedule:finance-schedule-application',
     defaultMessage: 'Gera greiðsluáætlun',

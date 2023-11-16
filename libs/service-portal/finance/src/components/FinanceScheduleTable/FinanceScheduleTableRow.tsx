@@ -5,7 +5,7 @@ import {
 } from '@island.is/service-portal/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
 import { DetailedSchedule } from '@island.is/api/schema'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useGetPaymentScheduleByIdLazyQuery } from './FinanceScheduleTable.generated'

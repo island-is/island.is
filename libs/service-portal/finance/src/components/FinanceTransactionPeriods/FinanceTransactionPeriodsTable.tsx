@@ -5,7 +5,7 @@ import sortBy from 'lodash/sortBy'
 import { ExpandHeader } from '@island.is/service-portal/core'
 import FinanceTransactionPeriodsTableRow from './FinanceTransactionPeriodsTableRow'
 import { ChargeTypes } from './FinanceTransactionPeriodsTypes'
-import { messages } from '../../lib/messages'
+import { m as messages } from '../../lib/messages'
 
 interface Props {
   records: ChargeTypes
