@@ -115,6 +115,20 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
               </Box>
             )}
+          {workingCase.appealRulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(strings.rulingModifiedTitle)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.appealRulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <InfoCard
               data={[

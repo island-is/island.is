@@ -628,3 +628,13 @@ export const ShipRegistry = new XroadConf({
     },
   },
 })
+
+export const DirectorateOfImmigration = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: {
+      dev: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      staging: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      prod: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1',
+    },
+  },
+})

@@ -9,8 +9,8 @@ export class ChargeTypesByYearData {
   name!: string
 }
 
-@ObjectType('FinanceChargeTypesByYearModel')
-export class ChargeTypesByYearModel {
+@ObjectType('FinanceChargeTypesByYear')
+export class ChargeTypesByYear {
   @Field(() => [ChargeTypesByYearData], { nullable: true })
   chargeType?: ChargeTypesByYearData[]
 }

@@ -365,6 +365,9 @@ export class Case implements TCase {
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
 
+  @Field({ nullable: true })
+  readonly appealRulingModifiedHistory?: string
+
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
 }

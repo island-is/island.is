@@ -1,3 +1,6 @@
+import { useMemo } from 'react'
+import { BLOCKS } from '@contentful/rich-text-types'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Accordion,
@@ -6,18 +9,62 @@ import {
   Divider,
   LinkV2,
   Stack,
+  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
+import { AllSlicesFragment, OneColumnText } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { createNavigation } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
 
+import { scrollTo } from '../../hooks/useScrollSpy'
 import { ManualWrapper } from './components/ManualWrapper'
 import { generateOgTitle, getProps, ManualScreen } from './utils'
 import * as styles from './Manual.css'
+
+type ChapterItem = OneColumnText & {
+  typename: 'OneColumnText'
+  content: AllSlicesFragment[]
+}
+
+const createChapterItemNavigation = (chapterItem: ChapterItem) => {
+  const navigation = createNavigation(chapterItem?.content ?? [], {
+    htmlTags: [BLOCKS.HEADING_3],
+  })
+
+  // we'll hide the chapter item navigation if it's only one item
+  return navigation.length > 1 ? navigation : []
+}
+
+const ChapterItemTableOfContents = ({
+  chapterItem,
+  title,
+}: {
+  chapterItem: ChapterItem
+  title: string
+}) => {
+  const navigation = useMemo(
+    () => createChapterItemNavigation(chapterItem),
+    [chapterItem],
+  )
+
+  if (navigation.length === 0) return null
+
+  return (
+    <TableOfContents
+      tableOfContentsTitle={title}
+      headings={navigation.map(({ id, text }) => ({
+        headingTitle: text,
+        headingId: id,
+      }))}
+      onClick={(id) => scrollTo(id, { smooth: true })}
+    />
+  )
+}
 
 const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   const { linkResolver } = useLinkResolver()
@@ -26,6 +73,11 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
 
   useLocalLinkTypeResolver()
   useContentfulId(manual?.id, manualChapter?.id)
+
+  const tableOfContentsTitle = n(
+    'manualChapterItemTableOfContentsTitle',
+    activeLocale === 'is' ? 'Efni kaflans' : 'Chapter content',
+  ) as string
 
   return (
     <ManualWrapper
@@ -48,7 +100,7 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
           </LinkV2>
           <Divider />
           <Box paddingTop={2}>
-            <Text variant="h2" as="h2">
+            <Text variant="h2" as="h1">
               {manualChapter.title}
             </Text>
             {webRichText((manualChapter?.description ?? []) as SliceType[])}
@@ -60,7 +112,18 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
         {manualChapter && (
           <Accordion>
             {manualChapter.chapterItems.map((item) => (
-              <AccordionItem key={item.id} id={item.id} label={item.title}>
+              <AccordionItem
+                labelUse="h2"
+                key={item.id}
+                id={item.id}
+                label={item.title}
+              >
+                <Box paddingTop={2}>
+                  <ChapterItemTableOfContents
+                    chapterItem={item as ChapterItem}
+                    title={tableOfContentsTitle}
+                  />
+                </Box>
                 {webRichText(
                   item.content as SliceType[],
                   undefined,

@@ -1,5 +1,3 @@
-import React, { FC } from 'react'
-
 import { amountFormat, ExpandRow } from '@island.is/service-portal/core'
 
 import FinanceStatusDetailTable from '../../components/FinanceStatusDetailTable/FinanceStatusDetailTable'
@@ -16,11 +14,11 @@ interface Props {
   downloadURL: string
 }
 
-const FinanceStatusTableRow: FC<React.PropsWithChildren<Props>> = ({
+const FinanceStatusTableRow = ({
   organization,
   chargeType,
   downloadURL,
-}) => {
+}: Props) => {
   const [getDetailsQuery, { loading, error, data }] =
     useGetFinanceStatusDetailsLazyQuery()
   const financeStatusDetails: FinanceStatusDetailsType =

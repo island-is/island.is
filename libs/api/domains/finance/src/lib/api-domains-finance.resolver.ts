@@ -32,11 +32,11 @@ import {
 } from './models/paymentSchedule.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
-import { AssessmentYearsModel } from './models/assessmentYears.model'
-import { ChargeTypesByYearModel } from './models/chargeTypesByYear.model'
-import { FinanceChargeTypeDetailsModel } from './models/chargeTypeDetails.model'
-import { ChargeTypePeriodSubjectModel } from './models/chargeTypePeriodSubject.model'
-import { ChargeItemSubjectsByYearModel } from './models/chargeItemSubjectsByYear.model'
+import { AssessmentYears } from './models/assessmentYears.model'
+import { ChargeTypesByYear } from './models/chargeTypesByYear.model'
+import { FinanceChargeTypeDetails } from './models/chargeTypeDetails.model'
+import { ChargeTypePeriodSubject } from './models/chargeTypePeriodSubject.model'
+import { ChargeItemSubjectsByYear } from './models/chargeItemSubjectsByYear.model'
 import { GetChargeTypesByYearInput } from './dto/getChargeTypesByYear.input'
 import { GetChargeTypesDetailsByYearInput } from './dto/getChargeTypesDetailsByYear.input'
 import { GetChargeItemSubjectsByYearInput } from './dto/getChargeItemSubjectsByYear.input'
@@ -230,67 +230,60 @@ export class FinanceResolver {
     )
   }
 
-  @Query(() => AssessmentYearsModel)
+  @Query(() => AssessmentYears)
   @Audit()
   async getAssessmentYears(@CurrentUser() user: User) {
-    return await this.financeServiceV2.getAssessmentYears(user.nationalId, user)
+    return this.financeServiceV2.getAssessmentYears(user)
   }
 
-  @Query(() => ChargeTypesByYearModel, { nullable: true })
+  @Query(() => ChargeTypesByYear, { nullable: true })
   @Audit()
   async getChargeTypesByYear(
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypesByYearInput,
   ) {
-    return await this.financeServiceV2.getChargeTypesByYear(
-      user.nationalId,
-      input.year,
-      user,
-    )
+    return this.financeServiceV2.getChargeTypesByYear(user, input.year)
   }
 
-  @Query(() => FinanceChargeTypeDetailsModel)
+  @Query(() => FinanceChargeTypeDetails)
   @Audit()
   async getChargeTypesDetailsByYear(
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypesDetailsByYearInput,
   ) {
-    return await this.financeServiceV2.getChargeTypesDetailsByYear(
-      user.nationalId,
+    return this.financeServiceV2.getChargeTypesDetailsByYear(
+      user,
       input.year,
       input.typeId,
-      user,
     )
   }
 
-  @Query(() => ChargeItemSubjectsByYearModel)
+  @Query(() => ChargeItemSubjectsByYear)
   @Audit()
   async getChargeItemSubjectsByYear(
     @CurrentUser() user: User,
     @Args('input') input: GetChargeItemSubjectsByYearInput,
   ) {
-    return await this.financeServiceV2.getChargeItemSubjectsByYear(
-      user.nationalId,
+    return this.financeServiceV2.getChargeItemSubjectsByYear(
+      user,
       input.year,
       input.typeId,
       input.nextKey,
-      user,
     )
   }
 
-  @Query(() => ChargeTypePeriodSubjectModel)
+  @Query(() => ChargeTypePeriodSubject)
   @Audit()
   async getChargeTypePeriodSubject(
     @CurrentUser() user: User,
     @Args('input') input: GetChargeTypePeriodSubjectInput,
   ) {
-    return await this.financeServiceV2.getChargeTypePeriodSubject(
-      user.nationalId,
+    return this.financeServiceV2.getChargeTypePeriodSubject(
+      user,
       input.year,
       input.typeId,
       input.subject,
       input.period,
-      user,
     )
   }
 }

@@ -18,8 +18,8 @@ export class FinanceChargeTypeDetailsData {
   lastMovementDate!: string
 }
 
-@ObjectType('FinanceChargeTypeDetailsModel')
-export class FinanceChargeTypeDetailsModel {
+@ObjectType('FinanceChargeTypeDetails')
+export class FinanceChargeTypeDetails {
   @Field(() => [FinanceChargeTypeDetailsData])
   chargeType!: FinanceChargeTypeDetailsData[]
 }
