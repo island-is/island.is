@@ -147,22 +147,22 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
 
           <Box display="flex" columnGap={2} alignItems="center">
-            {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` ||
-              (state === `${States.TRYGGINGASTOFNUN_ABORT}` && (
-                <Button
-                  colorScheme="default"
-                  iconType="filled"
-                  size="small"
-                  type="button"
-                  variant="text"
-                  icon="pencil"
-                  loading={loadingSubmit}
-                  disabled={loadingSubmit}
-                  onClick={() => handleSubmit('EDIT')}
-                >
-                  {formatMessage(oldAgePensionFormMessage.review.buttonsEdit)}
-                </Button>
-              ))}
+            {(state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` ||
+              state === `${States.TRYGGINGASTOFNUN_ABORT}`) && (
+              <Button
+                colorScheme="default"
+                iconType="filled"
+                size="small"
+                type="button"
+                variant="text"
+                icon="pencil"
+                loading={loadingSubmit}
+                disabled={loadingSubmit}
+                onClick={() => handleSubmit('EDIT')}
+              >
+                {formatMessage(oldAgePensionFormMessage.review.buttonsEdit)}
+              </Button>
+            )}
             <Button
               variant="utility"
               icon="print"
