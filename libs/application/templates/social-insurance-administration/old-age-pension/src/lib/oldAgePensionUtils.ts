@@ -122,6 +122,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFiles.additionalDocumentsRequired',
+  ) as FileType[]
+
   const pensionAttachments = getValueViaPath(
     answers,
     'fileUpload.pension',
@@ -166,6 +171,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     personalAllowanceUsage,
     spouseAllowanceUsage,
     additionalAttachments,
+    additionalAttachmentsRequired,
     pensionAttachments,
     fishermenAttachments,
     selfEmployedAttachments,

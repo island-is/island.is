@@ -296,7 +296,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
-        entry: ['assignOrganization'],
+        entry: ['assignOrganization', 'moveAdditionalDocumentRequired'],
         exit: ['clearAssignees'],
         meta: {
           status: 'inprogress',
@@ -501,6 +501,26 @@ const OldAgePensionTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      moveAdditionalDocumentRequired: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { additionalAttachmentsRequired, additionalAttachments } =
+          getApplicationAnswers(answers)
+
+        const mergedAdditionalDocumentRequired = [
+          ...additionalAttachments,
+          ...additionalAttachmentsRequired,
+        ]
+
+        set(
+          answers,
+          'fileUploadAdditionalFiles.additionalDocuments',
+          mergedAdditionalDocumentRequired,
+        )
+        unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
+
+        return context
+      }),
     },
   },
   mapUserToRole(
