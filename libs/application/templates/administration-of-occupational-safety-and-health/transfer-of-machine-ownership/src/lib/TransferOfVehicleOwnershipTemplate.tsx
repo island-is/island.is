@@ -98,7 +98,7 @@ const template: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: 'Tilkynning um eigendaskipti að ökutæki',
+          name: 'Tilkynning um eigendaskipti að tæki',
           status: 'draft',
           actionCard: {
             tag: {

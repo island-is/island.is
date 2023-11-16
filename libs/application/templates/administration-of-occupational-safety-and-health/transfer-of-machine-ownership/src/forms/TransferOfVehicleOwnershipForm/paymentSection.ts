@@ -21,11 +21,6 @@ export const paymentSection = buildSection({
           title: '',
           component: 'PaymentChargeOverview',
         }),
-        // buildCustomField({
-        //   id: 'ValidationErrorMessages',
-        //   title: '',
-        //   component: 'ValidationErrorMessages',
-        // }),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
