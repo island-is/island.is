@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useMemo, useRef } from 'react'
 
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { ProjectPage } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './GrindavikProjectHeader.css'
@@ -28,10 +29,14 @@ export const GrindavikProjectHeader = ({
   projectPage,
 }: GrindavikProjectHeaderProps) => {
   const { linkResolver } = useLinkResolver()
-
   const textBackgroundColor = getTextBackgroundColor(projectPage)
-
   const textRef = useRef<HTMLDivElement | null>(null)
+
+  const namespace = useMemo(() => {
+    return JSON.parse(projectPage.namespace?.fields || '{}')
+  }, [projectPage])
+
+  const n = useNamespace(namespace)
 
   return (
     <Box className={styles.headerWrapper}>
@@ -80,9 +85,10 @@ export const GrindavikProjectHeader = ({
         >
           <img
             className={styles.headerImage}
-            src={
-              'https://images.ctfassets.net/8k0h54kbe6bj/72VBXAja5JUADJ6XBMCBgW/54fb65f782472598b231da29fbf3a971/grindavik.png'
-            }
+            src={n(
+              'grindavikProjectHeaderImageUrl',
+              'https://images.ctfassets.net/8k0h54kbe6bj/72VBXAja5JUADJ6XBMCBgW/54fb65f782472598b231da29fbf3a971/grindavik.png',
+            )}
             alt="header"
           />
         </Box>
