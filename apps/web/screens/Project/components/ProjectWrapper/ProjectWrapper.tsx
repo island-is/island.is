@@ -1,4 +1,6 @@
 import React, { ReactElement, useMemo } from 'react'
+import { useRouter } from 'next/router'
+
 import {
   Box,
   BreadCrumbItem,
@@ -10,13 +12,12 @@ import {
   Icon,
   Link,
 } from '@island.is/island-ui/core'
+import { ProjectPage } from '@island.is/web/graphql/schema'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+
+import { getSidebarNavigationComponent } from '../../utils'
 import { ProjectChatPanel } from '../ProjectChatPanel'
 import { ProjectHeader } from '../ProjectHeader'
-import { ProjectPage } from '@island.is/web/graphql/schema'
-import { getSidebarNavigationComponent } from '../../utils'
-import { useRouter } from 'next/router'
-
 import * as styles from './ProjectWrapper.css'
 
 interface ProjectWrapperProps {
@@ -25,6 +26,7 @@ interface ProjectWrapperProps {
   projectPage: ProjectPage
   breadcrumbItems: BreadCrumbItem[]
   sidebarNavigationTitle: string
+  namespace: Record<string, string>
 }
 
 export const ProjectWrapper: React.FC<
@@ -35,6 +37,7 @@ export const ProjectWrapper: React.FC<
   projectPage,
   breadcrumbItems,
   sidebarNavigationTitle,
+  namespace,
   children,
 }) => {
   const router = useRouter()
@@ -85,7 +88,7 @@ export const ProjectWrapper: React.FC<
   return (
     <>
       <ProjectChatPanel projectPage={projectPage} />
-      <ProjectHeader projectPage={projectPage} />
+      <ProjectHeader projectPage={projectPage} namespace={namespace} />
       {withSidebar ? (
         <SidebarLayout
           isSticky={true}

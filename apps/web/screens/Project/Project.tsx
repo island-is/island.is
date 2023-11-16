@@ -1,5 +1,25 @@
-import { useMemo, useState, useEffect } from 'react'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { useEffect, useMemo, useState } from 'react'
+import { Locale } from 'locale'
+import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
+import { SliceType } from '@island.is/island-ui/contentful'
+import {
+  Box,
+  BreadCrumbItem,
+  TableOfContents,
+  Text,
+} from '@island.is/island-ui/core'
+import {
+  Form,
+  HeadWithSocialSharing,
+  OneColumnTextSlice,
+  SliceMachine,
+  Stepper,
+  stepperUtils,
+  TabSectionSlice,
+  Webreader,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   OneColumnText,
@@ -8,37 +28,19 @@ import {
   QueryGetProjectPageArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '../queries'
-import { Screen } from '../../types'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
-import {
-  SliceMachine,
-  HeadWithSocialSharing,
-  Stepper,
-  stepperUtils,
-  Form,
-  TabSectionSlice,
-  Webreader,
-  OneColumnTextSlice,
-} from '@island.is/web/components'
-import {
-  Box,
-  BreadCrumbItem,
-  TableOfContents,
-  Text,
-} from '@island.is/island-ui/core'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { useRouter } from 'next/router'
-import slugify from '@sindresorhus/slugify'
-import { getThemeConfig } from './utils'
-import { ProjectWrapper } from './components/ProjectWrapper'
-import { Locale } from 'locale'
-import { ProjectFooter } from './components/ProjectFooter'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import { Screen } from '../../types'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { ProjectFooter } from './components/ProjectFooter'
+import { ProjectWrapper } from './components/ProjectWrapper'
 import { TOC } from './ProjectTableOfContents'
+import { getThemeConfig } from './utils'
 
 interface PageProps {
   projectPage: Query['getProjectPage']
@@ -148,6 +150,7 @@ const ProjectPage: Screen<PageProps> = ({
         breadcrumbItems={breadCrumbs}
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
+        namespace={projectNamespace}
       >
         {!subpage && shouldDisplayWebReader && (
           <Webreader
