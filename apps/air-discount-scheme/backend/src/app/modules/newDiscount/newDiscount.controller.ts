@@ -9,6 +9,7 @@ import {
   UseGuards,
   BadRequestException,
   Body,
+  NotImplementedException,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -20,6 +21,7 @@ import {
 import {
   CreateDiscountCodeParams,
   CreateExplicitDiscountCodeParams,
+  CreateNewDiscountCodeBody,
   GetCurrentDiscountByNationalIdParams,
   NewDiscountViewModel,
 } from './dto'
@@ -111,6 +113,7 @@ export class PrivateNewDiscountController {
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
+    @Body() body: CreateNewDiscountCodeBody,
     @CurrentUser() auth: AuthUser,
   ): Promise<NewDiscountViewModel> {
     const user = await this.userService.getUserInfoByNationalId(
@@ -124,12 +127,12 @@ export class PrivateNewDiscountController {
     const newDiscount = await this.discountService.createNewDiscountCode(
       user,
       params.nationalId,
-      'GRY',
-      'RKV',
-      true,
+      body.origin,
+      body.destination,
+      body.isRoundTrip
     )
     if (!newDiscount) {
-      throw new Error(`Could not create discount`)
+      throw new NotImplementedException(`Could not create discount`)
     }
 
     return new NewDiscountViewModel(newDiscount)
@@ -160,12 +163,12 @@ export class PrivateNewDiscountAdminController {
     const discount = await this.discountService.createNewExplicitDiscountCode(
       auth,
       body.nationalId,
-      'GRY',
-      'RKV',
-      true,
+      body.origin,
+      body.destination,
+      body.isRoundTrip,
     )
     if (!discount) {
-      throw new Error(`Could not create explicit discount`)
+      throw new NotImplementedException(`Could not create explicit discount`)
     }
 
     return new NewDiscountViewModel(discount)

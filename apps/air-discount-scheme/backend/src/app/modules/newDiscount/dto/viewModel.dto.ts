@@ -92,18 +92,13 @@ export class DiscountedFlightViewModel {
 export class NewDiscountViewModel {
   constructor(discount: NewDiscount) {
     this.id = discount.id
-    this.nationalId = NewDiscountViewModel.maskNationalId(discount.nationalId)
+    this.nationalId = discount.nationalId
     this.discountedFlights = (discount.discountedFlights ?? []).map(
       (flight) => new DiscountedFlightViewModel(flight),
     )
     this.active = discount.active
     this.usedAt = discount.usedAt
     this.user = discount.user
-  }
-
-
-  private static maskNationalId(nationalId: string): string {
-    return `${nationalId.slice(0, 6)}xxx${nationalId.slice(-1)}`
   }
 
   @ApiProperty()

@@ -8,6 +8,18 @@ export class CreateDiscountCodeParams {
   readonly nationalId!: string
 }
 
+export class CreateNewDiscountCodeBody {
+
+  @IsString()
+  readonly origin!: string
+
+  @IsString()
+  readonly destination!: string
+
+  @IsBoolean()
+  readonly isRoundTrip!: boolean
+}
+
 export class GetCurrentDiscountByNationalIdParams {
   @IsString()
   @Length(10, 10)

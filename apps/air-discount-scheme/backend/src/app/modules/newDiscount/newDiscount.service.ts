@@ -83,7 +83,12 @@ export class NewDiscountService {
     return flightLegs
   }
 
-  generateAirDiscountCode(isConnectionCode: boolean, generateCode: () => string, validUntil: string, explicit = false) {
+  generateAirDiscountCode(
+    isConnectionCode: boolean,
+    generateCode: () => string,
+    validUntil: string,
+    explicit = false,
+  ) {
     return {
       code: generateCode(),
       validUntil,
@@ -186,9 +191,7 @@ export class NewDiscountService {
         discount: this.generateAirDiscountCode(
           flight.isConnectionFlight,
           () => this.generateDiscountCode(),
-          new Date(
-            Date.now() + 1000 * 60 * 60 * 24 * 14,
-          ).toISOString(),
+          new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString(),
           explicit,
         ),
       }
@@ -211,23 +214,28 @@ export class NewDiscountService {
       explicit,
     )
 
-    const discount = await this.discountModel.create(
-      {
-        user: user,
-        nationalId,
-        discountedFlights: this.createDiscountFlights(flights),
-        active: true,
-      },
-      {
-        include: [
-          {
-            model: this.discountedFlightModel,
-            include: [this.discountedFlightLegModel, this.airDiscountModel],
-          },
-        ],
-      },
-    )
-    return discount
+    try {
+      const discount = await this.discountModel.create(
+        {
+          user: user,
+          nationalId,
+          discountedFlights: this.createDiscountFlights(flights),
+          active: true,
+        },
+        {
+          include: [
+            {
+              model: this.discountedFlightModel,
+              include: [this.discountedFlightLegModel, this.airDiscountModel],
+            },
+          ],
+        },
+      )
+      return discount
+    } catch (e) {
+      // TODO: Log error
+      return null
+    }
   }
 
   async createNewExplicitDiscountCode(
