@@ -197,6 +197,11 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
+    XROAD_FINANCES_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
+    },
   },
 })
 
