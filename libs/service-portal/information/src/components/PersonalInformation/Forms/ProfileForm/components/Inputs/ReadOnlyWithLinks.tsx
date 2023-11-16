@@ -34,7 +34,7 @@ export function ReadOnlyWithLinks({
         icon={(verified && { name: 'checkmark' }) || undefined}
         readOnly
       />
-      <Box className={styles.linkContainer}>
+      <Box display="flex" alignItems="center" className={styles.linkContainer}>
         <ArrowLink href={link} color="blue400">
           {linkTitle}
         </ArrowLink>
