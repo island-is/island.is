@@ -10,7 +10,7 @@ import {
   formatNationalId,
   IntroHeader,
   m,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
@@ -49,7 +49,7 @@ const SubjectInfo = () => {
       <IntroHeader
         title={userInfo.profile.name}
         intro={spmm.userInfoDesc}
-        serviceProviderID={THJODSKRA_ID}
+        serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
       <Stack space={2}>
@@ -243,7 +243,7 @@ const SubjectInfo = () => {
           </>
         )}
       </Stack>
-      <FootNote serviceProviderID={THJODSKRA_ID} />
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }

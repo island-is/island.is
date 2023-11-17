@@ -17,7 +17,7 @@ import {
   IntroHeader,
   m,
   NotFound,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { spmm } from '../../lib/messages'
@@ -88,7 +88,7 @@ const FamilyMember = () => {
           title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
-          serviceProviderID={THJODSKRA_ID}
+          serviceProviderSlug={THJODSKRA_SLUG}
           serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
@@ -118,7 +118,7 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
-      <FootNote serviceProviderID={THJODSKRA_ID} />
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }
