@@ -113,10 +113,10 @@ export class PersonResolver {
       resources: user.nationalId,
     })
 
-    const custodyInfo = await this.service.getChildCustody(
+    const custodyInfo = (await this.service.getChildCustody(
       person.nationalId,
       person,
-    )
+    )) as Array<SharedChildCustody> | null
 
     if (childNationalId) {
       const child = custodyInfo?.find((c) => c.nationalId === childNationalId)
