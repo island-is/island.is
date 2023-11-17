@@ -799,6 +799,10 @@ const Auctions: Screen<AuctionsProps> = ({
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
 
+            const displayCustomCardMessage =
+              auction.lotType === LOT_TYPES.VEHICLE ||
+              auction.lotType === LOT_TYPES.LIQUID_ASSETS
+
             return (
               <Box
                 key={`auction-${index}`}
@@ -956,33 +960,43 @@ const Auctions: Screen<AuctionsProps> = ({
                         />
                       )}
                     </Box>
-                    <GridContainer>
-                      <GridRow marginTop={3} alignItems="flexEnd">
-                        <GridColumn span="1/2">
-                          <Text variant="small">
-                            <i>
-                              {n(
-                                '',
-                                'Í tilviki lausafjáruppboða fer uppboð ekki fram nema gerðarbeiðandi komi andlagi á uppboðsstað',
-                              )}
-                            </i>
-                          </Text>
-                        </GridColumn>
-                        <GridColumn span="1/2">
-                          <Box
-                            display="flex"
-                            justifyContent="flexEnd"
-                            alignItems="flexEnd"
-                          >
+
+                    {!displayCustomCardMessage && (
+                      <Text variant="small">
+                        {auction.lotType}{' '}
+                        {auction.auctionType && ' - ' + auction.auctionType}
+                      </Text>
+                    )}
+
+                    {displayCustomCardMessage && (
+                      <GridContainer>
+                        <GridRow marginTop={3} alignItems="flexEnd">
+                          <GridColumn span="1/2">
                             <Text variant="small">
-                              {auction.lotType}{' '}
-                              {auction.auctionType &&
-                                ' - ' + auction.auctionType}
+                              <i>
+                                {n(
+                                  'auctionVehicleAndLiquidAssetCustomCardMessage',
+                                  'Í tilviki lausafjáruppboða fer uppboð ekki fram nema gerðarbeiðandi komi andlagi á uppboðsstað',
+                                )}
+                              </i>
                             </Text>
-                          </Box>
-                        </GridColumn>
-                      </GridRow>
-                    </GridContainer>
+                          </GridColumn>
+                          <GridColumn span="1/2">
+                            <Box
+                              display="flex"
+                              justifyContent="flexEnd"
+                              alignItems="flexEnd"
+                            >
+                              <Text variant="small">
+                                {auction.lotType}{' '}
+                                {auction.auctionType &&
+                                  ' - ' + auction.auctionType}
+                              </Text>
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
+                      </GridContainer>
+                    )}
                   </Box>
                 </Box>
               </Box>
