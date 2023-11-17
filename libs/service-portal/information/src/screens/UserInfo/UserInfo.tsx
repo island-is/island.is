@@ -33,7 +33,11 @@ const SubjectInfo = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useNationalRegistryPersonQuery()
+  const { data, loading, error } = useNationalRegistryPersonQuery({
+    variables: {
+      api: 'v3',
+    },
+  })
 
   const { nationalRegistryPerson } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
