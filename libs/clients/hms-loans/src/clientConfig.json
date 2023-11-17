@@ -8,9 +8,7 @@
   "paths": {
     "/api/v{version}/Libra/loanhistory": {
       "post": {
-        "tags": [
-          "Libra"
-        ],
+        "tags": ["Libra"],
         "summary": "Retrieves information about loan history for logged in individual in the Libra HMS loan system.",
         "parameters": [
           {
@@ -118,9 +116,7 @@
     },
     "/api/v{version}/Libra/paymenthistory": {
       "post": {
-        "tags": [
-          "Libra"
-        ],
+        "tags": ["Libra"],
         "summary": "Retrieves information about payment history for all loans for logged in individual in the Libra HMS loan system.",
         "parameters": [
           {
@@ -635,7 +631,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ]
 }
