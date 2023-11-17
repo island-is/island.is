@@ -1,5 +1,8 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
+import {
+  useGetInsuranceConfirmationLazyQuery,
+  useGetInsuranceOverviewQuery,
+} from './HealthOverview.generated'
 import {
   ErrorScreen,
   SYSLUMENN_SLUG,
@@ -32,6 +35,11 @@ export const HealthOverview = () => {
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
 
+  const [
+    getInsuranceConfirmationLazyQuery,
+    { loading: confirmationLoading, error: confirmationError },
+  ] = useGetInsuranceConfirmationLazyQuery()
+
   const featureFlagClient = useFeatureFlagClient()
 
   const [enabledPaymentPage, setEnabledPaymentPage] = useState<boolean>(false)
@@ -52,6 +60,18 @@ export const HealthOverview = () => {
 
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
+
+  async function getInsuranceConfirmation() {
+    const data = await getInsuranceConfirmationLazyQuery()
+    const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
+
+    if (downloadData?.data && downloadData.fileName) {
+      const downloadLink = document.createElement('a')
+      downloadLink.href = 'data:application/pdf;base64,' + downloadData?.data
+      downloadLink.download = downloadData.fileName
+      downloadLink.click()
+    }
+  }
 
   if (error) {
     return (
@@ -127,6 +147,35 @@ export const HealthOverview = () => {
               <UserInfoLine
                 label={formatMessage(messages.status)}
                 content={insurance.status?.display ?? undefined}
+              />
+              <UserInfoLine
+                label={formatMessage(messages.healthInsuranceConfirmation)}
+                content={
+                  confirmationError ? (
+                    formatMessage(
+                      messages.healthInsuranceConfirmationTransferError,
+                    )
+                  ) : (
+                    <Button
+                      icon="fileTrayFull"
+                      iconType="outline"
+                      size="small"
+                      type="button"
+                      variant="text"
+                      as="button"
+                      onClick={getInsuranceConfirmation}
+                      disabled={confirmationLoading}
+                    >
+                      {confirmationLoading
+                        ? formatMessage(
+                            messages.healthInsuranceConfirmationLoading,
+                          )
+                        : formatMessage(
+                            messages.healthInsuranceConfirmationButton,
+                          )}
+                    </Button>
+                  )
+                }
               />
             </Stack>
           </Box>
