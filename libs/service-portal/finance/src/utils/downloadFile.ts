@@ -39,7 +39,7 @@ export const downloadFile = async (
       SheetNames: [sheetName],
     }
 
-    const excelBuffer: any = XLSX.write(workbook, {
+    const excelBuffer = XLSX.write(workbook, {
       bookType: 'xlsx',
       type: 'base64',
     })

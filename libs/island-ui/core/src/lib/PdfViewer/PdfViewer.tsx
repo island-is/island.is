@@ -76,6 +76,7 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
           className={cn(styles.pdfViewer, { [styles.pdfSvgPage]: autoWidth })}
           loading={() => loadingView()}
           error={errorComponent ?? pdfError}
+          externalLinkTarget="_blank"
         >
           {showAllPages ? (
             [...Array(numPages)].map((x, page) => (
@@ -83,14 +84,14 @@ export const PdfViewer: FC<React.PropsWithChildren<PdfViewerProps>> = ({
                 key={`page_${page + 1}`}
                 pageNumber={page + 1}
                 renderTextLayer={false}
-                renderAnnotationLayer={false}
+                renderAnnotationLayer={true}
                 scale={scale}
               />
             ))
           ) : (
             <pdfLib.Page
               renderTextLayer={false}
-              renderAnnotationLayer={false}
+              renderAnnotationLayer={true}
               pageNumber={pageNumber}
               scale={scale}
             />
