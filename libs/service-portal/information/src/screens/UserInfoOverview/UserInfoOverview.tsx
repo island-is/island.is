@@ -20,7 +20,7 @@ const UserInfoOverview = () => {
   const userInfo = useUserInfo()
 
   const { data, loading, error } = useUserInfoOverviewQuery({
-    variables: { api: 'v1' },
+    variables: { api: 'v3' },
   })
 
   const { spouse, childCustody } = data?.nationalRegistryPerson || {}

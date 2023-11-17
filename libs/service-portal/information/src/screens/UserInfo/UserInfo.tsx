@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -21,11 +21,7 @@ import {
 } from '../../helpers/localizationHelpers'
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
-import { useNationalRegistryPersonLazyQuery } from './UserInfo.generated'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
+import { useNationalRegistryPersonQuery } from './UserInfo.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -37,26 +33,7 @@ const SubjectInfo = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
 
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
-  const [getNationalRegistryPerson, { data, loading, error }] =
-    useNationalRegistryPersonLazyQuery()
-
-  /* Should use v3? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      getNationalRegistryPerson({
-        variables: {
-          api: ffEnabled ? 'v3' : undefined,
-        },
-      })
-    }
-    isFlagEnabled()
-  }, [])
+  const { data, loading, error } = useNationalRegistryPersonQuery()
 
   const { nationalRegistryPerson } = data || {}
   const isDelegation = userInfo && checkDelegation(userInfo)
