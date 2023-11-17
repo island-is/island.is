@@ -1,5 +1,7 @@
 import { Tooltip, TooltipProps } from 'recharts'
 
+import { theme } from '@island.is/island-ui/theme'
+
 import { formatValueForPresentation } from '../utils'
 
 export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
@@ -21,10 +23,10 @@ export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
     >
       {payload.map((item) => {
         let labelColor =
-          (item as any)?.stroke ?? item?.payload?.stroke ?? 'black'
+          (item as any)?.stroke ?? item?.payload?.stroke ?? theme.color.dark400
 
-        if (labelColor === 'white') {
-          labelColor = 'black'
+        if (labelColor === 'white' || labelColor === '#fff') {
+          labelColor = theme.color.dark400
         }
 
         return (

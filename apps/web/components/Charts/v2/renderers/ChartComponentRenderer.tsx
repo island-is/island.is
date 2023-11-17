@@ -89,23 +89,12 @@ const renderCustomizedLabel = ({
         x={x}
         y={y}
         fill="#00003C"
-        dy={18}
-        textAnchor={x > outerRadius ? 'middle' : 'end'}
-        dominantBaseline="central"
-        fontSize="12px"
-      >
-        {`${formatValueForPresentation(value)}`}
-      </text>
-      <text
-        x={x}
-        y={y}
-        fill="#00003C"
         textAnchor={x > outerRadius ? 'middle' : 'end'}
         dominantBaseline="central"
         fontSize="12px"
         fontWeight={500}
       >
-        {payload?.name}
+        {`${formatValueForPresentation(value)}`} {payload?.name?.toLowerCase()}
       </text>
     </g>
   )
