@@ -1,4 +1,3 @@
-import { Application } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 
 export const formatIsk = (value: number): string =>
@@ -14,6 +13,6 @@ export { getApproveAnswers } from './getApproveAnswers'
 export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 
-export const getChargeItemCodes = (application: Application): Array<string> => {
+export const getChargeItemCodes = (): Array<string> => {
   return [ChargeItemCode.AOSH_TRANSFER_OF_MACHINE_OWNERSHIP.toString()]
 }
