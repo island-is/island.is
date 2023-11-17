@@ -6,6 +6,7 @@ import NoPDF from '../NoPDF/NoPDF'
 import { messages } from '../../utils/messages'
 import { ActiveDocumentType } from '../../lib/types'
 import { useLocale } from '@island.is/localization'
+import { customUrl } from '../../utils/customUrlHandler'
 
 const parseDocmentType = (doc: DocumentDetails) => {
   if (doc.html && doc.html.length > 0) {
@@ -41,7 +42,9 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({
   }
 
   if (type === 'url') {
-    return <UrlDocument url={document.document.url} />
+    const docUrl = customUrl(document)
+
+    return <UrlDocument url={docUrl} />
   }
 
   return <NoPDF />

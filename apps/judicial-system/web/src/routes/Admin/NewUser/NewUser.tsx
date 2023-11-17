@@ -36,9 +36,7 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
 
   const {
-    allCourts,
-    prosecutorsOffices,
-    prisonInstitutions,
+    allInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -76,9 +74,7 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
         <PageHeader title={formatMessage(titles.admin.newUser)} />
         <UserForm
           user={user}
-          allCourts={allCourts}
-          prosecutorsOffices={prosecutorsOffices}
-          prisonInstitutions={prisonInstitutions}
+          institutions={allInstitutions}
           onSave={createUser}
           loading={createLoading}
         />

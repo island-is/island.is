@@ -27,11 +27,15 @@ export const FormButton: FC<React.PropsWithChildren<Props>> = ({
         {children}
       </Button>
     ) : (
-      <button type="submit" disabled={disabled}>
-        <Button variant="text" size="small" disabled={disabled}>
-          {children}
-        </Button>
-      </button>
+      <Button
+        as="button"
+        type="submit"
+        variant="text"
+        size="small"
+        disabled={disabled}
+      >
+        {children}
+      </Button>
     )
   }
   return (

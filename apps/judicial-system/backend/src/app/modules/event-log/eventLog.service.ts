@@ -18,6 +18,7 @@ export class EventLogService {
 
   async create(event: CreateEventLogDto): Promise<void> {
     const { eventType, caseId, userRole, nationalId } = event
+    const allowMultiple = ['LOGIN']
 
     const where = Object.fromEntries(
       Object.entries({ caseId, eventType, nationalId, userRole }).filter(
@@ -27,7 +28,7 @@ export class EventLogService {
 
     const eventExists = await this.eventLogModel.findOne({ where })
 
-    if (eventExists) {
+    if (!allowMultiple.includes(event.eventType) && eventExists) {
       return
     }
 

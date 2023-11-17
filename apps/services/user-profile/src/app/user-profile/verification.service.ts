@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { randomInt } from 'crypto'
 import addMilliseconds from 'date-fns/addMilliseconds'
+import { parsePhoneNumber } from 'libphonenumber-js'
 import { join } from 'path'
 import { Transaction } from 'sequelize'
 
@@ -11,7 +12,6 @@ import type { Logger } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 
 import environment from '../../environments/environment'
-import { formatPhoneNumber } from '../utils/format-phone-number'
 import { ConfirmEmailDto } from './dto/confirmEmailDto'
 import { ConfirmSmsDto } from './dto/confirmSmsDto'
 import { ConfirmationDtoResponse } from './dto/confirmationResponseDto'
@@ -91,10 +91,7 @@ export class VerificationService {
   ): Promise<SmsVerification | null> {
     const code = this.generateVerificationCode(codeLength)
     const verification = {
-      nationalId: createSmsVerification.nationalId,
-      mobilePhoneNumber: formatPhoneNumber(
-        createSmsVerification.mobilePhoneNumber,
-      ),
+      ...createSmsVerification,
       tries: 0,
       smsCode: code,
       created: new Date(),
@@ -202,12 +199,14 @@ export class VerificationService {
   ): Promise<ConfirmationDtoResponse> {
     const { transaction, maxTries = SMS_VERIFICATION_MAX_TRIES } = options ?? {}
 
-    const formattedPhoneNumber = formatPhoneNumber(
-      confirmSmsDto.mobilePhoneNumber,
-    )
+    const phoneNumber = parsePhoneNumber(confirmSmsDto.mobilePhoneNumber, 'IS')
+    const mobilePhoneNumber =
+      phoneNumber.country === 'IS'
+        ? (phoneNumber.nationalNumber as string)
+        : confirmSmsDto.mobilePhoneNumber
 
     let verification = await this.smsVerificationModel.findOne({
-      where: { nationalId, mobilePhoneNumber: formattedPhoneNumber },
+      where: { nationalId, mobilePhoneNumber },
       order: [['created', 'DESC']],
       ...(transaction && { transaction }),
     })

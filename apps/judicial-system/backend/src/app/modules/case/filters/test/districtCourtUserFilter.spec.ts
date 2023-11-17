@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import {
   CaseState,
-  extendedCourtRoles,
+  districtCourtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -63,57 +63,59 @@ const continueFromIndictmentType = (user: User, type: string) => {
   })
 }
 
-describe.each([UserRole.JUDGE, UserRole.REGISTRAR])(
-  'district court user %s',
-  (role) => {
-    const user = {
-      role,
-      institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
-    } as User
+describe.each([
+  UserRole.DISTRICT_COURT_JUDGE,
+  UserRole.DISTRICT_COURT_REGISTRAR,
+])('district court user %s', (role) => {
+  const user = {
+    role,
+    institution: { id: uuid(), type: InstitutionType.DISTRICT_COURT },
+  } as User
 
-    describe.each([...restrictionCases, ...investigationCases])(
-      'accessible case type %s',
-      (type) => {
-        const accessibleCaseStates = [
-          CaseState.DRAFT,
-          CaseState.SUBMITTED,
-          CaseState.RECEIVED,
-          CaseState.ACCEPTED,
-          CaseState.REJECTED,
-          CaseState.DISMISSED,
-        ]
+  describe.each([...restrictionCases, ...investigationCases])(
+    'accessible case type %s',
+    (type) => {
+      const accessibleCaseStates = [
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        CaseState.ACCEPTED,
+        CaseState.REJECTED,
+        CaseState.DISMISSED,
+      ]
 
-        describe.each(
-          Object.values(CaseState).filter(
-            (state) => !accessibleCaseStates.includes(state),
-          ),
-        )('inaccessible case state %s', (state) => {
-          const theCase = {
-            type,
-            state,
-          } as Case
+      describe.each(
+        Object.values(CaseState).filter(
+          (state) => !accessibleCaseStates.includes(state),
+        ),
+      )('inaccessible case state %s', (state) => {
+        const theCase = {
+          type,
+          state,
+        } as Case
 
-          verifyNoAccess(theCase, user)
-        })
+        verifyNoAccess(theCase, user)
+      })
 
-        describe.each(accessibleCaseStates)(
-          'accessible case state %s',
-          (state) => {
-            continueFromCaseState(user, type, state)
-          },
-        )
-      },
-    )
+      describe.each(accessibleCaseStates)(
+        'accessible case state %s',
+        (state) => {
+          continueFromCaseState(user, type, state)
+        },
+      )
+    },
+  )
 
-    describe.each(indictmentCases)('accessible case type %s', (type) => {
-      continueFromIndictmentType(user, type)
-    })
-  },
-)
+  describe.each(indictmentCases)('accessible case type %s', (type) => {
+    continueFromIndictmentType(user, type)
+  })
+})
 
 describe.each(
-  extendedCourtRoles.filter(
-    (role) => role !== UserRole.JUDGE && role !== UserRole.REGISTRAR,
+  districtCourtRoles.filter(
+    (role) =>
+      role !== UserRole.DISTRICT_COURT_JUDGE &&
+      role !== UserRole.DISTRICT_COURT_REGISTRAR,
   ),
 )('district court user %s', (role) => {
   const user = {

@@ -41,9 +41,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const {
-    allCourts,
-    prosecutorsOffices,
-    prisonInstitutions,
+    allInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -87,9 +85,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
         <PageHeader title={formatMessage(titles.admin.changeUser)} />
         <UserForm
           user={userData?.user}
-          allCourts={allCourts}
-          prosecutorsOffices={prosecutorsOffices}
-          prisonInstitutions={prisonInstitutions}
+          institutions={allInstitutions}
           onSave={saveUser}
           loading={saveLoading}
         />

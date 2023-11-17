@@ -13,6 +13,7 @@ import { Hidden } from '../Hidden/Hidden'
 import { Icon as IconType } from '../IconRC/iconMap'
 import { Icon } from '../IconRC/Icon'
 import DialogPrompt from '../DialogPrompt/DialogPrompt'
+import { ProgressMeter } from '../ProgressMeter/ProgressMeter'
 
 export type ActionCardProps = {
   date?: string
@@ -27,7 +28,7 @@ export type ActionCardProps = {
     variant?: TagVariant
     outlined?: boolean
   }
-  cta: {
+  cta?: {
     label: string
     /** Allows for simple variant configuration of the button. If buttonType is defined it will supersede this property. */
     variant?: ButtonTypes['variant']
@@ -62,6 +63,11 @@ export type ActionCardProps = {
     dialogDescription?: string
     dialogConfirmLabel?: string
     dialogCancelLabel?: string
+  }
+  progressMeter?: {
+    currentProgress: number
+    maxProgress: number
+    withLabel?: boolean
   }
 }
 
@@ -107,6 +113,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   deleteButton: _delete,
   avatar,
   focused = false,
+  progressMeter,
 }) => {
   const cta = { ...defaultCta, ..._cta }
   const tag = { ...defaultTag, ..._tag }
@@ -369,6 +376,28 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           {unavailable.active ? renderDisabled() : renderDefault()}
         </Box>
       </Box>
+      {progressMeter && (
+        <Box marginTop={2}>
+          <ProgressMeter
+            progress={
+              Number(
+                (
+                  progressMeter.currentProgress / progressMeter.maxProgress
+                ).toFixed(1),
+              ) < 1
+                ? Number(
+                    (
+                      progressMeter.currentProgress / progressMeter.maxProgress
+                    ).toFixed(1),
+                  )
+                : 1
+            }
+            withLabel={progressMeter.withLabel}
+            labelMin={progressMeter.currentProgress}
+            labelMax={progressMeter.maxProgress}
+          />
+        </Box>
+      )}
     </Box>
   )
 }

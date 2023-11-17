@@ -59,26 +59,26 @@ describe('InternalNotificationController - Send appeal judges assigned notificat
             appealAssistant: {
               name: assistantName,
               email: assistantEmail,
-              role: UserRole.ASSISTANT,
+              role: UserRole.COURT_OF_APPEALS_ASSISTANT,
             },
             appealJudge1: {
               name: judgeName1,
               email: judgeEmail1,
               id: judgeId1,
-              role: UserRole.JUDGE,
+              role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
             appealJudge1Id: judgeId1,
             appealJudge2: {
               name: judgeName2,
               email: judgeEmail2,
               id: judgeId2,
-              role: UserRole.JUDGE,
+              role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
             appealJudge3: {
               name: judgeName3,
               email: judgeEmail3,
               id: judgeId3,
-              role: UserRole.JUDGE,
+              role: UserRole.COURT_OF_APPEALS_JUDGE,
             },
           } as Case,
           {

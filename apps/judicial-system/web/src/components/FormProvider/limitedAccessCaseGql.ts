@@ -120,6 +120,7 @@ const LimitedAccessCaseQuery = gql`
       appealConclusion
       appealRulingDecision
       appealCaseNumber
+      appealRulingModifiedHistory
       appealAssistant {
         id
         name

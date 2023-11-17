@@ -20,8 +20,7 @@ export const downloadVehicleOwnedFile = async (
     link.click()
   }
   const showOwnedVehicles = data[0].length > 0
-  const showCoOwnedVehicles = data[1].length > 0
-  const showOperatorVehicles = data[2].length > 0
+  const showOperatorVehicles = data[1].length > 0
 
   const sheetData = [
     [],
@@ -38,22 +37,13 @@ export const downloadVehicleOwnedFile = async (
     ...(showOwnedVehicles ? data[0] : [['Ekkert fannst']]),
     [],
     [
-      `Ökutæki í meðeigu kt. ${nationalId} þann ${new Date().toLocaleDateString(
-        locale,
-      )}`,
-    ],
-    [],
-    showCoOwnedVehicles ? header[1] : null,
-    ...(showCoOwnedVehicles ? data[1] : [['Ekkert fannst']]),
-    [],
-    [
       `Ökutæki í umráði kt. ${nationalId} þann ${new Date().toLocaleDateString(
         locale,
       )}`,
     ],
     [],
-    showOperatorVehicles ? header[2] : null,
-    ...(showOperatorVehicles ? data[2] : [['Ekkert fannst']]),
+    showOperatorVehicles ? header[1] : null,
+    ...(showOperatorVehicles ? data[1] : [['Ekkert fannst']]),
   ]
   const sheetName = name.substring(0, 31) // Max length for a sheet name.
 

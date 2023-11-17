@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 export const outer = style({
   height: 14,
   padding: 4,
+  alignSelf: 'center',
 })
 
 export const inner = style({

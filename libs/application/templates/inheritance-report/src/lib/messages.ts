@@ -596,6 +596,11 @@ export const m = defineMessages({
     defaultMessage: 'Yfirlit eigna',
     description: '',
   },
+  debtsOverview: {
+    id: 'ir.application:debtsOverview',
+    defaultMessage: 'Yfirlit skulda',
+    description: '',
+  },
   assetOverviewDescription: {
     id: 'ir.application:assetOverviewDescription',
     defaultMessage:
@@ -968,6 +973,11 @@ export const m = defineMessages({
   },
 
   // Done
+  readyToSubmit: {
+    id: 'ir.application:readyToSubmit',
+    defaultMessage: 'Skila inn erfðafjárskýrslu',
+    description: '',
+  },
   submitReport: {
     id: 'ir.application:submitReport',
     defaultMessage: 'Senda inn skýrslu',

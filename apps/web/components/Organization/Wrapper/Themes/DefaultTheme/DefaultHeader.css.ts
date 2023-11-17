@@ -1,17 +1,22 @@
 import { style } from '@vanilla-extract/css'
+
 import { themeUtils } from '@island.is/island-ui/theme'
 
 export const gridContainer = style({
   display: 'grid',
+  maxWidth: '1342px',
+  margin: '0 auto',
   ...themeUtils.responsiveStyle({
-    xs: {
-      gridTemplateRows: '200px 255px',
-    },
     lg: {
-      gridTemplateRows: '255px',
+      gridTemplateRows: '315px',
       gridTemplateColumns: '65fr 35fr',
     },
   }),
+})
+
+export const gridContainerWidth = style({
+  maxWidth: '1342px',
+  margin: '0 auto',
 })
 
 export const textContainer = style({
@@ -21,11 +26,12 @@ export const textContainer = style({
       order: 1,
       minHeight: '255px',
       paddingTop: '32px',
+      paddingBottom: '20px',
     },
     lg: {
       order: 0,
       display: 'grid',
-      placeItems: 'center',
+      placeItems: 'left',
       textAlign: 'left',
       paddingTop: '0px',
     },
@@ -36,13 +42,13 @@ export const textInnerContainer = style({
   ...themeUtils.responsiveStyle({
     lg: {
       height: '100%',
-      maxWidth: '50%',
-      transform: 'translateX(50%)',
+      maxWidth: '100%',
       display: 'flex',
-      justifyContent: 'flex-end',
-      alignItems: 'center',
-      paddingLeft: '16px',
+      alignItems: 'flex-end',
+      paddingLeft: '60px',
       paddingRight: '16px',
+      paddingBottom: '105px',
+      zIndex: 1,
     },
   }),
 })
@@ -50,7 +56,8 @@ export const textInnerContainer = style({
 export const headerImage = style({
   height: '100%',
   width: '100%',
-  objectFit: 'cover',
+  objectFit: 'contain',
+  padding: '20px',
   ...themeUtils.responsiveStyle({
     xs: {
       order: 0,
@@ -66,7 +73,7 @@ export const logoContainer = style({
   height: '136px',
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.08)',
   position: 'absolute',
-  bottom: '-32px',
+  bottom: '-92px',
   left: '7%',
   display: 'grid',
   placeItems: 'center',
@@ -86,6 +93,7 @@ export const contentContainer = style({
   transform: 'translate(-50%, 0)',
   paddingLeft: '48px',
   paddingRight: '48px',
+  zIndex: 1,
 })
 
 export const innerContentContainer = style({

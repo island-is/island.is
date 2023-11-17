@@ -121,6 +121,7 @@ export type GenericLicenseDataField = {
 export type GenericUserLicenseMetaLinks = {
   label?: string
   value?: string
+  name?: string
   type?: GenericUserLicenseMetaLinksType
 }
 

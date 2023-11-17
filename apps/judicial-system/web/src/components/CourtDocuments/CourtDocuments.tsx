@@ -49,7 +49,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
       label: formatMessage(courtDocuments.whoFiled.defendant),
     },
     {
-      value: UserRole.JUDGE,
+      value: UserRole.DISTRICT_COURT_JUDGE,
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]

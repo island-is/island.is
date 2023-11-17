@@ -1577,6 +1577,11 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
+    uploadDescription: {
+      id: 'pl.application:fileUpload.upload.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
+    },
     attachmentMaxSizeError: {
       id: 'pl.application:selfEmployed.attachment.maxSizeError',
       defaultMessage: 'Hámark 2 MB á skrá',

@@ -20,7 +20,6 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  InstitutionType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -68,11 +67,7 @@ const AppealCase = () => {
   })
 
   const assistants = (userData?.users ?? [])
-    .filter(
-      (user: User) =>
-        user.role === UserRole.ASSISTANT &&
-        user.institution?.type === InstitutionType.COURT_OF_APPEALS,
-    )
+    .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
     })
@@ -80,8 +75,7 @@ const AppealCase = () => {
   const judges = (userData?.users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.JUDGE &&
-        user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+        user.role === UserRole.COURT_OF_APPEALS_JUDGE &&
         workingCase.appealJudge1?.id !== user.id &&
         workingCase.appealJudge2?.id !== user.id &&
         workingCase.appealJudge3?.id !== user.id,
@@ -262,12 +256,12 @@ const AppealCase = () => {
         {modalVisible && (
           <Modal
             title={formatMessage(
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? strings.notificationsFailedModalHeading
                 : strings.modalHeading,
             )}
             text={formatMessage(
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? strings.notificationsFailedModalMessage
                 : strings.modalMessage,
             )}
@@ -278,7 +272,7 @@ const AppealCase = () => {
               sendNotifications()
             }}
             secondaryButtonText={
-              sendNotificationError || isSendingNotification
+              sendNotificationError
                 ? formatMessage(strings.notificationFailedModalSecondaryButton)
                 : undefined
             }

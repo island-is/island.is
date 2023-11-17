@@ -245,7 +245,7 @@ export class LicenseService {
     this.logger.error('License update failed', {
       category: LOG_CATEGORY,
       requestId,
-      ...updateRes.error,
+      error: updateRes.error,
     })
 
     throw this.getException(
@@ -280,7 +280,7 @@ export class LicenseService {
     this.logger.error('License revoke failure', {
       category: LOG_CATEGORY,
       requestId,
-      ...revokeRes.error,
+      error: revokeRes.error,
     })
     throw this.getException(
       this.getErrorTypeByCode(revokeRes.error.code),
@@ -319,7 +319,7 @@ export class LicenseService {
     }
     this.logger.error('Verify license failure', {
       category: LOG_CATEGORY,
-      ...verifyRes.error,
+      error: verifyRes.error,
       requestId,
     })
     throw this.getException(this.getErrorTypeByCode(verifyRes.error.code), {

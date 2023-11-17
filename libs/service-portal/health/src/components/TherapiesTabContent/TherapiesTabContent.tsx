@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Text, Stack, Divider, Select } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
@@ -23,11 +23,7 @@ type OptionType = {
   label: string
   value: string
 }
-export const TherapiesTabContent: FC<React.PropsWithChildren<Props>> = ({
-  data,
-  link,
-  linkText,
-}) => {
+export const TherapiesTabContent = ({ data, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const [dropDownValue, setDropDownValue] = useState<OptionType>()

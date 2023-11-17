@@ -75,7 +75,7 @@ const AidsAndNutrition = () => {
         title={formatMessage(messages.aidsAndNutritionTitle)}
         intro={formatMessage(messages.aidsAndNutritionDescription)}
         serviceProviderID={SJUKRATRYGGINGAR_ID}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 

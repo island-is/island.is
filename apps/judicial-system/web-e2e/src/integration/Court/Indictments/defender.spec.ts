@@ -29,7 +29,7 @@ describe(`${INDICTMENTS_DEFENDER_ROUTE}/:id`, () => {
 
     cy.stubAPIResponses()
     intercept(caseDataAddition)
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.visit(`${INDICTMENTS_DEFENDER_ROUTE}/test_id`)
   })
 

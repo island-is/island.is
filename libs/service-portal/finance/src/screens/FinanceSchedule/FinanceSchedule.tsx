@@ -1,7 +1,3 @@
-import React from 'react'
-
-import { gql, useQuery } from '@apollo/client'
-import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -25,30 +21,7 @@ import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceS
 import { useUserInfo } from '@island.is/auth/react'
 import { m } from '../../lib/messages'
 import FinanceIntro from '../../components/FinanceIntro'
-
-export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
-  query getPaymentSchedulesQuery {
-    getPaymentSchedule {
-      myPaymentSchedule {
-        nationalId
-        paymentSchedules {
-          approvalDate
-          paymentCount
-          scheduleName
-          scheduleNumber
-          scheduleStatus
-          scheduleType
-          totalAmount
-          unpaidAmount
-          unpaidWithInterest
-          unpaidCount
-          documentID
-          downloadServiceURL
-        }
-      }
-    }
-  }
-`
+import { useGetPaymentScheduleQuery } from './FinanceSchedule.generated'
 
 const FinanceSchedule = () => {
   useNamespaces('sp.finance-schedule')
@@ -60,9 +33,9 @@ const FinanceSchedule = () => {
     data: paymentSchedulesData,
     loading: paymentSchedulesLoading,
     error: paymentSchedulesError,
-  } = useQuery<Query>(GET_FINANCE_PAYMENT_SCHEDULES)
+  } = useGetPaymentScheduleQuery()
 
-  const recordsData: Array<PaymentSchedule> =
+  const recordsData =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
@@ -139,6 +112,8 @@ const FinanceSchedule = () => {
                     size="default"
                     type="button"
                     variant="utility"
+                    as="span"
+                    unfocusable
                   >
                     {applicationButtonText}
                   </Button>

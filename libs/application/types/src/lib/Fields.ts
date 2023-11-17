@@ -117,6 +117,7 @@ export enum FieldTypes {
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
+  PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
 }
 
 export enum FieldComponents {
@@ -139,6 +140,7 @@ export enum FieldComponents {
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
+  PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -343,6 +345,16 @@ export interface LinkField extends BaseField {
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
+export interface PaymentChargeOverviewField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
+  component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
+  forPaymentLabel: StaticText
+  totalLabel: StaticText
+  getSelectedChargeItems: (
+    application: Application,
+  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -364,3 +376,4 @@ export type Field =
   | ExpandableDescriptionField
   | AlertMessageField
   | LinkField
+  | PaymentChargeOverviewField

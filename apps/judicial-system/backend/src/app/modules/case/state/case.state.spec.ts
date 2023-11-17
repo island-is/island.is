@@ -583,4 +583,69 @@ describe('Transition Case', () => {
       )
     })
   })
+
+  describe('reopen appeal', () => {
+    const allowedFromStates = [
+      CaseState.ACCEPTED,
+      CaseState.REJECTED,
+      CaseState.DISMISSED,
+    ]
+    const allowedFromAppealStates = [CaseAppealState.COMPLETED]
+
+    describe.each(allowedFromStates)('state %s', (fromState) => {
+      it.each(allowedFromAppealStates)(
+        'appeal state %s - should reopen appeal',
+        (fromAppealState) => {
+          // Act
+          const res = transitionCase(
+            CaseTransition.REOPEN_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+          // Assert
+          expect(res).toEqual({ appealState: CaseAppealState.RECEIVED })
+        },
+      )
+
+      it.each(
+        Object.values(CaseAppealState).filter(
+          (appealState) => !allowedFromAppealStates.includes(appealState),
+        ),
+      )('appeal state %s - should not reopen appeal', (fromAppealState) => {
+        // Arrange
+        const act = () =>
+          transitionCase(
+            CaseTransition.REOPEN_APPEAL,
+            fromState,
+            fromAppealState,
+          )
+
+        // Act and assert
+        expect(act).toThrow(ForbiddenException)
+      })
+    })
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s', (fromState) => {
+      it.each(Object.values(CaseAppealState))(
+        'appeal state %s - should not reopen appeal',
+        (fromAppealState) => {
+          // Arrange
+          const act = () =>
+            transitionCase(
+              CaseTransition.REOPEN_APPEAL,
+              fromState,
+              fromAppealState,
+            )
+
+          // Act and assert
+          expect(act).toThrow(ForbiddenException)
+        },
+      )
+    })
+  })
 })

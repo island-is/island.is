@@ -5,6 +5,7 @@ interface IOrganizationTheme {
   gradientEndColor?: string
   backgroundColor?: string
   darkText?: boolean
+  fullWidth?: boolean
 }
 
 @ObjectType()
@@ -20,6 +21,9 @@ export class OrganizationTheme {
 
   @Field(() => Boolean, { nullable: true })
   darkText?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  fullWidth?: boolean
 }
 
 export const mapOrganizationTheme = (
@@ -29,4 +33,5 @@ export const mapOrganizationTheme = (
   gradientEndColor: theme.gradientEndColor ?? '',
   backgroundColor: theme.backgroundColor ?? '',
   darkText: !theme.darkText ? false : true,
+  fullWidth: !theme.fullWidth ? false : true,
 })

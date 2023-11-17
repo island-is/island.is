@@ -13,7 +13,6 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles, MCEvents } from './constants'
@@ -31,8 +30,8 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { ChargeItemCode } from '@island.is/shared/constants'
 import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes } from '../util'
 
 const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -261,7 +260,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: [ChargeItemCode.MORTGAGE_CERTIFICATE],
+        chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
         onExit: [
           defineTemplateApi({

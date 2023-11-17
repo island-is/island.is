@@ -118,6 +118,7 @@ export enum CaseTransition {
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -283,6 +284,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
 }
@@ -403,6 +405,7 @@ export interface UpdateCase
     | 'appealCaseNumber'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]

@@ -17,6 +17,7 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   residencePermitPermanent = 'isResidencePermitPermanentEnabled',
   residencePermitRenewal = 'isResidencePermitRenewalEnabled',
@@ -50,6 +51,9 @@ export enum Features {
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
+
+  // Userprofile Collection
+  isIASSpaPagesEnabled = 'isiasspapagesenabled',
 }
 
 export enum ServerSideFeature {

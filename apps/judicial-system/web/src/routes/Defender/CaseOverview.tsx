@@ -4,11 +4,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   completedCaseStates,
@@ -27,12 +23,9 @@ import {
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PdfButton,
-  RestrictionTags,
-  RulingDateLabel,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -115,6 +108,20 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
               </Box>
             )}
+          {workingCase.appealRulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(strings.rulingModifiedTitle)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.appealRulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <InfoCard
               data={[

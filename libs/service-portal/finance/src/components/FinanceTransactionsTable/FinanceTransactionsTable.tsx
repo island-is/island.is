@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -15,9 +15,7 @@ interface Props {
   recordsArray: Array<CustomerRecordsDetails>
 }
 
-const FinanceTransactionsTable: FC<React.PropsWithChildren<Props>> = ({
-  recordsArray,
-}) => {
+const FinanceTransactionsTable = ({ recordsArray }: Props) => {
   const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 

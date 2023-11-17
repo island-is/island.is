@@ -2,9 +2,6 @@ import { LicensePlateRenewal } from '../lib/dataSchema'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { Application, ExtraData } from '@island.is/application/types'
 
-export const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
 export const getChargeItemCodeWithAnswers = (
   answers: LicensePlateRenewal,
 ): Array<string> => {
@@ -15,8 +12,8 @@ export const getChargeItemCodeWithAnswers = (
   return result
 }
 
-export const getChargeItemCodes = (applicaiton: Application): Array<string> => {
-  const answers = applicaiton.answers as LicensePlateRenewal
+export const getChargeItemCodes = (application: Application): Array<string> => {
+  const answers = application.answers as LicensePlateRenewal
   return getChargeItemCodeWithAnswers(answers)
 }
 

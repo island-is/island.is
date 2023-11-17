@@ -22,9 +22,10 @@ import {
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
 import {
-  InstitutionType,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  isAdminUser,
+  isCourtOfAppealsUser,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { useGetLawyer } from '../../utils/hooks'
@@ -76,11 +77,11 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const logoHref =
     !user || !isAuthenticated
       ? '/'
-      : user.role === UserRole.DEFENDER
+      : isDefenceUser(user)
       ? constants.DEFENDER_CASES_ROUTE
-      : user.role === UserRole.ADMIN
+      : isAdminUser(user)
       ? constants.USERS_ROUTE
-      : user.institution?.type === InstitutionType.COURT_OF_APPEALS
+      : isCourtOfAppealsUser(user)
       ? constants.COURT_OF_APPEAL_CASES_ROUTE
       : constants.CASES_ROUTE
 
@@ -89,7 +90,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, user?.role === UserRole.DEFENDER) ?? {}
+    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
 
   return (
     <Container>
@@ -148,7 +149,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.DEFENDER
+                            isDefenceUser(user)
                               ? formatMessage(header.defender)
                               : user.title,
                           )}
@@ -157,7 +158,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {capitalize(
-                            user.role === UserRole.DEFENDER
+                            isDefenceUser(user)
                               ? practice
                               : user.institution?.name,
                           )}
@@ -166,16 +167,12 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
                       <Box marginBottom={2}>
                         <Text>
                           {formatPhoneNumber(
-                            user.role === UserRole.DEFENDER
-                              ? phoneNr
-                              : user.mobileNumber,
+                            isDefenceUser(user) ? phoneNr : user.mobileNumber,
                           )}
                         </Text>
                       </Box>
                       <Box>
-                        <Text>
-                          {user.role === UserRole.DEFENDER ? email : user.email}
-                        </Text>
+                        <Text>{isDefenceUser(user) ? email : user.email}</Text>
                       </Box>
                     </Box>
                   </div>
@@ -188,7 +185,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
                       />
                     </Box>
                     <Box>
-                      {user.role === UserRole.DEFENDER ? (
+                      {isDefenceUser(user) ? (
                         <Text>
                           {formatMessage(header.tipDisclaimerDefenders)}
                         </Text>

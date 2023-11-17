@@ -5,7 +5,7 @@ import {
   CaseState,
   CaseType,
   InstitutionType,
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isDefenceUser,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -68,7 +68,12 @@ function canProsecutionUserAccessCase(
 
 function canDistrictCourtUserAccessCase(theCase: Case, user: User): boolean {
   // Check case type access
-  if (![UserRole.JUDGE, UserRole.REGISTRAR].includes(user.role)) {
+  if (
+    ![
+      UserRole.DISTRICT_COURT_JUDGE,
+      UserRole.DISTRICT_COURT_REGISTRAR,
+    ].includes(user.role)
+  ) {
     if (!isIndictmentCase(theCase.type)) {
       return false
     }
@@ -265,7 +270,7 @@ export function canUserAccessCase(
     return canDistrictCourtUserAccessCase(theCase, user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return canAppealsCourtUserAccessCase(theCase)
   }
 

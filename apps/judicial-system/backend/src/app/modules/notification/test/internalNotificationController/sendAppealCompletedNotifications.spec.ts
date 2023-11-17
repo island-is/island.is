@@ -41,11 +41,18 @@ describe('InternalNotificationController - Send appeal completed notifications',
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, notificationConfig, internalNotificationController } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      notificationConfig,
+      notificationModel,
+      internalNotificationController,
+    } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
+
+    const mockFindAll = notificationModel.findAll as jest.Mock
+    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (defenderNationalId?: string) => {
       const then = {} as Then

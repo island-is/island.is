@@ -1,4 +1,7 @@
-import { judgeRule, registrarRule } from '../../../../guards'
+import {
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+} from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Get court record signature confirmation rules', () => {
@@ -12,9 +15,9 @@ describe('CaseController - Get court record signature confirmation rules', () =>
     )
   })
 
-  it('should give permission to two roles', () => {
+  it('should give permission to roles', () => {
     expect(rules).toHaveLength(2)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
+    expect(rules).toContain(districtCourtJudgeRule)
+    expect(rules).toContain(districtCourtRegistrarRule)
   })
 })

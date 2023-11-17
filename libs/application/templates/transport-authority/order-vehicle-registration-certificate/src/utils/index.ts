@@ -2,9 +2,6 @@ import { Application, ExtraData } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { OrderVehicleRegistrationCertificateAnswers } from '..'
 
-export const formatIsk = (value: number): string =>
-  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
-
 export { getSelectedVehicle } from './getSelectedVehicle'
 
 export const getChargeItemCodes = (): Array<string> => {

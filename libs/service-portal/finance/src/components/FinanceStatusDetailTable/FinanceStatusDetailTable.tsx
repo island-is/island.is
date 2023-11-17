@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import React, { FC } from 'react'
 
 import {
   Box,
@@ -32,12 +31,12 @@ interface Props {
   downloadURL: string
 }
 
-const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
+const FinanceStatusDetailTable = ({
   organization,
   chargeType,
   financeStatusDetails,
   downloadURL,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const headerArray = [

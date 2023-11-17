@@ -226,6 +226,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         gradientEndColor
         backgroundColor
         darkText
+        fullWidth
       }
       externalLinks {
         text

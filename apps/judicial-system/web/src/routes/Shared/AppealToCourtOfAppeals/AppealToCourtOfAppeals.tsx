@@ -7,7 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseFileCategory,
   CaseTransition,
-  isProsecutionRole,
+  isDefenceUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -31,7 +31,7 @@ import { appealToCourtOfAppeals as strings } from './AppealToCourtOfAppeals.stri
 
 const AppealToCourtOfAppeals = () => {
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess, user } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
@@ -48,14 +48,14 @@ const AppealToCourtOfAppeals = () => {
   )
   const { transitionCase } = useCase()
 
-  const appealBriefType = isProsecutionRole(user?.role)
+  const appealBriefType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF
-  const appealCaseFilesType = isProsecutionRole(user?.role)
+  const appealCaseFilesType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE
   const previousUrl = `${
-    limitedAccess
+    isDefenceUser(user)
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`

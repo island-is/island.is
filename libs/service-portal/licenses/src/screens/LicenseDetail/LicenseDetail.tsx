@@ -102,6 +102,7 @@ const GenericLicenseQuery = gql`
           links {
             type
             label
+            name
             value
           }
         }
@@ -421,9 +422,16 @@ const LicenseDetail = () => {
                       href={link.value}
                       target="_blank"
                       rel="noreferrer"
+                      download={
+                        link.type === GenericUserLicenseMetaLinksType.Download
+                          ? link.name
+                          : false
+                      }
                       key={licenseType + '_link_' + index}
                     >
                       <Button
+                        as="span"
+                        unfocusable
                         variant="utility"
                         size="small"
                         icon={

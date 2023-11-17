@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { formatPlausiblePathToParams, isExternalLink } from '../..'
 import * as styles from './LinkResolver.css'

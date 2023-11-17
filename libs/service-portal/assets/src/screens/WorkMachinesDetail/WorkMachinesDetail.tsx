@@ -87,6 +87,7 @@ const WorkMachinesDetail = () => {
 
       const button = (
         <Button
+          as={url ? 'span' : undefined}
           size="medium"
           disabled={!url}
           icon={icon}

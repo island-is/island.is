@@ -277,6 +277,7 @@ export const UpdateCaseMutation = gql`
       }
       appealConclusion
       appealRulingDecision
+      appealRulingModifiedHistory
     }
   }
 `

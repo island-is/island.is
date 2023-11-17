@@ -95,7 +95,6 @@ import { ResidencePermitPermanentModule } from './directorate-of-immigration/res
 import { ResidencePermitPermanentService } from './directorate-of-immigration/residence-permit-permanent/residence-permit-permanent.service'
 import { ResidencePermitRenewalModule } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.module'
 import { ResidencePermitRenewalService } from './directorate-of-immigration/residence-permit-renewal/residence-permit-renewal.service'
-
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 

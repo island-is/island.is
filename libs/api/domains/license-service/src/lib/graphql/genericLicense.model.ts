@@ -57,6 +57,9 @@ export class GenericUserLicenseMetaLinks {
   @Field(() => String, { nullable: true })
   value?: string
 
+  @Field(() => String, { nullable: true })
+  name?: string
+
   @Field(() => GenericUserLicenseMetaLinksType, { nullable: true })
   type?: GenericUserLicenseMetaLinksType
 }

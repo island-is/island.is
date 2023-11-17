@@ -1,9 +1,9 @@
 import {
-  appealsCourtRoles,
   CaseAppealState,
   CaseState,
   CaseType,
   completedCaseStates,
+  courtOfAppealsRoles,
   InstitutionType,
   investigationCases,
   restrictionCases,
@@ -13,7 +13,7 @@ import {
 import { Case } from '../..'
 import { verifyFullAccess, verifyNoAccess } from './verify'
 
-describe.each(appealsCourtRoles)('appeals court user %s', (role) => {
+describe.each(courtOfAppealsRoles)('appeals court user %s', (role) => {
   const user = {
     role,
     institution: { type: InstitutionType.COURT_OF_APPEALS },

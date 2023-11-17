@@ -12,7 +12,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   CaseState,
   CaseTransition,
-  isExtendedCourtRole,
+  isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -205,7 +205,7 @@ const openCase = (caseToOpen: Case, user: User) => {
     } else {
       routeTo = constants.SIGNED_VERDICT_OVERVIEW_ROUTE
     }
-  } else if (isExtendedCourtRole(user.role)) {
+  } else if (isDistrictCourtUser(user)) {
     if (isRestrictionCase(caseToOpen.type)) {
       routeTo = findFirstInvalidStep(
         constants.courtRestrictionCasesRoutes,

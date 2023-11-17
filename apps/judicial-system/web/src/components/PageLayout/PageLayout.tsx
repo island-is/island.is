@@ -15,7 +15,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
+import {
+  isDefenceUser,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import {
   pageLayout,
   sections as formStepperSections,
@@ -23,7 +26,6 @@ import {
 import {
   InstitutionType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -126,7 +128,6 @@ const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   onNavigationTo,
   workingCase,
 }) => {
-  const { limitedAccess } = useContext(UserContext)
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
@@ -138,7 +139,7 @@ const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
       <div className={styles.formStepperContainer}>
         <Box marginLeft={[0, 0, 2]}>
-          {!limitedAccess && (
+          {!isDefenceUser(user) && (
             <Box marginBottom={7} display={['none', 'none', 'block']}>
               <Logo defaultInstitution={workingCase.court?.name} />
             </Box>
@@ -202,18 +203,18 @@ const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? {
               href: constants.DEFENDER_CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',

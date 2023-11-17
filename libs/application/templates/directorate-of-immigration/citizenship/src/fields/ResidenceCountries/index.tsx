@@ -1,5 +1,9 @@
 import { FC, useEffect, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import {
+  FieldBaseProps,
+  FieldComponents,
+  FieldTypes,
+} from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
 import { ResidenceCountriesRepeaterItem } from './ResidenceCountriesRepeaterItem'
 import { CountryOfResidence } from '../../shared'
@@ -11,9 +15,9 @@ import {
 } from '@island.is/application/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { information } from '../../lib/messages'
-import DescriptionText from '../../components/DescriptionText'
 import { useLocale } from '@island.is/localization'
 import { CountryOfResidenceViewModel } from '@island.is/clients/directorate-of-immigration'
+import { DescriptionFormField } from '@island.is/application/ui-fields'
 
 interface ExtendedCountryProps extends CountryOfResidence {
   readOnly?: boolean
@@ -137,14 +141,24 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
   return (
     <Box>
-      <DescriptionText
-        text={information.labels.countriesOfResidence.questionTitle}
-        textProps={{
-          as: 'h5',
-          fontWeight: 'semiBold',
-          marginBottom: 3,
-        }}
-      />
+      <Box marginBottom={3}>
+        {DescriptionFormField({
+          application: application,
+          showFieldName: false,
+          field: {
+            id: 'title',
+            title: '',
+            description: formatMessage(
+              information.labels.countriesOfResidence.questionTitle,
+            ),
+            titleVariant: 'h5',
+            type: FieldTypes.DESCRIPTION,
+            component: FieldComponents.DESCRIPTION,
+            children: undefined,
+          },
+        })}
+      </Box>
+
       <RadioController
         id={'countriesOfResidence.hasLivedAbroad'}
         split="1/2"
@@ -173,15 +187,23 @@ export const ResidenceCountries: FC<FieldBaseProps> = (props) => {
 
       <Box>
         {hasLivedAbroad === YES && (
-          <DescriptionText
-            text={information.labels.countriesOfResidence.countryListTitle}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              paddingTop: 3,
-              marginBottom: 1,
-            }}
-          />
+          <Box marginBottom={3} paddingTop={1}>
+            {DescriptionFormField({
+              application: application,
+              showFieldName: false,
+              field: {
+                id: 'title',
+                title: '',
+                description: formatMessage(
+                  information.labels.countriesOfResidence.countryListTitle,
+                ),
+                titleVariant: 'h5',
+                type: FieldTypes.DESCRIPTION,
+                component: FieldComponents.DESCRIPTION,
+                children: undefined,
+              },
+            })}
+          </Box>
         )}
         {selectedCountries.map((field, index) => {
           const position = filteredSelectedCountries.indexOf(field)

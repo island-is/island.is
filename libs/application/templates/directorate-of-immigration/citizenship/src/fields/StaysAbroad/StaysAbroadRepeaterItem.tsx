@@ -18,8 +18,10 @@ import {
 import { FC, useEffect } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { information } from '../../lib/messages'
-import { SelectFormField } from '@island.is/application/ui-fields'
-import DescriptionText from '../../components/DescriptionText'
+import {
+  DescriptionFormField,
+  SelectFormField,
+} from '@island.is/application/ui-fields'
 import { getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { getErrorViaPath } from '@island.is/application/core'
@@ -108,20 +110,23 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         justifyContent="spaceBetween"
         marginTop={showItemTitle || itemNumber > 0 ? 2 : 0}
       >
-        {showItemTitle && (
-          <DescriptionText
-            text={information.labels.staysAbroad.itemTitle}
-            format={{ index: itemNumber + 1 }}
-            textProps={{
-              as: 'h5',
-              fontWeight: 'semiBold',
-              marginBottom: 0,
-            }}
-          />
-          /*
-            <Text as="h5" fontWeight="semiBold">{formatMessage(information.labels.staysAbroad.itemTitle)}</Text>
-        */
-        )}
+        {showItemTitle &&
+          DescriptionFormField({
+            application: application,
+            showFieldName: false,
+            field: {
+              id: 'title',
+              title: '',
+              description: formatMessage(
+                information.labels.staysAbroad.itemTitle,
+                { index: itemNumber + 1 },
+              ),
+              titleVariant: 'h5',
+              type: FieldTypes.DESCRIPTION,
+              component: FieldComponents.DESCRIPTION,
+              children: undefined,
+            },
+          })}
 
         {itemNumber > 0 && !readOnly && (
           <Button

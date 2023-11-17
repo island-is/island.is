@@ -3,20 +3,20 @@ import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
   PdfApi,
-  VehicleSearchDto,
   PublicVehicleSearchApi,
-  PersidnoLookupResultDto,
+  VehicleDtoListPagedResponse,
+  VehicleSearchDto,
 } from '@island.is/clients/vehicles'
-import { VehiclesDetail } from '../models/getVehicleDetail.model'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 
 @Injectable()
 export class VehiclesService {
   constructor(
     @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
-    @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}
@@ -27,28 +27,39 @@ export class VehiclesService {
 
   async getVehiclesForUser(
     auth: User,
-    showDeregistered: boolean,
-    showHistory: boolean,
-    nextCursor?: string,
-  ): Promise<PersidnoLookupResultDto> {
-    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+    input: GetVehiclesForUserInput,
+  ): Promise<VehicleDtoListPagedResponse> {
+    return await this.getVehiclesWithAuth(
+      auth,
+    ).vehicleHistoryRequestedPersidnoGet({
       requestedPersidno: auth.nationalId,
-      showDeregistered: showDeregistered,
-      showHistory: showHistory,
-      cursor: nextCursor,
+      showDeregistered: input.showDeregeristered,
+      showHistory: input.showHistory,
+      page: input.page,
+      pageSize: input.pageSize,
+      type: input.type,
+      dtFrom: input.dateFrom,
+      dtTo: input.dateTo,
+      permno: input.permno
+        ? input.permno.length < 5
+          ? `${input.permno}*`
+          : `${input.permno}`
+        : undefined,
     })
   }
 
-  async getVehiclesSearch(
-    auth: User,
-    search: string,
-  ): Promise<VehicleSearchDto | null> {
-    const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
-      search,
+  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
+    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
+      ssn: auth.nationalId,
     })
-    const { data } = res
-    if (!data) return null
-    return data[0]
+
+    return {
+      persidno: res.persidno ?? undefined,
+      name: res.name ?? undefined,
+      vehicles: res.vehicles?.map((item) =>
+        basicVehicleInformationMapper(item),
+      ),
+    }
   }
 
   async getPublicVehicleSearch(search: string) {
@@ -79,6 +90,18 @@ export class VehiclesService {
 
     if (!res) return null
 
-    return basicVehicleInformationMapper(res, auth.nationalId)
+    return basicVehicleInformationMapper(res)
+  }
+
+  async getVehiclesSearch(
+    auth: User,
+    search: string,
+  ): Promise<VehicleSearchDto | null> {
+    const res = await this.getVehiclesWithAuth(auth).vehicleSearchGet({
+      search,
+    })
+    const { data } = res
+    if (!data) return null
+    return data[0]
   }
 }

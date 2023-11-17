@@ -429,9 +429,10 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 export const isAdminUserFormValid = (user: User): boolean => {
   return (
     (user.institution &&
+      user.role &&
       validate([
-        [user.name, ['empty']],
         [user.nationalId, ['empty', 'national-id']],
+        [user.name, ['empty']],
         [user.title, ['empty']],
         [user.mobileNumber, ['empty']],
         [user.email, ['empty', 'email-format']],

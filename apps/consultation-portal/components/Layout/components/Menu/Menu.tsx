@@ -48,7 +48,9 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
               <Columns alignY="center" space={2}>
                 {isFrontPage && (
                   <Column width="content">
-                    <Logo />
+                    <FocusableBox href="https://island.is">
+                      <Logo />
+                    </FocusableBox>
                   </Column>
                 )}
                 {!isFrontPage && (
@@ -56,7 +58,9 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                     {!isMobile && (
                       <>
                         <Column width="content">
-                          <Logo iconOnly />
+                          <FocusableBox href="https://island.is">
+                            <Logo iconOnly />
+                          </FocusableBox>
                         </Column>
                         <Column width="content">
                           <Box

@@ -1,4 +1,7 @@
-import { judgeRule, registrarRule } from '../../../../guards'
+import {
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+} from '../../../../guards'
 import { FileController } from '../../file.controller'
 
 describe('FileController - Update case file to court rules', () => {
@@ -14,7 +17,7 @@ describe('FileController - Update case file to court rules', () => {
 
   it('should give permission to two roles', () => {
     expect(rules).toHaveLength(2)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
+    expect(rules).toContain(districtCourtJudgeRule)
+    expect(rules).toContain(districtCourtRegistrarRule)
   })
 })

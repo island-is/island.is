@@ -1,4 +1,3 @@
-import { FC } from 'react'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { LinkButton } from '@island.is/service-portal/core'
 
@@ -10,13 +9,13 @@ interface Props {
   linkText: string
 }
 
-const ExpiringTable: FC<React.PropsWithChildren<Props>> = ({
+const ExpiringTable = ({
   header,
   children,
   footnote,
   link,
   linkText,
-}) => {
+}: Props) => {
   return (
     <Box marginTop={[2, 2, 5]}>
       <Box marginTop={2}>

@@ -8,40 +8,40 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
 
 describe('useFilter - filterOptionsForUser', () => {
-  test.each([UserRole.ASSISTANT, UserRole.PROSECUTOR_REPRESENTATIVE])(
-    'should filter out investigation option for %s',
-    (role) => {
-      const user = { role: role } as User
-      const options: FilterOption[] = [
-        {
-          label: 'ALL_CASES',
-          value: 'ALL_CASES',
-        },
-        {
-          label: 'INVESTIGATION',
-          value: 'INVESTIGATION',
-        },
-        {
-          label: 'INDICTMENT',
-          value: 'INDICTMENT',
-        },
-        {
-          label: 'MY_CASES',
-          value: 'MY_CASES',
-        },
-      ]
-      const result = filterOptionsForUser(options, user)
-      expect(result).not.toEqual(
-        expect.arrayContaining([
-          { value: 'INVESTIGATION', label: 'INVESTIGATION' },
-        ]),
-      )
-      expect(result.length).toBe(3)
-      expect(result).toEqual(
-        expect.arrayContaining([{ value: 'INDICTMENT', label: 'INDICTMENT' }]),
-      )
-    },
-  )
+  test.each([
+    UserRole.DISTRICT_COURT_ASSISTANT,
+    UserRole.PROSECUTOR_REPRESENTATIVE,
+  ])('should filter out investigation option for %s', (role) => {
+    const user = { role: role } as User
+    const options: FilterOption[] = [
+      {
+        label: 'ALL_CASES',
+        value: 'ALL_CASES',
+      },
+      {
+        label: 'INVESTIGATION',
+        value: 'INVESTIGATION',
+      },
+      {
+        label: 'INDICTMENT',
+        value: 'INDICTMENT',
+      },
+      {
+        label: 'MY_CASES',
+        value: 'MY_CASES',
+      },
+    ]
+    const result = filterOptionsForUser(options, user)
+    expect(result).not.toEqual(
+      expect.arrayContaining([
+        { value: 'INVESTIGATION', label: 'INVESTIGATION' },
+      ]),
+    )
+    expect(result.length).toBe(3)
+    expect(result).toEqual(
+      expect.arrayContaining([{ value: 'INDICTMENT', label: 'INDICTMENT' }]),
+    )
+  })
 
   test('should return all options for others', () => {
     const user = {} as User

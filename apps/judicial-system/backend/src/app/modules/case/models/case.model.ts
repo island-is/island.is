@@ -1119,6 +1119,16 @@ export class Case extends Model {
   appealJudge3?: User
 
   /**********
+   * The history on when a case's appeal ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealRulingModifiedHistory?: string
+
+  /**********
    * The case's event logs
    **********/
   @HasMany(() => EventLog, 'caseId')

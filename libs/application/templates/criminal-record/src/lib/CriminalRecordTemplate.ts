@@ -14,7 +14,6 @@ import {
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -27,9 +26,8 @@ import {
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
-
 import { buildPaymentState } from '@island.is/application/utils'
-import { ChargeItemCode } from '@island.is/shared/constants'
+import { getChargeItemCodes } from '../utils'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -96,7 +94,7 @@ const template: ApplicationTemplate<
       },
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
-        chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],
+        chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
       }),
       [States.COMPLETED]: {

@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import {
   Box,
   Text,
@@ -12,9 +11,7 @@ interface Props {
   data: Array<{ title: string; value?: string | number }>
 }
 
-const FinanceTransactionsDetail: FC<React.PropsWithChildren<Props>> = ({
-  data,
-}) => {
+const FinanceTransactionsDetail = ({ data }: Props) => {
   return (
     <Box padding={2} background="blue100">
       <GridContainer className={styles.grid}>

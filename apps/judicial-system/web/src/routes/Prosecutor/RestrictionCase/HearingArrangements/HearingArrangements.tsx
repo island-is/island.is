@@ -62,7 +62,7 @@ export const HearingArrangements: React.FC<
     setAndSendCaseToServer,
   } = useCase()
 
-  const { courts, loading: institutionLoading } = useInstitution()
+  const { districtCourts, loading: institutionLoading } = useInstitution()
 
   const handleCourtChange = (court: Institution) => {
     if (workingCase) {
@@ -147,7 +147,7 @@ export const HearingArrangements: React.FC<
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
-                courts={courts}
+                courts={districtCourts}
                 onChange={handleCourtChange}
               />
             </Box>

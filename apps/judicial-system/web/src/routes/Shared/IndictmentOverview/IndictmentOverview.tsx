@@ -4,7 +4,10 @@ import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { completedCaseStates } from '@island.is/judicial-system/types'
+import {
+  completedCaseStates,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -27,7 +30,7 @@ import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const { limitedAccess } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -82,7 +85,7 @@ const IndictmentOverview = () => {
           </Box>
         )}
       </FormContentContainer>
-      {!caseIsClosed && !limitedAccess && (
+      {!caseIsClosed && !isDefenceUser(user) && (
         <FormContentContainer isFooter>
           <FormFooter
             nextButtonIcon="arrowForward"

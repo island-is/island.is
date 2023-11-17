@@ -3,6 +3,7 @@ export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': [
       'ts-jest',

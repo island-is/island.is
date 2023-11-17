@@ -36,6 +36,7 @@ import {
   Image,
   Organization,
   OrganizationPage,
+  OrganizationTheme,
 } from '@island.is/web/graphql/schema'
 import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
@@ -145,6 +146,14 @@ const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
 ]
+
+const getBackgroundStyle = (background: OrganizationTheme) => {
+  if (background.gradientStartColor && background.gradientEndColor)
+    return `linear-gradient(99.09deg, ${background.gradientStartColor} 23.68%,
+      ${background.gradientEndColor} 123.07%),
+      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
+  return background.backgroundColor ?? ''
+}
 
 export const getThemeConfig = (
   theme?: string,
@@ -265,7 +274,19 @@ export const OrganizationHeader: React.FC<
     case 'rikissaksoknari':
       return <RikissaksoknariHeader organizationPage={organizationPage} />
     default:
-      return <DefaultHeader organizationPage={organizationPage} />
+      return (
+        <DefaultHeader
+          fullWidth={organizationPage.themeProperties.fullWidth ?? false}
+          image={organizationPage.defaultHeaderImage?.url}
+          background={getBackgroundStyle(organizationPage.themeProperties)}
+          title={organizationPage.title}
+          logo={organizationPage.organization?.logo?.url}
+          titleColor={
+            organizationPage.themeProperties.darkText ? 'dark400' : 'white'
+          }
+          slug={organizationPage.slug}
+        />
+      )
   }
 }
 
