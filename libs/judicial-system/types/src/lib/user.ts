@@ -106,7 +106,11 @@ function isAppealsCourtRole(role: string): boolean {
   return appealsCourtRoles.includes(role)
 }
 
-export function isAppealsCourtUser(user: User): boolean {
+export function isAppealsCourtUser(user?: User): boolean {
+  if (!user) {
+    return false
+  }
+
   return (
     user.institution?.type === InstitutionType.COURT_OF_APPEALS &&
     isAppealsCourtRole(user.role)

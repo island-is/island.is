@@ -42,7 +42,7 @@ const renderLinkButton = (text: string, href: string) => {
   )
 }
 
-const getAppealDecision = (
+export const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
   appealRulingDecision?: CaseAppealRulingDecision,
 ) => {

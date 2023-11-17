@@ -8,6 +8,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   completedCaseStates,
+  isAppealsCourtUser,
+  User,
   UserRole,
 } from '@island.is/judicial-system/types'
 import {
@@ -77,7 +79,8 @@ const AppealCaseFilesOverview: React.FC<
 
   const appealRulingFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
-      workingCase.appealState === CaseAppealState.COMPLETED &&
+      (workingCase.appealState === CaseAppealState.COMPLETED ||
+        isAppealsCourtUser(user as User)) &&
       caseFile.category &&
       [CaseFileCategory.APPEAL_RULING].includes(caseFile.category),
   )

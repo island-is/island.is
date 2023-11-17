@@ -1198,6 +1198,7 @@ const useSections = (
        */
       (route) => route === router.pathname.slice(0, -5),
     )
+
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
@@ -1211,7 +1212,7 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
           user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
-          routeIndex !== 3,
+          routeIndex !== 4,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
@@ -1253,6 +1254,28 @@ const useSections = (
                     await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
                 : undefined,
           },
+          {
+            name: formatMessage(sections.courtOfAppealSection.summary),
+            isActive: routeIndex === 3,
+            href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            onClick:
+              routeIndex !== 3 &&
+              validateFormStepper(
+                isValid,
+                [
+                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                  constants.COURT_OF_APPEAL_CASE_ROUTE,
+                  constants.COURT_OF_APPEAL_RULING_ROUTE,
+                ],
+                workingCase,
+              ) &&
+              onNavigationTo
+                ? async () =>
+                    await onNavigationTo(
+                      constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                    )
+                : undefined,
+          },
         ],
       },
       {
@@ -1261,7 +1284,7 @@ const useSections = (
             ? getAppealResultText(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
         isActive:
-          routeIndex === 3 ||
+          routeIndex === 4 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
