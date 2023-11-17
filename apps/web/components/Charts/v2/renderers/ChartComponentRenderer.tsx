@@ -140,7 +140,13 @@ export const renderPieChartComponents = (
         position="center"
       />
       {components.map((c, i) => (
-        <Cell key={i} fill={c.fill} name={c.label} />
+        <Cell
+          key={i}
+          fill={c.fill}
+          name={c.label}
+          stroke="white"
+          strokeWidth={3}
+        />
       ))}
     </Pie>
   )

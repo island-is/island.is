@@ -19,18 +19,27 @@ export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
         borderRadius: '4px',
       }}
     >
-      {payload.map((item) => (
-        <li>
-          <span
-            style={{
-              color: (item as any)?.stroke ?? item?.payload?.stroke ?? 'black',
-            }}
-          >
-            {item.name}
-          </span>
-          : {formatValueForPresentation(item.value)}
-        </li>
-      ))}
+      {payload.map((item) => {
+        let labelColor =
+          (item as any)?.stroke ?? item?.payload?.stroke ?? 'black'
+
+        if (labelColor === 'white') {
+          labelColor = 'black'
+        }
+
+        return (
+          <li>
+            <span
+              style={{
+                color: labelColor,
+              }}
+            >
+              {item.name}
+            </span>
+            : {formatValueForPresentation(item.value)}
+          </li>
+        )
+      })}
     </ul>
   )
 }

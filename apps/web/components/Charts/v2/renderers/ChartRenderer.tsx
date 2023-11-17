@@ -9,12 +9,14 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Chart as IChart } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 
 import {
   useGetChartBaseComponent,
   useGetChartComponentsWithRenderProps,
   useGetChartData,
 } from '../hooks'
+import { messages } from '../messages'
 import { ChartType } from '../types'
 import { decideChartBase, formatDate } from '../utils'
 import { AccessibilityTableRenderer } from './AccessibilityTableRenderer'
@@ -39,9 +41,10 @@ export const Chart = ({ slice }: ChartProps) => {
   const BaseChartComponent = useGetChartBaseComponent(slice)
   const chartUsesGrid = chartType !== ChartType.pie
   const [expanded, setExpanded] = useState(true)
+  const { activeLocale } = useI18n()
 
   if (BaseChartComponent === null || chartType === null) {
-    return <p>Could not render chart</p>
+    return messages[activeLocale].renderError
   }
 
   if (queryResult.loading) {
@@ -49,8 +52,7 @@ export const Chart = ({ slice }: ChartProps) => {
   }
 
   if (!queryResult.data || queryResult.data.length === 0) {
-    // TODO:
-    return <p>No data for chart</p>
+    return messages[activeLocale].noDataForChart
   }
 
   const Wrapper = slice.displayAsCard ? AccordionCard : React.Fragment
@@ -60,7 +62,7 @@ export const Chart = ({ slice }: ChartProps) => {
   return (
     <Box width="full" height="full">
       <a href={`#${skipId}`} className="visually-hidden">
-        Sleppa grafi, {slice.alternativeDescription}
+        {messages[activeLocale].skipGraph} {slice.title}
       </a>
       <Wrapper
         id={slice.id}

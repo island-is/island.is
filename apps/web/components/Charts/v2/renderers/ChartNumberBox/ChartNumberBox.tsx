@@ -3,8 +3,10 @@ import round from 'lodash/round'
 
 import { Icon, SkeletonLoader } from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 
 import { useGetChartData } from '../../hooks'
+import { messages } from '../../messages'
 import { ChartType } from '../../types'
 import { formatValueForPresentation } from '../../utils'
 import * as styles from './ChartNumberBox.css'
@@ -32,6 +34,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     chartType: ChartType.mixed,
     components: [slice],
   })
+  const { activeLocale } = useI18n()
 
   const boxData = useMemo(() => {
     const result: ChartNumberBoxData[] = [
@@ -50,7 +53,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
     if (slice.displayChangeMonthOverMonth) {
       result.push({
-        title: 'Breyting milli mánaða',
+        title: messages[activeLocale].changeMOM,
         sourceDataKey: slice.sourceDataKey,
         sourceDataIndex: numberOfDataPoints - 2,
         valueType: 'percentage',
@@ -59,7 +62,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
     if (slice.displayChangeYearOverYear) {
       result.push({
-        title: 'Breyting milli ára',
+        title: messages[activeLocale].changeYOY,
         sourceDataKey: slice.sourceDataKey,
         sourceDataIndex: 0,
         valueType: 'percentage',
@@ -67,14 +70,14 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     }
 
     return result
-  }, [slice, numberOfDataPoints])
+  }, [slice, numberOfDataPoints, activeLocale])
 
   if (queryResult.loading) {
     return <SkeletonLoader width="100%" height={130} borderRadius="xl" />
   }
 
   if (!queryResult.data || queryResult.data.length === 0) {
-    return <p>Could not load chart data</p>
+    return <p>{messages[activeLocale].noDataForChart}</p>
   }
 
   return (
@@ -112,7 +115,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               <span>
                 {data.valueType === 'number'
                   ? formatValueForPresentation(result)
-                  : `${result * 100}%`}
+                  : `${Math.abs(result) * 100}%`}
               </span>
             </p>
           </div>
