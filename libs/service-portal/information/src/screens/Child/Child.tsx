@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import {
   formatNationalId,
   NotFound,
@@ -30,10 +25,7 @@ import ChildRegistrationModal from './ChildRegistrationModal'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
-import {
-  useNationalRegistryChildCustodyLazyQuery,
-  useNationalRegistryChildCustodyQuery,
-} from './Child.generated'
+import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
 
@@ -50,6 +42,7 @@ const Child = () => {
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
       api: 'v3',
+      childNationalId: nationalId,
     },
   })
 
