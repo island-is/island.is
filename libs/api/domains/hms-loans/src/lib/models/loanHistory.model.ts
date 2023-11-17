@@ -1,142 +1,161 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HmsLoansVedstadir')
-export class Vedstadir {
+@ObjectType('HmsLoansProperty')
+export class Property {
   @Field(() => String, { nullable: true })
-  fastanumer?: string
+  propertyId?: string
 
   @Field(() => String, { nullable: true })
-  vedstadurHeiti?: string
+  propertyAddress?: string
 
   @Field(() => String, { nullable: true })
-  vedstadurSVfelag?: string
+  propertyMunicipality?: string
 
   @Field(() => String, { nullable: true })
   epilog?: string
 
   @Field(() => String, { nullable: true })
-  svFelagsNumer?: string
+  municipalityNumber?: string
 }
 
-@ObjectType('HmsLoansMedgreidendur')
-export class Medgreidendur {
+@ObjectType('HmsLoansCoPayer')
+export class CoPayer {
   @Field(() => String, { nullable: true })
-  nafnMedgreidandi?: string | null
+  coPayerName?: string
 
   @Field(() => String, { nullable: true })
-  medGreidandi?: string | null
+  coPayerNationalId?: string
 }
 
 @ObjectType('HmsLoansLoan')
-export class Loan {
+export class Loanhistory {
   @Field(() => Number, { nullable: true })
-  masterloanid?: number
+  loanId?: number
 
   @Field(() => String, { nullable: true })
-  nafn?: string
-
   @Field(() => String, { nullable: true })
-  heimili?: string
+  homeAddress?: string
 
   @Field(() => Number, { nullable: true })
-  postnumer?: number
+  postNumber?: number
 
   @Field(() => String, { nullable: true })
-  poststod?: string
+  municipality?: string
 
   @Field(() => Date, { nullable: true })
-  fyrstiVaxtadagur?: Date
+  firstInterestDate?: Date
 
   @Field(() => Date, { nullable: true })
-  fyrstiGjalddagi?: Date
+  firstPaymentDate?: Date
 
   @Field(() => Number, { nullable: true })
-  fjoldiGjalddaga?: number
+  totalNumberOfPayments?: number
 
   @Field(() => Number, { nullable: true })
-  fjoldiGjalddagaAAri?: number
+  numberOfPaymentPerYear?: number
 
   @Field(() => String, { nullable: true })
-  greidslujofnun?: string
+  balancePayment?: string
 
   @Field(() => String, { nullable: true })
-  uppGrAkvaedi?: string
+  paymentFee?: string
 
   @Field(() => String, { nullable: true })
-  frysting?: string
+  paymentDelayment?: string
 
   @Field(() => String, { nullable: true })
-  timabFrysting?: string
+  temporaryPaymentDelayment?: string
 
   @Field(() => String, { nullable: true })
-  breytilegir?: string
+  variableInterest?: string
 
   @Field(() => Number, { nullable: true })
-  hlutdeildarlan?: number
+  affiliateLoan?: number
 
   @Field(() => String, { nullable: true })
-  tegVisitolu?: string
+  priceIndexType?: string
 
   @Field(() => Number, { nullable: true })
-  grunnVisitala?: number
+  baseIndex?: number
 
   @Field(() => Number, { nullable: true })
-  vextir?: number
+  interest?: number
 
   @Field(() => Number, { nullable: true })
-  upphaflegFjarhaed?: number
+  originalLoanAmount?: number
 
   @Field(() => Date, { nullable: true })
-  naestiGjalddagi?: Date
+  nextPaymentDate?: Date
 
   @Field(() => Date, { nullable: true })
-  sidastiGjalddagi?: Date
+  lastPaymentDate?: Date
 
   @Field(() => Date, { nullable: true })
-  elstiOgreiddiGjalddagi?: Date
+  lastUnpaidInvoiceDate?: Date
 
   @Field(() => Number, { nullable: true })
-  fjoldiGjalddagaEftir?: number
+  numberOfPaymentDatesRemaining?: number
 
   @Field(() => Number, { nullable: true })
-  stadaJofnun?: number
+  statusSettlementPayment?: number
 
   @Field(() => Number, { nullable: true })
-  sidastaGreidsla?: number
+  lastPaymentAmount?: number
 
   @Field(() => Number, { nullable: true })
-  vanskilAlls?: number
+  totalDueAmount?: number
 
   @Field(() => Number, { nullable: true })
-  nafnverdOgjaldfallid?: number
+  balanceWithoutInterestPriceImprovements?: number
 
   @Field(() => Number, { nullable: true })
-  afallnirVxtVb?: number
+  accruedInterestPriceImprovements?: number
 
   @Field(() => Number, { nullable: true })
-  eftirstodvarMVSkil?: number
+  remainingBalanceWithoutDebt?: number
 
   @Field(() => Number, { nullable: true })
-  uppgreidslugjald?: number
+  repaymentFee?: number
 
   @Field(() => Number, { nullable: true })
-  uppgreidsluverdmaeti?: number
+  loanAmountWithRepayment?: number
 
   @Field(() => String, { nullable: true })
-  stadaLans?: string
+  loanStatus?: string
 
   @Field(() => String, { nullable: true })
-  kennitala?: string
+  nationalId?: string
 
   @Field(() => String, { nullable: true })
-  lanaFlokkur?: string
+  propertyId?: string
+
+  @Field(() => String, { nullable: true })
+  propertyAddress?: string
+
+  @Field(() => String, { nullable: true })
+  propertyMunicipality?: string
+
+  @Field(() => String, { nullable: true })
+  epilog?: string
+
+  @Field(() => String, { nullable: true })
+  municipalityNumber?: string
+
+  @Field(() => String, { nullable: true })
+  loanType?: string
 
   @Field(() => Number, { nullable: true })
-  leggur?: number
+  installments?: number
 
-  @Field(() => [Vedstadir], { nullable: true })
-  vedstadir?: Vedstadir[]
+  @Field(() => String, { nullable: true })
+  coPayerName?: string
 
-  @Field(() => [Medgreidendur], { nullable: true })
-  medgreidendur?: Medgreidendur[]
+  @Field(() => String, { nullable: true })
+  coPayerNationalId?: string
+
+  @Field(() => [Property], { nullable: true })
+  properties?: Property[]
+
+  @Field(() => [CoPayer], { nullable: true })
+  coPayers?: CoPayer[]
 }

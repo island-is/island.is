@@ -2,14 +2,16 @@
   "openapi": "3.0.1",
   "info": {
     "title": "LibraAPI",
-    "description": "Vefþjónusta útgáfa 2 fyrir Libra kerfi.",
-    "version": "v2.0"
+    "description": "LibraAPI gives information about loans in HMS.",
+    "version": "v1"
   },
   "paths": {
-    "/api/v{version}/Libra/greidsluyfirlit": {
+    "/api/v{version}/Libra/loanhistory": {
       "post": {
-        "tags": ["Libra"],
-        "summary": "Skilar greiðsluyfirlit lána fyrir viðkomandi einstakling sem eru í Libra kerfi HMS.",
+        "tags": [
+          "Libra"
+        ],
+        "summary": "Retrieves information about loan history for logged in individual in the Libra HMS loan system.",
         "parameters": [
           {
             "name": "version",
@@ -29,7 +31,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                    "$ref": "#/components/schemas/LoanHistoryReturnModel"
                   }
                 }
               },
@@ -37,7 +39,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                    "$ref": "#/components/schemas/LoanHistoryReturnModel"
                   }
                 }
               },
@@ -45,7 +47,117 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/GreidsluYfirlitReturnModel"
+                    "$ref": "#/components/schemas/LoanHistoryReturnModel"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Libra/paymenthistory": {
+      "post": {
+        "tags": [
+          "Libra"
+        ],
+        "summary": "Retrieves information about payment history for all loans for logged in individual in the Libra HMS loan system.",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
                   }
                 }
               }
@@ -128,69 +240,269 @@
         },
         "additionalProperties": false
       },
-      "GreidsluYfirlitReturnModel": {
+      "CoPayerReturnModel": {
         "type": "object",
         "properties": {
-          "gjalddagi": {
+          "coPayerName": {
             "type": "string",
-            "description": "Gjalddagi fyrir greiðslu.",
-            "format": "date-time"
+            "description": "Name of co-payer on loan.",
+            "nullable": true
           },
-          "hreyfingadagur": {
+          "coPayerNationalId": {
             "type": "string",
-            "description": "Hreyfingadagur greiðslu.",
-            "format": "date-time"
-          },
-          "afborgun": {
-            "type": "number",
-            "description": "Afborgun fyrir greiðslu.",
-            "format": "double",
+            "description": "National Id of co-payer.",
             "nullable": true
-          },
-          "vextir": {
-            "type": "number",
-            "description": "Vextir fyrir greiðslu.",
-            "format": "double",
-            "nullable": true
-          },
-          "verdbAfborgun": {
-            "type": "number",
-            "description": "Verðbætur afborgun.",
-            "format": "double",
-            "nullable": true
-          },
-          "verdbVextir": {
-            "type": "number",
-            "description": "Verðbætur vextir.",
-            "format": "double",
-            "nullable": true
-          },
-          "kostnadur": {
-            "type": "number",
-            "description": "Kostnaður við greiðslu.",
-            "format": "double",
-            "nullable": true
-          },
-          "drattarvextir": {
-            "type": "number",
-            "description": "Dráttarvextir greiðslu.",
-            "format": "double",
-            "nullable": true
-          },
-          "samtals": {
-            "type": "number",
-            "description": "Samtala fyrir greiðslu.",
-            "format": "double",
-            "nullable": true
-          },
-          "lansnumer": {
-            "type": "integer",
-            "description": "Lánsnúmer fyrir greiðslu.",
-            "format": "int32"
           }
         },
-        "additionalProperties": false,
-        "description": "Model fyrir greiðsluyfirlit."
+        "additionalProperties": false
+      },
+      "LoanHistoryReturnModel": {
+        "type": "object",
+        "properties": {
+          "loanId": {
+            "type": "integer",
+            "description": "Unique id of loan.",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of borrower.",
+            "nullable": true
+          },
+          "homeAddress": {
+            "type": "string",
+            "description": "Home address of borrower.",
+            "nullable": true
+          },
+          "postNumber": {
+            "type": "number",
+            "description": "Postal code of borrower.",
+            "format": "double"
+          },
+          "municipality": {
+            "type": "string",
+            "description": "Municipality of the borrower.",
+            "nullable": true
+          },
+          "firstInterestDate": {
+            "type": "string",
+            "description": "First interest date of loan.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "firstPaymentDate": {
+            "type": "string",
+            "description": "First payment date.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalNumberOfPayments": {
+            "type": "integer",
+            "description": "Total number of payments.",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfPaymentPerYear": {
+            "type": "integer",
+            "description": "Number of payments per year.",
+            "format": "int32",
+            "nullable": true
+          },
+          "balancePayment": {
+            "type": "string",
+            "description": "Balance of payment. Returns yes or no.",
+            "nullable": true
+          },
+          "paymentFee": {
+            "type": "string",
+            "description": "Payment Fee that needs to be paid if loan borrower pays loan fully or pays payment exceeding agreed payments.",
+            "nullable": true
+          },
+          "paymentDelayment": {
+            "type": "string",
+            "description": "Payment Delayment. Returns yes if loan payment has or is delayed.",
+            "nullable": true
+          },
+          "temporaryPaymentDelayment": {
+            "type": "string",
+            "description": "Temporarily delayment of payments.",
+            "nullable": true
+          },
+          "variableInterest": {
+            "type": "string",
+            "description": "Variable interest (Yes/No) - (Já/Nei)",
+            "nullable": true
+          },
+          "affiliateLoan": {
+            "type": "integer",
+            "description": "Number loan type. If empty then the loan is not type 48 which is (AffiliateLoan)Hlutdeildarlán.",
+            "format": "int32"
+          },
+          "priceIndexType": {
+            "type": "string",
+            "description": "Type of price index. For example: CPI(NEY) - Consumer Price Index",
+            "nullable": true
+          },
+          "baseIndex": {
+            "type": "number",
+            "description": "Base Index on date when loan is issued.",
+            "format": "double",
+            "nullable": true
+          },
+          "interest": {
+            "type": "number",
+            "description": "Interest",
+            "format": "double",
+            "nullable": true
+          },
+          "originalLoanAmount": {
+            "type": "number",
+            "description": "Original Loan Amount",
+            "format": "double"
+          },
+          "nextPaymentDate": {
+            "type": "string",
+            "description": "Next payment date.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastPaymentDate": {
+            "type": "string",
+            "description": "Last payment date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUnpaidInvoiceDate": {
+            "type": "string",
+            "description": "Last unpaid invoice by borrower.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "numberOfPaymentDatesRemaining": {
+            "type": "integer",
+            "description": "Number of payment dates remaining.",
+            "format": "int32",
+            "nullable": true
+          },
+          "statusSettlementPayment": {
+            "type": "number",
+            "description": "Status of settlement payment. Rarely used.",
+            "format": "double"
+          },
+          "lastPaymentAmount": {
+            "type": "number",
+            "description": "Last paid amount.",
+            "format": "double",
+            "nullable": true
+          },
+          "totalDueAmount": {
+            "type": "number",
+            "description": "Total Payment that is due because borrower has defaulted on his loan.",
+            "format": "double"
+          },
+          "balanceWithoutInterestPriceImprovements": {
+            "type": "number",
+            "description": "Remaining balance without price improvements and interests.",
+            "format": "double",
+            "nullable": true
+          },
+          "accruedInterestPriceImprovements": {
+            "type": "number",
+            "description": "Accrued interest and price improvements.",
+            "format": "double",
+            "nullable": true
+          },
+          "remainingBalanceWithoutDebt": {
+            "type": "number",
+            "description": "Remaining of balance assuming that the borrower has no debt.",
+            "format": "double",
+            "nullable": true
+          },
+          "repaymentFee": {
+            "type": "number",
+            "description": "Fee for repayment of loan.",
+            "format": "double",
+            "nullable": true
+          },
+          "loanAmountWithRepayment": {
+            "type": "number",
+            "description": "Loan amount with repayment fee.",
+            "format": "double",
+            "nullable": true
+          },
+          "loanStatus": {
+            "type": "string",
+            "description": "Status of loan. Active/Inactive.",
+            "nullable": true
+          },
+          "nationalId": {
+            "type": "string",
+            "description": "National Id(Kennitala) of a person.",
+            "nullable": true
+          },
+          "propertyId": {
+            "type": "string",
+            "description": "Property ID of mortgage.",
+            "nullable": true
+          },
+          "propertyAddress": {
+            "type": "string",
+            "description": "Property address.",
+            "nullable": true
+          },
+          "propertyMunicipality": {
+            "type": "string",
+            "description": "Municipality of property.",
+            "nullable": true
+          },
+          "epilog": {
+            "type": "string",
+            "description": "Epilog(Matshluti) is a number from the Icelandic property registry that represents a part of the property. For example a garage. Term from Property registry.",
+            "nullable": true
+          },
+          "municipalityNumber": {
+            "type": "string",
+            "description": "Municipality number of property.",
+            "nullable": true
+          },
+          "loanType": {
+            "type": "string",
+            "description": "Type of loan.",
+            "nullable": true
+          },
+          "installments": {
+            "type": "integer",
+            "description": "Only applies to loan of the type \"ádráttarlán\". Number reflects number of payments to the loan taker by HMS. Each payment might have different interest rate etc.",
+            "format": "int32"
+          },
+          "coPayerName": {
+            "type": "string",
+            "description": "Name of the co-payer.",
+            "nullable": true
+          },
+          "coPayerNationalId": {
+            "type": "string",
+            "description": "National id of the co-payer.",
+            "nullable": true
+          },
+          "properties": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PropertyReturnModel"
+            },
+            "description": "List of properties that this loan is for.",
+            "nullable": true
+          },
+          "coPayers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoPayerReturnModel"
+            },
+            "description": "List of co-payers that are registered on this loan.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "NoContent": {
         "type": "object",
@@ -213,6 +525,103 @@
           }
         },
         "additionalProperties": false
+      },
+      "PaymentHistoryReturnModel": {
+        "type": "object",
+        "properties": {
+          "paymentDate": {
+            "type": "string",
+            "description": "Due date for the payment.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "transactionDate": {
+            "type": "string",
+            "description": "Transaction date of the payment.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "paymentAmount": {
+            "type": "number",
+            "description": "Payment amount",
+            "format": "double",
+            "nullable": true
+          },
+          "interest": {
+            "type": "number",
+            "description": "Interest",
+            "format": "double",
+            "nullable": true
+          },
+          "priceImprovementPayment": {
+            "type": "number",
+            "description": "Price improvement payment.",
+            "format": "double",
+            "nullable": true
+          },
+          "priceImprovementInterest": {
+            "type": "number",
+            "description": "Price improvement interest.",
+            "format": "double",
+            "nullable": true
+          },
+          "costPayment": {
+            "type": "number",
+            "description": "Cost of the payment.",
+            "format": "double",
+            "nullable": true
+          },
+          "defaultInterest": {
+            "type": "number",
+            "description": "Default interest for the payment.",
+            "format": "double",
+            "nullable": true
+          },
+          "totalPayment": {
+            "type": "number",
+            "description": "Total amount for the payment.",
+            "format": "double",
+            "nullable": true
+          },
+          "loanId": {
+            "type": "integer",
+            "description": "Loan id for the payment.",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model for payment history."
+      },
+      "PropertyReturnModel": {
+        "type": "object",
+        "properties": {
+          "propertyId": {
+            "type": "string",
+            "description": "Property ID of mortgage.",
+            "nullable": true
+          },
+          "propertyAddress": {
+            "type": "string",
+            "description": "Property address.",
+            "nullable": true
+          },
+          "propertyMunicipality": {
+            "type": "string",
+            "description": "Municipality of property.",
+            "nullable": true
+          },
+          "epilog": {
+            "type": "string",
+            "description": "Epilog(Matshluti) is a number from the Icelandic property registry that represents a part of the property. For example a garage. Term from Property registry.",
+            "nullable": true
+          },
+          "municipalityNumber": {
+            "type": "string",
+            "description": "Municipality number of property.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -226,7 +635,7 @@
   },
   "security": [
     {
-      "Bearer": []
+      "Bearer": [ ]
     }
   ]
 }

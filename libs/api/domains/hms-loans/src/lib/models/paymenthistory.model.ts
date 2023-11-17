@@ -1,34 +1,34 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('HmsLoansPayment')
-export class Payment {
+export class Paymenthistory {
   @Field(() => Date, { nullable: true })
-  gjalddagi?: Date
+  paymentDate?: Date
 
   @Field(() => Date, { nullable: true })
-  hreyfingadagur?: Date
+  transactionDate?: Date
 
   @Field(() => Number, { nullable: true })
-  afborgun?: number
+  paymentAmount?: number
 
   @Field(() => Number, { nullable: true })
-  vextir?: number
+  interest?: number
 
   @Field(() => Number, { nullable: true })
-  verdbAfborgun?: number
+  priceImprovementPayment?: number
 
   @Field(() => Number, { nullable: true })
-  verdbVextir?: number
+  priceImprovementInterest?: number
 
   @Field(() => Number, { nullable: true })
-  kostnadur?: number
+  costPayment?: number
 
   @Field(() => Number, { nullable: true })
-  drattarvextir?: number
+  defaultInterest?: number
 
   @Field(() => Number, { nullable: true })
-  samtals?: number
+  totalPayment?: number
 
   @Field(() => Number, { nullable: true })
-  lansnumer?: number
+  loanId?: number
 }
