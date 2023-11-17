@@ -15,7 +15,7 @@ import { NationalRegistryService } from '../nationalRegistry.service'
 import { ChildCustody } from '../shared/models/childCustody.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { SharedChildCustody } from '../shared/types'
+import type { SharedChildCustody } from '../shared/types'
 
 const namespace = '@island.is/api/national-registry'
 
