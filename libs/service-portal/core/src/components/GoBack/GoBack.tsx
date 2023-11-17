@@ -5,8 +5,7 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useNavigate } from 'react-router-dom'
-import { m } from '../../'
+import { LinkResolver, m } from '../../'
 import * as styles from './GoBack.css'
 
 type GoBackProps = {
@@ -16,15 +15,19 @@ type GoBackProps = {
   noUnderline?: boolean
   truncate?: boolean
   marginBottom?: ResponsiveSpace
+  path?: string
+  label?: string
 }
 export const GoBack = ({
   display = ['none', 'none', 'block'],
   noUnderline,
   truncate,
   marginBottom = 3,
+  path = '/',
+  label,
 }: GoBackProps) => {
-  const navigate = useNavigate()
   const { formatMessage } = useLocale()
+
   return (
     <Box
       display={display}
@@ -32,17 +35,20 @@ export const GoBack = ({
       marginBottom={marginBottom}
       className={noUnderline ? styles.noUnderline : undefined}
     >
-      <Button
-        preTextIcon="arrowBack"
-        preTextIconType="filled"
-        size="small"
-        type="button"
-        variant="text"
-        truncate={truncate}
-        onClick={() => navigate('/')}
-      >
-        {formatMessage(m.goBackToDashboard)}
-      </Button>
+      <LinkResolver href={path}>
+        <Button
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          size="small"
+          type="button"
+          variant="text"
+          truncate={truncate}
+          as="span"
+          unfocusable
+        >
+          {label ?? formatMessage(m.goBackToDashboard)}
+        </Button>
+      </LinkResolver>
     </Box>
   )
 }

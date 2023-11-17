@@ -168,7 +168,7 @@ export const notifications = {
   defenderResubmittedToCourt: defineMessages({
     subject: {
       id: 'judicial.system.backend:notifications.defender_resubmitted_to_court.subject_v3',
-      defaultMessage: 'Gögn í máli {courtCaseNumber}',
+      defaultMessage: 'Krafa í máli {courtCaseNumber}',
       description:
         'Notaður sem titil í pósti til verjanda þegar sækjandi breytir kröfunni og sendir aftur á héraðsdómstól',
     },
@@ -722,9 +722,9 @@ export const notifications = {
         'Landsréttur hefur skráð þig sem dómsformann í máli nr. {caseNumber}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
     },
     body: {
-      id: 'judicial.system.backend:notifications.coa_judge_assigned.body',
+      id: 'judicial.system.backend:notifications.coa_judge_assigned.body_v2',
       defaultMessage:
-        'Landsréttur hefur skráð þig sem {role, select, JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Dómsformaður er {foreperson}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
+        'Landsréttur hefur skráð þig sem {role, select, COURT_OF_APPEALS_JUDGE {dómara} other {aðstoðarmann dómara}} í máli nr. {caseNumber}. Dómsformaður er {foreperson}. Þú getur nálgast yfirlit málsins á {linkStart}yfirlitssíðu málsins í Réttarvörslugátt.{linkEnd}',
       description:
         'Texti í pósti til dómara og aðstoðarmanna dómara þegar máli er úthlutað í landsrétti',
     },
