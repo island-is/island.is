@@ -88,6 +88,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                 label: getLabel('downloadCard', locale, label),
                 value: getDocument(typedPayload.tempCardPdf, 'pdf'),
                 type: GenericUserLicenseMetaLinksType.Download,
+                name: `EHIC_${new Date().toISOString().split('T')[0]}.pdf`,
               }
             : undefined,
           {
