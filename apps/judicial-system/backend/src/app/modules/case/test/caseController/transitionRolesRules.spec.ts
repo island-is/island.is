@@ -1,10 +1,13 @@
 import { CaseController } from '../../case.controller'
 import {
-  assistantTransitionRule,
-  judgeTransitionRule,
+  courtOfAppealsAssistantTransitionRule,
+  courtOfAppealsJudgeTransitionRule,
+  courtOfAppealsRegistrarTransitionRule,
+  districtCourtAssistantTransitionRule,
+  districtCourtJudgeTransitionRule,
+  districtCourtRegistrarTransitionRule,
   prosecutorRepresentativeTransitionRule,
   prosecutorTransitionRule,
-  registrarTransitionRule,
 } from '../../guards/rolesRules'
 
 describe('CaseController - Transition rules', () => {
@@ -18,12 +21,15 @@ describe('CaseController - Transition rules', () => {
     )
   })
 
-  it('should give permission to five roles', () => {
-    expect(rules).toHaveLength(5)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorTransitionRule)
     expect(rules).toContain(prosecutorRepresentativeTransitionRule)
-    expect(rules).toContain(judgeTransitionRule)
-    expect(rules).toContain(registrarTransitionRule)
-    expect(rules).toContain(assistantTransitionRule)
+    expect(rules).toContain(districtCourtJudgeTransitionRule)
+    expect(rules).toContain(districtCourtRegistrarTransitionRule)
+    expect(rules).toContain(districtCourtAssistantTransitionRule)
+    expect(rules).toContain(courtOfAppealsJudgeTransitionRule)
+    expect(rules).toContain(courtOfAppealsRegistrarTransitionRule)
+    expect(rules).toContain(courtOfAppealsAssistantTransitionRule)
   })
 })

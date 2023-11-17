@@ -6,7 +6,7 @@ import {
   FootNote,
   IntroHeader,
   m,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -41,6 +41,7 @@ const UserInfoOverview = () => {
       })
     }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { spouse, childCustody } = data?.nationalRegistryPerson || {}
@@ -50,7 +51,7 @@ const UserInfoOverview = () => {
       <IntroHeader
         title={m.myInfo}
         intro={spmm.userInfoDesc}
-        serviceProviderID={THJODSKRA_ID}
+        serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
 
@@ -83,7 +84,7 @@ const UserInfoOverview = () => {
             familyRelation="child"
           />
         ))}
-        <FootNote serviceProviderID={THJODSKRA_ID} />
+        <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
       </Stack>
     </>
   )
