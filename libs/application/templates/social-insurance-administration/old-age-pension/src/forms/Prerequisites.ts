@@ -217,6 +217,16 @@ export const PrerequisitesForm: Form = buildForm({
       children: [],
     }),
     buildSection({
+      id: 'periodSection',
+      title: oldAgePensionFormMessage.period.periodTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'fileUpload',
+      title: oldAgePensionFormMessage.fileUpload.title,
+      children: [],
+    }),
+    buildSection({
       id: 'additionalInformation',
       title: oldAgePensionFormMessage.comment.additionalInfoTitle,
       children: [],
