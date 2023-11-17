@@ -21,7 +21,7 @@ import { University } from '../../university/model/university'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
-export class Program extends Model {
+export class ProgramBase extends Model {
   @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
@@ -341,7 +341,10 @@ export class Program extends Model {
   readonly modified!: Date
 }
 
-export class ProgramDetails extends Program {
+@Table({
+  tableName: 'program',
+})
+export class Program extends ProgramBase {
   @ApiPropertyOptional({
     description:
       'External url  for the program from the university web page (Icelandic)',
@@ -439,8 +442,3 @@ export class ProgramDetails extends Program {
   @HasMany(() => ProgramExtraApplicationField)
   extraApplicationFields?: ProgramExtraApplicationField[]
 }
-
-@Table({
-  tableName: 'program',
-})
-export class ProgramTable extends ProgramDetails {}

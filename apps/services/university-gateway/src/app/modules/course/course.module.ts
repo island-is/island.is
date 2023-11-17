@@ -5,16 +5,11 @@ import { CourseService } from './course.service'
 import { Course } from './model/course'
 import { University } from '../university/model/university'
 import { ProgramCourse } from '../program/model/programCourse'
-import { ProgramTable } from '../program/model/program'
+import { Program } from '../program/model/program'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      University,
-      Course,
-      ProgramTable,
-      ProgramCourse,
-    ]),
+    SequelizeModule.forFeature([University, Course, Program, ProgramCourse]),
   ],
   controllers: [CourseController],
   providers: [CourseService],

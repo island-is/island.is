@@ -14,7 +14,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Course } from '../../course/model/course'
-import { ProgramTable } from './program'
+import { Program } from './program'
 import { Requirement, Season } from '@island.is/university-gateway'
 
 @Table({
@@ -35,7 +35,7 @@ export class ProgramCourse extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => ProgramTable)
+  @ForeignKey(() => Program)
   programId!: string
 
   @ApiHideProperty()

@@ -9,7 +9,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ProgramTable } from './program'
+import { Program } from './program'
 import { Tag } from './tag'
 
 @Table({
@@ -30,7 +30,7 @@ export class ProgramTag extends Model {
     type: DataType.UUID,
     allowNull: false,
   })
-  @ForeignKey(() => ProgramTable)
+  @ForeignKey(() => Program)
   programId!: string
 
   @ApiProperty({
