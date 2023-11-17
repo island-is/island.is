@@ -93,14 +93,20 @@ export const BaseInformation = ({
       triggerValidation
     >
       {applicantName !== '' && (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(oldAgePensionFormMessage.review.name)}
               value={applicantName}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
               value={formatKennitala(applicantNationalId)}
@@ -109,15 +115,21 @@ export const BaseInformation = ({
         </GridRow>
       )}
 
-      <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.address)}
             value={applicantAddress}
           />
         </GridColumn>
 
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.municipality)}
             value={applicantMunicipality}
@@ -126,7 +138,10 @@ export const BaseInformation = ({
       </GridRow>
 
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={[3, 3, 3, 0]}
+        >
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.email)}
             value={applicantEmail}
@@ -144,15 +159,15 @@ export const BaseInformation = ({
       </GridRow>
 
       {spouseName && (
-        <GridRow marginTop={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
             <DataValue
               label={formatMessage(oldAgePensionFormMessage.review.spouseName)}
               value={spouseName}
             />
           </GridColumn>
 
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']} paddingTop={3}>
             <DataValue
               label={formatMessage(oldAgePensionFormMessage.review.nationalId)}
               value={formatKennitala(spouseNationalId)}

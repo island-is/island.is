@@ -11,6 +11,7 @@ import {
   TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
+  BankAccountType,
 } from './constants'
 import {
   Option,
@@ -35,6 +36,7 @@ import {
   FileUpload,
   Attachments,
 } from '../types'
+import isEmpty from 'lodash/isEmpty'
 
 enum AttachmentTypes {
   PENSION = 'pension',
@@ -42,6 +44,7 @@ enum AttachmentTypes {
   FISHERMAN = 'fishermen',
   SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+  FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -89,8 +92,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const rawEmployers = getValueViaPath(answers, 'employers', []) as Employer[]
   const employers = filterValidEmployers(rawEmployers)
-
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
   const personalAllowance = getValueViaPath(
     answers,
@@ -147,6 +148,41 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.earlyRetirement',
   ) as FileType[]
 
+  const bankAccountType = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankAccountType',
+  ) as BankAccountType
+
+  const bank = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bank',
+  ) as string
+
+  const iban = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.iban',
+  ) as string
+
+  const swift = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.swift',
+  ) as string
+
+  const bankName = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankName',
+  ) as string
+
+  const bankAddress = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.bankAddress',
+  ) as string
+
+  const currency = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountInfo.currency',
+  ) as string
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -172,6 +208,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selfEmployedAttachments,
     earlyRetirementAttachments,
     taxLevel,
+    bankAccountType,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
   }
 }
 
@@ -241,6 +283,11 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const currencies = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
+
   return {
     residenceHistory,
     applicantName,
@@ -253,6 +300,7 @@ export function getApplicationExternalData(
     maritalStatus,
     isEligible,
     bankInfo,
+    currencies,
   }
 }
 
@@ -427,19 +475,11 @@ export function getAttachments(application: Application) {
   }
 
   const { answers, externalData } = application
-  const {
-    applicationType,
-    // householdSupplementChildren,
-    // householdSupplementHousing,
-    // connectedApplications,
-    employmentStatus,
-    // childPension,
-    // childPensionAddChild,
-  } = getApplicationAnswers(answers)
+  const { applicationType, employmentStatus } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
 
-  // Early retirement, pension fund, fishermen
+  // Early retirement, pension fund, fishermen, foreign bank account
   const fileUpload = answers.fileUpload as FileUpload
 
   getAttachmentDetails(fileUpload?.pension, AttachmentTypes.PENSION)
@@ -598,8 +638,64 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBank = (bankInfo?: BankInfo) => {
-  return bankInfo?.bank && bankInfo?.ledger && bankInfo?.accountNumber
+export const formatBank = (bankInfo: string) => {
+  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+}
+
+export const getBankIsk = (bankInfo: BankInfo) => {
+  return !isEmpty(bankInfo) &&
+    bankInfo.bank &&
+    bankInfo.ledger &&
+    bankInfo.accountNumber
     ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
+}
+
+// We should only send bank account to TR if applicant is registering
+// new one or changing.
+export const shouldNotUpdateBankAccount = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
+  const { bankInfo } = getApplicationExternalData(externalData)
+  const {
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = getApplicationAnswers(answers)
+
+  if (bankAccountType === BankAccountType.ICELANDIC) {
+    return getBankIsk(bankInfo) === bank ?? false
+  } else {
+    return (
+      bankInfo.iban === iban &&
+      bankInfo.swift === swift &&
+      bankInfo.foreignBankName === bankName &&
+      bankInfo.foreignBankAddress === bankAddress &&
+      bankInfo.currency === currency
+    )
+  }
+}
+
+export const friendlyFormatSWIFT = (value: string | undefined) => {
+  return value
+    ? value
+        .toUpperCase()
+        .replace(/[\s]+/g, '')
+        .replace(/(.{4})(?!$)/g, '$1 ')
+        .replace(/(.{4}[\s].{2})(?!$)/g, '$1 ')
+    : undefined
+}
+
+export const useCurrencies = (currencies: Array<string>) => {
+  return (
+    currencies.map((i) => ({
+      label: i,
+      value: i,
+    })) ?? []
+  )
 }
