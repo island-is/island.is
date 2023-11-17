@@ -1,6 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-
 @ObjectType()
 export class Area {
   @Field(() => ID)
@@ -14,5 +13,4 @@ export class Area {
 
   @Field()
   max!: number
-
 }

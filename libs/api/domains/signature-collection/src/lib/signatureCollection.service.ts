@@ -10,10 +10,10 @@ import { SignatureList } from './models/signatureList.model'
 import { BypassAuth } from '@island.is/auth-nest-tools'
 import { Signature } from './models/signature.model'
 import { SignatureListNationalIdsInput } from './dto/signatureListNationalIds.input'
-import { Bulk } from './models/bulk.model';
+import { Bulk } from './models/bulk.model'
 import { Signee } from './models/signee.model'
 import { SignatureListInput } from './dto/singatureList.input'
-import * as nationalId from 'kennitala';
+import * as nationalId from 'kennitala'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -34,7 +34,9 @@ export class SignatureCollectionService {
   async canCreate(nationalId: string): Promise<Success> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: !!Lists.find((list) => list.owner.nationalId === nationalId) })
+        resolve({
+          success: !!Lists.find((list) => list.owner.nationalId === nationalId),
+        })
       }, 300)
     })
   }
@@ -52,8 +54,8 @@ export class SignatureCollectionService {
   //   CanSign
   async canSign(nationalId: string): Promise<Success> {
     const listId = Signatures.find(
-        (sign) => sign.signee.nationalId === nationalId,
-      )?.listId
+      (sign) => sign.signee.nationalId === nationalId,
+    )?.listId
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: !!listId })
@@ -154,20 +156,27 @@ export class SignatureCollectionService {
   }
 
   //   CompareLists
-  async compareLists({nationalIds, listId}: SignatureListNationalIdsInput): Promise<Bulk> {
+  async compareLists({
+    nationalIds,
+    listId,
+  }: SignatureListNationalIdsInput): Promise<Bulk> {
     const found: Signature[] = []
 
     Signatures.map((signature) => {
-        const nationalIdIndex = nationalIds.findIndex((id) => signature.signee.nationalId === id) 
-        if(nationalIdIndex > 0 && signature.listId === listId) {
-            found.push(signature)
-            nationalIds.splice(nationalIdIndex, 1)
-        } 
-    }
-   )
+      const nationalIdIndex = nationalIds.findIndex(
+        (id) => signature.signee.nationalId === id,
+      )
+      if (nationalIdIndex > 0 && signature.listId === listId) {
+        found.push(signature)
+        nationalIds.splice(nationalIdIndex, 1)
+      }
+    })
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: found, failed: nationalIds.map((nationalId) => ({nationalId})) })
+        resolve({
+          success: found,
+          failed: nationalIds.map((nationalId) => ({ nationalId })),
+        })
       }, 300)
     })
   }
@@ -193,7 +202,7 @@ export class SignatureCollectionService {
 
   //   Sign
   async sign(listId: string): Promise<Success> {
-    console.log('sign ',listId)
+    console.log('sign ', listId)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })
@@ -203,7 +212,7 @@ export class SignatureCollectionService {
 
   //   Unsign
   async unsign(listId: string): Promise<Success> {
-    console.log('unsign ',listId)
+    console.log('unsign ', listId)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })
@@ -213,7 +222,7 @@ export class SignatureCollectionService {
 
   //   Cancel
   async cancel(nationalId: string): Promise<Success> {
-    console.log('cancel ',nationalId)
+    console.log('cancel ', nationalId)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })
@@ -251,20 +260,27 @@ export class SignatureCollectionService {
   }
 
   //   BulkUploadSignatures
-  async bulkUploadSignatures({nationalIds, listId}: SignatureListNationalIdsInput): Promise<Bulk> {
+  async bulkUploadSignatures({
+    nationalIds,
+    listId,
+  }: SignatureListNationalIdsInput): Promise<Bulk> {
     const notFound: Signature[] = []
 
     Signatures.map((signature) => {
-        const nationalIdIndex = nationalIds.findIndex((id) => signature.signee.nationalId === id) 
-        if(nationalIdIndex > 0 && signature.listId === listId) {
-            notFound.push(signature)
-            nationalIds.splice(nationalIdIndex, 1)
-        } 
-    }
-   )
+      const nationalIdIndex = nationalIds.findIndex(
+        (id) => signature.signee.nationalId === id,
+      )
+      if (nationalIdIndex > 0 && signature.listId === listId) {
+        notFound.push(signature)
+        nationalIds.splice(nationalIdIndex, 1)
+      }
+    })
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: notFound, failed: nationalIds.map((nationalId) => ({nationalId})) })
+        resolve({
+          success: notFound,
+          failed: nationalIds.map((nationalId) => ({ nationalId })),
+        })
       }, 300)
     })
   }

@@ -1,4 +1,4 @@
-import { IsArray, IsString, } from 'class-validator'
+import { IsArray, IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
@@ -10,5 +10,4 @@ export class SignatureListNationalIdsInput {
   @Field(() => [String])
   @IsArray()
   nationalIds!: string[]
-
 }

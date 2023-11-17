@@ -1,8 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Signature } from './signature.model'
 
-
-
 @ObjectType()
 export class FailedNationalIds {
   @Field()
@@ -10,7 +8,6 @@ export class FailedNationalIds {
 
   @Field()
   reason?: string
-
 }
 
 @ObjectType()
@@ -20,5 +17,4 @@ export class Bulk {
 
   @Field(() => [FailedNationalIds])
   failed!: FailedNationalIds[]
-
 }

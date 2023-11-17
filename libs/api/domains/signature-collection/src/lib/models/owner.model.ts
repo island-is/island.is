@@ -1,6 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-
 @ObjectType()
 export class Owner {
   @Field()
@@ -14,5 +13,4 @@ export class Owner {
 
   @Field()
   email?: string
-
 }

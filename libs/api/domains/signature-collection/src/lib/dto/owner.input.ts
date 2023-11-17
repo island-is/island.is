@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
-
 @InputType()
 export class OwnerInput {
   @Field()
@@ -19,5 +18,4 @@ export class OwnerInput {
   @Field()
   @IsString()
   email?: string
-
 }
