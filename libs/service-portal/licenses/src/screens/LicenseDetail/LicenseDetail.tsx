@@ -430,6 +430,8 @@ const LicenseDetail = () => {
                       key={licenseType + '_link_' + index}
                     >
                       <Button
+                        as="span"
+                        unfocusable
                         variant="utility"
                         size="small"
                         icon={
