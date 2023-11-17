@@ -1,7 +1,7 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
-import { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Accordion,
@@ -22,12 +22,12 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
-  FJARSYSLAN_ID,
   FootNote,
   formSubmit,
   m,
   Filter,
   tableStyles,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -48,12 +48,12 @@ interface Props {
   defaultDateRangeMonths?: number
 }
 
-const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
+const DocumentScreen = ({
   title,
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
@@ -342,7 +342,7 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

@@ -12,8 +12,8 @@ import {
 import { HmsLoansClientService } from '@island.is/clients/hms-loans'
 import { Audit } from '@island.is/nest/audit'
 
-import { Loan } from './models/loanOverview.model'
-import { Payment } from './models/paymentOverview.model'
+import { Loanhistory } from './models/loanHistory.model'
+import { Paymenthistory } from './models/paymenthistory.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
@@ -22,15 +22,15 @@ import { Payment } from './models/paymentOverview.model'
 export class HmsLoansResolver {
   constructor(private hmsLoansService: HmsLoansClientService) {}
 
-  @Query(() => [Loan], { name: 'hmsLoans', nullable: true })
+  @Query(() => [Loanhistory], { name: 'hmsLoans', nullable: true })
   @Audit()
-    return await this.hmsLoansService.getHmsLoansLoanOverview(user)
   async getHmsLoans(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansLoanhistory(user)
   }
 
-  @Query(() => [Payment], { name: 'hmsLoansPayments', nullable: true })
+  @Query(() => [Paymenthistory], { name: 'hmsLoansPayments', nullable: true })
   @Audit()
-    return this.hmsLoansService.getHmsLoansPaymentOverview(user)
   async getHmsLoansPayments(@CurrentUser() user: User) {
+    return this.hmsLoansService.getHmsLoansPaymenthistory(user)
   }
 }

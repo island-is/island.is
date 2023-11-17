@@ -271,12 +271,10 @@ export const estateAssets = buildSection({
                   {
                     title: m.stocksFaceValue.defaultMessage,
                     id: 'faceValue',
-                    type: 'number',
                   },
                   {
                     title: m.stocksRateOfChange.defaultMessage,
                     id: 'rateOfExchange',
-                    type: 'number',
                   },
                   {
                     title: m.stocksValue.defaultMessage,
