@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ProgramDetails, ProgramTable } from './model/program'
+import { Program } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
@@ -17,8 +17,8 @@ import { NoContentException } from '@island.is/nest/problem'
 @Injectable()
 export class ProgramService {
   constructor(
-    @InjectModel(ProgramTable)
-    private programModel: typeof ProgramTable,
+    @InjectModel(Program)
+    private programModel: typeof Program,
 
     @InjectModel(Tag)
     private tagModel: typeof Tag,
@@ -88,7 +88,7 @@ export class ProgramService {
     })
   }
 
-  async getProgramById(id: string): Promise<ProgramDetails> {
+  async getProgramById(id: string): Promise<Program> {
     const program = await this.programModel.findByPk(id, {
       include: [
         {

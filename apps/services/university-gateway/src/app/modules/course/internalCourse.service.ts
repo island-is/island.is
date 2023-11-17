@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Course } from './model/course'
 import { University } from '../university/model/university'
 import { ProgramCourse } from '../program/model/programCourse'
-import { ProgramTable } from '../program/model/program'
+import { Program } from '../program/model/program'
 import { ReykjavikUniversityApplicationClient } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClient } from '@island.is/clients/university-application/university-of-iceland'
 import { ICourse, UniversityNationalIds } from '@island.is/university-gateway'
@@ -23,8 +23,8 @@ export class InternalCourseService {
     @InjectModel(Course)
     private courseModel: typeof Course,
 
-    @InjectModel(ProgramTable)
-    private programModel: typeof ProgramTable,
+    @InjectModel(Program)
+    private programModel: typeof Program,
 
     @InjectModel(ProgramCourse)
     private programCourseModel: typeof ProgramCourse,

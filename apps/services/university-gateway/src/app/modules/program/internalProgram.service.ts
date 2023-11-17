@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Tag } from './model/tag'
-import { ProgramTable } from './model/program'
+import { Program } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
@@ -24,8 +24,8 @@ export class InternalProgramService {
     @InjectModel(Tag)
     private tagModel: typeof Tag,
 
-    @InjectModel(ProgramTable)
-    private programModel: typeof ProgramTable,
+    @InjectModel(Program)
+    private programModel: typeof Program,
 
     @InjectModel(ProgramTag)
     private programTagModel: typeof ProgramTag,

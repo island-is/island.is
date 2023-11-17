@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PageInfoDto } from '@island.is/nest/pagination'
-import { Program } from '../model/program'
+import { ProgramBase } from '../model/program'
 
 export class ProgramsResponse {
   @ApiProperty({
@@ -10,9 +10,9 @@ export class ProgramsResponse {
 
   @ApiProperty({
     description: 'Program data',
-    type: [Program],
+    type: [ProgramBase],
   })
-  data!: Program[]
+  data!: ProgramBase[]
 
   @ApiProperty({
     description: 'Page information (for pagination)',
