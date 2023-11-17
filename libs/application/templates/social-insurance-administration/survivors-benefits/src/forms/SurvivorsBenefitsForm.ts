@@ -1,5 +1,6 @@
 import {
   buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -9,6 +10,7 @@ import {
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { survivorsBenefitsFormMessage } from '../lib/messages'
+import { FILE_SIZE_LIMIT } from '../lib/constants'
 
 export const SurvivorsBenefitsForm: Form = buildForm({
   id: 'SurvivorsBenefitsDraft',
@@ -41,6 +43,51 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   width: 'half',
                 }),
               ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'additionalInformation',
+      title: survivorsBenefitsFormMessage.comment.additionalInfoTitle,
+      children: [
+        buildSubSection({
+          id: 'fileUploadAdditionalFiles',
+          title: survivorsBenefitsFormMessage.fileUpload.additionalFileTitle,
+          children: [
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
+              title: survivorsBenefitsFormMessage.fileUpload.additionalFileTitle,
+              description:
+                survivorsBenefitsFormMessage.fileUpload.additionalFileDescription,
+              introduction:
+                survivorsBenefitsFormMessage.fileUpload.additionalFileDescription,
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                survivorsBenefitsFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                survivorsBenefitsFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                survivorsBenefitsFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                survivorsBenefitsFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'commentSection',
+          title: survivorsBenefitsFormMessage.comment.commentSection,
+          children: [
+            buildTextField({
+              id: 'comment',
+              title: survivorsBenefitsFormMessage.comment.commentSection,
+              variant: 'textarea',
+              rows: 10,
+              description: survivorsBenefitsFormMessage.comment.description,
+              placeholder: survivorsBenefitsFormMessage.comment.placeholder,
             }),
           ],
         }),
