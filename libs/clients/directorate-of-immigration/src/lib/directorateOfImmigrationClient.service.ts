@@ -10,12 +10,14 @@ import {
   CountryOfResidenceApi,
   CountryOfResidenceViewModel,
   CriminalRecordApi,
+  CriminalRecordViewModel,
   LookupType,
   OptionSetApi,
   OptionSetItem,
   ResidenceAbroadApi,
   ResidenceAbroadViewModel,
   StudyApi,
+  StudyViewModel,
   TravelDocumentApi,
   TravelDocumentViewModel,
 } from '../../gen/fetch'
@@ -450,22 +452,18 @@ export class DirectorateOfImmigrationClient {
   }
 
   // TODO need to add possibility to select for children as well
-  async getOldCriminalRecordList(auth: Auth): Promise<any[]> {
+  async getCurrentCriminalRecordList(
+    auth: Auth,
+  ): Promise<CriminalRecordViewModel[]> {
     const res = await this.criminalRecordApiWithAuth(
       auth,
     ).apiCriminalRecordGetAllGet()
 
-    return res.map((item) => ({
-      countryId: item.countryId?.toString() || '',
-      countryName: item.countryName!,
-      date: item.when ? new Date(item.when) : null,
-      offenceDescription: item.offence,
-      punishmentDescription: item.punishment,
-    }))
+    return res
   }
 
   // TODO need to add possibility to select for children as well
-  async getOldStudyItem(auth: Auth): Promise<any | undefined> {
+  async getCurrentStudyItem(auth: Auth): Promise<StudyViewModel> {
     const res = await this.studyApiWithAuth(auth).apiStudyGetAllGet()
 
     // Select the most recent entry
@@ -473,16 +471,11 @@ export class DirectorateOfImmigrationClient {
       (a, b) => (b.createdOn?.getTime() || 0) - (a.createdOn?.getTime() || 0),
     )[0]
 
-    return (
-      newestItem && {
-        schoolNationalId: newestItem.icelandicIDNO!,
-        schoolName: newestItem.school!,
-      }
-    )
+    return newestItem
   }
 
   // TODO call endpoint (that does not yet exist)
-  async getOldAgentItem(auth: Auth): Promise<any | undefined> {
+  async getCurrentAgentItem(auth: Auth): Promise<any | undefined> {
     throw new Error('404')
   }
 

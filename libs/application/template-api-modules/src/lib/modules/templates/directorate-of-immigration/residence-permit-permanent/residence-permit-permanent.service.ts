@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  ResidencePermitPermanentAnswers,
-} from '@island.is/application/templates/directorate-of-immigration/residence-permit-permanent'
+import { ApplicationTypes } from '@island.is/application/types'
+import { ResidencePermitPermanentAnswers } from '@island.is/application/templates/directorate-of-immigration/residence-permit-permanent'
 import { DirectorateOfImmigrationClient } from '@island.is/clients/directorate-of-immigration'
 
 @Injectable()
@@ -19,24 +13,6 @@ export class ResidencePermitPermanentService extends BaseTemplateApiService {
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
   ) {
     super(ApplicationTypes.RESIDENCE_PERMIT_PERMANENT)
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as ResidencePermitPermanentAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.UTLENDINGASTOFNUN,
-        chargeItemCodes,
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async submitApplication({
