@@ -492,12 +492,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           </GridRow>
         </Box>
       </GridContainer>
-      <Box
-        paddingTop={3}
-        paddingBottom={6}
-        background="blue100"
-        className="rs_read"
-      >
+      <Box paddingTop={3} paddingBottom={6} background="blue100">
         <GridContainer>
           <Box className="rs_read" marginBottom={6}>
             <Text>
@@ -548,7 +543,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                       padding={[3, 3, 'containerGutter']}
                       overflow="hidden"
                     >
-                      <Box className="rs_read" width="full">
+                      <Box width="full">
                         <GridRow
                           rowGap={[2, 2, 2, 5]}
                           direction={['column', 'column', 'column', 'row']}
@@ -563,40 +558,56 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                               <Text variant="eyebrow">
                                 {vacancy.fieldOfWork}
                               </Text>
-                              <Text color="blue400" variant="h3">
-                                {vacancy.title}
-                              </Text>
-                              <Text>
-                                {shortenText(
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-ignore make web strict
-                                  vacancy.intro,
-                                  VACANCY_INTRO_MAX_LENGTH,
-                                )}
-                              </Text>
-                              <Inline space={1}>
-                                {vacancy.institutionName && (
-                                  <Tag outlined={true} disabled={true}>
-                                    {vacancy.institutionName}
-                                  </Tag>
-                                )}
-                                {vacancy.locations &&
-                                  vacancy.locations
-                                    .filter((location) => location.title)
-                                    .map((location, index) => (
-                                      <Tag key={index} outlined={true} disabled>
-                                        {location.title}
-                                      </Tag>
-                                    ))}
-                              </Inline>
+                              <Box className="rs_read">
+                                <Text color="blue400" variant="h3">
+                                  {vacancy.title}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Text>
+                                  {shortenText(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore make web strict
+                                    vacancy.intro,
+                                    VACANCY_INTRO_MAX_LENGTH,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Inline space={1}>
+                                  {vacancy.institutionName && (
+                                    <Tag outlined={true} disabled={true}>
+                                      {vacancy.institutionName}
+                                    </Tag>
+                                  )}
+                                  {vacancy.locations &&
+                                    vacancy.locations
+                                      .filter((location) => location.title)
+                                      .map((location, index) => (
+                                        <Tag
+                                          key={index}
+                                          outlined={true}
+                                          disabled
+                                        >
+                                          {location.title}
+                                        </Tag>
+                                      ))}
+                                </Inline>
+                              </Box>
                               {vacancy.applicationDeadlineTo && (
-                                <Tag outlined={true} disabled variant="purple">
-                                  {n(
-                                    'applicationDeadlineTo',
-                                    'Umsóknarfrestur',
-                                  )}{' '}
-                                  {vacancy.applicationDeadlineTo}
-                                </Tag>
+                                <Box className="rs_read">
+                                  <Tag
+                                    outlined={true}
+                                    disabled
+                                    variant="purple"
+                                  >
+                                    {n(
+                                      'applicationDeadlineTo',
+                                      'Umsóknarfrestur',
+                                    )}{' '}
+                                    {vacancy.applicationDeadlineTo}
+                                  </Tag>
+                                </Box>
                               )}
                             </Stack>
                           </GridColumn>

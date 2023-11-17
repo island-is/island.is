@@ -47,7 +47,7 @@ const InformationPanel = ({ vacancy, namespace }: InformationPanelProps) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   return (
-    <Box className="rs_read">
+    <Box>
       <Stack space={3}>
         {vacancy?.institutionName && (
           <InstitutionPanel
@@ -130,7 +130,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
   const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
 
   return (
-    <Box className="rs_read">
+    <Box>
       <HeadWithSocialSharing
         title={`${vacancy?.title ?? ''}${vacancy?.title ? ogTitlePostfix : ''}`}
         description={shortenText(
@@ -186,9 +186,11 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
             </LinkV2>
           </Hidden>
           <Box>
-            <Text variant="h1" as="h1">
-              {vacancy?.title}
-            </Text>
+            <Box className="rs_read">
+              <Text variant="h1" as="h1">
+                {vacancy?.title}
+              </Text>
+            </Box>
             <Webreader
               marginBottom={0}
               readId={undefined}
@@ -196,78 +198,104 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
             />
           </Box>
           {vacancy?.intro && (
-            <Text as="div">{webRichText([vacancy.intro] as SliceType[])}</Text>
+            <Box className="rs_read">
+              <Text as="div">
+                {webRichText([vacancy.intro] as SliceType[])}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.tasksAndResponsibilities && (
-            <Text variant="h3" as="h2">
-              {n('assignmentsAndResponsibility', 'Helstu verkefni og ábyrgð')}
-            </Text>
+            <Box className="rs_read">
+              <Text variant="h3" as="h2">
+                {n('assignmentsAndResponsibility', 'Helstu verkefni og ábyrgð')}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.tasksAndResponsibilities && (
-            <Text as="div">
-              {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
-            </Text>
+            <Box className="rs_read">
+              <Text as="div">
+                {webRichText([vacancy.tasksAndResponsibilities] as SliceType[])}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.qualificationRequirements && (
-            <Text variant="h3" as="h2">
-              {n('qualificationRequirements', 'Hæfniskröfur')}
-            </Text>
+            <Box className="rs_read">
+              <Text variant="h3" as="h2">
+                {n('qualificationRequirements', 'Hæfniskröfur')}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.qualificationRequirements && (
-            <Text as="div">
-              {webRichText([vacancy.qualificationRequirements] as SliceType[])}
-            </Text>
+            <Box className="rs_read">
+              <Text as="div">
+                {webRichText([
+                  vacancy.qualificationRequirements,
+                ] as SliceType[])}
+              </Text>
+            </Box>
           )}
 
           {(vacancy?.salaryTerms ||
             vacancy?.description ||
             vacancy?.jobPercentage ||
             vacancy?.applicationDeadlineTo) && (
-            <Text variant="h3" as="h2">
-              {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
-            </Text>
+            <Box className="rs_read">
+              <Text variant="h3" as="h2">
+                {n('moreInfoAboutTheJob', 'Frekari upplýsingar um starfið')}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.salaryTerms && (
-            <Text as="div">
-              {webRichText([vacancy.salaryTerms] as SliceType[])}
-            </Text>
+            <Box className="rs_read">
+              <Text as="div">
+                {webRichText([vacancy.salaryTerms] as SliceType[])}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.description && (
-            <Text as="div">
-              {webRichText([vacancy.description] as SliceType[])}
-            </Text>
+            <Box className="rs_read">
+              <Text as="div">
+                {webRichText([vacancy.description] as SliceType[])}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.jobPercentage && (
-            <Text>
-              {n('jobPercentageIs', 'Starfshlutfall er')}{' '}
-              {vacancy.jobPercentage}
-            </Text>
+            <Box className="rs_read">
+              <Text>
+                {n('jobPercentageIs', 'Starfshlutfall er')}{' '}
+                {vacancy.jobPercentage}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.applicationDeadlineTo && (
-            <Text>
-              {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
-              {vacancy.applicationDeadlineTo}
-            </Text>
+            <Box className="rs_read">
+              <Text>
+                {n('applicationDeadlineIs', 'Umsóknarfrestur er til og með')}{' '}
+                {vacancy.applicationDeadlineTo}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.contacts && vacancy.contacts.length > 0 && (
-            <Text variant="h3" as="h2">
-              {n('contacts', 'Nánari upplýsingar veitir')}
-            </Text>
+            <Box className="rs_read">
+              <Text variant="h3" as="h2">
+                {n('contacts', 'Nánari upplýsingar veitir')}
+              </Text>
+            </Box>
           )}
 
           {vacancy?.contacts && vacancy.contacts.length > 0 && (
             <Stack space={2}>
               {vacancy.contacts.map((contact, index) => (
-                <Box key={index}>
+                <Box className="rs_read" key={index}>
                   <Text>
                     {contact.name && contact.email
                       ? `${contact.name}, `
@@ -295,7 +323,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
 
           {vacancy?.applicationHref && (
             <Inline>
-              <Box marginTop={3} marginBottom={[0, 0, 5]}>
+              <Box className="rs_read" marginTop={3} marginBottom={[0, 0, 5]}>
                 <LinkV2 href={vacancy.applicationHref} pureChildren={true}>
                   <Button size="small" as="div">
                     {n('applyForJob', 'Sækja um starf')}
