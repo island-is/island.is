@@ -1,9 +1,10 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes, Section } from '@island.is/application/types'
-import { confirmation, externalData } from '../../lib/messages'
+import { confirmation, externalData, payment } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
-import { PaymentSection } from './PaymentSection'
 import { Logo } from '../../assets/Logo'
+import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
+import { getChargeItemCodes } from '../../utils'
 
 const buildInformationSections = (): Section[] =>
   [...Array(2)].map((_key, index) => InformationSection(index))
@@ -22,7 +23,13 @@ export const ResidencePermitPermanentForm: Form = buildForm({
       children: [],
     }),
     ...buildInformationSections(),
-    PaymentSection,
+    buildFormPaymentChargeOverviewSection({
+      sectionTitle: payment.general.sectionTitle,
+      getSelectedChargeItems: (_) =>
+        getChargeItemCodes().map((x) => ({
+          chargeItemCode: x,
+        })),
+    }),
     buildSection({
       id: 'confirmation',
       title: confirmation.general.sectionTitle,
