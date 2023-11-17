@@ -29,9 +29,9 @@ import {
 } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
 
-const IDS_USER_PROFILE_LINKS = {
-  email: '/app/user-profile/email',
-  tel: '/app/user-profile/phone',
+enum IdsUserProfileLinks {
+  EMAIL = '/app/user-profile/email',
+  PHONE_NUMBER = '/app/user-profile/phone',
 }
 
 interface Props {
@@ -67,39 +67,48 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const { authority } = useAuth()
-
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
-
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
   const { formatMessage } = useLocale()
+
+  const isV2UserProfileEnabled = async () => {
+    const ffEnabled = await featureFlagClient.getValue(
+      Features.isIASSpaPagesEnabled,
+      false,
+    )
+
+    if (ffEnabled) {
+      setV2UserProfileEnabled(ffEnabled as boolean)
+    }
+  }
 
   /* Should disable email and phone input with deeplink to IDS */
   useEffect(() => {
-    const isV2UserProfileEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        Features.isIASSpaPagesEnabled,
-        false,
-      )
-      if (ffEnabled) {
-        setV2UserProfileEnabled(ffEnabled as boolean)
-      }
-    }
     isV2UserProfileEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  /**
+   * Creates a link to the IDS user profile page.
+   * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
+   */
+  const getIDSLink = (linkPath: IdsUserProfileLinks) => `${authority}${linkPath}?redirectUrl=${window.location}&continue_onboarding=false`
+
+  const isFlagEnabled = async () => {
+    const ffEnabled = await featureFlagClient.getValue(
+      `isServicePortalPaperMailSettingsEnabled`,
+      false,
+    )
+
+    if (ffEnabled) {
+      setShowPaperMail(ffEnabled as boolean)
+    }
+  }
 
   /* Should show the paper mail settings? */
   useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalPaperMailSettingsEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowPaperMail(ffEnabled as boolean)
-      }
-    }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -236,10 +245,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   title={formatMessage(msg.saveEmail)}
                   value={userProfile?.email || ''}
                   verified={userProfile?.emailVerified || false}
-                  link={
-                    `${authority}${IDS_USER_PROFILE_LINKS.email}?redirectUrl=${window.location}` ||
-                    ''
-                  }
+                  link={getIDSLink(IdsUserProfileLinks.EMAIL)}
                   linkTitle={formatMessage(msg.changeEmail)}
                 />
               ) : (
@@ -283,10 +289,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   title={formatMessage(msg.saveTel)}
                   value={userProfile?.mobilePhoneNumber || ''}
                   verified={userProfile?.mobilePhoneNumberVerified || false}
-                  link={
-                    `${authority}${IDS_USER_PROFILE_LINKS.tel}?redirectUrl=${window.location}` ||
-                    ''
-                  }
+                  link={getIDSLink(IdsUserProfileLinks.PHONE_NUMBER)}
                   linkTitle={formatMessage(msg.changeTel)}
                 />
               ) : (
