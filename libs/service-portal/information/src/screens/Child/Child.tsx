@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,8 +13,7 @@ import {
   m,
   ErrorScreen,
   IntroHeader,
-  THJODSKRA_ID,
-  FootNote,
+  THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -64,6 +63,7 @@ const Child = () => {
       })
     }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const dataNotFoundMessage = defineMessage({
@@ -135,7 +135,7 @@ const Child = () => {
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
-            serviceProviderID={THJODSKRA_ID}
+            serviceProviderSlug={THJODSKRA_SLUG}
             serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
           />
         </Box>

@@ -13,7 +13,7 @@ import { HmsLoansClientService } from '@island.is/clients/hms-loans'
 import { Audit } from '@island.is/nest/audit'
 
 import { Loanhistory } from './models/loanHistory.model'
-import { Paymenthistory } from './models/paymentHistory.model'
+import { Paymenthistory } from './models/paymenthistory.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
