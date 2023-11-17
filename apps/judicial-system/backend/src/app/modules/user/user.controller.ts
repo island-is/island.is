@@ -8,6 +8,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -25,6 +26,7 @@ import {
 import { adminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { UserInterceptor } from './interceptors/user.interceptor'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -66,6 +68,7 @@ export class UserController {
     isArray: true,
     description: 'Gets all existing users',
   })
+  @UseInterceptors(UserInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<User[]> {
     this.logger.debug('Getting all users')
 
