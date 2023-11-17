@@ -13,7 +13,7 @@ import {
 } from '@island.is/university-gateway'
 import { University } from '../university/model/university'
 import { ProgramModeOfDelivery } from '../program/model/programModeOfDelivery'
-import { ProgramTable } from '../program/model/program'
+import { Program } from '../program/model/program'
 import { NoContentException } from '@island.is/nest/problem'
 
 @Injectable()
@@ -26,8 +26,8 @@ export class ApplicationService {
     @InjectModel(Application)
     private applicationModel: typeof Application,
 
-    @InjectModel(ProgramTable)
-    private programModel: typeof ProgramTable,
+    @InjectModel(Program)
+    private programModel: typeof Program,
 
     @InjectModel(ProgramModeOfDelivery)
     private programModeOfDeliveryModel: typeof ProgramModeOfDelivery,
