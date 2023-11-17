@@ -8,12 +8,11 @@ import {
 } from '../../gen/fetch/apis'
 import {
   ChangeMachineOwner,
-  ChangeMachineSupervisor,
   ConfirmOwnerChange,
   Machine,
   MachineDetails,
 } from './transferOfMachineOwnershipClient.types'
-import { CustomMachineApi } from './customMachineApi'
+import { CustomMachineApi } from './apiConfiguration'
 import {
   apiChangeMachineOwnerToApiRequest,
   confirmChangeToApiRequest,
