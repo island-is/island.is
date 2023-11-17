@@ -3,7 +3,7 @@ import { ProgramController } from './program.controller'
 import { ProgramService } from './program.service'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Tag } from './model/tag'
-import { ProgramTable } from './model/program'
+import { Program } from './model/program'
 import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
@@ -16,7 +16,7 @@ import { University } from '../university/model/university'
       University,
       Course,
       Tag,
-      ProgramTable,
+      Program,
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,

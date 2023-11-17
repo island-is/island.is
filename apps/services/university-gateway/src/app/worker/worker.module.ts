@@ -22,7 +22,7 @@ import { Course } from '../modules/course/model/course'
 import { Tag } from '../modules/program/model/tag'
 import { ProgramCourse } from '../modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
-import { ProgramTable } from '../modules/program/model/program'
+import { Program } from '../modules/program/model/program'
 import { ProgramTag } from '../modules/program/model/programTag'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
 import { LoggingModule } from '@island.is/logging'
@@ -38,7 +38,7 @@ import { LoggingModule } from '@island.is/logging'
       University,
       Course,
       Tag,
-      ProgramTable,
+      Program,
       ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,

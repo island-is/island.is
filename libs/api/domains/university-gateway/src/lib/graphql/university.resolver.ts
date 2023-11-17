@@ -3,11 +3,13 @@ import { UniversityGatewayApi } from '../universityGateway.service'
 import { UniversityGatewayUniversity } from './models'
 import { Loader } from '@island.is/nest/dataloader'
 import {
+  OrganizationLogoLoader,
+  OrganizationShortTitleLoader,
+} from '@island.is/cms'
+import type {
   LogoUrl,
   OrganizationLogoDataLoader,
-  OrganizationLogoLoader,
   OrganizationShortTitleDataLoader,
-  OrganizationShortTitleLoader,
   ShortTitle,
 } from '@island.is/cms'
 
