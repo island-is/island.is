@@ -14,7 +14,6 @@ import {
   Parent,
   Query,
   ResolveField,
-  ResolveProperty,
   Resolver,
 } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -93,7 +92,7 @@ export class PersonResolver {
     )
   }
 
-  @ResolveProperty('childCustody', () => [ChildCustody], {
+  @ResolveField('childCustody', () => [ChildCustody], {
     nullable: true,
   })
   async resolveChildCustody(
