@@ -81,7 +81,7 @@ export class UserController {
     type: User,
     description: 'Gets an existing user',
   })
-  async getById(@Param('userId') userId: string): Promise<User> {
+  getById(@Param('userId') userId: string): Promise<User> {
     this.logger.debug(`Finding user ${userId}`)
 
     return this.userService.findById(userId)

@@ -23,7 +23,7 @@ export class UserService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  getAll(user: User): Promise<User[]> {
+  async getAll(user: User): Promise<User[]> {
     if (user.role === UserRole.ADMIN) {
       return this.userModel.findAll({
         order: ['name'],
@@ -38,7 +38,7 @@ export class UserService {
     })
   }
 
-  getById(userId: string): Promise<User | null> {
+  async getById(userId: string): Promise<User | null> {
     return this.userModel.findByPk(userId, {
       include: [{ model: Institution, as: 'institution' }],
     })
@@ -91,7 +91,7 @@ export class UserService {
     return user
   }
 
-  create(userToCreate: CreateUserDto): Promise<User> {
+  async create(userToCreate: CreateUserDto): Promise<User> {
     return this.userModel.create({ ...userToCreate })
   }
 
