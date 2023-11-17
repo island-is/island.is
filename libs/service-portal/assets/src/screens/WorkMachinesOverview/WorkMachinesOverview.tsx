@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   useGetWorkMachineDocumentLazyQuery,
@@ -12,9 +12,9 @@ import {
   ActionCard,
   formSubmit,
   IntroHeader,
-  VINNUEFTIRLITID_ID,
   Filter,
   FootNote,
+  VINNUEFTIRLITID_SLUG,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -144,7 +144,7 @@ const WorkMachinesOverview = () => {
       <IntroHeader
         title={formatMessage(messages.workMachinesTitle)}
         intro={formatMessage(messages.workMachinesDescription)}
-        serviceProviderID={VINNUEFTIRLITID_ID}
+        serviceProviderSlug={VINNUEFTIRLITID_SLUG}
         serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
       />
       <GridRow marginTop={[2, 2, 6]}>
@@ -215,9 +215,11 @@ const WorkMachinesOverview = () => {
                               const labelKey =
                                 filter.label as keyof typeof messages
                               return (
-                                <Box paddingTop={index === 0 ? 0 : 1}>
+                                <Box
+                                  paddingTop={index === 0 ? 0 : 1}
+                                  key={index}
+                                >
                                   <Checkbox
-                                    key={index}
                                     id={`work-machine-filter-${index}`}
                                     label={formatMessage(messages[labelKey])}
                                     checked={filter.value}
@@ -304,7 +306,7 @@ const WorkMachinesOverview = () => {
           </Box>
         )}
       <Box marginTop={2}>
-        <FootNote serviceProviderID={VINNUEFTIRLITID_ID} />
+        <FootNote serviceProviderSlug={VINNUEFTIRLITID_SLUG} />
       </Box>
     </Box>
   )
