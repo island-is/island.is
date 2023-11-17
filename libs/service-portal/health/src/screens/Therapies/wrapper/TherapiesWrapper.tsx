@@ -12,18 +12,12 @@ import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {
-  activeTherapies: boolean
   children: React.ReactNode
   error: boolean
   loading: boolean
 }
 
-export const TherapiesWrapper = ({
-  children,
-  error,
-  loading,
-  activeTherapies,
-}: Props) => {
+export const TherapiesWrapper = ({ children, error, loading }: Props) => {
   const { formatMessage } = useLocale()
 
   if (error && !loading) {
@@ -48,26 +42,24 @@ export const TherapiesWrapper = ({
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {activeTherapies ? (
-        <>
-          <TabNavigation
-            label="test"
-            items={
-              healthNavigation.children?.find((itm) => itm.name === m.therapies)
-                ?.children ?? []
-            }
-          />
-          <Box paddingY={4}>
-            {!loading && !error && children && (
-              <Box marginTop={[6]}>{children}</Box>
-            )}
+      <TabNavigation
+        label="test"
+        items={
+          healthNavigation.children?.find((itm) => itm.name === m.therapies)
+            ?.children ?? []
+        }
+      />
+      <Box paddingY={4}>
+        {!loading && !error && !children && (
+          <Box marginTop={8}>
+            <EmptyState />
           </Box>
-        </>
-      ) : !loading ? (
-        <Box marginTop={8}>
-          <EmptyState />
-        </Box>
-      ) : null}
+        )}
+
+        {!loading && !error && children && (
+          <Box marginTop={[6]}>{children}</Box>
+        )}
+      </Box>
     </Box>
   )
 }

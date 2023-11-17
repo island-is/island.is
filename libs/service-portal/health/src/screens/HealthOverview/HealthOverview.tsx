@@ -151,6 +151,8 @@ export const HealthOverview = () => {
                     {enabledPaymentPage && (
                       <Link to={HealthPaths.HealthPaymentOverview}>
                         <Button
+                          as="span"
+                          unfocusable
                           icon="open"
                           iconType="outline"
                           variant="text"

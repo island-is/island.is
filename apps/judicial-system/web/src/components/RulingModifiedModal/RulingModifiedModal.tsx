@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { isAppealsCourtUser, User } from '@island.is/judicial-system/types'
+import { isCourtOfAppealsUser } from '@island.is/judicial-system/types'
 import {
   FormContext,
   Modal,
@@ -29,11 +29,11 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   const { workingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 
-  const isCOAUser = isAppealsCourtUser(user as unknown as User)
-
   const [explanation, setExplanation] = useState(
     formatMessage(
-      isCOAUser ? strings.appealRulingAutofill : strings.rulingAutofill,
+      isCourtOfAppealsUser(user)
+        ? strings.appealRulingAutofill
+        : strings.rulingAutofill,
     ),
   )
   const [errorMessage, setErrorMessage] = useState<string>('')
@@ -41,7 +41,7 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   const handleContinue = () => {
     updateCase(
       workingCase.id,
-      isCOAUser
+      isCourtOfAppealsUser(user)
         ? { appealRulingModifiedHistory: explanation }
         : { rulingModifiedHistory: explanation },
     )
@@ -72,9 +72,15 @@ const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
   return (
     <Modal
       title={formatMessage(strings.title)}
-      text={formatMessage(isCOAUser ? strings.appealRulingText : strings.text)}
+      text={formatMessage(
+        isCourtOfAppealsUser(user)
+          ? strings.appealRulingText
+          : strings.rulingText,
+      )}
       primaryButtonText={formatMessage(
-        isCOAUser ? strings.appealRulingContinue : strings.rulingContinue,
+        isCourtOfAppealsUser(user)
+          ? strings.appealRulingContinue
+          : strings.rulingContinue,
       )}
       onPrimaryButtonClick={handleContinue}
       isPrimaryButtonDisabled={errorMessage !== ''}

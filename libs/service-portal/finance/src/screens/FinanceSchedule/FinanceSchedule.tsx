@@ -113,6 +113,7 @@ const FinanceSchedule = () => {
                     type="button"
                     variant="utility"
                     as="span"
+                    unfocusable
                   >
                     {applicationButtonText}
                   </Button>
