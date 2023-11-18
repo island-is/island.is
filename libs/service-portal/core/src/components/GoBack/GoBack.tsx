@@ -44,6 +44,7 @@ export const GoBack = ({
           variant="text"
           truncate={truncate}
           as="span"
+          unfocusable
         >
           {label ?? formatMessage(m.goBackToDashboard)}
         </Button>

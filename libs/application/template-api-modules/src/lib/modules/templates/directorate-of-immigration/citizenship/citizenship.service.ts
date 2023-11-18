@@ -82,6 +82,16 @@ export class CitizenshipService extends BaseTemplateApiService {
       }
     }
 
+    // if (!lastChangeDate) {
+    //   throw new TemplateApiError(
+    //     {
+    //       title: errorMessages.residenceInIcelandLastChangeDateMissing,
+    //       summary: errorMessages.residenceInIcelandLastChangeDateMissing,
+    //     },
+    //     404,
+    //   )
+    // }
+
     return lastChangeDate
   }
 
