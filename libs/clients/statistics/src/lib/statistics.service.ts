@@ -1,12 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache, caching } from 'cache-manager'
 
 import type { ConfigType } from '@island.is/nest/config'
-import {
-  createEnhancedFetch,
-  EnhancedFetchAPI,
-} from '@island.is/clients/middlewares'
+import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,

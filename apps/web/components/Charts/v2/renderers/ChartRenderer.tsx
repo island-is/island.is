@@ -8,6 +8,7 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -138,6 +139,7 @@ const CARTASIAN_GRID_HELPERS = [
       fontFamily: 'IBM Plex Sans',
       color: 'red',
     }}
+    dy={theme.spacing.p2}
   />,
   <YAxis
     axisLine={{ stroke: '#CCDFFF' }}
