@@ -27,11 +27,13 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
+import { AnchorPage } from './models/anchorPage.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
@@ -346,6 +348,14 @@ export class CmsResolver {
       input.lang,
       input.slug,
     )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => AnchorPage, { nullable: true })
+  getAnchorPage(
+    @Args('input') input: GetAnchorPageInput,
+  ): Promise<AnchorPage | null> {
+    return this.cmsContentfulService.getAnchorPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)

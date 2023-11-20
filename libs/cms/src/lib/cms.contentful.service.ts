@@ -24,6 +24,7 @@ import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
+import { AnchorPage, mapAnchorPage } from './models/anchorPage.model'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { Organization } from './models/organization.model'
 import { Organizations } from './models/organizations.model'
@@ -636,6 +637,24 @@ export class CmsContentfulService {
       .catch(errorHandler('getLifeEvents'))
 
     return (result.items as types.ILifeEventPage[]).map(mapLifeEventPage)
+  }
+
+  async getAnchorPage(
+    slug: string,
+    lang: string,
+  ): Promise<AnchorPage | null> {
+    const params = {
+      ['content_type']: 'anchorPage',
+      'fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPage'))
+
+    return (
+      (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
+    )
   }
 
   async getAlertBanner({
