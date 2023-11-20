@@ -1,19 +1,16 @@
-import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
   EmptyState,
   ErrorScreen,
-  ExcludesFalse,
   HUGVERKASTOFAN_ID,
   IntroHeader,
-  NotFound,
   TableGrid,
   UserInfoLine,
   formatDate,
   m,
 } from '@island.is/service-portal/core'
-import { ipMessages, messages } from '../../lib/messages'
+import { ipMessages } from '../../lib/messages'
 import {
   Accordion,
   AccordionItem,
