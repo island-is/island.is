@@ -825,6 +825,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:search-for-plate',
     defaultMessage: 'Leita eftir bílnúmeri',
   },
+  mileageInputTooLow: {
+    id: 'sp.vehicles:mileage-errors-input-too-low',
+    defaultMessage: 'Verður að vera hærri en síðasta skráning',
+  },
 })
 
 export const urls = defineMessages({

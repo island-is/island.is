@@ -21,7 +21,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   m,
   FootNote,
-  SAMGONGUSTOFA_ID,
+  SAMGONGUSTOFA_SLUG,
   IntroHeader,
   formatDate,
   icelandLocalTime,
@@ -74,7 +74,6 @@ const VehicleMilage = () => {
   const [postAction, { loading: postActionLoading }] =
     usePostVehicleMileageMutation({
       onError: (e) => {
-        console.log('e', e)
         toast.error(formatMessage(m.errorTitle))
       },
       onCompleted: (mutationData) => {
@@ -118,7 +117,7 @@ const VehicleMilage = () => {
               </span>
             ),
           })}
-          serviceProviderID={SAMGONGUSTOFA_ID}
+          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
         />
         <Stack space={6}>
@@ -131,7 +130,10 @@ const VehicleMilage = () => {
                   </Text>
                 </GridColumn>
               </GridRow>
-              <GridRow rowGap={[1, 1, 2, 2, 'smallGutter']}>
+              <GridRow
+                alignItems="flexStart"
+                rowGap={[1, 1, 2, 2, 'smallGutter']}
+              >
                 <GridColumn span={['1/1', '7/9', '6/9', '5/9', '3/9']}>
                   <InputController
                     control={control}
@@ -145,6 +147,21 @@ const VehicleMilage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
+                    rules={{
+                      validate: {
+                        value: (value: number) => {
+                          // Input number must be higher than the highest known mileage registration value
+                          if (details) {
+                            const highestRegistration = Math.max(
+                              ...details.map((o) => parseInt(o.mileage ?? '0')),
+                            )
+                            if (highestRegistration > value) {
+                              return formatMessage(messages.mileageInputTooLow)
+                            }
+                          }
+                        },
+                      },
+                    }}
                     label={formatMessage(messages.vehicleMilageInputLabel)}
                     placeholder={formatMessage(
                       messages.vehicleMilageInputPlaceholder,
@@ -155,6 +172,7 @@ const VehicleMilage = () => {
                   span={['1/1', '7/9', '6/9', '5/9', '2/9']}
                   offset={['0', '0', '0', '0', '0']}
                   paddingBottom={[1, 1, 2, 0, 0]}
+                  paddingTop="smallGutter"
                 >
                   <Box
                     display="flex"
@@ -237,7 +255,7 @@ const VehicleMilage = () => {
       </Box>
 
       <FootNote
-        serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         notes={[{ text: formatMessage(messages.infoNote) }]}
       />
     </>

@@ -5,7 +5,7 @@ export class PostVehicleMileageInput {
   @Field()
   permno!: string
 
-  @Field()
+  @Field({ description: 'Example: "ISLAND.IS"' })
   originCode!: string
 
   @Field()
