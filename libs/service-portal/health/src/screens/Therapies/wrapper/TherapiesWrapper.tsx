@@ -15,9 +15,15 @@ type Props = {
   children: React.ReactNode
   error: boolean
   loading: boolean
+  pathname?: string
 }
 
-export const TherapiesWrapper = ({ children, error, loading }: Props) => {
+export const TherapiesWrapper = ({
+  children,
+  error,
+  loading,
+  pathname,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   if (error && !loading) {
@@ -44,6 +50,7 @@ export const TherapiesWrapper = ({ children, error, loading }: Props) => {
       />
       <TabNavigation
         label={formatMessage(messages.therapyTitle)}
+        pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.therapies)
             ?.children ?? []

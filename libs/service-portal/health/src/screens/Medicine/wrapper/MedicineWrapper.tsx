@@ -10,8 +10,10 @@ import { healthNavigation } from '../../../lib/navigation'
 
 export const MedicineWrapper = ({
   children,
+  pathname,
 }: {
   children: React.ReactNode
+  pathname?: string
 }) => {
   const { formatMessage } = useLocale()
 
@@ -24,6 +26,7 @@ export const MedicineWrapper = ({
       />
       <TabNavigation
         label={formatMessage(m.medicineTitle)}
+        pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.medicineTitle)
             ?.children ?? []
