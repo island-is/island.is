@@ -104,8 +104,10 @@ export const GalleryModal: FC<Props> = ({
         <Box className={cn(styles.carets, styles.leftCaret)}>
           <Button
             icon="chevronBack"
-            size="small"
+            iconType="filled"
             variant="ghost"
+            circle
+            fluid
             onClick={() => onCaretClick('prev')}
           />
         </Box>
@@ -129,7 +131,7 @@ export const GalleryModal: FC<Props> = ({
         <Box className={cn(styles.carets, styles.rightCaret)}>
           <Button
             icon="chevronForward"
-            size="small"
+            circle
             variant="ghost"
             onClick={() => onCaretClick('next')}
           />
