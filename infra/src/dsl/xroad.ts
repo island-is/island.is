@@ -202,6 +202,11 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
       prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
     },
+    XROAD_HMS_LOANS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+    },
   },
 })
 
