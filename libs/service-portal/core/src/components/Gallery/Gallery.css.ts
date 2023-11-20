@@ -4,7 +4,7 @@ import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const galleryContainer = style({
   display: 'inherit',
-  width: '80%',
+  width: '100%',
   ...themeUtils.responsiveStyle({
     sm: {
       display: 'flex',
