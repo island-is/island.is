@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import {
+import type {
   AirDiscount as TAirDiscount,
   DiscountedFlightLeg as TDiscountedFlightLeg,
 } from '@island.is/air-discount-scheme/types'
