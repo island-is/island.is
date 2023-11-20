@@ -13,6 +13,6 @@
     "https://cdn.jsdelivr.net/npm/@inlang/message-lint-rule-identical-pattern@latest/dist/index.js"
   ],
   "plugin.inlang.i18next": {
-    "pathPattern": "./apps/skilavottord/web/i18n/locales/{languageTags}.json"
-  }
+		"pathPattern": "./apps/skilavottord/web/i18n/locales/{languageTag}.json"
+	}
 }
