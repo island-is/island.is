@@ -197,6 +197,16 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
+    XROAD_FINANCES_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
+    },
+    XROAD_HMS_LOANS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+    },
   },
 })
 
@@ -620,6 +630,16 @@ export const ShipRegistry = new XroadConf({
       dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       staging: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/skipaskra-V1',
+    },
+  },
+})
+
+export const DirectorateOfImmigration = new XroadConf({
+  env: {
+    XROAD_DIRECTORATE_OF_IMMIGRATION_PATH: {
+      dev: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      staging: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
+      prod: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1',
     },
   },
 })

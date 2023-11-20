@@ -39,19 +39,17 @@ export type {
 export {
   UserRole,
   prosecutionRoles,
-  isProsecutionRole,
   isProsecutionUser,
-  courtRoles,
-  isCourtRole,
-  extendedCourtRoles,
-  isExtendedCourtRole,
+  districtCourtRoles,
   isDistrictCourtUser,
-  appealsCourtRoles,
-  isAppealsCourtUser,
+  courtOfAppealsRoles,
+  isCourtOfAppealsUser,
   prisonSystemRoles,
   isPrisonSystemUser,
   defenceRoles,
   isDefenceUser,
+  isAdminUser,
+  isCoreUser,
 } from './lib/user'
 export type { User, CreateUser, UpdateUser } from './lib/user'
 
@@ -67,6 +65,7 @@ export {
   CaseDecision,
   CaseAppealRulingDecision,
   RequestSharedWithDefender,
+  canDefenderViewRequest,
   SessionArrangements,
   restrictionCases,
   investigationCases,

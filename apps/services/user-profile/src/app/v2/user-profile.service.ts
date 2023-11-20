@@ -6,6 +6,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
 import { AttemptFailed } from '@island.is/nest/problem'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -62,15 +63,24 @@ export class UserProfileService {
   }
 
   async patch(
-    nationalId: string,
+    user: User,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
+    const { nationalId, audkenniSimNumber } = user
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
+    const audkenniSimSameAsMobilePhoneNumber =
+      this.checkAudkenniSameAsMobilePhoneNumber(
+        audkenniSimNumber,
+        userProfile.mobilePhoneNumber,
+      )
+
     const shouldVerifyEmail = isEmailDefined && userProfile.email !== ''
     const shouldVerifyMobilePhoneNumber =
-      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== ''
+      !audkenniSimSameAsMobilePhoneNumber &&
+      isMobilePhoneNumberDefined &&
+      userProfile.mobilePhoneNumber !== ''
 
     if (shouldVerifyEmail && !isDefined(userProfile.emailVerificationCode)) {
       throw new BadRequestException('Email verification code is required')
@@ -193,12 +203,10 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: formattedPhoneNumber,
+        mobilePhoneNumber,
       },
       3,
     )
@@ -232,5 +240,28 @@ export class UserProfileService {
     }
 
     return null
+  }
+
+  /**
+   * Checks if the audkenni phone number is the same as the mobile phone number to skip verification
+   * @param audkenniSimNumber
+   * @param mobilePhoneNumber
+   */
+  private checkAudkenniSameAsMobilePhoneNumber(
+    audkenniSimNumber: string,
+    mobilePhoneNumber: string,
+  ): boolean {
+    if (!audkenniSimNumber || !mobilePhoneNumber) {
+      return false
+    }
+
+    /**
+     * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
+     * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
+     */
+    return (
+      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
+      audkenniSimNumber.replace(/-/g, '').slice(-7)
+    )
   }
 }
