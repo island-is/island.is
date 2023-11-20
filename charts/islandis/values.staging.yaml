@@ -2437,6 +2437,28 @@ user-notification:
         - host: 'user-notification-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+  initContainer:
+    containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:migrate'
+        command:
+          - 'npx'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
+    env:
+      DB_HOST: 'postgres-applications.internal'
+      DB_NAME: 'user_notification'
+      DB_REPLICAS_HOST: 'postgres-applications.internal'
+      DB_USER: 'user_notification'
+      SERVERSIDE_FEATURES_ON: ''
+    secrets:
+      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
