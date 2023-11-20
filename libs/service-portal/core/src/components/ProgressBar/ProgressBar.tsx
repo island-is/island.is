@@ -9,6 +9,7 @@ interface Props {
   variant?: boolean
   onClick?: (percentage?: number) => void
   renderProgressBar?: boolean
+  vertical?: boolean
 }
 
 export const ProgressBar: FC<Props> = ({
@@ -17,6 +18,7 @@ export const ProgressBar: FC<Props> = ({
   variant,
   onClick,
   renderProgressBar = true,
+  vertical = false,
 }) => {
   const ref = useRef<HTMLElement>(null)
 
@@ -43,13 +45,13 @@ export const ProgressBar: FC<Props> = ({
 
   return (
     <Box
-      className={cn(styles.progress, className)}
+      className={cn(styles.progress, className, {
+        [styles.vertical]: vertical,
+      })}
       position="relative"
       overflow="hidden"
       borderRadius="large"
       background={variant ? 'white' : 'blue100'}
-      width="full"
-      style={{ top: 0 }}
       onClick={handleClick}
       ref={ref}
     >
@@ -60,7 +62,9 @@ export const ProgressBar: FC<Props> = ({
           borderRadius="large"
           position="absolute"
           style={{
-            transform: `translateX(${(1 - progress) * -100}%)`,
+            transform: `translate${vertical ? 'Y' : 'X'}(${
+              (1 - progress) * -100
+            }%)`,
           }}
         />
       )}

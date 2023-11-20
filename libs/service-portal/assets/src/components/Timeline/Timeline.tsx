@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import { ProgressBar } from '@island.is/service-portal/core'
+import { useIsMobile } from '@island.is/service-portal/core'
 
 interface Props {
   children?: Array<ReactElement>
@@ -26,6 +27,8 @@ export const Timeline: FC<Props> = ({
   minDate,
   className,
 }) => {
+  const { isMobile } = useIsMobile()
+
   if (!children) {
     return null
   }
@@ -46,46 +49,62 @@ export const Timeline: FC<Props> = ({
   }
 
   return (
-    <Stack space={5}>
+    <Box>
       {title && (
-        <Text variant="eyebrow" color="purple400">
+        <Text marginBottom={2} variant="eyebrow" color="purple400">
           {title}
         </Text>
       )}
-      <Stack space="p1">
-        <Box
-          className={cn(styles.outer, className)}
-          position="relative"
-          background="blue100"
-          borderRadius="large"
-          width="full"
-        >
-          {currentProgress && (
-            <>
-              <ProgressBar progress={currentProgress} />
-              <Tooltip text="Í dag" placement="top">
-                <Box
-                  position="absolute"
-                  className={styles.tooltip}
-                  style={{
-                    left: `${currentProgress * 100}%`,
-                  }}
-                />
-              </Tooltip>
-            </>
-          )}
+      {isMobile && currentProgress && (
+        <Box display="flex">
+          <ProgressBar progress={currentProgress} vertical />
+          <Box marginLeft="gutter">
+            <Stack space={5}>
+              {children?.map((child, index) => (
+                <Box key={`step-item-${index}`}>{child}</Box>
+              ))}
+            </Stack>
+          </Box>
         </Box>
-        <Columns>
-          {children?.map((child, index) => (
-            <Column key={`step-item-${index}`}>
-              <Box textAlign={index === children.length - 1 ? 'right' : 'left'}>
-                {child}
-              </Box>
-            </Column>
-          ))}
-        </Columns>
-      </Stack>
-    </Stack>
+      )}
+      {!isMobile && (
+        <Stack space="p1">
+          <Box
+            className={cn(styles.outer, className)}
+            position="relative"
+            background="blue100"
+            borderRadius="large"
+            width="full"
+          >
+            {currentProgress && (
+              <>
+                <ProgressBar progress={currentProgress} />
+                <Tooltip text="Í dag" placement="top">
+                  <Box
+                    position="absolute"
+                    className={styles.tooltip}
+                    style={{
+                      left: `${currentProgress * 100}%`,
+                    }}
+                  />
+                </Tooltip>
+              </>
+            )}
+          </Box>
+          <Columns>
+            {children?.map((child, index) => (
+              <Column key={`step-item-${index}`}>
+                <Box
+                  textAlign={index === children.length - 1 ? 'right' : 'left'}
+                >
+                  {child}
+                </Box>
+              </Column>
+            ))}
+          </Columns>
+        </Stack>
+      )}
+    </Box>
   )
 }
 
