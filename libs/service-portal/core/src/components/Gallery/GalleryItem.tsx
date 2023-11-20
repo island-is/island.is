@@ -1,7 +1,7 @@
 import { cloneElement } from 'react'
 import * as styles from './GalleryItem.css'
 import cn from 'classnames'
-import { Box } from '@island.is/island-ui/core'
+import { Box, FocusableBox } from '@island.is/island-ui/core'
 
 export type GalleryItemProps = {
   children: React.ReactElement
@@ -17,7 +17,7 @@ export const GalleryItem = ({
   thumbnail,
 }: GalleryItemProps) => {
   return (
-    <Box
+    <FocusableBox
       className={cn(styles.galleryItem, {
         cover,
         thumbnail,
@@ -31,6 +31,6 @@ export const GalleryItem = ({
           }),
         })}
       </Box>
-    </Box>
+    </FocusableBox>
   )
 }

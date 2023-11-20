@@ -20,6 +20,10 @@ export const gallery = style({
   aspectRatio: '1/1',
   width: '100%',
 
+  ':focus': {
+    borderColor: theme.color.mint400,
+  },
+
   ...themeUtils.responsiveStyle({
     sm: {
       width: '352px',

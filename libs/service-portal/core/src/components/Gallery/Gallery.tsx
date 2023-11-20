@@ -39,22 +39,22 @@ export const Gallery: FC<GalleryProps> = ({
   return (
     <>
       <Box className={styles.galleryContainer}>
-        <Box
+        <FocusableBox
           className={styles.gallery}
+          component="button"
+          onClick={() => setIsModalOpen(true)}
           border="standard"
           borderRadius="large"
           overflow="hidden"
           transition="fast"
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          textAlign="center"
+          height="full"
         >
           {loading ? (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              textAlign="center"
-              overflow="hidden"
-              height="full"
-            >
+            <Box>
               <LoadingDots large />
             </Box>
           ) : (
@@ -66,7 +66,7 @@ export const Gallery: FC<GalleryProps> = ({
               )}
             </Box>
           )}
-        </Box>
+        </FocusableBox>
         {!loading && thumbnailsArray.length && (
           <Box className={styles.thumbnailGrid}>
             {shortenedThumbnailsArray
@@ -127,6 +127,7 @@ export const Gallery: FC<GalleryProps> = ({
             isVisible={isModalOpen}
             onVisibilityChange={(isVisible) => setIsModalOpen(isVisible)}
             thumbnails={thumbnails}
+            startingIndex={activeItem}
             label="all designs"
           >
             {children}

@@ -31,6 +31,7 @@ interface Props {
   label?: string
   children?: React.ReactNode
   thumbnails?: React.ReactNode
+  startingIndex?: number
   onVisibilityChange: (isVisible: boolean) => void
   onThumbnailClick?: () => void
 }
@@ -43,8 +44,9 @@ export const GalleryModal: FC<Props> = ({
   label,
   children,
   thumbnails,
+  startingIndex,
 }) => {
-  const [activeItem, setActiveItem] = useState(0)
+  const [activeItem, setActiveItem] = useState(startingIndex ?? 0)
   const imageRefs = useRef<Array<HTMLElement | null>>([])
 
   useEffect(() => {
