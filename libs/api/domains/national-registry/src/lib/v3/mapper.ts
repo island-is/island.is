@@ -20,7 +20,7 @@ import {
   Citizenship,
   Custodian,
 } from '../shared/models'
-import { PersonV3 } from '../shared/types'
+import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
@@ -38,6 +38,20 @@ export function formatPersonDiscriminated(
     ...person,
     api: 'v3',
     rawData: individual ?? null,
+  }
+}
+
+export function formatChildCustody(
+  childCustody?: EinstaklingurDTOForsjaItem | null,
+): ChildCustodyV3 | null {
+  if (!childCustody?.barnKennitala || !childCustody?.barnNafn) {
+    return null
+  }
+
+  return {
+    nationalId: childCustody.barnKennitala,
+    fullName: childCustody.barnNafn,
+    api: 'v3',
   }
 }
 
