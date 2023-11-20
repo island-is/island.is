@@ -41,19 +41,19 @@ export const isValidString = (string: string | undefined) =>
 export const isNumericalString = (string: string | undefined) =>
   string && /^[0-9]+$|^[0-9][0-9,.]+[0-9]$/.test(string)
 
-  export const getAssetDescriptionText = (application: Application<FormValue>) => {
-    return application.answers.selectedEstate ===
-    EstateTypes.estateWithoutAssets
-      ? /* EIGNALAUST DÁNARBU */
-        m.propertiesDescriptionEstateWithoutAssets
-      : application.answers.selectedEstate ===
-        EstateTypes.officialDivision
-      ? /* OPINBER SKIPTI */
-        m.propertiesDescriptionOfficialDivision
-      : application.answers.selectedEstate ===
-        EstateTypes.permitForUndividedEstate
-      ? /* SETA Í ÓSKIPTU BÚI */
-        m.propertiesDescriptionUndividedEstate
-      : /* EINKASKIPTI */
-        m.propertiesDescriptionDivisionOfEstateByHeirs
-  }
+export const getAssetDescriptionText = (
+  application: Application<FormValue>,
+) => {
+  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ? /* EIGNALAUST DÁNARBU */
+      m.propertiesDescriptionEstateWithoutAssets
+    : application.answers.selectedEstate === EstateTypes.officialDivision
+    ? /* OPINBER SKIPTI */
+      m.propertiesDescriptionOfficialDivision
+    : application.answers.selectedEstate ===
+      EstateTypes.permitForUndividedEstate
+    ? /* SETA Í ÓSKIPTU BÚI */
+      m.propertiesDescriptionUndividedEstate
+    : /* EINKASKIPTI */
+      m.propertiesDescriptionDivisionOfEstateByHeirs
+}
