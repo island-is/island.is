@@ -6,7 +6,7 @@ export class FailedNationalIds {
   @Field()
   nationalId!: string
 
-  @Field()
+  @Field({ nullable: true })
   reason?: string
 }
 

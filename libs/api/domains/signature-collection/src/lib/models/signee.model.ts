@@ -11,9 +11,9 @@ export class Signee {
   @Field()
   name!: string
 
-  @Field()
+  @Field({ nullable: true })
   areaId?: string
 
-  @Field()
+  @Field({ nullable: true })
   address?: string
 }

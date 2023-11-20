@@ -8,9 +8,9 @@ export class Owner {
   @Field()
   name!: string
 
-  @Field()
+  @Field({ nullable: true })
   phone?: string
 
-  @Field()
+  @Field({ nullable: true })
   email?: string
 }
