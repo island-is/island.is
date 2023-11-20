@@ -1,13 +1,20 @@
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
-  maxWidth: '546px',
+  maxWidth: '100%',
   aspectRatio: '1.55/1',
   borderRadius: theme.border.radius.large,
   borderWidth: theme.border.width.large,
   borderStyle: theme.border.style.solid,
   borderColor: theme.border.color.blue200,
+
+  ...themeUtils.responsiveStyle({
+    sm: {
+      width: '546px',
+      marginRight: theme.spacing[2],
+    },
+  }),
 
   ':fullscreen': {
     aspectRatio: '16/9',
@@ -23,7 +30,7 @@ export const video = style({
   background: theme.color.blue100,
   paddingTop: theme.spacing[1],
   paddingBottom: theme.spacing[1],
-  columnGap: theme.spacing[1],
+  columnGap: 0,
 })
 
 export const controls = style({
@@ -43,8 +50,4 @@ export const videoPlayer = style({
 
 export const hidden = style({
   display: 'none',
-})
-
-export const fullscreen = style({
-  maxWidth: '50vw',
 })

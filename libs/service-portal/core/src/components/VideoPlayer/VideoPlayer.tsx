@@ -124,8 +124,15 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
       {isReady && (
         <GridContainer className={cn(styles.controls)}>
           <GridRow className={styles.video} align="center" alignItems="center">
-            <GridColumn span="1/12" className={styles.audioControl}>
-              <Box display="flex" justifyContent="center">
+            <GridColumn
+              span={['4/12', '3/12', '4/12', '4/12', '3/12']}
+              className={styles.audioControl}
+            >
+              <Box
+                display="flex"
+                justifyContent="spaceAround"
+                alignItems="center"
+              >
                 {isReady && (
                   <button
                     disabled={!isReady}
@@ -151,14 +158,15 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                     />
                   </button>
                 )}
+                <Text variant="small" textAlign="center">
+                  {`${formatTime(trackProgress)} / ${formatTime(duration)}`}
+                </Text>
               </Box>
             </GridColumn>
-            <GridColumn span="2/12" className={styles.audioControl}>
-              <Text variant="small" textAlign="center">{`${formatTime(
-                trackProgress,
-              )} / ${formatTime(duration)}`}</Text>
-            </GridColumn>
-            <GridColumn span="5/12" className={styles.audioControl}>
+            <GridColumn
+              span={['5/12', '6/12', '5/12', '5/12', '6/12']}
+              className={styles.audioControl}
+            >
               <ProgressBar
                 progress={progress}
                 onClick={setTimeChange}
