@@ -83,7 +83,6 @@ export const Gallery: FC<GalleryProps> = ({
                     className={cn(styles.galleryButton, {
                       [styles.activeGalleryButton]: i === activeItem,
                     })}
-                    style={{ height: '80px', width: '80px' }}
                     onClick={() => onThumbnailClick(i, lastImage)}
                   >
                     <>

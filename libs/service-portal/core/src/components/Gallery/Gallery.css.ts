@@ -52,18 +52,28 @@ export const thumbnailGrid = style({
 })
 
 export const galleryButton = style({
+  width: '20%',
+  marginRight: theme.spacing[1],
+  aspectRatio: '1/1',
   border: '1px solid #d2d2d2',
   borderRadius: ' 8px',
   overflow: 'hidden',
   position: 'relative',
   display: 'block',
   zIndex: theme.zIndex.base,
-  width: '100%',
   opacity: 0.8,
 
   ':focus': {
     borderColor: theme.color.mint400,
   },
+
+  ...themeUtils.responsiveStyle({
+    sm: {
+      height: '80px',
+      width: '80px',
+      marginRight: 'initial',
+    },
+  }),
 })
 
 export const activeGalleryButton = style({
