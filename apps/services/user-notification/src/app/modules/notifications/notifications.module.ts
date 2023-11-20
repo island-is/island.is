@@ -21,7 +21,6 @@ import * as userProfile from '@island.is/clients/user-profile'
 import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { SequelizeModule } from '@nestjs/sequelize'
-// import notfication model
 import { Notification } from './notification.model'
 
 @Module({
