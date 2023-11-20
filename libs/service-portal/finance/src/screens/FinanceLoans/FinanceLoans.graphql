@@ -1,65 +1,72 @@
-query GetHmsLoansLoanOverview {
-  getHmsLoansLoanOverview {
-    masterloanid
-    nafn
-    heimili
-    postnumer
-    poststod
-    fyrstiVaxtadagur
-    fyrstiGjalddagi
-    fjoldiGjalddaga
-    fjoldiGjalddagaAAri
-    greidslujofnun
-    uppGrAkvaedi
-    frysting
-    timabFrysting
-    breytilegir
-    hlutdeildarlan
-    tegVisitolu
-    grunnVisitala
-    vextir
-    upphaflegFjarhaed
-    naestiGjalddagi
-    sidastiGjalddagi
-    elstiOgreiddiGjalddagi
-    fjoldiGjalddagaEftir
-    stadaJofnun
-    sidastaGreidsla
-    vanskilAlls
-    nafnverdOgjaldfallid
-    afallnirVxtVb
-    eftirstodvarMVSkil
-    uppgreidslugjald
-    uppgreidsluverdmaeti
-    stadaLans
-    kennitala
-    lanaFlokkur
-    leggur
-    vedstadir {
-      fastanumer
-      vedstadurHeiti
-      vedstadurSVfelag
+query GetHmsLoansLoanhistory {
+  hmsLoansLoanhistory {
+    loanId
+    name
+    homeAddress
+    postNumber
+    municipality
+    firstInterestDate
+    firstPaymentDate
+    totalNumberOfPayments
+    numberOfPaymentPerYear
+    balancePayment
+    paymentFee
+    paymentDelayment
+    temporaryPaymentDelayment
+    variableInterest
+    affiliateLoan
+    priceIndexType
+    baseIndex
+    interest
+    originalLoanAmount
+    nextPaymentDate
+    lastPaymentDate
+    lastUnpaidInvoiceDate
+    numberOfPaymentDatesRemaining
+    statusSettlementPayment
+    lastPaymentAmount
+    totalDueAmount
+    balanceWithoutInterestPriceImprovements
+    accruedInterestPriceImprovements
+    remainingBalanceWithoutDebt
+    repaymentFee
+    loanAmountWithRepayment
+    loanStatus
+    nationalId
+    propertyId
+    propertyAddress
+    propertyMunicipality
+    epilog
+    municipalityNumber
+    loanType
+    installments
+    coPayerName
+    coPayerNationalId
+    properties {
+      propertyId
+      propertyAddress
+      propertyMunicipality
       epilog
-      svFelagsNumer
+      municipalityNumber
     }
-    medgreidendur {
-      nafnMedgreidandi
-      medGreidandi
+    coPayers {
+      coPayerName
+      coPayerNationalId
     }
   }
 }
 
-query GetHmsLoansPaymentOverview {
-  getHmsLoansPaymentOverview {
-    gjalddagi
-    hreyfingadagur
-    afborgun
-    vextir
-    verdbAfborgun
-    verdbVextir
-    kostnadur
-    drattarvextir
-    samtals
-    lansnumer
+query GetHmsLoansPaymenthistory {
+  hmsLoansPaymenthistory {
+    paymentDate
+    transactionDate
+    paymentAmount
+    interest
+    priceImprovementPayment
+    priceImprovementInterest
+    costPayment
+    defaultInterest
+    totalPayment
+    loanId
   }
 }

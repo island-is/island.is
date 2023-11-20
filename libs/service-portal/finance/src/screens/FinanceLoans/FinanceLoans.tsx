@@ -4,8 +4,8 @@ import { AlertBanner, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import FinanceIntro from '../../components/FinanceIntro'
 import {
-  useGetHmsLoansLoanOverviewQuery,
-  useGetHmsLoansPaymentOverviewQuery,
+  useGetHmsLoansLoanhistoryQuery,
+  useGetHmsLoansPaymenthistoryQuery,
 } from './FinanceLoans.generated'
 import { FinanceLoansTable } from '../../components/FinanceLoans/FinanceLoansTable'
 
@@ -18,14 +18,14 @@ const FinanceLoans = () => {
     loading: loanOverviewLoading,
     error: loanOverviewError,
     called: loanOverviewCalled,
-  } = useGetHmsLoansLoanOverviewQuery()
+  } = useGetHmsLoansLoanhistoryQuery()
 
   const {
     data: loanPaymentsData,
     loading: loanPaymentsLoading,
     error: loanPaymentsError,
     called: loanPaymentsCalled,
-  } = useGetHmsLoansPaymentOverviewQuery()
+  } = useGetHmsLoansPaymenthistoryQuery()
 
   console.log({ loanOverviewData, loanPaymentsData })
 
@@ -49,7 +49,7 @@ const FinanceLoans = () => {
             <SkeletonLoader space={1} height={40} repeat={5} />
           </Box>
         )}
-        {!loanOverviewData?.getHmsLoansLoanOverview?.length &&
+        {!loanOverviewData?.hmsLoansLoanhistory?.length &&
           loanOverviewCalled &&
           !loanOverviewLoading &&
           !loanOverviewError && (
@@ -58,9 +58,9 @@ const FinanceLoans = () => {
               variant="warning"
             />
           )}
-        {loanOverviewData?.getHmsLoansLoanOverview?.length ? (
+        {loanOverviewData?.hmsLoansLoanhistory?.length ? (
           <FinanceLoansTable
-            loanOverview={loanOverviewData.getHmsLoansLoanOverview}
+            loanOverview={loanOverviewData.hmsLoansLoanhistory}
           />
         ) : null}
       </Box>

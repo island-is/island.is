@@ -27,12 +27,14 @@ export class CoPayer {
   coPayerNationalId?: string
 }
 
-@ObjectType('HmsLoansLoan')
+@ObjectType('HmsLoansLoanhistory')
 export class Loanhistory {
   @Field(() => Number, { nullable: true })
   loanId?: number
 
   @Field(() => String, { nullable: true })
+  name?: string
+
   @Field(() => String, { nullable: true })
   homeAddress?: string
 
