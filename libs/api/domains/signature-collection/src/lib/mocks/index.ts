@@ -74,6 +74,10 @@ export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
     owner,
     active: true,
     collectionId: CurrentCollection.id,
+    collectors: [
+      { name: 'Aðili 1', nationalId: '0101301234' },
+      { name: 'Aðili 2', nationalId: '0101301234' },
+    ],
     numberOfSignatures: 10,
   })),
 )
