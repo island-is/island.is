@@ -1,83 +1,77 @@
-// // notification.model.ts
+import { Table, Column, Model, DataType, AutoIncrement, PrimaryKey, CreatedAt, UpdatedAt, Index } from 'sequelize-typescript';
 
-// import {
-//   Table,
-//   Model,
-//   Column,
-//   DataType,
-//   CreatedAt,
-//   UpdatedAt,
-//   PrimaryKey,
-//   AutoIncrement,
-// } from 'sequelize-typescript'
+interface ArgItem {
+  key: string;
+  value: string;
+}
 
-// export enum NotificationState {
-//   READ = 'read',
-//   UNREAD = 'unread',
-// }
-
-// // @Table({
-// //   tableName: 'user_profile',
-// //   timestamps: true,
-// //   indexes: [
-// //     {
-// //       fields: ['national_id'],................................
-// //     },
-// //   ],
-// // })
-
-// @Table
-// export class Notification extends Model {
-//   @PrimaryKey
-//   @AutoIncrement
-//   @Column(DataType.INTEGER)
-//   id!: number
-
-//   @Column(DataType.STRING)
-//   nationalId!: string
-
-//   @Column(DataType.STRING)
-//   templateId!: string
-
-//   @Column(DataType.JSON)
-//   args!: Array<{
-//     key: string
-//     value: string
-//   }>
-
-//   @Column(DataType.JSON)
-//   compiled!: {
-//     title: string
-//     body: string
-//     click_action: string
-//   }
-
-//   @CreatedAt
-//   created!: Date
-
-//   @UpdatedAt
-//   modified!: Date
-
-//   @Column({
-//     type: DataType.ENUM(NotificationState.READ, NotificationState.UNREAD),
-//     defaultValue: NotificationState.UNREAD,
-//   })
-//   state!: NotificationState
-// }
-
-import { Column, Model, Table, DataType } from 'sequelize-typescript'
-
+enum NotificationStatus {
+  READ = 'read',
+  UNREAD = 'unread'
+}
+@Table({
+  tableName: 'user_notification', // Explicitly setting the table name
+})
 @Table
-export class Notification extends Model {
-  @Column({ type: DataType.UUID, primaryKey: true, defaultValue: DataType.UUIDV4 })
-  id!: string;
+export class Notification extends Model<Notification> {
+  @PrimaryKey
+  @AutoIncrement
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    field: 'cursor'
+  })
+  cursor!: number;
 
-  @Column
-  title!: string;
+  @Column({
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+    field: 'message_id'
+  })
+  messageId!: string;
 
-  @Column
-  message!: string;
+  @Index // Adding an index
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'recipient'
+  })
+  recipient!: string;
 
-  @Column({ defaultValue: false })
-  read!: boolean;
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'template_id'
+  })
+  templateId!: string;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: false,
+    field: 'args'
+  })
+  args!: ArgItem[];
+
+  @CreatedAt
+  @Column({
+    type: DataType.DATE,
+    field: 'created'
+  })
+  created!: Date;
+
+  @UpdatedAt
+  @Column({
+    type: DataType.DATE,
+    field: 'updated'
+  })
+  updated!: Date;
+
+  @Column({
+    type: DataType.ENUM,
+    values: [NotificationStatus.READ, NotificationStatus.UNREAD],
+    defaultValue: NotificationStatus.UNREAD,
+    allowNull: false,
+    field: 'status'
+  })
+  status!: NotificationStatus;
 }

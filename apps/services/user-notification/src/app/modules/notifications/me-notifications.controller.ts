@@ -12,6 +12,7 @@ import {
   Patch,
   Put,
   Delete,
+  HttpStatus,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
@@ -28,6 +29,8 @@ import { Notification } from './notification.model'
 
 import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
+import { NotificationDTO } from './dto/notification.dto'; // Import your DTO
+
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
@@ -39,33 +42,39 @@ export class MeNotificationsController {
     // @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationService: NotificationsService,
   ) {}
-  // @Post()
-  // create(@Body() createNotificationDto: CreateNotificationDto) {
-  //   return this.notificationService.create(createNotificationDto);
-  // }
+  @Post()
+  @Scopes(NotificationsScope.read)
+  @ApiTags("user-notification")
+  @ApiSecurity('oauth2', [NotificationsScope.read])
+  @HttpCode(HttpStatus.CREATED)
+  async create(@CurrentUser() user: User, @Body() notificationData: NotificationDTO) {
+    console.log("#####################")
+    console.log(user)
+    return this.notificationService.create(user.nationalId,notificationData);
+  }
 
   @Get()
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
   findAll(@CurrentUser() user: User, @Query('cursor') cursor?: number, @Query('limit') limit?: number) {
-    return this.notificationService.findAll(cursor, limit);
+    return this.notificationService.findAll(user.nationalId,cursor, limit);
   }
 
   @Get(':id')
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
-  findOne(@Param('id') id: number) {
-    return this.notificationService.findOne(id);
+  findOne(@CurrentUser() user: User, @Param('id') id: number) {
+    return this.notificationService.findOne(user.nationalId,id);
   }
 
   @Patch(':id')
   @Scopes(NotificationsScope.write)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.write])
-  update(@Param('id') id: number, @Body() updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationService.update(id, updateNotificationDto);
+  update(@CurrentUser() user: User, @Param('id') id: number, @Body() updateNotificationDto: UpdateNotificationDto) {
+    return this.notificationService.update(user.nationalId,id, updateNotificationDto);
   }
 
   // @Delete(':id')

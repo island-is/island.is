@@ -25,6 +25,10 @@ export const userNotificationServiceSetup =
         CONTENTFUL_ACCESS_TOKEN:
           '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
       })
+      .initContainer({
+        containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+        postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },// UPDATE THIS
+      })
       .liveness('/liveness')
       .readiness('/liveness')
       .ingress({
