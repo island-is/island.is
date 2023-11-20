@@ -43,4 +43,9 @@ export const error = defineMessages({
     defaultMessage: 'Notandi uppfyllir ekki nein búsetuskilyrði',
     description: 'User does not fulfill any residence conditions',
   },
+  notOldEnough: {
+    id: 'ta.tvo.application:error.notOldEnough',
+    defaultMessage: 'Umsækjandi er ekki orðinn 18 ára',
+    description: 'Applicant is not old enough',
+  },
 })
