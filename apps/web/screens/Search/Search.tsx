@@ -663,6 +663,10 @@ const Search: Screen<CategoryProps> = ({
                         },
                       })
                     }
+                    clearFilter={() => {
+                      setReferencedBy(null)
+                      dispatch({ type: ActionType.RESET_SEARCH })
+                    }}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
