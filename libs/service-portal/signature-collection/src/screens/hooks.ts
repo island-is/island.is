@@ -51,7 +51,7 @@ export const useGetSignatureList = (listId: string) => {
   return { listInfo, refetchSignatureList, loadingList }
 }
 
-export const useGetListSignees = (listId: string) => {
+export const useGetListSignees = (listId: string, pageNumber?: number) => {
   const {
     data: listSignatures,
     refetch: refetchListSignees,
@@ -70,9 +70,12 @@ export const useGetListSignees = (listId: string) => {
 }
 
 export const useGetSignedList = () => {
-  const { data: getSignedList, loading: loadingSignedList, refetch: refetchSignedList } =
-    useQuery<SignedList>(GetSignedList)
-  
+  const {
+    data: getSignedList,
+    loading: loadingSignedList,
+    refetch: refetchSignedList,
+  } = useQuery<SignedList>(GetSignedList)
+
   const signedList =
     (getSignedList?.signatureCollectionSignedList as SignatureList) ?? {}
   return { signedList, loadingSignedList, refetchSignedList }
@@ -88,14 +91,17 @@ export const useGetOwnerLists = () => {
 }
 
 export const useGetListsBySigneeArea = (area: string) => {
-  const { data: getListsBySigneeArea, loading: loadingAreaLists, refetch: refetchListsBySigneeArea } =
-    useQuery<ListsByArea>(GetListsBySigneeArea, {
-      variables: {
-        input: {
-          areaId: area,
-        },
+  const {
+    data: getListsBySigneeArea,
+    loading: loadingAreaLists,
+    refetch: refetchListsBySigneeArea,
+  } = useQuery<ListsByArea>(GetListsBySigneeArea, {
+    variables: {
+      input: {
+        areaId: area,
       },
-    })
+    },
+  })
 
   const listsBySigneeArea =
     (getListsBySigneeArea?.signatureCollectionListsByArea as SignatureList[]) ??

@@ -1,6 +1,5 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import Signees from './signees'
 import PaperUpload from './paperUpload'
@@ -11,7 +10,6 @@ import format from 'date-fns/format'
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-
   const { pathname } = useLocation()
   const listId = pathname.replace('/min-gogn/medmaelalistar/', '')
   const { listInfo, loadingList } = useGetSignatureList(listId)
@@ -36,28 +34,24 @@ const ViewList = () => {
             </Box>
             <Box marginTop={[2, 0]}>
               <Text variant="h5">{formatMessage(m.numberOfSigns)}</Text>
-              <Text>{0}</Text>
+              <Text>{listInfo.numberOfSignatures}</Text>
             </Box>
             <Box marginTop={[2, 0]}>
-              <Text variant="h5">{formatMessage('Eitthvað meir:')}</Text>
-              <Text>{formatMessage(m.tempMessage)}</Text>
+              <Text marginTop={[2, 0]} variant="h5">
+                {formatMessage(m.coOwners)}
+              </Text>
+              {listInfo.collectors?.map((collector) => (
+                <Box
+                  key={collector.name}
+                  width="half"
+                  marginBottom={[2, 0]}
+                  display={['block', 'flex']}
+                  justifyContent="spaceBetween"
+                >
+                  <Text>{collector.name}</Text>
+                </Box>
+              ))}
             </Box>
-          </Box>
-          <Box>
-            <Text marginTop={[2, 0]} variant="h5">
-              {formatMessage(m.coOwners)}
-            </Text>
-            {mockSingleList.people.map((person) => (
-              <Box
-                key={person.id}
-                width="half"
-                marginBottom={[2, 0]}
-                display={['block', 'flex']}
-                justifyContent="spaceBetween"
-              >
-                <Text>{person.name}</Text>
-              </Box>
-            ))}
           </Box>
           <Signees />
           <PaperUpload />

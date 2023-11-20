@@ -13,8 +13,6 @@ const OwnerView = () => {
   const { formatMessage } = useLocale()
   const { ownerLists, loadingLists } = useGetOwnerLists()
 
-  console.log(ownerLists)
-
   return (
     <>
       {!loadingLists ? (
@@ -44,8 +42,8 @@ const OwnerView = () => {
                         icon: 'arrowForward',
                       }}
                       progressMeter={{
-                        currentProgress: 0,
-                        maxProgress: 350,
+                        currentProgress: Number(list.numberOfSignatures),
+                        maxProgress: list.area.min,
                         withLabel: true,
                       }}
                     />

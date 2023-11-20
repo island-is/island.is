@@ -12,8 +12,10 @@ const SigneeView = () => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
 
-  const { signedList, loadingSignedList, refetchSignedList } = useGetSignedList()
-  const { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea } = useGetListsBySigneeArea('SF')
+  const { signedList, loadingSignedList, refetchSignedList } =
+    useGetSignedList()
+  const { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea } =
+    useGetListsBySigneeArea('SF')
 
   const onUnSignList = () => {
     setModalIsOpen(false)

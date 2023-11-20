@@ -19,11 +19,12 @@ import { SkeletonTable } from '../Skeletons'
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const [searchTerm, setSearchTerm] = useState('')
-
   const { pathname } = useLocation()
   const listId = pathname.replace('/min-gogn/medmaelalistar/', '')
+  const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees } = useGetListSignees(listId)
+  const [page, setPage] = useState(1)
+  const page_size = 10
 
   return (
     <Box marginTop={5}>
@@ -103,10 +104,16 @@ const Signees = () => {
 
           <Box marginTop={5}>
             <Pagination
-              page={1}
-              totalPages={5}
+              totalItems={listSignees.length}
+              itemsPerPage={page_size}
+              page={page}
               renderLink={(page, className, children) => (
-                <Box cursor="pointer" className={className}>
+                <Box
+                  cursor="pointer"
+                  className={className}
+                  onClick={() => setPage(page)}
+                  component="button"
+                >
                   {children}
                 </Box>
               )}

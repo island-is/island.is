@@ -28,6 +28,7 @@ export const GetListById = gql`
       active
       collectionId
       link
+      numberOfSignatures
     }
   }
 `
@@ -111,6 +112,7 @@ export const GetOwnerLists = gql`
       active
       collectionId
       link
+      numberOfSignatures
     }
   }
 `
