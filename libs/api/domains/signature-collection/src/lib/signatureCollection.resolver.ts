@@ -17,6 +17,7 @@ import { Bulk } from './models/bulk.model'
 import { Signee } from './models/signee.model'
 import { SignatureListInput } from './dto/singatureList.input'
 import { FindSignatureInput } from './dto/findSignature.input'
+import { AreaInput } from './dto/area.input'
 
 @UseGuards(IdsAuthGuard, IdsUserGuard)
 @Resolver()
@@ -81,9 +82,9 @@ export class SignatureCollectionResolver {
   //   signatureCollectionListsByArea
   @Query(() => [SignatureList])
   async signatureCollectionListsByArea(
-    @Args('input') input: IdInput,
+    @Args('input') input: AreaInput,
   ): Promise<SignatureList[]> {
-    return this.signatureCollectionService.listsByArea(input.id)
+    return this.signatureCollectionService.listsByArea(input.areaId)
   }
 
   //   signatureCollectionList
