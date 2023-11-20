@@ -2,7 +2,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
-  FJARSYSLAN_ID,
+  FJARSYSLAN_SLUG,
   FootNote,
 } from '@island.is/service-portal/core'
 
@@ -31,7 +31,7 @@ const FinanceTransactionPeriods = () => {
           <FinanceTransactionPeriodsFilter />
         </Box>
       </FinanceTransactionPeriodsProvider>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </DynamicWrapper>
   )
 }

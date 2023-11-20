@@ -9,6 +9,7 @@ interface Props {
     align?: 'left' | 'right'
     element?: boolean
     printHidden?: boolean
+    width?: string
   }>
 }
 
@@ -25,6 +26,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({ data }) => {
             scope="col"
             key={i}
             style={tableStyles}
+            width={item.width}
           >
             <Text
               variant="medium"

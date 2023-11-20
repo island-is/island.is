@@ -6,6 +6,7 @@ import { useGetChargeItemSubjectsByYearLazyQuery } from '../../screens/FinanceTr
 import { cropText } from '../../utils/cropText'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
 import { ChargeTypes } from './FinanceTransactionPeriodsTypes'
+import { Box } from '@island.is/island-ui/core'
 
 interface Props {
   record: ChargeTypes[0]
@@ -25,7 +26,13 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
       key={`${record.iD}-${record.chargeItemSubjects}-${record.lastMovementDate}`}
       data={[
         { value: record.name },
-        { value: cropText(record.chargeItemSubjects, 24) },
+        {
+          value: (
+            <Box title={record.chargeItemSubjects}>
+              {cropText(record.chargeItemSubjects, 24)}
+            </Box>
+          ),
+        },
         { value: record.chargeItemSubjectDescription },
         {
           value: format(new Date(record.lastMovementDate), dateFormat.is),

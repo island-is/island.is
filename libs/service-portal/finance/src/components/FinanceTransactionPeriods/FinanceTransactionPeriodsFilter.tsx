@@ -114,10 +114,6 @@ const FinanceTransactionPeriodsFilter = () => {
     setChargeTypeDetails(chargeTypesDetailsData?.getChargeTypesDetailsByYear)
   }, [chargeTypesData, chargeTypesDetailsData])
 
-  useEffect(() => {
-    setSelectedPeriodsActive(false)
-  }, [financeTransactionPeriodsState.selectedPeriods])
-
   function clearFilter() {
     setDropdownSelect([])
     setActiveChargeType('**')

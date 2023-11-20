@@ -80,11 +80,11 @@ export default function FinanceTransactionSelectedPeriod({
         <T.Table>
           <ExpandHeader
             data={[
-              { value: '', printHidden: true },
-              { value: formatMessage(m.dateShort) },
-              { value: formatMessage(m.feeItem) },
-              { value: formatMessage(m.recordCategory) },
-              { value: formatMessage(m.amount), align: 'right' },
+              { value: '', printHidden: true, width: '56' },
+              { value: formatMessage(m.dateShort), width: '15%' },
+              { value: formatMessage(m.feeItem), width: '30%' },
+              { value: formatMessage(m.recordCategory), width: '30%' },
+              { value: formatMessage(m.amount), align: 'right', width: '15%' },
             ]}
           />
           <T.Body>
