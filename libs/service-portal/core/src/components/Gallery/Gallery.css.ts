@@ -79,5 +79,5 @@ export const lastImageOverlay = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: hexToRgba(theme.color.blue100, 0.6),
+  background: hexToRgba(theme.color.blue100, 1),
 })
