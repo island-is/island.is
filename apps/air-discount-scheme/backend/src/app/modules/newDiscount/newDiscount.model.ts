@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import {
+import type {
   NewDiscount as TDiscount,
   AirDiscount as TAirDiscount,
   DiscountedFlight as TDiscountedFlight,

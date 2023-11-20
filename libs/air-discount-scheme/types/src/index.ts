@@ -3,6 +3,7 @@ export type {
   Discount,
   ExplicitCode,
 } from './lib/discount'
+
 export type {
   NewDiscount,
   AirDiscount,
