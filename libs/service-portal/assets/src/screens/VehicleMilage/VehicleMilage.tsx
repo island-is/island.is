@@ -1,16 +1,13 @@
 import { useParams } from 'react-router-dom'
+import { useRef, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
-import { Controller, useForm } from 'react-hook-form'
-import format from 'date-fns/format'
-import is from 'date-fns/locale/is'
+import { useForm } from 'react-hook-form'
 import {
   Box,
   Button,
-  DatePicker,
   GridColumn,
   GridContainer,
   GridRow,
-  LoadingDots,
   SkeletonLoader,
   Stack,
   Table,
@@ -23,7 +20,6 @@ import {
   FootNote,
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
-  formatDate,
   icelandLocalTime,
 } from '@island.is/service-portal/core'
 
@@ -33,6 +29,7 @@ import {
   usePostVehicleMileageMutation,
 } from './VehicleDetail.generated'
 import { displayWithUnit } from '../../utils/displayWithUnit'
+import MileageConfirmation from '../../components/MileageConfirmation'
 import * as styles from './VehicleMileage.css'
 
 const ORIGIN_CODE = 'ISLAND.IS'
@@ -47,12 +44,15 @@ interface FormData {
 
 const VehicleMilage = () => {
   useNamespaces('sp.vehicles')
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
+  const [formValue, setFormValue] = useState('')
   const { id } = useParams() as UseParams
+  const buttonRef = useRef<HTMLButtonElement>(null)
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>()
 
   const handleSubmitForm = async (submitData: FormData) => {
@@ -77,6 +77,9 @@ const VehicleMilage = () => {
         toast.error(formatMessage(m.errorTitle))
       },
       onCompleted: (mutationData) => {
+        // Clear form and errors on success.
+        reset()
+
         // Update useGetUsersMileageQuery on mutation success.
         const updatedMileage = mutationData.vehicleMileagePost
         toast.success(formatMessage(messages.postSuccess))
@@ -147,6 +150,8 @@ const VehicleMilage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
+                    defaultValue={''}
+                    onChange={(e) => setFormValue(e.target.value)}
                     rules={{
                       validate: {
                         value: (value: number) => {
@@ -160,6 +165,14 @@ const VehicleMilage = () => {
                             }
                           }
                         },
+                      },
+                      required: {
+                        value: true,
+                        message: formatMessage(messages.mileageInputMinLength),
+                      },
+                      minLength: {
+                        value: 1,
+                        message: formatMessage(messages.mileageInputMinLength),
                       },
                     }}
                     label={formatMessage(messages.vehicleMilageInputLabel)}
@@ -190,6 +203,24 @@ const VehicleMilage = () => {
                     >
                       {formatMessage(m.save)}
                     </Button>
+
+                    {/* <Box display="none">
+                      <Button
+                        variant="primary"
+                        size="small"
+                        fluid
+                        type="submit"
+                        loading={postActionLoading}
+                        ref={buttonRef}
+                      >
+                        {formatMessage(m.save)}
+                      </Button>
+                    </Box>
+                    <MileageConfirmation
+                      postActionLoading={postActionLoading}
+                      formValue={formValue}
+                      buttonRef={buttonRef}
+                    /> */}
                   </Box>
                 </GridColumn>
               </GridRow>

@@ -829,6 +829,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-errors-input-too-low',
     defaultMessage: 'Verður að vera hærri en síðasta skráning',
   },
+  mileageInputMinLength: {
+    id: 'sp.vehicles:mileage-errors-min-length',
+    defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
+  },
 })
 
 export const urls = defineMessages({
