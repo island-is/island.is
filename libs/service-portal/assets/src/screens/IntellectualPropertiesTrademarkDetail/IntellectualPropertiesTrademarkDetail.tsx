@@ -95,23 +95,66 @@ const IntellectualPropertiesTrademarkDetail = () => {
           </Inline>
         </Box>
 
-        {ip?.type === TrademarkType.TEXT && ip?.imagePath && (
-          <Image url={ip.imagePath} title={ip.text ?? ''} />
+        {ip?.type === TrademarkType.TEXT && (
+          <Box>
+            <Text variant="eyebrow" as="div" color="purple400">
+              {formatMessage(ipMessages.text)}
+            </Text>
+            {ip?.imagePath && (
+              <Image url={ip.imagePath} title={ip.text ?? ''} />
+            )}
+          </Box>
         )}
-        {ip?.type === TrademarkType.MULTIMEDIA && ip.media?.mediaPath && (
-          <VideoPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
+        {ip?.type === TrademarkType.MULTIMEDIA && (
+          <Box>
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {formatMessage(ipMessages.video)}
+            </Text>
+            {ip.media?.mediaPath && (
+              <VideoPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
+            )}
+          </Box>
         )}
-        {ip?.type === TrademarkType.ANIMATION && ip.media?.mediaPath && (
-          <Image
-            url={ip.media?.mediaPath}
-            title={ip?.text ?? ''}
-            height="352px"
-            width="352px"
-            isAnimation
-          />
+        {ip?.type === TrademarkType.ANIMATION && (
+          <Box>
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {formatMessage(ipMessages.animation)}
+            </Text>
+            {ip.media?.mediaPath && (
+              <Image
+                url={ip.media?.mediaPath}
+                title={ip?.text ?? ''}
+                height="352px"
+                width="352px"
+                isAnimation
+              />
+            )}
+          </Box>
         )}
-        {ip?.type === TrademarkType.AUDIO && ip.media?.mediaPath && (
-          <AudioPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
+        {ip?.type === TrademarkType.AUDIO && (
+          <>
+            <Text
+              variant="eyebrow"
+              as="div"
+              paddingBottom={2}
+              color="purple400"
+            >
+              {formatMessage(ipMessages.audio)}
+            </Text>
+            {ip.media?.mediaPath && (
+              <AudioPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
+            )}
+          </>
         )}
         <Stack space="p2">
           <UserInfoLine

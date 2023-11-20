@@ -812,6 +812,30 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:base-info',
     defaultMessage: 'Grunnupplýsingar',
   },
+  text: {
+    id: 'sp.intellectual-property:text',
+    defaultMessage: 'Texti',
+  },
+  image: {
+    id: 'sp.intellectual-property:image',
+    defaultMessage: 'Mynd',
+  },
+  images: {
+    id: 'sp.intellectual-property:images',
+    defaultMessage: 'Myndir',
+  },
+  audio: {
+    id: 'sp.intellectual-property:audio',
+    defaultMessage: 'Hljóðskrá',
+  },
+  video: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Myndband',
+  },
+  animation: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Hreyfimynd',
+  },
   name: {
     id: 'sp.intellectual-property:name',
     defaultMessage: 'Nafn',

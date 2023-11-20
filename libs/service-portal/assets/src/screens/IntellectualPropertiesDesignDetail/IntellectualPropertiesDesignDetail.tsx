@@ -111,44 +111,51 @@ const IntellectualPropertiesDesignDetail = () => {
             </Button>
           </Inline>
         </Box>
-        <Gallery
-          loading={loading}
-          thumbnails={data?.intellectualPropertyDesignImageList?.images.map(
-            (item, i) => {
-              if (!item) {
-                return null
-              }
+        <Box>
+          <Text variant="eyebrow" as="div" paddingBottom={2} color="purple400">
+            {formatMessage(ipMessages.images)}
+          </Text>
+          <Gallery
+            loading={loading}
+            thumbnails={data?.intellectualPropertyDesignImageList?.images.map(
+              (item, i) => {
+                if (!item) {
+                  return null
+                }
 
-              return (
-                <GalleryItem key={i} thumbnail>
-                  <img
-                    width={365}
-                    height={365}
-                    src={`data:image/png;base64,${item.image}`}
-                    alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
-                  />
-                </GalleryItem>
-              )
-            },
-          )}
-        >
-          {data?.intellectualPropertyDesignImageList?.images.map((item, i) => {
-            if (!item) {
-              return null
-            }
+                return (
+                  <GalleryItem key={i} thumbnail>
+                    <img
+                      width={365}
+                      height={365}
+                      src={`data:image/png;base64,${item.image}`}
+                      alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                    />
+                  </GalleryItem>
+                )
+              },
+            )}
+          >
+            {data?.intellectualPropertyDesignImageList?.images.map(
+              (item, i) => {
+                if (!item) {
+                  return null
+                }
 
-            return (
-              <GalleryItem key={i}>
-                <img
-                  width={365}
-                  height={365}
-                  src={`data:image/png;base64,${item.image}`}
-                  alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
-                />
-              </GalleryItem>
-            )
-          })}
-        </Gallery>
+                return (
+                  <GalleryItem key={i}>
+                    <img
+                      width={365}
+                      height={365}
+                      src={`data:image/png;base64,${item.image}`}
+                      alt={`design-${item.designNumber}-nr-${item.imageNumber}`}
+                    />
+                  </GalleryItem>
+                )
+              },
+            )}
+          </Gallery>
+        </Box>
         <Stack space="p2">
           <UserInfoLine
             title={formatMessage(ipMessages.baseInfo)}
