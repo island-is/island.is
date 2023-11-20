@@ -944,6 +944,8 @@ components:
           type: string
         usedAt:
           type: string
+        hasReturnFlight:
+          type: boolean
       required:
         - id
         - code
@@ -951,6 +953,7 @@ components:
         - active
         - isConnectionCode
         - validUntil
+        - hasReturnFlight
     DiscountedFlightLegViewModel:
       type: object
       properties:

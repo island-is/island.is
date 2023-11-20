@@ -188,12 +188,15 @@ export class NewDiscountService {
     return flights.map((flight) => {
       return {
         ...flight,
-        discount: this.generateAirDiscountCode(
-          flight.isConnectionFlight,
-          () => this.generateDiscountCode(),
-          new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString(),
-          explicit,
-        ),
+        discount: {
+          ...this.generateAirDiscountCode(
+            flight.isConnectionFlight,
+            () => this.generateDiscountCode(),
+            new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString(),
+            explicit,
+          ),
+          hasReturnFlight: flight.flightLegs.length > 1,
+        },
       }
     })
   }

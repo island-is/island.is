@@ -12,6 +12,7 @@ import {
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
 import { NewDiscount as DiscountModel } from '../models/newDiscount.model'
+import { CreateNewDiscountCodeInput } from './dto/createNewDiscountCode.input'
 
 @Injectable()
 export class NewDiscountService {
@@ -120,27 +121,29 @@ export class NewDiscountService {
     return discountResponse
   }
 
-  private async createDiscount(
+  async createDiscount(
     auth: User,
-    nationalId: string,
-    origin: string,
-    destination: string,
-    isRoundTrip: boolean,
-  ): Promise<TNewDiscount | null> {
+    input: CreateNewDiscountCodeInput,
+  ): Promise<DiscountModel | null> {
     const createDiscountResponse = await this.getADSWithAuth(auth)
       .privateNewDiscountControllerCreateDiscountCode({
-        nationalId,
-        body: {
-          origin,
-          destination,
-          isRoundTrip,
-        },
+        nationalId: auth.nationalId,
+        body: input,
       })
       .catch((e) => {
         this.handle4xx(e)
         return null
       })
-    return createDiscountResponse
+    if (!createDiscountResponse) {
+      return null
+    }
+    return {
+      ...createDiscountResponse,
+      user: {
+        ...createDiscountResponse.user,
+        name: createDiscountResponse.user.firstName,
+      },
+    }
   }
 
   private async getUserRelations(auth: User): Promise<TUser[]> {

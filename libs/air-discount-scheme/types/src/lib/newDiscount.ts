@@ -18,6 +18,7 @@ export interface AirDiscount {
   isConnectionCode: boolean
   validUntil: string
   usedAt?: string
+  hasReturnFlight: boolean
 }
 
 export interface DiscountedFlight {

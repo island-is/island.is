@@ -15,6 +15,7 @@ module.exports = {
           is_connection_code BOOLEAN NOT NULL,
           valid_until VARCHAR NOT NULL,
           used_at VARCHAR,
+          has_return_flight BOOLEAN NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (id),

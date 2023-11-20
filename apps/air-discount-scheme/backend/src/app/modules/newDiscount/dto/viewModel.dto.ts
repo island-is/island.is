@@ -19,6 +19,7 @@ export class AirDiscountViewModel {
     this.isConnectionCode = airdiscount.isConnectionCode
     this.validUntil = airdiscount.validUntil
     this.usedAt = airdiscount.usedAt
+    this.hasReturnFlight = airdiscount.hasReturnFlight
   }
 
   @ApiProperty()
@@ -47,6 +48,9 @@ export class AirDiscountViewModel {
 
   @ApiPropertyOptional()
   readonly usedAt?: string
+
+  @ApiProperty()
+  readonly hasReturnFlight: boolean
 }
 
 export class DiscountedFlightLegViewModel {

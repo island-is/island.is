@@ -98,6 +98,13 @@ export class AirDiscount
   })
   usedAt?: string
 
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  hasReturnFlight!: boolean
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

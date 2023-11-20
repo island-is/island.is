@@ -33,6 +33,9 @@ export class AirDiscount {
 
   @Field(() => String, { nullable: true })
   usedAt?: string
+
+  @Field()
+  hasReturnFlight!: boolean
 }
 
 @ObjectType('AirDiscountSchemeDiscountFlightLeg')
