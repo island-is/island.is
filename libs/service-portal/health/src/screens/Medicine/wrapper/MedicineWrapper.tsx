@@ -23,7 +23,7 @@ export const MedicineWrapper = ({
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       />
       <TabNavigation
-        label="test"
+        label={formatMessage(m.medicineTitle)}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.medicineTitle)
             ?.children ?? []

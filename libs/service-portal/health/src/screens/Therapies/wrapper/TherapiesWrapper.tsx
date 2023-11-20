@@ -43,7 +43,7 @@ export const TherapiesWrapper = ({ children, error, loading }: Props) => {
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
       <TabNavigation
-        label="test"
+        label={formatMessage(messages.therapyTitle)}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.therapies)
             ?.children ?? []

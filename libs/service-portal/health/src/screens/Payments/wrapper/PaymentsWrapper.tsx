@@ -43,7 +43,7 @@ export const PaymentsWrapper = ({ children }: Props) => {
       </Box>
 
       <TabNavigation
-        label="test"
+        label={formatMessage(messages.payments)}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.payments)
             ?.children ?? []
