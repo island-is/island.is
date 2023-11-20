@@ -53,7 +53,7 @@ export class AnchorPage {
   featuredImage?: Image | null
 }
 
-export const mapLifeEventPage = ({
+export const mapAnchorPage = ({
   fields,
   sys,
 }: IAnchorPage): AnchorPage => ({
