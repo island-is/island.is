@@ -160,6 +160,22 @@ export const messages = defineMessages({
     id: 'sp.health:health-insurance-status',
     defaultMessage: 'Staða sjúkratryggingar',
   },
+  healthInsuranceConfirmation: {
+    id: 'sp.health:health-insurance-confirmation',
+    defaultMessage: 'Staðfesting á sjúkratryggingu',
+  },
+  healthInsuranceConfirmationButton: {
+    id: 'sp.health:health-insurance-confirmation-button',
+    defaultMessage: 'Sækja staðfestingu',
+  },
+  healthInsuranceConfirmationLoading: {
+    id: 'sp.health:health-insurance-confirmation-loading',
+    defaultMessage: 'Sæki skjal',
+  },
+  healthInsuranceConfirmationTransferError: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
+  },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',

@@ -18,7 +18,7 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
-  FJARSYSLAN_ID,
+  FJARSYSLAN_SLUG,
   FootNote,
   formSubmit,
   m,
@@ -136,6 +136,7 @@ const FinanceStatus = () => {
                         type="button"
                         variant="utility"
                         as="span"
+                        unfocusable
                       >
                         {formatMessage({
                           id: 'sp.finance-status:make-payment-schedule',
@@ -253,7 +254,7 @@ const FinanceStatus = () => {
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }
