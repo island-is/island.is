@@ -24,12 +24,13 @@ import { PersonV3 } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
-import { isDefined } from '@island.is/shared/utils'
+import { encrypt, isDefined } from '@island.is/shared/utils'
 
 export function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,
+  nationalId?: string,
 ): PersonV3 | null {
-  const person = formatPerson(individual)
+  const person = formatPerson(individual, nationalId)
   if (!person) {
     return null
   }
@@ -43,6 +44,7 @@ export function formatPersonDiscriminated(
 
 export function formatPerson(
   individual?: EinstaklingurDTOAllt | null,
+  nationalId?: string,
 ): Person | null {
   if (individual === null || !individual?.kennitala || !individual?.nafn) {
     return null
@@ -67,6 +69,10 @@ export function formatPerson(
     maritalStatus: mapMaritalStatus(
       individual.hjuskaparstada?.hjuskaparstadaKodi ?? '',
     ),
+    ...(nationalId &&
+      individual.kennitala && {
+        baseId: encrypt(individual.kennitala, nationalId),
+      }),
 
     //DEPRECATION LINE -- below shall be removed
     legalResidence: legalResidence ?? null,

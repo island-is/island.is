@@ -16,6 +16,7 @@ import { useUserInfoOverviewLazyQuery } from './UserInfoOverview.generated'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect } from 'react'
+import { encrypt } from '@island.is/shared/utils'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
@@ -80,6 +81,9 @@ const UserInfoOverview = () => {
             key={child.nationalId}
             title={child.fullName || ''}
             nationalId={child.nationalId}
+            baseId={
+              encrypt(child.nationalId, userInfo.profile.nationalId) ?? ''
+            }
             familyRelation="child"
           />
         ))}

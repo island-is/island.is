@@ -130,6 +130,7 @@ export class BrokerService {
     const data =
       rawData?.hjuskaparstada ??
       (await this.nationalRegistryV3.getSpouse(nationalId))
+
     return data && formatSpouse(data)
   }
 
@@ -174,7 +175,7 @@ export class BrokerService {
           return null
         }
 
-        return formatPersonDiscriminated(childData)
+        return formatPersonDiscriminated(childData, parentNationalId)
       }),
     )
     return childDetails.filter((child): child is PersonV3 => child != null)

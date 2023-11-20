@@ -4,6 +4,7 @@ query NationalRegistryChildCustody($api: String, $childNationalId: String) {
     fullName
     childCustody(childNationalId: $childNationalId) {
       nationalId
+      baseId
       fullName
       name {
         firstName

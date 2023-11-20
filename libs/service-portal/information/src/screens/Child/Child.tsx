@@ -34,23 +34,26 @@ import { spmm } from '../../lib/messages'
 import { useNationalRegistryChildCustodyLazyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
+import { decrypt } from '@island.is/shared/utils'
 
 type UseParams = {
-  nationalId: string
+  baseId: string
 }
 
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
+  const [nationalId, setNationalId] = useState<string>()
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
-  const { nationalId } = useParams() as UseParams
+  const { baseId } = useParams() as UseParams
 
   const [getNationalRegistryChildCustodyQuery, { data, loading, error }] =
     useNationalRegistryChildCustodyLazyQuery()
 
   /* Should show name breakdown tooltip? */
   useEffect(() => {
+    const natId = decrypt(baseId, userInfo.profile.nationalId)
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
         `isserviceportalnationalregistryv3enabled`,
@@ -59,11 +62,12 @@ const Child = () => {
       getNationalRegistryChildCustodyQuery({
         variables: {
           api: ffEnabled ? 'v3' : undefined,
-          childNationalId: nationalId,
+          childNationalId: natId,
         },
       })
     }
     isFlagEnabled()
+    setNationalId(natId)
   }, [])
 
   const dataNotFoundMessage = defineMessage({

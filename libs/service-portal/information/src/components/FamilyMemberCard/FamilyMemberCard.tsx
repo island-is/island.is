@@ -8,6 +8,7 @@ import { InformationPaths } from '../../lib/paths'
 interface Props {
   title: string
   nationalId: string
+  baseId?: string
   familyRelation?: 'child' | 'spouse' | 'child2'
   currentUser?: boolean
 }
@@ -17,6 +18,7 @@ export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
   nationalId,
   currentUser,
   familyRelation,
+  baseId,
 }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
@@ -38,7 +40,7 @@ export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
             id: 'sp.family:child',
             defaultMessage: 'Barn',
           }),
-          path: InformationPaths.Child.replace(':nationalId', nationalId),
+          path: InformationPaths.Child.replace(':baseId', baseId ?? ''),
         }
       case 'spouse':
         return {
@@ -46,7 +48,7 @@ export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
             id: 'sp.family:spouse',
             defaultMessage: 'Maki',
           }),
-          path: InformationPaths.Spouse.replace(':nationalId', nationalId),
+          path: InformationPaths.Spouse,
         }
       case 'child2':
         return {
