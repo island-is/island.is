@@ -33,4 +33,7 @@ export class SignatureList {
 
   @Field({ nullable: true })
   link?: string
+
+  @Field({ nullable: true })
+  numberOfSignatures?: number
 }

@@ -66,7 +66,7 @@ const Owners: Owner[] = [
 
 export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
   Areas.map((area, index) => ({
-    id: `${i}${index}`,
+    id: `${i + 1}${index + 1}`,
     title: `${owner.name} ${area.name}`,
     area,
     endTime: CurrentCollection.endTime,
@@ -74,15 +74,17 @@ export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
     owner,
     active: true,
     collectionId: CurrentCollection.id,
+    numberOfSignatures: 10,
   })),
 )
 
-export const Signatures: Signature[] = fakeSigners.map((fake, index) => ({
-  id: `${index}0${index}`,
-  listId: Lists[0].id,
-  created: currDate,
-  modified: currDate,
-  signee: signee(fake),
-  active: true,
-  signatureType: 'User',
-}))
+export const Signatures = (listId: string): Signature[] =>
+  fakeSigners.map((fake, index) => ({
+    id: `${index}0${index}`,
+    listId: listId,
+    created: currDate,
+    modified: currDate,
+    signee: signee(fake),
+    active: true,
+    signatureType: 'User',
+  }))

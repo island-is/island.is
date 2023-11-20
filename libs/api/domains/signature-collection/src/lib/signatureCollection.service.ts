@@ -14,6 +14,7 @@ import { Bulk } from './models/bulk.model'
 import { Signee } from './models/signee.model'
 import { SignatureListInput } from './dto/singatureList.input'
 import * as nationalId from 'kennitala'
+import { FindSignatureInput } from './dto/findSignature.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -53,12 +54,12 @@ export class SignatureCollectionService {
 
   //   CanSign
   async canSign(nationalId: string): Promise<Success> {
-    const listId = Signatures.find(
-      (sign) => sign.signee.nationalId === nationalId,
-    )?.listId
+    console.log(nationalId)
+    // TODO: return list person is signed on
+    // TODO: take in list user is trying to sign
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ success: !!listId })
+        resolve({ success: true })
       }, 300)
     })
   }
@@ -121,14 +122,10 @@ export class SignatureCollectionService {
 
   //   SignedList
   async signedList(nationalId: string): Promise<SignatureList | null> {
-    const listId = Signatures.find(
-      (sign) => sign.signee.nationalId === nationalId,
-    )?.listId
-
-    const list = listId ? await this.list(listId) : null
+    console.log(nationalId)
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(list)
+        resolve(Lists[0])
       }, 300)
     })
   }
@@ -137,17 +134,21 @@ export class SignatureCollectionService {
   async signatures(listId: string): Promise<Signature[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve(Signatures.filter((sign) => sign.listId === listId))
+        resolve(Signatures(listId).filter((sign) => sign.listId === listId))
       }, 300)
     })
   }
 
   //   FindSignature
-  async findSignature(id: string): Promise<Signature | null> {
+  async findSignature({
+    listId,
+    query,
+  }: FindSignatureInput): Promise<Signature | null> {
     return new Promise((resolve) => {
       const singature =
-        Signatures.find(
-          (sign) => sign.signee.nationalId === id || sign.signee.name === id,
+        Signatures(listId).find(
+          (sign) =>
+            sign.signee.nationalId === query || sign.signee.name === query,
         ) ?? null
       setTimeout(() => {
         resolve(singature)
@@ -162,7 +163,7 @@ export class SignatureCollectionService {
   }: SignatureListNationalIdsInput): Promise<Bulk> {
     const found: Signature[] = []
 
-    Signatures.map((signature) => {
+    Signatures(listId).map((signature) => {
       const nationalIdIndex = nationalIds.findIndex(
         (id) => signature.signee.nationalId === id,
       )
@@ -266,7 +267,7 @@ export class SignatureCollectionService {
   }: SignatureListNationalIdsInput): Promise<Bulk> {
     const notFound: Signature[] = []
 
-    Signatures.map((signature) => {
+    Signatures(listId).map((signature) => {
       const nationalIdIndex = nationalIds.findIndex(
         (id) => signature.signee.nationalId === id,
       )
