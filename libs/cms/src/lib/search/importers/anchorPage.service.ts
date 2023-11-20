@@ -9,9 +9,7 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AnchorPageSyncService
-  implements CmsSyncProvider<IAnchorPage>
-{
+export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
   processSyncData(entries: processSyncDataInput<IAnchorPage>) {
     logger.info('Processing sync data for anchor pages')
 
