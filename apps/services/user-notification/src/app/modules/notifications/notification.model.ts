@@ -19,9 +19,9 @@ export class Notification extends Model<Notification> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    field: 'cursor'
+    field: 'id'
   })
-  cursor!: number;
+  id!: number;
 
   @Column({
     type: DataType.UUID,
@@ -74,4 +74,6 @@ export class Notification extends Model<Notification> {
     field: 'status'
   })
   status!: NotificationStatus;
+
+  
 }

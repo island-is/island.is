@@ -11,9 +11,10 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
 import axios from 'axios'
-// import notificationModel from './notification.model'
 import { Notification } from './notification.model'
 import { InjectModel } from '@nestjs/sequelize'
+
+import { paginate } from '@island.is/nest/pagination'
 
 
 // 
@@ -21,12 +22,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
 import { Op } from 'sequelize'
-import { NotificationDTO } from './dto/notification.dto'
+import { NotificationDTO, NotificationStatus } from './dto/notification.dto'
+import { User } from '@island.is/auth-nest-tools'
+
+
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
 
+
+  
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -165,30 +171,69 @@ export class NotificationsService {
     return template
   }
 
-  async findOne(nationalId: string,id: number): Promise<any> {
-    return await this.notificationModel.findByPk(id);
-   
-  }
-
-  async findAll(nationalId: string, cursor?: number, limit = 10): Promise<any[]> {
-    return await this.notificationModel.findAll({
-      where: cursor ? { cursor: { [Op.gt]: cursor } } : {}, // AND nationalId
-      limit: limit,
+  async findOne(user: User,id: number): Promise<any> {
+    return await this.notificationModel.findOne({
+      where: {
+        id: id,
+        recipient: user.nationalId
+      }
     });
+  }
+
+  async findMany(user:User,query: any): Promise<any> {
+    return await paginate({
+      Model: this.notificationModel,
+      limit: query.limit || 10,
+      after: query.after,
+      before: query.before,
+      primaryKeyField: 'id',
+      orderOption: [['id', 'DESC']],
+      // where: { ListId: listId }, // insert sequelize where clause
+    })
+  }
+
+  // async findAll(user: User, cursor?: string, limit = 10): Promise<any> {
+  //   return this.notificationModel.paginate({
+  //     where: {
+  //       recipient: user.nationalId
+  //     },
+  //     order: [['id', 'DESC']],
+  //     limit: limit,
+  //     after: cursor,
+  //   }).then((result) => {
+  //     console.log(result);
+  //   });
+  //   return await this.notificationModel.findAll({
+  //     where: cursor ? {  recipient: user.nationalId, id: { [Op.gt]: cursor } } : {}, // AND nationalId
+  //     limit: limit,
+  //   });
     
-  }
+  // }
 
-  async update(nationalId: string,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
-    return await this.notificationModel.findByPk(id);
+
+  // async update(user: User,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
+  //   const notification = await this.notificationModel.findOne({
+  //     where: {
+  //       id: id,
+  //       recipient: user.nationalId // Check if the recipient matches the nationalId
+  //     }
+  //   });
+  
+  //   if (!notification) {
+  //     throw new NotFoundException('Notification not found or does not belong to the user');
+  //   }
+  
+  //   // Update the notification with the provided DTO
+  //   return await notification.update(updateNotificationDto);
    
-  }
+  // }
 
-  async create(nationalId:string, notificationData: NotificationDTO): Promise<Notification> {
+  
+
+  // Just a test function WHILE DEVELOPING
+  async create(user:User, notificationData: NotificationDTO): Promise<any> {
     const exampleNotificationData = {
-      // Assuming 'cursor' is a required field. 
-      // Its value can be set dynamically as needed
-      // cursor: Math.floor(Math.random() * 100000), // Example dynamic value
-      recipient: nationalId,
+      recipient: user.nationalId,
       templateId: "HNIPP.POSTHOLF.NEW_DOCUMENT",
       args: [
         {
@@ -200,7 +245,7 @@ export class NotificationsService {
           value: "abcd-abcd-abcd-abcd"
         }
       ],
-      status: "unread"
+      status: NotificationStatus.UNREAD
     };
     return this.notificationModel.create(exampleNotificationData as any);
   }

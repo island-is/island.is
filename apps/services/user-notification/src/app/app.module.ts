@@ -24,16 +24,5 @@ import {
 
     NotificationsModule,
   ],
-  // providers: [
-  //   {
-  //     provide: APP_GUARD,
-  //     useClass: IdsUserGuard,
-  //   },
-  //   {
-  //     provide: APP_GUARD,
-  //     useClass: ScopesGuard,
-  //   },
-
-  // ],
 })
 export class AppModule {}

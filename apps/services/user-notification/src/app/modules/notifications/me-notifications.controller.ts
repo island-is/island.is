@@ -30,7 +30,18 @@ import { Notification } from './notification.model'
 import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
 import { NotificationDTO } from './dto/notification.dto'; // Import your DTO
+import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
 
+export enum NotificationState {
+  Read = 'read',
+  Unread = 'unread'
+}
+
+export class PaginatedNotificationDto {
+  totalCount!: number
+  data!: Notification[]
+  pageInfo!: PageInfoDto
+}
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
@@ -50,32 +61,50 @@ export class MeNotificationsController {
   async create(@CurrentUser() user: User, @Body() notificationData: NotificationDTO) {
     console.log("#####################")
     console.log(user)
-    return this.notificationService.create(user.nationalId,notificationData);
+    return this.notificationService.create(user,notificationData);
   }
 
   @Get()
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
-  findAll(@CurrentUser() user: User, @Query('cursor') cursor?: number, @Query('limit') limit?: number) {
-    return this.notificationService.findAll(user.nationalId,cursor, limit);
+  findMany(@CurrentUser() user: User, @Query() query: PaginationDto, @Query('limit') limit: number): Promise<PaginatedNotificationDto> {
+    return this.notificationService.findMany(user,query)
   }
+  // async findMany(
+  //   @Query() query: PaginationDto,
+  // ): Promise<PaginatedExampleModelDto> {
+  //   return await this.moduleService.findMany(query)
+  // }
 
   @Get(':id')
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
   findOne(@CurrentUser() user: User, @Param('id') id: number) {
-    return this.notificationService.findOne(user.nationalId,id);
+    return this.notificationService.findOne(user,id);
   }
 
-  @Patch(':id')
-  @Scopes(NotificationsScope.write)
-  @ApiTags("user-notification")
-  @ApiSecurity('oauth2', [NotificationsScope.write])
-  update(@CurrentUser() user: User, @Param('id') id: number, @Body() updateNotificationDto: UpdateNotificationDto) {
-    return this.notificationService.update(user.nationalId,id, updateNotificationDto);
-  }
+  // @Patch(':id')
+  // @Scopes(NotificationsScope.write)
+  // @ApiTags("user-notification")
+  // @ApiSecurity('oauth2', [NotificationsScope.write])
+  // update(@CurrentUser() user: User, @Param('id') id: number, @Body() updateNotificationDto: UpdateNotificationDto) {
+  //   return this.notificationService.update(user,id, updateNotificationDto);
+  // }
+
+  // @Put(':id/state')
+  // async updateState(
+  //   @CurrentUser() user: User,
+  //   @Param('id') id: number,
+  //   @Body('state') newState: NotificationState
+  // ): Promise<any> {
+  //   try {
+  //     return await this.notificationService.update(user.nationalId, id, newState);
+  //   } catch (error) {
+  //     throw new NotFoundException(error.message);
+  //   }
+  // }
 
   // @Delete(':id')
   // @Scopes(NotificationsScope.write)
