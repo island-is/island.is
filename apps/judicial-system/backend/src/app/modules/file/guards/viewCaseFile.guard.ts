@@ -10,9 +10,10 @@ import {
   CaseAppealState,
   CaseState,
   completedCaseStates,
-  isExtendedCourtRole,
+  isCourtOfAppealsUser,
+  isDistrictCourtUser,
   isPrisonSystemUser,
-  isProsecutionRole,
+  isProsecutionUser,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -39,17 +40,28 @@ export class ViewCaseFileGuard implements CanActivate {
     // case type, case state, appeal case state and case file category
     // to get accurate case file permissions
 
-    if (isProsecutionRole(user.role)) {
+    if (isProsecutionUser(user)) {
       return true
     }
 
     if (
-      isExtendedCourtRole(user.role) &&
+      isDistrictCourtUser(user) &&
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         ...completedCaseStates,
       ].includes(theCase.state)
+    ) {
+      return true
+    }
+
+    if (
+      isCourtOfAppealsUser(user) &&
+      completedCaseStates.includes(theCase.state) &&
+      theCase.appealState &&
+      [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED].includes(
+        theCase.appealState,
+      )
     ) {
       return true
     }

@@ -49,7 +49,11 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                 {isFrontPage && (
                   <Column width="content">
                     <FocusableBox href="https://island.is">
-                      <Logo />
+                      <Logo
+                        iconOnly={isMobile ? true : false}
+                        width={isMobile ? 28 : 160}
+                        height={isMobile ? 28 : 28}
+                      />
                     </FocusableBox>
                   </Column>
                 )}
@@ -59,7 +63,7 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                       <>
                         <Column width="content">
                           <FocusableBox href="https://island.is">
-                            <Logo iconOnly />
+                            <Logo iconOnly height={28} width={28} />
                           </FocusableBox>
                         </Column>
                         <Column width="content">
@@ -77,7 +81,7 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
                     )}
                     <Column width="content">
                       <FocusableBox href="/" alignItems="center">
-                        <LogoText isSmall={isMobile ? true : false} />
+                        <LogoText isSmall />
                       </FocusableBox>
                     </Column>
                   </>
