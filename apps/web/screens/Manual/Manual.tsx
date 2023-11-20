@@ -28,7 +28,8 @@ const Manual: ManualScreen = ({ manual, namespace }) => {
     <ManualWrapper manual={manual} namespace={namespace}>
       {typeof manual?.description?.length === 'number' &&
         manual.description.length > 0 && (
-          <Stack space={3}>
+          <Stack space={4}>
+            <Divider />
             <Box>
               <Text variant="eyebrow">
                 {n(
