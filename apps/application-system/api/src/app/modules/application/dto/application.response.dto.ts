@@ -13,6 +13,7 @@ import {
   IsArray,
   IsBoolean,
 } from 'class-validator'
+import { FormResponseDto } from './form.response.dto'
 
 class ActionCardTag {
   @ApiPropertyOptional()
@@ -181,8 +182,8 @@ export class BaseApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
-  @IsString()
-  form?: string
+  @IsObject()
+  form?: FormResponseDto
 
   constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)
