@@ -59,7 +59,6 @@ export const dataCollection = buildSection({
               : /* EINKASKIPTI */
                 m.personalInfoProviderSubtitleDivisionOfEstateByHeirs,
         }),
-        // subTitle: m.settingsInfoProviderSubtitle,
         buildDataProviderItem({
           provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
