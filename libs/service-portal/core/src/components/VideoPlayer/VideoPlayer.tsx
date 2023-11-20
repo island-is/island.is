@@ -51,10 +51,18 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
       document.exitFullscreen()
       setIsFullscreen(false)
     } else {
-      containerRef.current?.requestFullscreen()
+      containerRef?.current?.requestFullscreen()
       setIsFullscreen(true)
     }
   }
+
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement) {
+      setIsFullscreen(true)
+    } else {
+      setIsFullscreen(false)
+    }
+  })
 
   const setTimeChange = (durationPercent?: number) => {
     if (!durationPercent || !videoRef.current) {
@@ -77,9 +85,20 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
   }
 
   return (
-    <Box ref={containerRef} className={styles.container} position="relative">
+    <Box
+      ref={containerRef}
+      className={styles.container}
+      position="relative"
+      overflow="hidden"
+      borderRadius="large"
+      borderWidth="large"
+      borderStyle="solid"
+      borderColor="blue200"
+    >
       <video
-        className={cn(styles.videoPlayer, { [styles.hidden]: !isReady })}
+        className={cn(styles.videoPlayer, {
+          [styles.hidden]: !isReady,
+        })}
         ref={videoRef}
         preload="metadata"
         muted={isMuted}
@@ -103,9 +122,9 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
         </Box>
       )}
       {isReady && (
-        <GridContainer className={styles.controls}>
+        <GridContainer className={cn(styles.controls)}>
           <GridRow className={styles.video} align="center" alignItems="center">
-            <GridColumn span="1/12">
+            <GridColumn span="1/12" className={styles.audioControl}>
               <Box display="flex" justifyContent="center">
                 {isReady && (
                   <button
@@ -134,12 +153,12 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                 )}
               </Box>
             </GridColumn>
-            <GridColumn span="2/12">
-              <Text variant="small">{`${formatTime(
+            <GridColumn span="2/12" className={styles.audioControl}>
+              <Text variant="small" textAlign="center">{`${formatTime(
                 trackProgress,
               )} / ${formatTime(duration)}`}</Text>
             </GridColumn>
-            <GridColumn span="6/12">
+            <GridColumn span="5/12" className={styles.audioControl}>
               <ProgressBar
                 progress={progress}
                 onClick={setTimeChange}
@@ -147,7 +166,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                 variant
               />
             </GridColumn>
-            <GridColumn span="1/12">
+            <GridColumn span="1/12" className={styles.audioControl}>
               <Box display="flex" justifyContent="center">
                 <button
                   title={isMuted ? 'Unmute video' : 'Mute video'}
@@ -155,13 +174,12 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                 >
                   <Icon
                     icon={isMuted ? 'volumeMute' : 'volumeHigh'}
-                    size="large"
                     color="blue400"
                   />
                 </button>
               </Box>
             </GridColumn>
-            <GridColumn span="1/12">
+            <GridColumn span="1/12" className={styles.audioControl}>
               <Box display="flex" justifyContent="center">
                 <button
                   title={isFullscreen ? 'Close fullscreen' : 'Open fullscreen'}
