@@ -31,6 +31,7 @@ interface Props {
   label?: string
   children?: React.ReactNode
   thumbnails?: React.ReactNode
+  startingIndex?: number
   onVisibilityChange: (isVisible: boolean) => void
   onThumbnailClick?: () => void
 }
@@ -43,8 +44,9 @@ export const GalleryModal: FC<Props> = ({
   label,
   children,
   thumbnails,
+  startingIndex,
 }) => {
-  const [activeItem, setActiveItem] = useState(0)
+  const [activeItem, setActiveItem] = useState(startingIndex ?? 0)
   const imageRefs = useRef<Array<HTMLElement | null>>([])
 
   useEffect(() => {
@@ -102,8 +104,10 @@ export const GalleryModal: FC<Props> = ({
         <Box className={cn(styles.carets, styles.leftCaret)}>
           <Button
             icon="chevronBack"
-            size="small"
+            iconType="filled"
             variant="ghost"
+            circle
+            fluid
             onClick={() => onCaretClick('prev')}
           />
         </Box>
@@ -127,7 +131,7 @@ export const GalleryModal: FC<Props> = ({
         <Box className={cn(styles.carets, styles.rightCaret)}>
           <Button
             icon="chevronForward"
-            size="small"
+            circle
             variant="ghost"
             onClick={() => onCaretClick('next')}
           />

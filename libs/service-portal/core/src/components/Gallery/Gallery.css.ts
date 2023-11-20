@@ -4,7 +4,7 @@ import { hexToRgba } from '@island.is/island-ui/utils'
 
 export const galleryContainer = style({
   display: 'inherit',
-  width: '80%',
+  width: '100%',
   ...themeUtils.responsiveStyle({
     sm: {
       display: 'flex',
@@ -19,6 +19,10 @@ export const gallery = style({
   zIndex: theme.zIndex.base,
   aspectRatio: '1/1',
   width: '100%',
+
+  ':focus': {
+    borderColor: theme.color.mint400,
+  },
 
   ...themeUtils.responsiveStyle({
     sm: {
@@ -48,18 +52,28 @@ export const thumbnailGrid = style({
 })
 
 export const galleryButton = style({
+  width: '20%',
+  marginRight: theme.spacing[1],
+  aspectRatio: '1/1',
   border: '1px solid #d2d2d2',
   borderRadius: ' 8px',
   overflow: 'hidden',
   position: 'relative',
   display: 'block',
   zIndex: theme.zIndex.base,
-  width: '100%',
   opacity: 0.8,
 
   ':focus': {
     borderColor: theme.color.mint400,
   },
+
+  ...themeUtils.responsiveStyle({
+    sm: {
+      height: '80px',
+      width: '80px',
+      marginRight: 'initial',
+    },
+  }),
 })
 
 export const activeGalleryButton = style({
@@ -75,5 +89,5 @@ export const lastImageOverlay = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  background: hexToRgba(theme.color.blue100, 0.6),
+  background: hexToRgba(theme.color.blue100, 1),
 })
