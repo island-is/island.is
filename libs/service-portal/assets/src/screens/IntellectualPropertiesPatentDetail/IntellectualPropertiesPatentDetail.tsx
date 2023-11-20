@@ -209,6 +209,10 @@ const IntellectualPropertiesPatentDetail = () => {
                       ? formatDate(ip.registeredDate, 'dd.MM.yy')
                       : '',
                   },
+                  {
+                    title: '',
+                    value: '',
+                  },
                 ].filter(isDefined),
                 2,
               )}

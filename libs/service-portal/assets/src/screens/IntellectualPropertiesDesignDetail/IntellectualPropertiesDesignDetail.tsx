@@ -236,8 +236,13 @@ const IntellectualPropertiesDesignDetail = () => {
                         : '',
                     },
                     {
-                      title: 'Flokkun',
+                      title: 'Staða',
                       value: ip?.status ?? '',
+                    },
+                    //cheap hack to make the underline not disappear
+                    {
+                      title: '',
+                      value: '',
                     },
                   ].filter(isDefined),
                   2,
