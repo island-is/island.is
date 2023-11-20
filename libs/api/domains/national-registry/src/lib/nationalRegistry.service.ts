@@ -27,6 +27,13 @@ export class NationalRegistryService {
       : this.v1.getChildCustody(nationalId, data?.rawData)
   }
 
+  async getChildDetails(nationalId: string, api: 'v1' | 'v3') {
+    if (api === 'v3') {
+      return this.v3.getChildDetails(nationalId)
+    }
+    return this.v1.getPerson(nationalId)
+  }
+
   getCustodians(
     nationalId: string,
     userNationalId: string,

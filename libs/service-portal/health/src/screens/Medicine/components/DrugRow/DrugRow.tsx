@@ -1,9 +1,7 @@
 import { Table as T, Icon } from '@island.is/island-ui/core'
 import { QuantityCounter } from '../QuantityCounter/QuantityCounter'
 import { useState } from 'react'
-import { useLocale } from '@island.is/localization'
-import { messages } from '../../../../lib/messages'
-import { useIntl } from 'react-intl'
+import { amountFormat } from '@island.is/service-portal/core'
 
 type DrugRowDrug = {
   name?: string | null
@@ -23,9 +21,6 @@ export const DrugRow: React.FC<Props> = ({
   handleQuantityChange,
   handleRemove,
 }) => {
-  const { formatMessage } = useLocale()
-  const intl = useIntl()
-
   const [quantity, setQuantity] = useState(1)
 
   const handleIncrement = () => {
@@ -51,18 +46,8 @@ export const DrugRow: React.FC<Props> = ({
           handleIncrement={handleIncrement}
         />
       </T.Data>
-      <T.Data>
-        {!!drug.totalPrice &&
-          formatMessage(messages.medicinePaymentPaidAmount, {
-            amount: intl.formatNumber(drug.totalPrice),
-          })}
-      </T.Data>
-      <T.Data>
-        {!!drug.totalPaidIndividual &&
-          formatMessage(messages.medicinePaymentPaidAmount, {
-            amount: drug.totalPaidIndividual,
-          })}
-      </T.Data>
+      <T.Data>{amountFormat(drug.totalPrice ?? 0)}</T.Data>
+      <T.Data>{amountFormat(drug.totalPaidIndividual ?? 0)}</T.Data>
       <T.Data>
         <button onClick={handleRemove}>
           <Icon icon="trash" color="blue400" type="outline" size="small" />
