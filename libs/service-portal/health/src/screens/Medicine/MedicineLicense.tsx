@@ -18,11 +18,11 @@ export const MedicineLicense = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           intro={formatMessage(messages.medicineLicenseIntroText)}
           isSubheading
         />

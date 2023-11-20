@@ -90,11 +90,11 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={messages.medicinePurchaseTitle}
           intro={messages.medicinePurchaseIntroText}
         />
