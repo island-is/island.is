@@ -40,20 +40,16 @@ export const PREDEFINED_PIE_FILL_PATTERNS: FillPattern[] = [
  * Unless they specifically opt to overwrite them
  */
 export const DEFAULT_COLORS = [
-  theme.color.blue300,
-  theme.color.blueberry300,
+  theme.color.blue400,
   theme.color.purple300,
+  theme.color.blueberry400,
   theme.color.roseTinted300,
-  // '#0061FF',
-  // '#99C0FF',
-  // '#24268E',
-  // '#B5B6EC',
-  // '#6A2EA0',
-  // '#C3ABD9',
-  // '#4649D0',
-  // '#D799C7',
-  // '#EBCCE3',
-  // '#CCCCD8',
+  theme.color.purple400,
+  theme.color.blueberry300,
+  theme.color.roseTinted400,
+  theme.color.blue300,
+  theme.color.dark400,
+  theme.color.dark300,
 ]
 
 export const COMPONENT_TYPES_WITH_FILL = [
