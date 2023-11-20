@@ -203,12 +203,10 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: formattedPhoneNumber,
+        mobilePhoneNumber,
       },
       3,
     )
