@@ -254,7 +254,8 @@ export const SearchInput = forwardRef<
     return (
       <Downshift<SubmitType>
         id={id}
-        initialInputValue={initialInputValue}
+        // Since the search supports '*' we don't want to display it in the UI
+        initialInputValue={initialInputValue === '*' ? '' : initialInputValue}
         onChange={(item) => {
           if (!item?.string) {
             return false
