@@ -11,7 +11,6 @@ import {
 import format from 'date-fns/format'
 import * as styles from './AudioPlayer.css'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
-import React from 'react'
 interface Props {
   url: string
   title?: string
@@ -102,12 +101,14 @@ export const AudioPlayer = ({ url, title }: Props) => {
                 }
               </Box>
             </GridColumn>
-            <GridColumn span="2/12">
-              <Text variant="small">{`${formatTime(
-                trackProgress,
-              )} / ${formatTime(duration)}`}</Text>
+            <GridColumn span={['3/12', '2/12', '3/12', '3/12', '3/12']}>
+              <Box display="flex" justifyContent="center">
+                <Text variant="small">{`${formatTime(
+                  trackProgress,
+                )} / ${formatTime(duration)}`}</Text>
+              </Box>
             </GridColumn>
-            <GridColumn span="7/12">
+            <GridColumn span={['6/12', '7/12', '6/12', '7/12', '7/12']}>
               <ProgressBar
                 progress={audioProgress}
                 onClick={setTimeChange}
@@ -123,7 +124,6 @@ export const AudioPlayer = ({ url, title }: Props) => {
                 >
                   <Icon
                     icon={isMuted ? 'volumeMute' : 'volumeHigh'}
-                    size="large"
                     color="blue400"
                   />
                 </button>
