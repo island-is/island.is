@@ -18,7 +18,7 @@ export class Signature {
   @Field(() => Signee)
   signee!: Signee
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   active?: boolean
 
   @Field()
