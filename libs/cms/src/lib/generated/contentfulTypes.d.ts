@@ -106,6 +106,70 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
   }
 }
 
+export interface IAnchorPageFields {
+  /** title */
+  title: string
+
+  /** short title */
+  shortTitle?: string | undefined
+
+  /** slug */
+  slug: string
+
+  /** intro */
+  intro?: string | undefined
+
+  /** short intro */
+  shortIntro?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
+
+  /** content */
+  content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** page type */
+  pageType?:
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | 'Life Event'
+    | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
+}
+
+/** !!DO NOT USE YET!! - This content entry will replace the current anchor page (previously life events). The team will be informed when the migration had been completed. */
+
+export interface IAnchorPage extends Entry<IAnchorPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -4470,6 +4534,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'anchorPage'
   | 'appUri'
   | 'article'
   | 'articleCategory'
