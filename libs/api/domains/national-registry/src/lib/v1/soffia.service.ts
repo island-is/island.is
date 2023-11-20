@@ -8,7 +8,7 @@ import {
   NationalRegistryApi,
 } from '@island.is/clients/national-registry-v1'
 import { FamilyCorrectionInput } from './dto/FamilyCorrectionInput.input'
-import { PersonV1, V1RawData } from '../shared/types'
+import { ChildCustodyV1, PersonV1, V1RawData } from '../shared/types'
 import { mapGender, mapMaritalStatus } from '../shared/mapper'
 import {
   Birthplace,
@@ -219,6 +219,28 @@ export class SoffiaService {
   }
 
   async getChildCustody(
+    nationalId?: string,
+    data?: V1RawData,
+  ): Promise<Array<ChildCustodyV1> | null> {
+    if (nationalId || data) {
+      //just some nationalId fallback which won't ever get used
+      const children = await this.getChildren(nationalId ?? '0', data)
+
+      const childrenData = children.map((c) => {
+        return {
+          api: 'v1' as ChildCustodyV1['api'],
+          nationalId: c.nationalId,
+          fullName: c.fullName,
+        }
+      })
+
+      return childrenData
+    }
+
+    return null
+  }
+
+  async getChildDetails(
     nationalId?: string,
     data?: V1RawData,
   ): Promise<Array<PersonV1> | null> {

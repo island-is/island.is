@@ -15,6 +15,7 @@ import {
   ChildResolver,
   CorrectionResolver,
   PersonResolver,
+  ChildCustodyResolver,
 } from './resolvers'
 
 @Module({
@@ -35,6 +36,7 @@ import {
     BrokerService,
     NationalRegistryService,
     UserResolver,
+    ChildCustodyResolver,
     PersonResolver,
     FamilyMemberResolver,
     ChildResolver,

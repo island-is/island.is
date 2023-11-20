@@ -1,5 +1,4 @@
 import isNumber from 'lodash/isNumber'
-import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, gql } from '@apollo/client'
 import {
@@ -15,7 +14,6 @@ import {
   GridColumn,
   GridRow,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -27,8 +25,8 @@ import {
   UserInfoLine,
   m,
   FootNote,
-  SAMGONGUSTOFA_ID,
   IntroHeader,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -270,7 +268,7 @@ const VehicleDetail = () => {
                 .filter(Boolean)
                 .join(' ')}
               intro={messages.intro}
-              serviceProviderID={SAMGONGUSTOFA_ID}
+              serviceProviderSlug={SAMGONGUSTOFA_SLUG}
               serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
               loading={loading}
             />
@@ -508,7 +506,7 @@ const VehicleDetail = () => {
       )}
 
       <FootNote
-        serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         notes={[{ text: formatMessage(messages.infoNote) }]}
       />
     </>

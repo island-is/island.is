@@ -2,7 +2,7 @@ import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import {
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
 } from '@island.is/service-portal/core'
 import { messages as m } from '../../../lib/messages'
@@ -20,7 +20,7 @@ export const MedicineWrapper = ({
       <IntroHeader
         title={formatMessage(m.medicineTitle)}
         intro={formatMessage(m.medicineTitleIntro)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       />
       <TabNavigation
         label="test"

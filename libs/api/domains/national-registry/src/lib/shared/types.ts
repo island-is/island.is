@@ -5,6 +5,7 @@ import {
   ISLBorninMin,
   ISLEinstaklingur,
 } from '@island.is/clients/national-registry-v1'
+import { ChildCustody } from './models/childCustody.model'
 
 export enum Gender {
   MALE = 'male',
@@ -48,3 +49,13 @@ export type PersonV1 = Person & {
 }
 
 export type SharedPerson = PersonV1 | PersonV3
+
+export type ChildCustodyV1 = ChildCustody & {
+  api: 'v1'
+}
+
+export type ChildCustodyV3 = ChildCustody & {
+  api: 'v3'
+}
+
+export type SharedChildCustody = ChildCustodyV1 | ChildCustodyV3

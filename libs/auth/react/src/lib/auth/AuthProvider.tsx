@@ -291,8 +291,9 @@ export const AuthProvider = ({
       signInSilent,
       switchUser,
       signOut,
+      authority: authSettings.authority,
     }),
-    [state, signIn, signInSilent, switchUser, signOut],
+    [state, signIn, signInSilent, switchUser, signOut, authSettings.authority],
   )
 
   const url = getCurrentUrl(basePath)

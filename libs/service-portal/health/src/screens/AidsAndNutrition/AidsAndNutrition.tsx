@@ -4,7 +4,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   m,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -74,7 +74,7 @@ const AidsAndNutrition = () => {
       <IntroHeader
         title={formatMessage(messages.aidsAndNutritionTitle)}
         intro={formatMessage(messages.aidsAndNutritionDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}

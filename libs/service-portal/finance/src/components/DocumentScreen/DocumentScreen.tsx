@@ -22,12 +22,12 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
-  FJARSYSLAN_ID,
   FootNote,
   formSubmit,
   m,
   Filter,
   tableStyles,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -342,7 +342,7 @@ const DocumentScreen = ({
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

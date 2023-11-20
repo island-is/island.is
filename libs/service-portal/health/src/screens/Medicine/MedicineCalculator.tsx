@@ -127,7 +127,7 @@ export const MedicineCalulator = () => {
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={formatMessage(messages.medicineCalculatorIntroTitle)}
           intro={formatMessage(messages.medicineCalculatorIntroText)}
         />

@@ -20,8 +20,8 @@ export class CoursesModel {
   @Field(() => String, { nullable: true })
   units?: number
 
-  @Field(() => String, { nullable: true })
-  stage?: string
+  @Field(() => Number, { nullable: true })
+  stage?: number | null
 
   @Field(() => String, { nullable: true })
   status?: string
@@ -58,4 +58,13 @@ export class PeriodItems {
 
   @Field(() => String, { nullable: true })
   periodTo?: string
+
+  @Field(() => Number, { nullable: true })
+  studentId?: number
+
+  @Field(() => Number, { nullable: true })
+  periodId?: number
+
+  @Field(() => Number, { nullable: true })
+  diplomaId?: number
 }

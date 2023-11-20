@@ -33,7 +33,7 @@ import {
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
 } from '../dataProviders'
-import { getChargeItemCodes, hasReviewerApproved } from '../utils'
+import { getChargeItemCodes, getExtraData, hasReviewerApproved } from '../utils'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -158,6 +158,7 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
         chargeItemCodes: getChargeItemCodes(),
+        extraData: getExtraData,
         submitTarget: States.REVIEW,
         onExit: [
           defineTemplateApi({

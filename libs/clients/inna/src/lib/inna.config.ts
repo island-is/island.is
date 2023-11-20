@@ -2,17 +2,16 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
+  xRoadServicePath: z.string().optional(),
 })
 
 export const InnaClientConfig = defineConfig<z.infer<typeof schema>>({
   name: 'InnaClientConfig',
   schema,
   load: (env) => ({
-    fetch: {
-      timeout: 30000,
-    },
+    xRoadServicePath: undefined /* env.required(
+      'XROAD_INNA_PATH',
+      'IS-DEV/GOV/',
+    )*/,
   }),
 })

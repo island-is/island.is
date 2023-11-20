@@ -1,8 +1,11 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { useGetInsuranceOverviewQuery } from './HealthOverview.generated'
+import {
+  useGetInsuranceConfirmationLazyQuery,
+  useGetInsuranceOverviewQuery,
+} from './HealthOverview.generated'
 import {
   ErrorScreen,
-  ICELAND_ID,
+  SYSLUMENN_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
@@ -21,7 +24,6 @@ import { useUserInfo } from '@island.is/auth/react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import { HealthPaths } from '../../lib/paths'
 import { Link } from 'react-router-dom'
-import { useIntl } from 'react-intl'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useEffect, useState } from 'react'
 
@@ -33,7 +35,10 @@ export const HealthOverview = () => {
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
 
-  const intl = useIntl()
+  const [
+    getInsuranceConfirmationLazyQuery,
+    { loading: confirmationLoading, error: confirmationError },
+  ] = useGetInsuranceConfirmationLazyQuery()
 
   const featureFlagClient = useFeatureFlagClient()
 
@@ -56,6 +61,18 @@ export const HealthOverview = () => {
   const insurance = data?.rightsPortalInsuranceOverview.items[0]
   const errors = data?.rightsPortalInsuranceOverview.errors
 
+  async function getInsuranceConfirmation() {
+    const data = await getInsuranceConfirmationLazyQuery()
+    const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
+
+    if (downloadData?.data && downloadData.fileName) {
+      const downloadLink = document.createElement('a')
+      downloadLink.href = 'data:application/pdf;base64,' + downloadData?.data
+      downloadLink.download = downloadData.fileName
+      downloadLink.click()
+    }
+  }
+
   if (error) {
     return (
       <ErrorScreen
@@ -76,7 +93,7 @@ export const HealthOverview = () => {
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderID={ICELAND_ID}
+          serviceProviderSlug={SYSLUMENN_SLUG}
         />
       </Box>
       {loading ? (
@@ -130,6 +147,35 @@ export const HealthOverview = () => {
               <UserInfoLine
                 label={formatMessage(messages.status)}
                 content={insurance.status?.display ?? undefined}
+              />
+              <UserInfoLine
+                label={formatMessage(messages.healthInsuranceConfirmation)}
+                content={
+                  confirmationError ? (
+                    formatMessage(
+                      messages.healthInsuranceConfirmationTransferError,
+                    )
+                  ) : (
+                    <Button
+                      icon="fileTrayFull"
+                      iconType="outline"
+                      size="small"
+                      type="button"
+                      variant="text"
+                      as="button"
+                      onClick={getInsuranceConfirmation}
+                      disabled={confirmationLoading}
+                    >
+                      {confirmationLoading
+                        ? formatMessage(
+                            messages.healthInsuranceConfirmationLoading,
+                          )
+                        : formatMessage(
+                            messages.healthInsuranceConfirmationButton,
+                          )}
+                    </Button>
+                  )
+                }
               />
             </Stack>
           </Box>

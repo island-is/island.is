@@ -17,9 +17,13 @@ export class AppController {
 
   @Post('case')
   @ApiCreatedResponse({ type: Case, description: 'Creates a new case' })
-  create(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
+  async create(@Body() caseToCreate: CreateCaseDto): Promise<Case> {
     this.logger.debug('Creating a case')
 
-    return this.appService.create(caseToCreate)
+    return this.appService.create(caseToCreate).then((createdCase) => {
+      this.logger.info(`Case ${createdCase.id} created`)
+
+      return createdCase
+    })
   }
 }

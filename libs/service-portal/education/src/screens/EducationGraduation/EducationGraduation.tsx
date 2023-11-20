@@ -1,4 +1,3 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
 import { Box, Stack } from '@island.is/island-ui/core'
@@ -9,7 +8,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
-  UNI_HI_ID,
+  UNI_HI_SLUG,
   m,
 } from '@island.is/service-portal/core'
 import { Query } from '@island.is/api/schema'
@@ -82,7 +81,7 @@ export const EducationGraduation = () => {
             'Hér getur þú fundið yfirlit yfir brautskráningar frá háskólanámi frá árinu 2015.',
           description: 'education graduation intro',
         })}
-        serviceProviderID={UNI_HI_ID}
+        serviceProviderSlug={UNI_HI_SLUG}
         serviceProviderTooltip={formatMessage(m.universityOfIcelandTooltip)}
       />
       {loading && !error && <CardLoader />}

@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class DiplomaModel {
@@ -11,14 +11,29 @@ export class DiplomaItems {
   @Field(() => String, { nullable: true })
   diplomaDate?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   diplomaId?: number
 
   @Field(() => String, { nullable: true })
   diplomaName?: string
 
   @Field(() => String, { nullable: true })
+  diplomaLongName?: string
+
+  @Field(() => String, { nullable: true })
+  diplomaCode?: string
+
+  @Field(() => Number, { nullable: true })
+  diplomaCreditsTotal?: number
+
+  @Field(() => Number, { nullable: true })
+  diplomaCredits?: number
+
+  @Field(() => String, { nullable: true })
   organisation?: string
+
+  @Field(() => Number, { nullable: true })
+  organisationId?: number
 
   @Field(() => String, { nullable: true })
   organisationShort?: string

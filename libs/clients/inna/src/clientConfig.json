@@ -77,11 +77,26 @@
                           "diploma_name": {
                             "$ref": "#/components/schemas/VARCHAR2"
                           },
+                          "diploma_long_name": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_code": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_credits_total": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "diploma_credits": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
                           "organisation": {
                             "$ref": "#/components/schemas/VARCHAR2"
                           },
                           "organisation_short": {
                             "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "organisation_id": {
+                            "$ref": "#/components/schemas/NUMBER"
                           }
                         }
                       }
@@ -159,6 +174,15 @@
                           },
                           "period_to": {
                             "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "student_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "period_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "diploma_id": {
+                            "$ref": "#/components/schemas/NUMBER"
                           }
                         }
                       }
@@ -231,7 +255,9 @@
             "format": "int32"
           },
           "stage": {
-            "type": "string"
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "status": {
             "type": "string"

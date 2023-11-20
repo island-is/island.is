@@ -5,8 +5,8 @@ import {
   EmptyState,
   UserInfoLine,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
   CardLoader,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -77,7 +77,7 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
