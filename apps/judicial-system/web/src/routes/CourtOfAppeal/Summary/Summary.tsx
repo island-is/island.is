@@ -31,7 +31,7 @@ import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/st
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { strings } from './Summary.strings'
 
-type ModalType = 'UploadComplete' | 'AppealRulingModified' | 'none'
+type ModalType = 'AppealCompleted' | 'AppealRulingModified' | 'none'
 
 const Summary: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -52,7 +52,7 @@ const Summary: React.FC = () => {
         : true
 
     if (caseTransitioned) {
-      setVisibleModal('UploadComplete')
+      setVisibleModal('AppealCompleted')
     }
   }
 
@@ -117,10 +117,10 @@ const Summary: React.FC = () => {
             nextIsDisabled={isTransitioningCase}
           />
         </FormContentContainer>
-        {visibleModal === 'UploadComplete' && (
+        {visibleModal === 'AppealCompleted' && (
           <Modal
-            title={formatMessage(strings.uploadCompletedModalTitle)}
-            text={formatMessage(strings.uploadCompletedModalText)}
+            title={formatMessage(strings.appealCompletedModalTitle)}
+            text={formatMessage(strings.appealCompletedModalText)}
             secondaryButtonText={formatMessage(core.closeModal)}
             onClose={() => setVisibleModal('none')}
             onSecondaryButtonClick={() => {
