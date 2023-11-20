@@ -5,7 +5,7 @@ import {
   IntroHeader,
   FootNote,
   m as coreMessage,
-  ISLAND_SYSLUMENN_ID,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
@@ -23,6 +23,7 @@ import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useState, useEffect } from 'react'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -120,6 +121,7 @@ export const LicensesOverview = () => {
     }
 
     checkIncluded()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
@@ -173,7 +175,7 @@ export const LicensesOverview = () => {
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
         marginBottom={4}
-        serviceProviderID={ISLAND_SYSLUMENN_ID}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
@@ -217,7 +219,9 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
-      <FootNote serviceProviderID={ISLAND_SYSLUMENN_ID} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </>
   )
 }
