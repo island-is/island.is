@@ -336,6 +336,7 @@ export const serviceSetup = (services: {
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
       CHART_STATISTIC_SOURCE_DATA_PATHS:
         '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
+      CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
     })
     .xroad(
       AdrAndMachine,
