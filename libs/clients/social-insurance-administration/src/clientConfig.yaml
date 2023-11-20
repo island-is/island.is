@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.4
+  version: 1.0.5
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -148,6 +148,8 @@ components:
           $ref: '#/components/schemas/Period'
         comment:
           type: string
+        applicationId:
+          type: string
         domesticBankInfo:
           $ref: '#/components/schemas/DomesticBankInfo'
         foreignBankInfo:
@@ -161,8 +163,6 @@ components:
         hasOneTimePayment:
           type: boolean
         isSailorPension:
-          type: boolean
-        isEarlyPension:
           type: boolean
         uploads:
           $ref: '#/components/schemas/Uploads'

@@ -53,6 +53,7 @@ export const transformApplicationToOldAgePensionDTO = (
       month: getMonthNumber(selectedMonth),
     },
     comment: comment,
+    applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(
       application.answers,
       application.externalData,
@@ -87,10 +88,6 @@ export const transformApplicationToOldAgePensionDTO = (
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
     isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
-    isEarlyPension: isEarlyRetirement(
-      application.answers,
-      application.externalData,
-    ),
     uploads,
   }
 
