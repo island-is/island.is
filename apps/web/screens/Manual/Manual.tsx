@@ -1,5 +1,11 @@
 import { SliceType } from '@island.is/island-ui/contentful'
-import { Box, Divider, LinkV2, Stack, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  CategoryCard,
+  Divider,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
@@ -8,12 +14,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { ManualWrapper } from './components/ManualWrapper'
-import {
-  extractTextFromManualChapterDescription,
-  getProps,
-  ManualScreen,
-} from './utils'
-import * as styles from './Manual.css'
+import { getProps, ManualScreen } from './utils'
 
 const Manual: ManualScreen = ({ manual, namespace }) => {
   const { linkResolver } = useLinkResolver()
@@ -28,7 +29,6 @@ const Manual: ManualScreen = ({ manual, namespace }) => {
       {typeof manual?.description?.length === 'number' &&
         manual.description.length > 0 && (
           <Stack space={3}>
-            <Divider />
             <Box>
               <Text variant="eyebrow">
                 {n(
@@ -41,29 +41,25 @@ const Manual: ManualScreen = ({ manual, namespace }) => {
           </Stack>
         )}
 
+      {manual?.chapters && manual?.chapters.length > 0 && (
+        <Box paddingBottom={3} paddingTop={1}>
+          <Divider />
+        </Box>
+      )}
+
       <Stack space={3}>
-        {manual?.chapters.map((chapter, index) => (
-          <Stack space={3}>
-            {index === 0 && <Divider />}
-            <Stack space={1} key={chapter.id}>
-              <LinkV2
-                className={styles.link}
-                underlineVisibility="always"
-                underline="small"
-                color="blue400"
-                href={
-                  linkResolver('manualchapter', [manual.slug, chapter.slug])
-                    .href
-                }
-              >
-                {chapter.title}
-              </LinkV2>
-              <Text variant="medium" fontWeight="light">
-                {extractTextFromManualChapterDescription(chapter)}
-              </Text>
-            </Stack>
-            <Divider />
-          </Stack>
+        {manual?.chapters.map((chapter) => (
+          <CategoryCard
+            headingAs="h2"
+            headingVariant="h4"
+            heading={chapter.title}
+            text={chapter.intro ?? ''}
+            textVariant="medium"
+            textFontWeight="light"
+            href={
+              linkResolver('manualchapter', [manual.slug, chapter.slug]).href
+            }
+          />
         ))}
       </Stack>
     </ManualWrapper>
