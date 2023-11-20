@@ -8,8 +8,7 @@ import {
   TaxLevelOptions,
 } from './constants'
 import { errorMessages } from './messages'
-import { formatBankInfo } from './oldAgePensionUtils'
-import * as ibantools from 'ibantools'
+import { formatBankInfo, validIBAN, validSWIFT } from './oldAgePensionUtils'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -76,8 +75,8 @@ export const dataSchema = z.object({
       .refine(
         ({ iban, bankAccountType }) => {
           if (bankAccountType === BankAccountType.FOREIGN) {
-            const formattedIBAN = ibantools.electronicFormatIBAN(iban)
-            return formattedIBAN ? ibantools.isValidIBAN(formattedIBAN) : false
+            const formattedIBAN = iban?.replace(/[\s]+/g, '')
+            return formattedIBAN ? validIBAN(formattedIBAN) : false
           }
           return true
         },
@@ -87,7 +86,7 @@ export const dataSchema = z.object({
         ({ swift, bankAccountType }) => {
           if (bankAccountType === BankAccountType.FOREIGN) {
             const formattedSWIFT = swift?.replace(/[\s]+/g, '')
-            return formattedSWIFT ? ibantools.isValidBIC(formattedSWIFT) : false
+            return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
           }
           return true
         },
