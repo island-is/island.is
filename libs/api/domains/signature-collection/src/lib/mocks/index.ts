@@ -40,7 +40,7 @@ export const signee = (nationalId: string): Signee => ({
   nationalId,
   name: `Nafn ${nationalId}`,
   areaId: 'SF',
-  address: 'Home'
+  address: 'Home',
 })
 
 const Owners: Owner[] = [
@@ -73,9 +73,9 @@ export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
     startTime: CurrentCollection.startTime,
     owner,
     active: true,
-    collectionId: CurrentCollection.id
-  }))
-);
+    collectionId: CurrentCollection.id,
+  })),
+)
 
 export const Signatures: Signature[] = fakeSigners.map((fake, index) => ({
   id: `${index}0${index}`,
@@ -84,5 +84,5 @@ export const Signatures: Signature[] = fakeSigners.map((fake, index) => ({
   modified: currDate,
   signee: signee(fake),
   active: true,
-  signatureType: 'User'
+  signatureType: 'User',
 }))

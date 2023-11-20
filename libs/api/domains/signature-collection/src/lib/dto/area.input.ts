@@ -2,8 +2,8 @@ import { IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType()
-export class IdInput {
+export class AreaInput {
   @Field()
   @IsString()
-  id!: string
+  areaId!: string
 }

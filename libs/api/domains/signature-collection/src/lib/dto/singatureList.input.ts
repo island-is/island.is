@@ -1,8 +1,6 @@
-
-import { IsString, } from 'class-validator'
+import { IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 import { OwnerInput } from './owner.input'
-
 
 @InputType()
 export class SignatureListInput {

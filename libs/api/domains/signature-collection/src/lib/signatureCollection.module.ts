@@ -4,7 +4,7 @@ import { SignatureCollectionService } from './signatureCollection.service'
 
 @Module({
   controllers: [],
-  providers: [ SignatureCollectionService, SignatureCollectionResolver],
+  providers: [SignatureCollectionService, SignatureCollectionResolver],
   exports: [],
 })
 export class SignatureCollectionModule {}
