@@ -11,6 +11,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { FinanceClientService } from '@island.is/clients/finance'
+import { FinanceClientV2Service } from '@island.is/clients/finance-v2'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -31,6 +32,15 @@ import {
 } from './models/paymentSchedule.model'
 import { DebtStatusModel } from './models/debtStatus.model'
 import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.input'
+import { AssessmentYears } from './models/assessmentYears.model'
+import { ChargeTypesByYear } from './models/chargeTypesByYear.model'
+import { FinanceChargeTypeDetails } from './models/chargeTypeDetails.model'
+import { ChargeTypePeriodSubject } from './models/chargeTypePeriodSubject.model'
+import { ChargeItemSubjectsByYear } from './models/chargeItemSubjectsByYear.model'
+import { GetChargeTypesByYearInput } from './dto/getChargeTypesByYear.input'
+import { GetChargeTypesDetailsByYearInput } from './dto/getChargeTypesDetailsByYear.input'
+import { GetChargeItemSubjectsByYearInput } from './dto/getChargeItemSubjectsByYear.input'
+import { GetChargeTypePeriodSubjectInput } from './dto/getChargeTypePeriodSubject.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeOverview)
@@ -39,6 +49,7 @@ import { GetFinancePaymentScheduleInput } from './dto/getFinancePaymentSchedule.
 export class FinanceResolver {
   constructor(
     private financeService: FinanceClientService,
+    private financeServiceV2: FinanceClientV2Service,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadServiceConfig: ConfigType<
       typeof DownloadServiceConfig
@@ -216,6 +227,63 @@ export class FinanceResolver {
       user.nationalId,
       input.scheduleNumber,
       user,
+    )
+  }
+
+  @Query(() => AssessmentYears)
+  @Audit()
+  async getAssessmentYears(@CurrentUser() user: User) {
+    return this.financeServiceV2.getAssessmentYears(user)
+  }
+
+  @Query(() => ChargeTypesByYear, { nullable: true })
+  @Audit()
+  async getChargeTypesByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypesByYearInput,
+  ) {
+    return this.financeServiceV2.getChargeTypesByYear(user, input.year)
+  }
+
+  @Query(() => FinanceChargeTypeDetails)
+  @Audit()
+  async getChargeTypesDetailsByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypesDetailsByYearInput,
+  ) {
+    return this.financeServiceV2.getChargeTypesDetailsByYear(
+      user,
+      input.year,
+      input.typeId,
+    )
+  }
+
+  @Query(() => ChargeItemSubjectsByYear)
+  @Audit()
+  async getChargeItemSubjectsByYear(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeItemSubjectsByYearInput,
+  ) {
+    return this.financeServiceV2.getChargeItemSubjectsByYear(
+      user,
+      input.year,
+      input.typeId,
+      input.nextKey,
+    )
+  }
+
+  @Query(() => ChargeTypePeriodSubject)
+  @Audit()
+  async getChargeTypePeriodSubject(
+    @CurrentUser() user: User,
+    @Args('input') input: GetChargeTypePeriodSubjectInput,
+  ) {
+    return this.financeServiceV2.getChargeTypePeriodSubject(
+      user,
+      input.year,
+      input.typeId,
+      input.subject,
+      input.period,
     )
   }
 }

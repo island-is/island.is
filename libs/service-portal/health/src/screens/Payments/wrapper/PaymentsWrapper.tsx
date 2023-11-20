@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import {
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
@@ -22,7 +22,7 @@ export const PaymentsWrapper = ({ children }: Props) => {
         <IntroHeader
           title={formatMessage(messages.payments)}
           intro={formatMessage(messages.paymentsIntro)}
-          serviceProviderID={SJUKRATRYGGINGAR_ID}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         />
         <LinkV2
           href={formatMessage(
@@ -35,6 +35,7 @@ export const PaymentsWrapper = ({ children }: Props) => {
             icon="open"
             iconType="outline"
             as="span"
+            unfocusable
           >
             {formatMessage(messages.readAboutPaymentParticipationSystems)}
           </Button>

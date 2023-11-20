@@ -7,7 +7,7 @@ export enum HealthPaths {
   HealthTherapiesOccupational = '/heilsa/thjalfun/idjuthjalfun',
 
   HealthPayments = '/heilsa/greidslur',
-  HealthPaymentParticipation = '/heilsa/greidslur/greidsluthattaka',
+  HealthPaymentParticipation = '/heilsa/greidslur/greidsluthatttaka',
   HealthPaymentOverview = '/heilsa/greidslur/greidsluyfirlit',
 
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
@@ -18,8 +18,8 @@ export enum HealthPaths {
   HealthMedicine = '/heilsa/lyf',
   HealthMedicinePurchase = '/heilsa/lyf/lyfjakaup',
   HealthMedicineCalculator = '/heilsa/lyf/lyfjareiknivel',
-  HealthMedicineCertificates = '/heilsa/lyf/lyfjaskyrteini',
-  HealthMedicineCertificate = '/heilsa/lyf/lyfjaskyrteini/:name/:id',
+  HealthMedicineCertificates = '/heilsa/lyf/lyfjaskirteini',
+  HealthMedicineCertificate = '/heilsa/lyf/lyfjaskirteini/:name/:id',
 
   HealthCenter = '/heilsa/heilusgaesla',
   HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
