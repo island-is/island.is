@@ -24,6 +24,7 @@ export const getAirNewDiscountsData = [
           explicit: false,
           comment: '',
           employeeId: '123',
+          hasReturnFlight: false,
         },
       },
     ],
