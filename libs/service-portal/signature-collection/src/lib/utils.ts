@@ -25,22 +25,22 @@ export function pages(petitionsLength: number) {
 
 export const mockLists = [
   {
-    id: '1',
+    id: '01',
     name: 'Vestfirðingafjórðungur',
     progress: 40,
   },
   {
-    id: '2',
+    id: '02',
     name: 'Norðlendingafjórðungur',
     progress: 90,
   },
   {
-    id: '3',
+    id: '03',
     name: 'Austfirðingafjórðungur',
     progress: 185,
   },
   {
-    id: '4',
+    id: '04',
     name: 'Sunnlendingafjórðungur',
     progress: 35,
   },
@@ -52,16 +52,20 @@ export const mockSingleList = {
   period: '2.04.2024-25.04.2024',
   people: [
     {
+      id: 1,
       name: 'Siggi Sævarsson',
     },
     {
+      id: 2,
       name: 'Jón Sævarsson',
       paper: true,
     },
     {
+      id: 3,
       name: 'Siggi Sævarsson',
     },
     {
+      id: 4,
       name: 'Guðmundur Ólafsson',
       paper: true,
     },

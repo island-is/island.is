@@ -5,19 +5,25 @@ import {
   Pagination,
   Input,
   Button,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { mockSingleList } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { useState } from 'react'
 import * as styles from '../styles.css'
+import { useGetListSignees } from '../hooks'
+import { useLocation } from 'react-router-dom'
+import { format as formatNationalId } from 'kennitala'
+import { SkeletonTable } from '../Skeletons'
 
 const Signees = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [searchTerm, setSearchTerm] = useState('')
+
+  const { pathname } = useLocation()
+  const listId = pathname.replace('/min-gogn/medmaelalistar/', '')
+  const { listSignees, loadingSignees } = useGetListSignees(listId)
 
   return (
     <Box marginTop={5}>
@@ -42,69 +48,74 @@ const Signees = () => {
           {formatMessage(m.downloadList)}
         </Button>
       </Box>
-      <Box marginTop={5}>
-        <T.Table>
-          <T.Head>
-            <T.Row>
-              <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
-              <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
-              <T.HeadData></T.HeadData>
-            </T.Row>
-          </T.Head>
-          <T.Body>
-            {mockSingleList.people.map((person) => {
-              const boxColor = person.paper ? 'purple100' : 'white'
-              return (
-                <T.Row key={person.name}>
-                  <T.Data
-                    box={{ background: boxColor }}
-                    text={{ variant: 'medium' }}
-                  >
-                    {format(new Date(), 'dd.MM.yyyy')}
-                  </T.Data>
-                  <T.Data
-                    box={{ background: boxColor }}
-                    text={{ variant: 'medium' }}
-                  >
-                    {person.name}
-                  </T.Data>
-                  <T.Data
-                    box={{ background: boxColor }}
-                    text={{ variant: 'medium' }}
-                  >
-                    {formatMessage(m.tempMessage)}
-                  </T.Data>
-                  <T.Data
-                    box={{ background: boxColor }}
-                    text={{ variant: 'medium' }}
-                  >
-                    {formatMessage(m.tempMessage)}
-                  </T.Data>
-                  <T.Data box={{ background: boxColor }}>
+      {!loadingSignees ? (
+        <Box marginTop={5}>
+          <T.Table>
+            <T.Head>
+              <T.Row>
+                <T.HeadData>{formatMessage(m.signeeDate)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.signeeNationalId)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.signeeAddress)}</T.HeadData>
+                <T.HeadData></T.HeadData>
+              </T.Row>
+            </T.Head>
+            <T.Body>
+              {listSignees.map((s) => {
+                const boxColor = /*person.paper ? 'purple100' : */ 'white'
+                return (
+                  <T.Row key={s.id}>
+                    <T.Data
+                      box={{ background: boxColor }}
+                      text={{ variant: 'medium' }}
+                    >
+                      {format(new Date(), 'dd.MM.yyyy')}
+                    </T.Data>
+                    <T.Data
+                      box={{ background: boxColor }}
+                      text={{ variant: 'medium' }}
+                    >
+                      {s.signee.name}
+                    </T.Data>
+                    <T.Data
+                      box={{ background: boxColor }}
+                      text={{ variant: 'medium' }}
+                    >
+                      {formatNationalId(s.signee.nationalId)}
+                    </T.Data>
+                    <T.Data
+                      box={{ background: boxColor }}
+                      text={{ variant: 'medium' }}
+                    >
+                      {formatMessage(m.tempMessage)}
+                    </T.Data>
+                    <T.Data></T.Data>
+                    {/*<T.Data box={{ background: boxColor }}>
                     {person.paper && (
                       <Icon icon="document" type="outline" color="blue400" />
                     )}
-                  </T.Data>
-                </T.Row>
-              )
-            })}
-          </T.Body>
-        </T.Table>
+                    </T.Data>*/}
+                  </T.Row>
+                )
+              })}
+            </T.Body>
+          </T.Table>
 
-        <Box marginTop={5}>
-          <Pagination
-            page={1}
-            totalPages={5}
-            renderLink={(page, className, children) => (
-              <Box cursor="pointer" className={className}>
-                {children}
-              </Box>
-            )}
-          />
+          <Box marginTop={5}>
+            <Pagination
+              page={1}
+              totalPages={5}
+              renderLink={(page, className, children) => (
+                <Box cursor="pointer" className={className}>
+                  {children}
+                </Box>
+              )}
+            />
+          </Box>
         </Box>
-      </Box>
+      ) : (
+        <SkeletonTable />
+      )}
     </Box>
   )
 }

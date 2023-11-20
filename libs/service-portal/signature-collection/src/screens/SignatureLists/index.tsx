@@ -11,11 +11,14 @@ import { mockLists } from '../../lib/utils'
 import OwnerView from './ownerView'
 import SigneeView from './signeeView'
 import { useState } from 'react'
+import { useIsOwner } from '../hooks'
 
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const [viewAsOwner, setViewAsOwner] = useState(true)
+
+  const { isOwner } = useIsOwner()
+  const [viewAsOwner, setViewAsOwner] = useState(isOwner.success)
 
   return (
     <Box>
