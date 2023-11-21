@@ -162,9 +162,13 @@ export const GalleryModal: FC<Props> = ({
                     color="blueberry"
                     aria-selected={activeItem === i}
                     onClick={() => setActiveItem(i)}
-                    className={cn(galleryStyles.galleryButton, {
-                      [galleryStyles.activeGalleryButton]: i === activeItem,
-                    })}
+                    className={cn(
+                      galleryStyles.galleryButton,
+                      styles.galleryButtonThumbnail,
+                      {
+                        [galleryStyles.activeGalleryButton]: i === activeItem,
+                      },
+                    )}
                     onKeyDown={(e) => onKeyDown(e)}
                   >
                     {cloneElement(
