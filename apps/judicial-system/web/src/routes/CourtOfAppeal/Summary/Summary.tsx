@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
+import router from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -38,7 +38,6 @@ const Summary: React.FC = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const { transitionCase, isTransitioningCase } = useCase()
-  const router = useRouter()
   const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const handleComplete = async () => {

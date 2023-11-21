@@ -55,10 +55,11 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
       <motion.div
         key="modal"
         className={styles.container}
-        data-testid="modal"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
       >
         <motion.div
           className={styles.modalContainer}
