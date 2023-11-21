@@ -2,7 +2,17 @@ import { User } from '@island.is/auth-nest-tools'
 import { Test, TestingModule } from '@nestjs/testing'
 import { NewDiscountResolver } from '../newDiscount.resolver'
 import { NewDiscountService } from '../newDiscount.service'
-import {fabTUser, fabGetDiscount, idsForGetDiscount, idsForCreateDiscount, idsForGetUserRelations, fabInvalidDiscount, fabAuthUser, fabCreateDiscount, userRelationsWardResponse} from './mocksForTesting'
+import {
+  fabTUser,
+  fabGetDiscount,
+  idsForGetDiscount,
+  idsForCreateDiscount,
+  idsForGetUserRelations,
+  fabInvalidDiscount,
+  fabAuthUser,
+  fabCreateDiscount,
+  userRelationsWardResponse,
+} from './mocksForTesting'
 
 import {
   NewDiscount as TDiscount,
