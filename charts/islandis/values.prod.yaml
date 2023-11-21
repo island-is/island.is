@@ -331,6 +331,7 @@ api:
     XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1'
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
