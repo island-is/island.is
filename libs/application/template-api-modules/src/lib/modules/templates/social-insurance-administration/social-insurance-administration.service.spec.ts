@@ -1,0 +1,64 @@
+import { createApplication } from '@island.is/application/testing'
+import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import { Test, TestingModule } from '@nestjs/testing'
+import {
+  APPLICATION_ATTACHMENT_BUCKET,
+  OldAgePensionService,
+} from './social-insurance-administration.service'
+import { createCurrentUser } from '@island.is/testing/fixtures'
+import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+
+describe('OldAgePensionService', () => {
+  let oldAgePensionService: OldAgePensionService
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        OldAgePensionService,
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        {
+          provide: SocialInsuranceAdministrationClientService,
+          useClass: jest.fn(() => ({
+            sendApplication: () =>
+              Promise.resolve({
+                applicationLineId: '123',
+              }),
+          })),
+        },
+        {
+          provide: APPLICATION_ATTACHMENT_BUCKET,
+          useValue: 'attachmentBucket',
+        },
+      ],
+    }).compile()
+
+    oldAgePensionService =
+      module.get<OldAgePensionService>(OldAgePensionService)
+  })
+
+  it('should send old age pension application', async () => {
+    const auth = createCurrentUser()
+    const application = createApplication({
+      answers: {
+        'period.year': '2023',
+        'fileUploadAdditionalFiles.additionalDocuments': [
+          { key: 'key', name: 'name' },
+        ],
+      },
+    })
+
+    // Also need to mock the pdf here
+    jest.spyOn(oldAgePensionService, 'getPdf').mockImplementation(jest.fn())
+
+    const result = await oldAgePensionService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(result).toMatchObject({ applicationLineId: '123' })
+  })
+})
