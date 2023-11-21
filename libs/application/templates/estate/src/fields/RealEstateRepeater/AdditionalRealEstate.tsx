@@ -40,11 +40,12 @@ export const AdditionalRealEstate = ({
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
   const shareField = `${fieldIndex}.share`
+  const shareTempField = `${fieldIndex}.shareTemp`
   const marketValueField = `${fieldIndex}.marketValue`
 
-  const { control, setValue, clearErrors } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { control, setValue, getValues, clearErrors } = useFormContext()
 
+  const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
       SEARCH_FOR_PROPERTY_QUERY,
@@ -128,6 +129,21 @@ export const AdditionalRealEstate = ({
             readOnly
             defaultValue={field.description}
             error={error?.description}
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <InputController
+            id={shareTempField}
+            label={formatMessage(m.propertyShare)}
+            defaultValue={field?.share ? (field.share * 100).toFixed() : '100'}
+            onChange={(e) => {
+              const value = e.target.value
+              setValue(shareField, Number(value) / 100)
+            }}
+            placeholder="100%"
+            error={error?.share}
+            size="sm"
+            required
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
