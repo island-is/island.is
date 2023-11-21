@@ -34,7 +34,7 @@ const Cards = ({
         justifyContent="center"
         style={{ height: 200 }}
       >
-        <LoadingDots color="blue" large />
+        <LoadingDots large />
       </Box>
     )
   }

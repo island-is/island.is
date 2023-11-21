@@ -48,7 +48,7 @@ const HearingArrangements = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
-  const { courts } = useInstitution()
+  const { districtCourts } = useInstitution()
   const { formatMessage } = useIntl()
   const {
     sendNotification,
@@ -132,7 +132,7 @@ const HearingArrangements = () => {
           titles.prosecutor.investigationCases.hearingArrangements,
         )}
       />
-      {user && courts && (
+      {user && districtCourts && (
         <>
           <FormContentContainer>
             <Box marginBottom={7}>
@@ -145,7 +145,7 @@ const HearingArrangements = () => {
             <Box component="section" marginBottom={5}>
               <SelectCourt
                 workingCase={workingCase}
-                courts={courts}
+                courts={districtCourts}
                 onChange={handleCourtChange}
               />
             </Box>

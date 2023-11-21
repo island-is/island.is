@@ -1,4 +1,5 @@
 import { CSSProperties, useState } from 'react'
+import { useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client/react'
 
 import { ConnectedComponent, Query } from '@island.is/api/schema'
@@ -55,10 +56,16 @@ const MasterList = ({ slice }: MasterListProps) => {
     setAvailableLicenceProfessionOptions,
   ] = useState<{ label: string; value: string }[]>([])
 
-  const [filterLicenceProfession, setFilterLicenceProfession] = useState<{
-    label: string
-    value: string
-  } | null>(null)
+  const [filterLicenceProfession, setFilterLicenceProfession] = useState<
+    | {
+        label: string
+        value: string
+      }
+    | undefined
+    | null
+  >(null)
+
+  const [filterValue, setFilterValue] = useQueryState('profession')
 
   const onSearch = (searchString: string) => {
     setCurrentPageNumber(1)
@@ -76,9 +83,9 @@ const MasterList = ({ slice }: MasterListProps) => {
         allLicenceProfessionOption,
         ...Array.from(
           new Set<string>(
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
-            fetchedMasterLicences.map((x) => x.profession),
+            fetchedMasterLicences
+              .filter((x) => x.profession)
+              .map((x) => x.profession as string),
           ).values(),
         ),
       ]
@@ -88,7 +95,13 @@ const MasterList = ({ slice }: MasterListProps) => {
         }))
         .sort(sortAlpha('label'))
       setAvailableLicenceProfessionOptions(options)
-      setFilterLicenceProfession(options?.[0])
+      setFilterLicenceProfession(
+        options.find((x) => {
+          return filterValue === x.value
+        }) ?? options?.[0],
+      )
+
+      setFilterValue(filterValue)
     },
     onError: () => {
       setListState('error')
@@ -99,22 +112,20 @@ const MasterList = ({ slice }: MasterListProps) => {
     return new Promise<string>((resolve, reject) => {
       if (licences) {
         const headerRow = [
-          n('csvHeaderMasterLicenceName', 'Nafn'),
-          n('csvHeaderMasterLicenseProfession', 'Iðngrein'),
-          n('csvHeaderMasterLicenceDateOfPublication', 'Útgáfuár'),
+          n('csvHeaderMasterLicenceName', 'Nafn') as string,
+          n('csvHeaderMasterLicenseProfession', 'Iðngrein') as string,
+          n('csvHeaderMasterLicenceDateOfPublication', 'Útgáfuár') as string,
         ]
         const dataRows = []
         for (const licence of licences) {
           dataRows.push([
-            licence.name, // Nafn
-            licence.profession, // Iðngrein
+            licence.name ?? '', // Nafn
+            licence.profession ?? '', // Iðngrein
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
           ])
         }
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
         return resolve(prepareCsvString(headerRow, dataRows))
       }
       reject('Master Licences data has not been loaded.')
@@ -197,11 +208,10 @@ const MasterList = ({ slice }: MasterListProps) => {
                   name="licenceProfessionSelect"
                   options={availableLicenceProfessionOptions}
                   value={filterLicenceProfession}
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  onChange={(option: Option) => {
+                  onChange={(option) => {
                     setCurrentPageNumber(1)
                     setFilterLicenceProfession(option)
+                    setFilterValue(option ? option.value : '')
                   }}
                 />
               </GridColumn>
