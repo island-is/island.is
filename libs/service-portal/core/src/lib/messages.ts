@@ -764,6 +764,10 @@ export const m = defineMessages({
     id: 'service.portal:go-back-to-dashboard',
     defaultMessage: 'Til baka í yfirlit',
   },
+  goBackToDashboardShort: {
+    id: 'service.portal:go-back-to-dashboard-short',
+    defaultMessage: 'Yfirlit',
+  },
   viewDetail: {
     id: 'service.portal:view-detail',
     defaultMessage: 'Skoða nánar',
