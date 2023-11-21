@@ -14,4 +14,14 @@ export class HealthDirectorateClientService {
   ): Promise<Array<MinarSidur> | null> {
     return this.apiWithAuth(user).starfsleyfiAMinumSidumGet()
   }
+
+  async getMyHealthcareLicenses(auth: Auth): Promise<any[]> {
+    return [] //TODOx
+  }
+
+  async submitApplicationHealthcareLicenseCertificate(
+    auth: User,
+  ): Promise<void> {
+    console.log('TODOx')
+  }
 }

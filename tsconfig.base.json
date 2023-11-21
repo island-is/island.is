@@ -339,6 +339,9 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
+      "@island.is/application/templates/healthcare-license-certificate": [
+        "libs/application/templates/healthcare-license-certificate/src/index.ts"
+      ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
       ],

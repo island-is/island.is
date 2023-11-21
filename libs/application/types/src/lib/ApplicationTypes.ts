@@ -50,6 +50,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
 }
 
 export const ApplicationConfigurations = {
@@ -256,5 +257,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
   },
 }

@@ -120,30 +120,76 @@
         }
       }
     },
-    "/Vottord": {
+    "/Vottord/StarfsleyfiVottord": {
       "get": {
         "tags": ["Vottord"],
-        "summary": "Sækja upplýsingar um vottorð",
+        "summary": "Sækja upplýsingar um starfsleyfi fyrir umsóknir um vottorð",
         "responses": {
           "200": {
-            "description": "Skilar vottorðum",
+            "description": "Skilar starfsleyfum",
             "content": {
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Vottord" }
+                  "items": { "$ref": "#/components/schemas/StarfsleyfiVottord" }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Vottord" }
+                  "items": { "$ref": "#/components/schemas/StarfsleyfiVottord" }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Vottord" }
+                  "items": { "$ref": "#/components/schemas/StarfsleyfiVottord" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Kennitala er á röngu formi" },
+          "404": { "description": "Starfsmaður fannst ekki" }
+        }
+      }
+    },
+    "/Vottord/UtbuaSkjal": {
+      "post": {
+        "tags": ["Vottord"],
+        "summary": "Útbúa innsiglað vottorð um starfsleyfi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Skilar base64 streng",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
                 }
               }
             }
@@ -587,25 +633,103 @@
         "additionalProperties": false,
         "description": "Gagnaklasi fyrir skil á upplýsingum Heilbrigðisstarfsmenn"
       },
-      "Vottord": {
+      "StarfsleyfiVottord": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "format": "int32" },
-          "heiti": {
+          "ssnNumber": {
             "type": "string",
-            "description": "Heiti Vottorðs",
+            "description": "Kennitala á Viðkomandi",
             "nullable": true,
-            "example": "Vottorð um starfsleyfi"
+            "example": "123456-1234"
           },
-          "verd": {
+          "name": {
+            "type": "string",
+            "description": "Nafn á viðkomandi",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétts",
+            "nullable": true,
+            "example": "SF"
+          },
+          "professionIsl": {
+            "type": "string",
+            "description": "Heiti starfsstétt",
+            "nullable": true,
+            "example": "Sjúkraflutningamaður"
+          },
+          "professionEn": {
+            "type": "string",
+            "description": "Heiti starfsstétt á ensku",
+            "nullable": true,
+            "example": "Emergency Medical Technician"
+          },
+          "specialityIsl": {
+            "type": "string",
+            "description": "Leyfi",
+            "nullable": true,
+            "example": "Starfsleyfi"
+          },
+          "specialityEn": {
+            "type": "string",
+            "description": "Leyfi á ensku",
+            "nullable": true,
+            "example": "Licence to practice"
+          },
+          "isSpeciality": {
             "type": "integer",
-            "description": "Verð Vottorðs í krónum",
+            "description": "Er leyfið sérfræðileyfi?",
             "format": "int32",
-            "example": 2700
+            "example": 0
+          },
+          "validFrom": {
+            "type": "string",
+            "description": "Gildir frá dagsetning",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00.0000000"
+          },
+          "validTo": {
+            "type": "string",
+            "description": "Gildir Til dagsetning",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00.0000000"
+          },
+          "isRestricted": {
+            "type": "integer",
+            "description": "Er Starfsmaður með takmarkað leyfi?",
+            "format": "int32",
+            "example": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "FormDataModel": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "dateOfBirth": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "phoneNo": { "type": "string", "nullable": true },
+          "idProfession": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InnsigladSkjal": {
+        "type": "object",
+        "properties": {
+          "base64String": {
+            "type": "string",
+            "description": "Base64 strengur",
+            "nullable": true,
+            "example": ""
           }
         },
         "additionalProperties": false,
-        "description": "Gagnaklasi af starfsleyfi fyrir Mínar síður"
+        "description": "Gagnaklasi fyrir Innsigluð vottorð"
       }
     },
     "securitySchemes": {
