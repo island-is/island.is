@@ -50,7 +50,7 @@ export const fullWidth = style({
 })
 
 globalStyle(`${icon}:hover path`, {
-  fill: 'theme.color.blue400',
+  fill: theme.color.blue400,
 })
 
 export const z = style({
