@@ -37,7 +37,7 @@ export const controls = style({
   position: 'absolute',
   bottom: 0,
   overflow: 'hidden',
-  maxWidth: '546px',
+  maxWidth: theme.breakpoints.sm,
 })
 
 export const audioControl = style({
