@@ -69,6 +69,12 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
       return
     }
     videoRef.current.currentTime = duration * durationPercent
+
+    if (hasEnded) {
+      setHasEnded(false)
+      setIsPlaying(true)
+      videoRef.current.play()
+    }
   }
 
   useEffect(() => {
