@@ -64,9 +64,6 @@ export enum States {
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
 
-  PENDING = 'pending', // I_BID = 561
-  DISMISSED = 'dismissed', // VISAD_FRA = 1637
-
   REJECTED = 'rejected', // SYNJAD = 1281
   APPROVED = 'approved', // AFGREIDD = 563
 }

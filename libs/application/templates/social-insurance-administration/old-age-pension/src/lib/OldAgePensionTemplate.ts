@@ -136,7 +136,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           progress: 0.75,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -194,7 +194,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           progress: 0.75,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
@@ -233,8 +233,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          PENDING: { target: States.PENDING },
-          // DISMISSED: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -254,7 +252,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(30),
           progress: 0.5,
           roles: [
             {
@@ -278,34 +276,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
-        },
-      },
-      [States.PENDING]: {
-        meta: {
-          name: States.PENDING,
-          progress: 1,
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: statesMessages.pendingTag,
-            },
-            pendingAction: {
-              title: statesMessages.applicationPending,
-              content: statesMessages.applicationPendingDescription,
-              displayStatus: 'info',
-            },
-          },
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-            },
-          ],
         },
       },
       [States.APPROVED]: {
