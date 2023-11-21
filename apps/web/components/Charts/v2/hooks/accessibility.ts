@@ -4,7 +4,7 @@ import { Chart } from '@island.is/web/graphql/schema'
 
 export const useGetChartTableSettings = ({ components, xAxisKey }: Chart) =>
   useMemo(() => {
-    const tableHead = [...components.map((c) => c.sourceDataKey)]
+    const tableHead = components.map((c) => c.sourceDataKey)
     const tableHeadWithAxis = [xAxisKey, ...tableHead]
 
     return {

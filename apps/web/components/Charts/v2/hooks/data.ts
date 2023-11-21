@@ -38,7 +38,6 @@ export const useGetChartData = ({
         dateFrom: dateFrom ?? undefined,
         dateTo: dateTo ?? undefined,
         numberOfDataPoints: numberOfDataPoints ?? undefined,
-        interval: undefined, // TODO
       },
     } as GetMultipleStatisticsQueryVariables,
   })
