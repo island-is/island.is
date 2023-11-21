@@ -1,23 +1,18 @@
-// import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
-// export class CreateNotificationDto {
-//   @IsNotEmpty()
-//   @IsString()
-//   title!: string;
-
-//   @IsNotEmpty()
-//   @IsString()
-//   message!: string;
-
-//   @IsBoolean()
-//   read!: boolean;
-// }
 
 
 export interface ArgItem {
   key: string;
   value: string;
 }
+
+export interface Message {
+  title: string;
+  body: string;
+  dataCopy: string;
+  clickAction: string;
+}
+
 
 export interface CreateNotificationDto {
   cursor: number;
@@ -28,4 +23,5 @@ export interface CreateNotificationDto {
   created: Date;
   updated: Date;
   status: string;
+  message:Message;
 }

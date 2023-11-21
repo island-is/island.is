@@ -31,7 +31,8 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
 
-
+  
+  
   
 @Injectable()
 export class NotificationsService {
@@ -172,16 +173,41 @@ export class NotificationsService {
   }
 
   async findOne(user: User,id: number): Promise<any> {
-    return await this.notificationModel.findOne({
+    
+    let notification = await this.notificationModel.findOne({
       where: {
         id: id,
         recipient: user.nationalId
       }
     });
+
+    if (!notification) {
+      throw new NotFoundException('Notification not found or does not belong to the user');
+    } else {
+      const template = await this.getTemplate(notification.templateId);
+      const formattedTemplate = this.formatArguments(notification, template);
+      const response = {
+        ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+        message: {
+          title: formattedTemplate.notificationTitle,
+          body: formattedTemplate.notificationBody,
+          dataCopy: formattedTemplate.notificationDataCopy,
+          clickAction: formattedTemplate.clickAction,
+        }
+      };
+
+      return response;
   }
+    }
+
+ 
+
+    
+  
 
   async findMany(user:User,query: any): Promise<any> {
-    return await paginate({
+    const templates = await this.getTemplates();
+    const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
       after: query.after,
@@ -190,6 +216,24 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: { recipient: user.nationalId }
     })
+    // loop through notifications and format them as a new property like in the method above
+    const formattedNotifications = paginatedListResponse.data.map((notification) => {
+      const template = templates.find((template) => template.templateId === notification.templateId);
+      if(template){
+        const formattedTemplate = this.formatArguments(notification, template);
+        return {
+          ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+          message: {
+            title: formattedTemplate.notificationTitle,
+            body: formattedTemplate.notificationBody,
+            dataCopy: formattedTemplate.notificationDataCopy,
+            clickAction: formattedTemplate.clickAction,
+          }
+        }
+      };
+    });
+    paginatedListResponse.data = formattedNotifications;
+    return paginatedListResponse
   }
 
 
@@ -205,38 +249,18 @@ export class NotificationsService {
     if (!notification) {
       throw new NotFoundException('Notification not found or does not belong to the user');
     } else {
-      const updatedItem = {...notification, updateNotificationDto}
-      // return updatedItem
-      return await notification.update(updatedItem);
+      notification.status = updateNotificationDto.status as unknown as NotificationStatus; // TODO FIX
+      const res = await notification.save();
+      return res
     }
-  
-
-    // // Update the notification with the provided DTO
-    // return await this.notificationModel.update(updateNotificationDto,{
-    //       where: { id },
-    //       returning: true,
-    //     });
    
   }
   
-  // async update(user: User, id: number, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
-  //   const [numberOfAffectedRows, [updatedItem]] = await this.notificationModel.update(updateNotificationDto, {
-  //     where: { id },
-  //     returning: true,
-  //   });
-
-  //   if (numberOfAffectedRows === 0) {
-  //     throw new NotFoundException(`Item with ID "${id}" not found.`);
-  //   }
-
-  //   return updatedItem;
-  // }
-
   
 
   // Just a test function for easy creating WHILE DEVELOPING
   async create(user:User): Promise<any> {
-    const exampleNotificationData = {
+    let exampleNotificationData = {
       recipient: user.nationalId,
       templateId: "HNIPP.POSTHOLF.NEW_DOCUMENT",
       args: [
@@ -249,9 +273,15 @@ export class NotificationsService {
           value: "abcd-abcd-abcd-abcd"
         }
       ],
-      status: NotificationStatus.UNREAD
+      status: NotificationStatus.UNREAD,
     };
-    return this.notificationModel.create(exampleNotificationData as any);
+
+    try {
+      return this.notificationModel.create(exampleNotificationData as any);
+    } catch (error) {
+      return Error
+    }
+    
   }
 
   

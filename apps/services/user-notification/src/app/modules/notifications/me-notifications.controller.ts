@@ -22,7 +22,7 @@ import { Notification } from './notification.model'
 
 // import { CreateNotificationDto } from './dto/create-notification.dto'
 import { UpdateNotificationDto } from './dto/update-notification.dto'
-import { NotificationDTO } from './dto/notification.dto'; // Import your DTO
+// import { NotificationDTO } from './dto/notification.dto'; // Import your DTO
 import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
 
 export class PaginatedNotificationDto {
@@ -49,8 +49,8 @@ export class MeNotificationsController {
   @ApiSecurity('oauth2', [NotificationsScope.read])
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @CurrentUser() user: User, 
-  ) {
+    @CurrentUser() user: User
+  ): Promise<any>{
     return this.notificationService.create(user);
   }
 
@@ -61,7 +61,7 @@ export class MeNotificationsController {
   findMany(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
-    @Query('limit') limit: number
+    // @Query('limit') limit: number
   ): Promise<PaginatedNotificationDto> {
     return this.notificationService.findMany(user,query)
   }
