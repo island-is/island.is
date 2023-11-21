@@ -47,6 +47,12 @@ export const AudioPlayer = ({ url, title }: Props) => {
       return
     }
     audioRef.current.currentTime = duration * durationPercent
+
+    if (hasEnded) {
+      setHasEnded(false)
+      setIsPlaying(true)
+      audioRef.current.play()
+    }
   }
 
   useEffect(() => {
@@ -62,13 +68,12 @@ export const AudioPlayer = ({ url, title }: Props) => {
     return format(date, 'm:ss')
   }
 
-  if (!isReady) {
-    //return <SkeletonLoader />
-  }
-
   return (
     <>
-      <SkeletonLoader display={!isReady ? 'inlineBlock' : 'none'} />
+      <SkeletonLoader
+        height="50px"
+        display={!isReady ? 'inlineBlock' : 'none'}
+      />
       <Box display={isReady ? 'block' : 'none'}>
         <GridContainer className={styles.container}>
           <GridRow className={styles.audio} align="center" alignItems="center">
