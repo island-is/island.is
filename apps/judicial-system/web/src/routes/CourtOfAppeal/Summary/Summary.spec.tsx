@@ -10,6 +10,7 @@ import {
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockTransitonCaseMutation } from '@island.is/judicial-system-web/src/utils/mocks'
+import * as stepHelper from '@island.is/judicial-system-web/src/utils/stepHelper'
 import {
   FormContextWrapper,
   IntlProviderWrapper,
@@ -63,5 +64,45 @@ describe('Summary', () => {
     const { getByText } = within(screen.getByRole('dialog'))
 
     expect(getByText('Máli hefur verið lokið')).toBeInTheDocument()
+  })
+
+  it('should show a modal window when the appeal ruling is modified', async () => {
+    const caseId = faker.datatype.uuid()
+    jest.spyOn(stepHelper, 'hasSentNotification').mockReturnValue(true)
+
+    render(
+      <MockedProvider
+        mocks={mockTransitonCaseMutation(caseId)}
+        addTypename={false}
+      >
+        <IntlProviderWrapper>
+          <FormContextWrapper
+            theCase={{
+              id: caseId,
+              origin: CaseOrigin.RVG,
+              type: CaseType.OTHER,
+              created: '',
+              modified: '',
+              state: CaseState.ACCEPTED,
+              policeCaseNumbers: [],
+            }}
+          >
+            <Summary />
+          </FormContextWrapper>
+        </IntlProviderWrapper>
+      </MockedProvider>,
+    )
+
+    const continueButton = screen.getByRole('button', { name: 'Ljúka máli' })
+
+    await act(async () => {
+      await userEvent.click(continueButton)
+    })
+
+    const { getByRole } = within(screen.getByRole('dialog'))
+
+    expect(
+      getByRole('heading', { name: 'Hverju var breytt?' }),
+    ).toBeInTheDocument()
   })
 })
