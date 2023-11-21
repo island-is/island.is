@@ -121,6 +121,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/european-health-insurance-card'),
   [ApplicationTypes.CAR_RECYCLING]: () =>
     import('@island.is/application/templates/car-recycling'),
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-creation'
+    ),
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-signing'
+    ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'

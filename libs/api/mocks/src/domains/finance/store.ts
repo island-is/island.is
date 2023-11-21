@@ -1,10 +1,5 @@
 import { createStore } from '@island.is/shared/mocking'
 import {
-  CustomerChargeType,
-  CustomerRecords,
-  DocumentsListModel,
-} from '../../types'
-import {
   getFinanceStatusData,
   getFinanceStatusDetailsData,
   getCustomerChargeTypeData,
@@ -17,9 +12,9 @@ import {
 export const store = createStore(() => {
   const financeStatus = getFinanceStatusData
   const financeStatusDetails = getFinanceStatusDetailsData
-  const customerChargeType: CustomerChargeType = getCustomerChargeTypeData
-  const customerRecords: CustomerRecords = getCustomerRecordsData
-  const documentsList: DocumentsListModel = getDocumentsListData
+  const customerChargeType = getCustomerChargeTypeData
+  const customerRecords = getCustomerRecordsData
+  const documentsList = getDocumentsListData
   const tapControl = getCustomerTapControlData
   const financeDocuments = getFinanceDocumentData
 

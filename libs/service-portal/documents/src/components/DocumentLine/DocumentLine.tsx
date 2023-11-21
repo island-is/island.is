@@ -88,8 +88,9 @@ export const DocumentLine: FC<Props> = ({
         document:
           docContent || (getFileByIdData?.getDocument as DocumentDetails),
         id: documentLine.id,
-        subject: documentLine.subject,
         sender: documentLine.senderName,
+        subject: documentLine.subject,
+        senderNatReg: documentLine.senderNatReg,
         downloadUrl: documentLine.url,
         date: date,
         img,

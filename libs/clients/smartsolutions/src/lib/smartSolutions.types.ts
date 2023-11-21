@@ -18,6 +18,9 @@ export type ApiResponse = {
   errors?: {
     message: string
     path: string
+    extensions: {
+      type: string
+    }
   }[]
 }
 
@@ -43,6 +46,10 @@ export type ServiceErrorCode =
   | 4
   /** Invalid pass */
   | 5
+  /** Unauthorized */
+  | 6
+  /** Forbidden */
+  | 7
   /** Missing PassTemplateId */
   | 10
   /** Fetch failed */

@@ -26,3 +26,7 @@ export type OrganizationSlugType =
   | 'domsmalaraduneytid'
   | 'utlendingastofnun'
   | 'urvinnslusjodur'
+  | 'menntamalastofnun'
+  | 'umhverfisstofnun'
+  | 'vegagerdin'
+  | 'landlaeknir'
