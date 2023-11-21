@@ -14,6 +14,7 @@ import LogOut from '../../components/AnimatedIcon/LogOut'
 import People from '../../components/AnimatedIcon/People'
 import Airplane from '../../components/AnimatedIcon/Airplane'
 import Heart from '../../components/AnimatedIcon/Heart'
+import Framfaerslur from '../../components/AnimatedIcon/Framfaerslur'
 
 export const iconIdMapper = (iconType: string) => {
   switch (iconType) {
@@ -32,9 +33,9 @@ export const iconIdMapper = (iconType: string) => {
     // Fjármál
     case 'cellular':
       return 'eD0ZSxAV3eT1'
-    // Fasteignir
+    // Eignir
     case 'home':
-      return 'epOba8x5m6E1'
+      return 'ebYEDB473Vf1'
     // Aðgangsstýringar
     case 'lockClosed':
       return 'eA2KDqNP3G51'
@@ -62,6 +63,9 @@ export const iconIdMapper = (iconType: string) => {
     // Heilsa
     case 'heart':
       return 'ehtpZ79segF1'
+    // Framfærslur
+    case 'framfaerslur':
+      return 'eNwbxRm5ElG1'
     default:
       return ''
   }
@@ -117,6 +121,9 @@ export const iconTypeToSVG = (iconType: string, iconId: string) => {
     // Heilsa
     case 'heart':
       return <Heart />
+    // Framfærslur
+    case 'framfaerslur':
+      return <Framfaerslur />
     default:
       return undefined
   }
