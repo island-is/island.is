@@ -50,7 +50,7 @@ export class Person extends PersonBase {
 
   @Field(() => String, {
     nullable: true,
-    description: 'Unique ID. Can be used for URL`s.',
+    description: 'Unique string. Can be used for URL`s.',
   })
   baseId?: string | null
 

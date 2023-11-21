@@ -6,54 +6,49 @@ import {
   createHash,
 } from 'crypto'
 
-export const encrypt = (text: string, key: string) => {
+const ALGORITHM = 'aes-256-cbc'
+
+/**
+ *
+ * @param text The string you wish to hide
+ * @param key You secret key
+ * @returns URL safe Base64
+ */
+export const encrypt = (text: string, key: string): string => {
   const iv = randomBytes(16)
   const derivedKey = hashKey(key)
 
-  if (!Buffer.isBuffer(derivedKey)) {
-    throw new Error('Derived key is not a Buffer.')
-  }
+  const cipher = createCipheriv(ALGORITHM, derivedKey, iv)
+  const encrypted =
+    cipher.update(text, 'utf-8', 'base64') + cipher.final('base64')
 
-  if (!Buffer.isBuffer(iv)) {
-    throw new Error('Initialization vector is not a Buffer.')
-  }
-
-  const cipher = createCipheriv('aes-256-cbc', derivedKey, iv)
-  const encrypted = Buffer.concat([
-    cipher.update(text, 'utf-8'),
-    cipher.final(),
-  ])
-
-  const cleanString = Base64.encodeURI(
-    `${iv.toString('base64')}:${encrypted.toString('base64')}`,
-  )
-  return cleanString
+  return Base64.encodeURI(`${iv.toString('base64')}:${encrypted}`)
 }
 
-export const decrypt = (encryptedText: string, key: string) => {
+/**
+ * @param encryptedText Base64 returned from encrypt()
+ * @param key You secret key you used in encrypt()
+ * @returns Reveals the string hidden by encrypt()
+ */
+export const decrypt = (encryptedText: string, key: string): string => {
   try {
-    const cleanString = Base64.decode(encryptedText)
-    const [receivedIv, encryptedData] = cleanString.split(':')
+    const [receivedIv, encryptedData] = Base64.decode(encryptedText).split(':')
     const derivedKey = hashKey(key)
     const decipher = createDecipheriv(
-      'aes-256-cbc',
+      ALGORITHM,
       derivedKey,
       Buffer.from(receivedIv, 'base64'),
     )
 
-    const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encryptedData, 'base64')),
-      decipher.final(),
-    ])
-
-    return decrypted.toString('utf-8')
+    return (
+      decipher.update(encryptedData, 'base64', 'utf-8') +
+      decipher.final('utf-8')
+    )
   } catch (e) {
     return ''
   }
 }
 
 function hashKey(key: string): Buffer {
-  const hash = createHash('sha256')
-  hash.update(key)
-  return hash.digest()
+  return createHash('sha256').update(key).digest()
 }
