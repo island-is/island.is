@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
+import { States } from '../../../shared/constants'
 
 export const Vehicles = ({
   application,
@@ -14,17 +15,21 @@ export const Vehicles = ({
 
   const [{ selectedVehicles }] = useStatefulAnswers(application)
 
+  const { state } = application
+
   return (
     <ReviewGroup
       isLast
       isEditable={editable}
       editAction={() => goToScreen?.('vehicles')}
     >
-      <Box position="relative" marginBottom={'containerGutter'}>
-        <Label>
-          {formatMessage(carRecyclingMessages.review.carsSectionTitle)}
-        </Label>
-      </Box>
+      {state === `${States.DRAFT}` && (
+        <Box position="relative" marginBottom={'containerGutter'}>
+          <Label>
+            {formatMessage(carRecyclingMessages.review.carsSectionTitle)}
+          </Label>
+        </Box>
+      )}
 
       {selectedVehicles.map((vehicle, index) => {
         return (

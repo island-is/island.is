@@ -176,6 +176,11 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Ökutæki valin til endurvinnslu',
       description: 'Vehicles selected for recycling',
     },
+    buttonsEdit: {
+      id: 'rf.cr.application:review.buttons.edit',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
   }),
   conclusionScreen: defineMessages({
     title: {
@@ -212,6 +217,16 @@ export const statesMessages = defineMessages({
     id: 'rf.cr.application:draft.description',
     defaultMessage: 'Þú hefur útbúið drög að umsókn.',
     description: 'Description of the state - draft',
+  },
+  applicationSent: {
+    id: 'rf.cr.application:application.sent.title',
+    defaultMessage: 'Umsókn þín hefur verið send.',
+    description: 'Title of the state - sent',
+  },
+  applicationSentDescription: {
+    id: 'oap.application:application.sent.description',
+    defaultMessage: 'Hægt er að breyta umsókn',
+    description: 'Description of the state - sent',
   },
 })
 

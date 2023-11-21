@@ -71,12 +71,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
           lifecycle: pruneAfterDays(1),
           progress: 0.25,
           actionCard: {
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.applicationStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
+            pendingAction: {
+              title: 'corePendingActionMessages.applicationReceivedTitle2222',
+              displayStatus: 'success',
+            },
           },
           roles: [
             {
@@ -116,17 +114,21 @@ const CarRecyclingTemplate: ApplicationTemplate<
             externalDataId: 'vehicles',
             throwOnError: false,
           }),
-          progress: 0.25,
+          progress: 0.5,
           /* onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
             throwOnError: true,
           }),*/
           actionCard: {
-            description: statesMessages.draftDescription,
-            historyLogs: {
-              onEvent: DefaultEvents.SUBMIT,
-              logMessage: coreHistoryMessages.applicationSent,
+            pendingAction: {
+              title: 'corePendingActionMessages.applicationReceivedTitle',
+              displayStatus: 'success',
             },
+            //  description: statesMessages.draftDescription,
+            // historyLogs: {
+            //  onEvent: DefaultEvents.SUBMIT,
+            //  logMessage: coreHistoryMessages.applicationSent,
+            // },
           },
           roles: [
             {
@@ -155,11 +157,12 @@ const CarRecyclingTemplate: ApplicationTemplate<
         meta: {
           name: States.SUBMITTED,
           progress: 1,
-          status: 'approved',
+          status: 'completed',
+
           actionCard: {
             pendingAction: {
-              title: 'statesMessages.applicationApproved',
-              content: 'statesMessages.applicationApprovedDescription',
+              title: statesMessages.applicationSent,
+              content: statesMessages.applicationSentDescription,
               displayStatus: 'success',
             },
           },
@@ -171,9 +174,13 @@ const CarRecyclingTemplate: ApplicationTemplate<
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
                 ),
-              read: 'all',
+              write: 'all',
+              delete: true,
             },
           ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
         },
       },
     },
@@ -185,16 +192,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
     nationalId: string,
     application: Application,
   ): ApplicationRole | undefined {
-    if (application.assignees.includes(nationalId)) {
-      return Roles.ASSIGNEE
-    }
-    if (application.applicant === nationalId) {
-      if (application.state === 'inReview') {
-        return Roles.ASSIGNEE
-      }
-
-      return Roles.APPLICANT
-    }
+    return Roles.APPLICANT
   },
   answerValidators,
 }
