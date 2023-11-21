@@ -24,7 +24,8 @@ import {
   coreHistoryMessages,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { Actions, Events, Roles, States } from './constants'
+
+import { Actions, Events, Roles, States, BankAccountType } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
@@ -32,6 +33,7 @@ import {
   NationalRegistryResidenceHistoryApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { getApplicationAnswers } from './oldAgePensionUtils'
@@ -78,6 +80,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
                 NationalRegistryResidenceHistoryApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationCurrenciesApi,
               ],
               delete: true,
             },
@@ -490,6 +493,26 @@ const OldAgePensionTemplate: ApplicationTemplate<
           } else {
             set(application, 'assignees', [TR_ID])
           }
+        }
+
+        return context
+      }),
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.bankAccountInfo.iban')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.swift')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'fileUpload.foreignBankAccount')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bankAccountInfo.bank')
         }
 
         return context

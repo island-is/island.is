@@ -38,7 +38,6 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getBank,
   getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
@@ -244,26 +243,10 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.payment.title,
               description: '',
               children: [
-                buildAlertMessageField({
-                  id: 'paymentInfo.alert',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
-                  message: oldAgePensionFormMessage.payment.alertMessage,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                }),
-                buildTextField({
-                  id: 'paymentInfo.bank',
-                  title: oldAgePensionFormMessage.payment.bank,
-                  backgroundColor: 'white',
-                  format: '####-##-######',
-                  placeholder: '0000-00-000000',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-
-                    return getBank(data.bankAccount)
-                  },
+                buildCustomField({
+                  id: 'paymentInfo.bankAccountInfo',
+                  title: '',
+                  component: 'BankAccount',
                 }),
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
@@ -345,13 +328,13 @@ export const OldAgePensionForm: Form = buildForm({
               title:
                 oldAgePensionFormMessage.onePaymentPerYear
                   .onePaymentPerYearTitle,
+              description:
+                oldAgePensionFormMessage.onePaymentPerYear
+                  .onePaymentPerYearDescription,
               children: [
                 buildRadioField({
                   id: 'onePaymentPerYear.question',
                   title: '',
-                  description:
-                    oldAgePensionFormMessage.onePaymentPerYear
-                      .onePaymentPerYearDescription,
                   options: getYesNOOptions(),
                   defaultValue: NO,
                   width: 'half',
@@ -464,7 +447,7 @@ export const OldAgePensionForm: Form = buildForm({
 
             return employmentStatus === Employment.SELFEMPLOYED
           },
-          children: [    
+          children: [
             buildFileUploadField({
               id: 'employment.selfEmployedAttachment',
               title: oldAgePensionFormMessage.fileUpload.selfEmployedTitle,
@@ -490,7 +473,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
           ],
-        }), 
+        }),
         buildSubSection({
           id: 'employerRegistration',
           title: oldAgePensionFormMessage.employer.registrationTitle,
@@ -572,9 +555,9 @@ export const OldAgePensionForm: Form = buildForm({
               ],
             }),
           ],
-        }),    
+        }),
       ],
-    }), 
+    }),
     buildSection({
       id: 'periodSection',
       title: oldAgePensionFormMessage.period.periodTitle,
@@ -599,8 +582,7 @@ export const OldAgePensionForm: Form = buildForm({
               alertType: 'warning',
               links: [
                 {
-                  title:
-                    oldAgePensionFormMessage.period.periodAlertLinkTitle,
+                  title: oldAgePensionFormMessage.period.periodAlertLinkTitle,
                   url: oldAgePensionFormMessage.period.periodAlertUrl,
                   isExternal: true,
                 },
@@ -648,7 +630,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
           ],
-        }),  
+        }),
         buildSubSection({
           id: 'fileUpload.pension.section',
           title: oldAgePensionFormMessage.fileUpload.pensionFileTitle,
@@ -673,7 +655,7 @@ export const OldAgePensionForm: Form = buildForm({
               uploadMultiple: true,
             }),
           ],
-        }), 
+        }),
         buildSubSection({
           condition: (answers) => {
             const { applicationType } = getApplicationAnswers(answers)
@@ -707,7 +689,7 @@ export const OldAgePensionForm: Form = buildForm({
               },
             }),
           ],
-        }),     
+        }),
       ],
     }),
     buildSection({

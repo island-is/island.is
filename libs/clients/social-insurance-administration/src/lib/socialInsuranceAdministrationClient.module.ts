@@ -9,6 +9,7 @@ import {
   GetApplicantInfoApi,
   SendApplicationApi,
   GetIsApplicantEligibleApi,
+  GetCurrenciesApi,
 } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { SocialInsuranceAdministrationClientService } from './socialInsuranceAdministrationClient.service'
@@ -56,6 +57,7 @@ export class SocialInsuranceAdministrationClientModule {
       GetApplicantInfoApi,
       SendApplicationApi,
       GetIsApplicantEligibleApi,
+      GetCurrenciesApi,
     ]
 
     return {

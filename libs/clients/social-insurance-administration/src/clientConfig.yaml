@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.3
+  version: 1.0.5
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -99,6 +99,30 @@ paths:
             application/json:
               schema:
                 type: string
+  /General/currencies:
+    get:
+      tags:
+        - Get currencies
+      operationId: General_GetCurrencies
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Currencies'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
 components:
   securitySchemes:
     bearerAuth:
@@ -124,6 +148,8 @@ components:
           $ref: '#/components/schemas/Period'
         comment:
           type: string
+        applicationId:
+          type: string
         domesticBankInfo:
           $ref: '#/components/schemas/DomesticBankInfo'
         foreignBankInfo:
@@ -138,11 +164,8 @@ components:
           type: boolean
         isSailorPension:
           type: boolean
-        isEarlyPension:
-          type: boolean
         uploads:
           $ref: '#/components/schemas/Uploads'
-
     Period:
       type: object
       additionalProperties: false
@@ -304,5 +327,9 @@ components:
           format: float
         taxLevel:
           type: number
+    Currencies:
+      type: array
+      items:
+        type: string
 security:
   - bearerAuth: []

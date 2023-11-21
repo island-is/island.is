@@ -7,9 +7,10 @@ import {
 import {
   ApplicationType,
   getApplicationAnswers,
-  getApplicationExternalData,
   isEarlyRetirement,
-  getBank,
+  BankAccountType,
+  formatBank,
+  shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
 
@@ -24,6 +25,7 @@ export const transformApplicationToOldAgePensionDTO = (
     applicantEmail,
     applicantPhonenumber,
     bank,
+    bankAccountType,
     onePaymentPerYear,
     comment,
     personalAllowance,
@@ -31,10 +33,12 @@ export const transformApplicationToOldAgePensionDTO = (
     personalAllowanceUsage,
     spouseAllowanceUsage,
     taxLevel,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
   } = getApplicationAnswers(application.answers)
-
-  const { bankInfo } = getApplicationExternalData(application.externalData)
-  const bankNumber = getBank(bankInfo)
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
@@ -49,16 +53,26 @@ export const transformApplicationToOldAgePensionDTO = (
       month: getMonthNumber(selectedMonth),
     },
     comment: comment,
-    // domesticBankInfo: {
-    //   bank: bank === bankNumber ? '' : bank, // TODO: Passa að þarf að formatta bankanúmer áður en sendi
-    // },
-    // foreignBankInfo: {
-    //   iban: '',
-    //   swift: '',
-    //   foreignBankName: '',
-    //   foreignBankAddress: '',
-    //   foreignCurrency: '',
-    // },
+    applicationId: application.id,
+    ...(!shouldNotUpdateBankAccount(
+      application.answers,
+      application.externalData,
+    ) && {
+      ...(bankAccountType === BankAccountType.ICELANDIC && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban,
+          swift: swift,
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
     taxInfo: {
       spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
@@ -74,10 +88,6 @@ export const transformApplicationToOldAgePensionDTO = (
     hasAbroadResidence: YES === residenceHistoryQuestion,
     hasOneTimePayment: YES === onePaymentPerYear,
     isSailorPension: applicationType === ApplicationType.SAILOR_PENSION,
-    isEarlyPension: isEarlyRetirement(
-      application.answers,
-      application.externalData,
-    ),
     uploads,
   }
 

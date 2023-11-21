@@ -8,6 +8,7 @@ import {
   Eligible,
   GetApplicantInfoApi,
   Applicant,
+  GetCurrenciesApi,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -16,6 +17,7 @@ export class SocialInsuranceAdministrationClientService {
     private readonly sendApplicationApi: SendApplicationApi,
     private readonly getIsApplicantEligibleApi: GetIsApplicantEligibleApi,
     private readonly getApplicantInfoApi: GetApplicantInfoApi,
+    private readonly getCurrenciesApi: GetCurrenciesApi,
   ) {}
 
   private sendAPIWithAuth = (user: User) =>
@@ -26,6 +28,8 @@ export class SocialInsuranceAdministrationClientService {
     )
   private applicantAPIWithAuth = (user: User) =>
     this.getApplicantInfoApi.withMiddleware(new AuthMiddleware(user as Auth))
+  private currenciesAPIWithAuth = (user: User) =>
+    this.getCurrenciesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async sendApplication(
     user: User,
@@ -46,5 +50,9 @@ export class SocialInsuranceAdministrationClientService {
     return await this.isEligibleAPIWithAuth(user).applicantGetIsEligible({
       applicationType,
     })
+  }
+
+  async getCurrencies(user: User): Promise<Array<string>> {
+    return await this.currenciesAPIWithAuth(user).generalGetCurrencies()
   }
 }
