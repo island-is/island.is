@@ -32,11 +32,9 @@ export class NationalRegistryV3ClientService {
   getAllDataIndividual(
     nationalId: string,
   ): Promise<EinstaklingurDTOAllt | null> {
-    return process.env.NODE_ENV === 'production'
-      ? this.individualApi.midlunV02EinstaklingarNationalIdGet({ nationalId })
-      : this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
-          nationalId,
-        })
+    return this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
+      nationalId,
+    })
   }
 
   getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {
