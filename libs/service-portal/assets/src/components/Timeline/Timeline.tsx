@@ -10,8 +10,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
-import { ProgressBar } from '@island.is/service-portal/core'
-import { useIsMobile } from '@island.is/service-portal/core'
+import { ProgressBar, useIsMobile } from '@island.is/service-portal/core'
 
 interface Props {
   children?: Array<ReactElement>
