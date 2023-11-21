@@ -125,13 +125,14 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
         <GridContainer className={cn(styles.controls)}>
           <GridRow className={styles.video} align="center" alignItems="center">
             <GridColumn
-              span={['4/12', '3/12', '4/12', '4/12', '3/12']}
+              span={['4/12', '3/12', '4/12', '3/12', '3/12']}
               className={styles.audioControl}
             >
               <Box
                 display="flex"
                 justifyContent="spaceAround"
                 alignItems="center"
+                columnGap={'p2'}
               >
                 {isReady && (
                   <button
@@ -164,7 +165,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
               </Box>
             </GridColumn>
             <GridColumn
-              span={['5/12', '6/12', '5/12', '5/12', '6/12']}
+              span={['6/12', '7/12', '6/12', '6/12', '7/12']}
               className={styles.audioControl}
             >
               <ProgressBar
