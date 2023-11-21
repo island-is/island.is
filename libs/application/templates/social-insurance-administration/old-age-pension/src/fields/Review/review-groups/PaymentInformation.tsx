@@ -6,16 +6,12 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  getApplicationExternalData,
-  friendlyFormatSWIFT,
-} from '../../../lib/oldAgePensionUtils'
+import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { getTaxLevelOption } from './utils'
 import { YES, BankAccountType } from '../../../lib/constants'
-import * as ibantools from 'ibantools'
 
 export const PaymentInformation = ({
   application,
@@ -64,7 +60,7 @@ export const PaymentInformation = ({
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
               <DataValue
                 label={formatMessage(oldAgePensionFormMessage.payment.iban)}
-                value={ibantools.friendlyFormatIBAN(iban)}
+                value={iban}
               />
             </GridColumn>
           </GridRow>
@@ -75,7 +71,7 @@ export const PaymentInformation = ({
             >
               <DataValue
                 label={formatMessage(oldAgePensionFormMessage.payment.swift)}
-                value={friendlyFormatSWIFT(swift)}
+                value={swift}
               />
             </GridColumn>
             <GridColumn

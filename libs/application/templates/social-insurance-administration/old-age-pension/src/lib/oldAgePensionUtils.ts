@@ -681,14 +681,39 @@ export const shouldNotUpdateBankAccount = (
   }
 }
 
+export const friendlyFormatIBAN = (value: string | undefined) => {
+  return !isEmpty(value) && value
+    ? value
+        .toUpperCase()
+        .replace(/[\s]+/g, '')
+        .replace(/(.{4})(?!$)/g, '$1 ')
+    : ''
+}
+
+export const validIBAN = (value: string) => {
+  const ibanRegex = new RegExp(
+    /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,19}$/,
+  )
+
+  return ibanRegex.test(value)
+}
+
 export const friendlyFormatSWIFT = (value: string | undefined) => {
-  return value
+  return !isEmpty(value) && value
     ? value
         .toUpperCase()
         .replace(/[\s]+/g, '')
         .replace(/(.{4})(?!$)/g, '$1 ')
         .replace(/(.{4}[\s].{2})(?!$)/g, '$1 ')
-    : undefined
+    : ''
+}
+
+export const validSWIFT = (value: string) => {
+  const swiftRegex = new RegExp(
+    /^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}([A-Z0-9]?){3}$/,
+  )
+
+  return swiftRegex.test(value)
 }
 
 export const useCurrencies = (currencies: Array<string>) => {

@@ -28,8 +28,8 @@ import {
   friendlyFormatSWIFT,
   useCurrencies,
   getBankIsk,
+  friendlyFormatIBAN,
 } from '../../lib/oldAgePensionUtils'
-import * as ibantools from 'ibantools'
 import isEmpty from 'lodash/isEmpty'
 
 export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
@@ -112,14 +112,6 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
           onSelect: (type: BankAccountType) => {
             setSelectedBankAccountType(type)
             setValue(accountTypeFieldId, type)
-
-            setValue(bankFieldId, '')
-            setValue(ibanFieldId, '')
-            setValue(swiftFieldId, '')
-
-            setValue(bankNameFieldId, '')
-            setValue(bankAddressFieldId, '')
-            setValue(currencyFieldId, '')
           },
           defaultValue: selectedBankAccountType,
         }}
@@ -137,7 +129,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
           error={errors && getErrorViaPath(errors, bankFieldId)}
           format="####-##-######"
           backgroundColor="blue"
-          defaultValue={!isEmpty(bankInfo) ? getBankIsk(bankInfo) : ''}
+          defaultValue={getBankIsk(bankInfo)}
         />
       ) : (
         <>
@@ -153,15 +145,11 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                 )}
                 error={errors && getErrorViaPath(errors, ibanFieldId)}
                 onChange={(e) => {
-                  const formattedIBAN = ibantools.friendlyFormatIBAN(
-                    e.target.value,
-                  )
+                  const formattedIBAN = friendlyFormatIBAN(e.target.value)
                   setValue(ibanFieldId as string, formattedIBAN)
                 }}
                 backgroundColor="blue"
-                defaultValue={
-                  ibantools.friendlyFormatIBAN(bankInfo?.iban) ?? ''
-                }
+                defaultValue={friendlyFormatIBAN(bankInfo.iban)}
               />
             </GridColumn>
           </GridRow>
@@ -181,7 +169,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                   setValue(swiftFieldId as string, formattedSWIFT)
                 }}
                 backgroundColor="blue"
-                defaultValue={friendlyFormatSWIFT(bankInfo?.swift) ?? ''}
+                defaultValue={friendlyFormatSWIFT(bankInfo.swift)}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
