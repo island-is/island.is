@@ -29,7 +29,6 @@ import {
   usePostVehicleMileageMutation,
 } from './VehicleDetail.generated'
 import { displayWithUnit } from '../../utils/displayWithUnit'
-import MileageConfirmation from '../../components/MileageConfirmation'
 import * as styles from './VehicleMileage.css'
 
 const ORIGIN_CODE = 'ISLAND.IS'
@@ -200,8 +199,9 @@ const VehicleMilage = () => {
                       fluid
                       type="submit"
                       loading={postActionLoading}
+                      disabled={formValue.length === 0}
                     >
-                      {formatMessage(m.save)}
+                      {formatMessage(m.register)}
                     </Button>
 
                     {/* <Box display="none">
@@ -213,10 +213,10 @@ const VehicleMilage = () => {
                         loading={postActionLoading}
                         ref={buttonRef}
                       >
-                        {formatMessage(m.save)}
+                        {formatMessage(m.register)}
                       </Button>
-                    </Box>
-                    <MileageConfirmation
+                    </Box> */}
+                    {/* <MileageConfirmation
                       postActionLoading={postActionLoading}
                       formValue={formValue}
                       buttonRef={buttonRef}

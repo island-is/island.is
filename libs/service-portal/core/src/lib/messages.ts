@@ -907,6 +907,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  register: {
+    id: 'service.portal:register',
+    defaultMessage: 'Skrá',
+  },
   startPage: {
     id: 'service.portal:start-page',
     defaultMessage: 'upphafssíðu',
