@@ -5,6 +5,8 @@ import subMonths from 'date-fns/subMonths'
 import { Sequelize } from 'sequelize-typescript'
 
 import { isDefined } from '@island.is/shared/utils'
+import { AttemptFailed } from '@island.is/nest/problem'
+import type { User } from '@island.is/auth-nest-tools'
 
 import { VerificationService } from '../user-profile/verification.service'
 import { UserProfile } from '../user-profile/userProfile.model'
@@ -61,15 +63,24 @@ export class UserProfileService {
   }
 
   async patch(
-    nationalId: string,
+    user: User,
     userProfile: PatchUserProfileDto,
   ): Promise<UserProfileDto> {
+    const { nationalId, audkenniSimNumber } = user
     const isEmailDefined = isDefined(userProfile.email)
     const isMobilePhoneNumberDefined = isDefined(userProfile.mobilePhoneNumber)
 
+    const audkenniSimSameAsMobilePhoneNumber =
+      this.checkAudkenniSameAsMobilePhoneNumber(
+        audkenniSimNumber,
+        userProfile.mobilePhoneNumber,
+      )
+
     const shouldVerifyEmail = isEmailDefined && userProfile.email !== ''
     const shouldVerifyMobilePhoneNumber =
-      isMobilePhoneNumberDefined && userProfile.mobilePhoneNumber !== ''
+      !audkenniSimSameAsMobilePhoneNumber &&
+      isMobilePhoneNumberDefined &&
+      userProfile.mobilePhoneNumber !== ''
 
     if (shouldVerifyEmail && !isDefined(userProfile.emailVerificationCode)) {
       throw new BadRequestException('Email verification code is required')
@@ -84,40 +95,58 @@ export class UserProfileService {
       )
     }
 
-    const formattedPhoneNumber = isMobilePhoneNumberDefined
-      ? formatPhoneNumber(userProfile.mobilePhoneNumber)
-      : undefined
-
     await this.sequelize.transaction(async (transaction) => {
-      const commonArgs = [nationalId, transaction] as const
+      const commonArgs = [nationalId, { transaction, maxTries: 3 }] as const
 
-      const promises = await Promise.all(
-        [
-          shouldVerifyEmail &&
-            (await this.verificationService.confirmEmail(
-              {
-                email: userProfile.email,
-                hash: userProfile.emailVerificationCode,
-              },
-              ...commonArgs,
-            )),
+      if (shouldVerifyEmail) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmEmail(
+            {
+              email: userProfile.email,
+              hash: userProfile.emailVerificationCode,
+            },
+            ...commonArgs,
+          )
 
-          shouldVerifyMobilePhoneNumber &&
-            (await this.verificationService.confirmSms(
-              {
-                mobilePhoneNumber: formattedPhoneNumber,
-                code: userProfile.mobilePhoneNumberVerificationCode,
-              },
-              ...commonArgs,
-            )),
-        ].filter(Boolean),
-      )
-
-      promises.map(({ confirmed, message }) => {
-        if (confirmed === false) {
-          throw new BadRequestException(message)
+        if (!confirmed) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              emailVerificationCode: 'Verification code does not match.',
+            })
+          } else {
+            throw new BadRequestException(message)
+          }
         }
-      })
+      }
+
+      if (shouldVerifyMobilePhoneNumber) {
+        const { confirmed, message, remainingAttempts } =
+          await this.verificationService.confirmSms(
+            {
+              mobilePhoneNumber: userProfile.mobilePhoneNumber,
+              code: userProfile.mobilePhoneNumberVerificationCode,
+            },
+            ...commonArgs,
+          )
+
+        if (confirmed === false) {
+          // Check if we should throw a BadRequest or an AttemptFailed error
+          if (remainingAttempts >= 0) {
+            throw new AttemptFailed(remainingAttempts, {
+              smsVerificationCode: 'Verification code does not match.',
+            })
+          } else if (remainingAttempts === -1) {
+            throw new AttemptFailed(0)
+          } else {
+            throw new BadRequestException(message)
+          }
+        }
+      }
+
+      const formattedPhoneNumber = isMobilePhoneNumberDefined
+        ? formatPhoneNumber(userProfile.mobilePhoneNumber)
+        : undefined
 
       const update = {
         nationalId,
@@ -174,12 +203,10 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: formattedPhoneNumber,
+        mobilePhoneNumber,
       },
       3,
     )
@@ -213,5 +240,28 @@ export class UserProfileService {
     }
 
     return null
+  }
+
+  /**
+   * Checks if the audkenni phone number is the same as the mobile phone number to skip verification
+   * @param audkenniSimNumber
+   * @param mobilePhoneNumber
+   */
+  private checkAudkenniSameAsMobilePhoneNumber(
+    audkenniSimNumber: string,
+    mobilePhoneNumber: string,
+  ): boolean {
+    if (!audkenniSimNumber || !mobilePhoneNumber) {
+      return false
+    }
+
+    /**
+     * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
+     * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
+     */
+    return (
+      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
+      audkenniSimNumber.replace(/-/g, '').slice(-7)
+    )
   }
 }

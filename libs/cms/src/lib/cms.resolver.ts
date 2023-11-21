@@ -93,8 +93,15 @@ import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPro
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 import { ServiceWebPage } from './models/serviceWebPage.model'
 import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
+import { LatestEventsSlice } from './models/latestEventsSlice.model'
+import { Event as EventModel } from './models/event.model'
+import { GetSingleEventInput } from './dto/getSingleEvent.input'
+import { GetEventsInput } from './dto/getEvents.input'
+import { EventList } from './models/eventList.model'
 import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
+import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
+import { EntryTitle } from './models/entryTitle.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -414,6 +421,26 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
+  @Query(() => EventModel, { nullable: true })
+  getSingleEvent(
+    @Args('input') { lang, slug }: GetSingleEventInput,
+  ): Promise<EventModel | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<EventModel>(
+      getElasticsearchIndex(lang),
+      { type: 'webEvent', slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => EventList)
+  getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
+    return this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+  }
+
+  @CacheControl(defaultCache)
   @Query(() => [String])
   getNewsDates(@Args('input') input: GetNewsDatesInput): Promise<string[]> {
     return this.cmsElasticsearchService.getNewsDates(
@@ -558,6 +585,19 @@ export class CmsResolver {
       { type: 'webManual', slug: input.slug },
     )
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => EntryTitle, { nullable: true })
+  async getSingleEntryTitleById(
+    @Args('input') input: GetSingleEntryTitleByIdInput,
+  ): Promise<EntryTitle | null> {
+    const document = await this.cmsElasticsearchService.getSingleDocumentById(
+      getElasticsearchIndex(input.lang),
+      input.id,
+    )
+    if (typeof document?.title !== 'string') return null
+    return { title: document.title }
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -573,6 +613,24 @@ export class LatestNewsSliceResolver {
       input,
     )
     return newsList.items
+  }
+}
+
+@Resolver(() => LatestEventsSlice)
+@CacheControl(defaultCache)
+export class LatestEventsSliceResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @CacheControl(defaultCache)
+  @ResolveField(() => [EventModel])
+  async events(
+    @Parent() { events: input }: LatestEventsSlice,
+  ): Promise<EventModel[]> {
+    const eventsList = await this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+    return eventsList.items
   }
 }
 

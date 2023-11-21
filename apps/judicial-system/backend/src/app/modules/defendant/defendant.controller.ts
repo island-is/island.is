@@ -22,11 +22,11 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import {
-  assistantRule,
-  judgeRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
 } from '../../guards'
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
@@ -68,9 +68,9 @@ export class DefendantController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Patch(':defendantId')
   @ApiOkResponse({

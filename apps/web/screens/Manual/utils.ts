@@ -185,3 +185,12 @@ export const getProps: ManualScreen['getProps'] = async ({
     namespace,
   }
 }
+
+export const generateOgTitle = (
+  manualTitle?: string,
+  chapterTitle?: string,
+) => {
+  return `${manualTitle ?? ''}${manualTitle ? ' - ' : ''}${
+    chapterTitle ?? ''
+  } | Ísland.is`
+}

@@ -9,7 +9,8 @@ import {
   CaseState,
   CaseType,
   completedCaseStates,
-  extendedCourtRoles,
+  courtOfAppealsRoles,
+  districtCourtRoles,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -370,11 +371,11 @@ describe('Limited Access View Case File Guard', () => {
             role,
             InstitutionType.PROSECUTORS_OFFICE,
           ]),
-          ...extendedCourtRoles.map((role) => [
+          ...districtCourtRoles.map((role) => [
             role,
             InstitutionType.DISTRICT_COURT,
           ]),
-          ...extendedCourtRoles.map((role) => [
+          ...courtOfAppealsRoles.map((role) => [
             role,
             InstitutionType.COURT_OF_APPEALS,
           ]),

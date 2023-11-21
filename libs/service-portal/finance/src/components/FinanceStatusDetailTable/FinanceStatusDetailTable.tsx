@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import React, { FC } from 'react'
 
 import {
   Box,
@@ -19,6 +18,7 @@ import {
 
 import {
   FinanceStatusDetailsType,
+  FinanceStatusOrganizationChargeType,
   FinanceStatusOrganizationType,
 } from '../../screens/FinanceStatus/FinanceStatusData.types'
 import { exportGjoldSundurlidunFile } from '../../utils/filesGjoldSundurlidun'
@@ -26,15 +26,17 @@ import * as styles from './FinanceStatusDetailTable.css'
 
 interface Props {
   organization: FinanceStatusOrganizationType
+  chargeType: FinanceStatusOrganizationChargeType
   financeStatusDetails: FinanceStatusDetailsType
   downloadURL: string
 }
 
-const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
+const FinanceStatusDetailTable = ({
   organization,
+  chargeType,
   financeStatusDetails,
   downloadURL,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const headerArray = [
@@ -192,7 +194,7 @@ const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
           onClick={() =>
             exportGjoldSundurlidunFile(
               financeStatusDetails,
-              organization?.chargeTypes?.[0].name || 'details',
+              chargeType.name || 'details',
               'xlsx',
             )
           }
@@ -211,7 +213,7 @@ const FinanceStatusDetailTable: FC<React.PropsWithChildren<Props>> = ({
             onClick={() =>
               exportGjoldSundurlidunFile(
                 financeStatusDetails,
-                organization?.chargeTypes?.[0].name || 'details',
+                chargeType.name || 'details',
                 'csv',
               )
             }

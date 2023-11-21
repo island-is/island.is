@@ -86,6 +86,8 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { FinanceClientConfig } from '@island.is/clients/finance'
+import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
+import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
@@ -139,6 +141,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
 const environment = getConfig
 
@@ -262,6 +265,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    HmsLoansModule,
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
@@ -310,7 +314,9 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
+        HmsLoansClientConfig,
         FinanceClientConfig,
+        FinanceClientV2Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,

@@ -20,7 +20,6 @@
 /libs/portals/core/                                                                                      @island-is/aranja @island-is/hugsmidjan
 
 /*                                                                                                       @island-is/core
-/.github/                                                                                                @island-is/core
 /libs/api/domains/identity/                                                                              @island-is/core
 /libs/testing/                                                                                           @island-is/core
 /libs/nest/swagger/                                                                                      @island-is/core
@@ -35,6 +34,7 @@
 /libs/clients/zendesk/                                                                                   @island-is/juni
 /libs/icelandic-names-registry/                                                                          @island-is/juni
 /libs/service-portal/petitions/                                                                          @island-is/juni
+/libs/service-portal/signature-collection/                                                               @island-is/juni
 /libs/service-portal/education/                                                                          @island-is/juni @island-is/hugsmidjan
 /libs/service-portal/education-career/                                                                   @island-is/juni
 /libs/service-portal/education-degree/                                                                   @island-is/juni
@@ -50,7 +50,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
-/libs/api/domains/education/                                                                             @island-is/juni
+/libs/api/domains/education/                                                                             @island-is/juni @island-is/hugsmidjan
 /libs/application/templates/estate/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/estate                                  @island-is/juni
 /libs/application/templates/general-petition/                                                            @island-is/juni
@@ -83,6 +83,8 @@
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
+/libs/application/templates/signature-collection                                                         @island-is/juni
+/libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -122,6 +124,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
+/libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
@@ -135,6 +138,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
+/libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                             @island-is/hugsmidjan
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
@@ -147,10 +151,12 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
 /libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
+/libs/clients/p-card/                                                                                    @island-is/hugsmidjan
 /libs/clients/assets/                                                                                    @island-is/hugsmidjan
 /libs/clients/university-of-iceland/                                                                     @island-is/hugsmidjan
 /libs/clients/regulations-admin/                                                                         @island-is/hugsmidjan
 /libs/clients/inna/                                                                                      @island-is/hugsmidjan
+/libs/clients/hms-loans/                                                                                 @island-is/hugsmidjan
 /apps/services/license-api/                                                                              @island-is/hugsmidjan
 /libs/regulations/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
@@ -279,12 +285,15 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/templates/driving-license-book-update-instructor/                                      @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
 
+/libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
+/libs/clients/directorate-of-immigration/                                                                @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
 
 # DevOps
-/.github/actions/                                                                                        @island-is/devops
-/.github/workflows/                                                                                      @island-is/devops
+/.github/                                                                                                @island-is/devops
 /apps/reference-backend/                                                                                 @island-is/devops
 /apps/github-actions-cache/                                                                              @island-is/devops
 /infra/                                                                                                  @island-is/devops
@@ -293,4 +302,4 @@ libs/clients/rsk/relationships/                                                 
 /scripts/                                                                                                @island-is/devops
 /scripts/postinstall.js                                                                                  @island-is/devops @island-is/core
 /scripts/codegen.js                                                                                      @island-is/devops @island-is/core
-/charts                                                                                                  @island-is/devops
+/charts/                                                                                                 @island-is/devops
