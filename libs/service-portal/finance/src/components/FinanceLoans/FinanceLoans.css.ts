@@ -9,7 +9,23 @@ export const col = style({
   paddingBottom: theme.spacing[3],
 })
 
-export const innerCol = style({
-  display: 'block',
+export const wrapper = style({
+  padding: `${theme.spacing[1]}px`,
   wordBreak: 'break-word',
+  selectors: {
+    '&:nth-child(2n-1)': {
+      background: '#fff',
+    },
+  },
+})
+
+export const label = style({
+  wordBreak: 'break-word',
+  width: '55%',
+})
+
+export const detailsGrid = style({
+  overflow: 'hidden',
+  width: 'auto',
+  marginLeft: '2px',
 })

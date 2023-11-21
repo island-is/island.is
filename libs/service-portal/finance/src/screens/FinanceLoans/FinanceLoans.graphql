@@ -56,8 +56,12 @@ query GetHmsLoansLoanhistory {
   }
 }
 
-query GetHmsLoansPaymenthistory {
-  hmsLoansPaymenthistory {
+query GetHmsLoansLoanhistoryPdf {
+  hmsLoansLoanhistoryPdf
+}
+
+query GetHmsLoansPaymenthistory($input: GetHmsLoansPaymenthistoryInput!) {
+  hmsLoansPaymenthistory(input: $input) {
     paymentDate
     transactionDate
     paymentAmount

@@ -14,6 +14,11 @@ export const m = defineMessages({
     defaultMessage: 'Í gildi',
   },
 
+  download: {
+    id: 'sp.finance-loans:download',
+    defaultMessage: 'Hlaða niður',
+  },
+
   loanNumber: {
     id: 'sp.finance-loans:loan-number',
     defaultMessage: 'Lánsnúmer',
@@ -22,6 +27,14 @@ export const m = defineMessages({
     id: 'sp.finance-loans:interests',
     defaultMessage: 'Vextir',
   },
+  paymentDate: {
+    id: 'sp.finance-loans:payment-date',
+    defaultMessage: 'Gjalddagi',
+  },
+  transactionDate: {
+    id: 'sp.finance-loans:transaction-date',
+    defaultMessage: 'Hreyfingadagur',
+  },
   firstPaymentDate: {
     id: 'sp.finance-loans:first-payment-date',
     defaultMessage: 'Fyrsti gjalddagi',
@@ -29,5 +42,10 @@ export const m = defineMessages({
   originalAmount: {
     id: 'sp.finance-loans:first-payment-date',
     defaultMessage: 'Upphafleg fjárhæð',
+  },
+
+  payment: {
+    id: 'sp.finance-loans:payment',
+    defaultMessage: 'Afborgun',
   },
 })

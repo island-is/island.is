@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver, Args } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 
 import { ApiScope } from '@island.is/auth/scopes'
@@ -14,6 +14,7 @@ import { Audit } from '@island.is/nest/audit'
 
 import { Loanhistory } from './models/loanHistory.model'
 import { Paymenthistory } from './models/paymenthistory.model'
+import { GetHmsLoansPaymenthistoryInput } from './dto/getHmsLoansPaymenthistory.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
@@ -28,12 +29,21 @@ export class HmsLoansResolver {
     return await this.hmsLoansService.getHmsLoansLoanhistory(user)
   }
 
+  @Query(() => String, { name: 'hmsLoansLoanhistoryPdf', nullable: true })
+  @Audit()
+  async getHmsLoansLoanhistoryPdf(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansLoanhistoryPdf(user)
+  }
+
   @Query(() => [Paymenthistory], {
     name: 'hmsLoansPaymenthistory',
     nullable: true,
   })
   @Audit()
-  async getHmsLoansPaymenthistory(@CurrentUser() user: User) {
-    return this.hmsLoansService.getHmsLoansPaymenthistory(user)
+  async getHmsLoansPaymenthistory(
+    @CurrentUser() user: User,
+    @Args('input') input: GetHmsLoansPaymenthistoryInput,
+  ) {
+    return this.hmsLoansService.getHmsLoansPaymenthistory(user, input.loanId)
   }
 }

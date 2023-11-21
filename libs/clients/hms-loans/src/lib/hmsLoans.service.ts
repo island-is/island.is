@@ -15,9 +15,16 @@ export class HmsLoansClientService {
     })
   }
 
-  async getHmsLoansPaymenthistory(user: User) {
-    return this.apiWithAuth(user).apiVversionLibraPaymenthistoryPost({
+  async getHmsLoansLoanhistoryPdf(user: User) {
+    return this.apiWithAuth(user).apiVversionLibraLoanhistorypdfPost({
       version: '1',
+    })
+  }
+
+  async getHmsLoansPaymenthistory(user: User, loanId: number) {
+    return this.apiWithAuth(user).apiVversionLibraPaymenthistorybyloanidPost({
+      version: '1',
+      loanId,
     })
   }
 }

@@ -1,10 +1,4 @@
-import {
-  Box,
-  Text,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as styles from './FinanceLoans.css'
 
 interface Props {
@@ -13,25 +7,19 @@ interface Props {
 
 export const FinanceLoansTableDetail = ({ data }: Props) => {
   return (
-    <Box padding={2} background="blue100">
-      <GridContainer className={styles.grid}>
-        <GridRow>
-          {data.map((item, i) => (
-            <GridColumn key={i} className={styles.col} span="4/12">
-              <Box className={styles.innerCol}>
-                <Text fontWeight="semiBold" variant="medium" as="span">
-                  {item.title}
-                </Text>
-              </Box>
-              <Box className={styles.innerCol}>
-                <Text variant="medium" as="span">
-                  {item.value ?? '-'}
-                </Text>
-              </Box>
-            </GridColumn>
-          ))}
-        </GridRow>
-      </GridContainer>
+    <Box padding={1} marginBottom={4}>
+      {data.map((item, i) => (
+        <Box key={i} display="flex" flexWrap="wrap" className={styles.wrapper}>
+          <Box className={styles.label}>
+            <Text fontWeight="semiBold" variant="small" as="span">
+              {item.title}{' '}
+            </Text>
+          </Box>
+          <Text variant="small" as="span">
+            {item.value ?? '-'}
+          </Text>
+        </Box>
+      ))}
     </Box>
   )
 }
