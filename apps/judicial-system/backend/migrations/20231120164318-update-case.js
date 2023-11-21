@@ -28,7 +28,7 @@ module.exports = {
                   '"',
                 '',
               )
-              console.log(c.court_documents, fix)
+
               return queryInterface.sequelize.query(
                 `UPDATE "case" SET court_documents = '{${fix}}' WHERE id = '${c.id}'`,
                 { transaction: t },
@@ -66,7 +66,7 @@ module.exports = {
                   '"',
                 '',
               )
-              console.log(c.court_documents, fix)
+
               return queryInterface.sequelize.query(
                 `UPDATE "case" SET court_documents = '{${fix}}' WHERE id = '${c.id}'`,
                 { transaction: t },
