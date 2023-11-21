@@ -31,7 +31,8 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, isLoadingAppealBanner } =
+    useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -41,7 +42,7 @@ const CourtOfAppealOverview: React.FC<
 
   return (
     <>
-      {!isLoadingWorkingCase && (
+      {!isLoadingAppealBanner && (
         <AlertBanner
           variant="warning"
           title={title}
