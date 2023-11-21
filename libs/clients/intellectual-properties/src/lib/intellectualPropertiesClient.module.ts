@@ -5,6 +5,6 @@ import { ApiConfig } from './api.config'
 
 @Module({
   providers: [ApiConfig, ...exportedApis, IntellectualPropertiesClientService],
-  exports: [IntellectualPropertiesClientService, ...exportedApis],
+  exports: [IntellectualPropertiesClientService],
 })
 export class IntellectualPropertiesClientModule {}

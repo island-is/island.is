@@ -325,6 +325,16 @@ export const Education = new XroadConf({
   },
 })
 
+export const IntellectualProperties = new XroadConf({
+  env: {
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: {
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      staging: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      prod: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+    },
+  },
+})
+
 export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
