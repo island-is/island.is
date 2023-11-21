@@ -101,12 +101,14 @@ export const AudioPlayer = ({ url, title }: Props) => {
                 }
               </Box>
             </GridColumn>
-            <GridColumn span={'9/12'}>
+            <GridColumn span={['3/12', '2/12', '3/12', '3/12', '3/12']}>
               <Box display="flex" justifyContent="center">
                 <Text variant="small">{`${formatTime(
                   trackProgress,
                 )} / ${formatTime(duration)}`}</Text>
               </Box>
+            </GridColumn>
+            <GridColumn span={['6/12', '7/12', '6/12', '7/12', '7/12']}>
               <ProgressBar
                 progress={audioProgress}
                 onClick={setTimeChange}
