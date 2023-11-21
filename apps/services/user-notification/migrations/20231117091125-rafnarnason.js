@@ -9,16 +9,16 @@ module.exports = {
         primaryKey: true,
         autoIncrement: true
       },
-      message_id: { // snake_case
+      message_id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
         allowNull: false
       },
-      recipient: { // snake_case
+      recipient: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      template_id: { // snake_case
+      template_id: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -36,7 +36,7 @@ module.exports = {
         allowNull: false,
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
       },
-      status: { // enum type
+      status: {
         type: Sequelize.ENUM('read', 'unread'),
         defaultValue: 'unread',
         allowNull: false

@@ -1,7 +1,7 @@
-import { IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsEnum } from 'class-validator';
+import { NotificationStatus } from '../notification.status.enum'
 
 export class UpdateNotificationDto {
-  @IsOptional()
-  @IsBoolean()
-  readonly read?: boolean;
+  @IsEnum(NotificationStatus)
+  status!: NotificationStatus;
 }

@@ -188,50 +188,54 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      // where: { ListId: listId }, // insert sequelize where clause
+      where: { recipient: user.nationalId }
     })
   }
 
-  // async findAll(user: User, cursor?: string, limit = 10): Promise<any> {
-  //   return this.notificationModel.paginate({
-  //     where: {
-  //       recipient: user.nationalId
-  //     },
-  //     order: [['id', 'DESC']],
-  //     limit: limit,
-  //     after: cursor,
-  //   }).then((result) => {
-  //     console.log(result);
-  //   });
-  //   return await this.notificationModel.findAll({
-  //     where: cursor ? {  recipient: user.nationalId, id: { [Op.gt]: cursor } } : {}, // AND nationalId
-  //     limit: limit,
-  //   });
-    
-  // }
 
+  async update(user: User,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
+    // return updateNotificationDto
+    const notification = await this.notificationModel.findOne({
+      where: {
+        id: id,
+        recipient: user.nationalId // Check if the recipient matches the nationalId
+      }
+    });
+  
+    if (!notification) {
+      throw new NotFoundException('Notification not found or does not belong to the user');
+    } else {
+      const updatedItem = {...notification, updateNotificationDto}
+      // return updatedItem
+      return await notification.update(updatedItem);
+    }
+  
 
-  // async update(user: User,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
-  //   const notification = await this.notificationModel.findOne({
-  //     where: {
-  //       id: id,
-  //       recipient: user.nationalId // Check if the recipient matches the nationalId
-  //     }
-  //   });
-  
-  //   if (!notification) {
-  //     throw new NotFoundException('Notification not found or does not belong to the user');
-  //   }
-  
-  //   // Update the notification with the provided DTO
-  //   return await notification.update(updateNotificationDto);
+    // // Update the notification with the provided DTO
+    // return await this.notificationModel.update(updateNotificationDto,{
+    //       where: { id },
+    //       returning: true,
+    //     });
    
+  }
+  
+  // async update(user: User, id: number, updateNotificationDto: UpdateNotificationDto): Promise<Notification> {
+  //   const [numberOfAffectedRows, [updatedItem]] = await this.notificationModel.update(updateNotificationDto, {
+  //     where: { id },
+  //     returning: true,
+  //   });
+
+  //   if (numberOfAffectedRows === 0) {
+  //     throw new NotFoundException(`Item with ID "${id}" not found.`);
+  //   }
+
+  //   return updatedItem;
   // }
 
   
 
-  // Just a test function WHILE DEVELOPING
-  async create(user:User, notificationData: NotificationDTO): Promise<any> {
+  // Just a test function for easy creating WHILE DEVELOPING
+  async create(user:User): Promise<any> {
     const exampleNotificationData = {
       recipient: user.nationalId,
       templateId: "HNIPP.POSTHOLF.NEW_DOCUMENT",
