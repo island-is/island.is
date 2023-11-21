@@ -398,7 +398,7 @@ export class NotificationService {
       theCase.defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
-      theCase.courtCaseNumber,
+      theCase.courtCaseNumber ?? theCase.policeCaseNumbers[0],
     )
 
     return this.sendEmail(
