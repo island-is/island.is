@@ -35,7 +35,7 @@ export const decideChartBase = (
     return types[0] as ChartType
   } else if (types.includes('pie')) {
     // We have multiple types, and pie is one of them
-    console.error(`Pie compnent can not be used with other component types`)
+    console.error(`Pie component can not be used with other component types`)
     return null
   }
 

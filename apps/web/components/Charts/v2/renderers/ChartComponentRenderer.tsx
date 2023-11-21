@@ -63,6 +63,7 @@ type CustomLabelProps = {
   percent: number
   payload?: {
     name?: string
+    value?: string | number
   }
 }
 
@@ -79,8 +80,6 @@ const renderCustomizedLabel = ({
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
 
-  // eslint-disable-next-line
-  // @ts-ignore yes it exists
   const value = payload?.value
 
   return (

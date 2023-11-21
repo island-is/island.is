@@ -90,7 +90,7 @@ export const Chart = ({ slice }: ChartProps) => {
               width={400}
               height={400}
             >
-              {chartUsesGrid && CARTASIAN_GRID_HELPERS.map((helper) => helper)}
+              {chartUsesGrid && CARTESIAN_GRID_HELPERS.map((helper) => helper)}
               {renderLegend({
                 componentsWithAddedProps,
                 data: queryResult.data,
@@ -122,7 +122,7 @@ export const Chart = ({ slice }: ChartProps) => {
   )
 }
 
-const CARTASIAN_GRID_HELPERS = [
+const CARTESIAN_GRID_HELPERS = [
   <CartesianGrid
     stroke="rgb(0, 97, 255, 0.2)"
     strokeDasharray="4 4"
