@@ -170,6 +170,7 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>

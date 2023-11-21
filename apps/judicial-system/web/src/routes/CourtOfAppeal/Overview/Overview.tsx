@@ -132,6 +132,7 @@ const CourtOfAppealOverview: React.FC<
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
             />
           </Box>
           <CaseFilesOverview />
