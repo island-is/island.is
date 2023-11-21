@@ -88,6 +88,13 @@ export const AudioPlayer = ({ url, title }: Props) => {
                         ? 'Pause audio'
                         : 'Play audio'
                     }
+                    aria-label={
+                      hasEnded
+                        ? 'Replay audio'
+                        : isPlaying
+                        ? 'Pause audio'
+                        : 'Play audio'
+                    }
                     onClick={toggleAudio}
                   >
                     <Icon
@@ -124,6 +131,7 @@ export const AudioPlayer = ({ url, title }: Props) => {
               <Box display="flex" justifyContent="center">
                 <button
                   title={isMuted ? 'Unmute audio' : 'Mute audio'}
+                  aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
                   onClick={() => setIsMuted(!isMuted)}
                 >
                   <Icon
@@ -133,13 +141,6 @@ export const AudioPlayer = ({ url, title }: Props) => {
                 </button>
               </Box>
             </GridColumn>
-            {/*}
-    <GridColumn span="1/12">
-      <Box display="flex" justifyContent="center">
-        <Icon icon="ellipsisVertical" color="blue400" />
-      </Box>
-    </GridColumn>
-      */}
           </GridRow>
         </GridContainer>
       </Box>

@@ -150,6 +150,13 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
                         ? 'Pause video'
                         : 'Play video'
                     }
+                    aria-label={
+                      hasEnded
+                        ? 'Replay video'
+                        : isPlaying
+                        ? 'Pause video'
+                        : 'Play video'
+                    }
                     onClick={toggleVideo}
                   >
                     <Icon
@@ -185,6 +192,7 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
               <Box display="flex" justifyContent="center">
                 <button
                   title={isMuted ? 'Unmute video' : 'Mute video'}
+                  aria-label={isMuted ? 'Unmute video' : 'Mute video'}
                   onClick={() => setIsMuted(!isMuted)}
                 >
                   <Icon
@@ -198,6 +206,9 @@ export const VideoPlayer: FC<Props> = ({ url, title }) => {
               <Box display="flex" justifyContent="center">
                 <button
                   title={isFullscreen ? 'Close fullscreen' : 'Open fullscreen'}
+                  aria-label={
+                    isFullscreen ? 'Close fullscreen' : 'Open fullscreen'
+                  }
                   onClick={toggleFullscreen}
                 >
                   <Icon icon="expand" color="blue400" />
