@@ -22,7 +22,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 }) => {
   const { formatMessage } = useLocale()
 
-  const [currentVehiclesList, setVehiclesList] = useState<VehicleMiniDto[]>([])
+  const [currentVehiclesList, setCurrentVehiclesList] = useState<
+    VehicleMiniDto[]
+  >([])
   const [selectedVehiclesList, setSelectedVehiclesList] = useState<
     VehicleMiniDto[]
   >([])
@@ -38,13 +40,16 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
       application.externalData,
     )
 
-    if (selectedVehicles.length > 0) setSelectedVehiclesList(selectedVehicles)
+    if (selectedVehicles.length > 0) {
+      setSelectedVehiclesList(selectedVehicles)
+    }
+
     setAllVehiclesList(vehiclesList)
 
-    if (allVehicles.length > 0) {
-      setVehiclesList(allVehicles)
+    if (selectedVehicles.length > 0) {
+      setCurrentVehiclesList(allVehicles)
     } else {
-      setVehiclesList(vehiclesList)
+      setCurrentVehiclesList(vehiclesList)
     }
   }, [])
 
@@ -86,19 +91,22 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
     const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
 
-    setVehiclesList(filterdVehiclesList)
+    setCurrentVehiclesList(filterdVehiclesList)
   }
 
   function onCancel(vehicle: VehicleMiniDto): void {
-    currentVehiclesList.unshift(vehicle)
-    setSelectedVehiclesList(currentVehiclesList)
-
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
     )
 
     setSelectedVehiclesList(filteredSelectedVehiclesList)
+
+    // Add selected vehicle back to the non selected list
+    setCurrentVehiclesList((vehicles: VehicleMiniDto[]) => [
+      vehicle,
+      ...vehicles,
+    ])
   }
 
   return (
@@ -126,7 +134,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
               filteredList,
             )
 
-            setVehiclesList(result)
+            setCurrentVehiclesList(result)
           }}
         />
       </Box>
