@@ -14,8 +14,9 @@ import {
   formatBirthplace,
   formatHousing,
   formatName,
+  formatChildCustody,
 } from './mapper'
-import { PersonV3 } from '../shared/types'
+import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import {
   Address,
   PersonBase,
@@ -24,7 +25,6 @@ import {
   Citizenship,
   Birthplace,
   Housing,
-  Person,
 } from '../shared/models'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -148,7 +148,7 @@ export class BrokerService {
   async getChildrenCustodyInformation(
     parentNationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
-  ): Promise<Array<PersonV3> | null> {
+  ): Promise<Array<ChildCustodyV3> | null> {
     const parentData =
       rawData ??
       (await this.nationalRegistryV3.getAllDataIndividual(parentNationalId))
@@ -161,24 +161,17 @@ export class BrokerService {
       ? parentData.forsja.born
       : []
 
-    const childDetails: Array<Person | null> = await Promise.all(
-      children.map(async (child) => {
-        if (!child.barnKennitala || !child.barnNafn) {
-          return null
-        }
+    return children.map((c) => formatChildCustody(c)).filter(isDefined)
+  }
 
-        const childData = await this.nationalRegistryV3.getAllDataIndividual(
-          child.barnKennitala,
-        )
+  async getChildDetails(nationalId: string): Promise<PersonV3 | null> {
+    const child = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
 
-        if (!childData) {
-          return null
-        }
+    if (!child) {
+      return null
+    }
 
-        return formatPersonDiscriminated(childData, parentNationalId)
-      }),
-    )
-    return childDetails.filter((child): child is PersonV3 => child != null)
+    return formatPersonDiscriminated(child, nationalId)
   }
 
   async getBirthplace(

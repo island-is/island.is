@@ -6,43 +6,23 @@ import {
   FootNote,
   IntroHeader,
   m,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
-import { useUserInfoOverviewLazyQuery } from './UserInfoOverview.generated'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { useEffect } from 'react'
 import { encrypt } from '@island.is/shared/utils'
+import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
 
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
-  const [getUserInfoOverview, { data, loading, error }] =
-    useUserInfoOverviewLazyQuery()
-
-  /* Should use v3? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      getUserInfoOverview({
-        variables: {
-          api: ffEnabled ? 'v3' : undefined,
-        },
-      })
-    }
-    isFlagEnabled()
-  }, [])
+  const { data, loading, error } = useUserInfoOverviewQuery({
+    variables: { api: 'v3' },
+  })
 
   const { spouse, childCustody } = data?.nationalRegistryPerson || {}
 
@@ -51,7 +31,7 @@ const UserInfoOverview = () => {
       <IntroHeader
         title={m.myInfo}
         intro={spmm.userInfoDesc}
-        serviceProviderID={THJODSKRA_ID}
+        serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
 
@@ -87,7 +67,7 @@ const UserInfoOverview = () => {
             familyRelation="child"
           />
         ))}
-        <FootNote serviceProviderID={THJODSKRA_ID} />
+        <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
       </Stack>
     </>
   )
