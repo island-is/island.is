@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Test } from '@nestjs/testing'
 
 import { NewDiscountService } from '../../newDiscount.service'
@@ -248,7 +249,6 @@ describe('DiscountController', () => {
       const discountCode = 'ABCDEFG'
       const testUser = createTestUser()
       const airlineUser = new AirlineUser(testUser, testUser.fund)
-      const nationalId = testUser.nationalId
       const discount = {
         ...mockDiscount,
         user: testUser,

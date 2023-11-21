@@ -7,7 +7,6 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  Discount as TDiscount,
   NewDiscount as TNewDiscount,
   User as TUser,
 } from '@island.is/air-discount-scheme/types'
@@ -31,21 +30,8 @@ export class NewDiscountService {
     )
   }
 
-  discountIsValid(discount: TDiscount): boolean {
-    const TWO_HOURS = '7200'
-    if (JSON.stringify(discount.expiresIn) < TWO_HOURS) {
-      return false
-    }
-
-    const { total } = discount.user.fund
-    return total >= 1
-  }
-
-  processDiscount(discount: TDiscount): TDiscount {
-    if (!this.discountIsValid(discount)) {
-      discount.discountCode = null
-    }
-    return discount
+  discountIsValid(discount: TNewDiscount): boolean {
+    return discount.active && discount.discountedFlights.length > 0
   }
 
   private handleJSONError(e: FetchError) {
@@ -92,7 +78,6 @@ export class NewDiscountService {
         relation.nationalId,
       )
       if (discount) {
-        // this.processDiscount(discount)
         discounts.push({
           ...discount,
           user: {
