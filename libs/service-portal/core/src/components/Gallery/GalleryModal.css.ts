@@ -6,12 +6,23 @@ export const container = style({
   width: '100%',
   display: 'grid',
   borderRadius: theme.border.radius.large,
-  gridTemplateRows: `${theme.spacing[8]}px 8fr ${theme.spacing[2]}px 2fr`,
-  gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
+  gridTemplateRows: `${theme.spacing[8]}px 2fr ${theme.spacing[1]}px 1fr`,
+  gridTemplateColumns: `${theme.spacing[6]}px 1fr ${theme.spacing[6]}px`,
   gridTemplateAreas:
     '"header header exit""left main right" ". counter ." " swiper swiper swiper"',
   rowGap: '5px',
   backgroundColor: white,
+
+  ...themeUtils.responsiveStyle({
+    md: {
+      gridTemplateRows: `${theme.spacing[8]}px 4fr ${theme.spacing[2]}px 1fr`,
+      gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
+    },
+    lg: {
+      gridTemplateRows: `${theme.spacing[8]}px 5fr ${theme.spacing[2]}px 1fr`,
+      gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
+    },
+  }),
 })
 
 export const modal = style({
@@ -19,15 +30,23 @@ export const modal = style({
   left: '50%',
   top: '50%',
   transform: 'translate(-50%, -50%)',
-  width: '90vw',
-  height: '70vh',
+  aspectRatio: '1/1',
   maxWidth: theme.contentWidth.medium,
   borderRadius: theme.border.radius.large,
   boxShadow: '0px 4px 70px rgba(0, 97, 255, 0.1)',
 
   ...themeUtils.responsiveStyle({
+    xs: {
+      width: '400px',
+    },
+    sm: {
+      width: '440px',
+    },
     md: {
-      width: 'auto',
+      width: '648px',
+    },
+    lg: {
+      width: '800px',
     },
   }),
 })
@@ -77,4 +96,8 @@ export const swiper = style({
 
 export const counter = style({
   gridArea: 'counter',
+})
+
+export const galleryButtonThumbnail = style({
+  width: 'auto',
 })
