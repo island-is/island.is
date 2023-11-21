@@ -18,6 +18,8 @@ interface Props {
   maxDate?: Date | null
   minDate?: Date | null
   className?: string
+  tooltip?: boolean
+  tooltipText?: string
 }
 export const Timeline: FC<Props> = ({
   children,
@@ -25,6 +27,8 @@ export const Timeline: FC<Props> = ({
   maxDate,
   minDate,
   className,
+  tooltip,
+  tooltipText,
 }) => {
   const { isMobile } = useIsMobile()
 
@@ -78,15 +82,17 @@ export const Timeline: FC<Props> = ({
             {currentProgress && (
               <>
                 <ProgressBar progress={currentProgress} />
-                <Tooltip text="Í dag" placement="top">
-                  <Box
-                    position="absolute"
-                    className={styles.tooltip}
-                    style={{
-                      left: `${currentProgress * 100}%`,
-                    }}
-                  />
-                </Tooltip>
+                {tooltip && (
+                  <Tooltip text={tooltipText} placement="top">
+                    <Box
+                      position="absolute"
+                      className={styles.tooltip}
+                      style={{
+                        left: `${currentProgress * 100}%`,
+                      }}
+                    />
+                  </Tooltip>
+                )}
               </>
             )}
           </Box>
