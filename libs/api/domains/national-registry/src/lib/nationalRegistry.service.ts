@@ -15,9 +15,13 @@ export class NationalRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
+  getPerson(
+    nationalId: string,
+    api: 'v1' | 'v3' = 'v1',
+    useFakeData?: boolean,
+  ) {
     return api === 'v3'
-      ? this.v3.getPerson(nationalId)
+      ? this.v3.getPerson(nationalId, undefined, useFakeData)
       : this.v1.getPerson(nationalId)
   }
 
