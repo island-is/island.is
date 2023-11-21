@@ -765,6 +765,15 @@ export const OldAgePensionForm: Form = buildForm({
                   title: oldAgePensionFormMessage.review.confirmTitle,
                   actions: [
                     {
+                      event: DefaultEvents.ABORT,
+                      name: oldAgePensionFormMessage.review.cancelButton,
+                      type: 'reject',
+                      condition: (answers) => {
+                        const { tempAnswers } = getApplicationAnswers(answers)
+                        return !!tempAnswers
+                      },
+                    },
+                    {
                       event: DefaultEvents.SUBMIT,
                       name: oldAgePensionFormMessage.review.confirmTitle,
                       type: 'primary',

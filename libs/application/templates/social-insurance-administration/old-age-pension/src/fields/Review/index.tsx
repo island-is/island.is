@@ -92,6 +92,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
   // TODO: Hvaða states eiga sjá þetta? Mega öll state sjá nema DRAFT og PREREQUISITES? (ekki heldur ADDITIONAL_DOCUMENTS_REQUIRED)
   const canView =
+    state === States.TRYGGINGASTOFNUN_ABORT ||
     state === States.TRYGGINGASTOFNUN_SUBMITTED ||
     state === States.TRYGGINGASTOFNUN_IN_REVIEW ||
     state === States.APPROVED ||
@@ -146,7 +147,8 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
 
           <Box display="flex" columnGap={2} alignItems="center">
-            {state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` && (
+            {(state === `${States.TRYGGINGASTOFNUN_SUBMITTED}` ||
+              state === `${States.TRYGGINGASTOFNUN_ABORT}`) && (
               <Button
                 colorScheme="default"
                 iconType="filled"

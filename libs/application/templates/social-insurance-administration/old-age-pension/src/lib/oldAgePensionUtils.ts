@@ -148,6 +148,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUpload.earlyRetirement',
   ) as FileType[]
 
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   const bankAccountType = getValueViaPath(
     answers,
     'paymentInfo.bankAccountInfo.bankAccountType',
@@ -208,6 +213,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selfEmployedAttachments,
     earlyRetirementAttachments,
     taxLevel,
+    tempAnswers,
     bankAccountType,
     iban,
     swift,
