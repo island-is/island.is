@@ -1,8 +1,12 @@
 import {
-  judgeRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
-  representativeRule,
 } from '../../../../guards'
 import { FileController } from '../../file.controller'
 
@@ -17,11 +21,15 @@ describe('FileController - Delete case file rules', () => {
     )
   })
 
-  it('should give permission to four role', () => {
-    expect(rules).toHaveLength(4)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
+    expect(rules).toContain(districtCourtJudgeRule)
+    expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
+    expect(rules).toContain(courtOfAppealsJudgeRule)
+    expect(rules).toContain(courtOfAppealsRegistrarRule)
+    expect(rules).toContain(courtOfAppealsAssistantRule)
   })
 })

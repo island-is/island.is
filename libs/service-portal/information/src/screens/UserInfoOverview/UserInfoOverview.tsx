@@ -1,50 +1,41 @@
-import React from 'react'
-
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import { Stack } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   CardLoader,
   EmptyState,
+  FootNote,
   IntroHeader,
   m,
+  THJODSKRA_SLUG,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
-import { NATIONAL_REGISTRY_CHILDREN } from '../../lib/queries/getNationalChildren'
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 
 const UserInfoOverview = () => {
   useNamespaces('sp.family')
+  const { formatMessage } = useLocale()
   const userInfo = useUserInfo()
 
-  // Current User
-  const { data, loading, error, called } = useQuery<Query>(
-    NATIONAL_REGISTRY_USER,
-  )
-  const { nationalRegistryUser } = data || {}
+  const { data, loading, error } = useUserInfoOverviewQuery({
+    variables: { api: 'v3' },
+  })
 
-  // User's Children
-  const { data: childrenData, loading: childrenLoading } = useQuery<Query>(
-    NATIONAL_REGISTRY_CHILDREN,
-  )
-  const { nationalRegistryChildren } = childrenData || {}
-
-  const spouseData = nationalRegistryUser?.spouse
+  const { spouse, childCustody } = data?.nationalRegistryPerson || {}
 
   return (
     <>
       <IntroHeader
-        marginBottom={2}
         title={m.myInfo}
         intro={spmm.userInfoDesc}
+        serviceProviderSlug={THJODSKRA_SLUG}
+        serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
 
       <Stack space={2}>
-        {called && !loading && !error && !nationalRegistryUser ? (
+        {!loading && !error && !data?.nationalRegistryPerson ? (
           <EmptyState description={m.noDataPresent} />
         ) : (
           <FamilyMemberCard
@@ -54,24 +45,25 @@ const UserInfoOverview = () => {
           />
         )}
         {loading && <CardLoader />}
-        {spouseData?.nationalId && (
+        {spouse?.nationalId && (
           <FamilyMemberCard
-            key={spouseData.nationalId}
-            title={spouseData?.name || ''}
-            nationalId={spouseData.nationalId}
+            key={spouse.nationalId}
+            title={spouse?.fullName || ''}
+            nationalId={spouse.nationalId}
             familyRelation="spouse"
           />
         )}
-        {childrenLoading &&
+        {loading &&
           [...Array(2)].map((_key, index) => <CardLoader key={index} />)}
-        {nationalRegistryChildren?.map((familyMember) => (
+        {childCustody?.map((child) => (
           <FamilyMemberCard
-            key={familyMember.nationalId}
-            title={familyMember.fullName || familyMember.displayName || ''}
-            nationalId={familyMember.nationalId}
+            key={child.nationalId}
+            title={child.fullName || ''}
+            nationalId={child.nationalId}
             familyRelation="child"
           />
         ))}
+        <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
       </Stack>
     </>
   )

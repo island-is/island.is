@@ -14,10 +14,10 @@ import { useState } from 'react'
 import { menuItems } from '../../components'
 import { checkActiveHeaderLink } from '../../../../utils'
 import * as styles from './MenuModal.css'
-import { MenuLogoMobile } from '../../../../../svg'
 import { useLogIn, useLogOut } from '../../../../../../hooks'
 import { useRouter } from 'next/router'
 import localization from '../../../../Layout.json'
+import { LogoText } from '../../../../../../components'
 
 interface Props {
   baseId: string
@@ -79,11 +79,11 @@ const MenuModal = ({ baseId, modalLabel, isLoggedIn, isFrontPage }: Props) => {
                           href="https://island.is/"
                           alignItems="center"
                         >
-                          <Logo iconOnly width={26} />
+                          <Logo width={28} height={28} iconOnly />
                         </FocusableBox>
                       ) : (
                         <FocusableBox href="/" alignItems="center">
-                          <MenuLogoMobile />
+                          <LogoText isSmall />
                         </FocusableBox>
                       )}
                       <Box

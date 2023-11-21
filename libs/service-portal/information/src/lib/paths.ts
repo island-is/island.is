@@ -1,6 +1,8 @@
 export enum InformationPaths {
   MyInfoRoot = '/min-gogn',
   MyInfoRootOverview = '/min-gogn/yfirlit',
+  SettingsOld = '/stillingar/minar-stillingar/',
+  Settings = '/min-gogn/stillingar/',
   Child = '/min-gogn/yfirlit/barn/:nationalId',
   FamilyMember = '/min-gogn/yfirlit/:nationalId',
   Spouse = '/min-gogn/yfirlit/maki/:nationalId',
@@ -9,4 +11,5 @@ export enum InformationPaths {
   PetitionList = '/min-gogn/listar/:listId',
   PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
   Company = '/fyrirtaeki',
+  SignatureCollectionLists = '/min-gogn/medmaelalistar',
 }

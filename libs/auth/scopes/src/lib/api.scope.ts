@@ -6,6 +6,7 @@ export enum ApiScope {
   financeOverview = '@island.is/finance:overview',
   financeSalary = '@island.is/finance/salary',
   financeSchedule = '@island.is/finance/schedule:read',
+  financeLoans = '@island.is/finance/loans',
   internal = '@island.is/internal',
   internalProcuring = '@island.is/internal:procuring',
   meDetails = '@island.is/me:details',
@@ -16,4 +17,5 @@ export enum ApiScope {
   samradsgatt = '@samradsgatt.island.is/samradsgatt',
   health = '@island.is/health',
   workMachines = '@island.is/work-machines',
+  samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
 }

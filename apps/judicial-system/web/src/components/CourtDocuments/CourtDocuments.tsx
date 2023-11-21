@@ -1,29 +1,30 @@
-import React, { useState, Dispatch, FC } from 'react'
-import cn from 'classnames'
+import React, { Dispatch, FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 import Select, {
+  ClearIndicatorProps,
   components,
   ControlProps,
-  IndicatorProps,
+  DropdownIndicatorProps,
   MenuProps,
   OptionProps,
   PlaceholderProps,
   ValueContainerProps,
 } from 'react-select'
+import cn from 'classnames'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
-import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import {
-  TempCase as Case,
-  ReactSelectOption,
-  CourtDocument,
-} from '@island.is/judicial-system-web/src/types'
-import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { theme } from '@island.is/island-ui/theme'
+import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
+import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CourtDocument,
+  ReactSelectOption,
+  TempCase as Case,
+} from '@island.is/judicial-system-web/src/types'
 
-import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import { useCase } from '../../utils/hooks'
+import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'
 
 interface Props {
@@ -48,12 +49,14 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
       label: formatMessage(courtDocuments.whoFiled.defendant),
     },
     {
-      value: UserRole.JUDGE,
+      value: UserRole.DISTRICT_COURT_JUDGE,
       label: formatMessage(courtDocuments.whoFiled.court),
     },
   ]
 
-  const DropdownIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+  const DropdownIndicator = (
+    props: DropdownIndicatorProps<ReactSelectOption>,
+  ) => {
     return (
       <components.DropdownIndicator {...props}>
         <Icon icon="chevronDown" size="small" color="blue400" />
@@ -102,7 +105,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
     )
   }
 
-  const ClearIndicator = (props: IndicatorProps<ReactSelectOption>) => {
+  const ClearIndicator = (props: ClearIndicatorProps<ReactSelectOption>) => {
     return (
       <components.ClearIndicator {...props}>
         <Icon icon="close" size="small" color="blue400" />

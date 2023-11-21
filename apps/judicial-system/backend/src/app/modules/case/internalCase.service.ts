@@ -1,9 +1,10 @@
-import { Op } from 'sequelize'
 import CryptoJS from 'crypto-js'
-import { Sequelize } from 'sequelize-typescript'
 import format from 'date-fns/format'
+import { Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -11,46 +12,49 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
+
 import { caseTypes } from '@island.is/judicial-system/formatters'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseOrigin,
   CaseState,
   CaseType,
   completedCaseStates,
   isIndictmentCase,
+  isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { uuidFactory, nowFactory } from '../../factories'
+import { nowFactory, uuidFactory } from '../../factories'
 import {
+  createCaseFilesRecord,
   getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  getRequestPdfAsBuffer,
-  createCaseFilesRecord,
-  getRequestPdfAsString,
   getCustodyNoticePdfAsString,
+  getRequestPdfAsBuffer,
+  getRequestPdfAsString,
 } from '../../formatters'
 import { courtUpload } from '../../messages'
-import { CaseEvent, EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
-import { PoliceService } from '../police'
-import { Institution } from '../institution'
-import { User, UserService } from '../user'
 import { Defendant, DefendantService } from '../defendant'
-import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { CaseEvent, EventService } from '../event'
 import { CaseFile, FileService } from '../file'
+import { IndictmentCount, IndictmentCountService } from '../indictment-count'
+import { Institution } from '../institution'
+import { PoliceService } from '../police'
+import { User, UserService } from '../user'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
+import { ArchiveResponse } from './models/archive.response'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
-import { ArchiveResponse } from './models/archive.response'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
 
@@ -443,6 +447,17 @@ export class InternalCaseService {
       }
     }
 
+    // If case is marked with heightened security, there needs to be a valid prosecutor
+    // assigned to it so that it doesn't get lost in the system
+    if (
+      caseToCreate.isHeightenedSecurityLevel &&
+      (!caseToCreate.prosecutorNationalId || !prosecutorId)
+    ) {
+      throw new BadRequestException(
+        'A valid prosecutor is required for heightened security cases',
+      )
+    }
+
     return this.sequelize.transaction(async (transaction) => {
       return this.caseModel
         .create(
@@ -699,6 +714,26 @@ export class InternalCaseService {
     return { delivered }
   }
 
+  async deliverCaseConclusionToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.courtService
+      .updateCaseWithConclusion(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        theCase.decision,
+        theCase.rulingDate,
+        isRestrictionCase(theCase.type) ? theCase.validToDate : undefined,
+        theCase.type === CaseType.CUSTODY && theCase.isCustodyIsolation
+          ? theCase.isolationToDate
+          : undefined,
+      )
+      .then(() => ({ delivered: true }))
+  }
+
   async deliverCaseToPolice(
     theCase: Case,
     user: TUser,
@@ -739,9 +774,11 @@ export class InternalCaseService {
             theCase.validToDate) ||
           new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
+        const originalAncestor = await this.findOriginalAncestor(theCase)
+
         const delivered = await this.policeService.updatePoliceCase(
           user,
-          theCase.id,
+          originalAncestor.id,
           theCase.type,
           theCase.state,
           theCase.policeCaseNumbers.length > 0
@@ -756,6 +793,7 @@ export class InternalCaseService {
           courtRecordPdf as string,
           rulingPdf as string,
           custodyNoticePdf,
+          undefined,
         )
 
         return { delivered }
@@ -768,5 +806,97 @@ export class InternalCaseService {
 
         return { delivered: false }
       })
+  }
+
+  async deliverAppealToPolice(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    return this.refreshFormatMessage()
+      .then(async () => {
+        const appealRuling =
+          theCase.appealState === CaseAppealState.COMPLETED && theCase.caseFiles
+            ? await Promise.all(
+                theCase.caseFiles
+                  .filter(
+                    (file) => file.category === CaseFileCategory.APPEAL_RULING,
+                  )
+                  .map((file) =>
+                    this.awsS3Service
+                      .getObject(file.key ?? '')
+                      .then((pdf) => pdf.toString('binary')),
+                  ),
+              )
+            : []
+        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+          (ids, defendant) =>
+            !defendant.noNationalId && defendant.nationalId
+              ? [...ids, defendant.nationalId]
+              : ids,
+          [],
+        )
+        const validToDate =
+          ([
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+
+        const originalAncestor = await this.findOriginalAncestor(theCase)
+
+        const delivered = await this.policeService.updatePoliceCase(
+          user,
+          originalAncestor.id,
+          theCase.type,
+          theCase.state,
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
+            : '',
+          validToDate,
+          theCase.conclusion ?? '',
+          undefined,
+          undefined,
+          undefined,
+          undefined,
+          appealRuling,
+        )
+
+        return { delivered }
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `Failed to deliver appeal for case ${theCase.id} to police`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async findOriginalAncestor(theCase: Case): Promise<Case> {
+    let originalAncestor: Case = theCase
+
+    while (originalAncestor.parentCaseId) {
+      const parentCase = await this.caseModel.findByPk(
+        originalAncestor.parentCaseId,
+      )
+
+      if (!parentCase) {
+        throw new InternalServerErrorException(
+          `Original ancestor of case ${theCase.id} not found`,
+        )
+      }
+
+      originalAncestor = parentCase
+    }
+
+    return originalAncestor
   }
 }

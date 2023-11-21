@@ -66,7 +66,8 @@ export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
   const showSearchSection = searchTitle && organizationTitle
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   usePlausiblePageview(organization?.trackingDomain)
 
   useEffect(() => {

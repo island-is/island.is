@@ -22,7 +22,11 @@ import {
 } from './helpers/applicantHelper'
 
 import { ApiActions } from '../dataProviders/apiActions.enum'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+  coreHistoryMessages,
+} from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
 import { States } from './types'
 import { dataSchema } from './dataSchema'
@@ -51,7 +55,15 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Prerequisites',
           status: 'draft',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationStarted,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -111,6 +123,14 @@ const template: ApplicationTemplate<
           status: 'inprogress',
           onExit: EhicApplyForPhysicalAndTemporary,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.SUBMIT,
+                logMessage: coreHistoryMessages.applicationApproved,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -166,7 +186,6 @@ const template: ApplicationTemplate<
               api: [EhicGetTemporaryCardApi],
               write: 'all',
               read: 'all',
-              delete: true,
             },
           ],
         },
@@ -184,6 +203,7 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/Declined').then((val) => val.Declined),
               read: 'all',
+              delete: true,
             },
           ],
         },
@@ -201,6 +221,7 @@ const template: ApplicationTemplate<
               formLoader: () =>
                 import('../forms/NoApplicants').then((val) => val.NoApplicants),
               read: 'all',
+              delete: true,
             },
           ],
         },

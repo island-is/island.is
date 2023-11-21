@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Text } from '@island.is/island-ui/core'
 
 import * as styles from '../Table.css'

@@ -14,9 +14,11 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import {
   estateTransformer,
-  filterAndRemoveRepeaterMetadata,
+  generateRawUploadData,
+  getFakeData,
+  stringifyObject,
   transformUploadDataToPDFStream,
-} from './utils'
+} from './utils/'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -95,20 +97,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     return true
   }
 
-  stringifyObject(obj: UploadData): Record<string, string> {
-    const result: Record<string, string> = {}
-    // Curiously: https://github.com/Microsoft/TypeScript/issues/12870
-    for (const key of Object.keys(obj) as Array<keyof typeof obj>) {
-      if (typeof obj[key] === 'string') {
-        result[key] = obj[key] as string
-      } else {
-        result[key] = JSON.stringify(obj[key])
-      }
-    }
-
-    return result
-  }
-
   async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     let estateResponse: EstateInfo
     if (
@@ -116,97 +104,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       (application.applicant.endsWith('2399') ||
         application.applicant.endsWith('7789'))
     ) {
-      estateResponse = {
-        addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
-        cash: [],
-        marriageSettlement: false,
-        assets: [
-          {
-            assetNumber: 'F2318696',
-            description: 'Íbúð í Reykjavík',
-            share: 1,
-          },
-          {
-            assetNumber: 'F2262202',
-            description: 'Raðhús á Akureyri',
-            share: 1,
-          },
-        ],
-        vehicles: [
-          {
-            assetNumber: 'VA334',
-            description: 'Nissan Terrano II',
-            share: 1,
-          },
-          {
-            assetNumber: 'YZ927',
-            description: 'Subaru Forester',
-            share: 1,
-          },
-        ],
-        knowledgeOfOtherWills: 'Yes',
-        ships: [],
-        flyers: [],
-        guns: [
-          {
-            assetNumber: '009-2018-0505',
-            description: 'Framhlaðningur (púður)',
-            share: 1,
-          },
-          {
-            assetNumber: '007-2018-1380',
-            description: 'Mauser P38',
-            share: 1,
-          },
-        ],
-        estateMembers: [
-          {
-            name: 'Gervimaður Afríka',
-            relation: 'Sonur',
-            nationalId: '0101303019',
-          },
-          {
-            name: 'Gervimaður Færeyja',
-            relation: 'Maki',
-            nationalId: '0101302399',
-          },
-          {
-            name: 'Gervimaður Bretland',
-            relation: 'Faðir',
-            nationalId: '0101304929',
-          },
-        ],
-        caseNumber: '2020-000123',
-        dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
-        nameOfDeceased: 'Lizzy B. Gone',
-        nationalIdOfDeceased: '0101301234',
-        districtCommissionerHasWill: true,
-      }
-
-      const fakeAdvocate = {
-        name: 'Gervimaður Evrópa',
-        address: 'Gerviheimili 123, 600 Feneyjar',
-        nationalId: '0101302719',
-        email: 'evropa@gervi.com',
-      }
-
-      const fakeChild = {
-        name: 'Gervimaður Undir 18 án málsvara',
-        relation: 'Barn',
-        // This kennitala is for Gervimaður Ísak Miri ÞÍ Jarrah
-        // This test will stop serving its purpose on the 24th of September 2034
-        // eslint-disable-next-line local-rules/disallow-kennitalas
-        nationalId: '2409151460',
-      }
-
-      if (application.applicant.endsWith('7789')) {
-        estateResponse.estateMembers.push(fakeChild)
-      } else {
-        estateResponse.estateMembers.push({
-          ...fakeChild,
-          advocate: fakeAdvocate,
-        })
-      }
+      estateResponse = getFakeData(application)
     } else {
       estateResponse = (
         await this.syslumennService.getEstateInfo(application.applicant)
@@ -232,113 +130,35 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const externalData = application.externalData.syslumennOnEntry
       ?.data as EstateSchema
 
+    const applicantData = application.answers
+      .applicant as EstateSchema['applicant']
+
     const person: Person = {
       name: nationalRegistryData?.fullName,
       ssn: application.applicant,
-      phoneNumber: application.answers.applicantPhone as string,
+      phoneNumber: applicantData.phone,
       city: nationalRegistryData?.address.city,
       homeAddress: nationalRegistryData?.address.streetAddress,
       postalCode: nationalRegistryData?.address.postalCode,
       signed: false,
       type: PersonType.AnnouncerOfDeathCertificate,
-      email: application.answers.applicantEmail as string,
+      email: applicantData.email,
     }
 
     const uploadDataName = 'danarbusskipti1.0'
     const uploadDataId = 'danarbusskipti1.0'
-
     const answers = application.answers as unknown as EstateSchema
 
-    const relation =
-      externalData?.estate.estateMembers?.find(
-        (member) => member.nationalId === application.applicant,
-      )?.relation ?? 'Óþekkt'
-
-    const processedAssets = filterAndRemoveRepeaterMetadata<
-      EstateSchema['estate']['assets']
-    >(answers?.estate?.assets ?? externalData?.estate?.assets ?? [])
-
-    const processedVehicles = filterAndRemoveRepeaterMetadata<
-      EstateSchema['estate']['vehicles']
-    >(answers?.estate?.vehicles ?? externalData?.estate?.vehicles ?? [])
-
-    const processedEstateMembers = filterAndRemoveRepeaterMetadata<
-      EstateSchema['estate']['estateMembers']
-    >(
-      answers?.estate?.estateMembers ??
-        externalData?.estate?.estateMembers ??
-        [],
-    )
-
-    const uploadData: UploadData = {
-      deceased: {
-        name: externalData.estate.nameOfDeceased ?? '',
-        ssn: externalData.estate.nationalIdOfDeceased ?? '',
-        dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
-        address: externalData.estate.addressOfDeceased ?? '',
-      },
-      districtCommissionerHasWill: answers.estate?.testament?.wills ?? '',
-      settlement: answers.estate?.testament?.agreement ?? '',
-      dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
-      remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
-      guns: answers.estate?.guns ?? [],
-      applicationType: answers.selectedEstate,
-      caseNumber: externalData?.estate?.caseNumber ?? '',
-      assets: processedAssets,
-      claims: answers.claims ?? [],
-      bankAccounts: answers.bankAccounts ?? [],
-      debts: answers.debts ?? [],
-      estateMembers: processedEstateMembers,
-      inventory: {
-        info: answers.inventory?.info ?? '',
-        value: answers.inventory?.value ?? '',
-      },
-      moneyAndDeposit: {
-        info: answers.moneyAndDeposit?.info ?? '',
-        value: answers.moneyAndDeposit?.value ?? '',
-      },
-      notifier: {
-        email: answers.applicant.email ?? '',
-        name: answers.applicant.name,
-        phoneNumber: answers.applicant.phone,
-        relation: relation ?? '',
-        ssn: answers.applicant.nationalId,
-      },
-      otherAssets: {
-        info: answers.otherAssets?.info ?? '',
-        value: answers.otherAssets?.value ?? '',
-      },
-      stocks: answers.stocks ?? [],
-      vehicles: processedVehicles,
-      ...(answers.representative?.name
-        ? {
-            representative: {
-              email: answers.representative.email ?? '',
-              name: answers.representative.name,
-              phoneNumber: answers.representative.phone ?? '',
-              ssn: answers.representative.nationalId ?? '',
-            },
-          }
-        : { representative: undefined }),
-      ...(answers.deceasedWithUndividedEstate?.spouse?.nationalId
-        ? {
-            deceasedWithUndividedEstate: {
-              spouse: {
-                name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
-                nationalId:
-                  answers.deceasedWithUndividedEstate.spouse.nationalId,
-              },
-              selection: answers.deceasedWithUndividedEstate.selection ?? '',
-            },
-          }
-        : { deceasedWithUndividedEstate: undefined }),
-    }
+    const uploadData = generateRawUploadData(answers, externalData, application)
+    // We deep copy the pdfData since the transform function
+    // for the PDF creation mutates the object
+    const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
 
     // Convert form data to a PDF backup for syslumenn
     const pdfBuffer = await transformUploadDataToPDFStream(
-      uploadData,
+      pdfData,
       application.id,
     )
     attachments.push({
@@ -370,7 +190,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       .uploadData(
         [person],
         attachments,
-        this.stringifyObject(uploadData),
+        stringifyObject(uploadData),
         uploadDataName,
         uploadDataId,
       )

@@ -24,6 +24,8 @@ import {
   serializeEnvironmentVariables,
 } from './serialization-helpers'
 
+import { getScaledValue } from '../utils/scale-value'
+
 /**
  * Transforms our definition of a service to a Helm values object
  * @param service Our service definition
@@ -56,9 +58,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
-      NODE_OPTIONS: `--max-old-space-size=${
-        parseInt(serviceDef.resources.limits.memory, 10) - 48
-      }`,
+      NODE_OPTIONS: `--max-old-space-size=${getScaledValue(
+        serviceDef.resources.limits.memory,
+      )}`,
     },
     secrets: {},
     healthCheck: {
@@ -334,6 +336,8 @@ function serializeIngress(
 
   return {
     annotations: {
+      'nginx.ingress.kubernetes.io/service-upstream':
+        ingressConf.serviceUpstream ?? true ? 'true' : 'false',
       'kubernetes.io/ingress.class':
         ingressConf.public ?? true
           ? 'nginx-external-alb'
@@ -353,6 +357,7 @@ function serializeVolumes(
     name?: string
     size: string
     accessModes: AccessModes
+    useExisting?: boolean
     mountPath: string
     storageClass?: string
   }[],
@@ -371,6 +376,7 @@ function serializeVolumes(
   const results: OutputPersistentVolumeClaim[] = volumes.map((volume) => ({
     name: volume.name ?? `${service.name}`,
     size: volume.size,
+    useExisting: volume.useExisting ?? false,
     mountPath: volume.mountPath,
     storageClass: 'efs-csi',
     accessModes: mapping[volume.accessModes],
@@ -382,6 +388,7 @@ function serializeVolumes(
 function serializeContainerRuns(
   containers: {
     command: string
+    image?: string
     args?: string[]
     name?: string
     resources?: Resources
@@ -391,6 +398,7 @@ function serializeContainerRuns(
     let result: ContainerRunHelm = {
       command: [c.command],
       args: c.args,
+      image: c.image,
       resources: {
         limits: {
           memory: '256Mi',

@@ -10,8 +10,9 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -20,20 +21,20 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { prosecutorRule } from '../../guards'
+import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import {
   Case,
   CaseExistsGuard,
-  CaseReadGuard,
   CaseNotCompletedGuard,
   CaseOriginalAncestorInterceptor,
+  CaseReadGuard,
   CurrentCase,
 } from '../case'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { PoliceService } from './police.service'
-import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 @UseGuards(
   JwtAuthGuard,
@@ -50,7 +51,7 @@ export class PoliceController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeFiles')
   @ApiOkResponse({
@@ -68,7 +69,7 @@ export class PoliceController {
     return this.policeService.getAllPoliceCaseFiles(theCase.id, user)
   }
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @UseInterceptors(CaseOriginalAncestorInterceptor)
   @Get('policeCaseInfo')
   @ApiOkResponse({
@@ -86,7 +87,7 @@ export class PoliceController {
     return this.policeService.getPoliceCaseInfo(theCase.id, user)
   }
 
-  @RolesRules(prosecutorRule)
+  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
   @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,

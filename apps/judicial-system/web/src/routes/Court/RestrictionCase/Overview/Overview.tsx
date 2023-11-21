@@ -3,49 +3,49 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
-  Text,
   Accordion,
   AccordionItem,
+  AlertMessage,
   Box,
   Button,
-  AlertMessage,
+  Text,
 } from '@island.is/island-ui/core'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
-  FormFooter,
-  PageLayout,
-  FormContentContainer,
-  PdfButton,
-  CaseFilesAccordionItem,
-  CommentsAccordionItem,
-  AccordionListItem,
-  InfoCard,
-  FormContext,
-  UserContext,
-  CourtCaseInfo,
-  CaseResentExplanation,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
-import {
-  UploadState,
-  useCourtUpload,
-  useCase,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  titles,
-  ruling,
-  rcCourtOverview,
   core,
   laws,
+  rcCourtOverview,
   requestCourtDate,
   restrictionsV2,
+  ruling,
+  titles,
 } from '@island.is/judicial-system-web/messages'
-import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFilesAccordionItem,
+  CaseResentExplanation,
+  CommentsAccordionItem,
+  CourtCaseInfo,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  UploadState,
+  useCase,
+  useCourtUpload,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 
 import { DraftConclusionModal } from '../../components'
 

@@ -1,4 +1,4 @@
-import { defenderRule } from '../../../../guards'
+import { defenderRule, prisonSystemStaffRule } from '../../../../guards'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
 
 describe('LimitedAccessCaseController - Get court record pdf rules', () => {
@@ -12,8 +12,9 @@ describe('LimitedAccessCaseController - Get court record pdf rules', () => {
     )
   })
 
-  it('should give permission to one role', () => {
-    expect(rules).toHaveLength(1)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(2)
     expect(rules).toContain(defenderRule)
+    expect(rules).toContain(prisonSystemStaffRule)
   })
 })

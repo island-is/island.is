@@ -11,7 +11,6 @@ import {
   Stack,
   Checkbox,
   Button,
-  Option,
   InputFileUpload,
   UploadFile,
 } from '@island.is/island-ui/core'
@@ -121,6 +120,8 @@ export const FormField = ({
           value={
             options.find((o) => o.value === value) ?? { label: value, value }
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => onChange(slug, value as string)}
           hasError={!!error}
           errorMessage={error}
@@ -223,18 +224,26 @@ type ErrorData = {
 
 export const Form = ({ form, namespace }: FormProps) => {
   const n = useNamespace(namespace)
+  const defaultNamespace = form.defaultFieldNamespace
 
-  const [data, setData] = useState<Record<string, string>>(() =>
-    Object.fromEntries(
-      form.fields
-        .filter((field) => field.type !== FormFieldType.INFORMATION)
-        .map((field): [string, string] => [slugify(field.title), ''])
-        .concat([
-          ['name', ''],
-          ['email', ''],
-        ]),
-    ),
-  )
+  const defaultNameFieldIsShown = defaultNamespace?.displayNameField ?? true
+  const defaultEmailFieldIsShown = defaultNamespace?.displayEmailField ?? true
+
+  const [data, setData] = useState<Record<string, string>>(() => {
+    const fields = form.fields
+      .filter((field) => field.type !== FormFieldType.INFORMATION)
+      .map((field): [string, string] => [slugify(field.title), ''])
+
+    if (defaultNameFieldIsShown) {
+      fields.push(['name', ''])
+    }
+
+    if (defaultEmailFieldIsShown) {
+      fields.push(['email', ''])
+    }
+
+    return Object.fromEntries(fields)
+  })
   const [fileList, setFileList] = useState<Record<string, UploadFile[]>>(() =>
     Object.fromEntries(
       form.fields
@@ -345,14 +354,27 @@ export const Form = ({ form, namespace }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
   }
 
   const formatBody = (data: Record<string, string>) => {
-    return `Sendandi: ${data['name']} <${data['email']}>\n\n`.concat(
+    let firstLine = ''
+
+    if (data['name']) {
+      firstLine += `Sendandi: ${data['name']}`
+      if (data['email']) {
+        firstLine += ` <${data['email']}>`
+      }
+      firstLine += '\n\n'
+    } else if (data['email']) {
+      firstLine += `Sendandi: <${data['email']}>\n\n`
+    }
+
+    return firstLine.concat(
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
@@ -518,9 +540,11 @@ export const Form = ({ form, namespace }: FormProps) => {
           variables: {
             input: {
               id: form.id,
-              name: data['name'],
-              email: data['email'],
+              name: data['name'] ?? '',
+              email: data['email'] ?? '',
               message: formatBody(_data),
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               files: files.map((f) => f[1]).flat(),
               recipientFormFieldDeciderValue:
                 getRecipientFormFieldDeciderValue(),
@@ -578,30 +602,44 @@ export const Form = ({ form, namespace }: FormProps) => {
             {form.aboutYouHeadingText}
           </Text>
           <Stack space={4}>
-            <Input
-              placeholder={n('formNamePlaceholder', 'Nafnið þitt')}
-              name="name"
-              label={n('formFullName', 'Fullt nafn')}
-              required={true}
-              value={data['name'] ?? ''}
-              hasError={!!errors.find((error) => error.field === 'name')}
-              errorMessage={
-                errors.find((error) => error.field === 'name')?.error
-              }
-              onChange={(e) => onChange('name', e.target.value)}
-            />
-            <Input
-              placeholder={n('formEmailPlaceholder', 'Netfang')}
-              name="email"
-              label={n('formEmail', 'Netfang')}
-              required={true}
-              value={data['email'] ?? ''}
-              hasError={!!errors.find((error) => error.field === 'email')}
-              errorMessage={
-                errors.find((error) => error.field === 'email')?.error
-              }
-              onChange={(e) => onChange('email', e.target.value)}
-            />
+            {defaultNameFieldIsShown && (
+              <Input
+                placeholder={
+                  defaultNamespace?.namePlaceholder ??
+                  n('formNamePlaceholder', 'Nafnið þitt')
+                }
+                name="name"
+                label={
+                  defaultNamespace?.nameLabel ?? n('formFullName', 'Fullt nafn')
+                }
+                required={true}
+                value={data['name'] ?? ''}
+                hasError={!!errors.find((error) => error.field === 'name')}
+                errorMessage={
+                  errors.find((error) => error.field === 'name')?.error
+                }
+                onChange={(e) => onChange('name', e.target.value)}
+              />
+            )}
+            {defaultEmailFieldIsShown && (
+              <Input
+                placeholder={
+                  defaultNamespace?.emailPlaceholder ??
+                  n('formEmailPlaceholder', 'Netfang')
+                }
+                name="email"
+                label={
+                  defaultNamespace?.emailLabel ?? n('formEmail', 'Netfang')
+                }
+                required={true}
+                value={data['email'] ?? ''}
+                hasError={!!errors.find((error) => error.field === 'email')}
+                errorMessage={
+                  errors.find((error) => error.field === 'email')?.error
+                }
+                onChange={(e) => onChange('email', e.target.value)}
+              />
+            )}
           </Stack>
           <Text variant="h5" color="blue600" marginBottom={2} marginTop={4}>
             {form.questionsHeadingText}

@@ -1,4 +1,4 @@
-import { defineMessages, defineMessage } from 'react-intl'
+import { defineMessage, defineMessages } from 'react-intl'
 
 export const cases = {
   tags: defineMessages({
@@ -170,9 +170,9 @@ export const cases = {
       description:
         'Notaður sem texti í upplýsingasvæði sem segir að engin afgreidd mál fundust á heimaskjá.',
     }),
-    highCourtUsers: defineMessages({
+    courtOfAppealsUsers: defineMessages({
       title: {
-        id: 'judicial.system.core:cases.past_requests.high_court_users.title',
+        id: 'judicial.system.core:cases.past_requests.court_of_appeals_users.title',
         defaultMessage: 'Kærðir úrskurðir',
         description:
           'Notaður sem titill í seinni málalista á heimaskjá landsréttarnotanda.',

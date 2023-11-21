@@ -1,12 +1,12 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { core } from '@island.is/judicial-system-web/messages'
 import { AlertBanner } from '@island.is/island-ui/core'
 import {
-  isProsecutionRole,
-  isExtendedCourtRole,
+  isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import { core } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 
@@ -26,15 +26,13 @@ const ServiceInterruptionBanner: React.FC<
   if (message && message !== 'NONE') {
     displayMessage = message
   } else if (
-    user?.role &&
-    isProsecutionRole(user.role) &&
+    isProsecutionUser(user) &&
     prosecutorMessage &&
     prosecutorMessage !== 'NONE'
   ) {
     displayMessage = prosecutorMessage
   } else if (
-    user?.role &&
-    isExtendedCourtRole(user.role) &&
+    isDistrictCourtUser(user) &&
     courtMessage &&
     courtMessage !== 'NONE'
   ) {

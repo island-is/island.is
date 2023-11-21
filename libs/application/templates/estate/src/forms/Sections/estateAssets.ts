@@ -9,6 +9,8 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
+import { application } from 'express'
+import { getAssetDescriptionText } from '../../lib/utils'
 
 export const estateAssets = buildSection({
   id: 'estateProperties',
@@ -27,13 +29,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
               title: m.realEstate,
               description: m.realEstateDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField({
               title: '',
@@ -51,13 +54,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'inventory',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'membersOfEstateTitle',
               title: m.inventoryTitle,
               description: m.inventoryDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'inventory.info',
@@ -83,13 +87,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
               title: m.vehicles,
               description: m.vehiclesDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -118,13 +123,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'realEstate',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'gunsTitle',
               title: m.guns,
               description: m.gunsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -153,13 +159,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
               title: m.estateBankInfo,
               description: m.estateBankInfoDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -195,13 +202,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'claims',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
               title: m.claimsTitle,
               description: m.claimsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -236,13 +244,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'stocks',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
               title: m.stocksTitle,
               description: m.stocksDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildCustomField(
               {
@@ -264,12 +273,10 @@ export const estateAssets = buildSection({
                   {
                     title: m.stocksFaceValue.defaultMessage,
                     id: 'faceValue',
-                    type: 'number',
                   },
                   {
                     title: m.stocksRateOfChange.defaultMessage,
                     id: 'rateOfExchange',
-                    type: 'number',
                   },
                   {
                     title: m.stocksValue.defaultMessage,
@@ -293,13 +300,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'moneyAndDeposit',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'moneyAndDepositTitle',
               title: m.moneyAndDepositTitle,
               description: m.moneyAndDepositDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'moneyAndDeposit.info',
@@ -325,13 +333,14 @@ export const estateAssets = buildSection({
         buildMultiField({
           id: 'otherAssets',
           title: m.propertiesTitle,
-          description: m.propertiesDescription,
+          description: (application) => getAssetDescriptionText(application),
           children: [
             buildDescriptionField({
               id: 'otherAssetsTitle',
               title: m.otherAssetsTitle,
               description: m.otherAssetsDescription,
               titleVariant: 'h3',
+              marginBottom: 2,
             }),
             buildTextField({
               id: 'otherAssets.info',

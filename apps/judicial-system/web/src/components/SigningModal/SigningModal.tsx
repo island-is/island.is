@@ -1,35 +1,35 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   ApolloError,
   FetchResult,
   MutationFunctionOptions,
 } from '@apollo/client'
-import { useIntl } from 'react-intl'
 
+import { Box, Text, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  core,
+  errors as errorMessages,
+} from '@island.is/judicial-system-web/messages'
 import {
   CaseType,
   Exact,
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { Box, Text, toast } from '@island.is/island-ui/core'
-import {
-  core,
-  errors as errorMessages,
-} from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
+import { Modal } from '..'
+import {
+  GetRulingSignatureConfirmationQuery,
+  useGetRulingSignatureConfirmationQuery,
+} from './getRulingSignatureConfirmation.generated'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
 } from './requestRulingSignature.generated'
-import {
-  useGetRulingSignatureConfirmationQuery,
-  GetRulingSignatureConfirmationQuery,
-} from './getRulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
 const ControlCode: React.FC<

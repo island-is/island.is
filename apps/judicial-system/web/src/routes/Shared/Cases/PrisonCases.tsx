@@ -1,22 +1,22 @@
 import React, { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
+import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Logo,
-  SectionHeading,
-  UserContext,
-  SharedPageLayout,
-  PastCasesTable,
   PageHeader,
+  PastCasesTable,
+  SectionHeading,
+  SharedPageLayout,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
@@ -48,9 +48,7 @@ export const PrisonCases: React.FC = () => {
     }, [resCases])
 
   const handleRowClick = (id: string) => {
-    getCaseToOpen({
-      variables: { input: { id } },
-    })
+    getCaseToOpen(id)
   }
 
   return (

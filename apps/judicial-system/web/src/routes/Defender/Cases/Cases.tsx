@@ -8,16 +8,14 @@ import {
   CaseListEntry,
   completedCaseStates,
 } from '@island.is/judicial-system/types'
-
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import { PageHeader } from '@island.is/judicial-system-web/src/components'
-import { titles, errors } from '@island.is/judicial-system-web/messages'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
 import useFilterCases, { Filters } from './hooks/useFilterCases'
-
 import { defenderCases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -106,33 +104,55 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
             id: 'active',
             label: formatMessage(m.activeCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={activeFilteredCases}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {activeCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={activeFilteredCases}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noActiveCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
           {
             id: 'completed',
             label: formatMessage(m.completedCasesTabLabel),
             content: (
-              <Box>
-                <FilterCheckboxes
-                  filters={filters}
-                  toggleFilter={toggleFilters}
-                />
-                <DefenderCasesTable
-                  cases={completedFilteredCases}
-                  showingCompletedCases={true}
-                  loading={loading}
-                />
-              </Box>
+              <div>
+                {completedCases.length > 0 || loading ? (
+                  <Box>
+                    <FilterCheckboxes
+                      filters={filters}
+                      toggleFilter={toggleFilters}
+                    />
+                    <DefenderCasesTable
+                      cases={completedFilteredCases}
+                      showingCompletedCases={true}
+                      loading={loading}
+                    />
+                  </Box>
+                ) : (
+                  <Box className={styles.infoContainer} marginTop={3}>
+                    <AlertMessage
+                      type="info"
+                      message={formatMessage(m.noCompletedCases)}
+                    />
+                  </Box>
+                )}
+              </div>
             ),
           },
         ]}

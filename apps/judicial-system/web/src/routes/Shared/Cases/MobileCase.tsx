@@ -1,20 +1,19 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import format from 'date-fns/format'
+import parseISO from 'date-fns/parseISO'
 
-import { Box, Text, FocusableBox } from '@island.is/island-ui/core'
-
+import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { tables } from '@island.is/judicial-system-web/messages'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { displayCaseType } from './utils'
 import * as styles from './MobileCase.css'
-import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
-import { tables } from '@island.is/judicial-system-web/messages'
 
 interface CategoryCardProps {
   heading: string | React.ReactNode

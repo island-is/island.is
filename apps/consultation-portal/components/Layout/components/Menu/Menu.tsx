@@ -15,13 +15,13 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './Menu.css'
 import React, { useContext } from 'react'
-import { MenuLogo, MenuLogoMobile } from '../../../svg'
 import { menuItems, MenuModal } from './components'
 import { useIsMobile, useLogIn, useLogOut } from '../../../../hooks'
 import { checkActiveHeaderLink } from '../../utils'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../../../context'
 import localization from '../../Layout.json'
+import { LogoText } from '../../../../components/'
 
 type MenuProps = {
   isFrontPage?: boolean
@@ -46,27 +46,42 @@ const Menu = ({ isFrontPage = false }: MenuProps) => {
           <GridRow>
             <GridColumn span="12/12" paddingTop={3} paddingBottom={3}>
               <Columns alignY="center" space={2}>
-                <Column width="content">
-                  {isFrontPage ? <Logo /> : !isMobile && <Logo iconOnly />}
-                </Column>
+                {isFrontPage && (
+                  <Column width="content">
+                    <FocusableBox href="https://island.is">
+                      <Logo
+                        iconOnly={isMobile ? true : false}
+                        width={isMobile ? 28 : 160}
+                        height={isMobile ? 28 : 28}
+                      />
+                    </FocusableBox>
+                  </Column>
+                )}
                 {!isFrontPage && (
                   <>
                     {!isMobile && (
-                      <Column width="content">
-                        <Box
-                          style={{
-                            transform: 'rotate(90deg)',
-                            width: 56,
-                          }}
-                          marginX={1}
-                        >
-                          <Divider />
-                        </Box>
-                      </Column>
+                      <>
+                        <Column width="content">
+                          <FocusableBox href="https://island.is">
+                            <Logo iconOnly height={28} width={28} />
+                          </FocusableBox>
+                        </Column>
+                        <Column width="content">
+                          <Box
+                            style={{
+                              transform: 'rotate(90deg)',
+                              width: 56,
+                            }}
+                            marginX={1}
+                          >
+                            <Divider />
+                          </Box>
+                        </Column>
+                      </>
                     )}
                     <Column width="content">
                       <FocusableBox href="/" alignItems="center">
-                        {isMobile ? <MenuLogoMobile /> : <MenuLogo />}
+                        <LogoText isSmall />
                       </FocusableBox>
                     </Column>
                   </>

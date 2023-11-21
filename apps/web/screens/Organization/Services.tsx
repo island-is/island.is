@@ -12,7 +12,6 @@ import {
   GridContainer,
   GridRow,
   Select,
-  Option,
   Input,
   Inline,
   Tag,
@@ -25,6 +24,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetOrganizationPageArgs,
   SortField,
+  Article,
 } from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -42,6 +42,7 @@ import {
 import { CustomNextError } from '@island.is/web/units/errors'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 interface ServicesPageProps {
   organizationPage: Query['getOrganizationPage']
@@ -66,12 +67,15 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   namespace,
 }) => {
   const router = useRouter()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
   useContentfulId(organizationPage?.id)
   useLocalLinkTypeResolver()
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
     ({ primaryLink, childrenLinks }) => ({
       title: primaryLink?.text,
@@ -111,13 +115,19 @@ const ServicesPage: Screen<ServicesPageProps> = ({
     (x) =>
       x.title.toLowerCase().includes(parameters.query.toLowerCase()) &&
       (parameters.categories.length === 0 ||
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         parameters.categories.includes(x.category?.slug)) &&
       (parameters.groups.length === 0 ||
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         parameters.groups.includes(x.group?.slug)),
   )
 
   groups = groups.filter((x) =>
     services
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       .filter((x) => parameters.categories.includes(x.category?.slug))
       .map((x) => x.group?.slug)
       .includes(x.value),
@@ -126,7 +136,11 @@ const ServicesPage: Screen<ServicesPageProps> = ({
   return (
     <OrganizationWrapper
       pageTitle={n('services', 'Þjónusta')}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       organizationPage={organizationPage}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       pageFeaturedImage={organizationPage?.featuredImage}
       fullWidthContent={false}
       stickySidebar={false}
@@ -153,7 +167,13 @@ const ServicesPage: Screen<ServicesPageProps> = ({
             <Text variant="h1" as="h1" marginBottom={0} marginTop={1}>
               {n('allServices', 'Öll þjónusta')}
             </Text>
-            <Webreader marginBottom={4} readId={null} readClass="rs_read" />
+            <Webreader
+              marginBottom={4}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              readId={null}
+              readClass="rs_read"
+            />
           </GridColumn>
         </GridRow>
         <GridRow marginBottom={4}>
@@ -191,9 +211,13 @@ const ServicesPage: Screen<ServicesPageProps> = ({
                 },
                 ...categories,
               ]}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
                 setParameters({
                   ...parameters,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   categories: value ? [value] : [],
                   groups: [],
                 })
@@ -210,10 +234,14 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               <Tag
                 key={x.value}
                 variant="blue"
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 active={parameters.groups.includes(x.value)}
                 onClick={() =>
                   setParameters({
                     ...parameters,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     groups: parameters.groups.includes(x.value)
                       ? []
                       : [x.value],
@@ -238,11 +266,15 @@ const ServicesPage: Screen<ServicesPageProps> = ({
               {({ isFocused }) => (
                 <LinkCard
                   isFocused={isFocused}
-                  tag={
-                    (!!article.processEntry ||
-                      article.processEntryButtonText) &&
-                    n(article.processEntryButtonText || 'application', 'Umsókn')
-                  }
+                  {...(hasProcessEntries(article as Article) ||
+                  article.processEntryButtonText
+                    ? {
+                        tag: n(
+                          article.processEntryButtonText || 'application',
+                          'Umsókn',
+                        ),
+                      }
+                    : {})}
                 >
                   {article.title}
                 </LinkCard>
@@ -336,7 +368,11 @@ ServicesPage.getProps = async ({ apolloClient, locale, query }) => {
     groups,
     sort: (query.sort as string) ?? 'popular',
     showSearchInHeader: false,
-    ...getThemeConfig(getOrganizationPage.theme, getOrganizationPage.slug),
+
+    ...getThemeConfig(
+      getOrganizationPage?.theme,
+      getOrganizationPage?.organization,
+    ),
   }
 }
 

@@ -6,11 +6,11 @@ import {
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { useFilter as m } from './useFilter.strings'
 
@@ -80,8 +80,8 @@ export function filterOptionsForUser(
 ) {
   return options.filter((option) => {
     if (
-      user?.role === UserRole.REPRESENTATIVE ||
-      user?.role === UserRole.ASSISTANT
+      user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||
+      user?.role === UserRole.DISTRICT_COURT_ASSISTANT
     ) {
       return option.value !== 'INVESTIGATION'
     }

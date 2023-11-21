@@ -217,6 +217,7 @@
             "skipTemplates": true
           }
         ],
+        "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
       }

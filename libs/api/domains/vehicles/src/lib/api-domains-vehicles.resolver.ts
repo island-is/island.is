@@ -14,14 +14,16 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehiclesHistory, VehiclesList } from '../models/usersVehicles.model'
+import { VehiclesList } from '../models/usersVehicles.model'
 import { VehiclesService } from './api-domains-vehicles.service'
 import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
-import { VehiclesDetail } from '../models/getVehicleDetail.model'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
-import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -40,25 +42,37 @@ export class VehiclesResolver {
   @Scopes(ApiScope.vehicles)
   @Query(() => VehiclesList, { name: 'vehiclesList', nullable: true })
   @Audit()
-  async getVehicleList(@CurrentUser() user: User) {
-    const data = await this.vehiclesService.getVehiclesForUser(
-      user,
-      false,
-      false,
-    )
+  async getVehicleList(
+    @CurrentUser() user: User,
+    @Args('input') input: GetVehiclesForUserInput,
+  ) {
+    const res = await this.vehiclesService.getVehiclesForUser(user, input)
     const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-
-    return { ...data, downloadServiceURL }
+    return {
+      vehicleList: res.data,
+      paging: {
+        pageNumber: res.pageNumber,
+        pageSize: res.pageSize,
+        totalPages: res.totalPages,
+        totalRecords: res.totalRecords,
+      },
+      downloadServiceURL: !input.type ? downloadServiceURL : null,
+    }
   }
 
   @Scopes(ApiScope.vehicles)
-  @Query(() => VehiclesHistory, { name: 'vehiclesHistoryList', nullable: true })
-  @Audit()
-  async getVehicleHistory(@CurrentUser() user: User) {
-    return await this.vehiclesService.getVehiclesForUser(user, true, true)
+  @Query(() => VehiclesExcel, { name: 'getExcelVehicles', nullable: true })
+  async getExcelVehicles(@CurrentUser() user: User) {
+    const res = await this.vehiclesService.getExcelVehiclesForUser(user)
+    return { ...res }
   }
 
-  @Scopes(ApiScope.vehicles, ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.vehicles,
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })
   @Audit()
   async getVehicleDetail(

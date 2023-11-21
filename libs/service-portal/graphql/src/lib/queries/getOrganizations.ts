@@ -5,12 +5,22 @@ const OrganizationFragment = gql`
     id
     title
     slug
+    link
     logo {
       id
       url
       title
     }
   }
+`
+
+export const GET_ORGANIZATION_QUERY = gql`
+  query getOrganization($input: GetOrganizationInput!) {
+    getOrganization(input: $input) {
+      ...OrganizationFragment
+    }
+  }
+  ${OrganizationFragment}
 `
 
 export const GET_ORGANIZATIONS_QUERY = gql`

@@ -1,31 +1,38 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import { AlertBanner, AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
+import { core } from '@island.is/judicial-system-web/messages'
 import {
   CaseFilesAccordionItem,
+  Conclusion,
   FormContentContainer,
   FormContext,
   FormFooter,
   InfoCard,
+  MarkdownWrapper,
   PageHeader,
   PageLayout,
+  ReopenModal,
   UserContext,
-  Conclusion,
-  AppealConclusion,
 } from '@island.is/judicial-system-web/src/components'
-import { core } from '@island.is/judicial-system-web/messages'
-import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
+import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
+import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
+import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { result as strings } from './Result.strings'
+
+type modalTypes = 'reopenCase' | 'none'
 
 const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+  const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
@@ -34,7 +41,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      {!isLoadingWorkingCase && (
+        <AlertBanner
+          variant="warning"
+          title={title}
+          description={description}
+        />
+      )}
 
       <PageLayout
         workingCase={workingCase}
@@ -43,8 +56,21 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
-
+          <CaseOverviewHeader />
+          {workingCase.appealRulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(strings.rulingModifiedTitle)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.appealRulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -118,9 +144,13 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.appealJudgesHeading),
                   value: (
                     <>
-                      <Text>{workingCase.appealJudge1?.name}</Text>
-                      <Text>{workingCase.appealJudge2?.name}</Text>
-                      <Text>{workingCase.appealJudge3?.name}</Text>
+                      {sortByIcelandicAlphabet([
+                        workingCase.appealJudge1?.name || '',
+                        workingCase.appealJudge2?.name || '',
+                        workingCase.appealJudge3?.name || '',
+                      ]).map((judge, index) => (
+                        <Text key={index}>{judge}</Text>
+                      ))}
                     </>
                   ),
                 },
@@ -138,14 +168,14 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
           ) : null}
           <Box marginBottom={6}>
             <Conclusion
+              title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
-              judgeName={workingCase.judge?.name}
             />
           </Box>
           <Box marginBottom={6}>
-            <AppealConclusion
+            <Conclusion
+              title={formatMessage(conclusion.appealTitle)}
               conclusionText={workingCase.appealConclusion}
-              judgeName={workingCase.appealJudge1?.name}
             />
           </Box>
           <CaseFilesOverview />
@@ -153,10 +183,14 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
         <FormContentContainer isFooter>
           <FormFooter
             previousUrl={constants.COURT_OF_APPEAL_CASES_ROUTE}
-            hideNextButton={true}
+            nextButtonText={formatMessage(strings.nextButtonText)}
+            onNextButtonClick={() => setModalVisible('reopenCase')}
           />
         </FormContentContainer>
       </PageLayout>
+      {modalVisible === 'reopenCase' && (
+        <ReopenModal onClose={() => setModalVisible('none')} />
+      )}
     </>
   )
 }

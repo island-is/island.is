@@ -6,7 +6,8 @@ import {
 } from '@island.is/web/graphql/schema'
 import initApollo from '@island.is/web/graphql/client'
 import { GET_PROJECT_PAGE_QUERY } from '@island.is/web/screens/queries/Project'
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 export default async function handler(req, res) {
   const apolloClient = initApollo({})
 
@@ -47,6 +48,8 @@ export default async function handler(req, res) {
           item.publishDate ? new Date(item.publishDate).toUTCString() : ''
         }</pubDate>
         <description>${item.answer
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           .map((answer) => documentToHtmlString(answer['document']))
           .join('\n')}</description>
       </item>`

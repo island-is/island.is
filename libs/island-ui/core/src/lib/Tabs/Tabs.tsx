@@ -3,11 +3,10 @@ import cn from 'classnames'
 import isNumber from 'lodash/isNumber'
 import { useWindowSize } from 'react-use'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
-import { ValueType } from 'react-select'
 
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Box } from '../Box/Box'
-import { Select, Option } from '../Select/Select'
+import { Select } from '../Select/Select'
 import { FocusableBox } from '../FocusableBox/FocusableBox'
 import { isDefined } from '@island.is/shared/utils'
 
@@ -63,12 +62,6 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
     }
   })
 
-  const onSelect = (option: ValueType<Option>) => {
-    const tabOption = option as Option
-    tab.setCurrentId(tabOption?.value as string)
-    tab.move(tabOption?.value as string)
-  }
-
   const { width } = useWindowSize()
   const [isMobile, setIsMobile] = useState(false)
 
@@ -97,7 +90,12 @@ export const Tabs: FC<React.PropsWithChildren<TabInterface>> = ({
               size={size}
               name={label}
               label={label}
-              onChange={onSelect}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
+              onChange={(opt) => {
+                tab.setCurrentId(opt?.value)
+                tab.move(opt?.value ?? null)
+              }}
               options={selectOptions}
               defaultValue={
                 isNumber(selected)

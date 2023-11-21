@@ -49,9 +49,7 @@ export const CoOwner: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   )
 
   useEffect(() => {
-    if (coOwners.length === 0) {
-      setFieldLoadingState?.(loading || !!error)
-    }
+    setFieldLoadingState?.(loading || !!error)
   }, [loading, error])
 
   useEffect(() => {

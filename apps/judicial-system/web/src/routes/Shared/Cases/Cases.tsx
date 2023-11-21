@@ -1,42 +1,42 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useQuery } from '@apollo/client'
 import partition from 'lodash/partition'
+import { useQuery } from '@apollo/client'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   CaseTransition,
-  isIndictmentCase,
   completedCaseStates,
-  isProsecutionRole,
-  isCourtRole,
+  isDistrictCourtUser,
+  isIndictmentCase,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  core,
+  errors,
+  tables,
+  titles,
+} from '@island.is/judicial-system-web/messages'
 import {
   DropdownMenu,
   Logo,
-  SectionHeading,
-  UserContext,
-  PastCasesTable,
-  SharedPageLayout,
   PageHeader,
+  PastCasesTable,
+  SectionHeading,
+  SharedPageLayout,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
-import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import {
-  core,
-  tables,
-  titles,
-  errors,
-} from '@island.is/judicial-system-web/messages'
 import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import ActiveCases from './ActiveCases'
 import { FilterOption, useFilter } from './useFilter'
@@ -51,7 +51,7 @@ const CreateCaseButton: React.FC<
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
-    if (user.role === UserRole.REPRESENTATIVE) {
+    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
@@ -103,9 +103,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
 
-  const isProsecutionUser = user && isProsecutionRole(user?.role)
-  const isDistrictCourtUser = user && isCourtRole(user?.role)
-
   const {
     transitionCase,
     isTransitioningCase,
@@ -143,7 +140,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       })
 
       return partition(casesWithoutDeleted, (c) => {
-        if (isIndictmentCase(c.type) || !isDistrictCourtUser) {
+        if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
           return !completedCaseStates.includes(c.state)
         } else {
           return !(
@@ -151,7 +148,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           )
         }
       })
-    }, [isDistrictCourtUser, resCases])
+    }, [resCases, user])
 
   const {
     filter,
@@ -174,9 +171,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleRowClick = (id: string) => {
-    getCaseToOpen({
-      variables: { input: { id } },
-    })
+    getCaseToOpen(id)
   }
 
   return (
@@ -184,7 +179,9 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
-        {isProsecutionUser ? <CreateCaseButton user={user} /> : null}
+        {user && isProsecutionUser(user) ? (
+          <CreateCaseButton user={user} />
+        ) : null}
       </div>
 
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>

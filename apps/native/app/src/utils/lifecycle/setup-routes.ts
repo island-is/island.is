@@ -60,8 +60,8 @@ export function setupRoutes() {
 
   addRoute('/vehicles', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehiclesScreen,
         passProps,
@@ -71,8 +71,8 @@ export function setupRoutes() {
 
   addRoute('/assets', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.AssetsOverviewScreen,
         passProps,
@@ -82,8 +82,8 @@ export function setupRoutes() {
 
   addRoute('/family', async (passProps: any) => {
     await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.ProfileStack);
-    await Navigation.push(ComponentRegistry.ProfileScreen, {
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.FamilyScreen,
         passProps,
@@ -211,6 +211,36 @@ export function setupRoutes() {
     });
   });
 
+  addRoute('/finance', async (passProps: any) => {
+    await Navigation.dismissAllModals();
+    await Navigation.popToRoot(StackRegistry.MoreStack);
+    selectTab(4);
+    await Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.FinanceScreen,
+        passProps,
+      },
+    });
+  });
+
+  addRoute(
+    '/finance/status/:orgId/:chargeTypeId/:index',
+    async (passProps: any) => {
+      Navigation.showModal({
+        stack: {
+          children: [
+            {
+              component: {
+                name: ComponentRegistry.FinanceStatusDetailScreen,
+                passProps,
+              },
+            },
+          ],
+        },
+      });
+    },
+  );
+
   addRoute('/family/:type/:nationalId', (passProps: any) => {
     Navigation.showModal({
       stack: {
@@ -320,7 +350,7 @@ export function setupRoutes() {
     });
   });
 
-  addRoute('/inbox/:docId', async ({docId, title}: any) => {
+  addRoute('/inbox/:docId', async passProps => {
     selectTab(0);
 
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
@@ -329,10 +359,19 @@ export function setupRoutes() {
     await Navigation.push(StackRegistry.InboxStack, {
       component: {
         name: ComponentRegistry.DocumentDetailScreen,
-        passProps: {
-          docId,
-        },
+        passProps,
         options: DocumentDetailScreen.options as Options,
+      },
+    });
+  });
+
+  addRoute('/inbox-filter', async passProps => {
+    selectTab(0);
+    await Navigation.popToRoot(StackRegistry.InboxStack);
+    await Navigation.push(StackRegistry.InboxStack, {
+      component: {
+        name: ComponentRegistry.InboxFilterScreen,
+        passProps,
       },
     });
   });

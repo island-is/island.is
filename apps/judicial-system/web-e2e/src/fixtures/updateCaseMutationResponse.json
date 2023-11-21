@@ -16,7 +16,7 @@
       ],
       "court": {
         "id": "d1e6e06f-dcfd-45e0-9a24-2fdabc2cc8bf",
-        "type": "COURT",
+        "type": "DISTRICT_COURT",
         "name": "Héraðsdómur Reykjavíkur"
       },
       "arrestDate": "2020-09-16T19:50:08.033Z",

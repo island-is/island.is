@@ -4,6 +4,7 @@ import {
   fromPromise,
   HttpLink,
   InMemoryCache,
+  makeVar,
 } from '@apollo/client/index';
 import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
@@ -60,7 +61,9 @@ const errorLink = onError(
 
       graphQLErrors.map(({message, locations, path}) =>
         console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+          `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
+            locations,
+          )}, Path: ${JSON.stringify(path)}`,
         ),
       );
     }
@@ -112,6 +115,7 @@ const authLink = setContext(async (_, {headers}) => ({
   },
 }));
 
+export const archivedCache = new Map();
 export const client = new ApolloClient({
   link: ApolloLink.from([
     // performanceLink,
@@ -125,5 +129,22 @@ export const client = new ApolloClient({
       fetchPolicy: 'cache-and-network',
     },
   },
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    typePolicies: {
+      Document: {
+        fields: {
+          archived: {
+            read(_value, {readField, variables}) {
+              const defaultState = variables?.input?.archived ? true : false;
+              const id = readField('id');
+              if (!archivedCache.has(id)) {
+                archivedCache.set(id, defaultState);
+              }
+              return archivedCache.get(id);
+            },
+          },
+        },
+      },
+    },
+  }),
 });

@@ -1,13 +1,12 @@
 import Link from 'next/link'
+
+import { Navigation, NavigationItem, Stack } from '@island.is/island-ui/core'
 import {
   Link as LinkSchema,
   LinkGroup,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
-import { Navigation, NavigationItem } from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
-
-const footerEnabled = ['opinbernyskopun', 'gagnasidur-fiskistofu']
 
 const lightThemes = [
   'traveling-to-iceland',
@@ -15,24 +14,25 @@ const lightThemes = [
   'ukraine',
   'default',
   'opinbernyskopun',
+  'grindavik',
 ]
 
 export const getThemeConfig = (
-  theme: string,
-): { themeConfig: Partial<LayoutProps> } => {
-  let footerVersion: LayoutProps['footerVersion'] = 'default'
+  projectPage?: ProjectPage,
+): {
+  themeConfig: Partial<LayoutProps>
+} => {
+  const theme = projectPage?.theme
+
+  const footerVersion =
+    (projectPage?.footerItems ?? []).length > 0 ? 'organization' : 'default'
 
   let showHeader = true
-
-  if (footerEnabled.includes(theme)) {
-    footerVersion = 'organization'
-  }
-
-  if (theme === 'gagnasidur-fiskistofu') {
+  if (theme === 'gagnasidur-fiskistofu' || theme === 'directorate-of-health') {
     showHeader = false
   }
 
-  const isLightTheme = lightThemes.includes(theme)
+  const isLightTheme = lightThemes.includes(theme ?? '')
   if (!isLightTheme) {
     return {
       themeConfig: {
@@ -58,6 +58,8 @@ export const convertLinksToNavigationItem = (links: LinkSchema[]) =>
 export const convertLinkGroupsToNavigationItems = (
   linkGroups: LinkGroup[],
 ): NavigationItem[] =>
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   linkGroups.map(({ primaryLink, childrenLinks }) => {
     return {
       title: primaryLink?.text,
@@ -114,28 +116,59 @@ export const getSidebarNavigationComponent = (
     convertLinkGroupsToNavigationItems(projectPage.sidebarLinks),
     baseRouterPath,
   )
+  const secondaryNavigationList =
+    projectPage.secondarySidebar?.childrenLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+      active: baseRouterPath === url,
+    })) ?? []
 
   const activeNavigationItemTitle = getActiveNavigationItemTitle(
     navigationList,
     baseRouterPath,
   )
+  const activeSecondaryNavigationItemTitle = getActiveNavigationItemTitle(
+    secondaryNavigationList,
+    baseRouterPath,
+  )
 
   return (isMenuDialog = false) => (
-    <Navigation
-      isMenuDialog={isMenuDialog}
-      baseId="pageNav"
-      items={navigationList}
-      activeItemTitle={activeNavigationItemTitle}
-      title={navigationTitle}
-      renderLink={(link, item) => {
-        return item?.href ? (
-          <Link href={item?.href} legacyBehavior>
-            {link}
-          </Link>
-        ) : (
-          link
-        )
-      }}
-    />
+    <Stack space={2}>
+      <Navigation
+        isMenuDialog={isMenuDialog}
+        baseId="pageNav"
+        items={navigationList}
+        activeItemTitle={activeNavigationItemTitle}
+        title={navigationTitle}
+        renderLink={(link, item) => {
+          return item?.href ? (
+            <Link href={item.href} legacyBehavior>
+              {link}
+            </Link>
+          ) : (
+            link
+          )
+        }}
+      />
+      {projectPage.secondarySidebar?.name && (
+        <Navigation
+          baseId="secondaryPageNav"
+          colorScheme="purple"
+          isMenuDialog={isMenuDialog}
+          title={projectPage.secondarySidebar.name}
+          items={secondaryNavigationList}
+          activeItemTitle={activeSecondaryNavigationItemTitle}
+          renderLink={(link, item) => {
+            return item?.href ? (
+              <Link href={item.href} legacyBehavior>
+                {link}
+              </Link>
+            ) : (
+              link
+            )
+          }}
+        />
+      )}
+    </Stack>
   )
 }

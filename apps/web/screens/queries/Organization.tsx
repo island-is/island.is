@@ -1,5 +1,11 @@
 import gql from 'graphql-tag'
-import { slices, nestedFields } from './fragments'
+
+import {
+  htmlFields,
+  nestedFields,
+  processEntryFields,
+  slices,
+} from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -63,6 +69,7 @@ export const GET_ORGANIZATION_BY_TITLE_QUERY = gql`
 `
 
 export const GET_ORGANIZATION_QUERY = gql`
+  ${htmlFields}
   query GetOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id
@@ -75,6 +82,20 @@ export const GET_ORGANIZATION_QUERY = gql`
       logo {
         title
         url
+      }
+      footerConfig
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        serviceWebContent {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
       }
       publishedMaterialSearchFilterGenericTags {
         id
@@ -165,6 +186,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         namespace {
           fields
         }
+        footerConfig
         footerItems {
           title
           content {
@@ -206,6 +228,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         gradientEndColor
         backgroundColor
         darkText
+        fullWidth
       }
       externalLinks {
         text
@@ -256,9 +279,12 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      body {
+        ...ProcessEntryFields
+      }
       processEntryButtonText
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       category {
         slug
@@ -270,6 +296,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
       }
     }
   }
+  ${processEntryFields}
 `
 
 export const GET_ORGANIZATION_TAGS_QUERY = gql`

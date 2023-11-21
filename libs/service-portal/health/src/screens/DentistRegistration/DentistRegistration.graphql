@@ -1,0 +1,40 @@
+query getDentistStatus {
+  rightsPortalDentistStatus {
+    canRegister
+    contractType
+  }
+}
+
+query getPaginatedDentists($input: RightsPortalDentistsInput!) {
+  response: rightsPortalPaginatedDentists(input: $input) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    dentists: data {
+      id
+      name
+      practices {
+        practice
+        address
+        region
+        postalCode
+      }
+    }
+  }
+  current: rightsPortalUserDentistRegistration {
+    dentist {
+      id
+      name
+    }
+  }
+}
+
+mutation registerDentist($input: RightsPortalDentistRegisterInput!) {
+  rightsPortalRegisterDentist(input: $input) {
+    success
+  }
+}

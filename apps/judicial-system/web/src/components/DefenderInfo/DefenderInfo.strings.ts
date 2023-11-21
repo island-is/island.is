@@ -25,10 +25,29 @@ export const defenderInfo = {
         },
       }),
       defenderRequestAccess: defineMessages({
-        label: {
+        title: {
+          id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.title',
+          defaultMessage: 'Aðgangur verjanda að kröfu',
+          description:
+            'Notaður sem titill fyrir gáreiti á fyrirtöku skrefi í rannsóknarheimildum.',
+        },
+        labelCourtDate: {
           id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.label',
           defaultMessage:
             'Gefa verjanda aðgang að kröfu við úthlutun fyrirtökutíma',
+          description:
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
+        },
+        labelReadyForCourt: {
+          id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.label_ready_for_court_access',
+          defaultMessage:
+            'Gefa verjanda aðgang að kröfu þegar krafa er send á dómstól',
+          description:
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
+        },
+        labelNoAccess: {
+          id: 'judicial.system.core:defender_info.investigation_cases.sections.defender_request_access.label_no_access',
+          defaultMessage: 'Ekki gefa verjanda aðgang að kröfu',
           description:
             'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í rannsóknarheimildum.',
         },
@@ -66,10 +85,29 @@ export const defenderInfo = {
         },
       }),
       defenderRequestAccess: defineMessages({
-        label: {
+        title: {
+          id: 'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.title',
+          defaultMessage: 'Aðgangur verjanda að kröfu',
+          description:
+            'Notaður sem titill fyrir gáreiti á fyrirtöku skrefi í gæsluvarðhalds- og farbannsmálum.',
+        },
+        labelCourtDate: {
           id: 'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.label',
           defaultMessage:
             'Gefa verjanda aðgang að kröfu við úthlutun fyrirtökutíma',
+          description:
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í gæsluvarðhalds- og farbannsmálum.',
+        },
+        labelReadyForCourt: {
+          id: 'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.label_ready_for_court_access',
+          defaultMessage:
+            'Gefa verjanda aðgang að kröfu þegar krafa er send á dómstól',
+          description:
+            'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í gæsluvarðhalds- og farbannsmálum.',
+        },
+        labelNoAccess: {
+          id: 'judicial.system.core:defender_info.restriction_cases.sections.defender_request_access.label_no_access',
+          defaultMessage: 'Ekki gefa verjanda aðgang að kröfu',
           description:
             'Notaður sem texti í "Gefa verjanda aðgang..." gátreit á varnaraðila skrefi í gæsluvarðhalds- og farbannsmálum.',
         },

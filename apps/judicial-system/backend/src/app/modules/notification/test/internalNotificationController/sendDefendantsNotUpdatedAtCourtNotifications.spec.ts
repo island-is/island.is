@@ -1,13 +1,15 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import { NotificationType, User } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse

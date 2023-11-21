@@ -1,5 +1,5 @@
 query GetAidsAndNutrition {
-  rightsPortalPaginatedAidsAndNutritionResponse {
+  rightsPortalPaginatedAidOrNutrition {
     data {
       name
       id

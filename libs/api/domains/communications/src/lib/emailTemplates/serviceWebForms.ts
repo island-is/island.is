@@ -69,7 +69,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]:
       'vestmannaeyjar.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'vestmannaeyjar@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'vestmannaeyjar.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]:
       'vestmannaeyjar@syslumenn.is',
@@ -89,7 +89,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]:
       'nordurlandeystra.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'nordurlandeystra.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]:
       'nordurlandeystra.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]:
@@ -107,7 +107,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]:
       'austurland.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'austurland.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'austurland.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'austurland@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'austurland.leyfi@syslumenn.is',
@@ -122,7 +122,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]:
       'vesturland.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'vesturland.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'vesturland.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'vesturland@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'vesturland.leyfi@syslumenn.is',
@@ -136,7 +136,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.THINGLYSINGAR]: 'thinglysing@syslumenn.is',
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]: 'smh@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'fjolskylda@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'smh@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'leyfi@syslumenn.is',
@@ -150,7 +150,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.THINGLYSINGAR]: 'sudurnes.thinglysing@syslumenn.is',
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]: 'sudurnes.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'sudurnes.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'sudurnes.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'sudurnes@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'sudurnes.leyfi@syslumenn.is',
@@ -164,7 +164,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.THINGLYSINGAR]: 'sudurland.thinglysing@syslumenn.is',
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]: 'sudurland@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'sudurland.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'sudurland.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'sudurland@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'sudurland.leyfi@syslumenn.is',
@@ -178,7 +178,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.THINGLYSINGAR]: 'nordurlandvestra@syslumenn.is',
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]: 'innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'nordurlandvestra@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'nordurlandvestra@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]:
       'nordurlandvestra@syslumenn.is',
@@ -194,7 +194,7 @@ export const syslumennEmails: Record<
     [SyslumennCategories.GJOLD_OG_INNHEIMTA]:
       'vestfirdir.innheimta@syslumenn.is',
     [SyslumennCategories.LOGGILDINGAR]: 'vestfirdir.leyfi@syslumenn.is',
-    [SyslumennCategories.VOTTORD]: 'island@island.is',
+    [SyslumennCategories.VOTTORD]: 'syslumenn@island.is',
     [SyslumennCategories.LOGRADAMAL]: 'vestfirdir.logradamal@syslumenn.is',
     [SyslumennCategories.ONNUR_THJONUSTA_SYSLUMANNA]: 'vestfirdir@syslumenn.is',
     [SyslumennCategories.LEYFI]: 'vestfirdir.leyfi@syslumenn.is',
@@ -259,6 +259,35 @@ enum SjukratryggingarCategories {
   TULKATHJONUSTA = 'tulkathjonusta',
 }
 
+enum DirectorateOfImmigrationCategories {
+  // ALþjóðleg vernd
+  INTERNATIONAL_PROTECTION = 'vURM4bLHZZefkRTFMMhkW',
+
+  // Dvalarleyfiskort og ferðaskilríki
+  RESIDENCE_PERMIT_CARDS_AND_TRAVEL_DOCUMENTS = '2Z8C7zKJPsAtsbjaClcCAg',
+
+  // Dvalarleyfi - Almenn skilyrði
+  RESIDENCE_PERMIT_GENERAL_CONDITIONS = '5HwuyKorz5r8xmk3UxLE1q',
+
+  // Dvalarleyfi - Tegundir
+  RESIDENCE_PERMIT_TYPES = '3Jrix29x8wFv5X0O7P0KsB',
+
+  // Ferðalög og heimsóknir til Íslands
+  TRAVEL_AND_VISITS_TO_ICELAND = '3jzNnjUIuZAIU2MCwzYi1Q',
+
+  // Ríkisborgararéttur
+  CITIZENSHIP = '2PdX8CTx3uiGFphBbbazzc',
+
+  // Staða umsókna, beiðni um gögn og afgreiðslugjald
+  APPLICATION_STATUS = '7s7yrJ8Nl1YmocagF93QB7',
+
+  // Dvalarleyfi
+  RESIDENCE_PERMIT = 'dvalarleyfi',
+
+  // Aðstoð við sjálfviljuga heimför
+  ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
+}
+
 const sjukratryggingarEmails = {
   [SjukratryggingarCategories.FERDAKOSTNADUR]: 'ferdakostnadur@sjukra.is',
   [SjukratryggingarCategories.HEILBRIGDISSTARFSFOLK]:
@@ -281,6 +310,14 @@ const sjukratryggingarEmails = {
     'sjukra@sjukra.is',
   [SjukratryggingarCategories.HJUKRUNARHEIMILI]: 'hjukrunarheimili@sjukra.is',
   [SjukratryggingarCategories.TULKATHJONUSTA]: 'laeknareikningar@sjukra.is',
+}
+
+const directorateOfImmigrationEmails = {
+  [DirectorateOfImmigrationCategories.TRAVEL_AND_VISITS_TO_ICELAND]:
+    'aritanir@utl.is',
+  [DirectorateOfImmigrationCategories.CITIZENSHIP]: 'rikisborgararettur@utl.is',
+  [DirectorateOfImmigrationCategories.ASSISTED_VOLUNTARY_RETURN]:
+    'return@utl.is',
 }
 
 export const getTemplate = (
@@ -308,6 +345,14 @@ export const getTemplate = (
     toAddress =
       sjukratryggingarEmails[categoryId as SjukratryggingarCategories] ??
       institutionEmail
+  } else if (
+    input.institutionSlug === 'utlendingastofnun' ||
+    input.institutionSlug === 'directorate-of-immigration'
+  ) {
+    toAddress =
+      directorateOfImmigrationEmails[
+        categoryId as keyof typeof directorateOfImmigrationEmails
+      ] ?? institutionEmail
   }
 
   const name = 'Ísland.is aðstoð'

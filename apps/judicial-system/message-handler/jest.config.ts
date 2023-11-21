@@ -10,9 +10,11 @@ export default {
       'ts-jest',
       {
         tsconfig: `${__dirname}/tsconfig.spec.json`,
+        isolatedModules: true,
       },
     ],
   },
   moduleFileExtensions: ['ts', 'js', 'html'],
+  testEnvironment: 'node',
   coverageDirectory: '<rootDir>/coverage/apps/judicial-system/message-handler',
 }

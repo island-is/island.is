@@ -1,4 +1,3 @@
-import React from 'react'
 import { gql, useQuery } from '@apollo/client'
 import {
   pagingFragment,
@@ -10,6 +9,8 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   EmptyState,
   ErrorScreen,
+  FootNote,
+  HMS_SLUG,
   IntroHeader,
   m,
 } from '@island.is/service-portal/core'
@@ -103,6 +104,8 @@ export const AssetsOverview = () => {
           defaultMessage:
             'Hér birtast upplýsingar úr fasteignaskrá um fasteignir þínar, lönd og lóðir sem þú ert þinglýstur eigandi að.',
         }}
+        serviceProviderSlug={HMS_SLUG}
+        serviceProviderTooltip={formatMessage(m.realEstateTooltip)}
       />
 
       {loading && <AssetCardLoader />}
@@ -123,11 +126,12 @@ export const AssetsOverview = () => {
                   rel="noreferrer"
                 >
                   <Button
+                    as="span"
+                    unfocusable
                     colorScheme="default"
                     icon="document"
                     iconType="filled"
                     size="default"
-                    type="button"
                     variant="utility"
                   >
                     {formatMessage(m.mortageCertificate)}
@@ -144,10 +148,11 @@ export const AssetsOverview = () => {
         !error &&
         assetData?.properties &&
         assetData?.properties?.length === 0 && (
-          <Box marginTop={8}>
+          <Box marginTop={[0, 8]}>
             <EmptyState />
           </Box>
         )}
+      <FootNote serviceProviderSlug={HMS_SLUG} />
     </>
   )
 }

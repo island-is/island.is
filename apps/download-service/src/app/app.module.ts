@@ -21,6 +21,8 @@ import { VehicleController } from './modules/vehicles-documents/vehicle-document
 import { EducationController } from './modules/education-documents/education-document.controller'
 import { RegulationDocumentsController } from './modules/regulation-documents/regulation-documents.controller'
 import { WorkMachinesController } from './modules/work-machines-documents/work-machines-documents.controller'
+import { OccupationalLicensesEducationController } from './modules/occupational-licenses/education-license.controller'
+import { MMSClientModule, MMSClientConfig } from '@island.is/clients/mms'
 import {
   VehiclesClientConfig,
   VehiclesClientModule,
@@ -41,7 +43,11 @@ import {
   WorkMachinesClientConfig,
   WorkMachinesClientModule,
 } from '@island.is/clients/work-machines'
-
+import { HealthPaymentsOverviewController } from './modules/health/payment-overview-documents.controller'
+import {
+  RightsPortalClientConfig,
+  RightsPortalClientModule,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 @Module({
   controllers: [
     DocumentController,
@@ -51,6 +57,8 @@ import {
     EducationController,
     RegulationDocumentsController,
     WorkMachinesController,
+    OccupationalLicensesEducationController,
+    HealthPaymentsOverviewController,
   ],
   imports: [
     AuditModule.forRoot(environment.audit),
@@ -67,6 +75,8 @@ import {
     RegulationsAdminClientModule,
     RegulationsClientModule,
     WorkMachinesClientModule,
+    MMSClientModule,
+    RightsPortalClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -78,6 +88,8 @@ import {
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         WorkMachinesClientConfig,
+        MMSClientConfig,
+        RightsPortalClientConfig,
       ],
     }),
   ],

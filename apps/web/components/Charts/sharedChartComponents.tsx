@@ -44,6 +44,8 @@ export const CustomizedAxisTick = ({
   className,
   payload,
 }: AxisTickProps) => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const xAxis = className.includes('xAxis')
   return (
     <g transform={`translate(${x},${y})`}>
@@ -54,7 +56,7 @@ export const CustomizedAxisTick = ({
         textAnchor="end"
         fill="#00003C"
       >
-        {payload.value} {xAxis}
+        {payload?.value} {xAxis}
       </text>
     </g>
   )
@@ -62,9 +64,15 @@ export const CustomizedAxisTick = ({
 
 export const CustomizedRightAxisTick = ({ x, y, payload }: AxisTickProps) => {
   return (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     <g transform={`translate(${x + 10},${y - 10})`}>
       <text dy={16} textAnchor="start" fill="#00003C">
-        {payload.value}
+        {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          payload.value
+        }
       </text>
     </g>
   )

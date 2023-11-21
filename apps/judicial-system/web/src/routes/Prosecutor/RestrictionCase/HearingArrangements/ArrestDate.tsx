@@ -1,10 +1,10 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 
 interface Props {

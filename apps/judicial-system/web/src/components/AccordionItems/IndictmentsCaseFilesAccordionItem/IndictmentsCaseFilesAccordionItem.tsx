@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useIntl } from 'react-intl'
-import { uuid } from 'uuidv4'
+import React, { useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
+import { useIntl } from 'react-intl'
+import { useMeasure } from 'react-use'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import {
@@ -13,35 +13,35 @@ import {
   useDragControls,
   useMotionValue,
 } from 'framer-motion'
-import { useMutation } from '@apollo/client'
-import { useMeasure } from 'react-use'
+import { uuid } from 'uuidv4'
 
 import {
   AccordionItem,
-  Text,
+  AlertMessage,
   Box,
   Icon,
-  AlertMessage,
   Input,
+  Text,
   toast,
 } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFile as TCaseFile,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import {
-  useFileList,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import {
   FileNotFoundModal,
   IndictmentInfo,
 } from '@island.is/judicial-system-web/src/components'
+import {
+  TUploadFile,
+  useFileList,
+  useS3Upload,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useUpdateFilesMutation } from './updateFiles.generated'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
-import { UpdateFileMutation } from './UpdateFiles.gql'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
 const DDMMYYYY = 'dd.MM.yyyy'
@@ -67,16 +67,13 @@ export interface ReorderableItem {
   id: string
   displayText: string
   isDivider: boolean
+  isHeading: boolean
   created?: string
   chapter?: number
   orderWithinChapter?: number
   userGeneratedFilename?: string
   displayDate?: string
   canOpen?: boolean
-}
-
-interface UpdateFilesMutationResponse {
-  caseFiles: TCaseFile[]
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
@@ -104,55 +101,34 @@ const useRaisedShadow = (value: MotionValue<number>) => {
   return boxShadow
 }
 
-export const getFilePlacement = (fileId: string, files: ReorderableItem[]) => {
-  let [chapter, orderWithinChapter]: [number | null, number | null] = [0, 0]
-  let counter = 0
-  const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
-
-  if (files.indexOf(fileInFiles) === -1) {
-    return [null, null]
-  }
-
-  for (
-    let i = files.indexOf(fileInFiles);
-    files[i].chapter === undefined;
-    i--
-  ) {
-    if (files[i - 1] === undefined) {
-      chapter = 0
-      orderWithinChapter = counter++
-      break
-    } else if (files[i - 1].isDivider) {
-      chapter = null
-      orderWithinChapter = null
-      break
-    } else if (files[i - 1].chapter !== undefined) {
-      chapter = files[i - 1].chapter || 0 // The "|| 0" part of this line is to silence a TS error
-      orderWithinChapter = counter++
-      break
-    } else {
-      orderWithinChapter = counter++
-    }
-  }
-
-  return [chapter, orderWithinChapter]
-}
-
-export const getFilesBelowInChapter = (
+export const getFilesToUpdate = (
   fileId: string,
   files: ReorderableItem[],
-) => {
-  const filesBelowInChapter: ReorderableItem[] = []
-  const fileInFiles = files[files.findIndex((item) => item.id === fileId)]
-  for (let i = files.indexOf(fileInFiles) + 1; i < files.length; i++) {
-    if (files[i].chapter !== undefined || files[i].isDivider) {
-      break
-    }
-
-    filesBelowInChapter.push(files[i])
+): [number | null, number | null, ReorderableItem[]] => {
+  let index = files.findIndex((item) => item.id === fileId)
+  if (index === -1) {
+    // This should not happen
+    return [null, null, []]
   }
 
-  return filesBelowInChapter
+  if (
+    index > 0 &&
+    (files[index - 1].chapter === undefined ||
+      files[index - 1].chapter === null)
+  ) {
+    // The file is not in a chapter
+    return [null, null, [files[index]]]
+  }
+
+  const chapter = files[index - 1]?.chapter ?? 0
+  const orderWithinChapter = (files[index - 1]?.orderWithinChapter ?? -1) + 1
+
+  const filesToUpdate: ReorderableItem[] = [files[index]]
+  while (files[++index].chapter === chapter) {
+    filesToUpdate.push(files[index])
+  }
+
+  return [chapter, orderWithinChapter, filesToUpdate]
 }
 
 export const sortedFilesInChapter = (
@@ -166,7 +142,9 @@ export const sortedFilesInChapter = (
         id: file.id,
         displayText: file.name,
         isDivider: false,
+        isHeading: false,
         created: file.created,
+        chapter: file.chapter,
         orderWithinChapter: file.orderWithinChapter,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
@@ -243,7 +221,7 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
       dragListener={false}
       dragControls={controls}
     >
-      {caseFile.chapter !== undefined ? (
+      {caseFile.isHeading && caseFile.chapter !== undefined ? (
         renderChapter(caseFile.chapter, caseFile.displayText)
       ) : caseFile.isDivider ? (
         <Box marginBottom={2}>
@@ -409,11 +387,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     crimeScenes,
   } = props
   const { formatMessage } = useIntl()
-  const [updateFilesMutation] =
-    useMutation<UpdateFilesMutationResponse>(UpdateFileMutation)
+  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { remove } = useS3Upload(caseId)
+  const { handleRemove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -426,6 +403,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         id: uuid(),
         displayText: formatMessage(m.chapterInvesitgationProcess),
         chapter: 1,
+        isHeading: true,
         isDivider: false,
       },
       ...sortedFilesInChapter(1, caseFiles),
@@ -433,6 +411,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         id: uuid(),
         displayText: formatMessage(m.chapterWitnesses),
         chapter: 2,
+        isHeading: true,
         isDivider: false,
       },
       ...sortedFilesInChapter(2, caseFiles),
@@ -440,6 +419,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         id: uuid(),
         displayText: formatMessage(m.chapterDefendant),
         chapter: 3,
+        isHeading: true,
         isDivider: false,
       },
       ...sortedFilesInChapter(3, caseFiles),
@@ -447,6 +427,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         id: uuid(),
         displayText: formatMessage(m.chapterCaseFiles),
         chapter: 4,
+        isHeading: true,
         isDivider: false,
       },
       ...sortedFilesInChapter(4, caseFiles),
@@ -454,6 +435,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         id: uuid(),
         displayText: formatMessage(m.chapterElectronicDocuments),
         chapter: 5,
+        isHeading: true,
         isDivider: false,
       },
       ...sortedFilesInChapter(5, caseFiles),
@@ -462,6 +444,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         displayText: `${formatMessage(m.unorderedFilesTitle)}|${formatMessage(
           m.unorderedFilesExplanation,
         )}`,
+        isHeading: false,
         isDivider: true,
       },
       ...caseFiles
@@ -476,6 +459,7 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
             isDivider: false,
+            isHeading: false,
             canOpen: Boolean(caseFile.key),
             displayDate: caseFile.displayDate,
           }
@@ -488,33 +472,29 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
       return
     }
 
-    const [chapter, orderWithinChapter] = getFilePlacement(
+    const [chapter, orderWithinChapter, filesToUpdate] = getFilesToUpdate(
       fileId,
       reorderableItems,
     )
-    const filesBelowInChapter = getFilesBelowInChapter(fileId, reorderableItems)
 
     const { errors } = await updateFilesMutation({
       variables: {
         input: {
           caseId,
-          files: [
-            {
-              id: fileId,
+          files: filesToUpdate.map((file, index) => {
+            // This nasty update-in-place is needed to keep local data current
+            file.chapter = chapter ?? undefined
+            file.orderWithinChapter =
+              orderWithinChapter === null
+                ? undefined
+                : orderWithinChapter + index
+            return {
+              id: file.id,
               chapter,
-              orderWithinChapter,
-            },
-            ...filesBelowInChapter.map((file, index) => {
-              return {
-                id: file.id,
-                chapter,
-                orderWithinChapter:
-                  orderWithinChapter === null
-                    ? null
-                    : orderWithinChapter + index + 1,
-              }
-            }),
-          ],
+              orderWithinChapter:
+                orderWithinChapter === null ? null : orderWithinChapter + index,
+            }
+          }),
         },
       },
     })
@@ -579,16 +559,10 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
     }
   }
 
-  const handleDelete = async (fileId: string) => {
-    const { errors } = await remove(fileId)
-
-    if (errors) {
-      toast.error(formatMessage(m.removeFailedErrorMessage))
-    }
-
-    setReorderableItems((prev) => {
-      return prev.filter((item) => item.id !== fileId)
-    })
+  const handleDelete = (fileId: string) => {
+    handleRemove({ id: fileId } as TUploadFile, (file: TUploadFile) =>
+      setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
+    )
   }
 
   return (

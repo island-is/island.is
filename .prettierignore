@@ -3,6 +3,7 @@
 /dist
 /coverage
 .github/actions/dist*
+.github/workflows/stale-prs.yml
 /libs/api/domains/application/gen
 /tmp
 /cache
@@ -10,3 +11,4 @@
 /tools/**/*.js
 **/*.hbs
 .yarn
+/infra/helm/

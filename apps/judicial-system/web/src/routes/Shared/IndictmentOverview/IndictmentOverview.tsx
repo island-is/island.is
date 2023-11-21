@@ -3,8 +3,12 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box } from '@island.is/island-ui/core'
-import { completedCaseStates } from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  completedCaseStates,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
   FormContentContainer,
@@ -17,17 +21,16 @@ import {
   PageTitle,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { titles, core } from '@island.is/judicial-system-web/messages'
-import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import IndictmentsLawsBrokenAccordionItem, {
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsLawsBrokenAccordionItem/IndictmentsLawsBrokenAccordionItem'
+import IndictmentCaseFilesList from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const router = useRouter()
-  const { limitedAccess } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -82,7 +85,7 @@ const IndictmentOverview = () => {
           </Box>
         )}
       </FormContentContainer>
-      {!caseIsClosed && !limitedAccess && (
+      {!caseIsClosed && !isDefenceUser(user) && (
         <FormContentContainer isFooter>
           <FormFooter
             nextButtonIcon="arrowForward"

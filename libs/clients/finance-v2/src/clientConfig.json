@@ -1,0 +1,645 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Finance Services v2",
+    "description": "Finance services verison 2 ,   services for  working with a assessment Year,",
+    "version": "2.0"
+  },
+  "servers": [
+    {
+      "url": "https://tbrws-s.hysing.is/rad/TBRIslandis.api.v2.financeService_v2_:financeServicesApi_v2"
+    }
+  ],
+  "paths": {
+    "/assessmentYears/{nationalId}": {
+      "get": {
+        "description": "Returns assessemnt years for given nationalId.",
+        "operationId": "assessmentYearsnationalId_GET_1",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "National identifier",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/assessmentYearsnationalId_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/chargeTypesByYear/{nationalId}/{assessmentYear}": {
+      "get": {
+        "description": "Returns  charge type for given nationalId./ Assessment Year",
+        "operationId": "chargeTypesByYearnationalIdassessmentYear_GET_2",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "Icelandic national ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assessmentYear",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/chargeTypesByYearnationalIdassessmentYear_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/chargeTypesDetailsByYear/{nationalId}/{assessmentYear}/{chargeTypeID}": {
+      "get": {
+        "description": "Returns charge type details for  nationalId/AssessmentYear",
+        "operationId": "chargeTypesDetailsByYearnationalIdassessmentYearchargeTypeID_GET_3",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "icelandic National Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assessmentYear",
+            "in": "path",
+            "description": "Assessment Year",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chargeTypeID",
+            "in": "path",
+            "description": "ChargeTypeId or ** for all",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/chargeTypesDetailsByYearnationalIdassessmentYearchargeTypeID_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/chargeItemSubjectsByYear/{nationalId}/{assessmentYear}/{chargeTypeID}": {
+      "get": {
+        "description": "Returns chargeItemSubjects/periods  for nationalid/ assessment Year/charge type",
+        "operationId": "chargeItemSubjectsByYearnationalIdassessmentYearchargeTypeID_GET_4",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "icelandic National Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assessmentYear",
+            "in": "path",
+            "description": "Assessment Year",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chargeTypeID",
+            "in": "path",
+            "description": "ChargeTypeId ",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nextKey",
+            "in": "query",
+            "description": "next key if more data",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/chargeItemSubjectsByYearnationalIdassessmentYearchargeTypeID_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    },
+    "/recordsByYear/{nationalId}/{assessmentYear}/{chargeTypeID}/{chargeItemSubject}/{period}": {
+      "get": {
+        "description": "Returns records  for nationalid/ assessment Year/charge type/subjects/period",
+        "operationId": "recordsByYearnationalIdassessmentYearchargeTypeIDchargeItemSubjectperiod_GET_5",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "in": "path",
+            "description": "Icelandic national Id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "assessmentYear",
+            "in": "path",
+            "description": "Assessment year",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chargeTypeID",
+            "in": "path",
+            "description": "one chargeTypeID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "chargeItemSubject",
+            "in": "path",
+            "description": "charge Item Subject",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "period",
+            "in": "path",
+            "description": "Period time",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "nextKey",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/recordsByYearnationalIdassessmentYearchargeTypeIDchargeItemSubjectperiod_GET_response"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Access Denied",
+            "content": {}
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChargeType_DT": {
+        "required": ["ID", "name"],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "errors": {
+        "required": ["detail", "title"],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "param": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          }
+        }
+      },
+      "record": {
+        "required": [
+          "accountReference",
+          "actionCategory",
+          "amount",
+          "category",
+          "chargeItemSubject",
+          "chargeType",
+          "collectingOrganization",
+          "createDate",
+          "createTime",
+          "itemCode",
+          "performingOrganization",
+          "period",
+          "periodType",
+          "reference",
+          "referenceToLevy",
+          "subCategory",
+          "valueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "createDate": {
+            "type": "string",
+            "description": "dagsetning færslu"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "tími færslu"
+          },
+          "valueDate": {
+            "type": "string",
+            "description": "Gildisdagur"
+          },
+          "performingOrganization": {
+            "type": "string",
+            "description": "Framkvæmdaraðili"
+          },
+          "collectingOrganization": {
+            "type": "string",
+            "description": "Umsjónarmaður"
+          },
+          "chargeType": {
+            "type": "string",
+            "description": "Gjaldflokkur"
+          },
+          "itemCode": {
+            "type": "string",
+            "description": "Gjaldlidur"
+          },
+          "chargeItemSubject": {
+            "type": "string",
+            "description": "Gjaldgrunnur"
+          },
+          "periodType": {
+            "type": "string",
+            "description": "tegund tímabils"
+          },
+          "period": {
+            "type": "string",
+            "description": "Álagningartímabil"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "category": {
+            "type": "string",
+            "description": "hreyfingarflokkur"
+          },
+          "subCategory": {
+            "type": "string",
+            "description": "hreyfingargerð"
+          },
+          "actionCategory": {
+            "type": "string",
+            "description": "Aðgerðaflokkur"
+          },
+          "reference": {
+            "type": "string",
+            "description": "Skýring"
+          },
+          "referenceToLevy": {
+            "type": "string"
+          },
+          "accountReference": {
+            "type": "string",
+            "description": "tilvísun í reikning"
+          }
+        }
+      },
+      "chargeItemSubjects": {
+        "required": [
+          "chargeItemSubject",
+          "lastMoveDate",
+          "periods",
+          "totalAmount"
+        ],
+        "type": "object",
+        "properties": {
+          "chargeItemSubject": {
+            "type": "string"
+          },
+          "lastMoveDate": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/periods"
+            }
+          }
+        }
+      },
+      "records": {
+        "required": ["message", "more", "nextKey", "records"],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "nextKey": {
+            "type": "string"
+          },
+          "more": {
+            "type": "boolean"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/record"
+            }
+          }
+        }
+      },
+      "chargeItemSubjectsByYearnationalIdassessmentYearchargeTypeID_GET_response": {
+        "required": ["resultSubjectsByYearChargeType"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "resultSubjectsByYearChargeType": {
+            "$ref": "#/components/schemas/ResultChargeTypeByYearItemSubject_DT"
+          }
+        }
+      },
+      "GetAssessmentYears_DT": {
+        "required": ["year"],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ResultChargetypeByYearDetails_DT": {
+        "required": ["chargeType"],
+        "type": "object",
+        "properties": {
+          "chargeType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargeTypeDetails_DT"
+            }
+          }
+        }
+      },
+      "ChargeTypeDetails_DT": {
+        "required": [
+          "ID",
+          "chargeItemSubjectDescription",
+          "chargeItemSubjects",
+          "lastMovementDate",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "ID": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "chargeItemSubjects": {
+            "type": "string"
+          },
+          "chargeItemSubjectDescription": {
+            "type": "string"
+          },
+          "lastMovementDate": {
+            "type": "string"
+          }
+        }
+      },
+      "recordsByYearnationalIdassessmentYearchargeTypeIDchargeItemSubjectperiod_GET_response": {
+        "required": ["resultRecordsByChargeTypePeriodSubject"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "resultRecordsByChargeTypePeriodSubject": {
+            "$ref": "#/components/schemas/records"
+          }
+        }
+      },
+      "periods": {
+        "required": ["amount", "description", "lastMoveDate", "period"],
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "lastMoveDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ResultChargetypeByYear_DT": {
+        "required": ["chargeType"],
+        "type": "object",
+        "properties": {
+          "chargeType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChargeType_DT"
+            }
+          }
+        }
+      },
+      "ProblemDetails_DT": {
+        "required": ["detail", "status", "title"],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "A URI reference [RFC3986] that identifies the problem type. This specification encourages that, when dereferenced, it provide human-readable documentation for the problem type (e.g., using HTML [W3C.REC-html5-20141028]). When this member is not present, its value is assumed to be \"about:blank\"."
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type.It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization(e.g., using proactive content negotiation; see[RFC7231], Section 3.4)."
+          },
+          "status": {
+            "type": "string",
+            "description": "The HTTP status code([RFC7231], Section 6) generated by the origin server for this occurrence of the problem."
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem."
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem.It may or may not yield further information if dereferenced."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/errors"
+            }
+          }
+        }
+      },
+      "chargeTypesByYearnationalIdassessmentYear_GET_response": {
+        "required": ["resultChargeTypeByYear"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "resultChargeTypeByYear": {
+            "$ref": "#/components/schemas/ResultChargetypeByYear_DT"
+          }
+        }
+      },
+      "assessmentYearsnationalId_GET_response": {
+        "required": ["ResultYears"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "ResultYears": {
+            "$ref": "#/components/schemas/GetAssessmentYears_DT"
+          }
+        }
+      },
+      "ResultChargeTypeByYearItemSubject_DT": {
+        "required": ["chargeItemSubjects", "more", "nextKey"],
+        "type": "object",
+        "properties": {
+          "chargeItemSubjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/chargeItemSubjects"
+            }
+          },
+          "more": {
+            "type": "boolean",
+            "description": "true more data"
+          },
+          "nextKey": {
+            "type": "string",
+            "description": "nextKey - next data"
+          }
+        }
+      },
+      "chargeTypesDetailsByYearnationalIdassessmentYearchargeTypeID_GET_response": {
+        "required": ["resultChargeTypeDetails"],
+        "type": "object",
+        "properties": {
+          "error": {
+            "$ref": "#/components/schemas/ProblemDetails_DT"
+          },
+          "resultChargeTypeDetails": {
+            "$ref": "#/components/schemas/ResultChargetypeByYearDetails_DT"
+          }
+        }
+      }
+    }
+  }
+}

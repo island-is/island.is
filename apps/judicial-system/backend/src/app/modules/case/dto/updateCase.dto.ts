@@ -1,29 +1,30 @@
 import {
-  IsString,
-  IsOptional,
-  IsEnum,
-  IsUUID,
-  IsBoolean,
-  IsObject,
   ArrayMinSize,
   IsArray,
+  IsBoolean,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import {
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseAppealDecision,
-  CaseDecision,
-  CaseAppealRulingDecision,
-  SessionArrangements,
-  CourtDocument,
-  CaseType,
-} from '@island.is/judicial-system/types'
 import type {
-  IndictmentSubtypeMap,
   CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseLegalProvisions,
+  CaseType,
+  CourtDocument,
+  RequestSharedWithDefender,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
 export class UpdateCaseDto {
@@ -70,9 +71,9 @@ export class UpdateCaseDto {
   readonly defenderPhoneNumber?: string
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional()
-  readonly sendRequestToDefender?: boolean
+  @IsEnum(RequestSharedWithDefender)
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @IsOptional()
   @IsBoolean()
@@ -310,16 +311,6 @@ export class UpdateCaseDto {
   readonly prosecutorAppealAnnouncement?: string
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly accusedPostponedAppealDate?: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly prosecutorPostponedAppealDate?: Date
-
-  @IsOptional()
   @IsUUID()
   @ApiPropertyOptional()
   readonly judgeId?: string
@@ -403,6 +394,11 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly appealConclusion?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealRulingModifiedHistory?: string
 
   @IsOptional()
   @IsEnum(CaseAppealRulingDecision)

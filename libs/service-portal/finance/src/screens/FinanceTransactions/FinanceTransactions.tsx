@@ -1,8 +1,6 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -10,21 +8,20 @@ import {
   Box,
   Button,
   DatePicker,
-  Filter,
   FilterInput,
   FilterMultiChoice,
-  GridColumn,
-  GridRow,
   Hidden,
   SkeletonLoader,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DynamicWrapper, IntroHeader, m } from '@island.is/service-portal/core'
 import {
-  GET_CUSTOMER_CHARGETYPE,
-  GET_CUSTOMER_RECORDS,
-} from '@island.is/service-portal/graphql'
+  DynamicWrapper,
+  FootNote,
+  m,
+  Filter,
+  FJARSYSLAN_SLUG,
+} from '@island.is/service-portal/core'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -35,6 +32,11 @@ import {
   CustomerChargeType,
   CustomerRecords,
 } from './FinanceTransactionsData.types'
+import FinanceIntro from '../../components/FinanceIntro'
+import {
+  useGetCustomerChargeTypeQuery,
+  useGetCustomerRecordsLazyQuery,
+} from './FinanceTransactions.generated'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -52,7 +54,7 @@ const FinanceTransactions = () => {
     data: customerChartypeData,
     loading: chargeTypeDataLoading,
     error: chargeTypeDataError,
-  } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
+  } = useGetCustomerChargeTypeQuery({
     onCompleted: (data) => {
       if (data?.getCustomerChargeType?.chargeType) {
         setEmptyChargeTypes()
@@ -66,7 +68,7 @@ const FinanceTransactions = () => {
     customerChartypeData?.getCustomerChargeType || {}
 
   const [loadCustomerRecords, { data, loading, called, error }] =
-    useLazyQuery(GET_CUSTOMER_RECORDS)
+    useGetCustomerRecordsLazyQuery()
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
@@ -83,11 +85,13 @@ const FinanceTransactions = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getAllChargeTypes() {
@@ -106,7 +110,7 @@ const FinanceTransactions = () => {
     setQ('')
   }
 
-  const recordsData: CustomerRecords = data?.getCustomerRecords || {}
+  const recordsData = (data?.getCustomerRecords || {}) as CustomerRecords
   const recordsDataArray =
     (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -116,50 +120,15 @@ const FinanceTransactions = () => {
 
   return (
     <DynamicWrapper>
-      <Box marginBottom={[6, 6, 10]}>
-        <IntroHeader
-          title={{
-            id: 'sp.finance-transactions:title',
-            defaultMessage: 'Hreyfingar',
-          }}
-          intro={{
+      <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+        <FinanceIntro
+          text={formatMessage({
             id: 'sp.finance-transactions:intro',
             defaultMessage:
               'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
-          }}
+          })}
         />
         <Stack space={2}>
-          <GridRow>
-            <GridColumn span={['11/12', '6/12']}>
-              <Box
-                display="flex"
-                marginLeft="auto"
-                paddingRight={2}
-                printHidden
-              >
-                <Box paddingRight={2}>
-                  <Button
-                    colorScheme="default"
-                    icon="print"
-                    iconType="filled"
-                    onClick={() => window.print()}
-                    preTextIconType="filled"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    {formatMessage(m.print)}
-                  </Button>
-                </Box>
-                <DropdownExport
-                  onGetCSV={() => exportHreyfingarFile(recordsDataArray, 'csv')}
-                  onGetExcel={() =>
-                    exportHreyfingarFile(recordsDataArray, 'xlsx')
-                  }
-                />
-              </Box>
-            </GridColumn>
-          </GridRow>
           <Hidden print={true}>
             <Box marginTop={[1, 1, 2, 2, 5]}>
               <Filter
@@ -178,6 +147,30 @@ const FinanceTransactions = () => {
                     onChange={(e) => setQ(e)}
                     backgroundColor="blue"
                   />
+                }
+                additionalFilters={
+                  <>
+                    <Button
+                      colorScheme="default"
+                      icon="print"
+                      iconType="filled"
+                      onClick={() => window.print()}
+                      preTextIconType="filled"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                    >
+                      {formatMessage(m.print)}
+                    </Button>
+                    <DropdownExport
+                      onGetCSV={() =>
+                        exportHreyfingarFile(recordsDataArray, 'csv')
+                      }
+                      onGetExcel={() =>
+                        exportHreyfingarFile(recordsDataArray, 'xlsx')
+                      }
+                    />
+                  </>
                 }
                 onFilterClear={clearAllFilters}
               >
@@ -217,7 +210,7 @@ const FinanceTransactions = () => {
                         key="date-accordion-item"
                         id="date-accordion-item"
                         label={formatMessage(m.datesLabel)}
-                        labelColor="blue400"
+                        labelColor="dark400"
                         labelUse="h5"
                         labelVariant="h5"
                         iconVariant="small"
@@ -286,6 +279,7 @@ const FinanceTransactions = () => {
           </Box>
         </Stack>
       </Box>
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </DynamicWrapper>
   )
 }

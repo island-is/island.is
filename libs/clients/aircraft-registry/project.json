@@ -30,11 +30,12 @@
         "cwd": "libs/clients/aircraft-registry"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/aircraft-registry/gen/fetch -i libs/clients/aircraft-registry/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client"]

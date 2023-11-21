@@ -1,4 +1,5 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { FormatMessage } from '@island.is/localization'
 import { arrangeRoutes, filterEnabledModules } from '../modules'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import { User } from '@island.is/shared/types'
@@ -9,12 +10,14 @@ export type PrepareRouterDataProps = {
   featureFlagClient: FeatureFlagClient
   modules: PortalModule[]
   client: ApolloClient<NormalizedCacheObject>
+  formatMessage: FormatMessage
 }
 
 export type PrepareRouterDataReturnType = {
   modules: PortalModule[]
   routes: PortalRoute[]
   userInfo: User
+  formatMessage: FormatMessage
 }
 
 /**
@@ -23,6 +26,7 @@ export type PrepareRouterDataReturnType = {
 export const prepareRouterData = async ({
   modules: initialModules,
   client,
+  formatMessage,
   ...rest
 }: PrepareRouterDataProps): Promise<PrepareRouterDataReturnType> => {
   const modules = await filterEnabledModules({
@@ -33,6 +37,7 @@ export const prepareRouterData = async ({
   const routes = await arrangeRoutes({
     modules: Object.values(modules),
     client,
+    formatMessage,
     ...rest,
   })
 
@@ -40,5 +45,6 @@ export const prepareRouterData = async ({
     modules,
     routes,
     userInfo: rest.userInfo,
+    formatMessage,
   }
 }

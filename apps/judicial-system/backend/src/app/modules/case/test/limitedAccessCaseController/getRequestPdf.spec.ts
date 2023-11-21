@@ -1,9 +1,10 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { getRequestPdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
 
 jest.mock('../../../../formatters/requestPdf')
 
@@ -39,25 +40,8 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
   describe('pdf generated', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
-    const res = {} as Response
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, theCase, res)
-    })
-
-    it('should generate pdf', () => {
-      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
-        theCase,
-        expect.any(Function),
-      )
-    })
-  })
-
-  describe('pdf returned', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
     const res = { end: jest.fn() } as unknown as Response
-    const pdf = {}
+    const pdf = 'Request pdf'
 
     beforeEach(async () => {
       const getMock = getRequestPdfAsBuffer as jest.Mock
@@ -67,6 +51,10 @@ describe('LimitedAccessCaseController - Get request pdf', () => {
     })
 
     it('should generate pdf', () => {
+      expect(getRequestPdfAsBuffer).toHaveBeenCalledWith(
+        theCase,
+        expect.any(Function),
+      )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
   })

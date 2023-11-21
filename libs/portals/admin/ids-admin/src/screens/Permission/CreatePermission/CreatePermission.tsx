@@ -28,6 +28,7 @@ import { parseID } from '../../../utils/forms'
 import { useErrorFormatMessage } from '../../../hooks/useFormatErrorMessage'
 import { CreateScopeResult } from './CreatePermission.action'
 import { authAdminEnvironments } from '../../../utils/environments'
+import { useGetScopeAvailabilityLazyQuery } from './CreatePermission.generated'
 
 type InputOnChange = ComponentPropsWithoutRef<typeof Input>['onChange']
 
@@ -39,6 +40,11 @@ export default function CreatePermission() {
   const tenant = useRouteLoaderData(tenantLoaderId) as TenantLoaderResult
   const { isLoading, isSubmitting } = useSubmitting()
 
+  const [getScopeAvailabilityQuery, { data: scopeAvailabilityData }] =
+    useGetScopeAvailabilityLazyQuery()
+  const scopeIdAlreadyExists =
+    (scopeAvailabilityData?.authAdminScope?.availableEnvironments?.length ??
+      0) > 0
   const handleClose = () => {
     navigate(
       replaceParams({
@@ -75,6 +81,20 @@ export default function CreatePermission() {
     })
   }
 
+  const validateUniqueId = async () => {
+    const scopeId = idState.value
+    if (!scopeId) return
+
+    await getScopeAvailabilityQuery({
+      variables: {
+        input: {
+          scopeName: scopeId,
+          tenantId: tenant.id,
+        },
+      },
+    })
+  }
+
   return (
     <Modal
       label={formatMessage(m.createPermission)}
@@ -100,6 +120,7 @@ export default function CreatePermission() {
                 size="sm"
                 backgroundColor="blue"
                 onChange={handleNameChange}
+                onBlur={validateUniqueId}
                 errorMessage={formatErrorMessage(
                   actionData?.errors?.displayName,
                 )}
@@ -116,7 +137,12 @@ export default function CreatePermission() {
                 backgroundColor="blue"
                 value={idState.value}
                 onChange={handleIdChange}
-                errorMessage={formatErrorMessage(actionData?.errors?.name)}
+                onBlur={validateUniqueId}
+                errorMessage={
+                  scopeIdAlreadyExists
+                    ? formatMessage(m.permissionAlreadyExists)
+                    : formatErrorMessage(actionData?.errors?.name)
+                }
               />
             </GridColumn>
             <GridColumn span={['12/12']}>
@@ -185,7 +211,11 @@ export default function CreatePermission() {
             <Button onClick={handleClose} variant="ghost" type="button">
               {formatMessage(m.cancel)}
             </Button>
-            <Button type="submit" loading={isLoading || isSubmitting}>
+            <Button
+              disabled={scopeIdAlreadyExists || !scopeAvailabilityData}
+              type="submit"
+              loading={isLoading || isSubmitting}
+            >
               {formatMessage(m.create)}
             </Button>
           </Box>

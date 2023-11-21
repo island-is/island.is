@@ -41,6 +41,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:search-placeholder',
     defaultMessage: 'Search',
   },
+  client: {
+    id: 'ap.ids-admin:client',
+    defaultMessage: 'Client',
+  },
   clients: {
     id: 'ap.ids-admin:clients',
     defaultMessage: 'Applications',
@@ -153,7 +157,7 @@ export const m = defineMessages({
   },
   errorScopeIdRegex: {
     id: 'ap.ids-admin:error-scope-id-regex',
-    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - /',
+    defaultMessage: 'Allowed characters are A-Z a-z 0-9 . _ - / :',
   },
   errorEnvironment: {
     id: 'ap.ids-admin:error-environment',
@@ -634,6 +638,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-description',
     defaultMessage: 'Description',
   },
+  permissionAlreadyExists: {
+    id: 'ap.ids-admin:permission-already-exists',
+    defaultMessage: 'Permission ID already exists',
+  },
   permissionDescriptionInfo: {
     id: 'ap.ids-admin:permission-description-info',
     defaultMessage: 'Users see this when they sign in, and manage consents.',
@@ -823,5 +831,17 @@ export const m = defineMessages({
     id: 'ap.ids-admin:delete-client-alert-message',
     defaultMessage:
       'The client ID will be deleted from all available environments and cannot be reused. Authentications will stop working immediately for your application.',
+  },
+  partiallyCreatedClient: {
+    id: 'ap.ids-admin:partially-created-client',
+    defaultMessage: 'Client creation failed on one or more environments',
+  },
+  typeNotFound: {
+    id: 'ap.ids-admin:type-not-found',
+    defaultMessage: '{type} not found',
+  },
+  typeNotFoundMessage: {
+    id: 'ap.ids-admin:type-not-found-message',
+    defaultMessage: 'It may have been removed or moved',
   },
 })

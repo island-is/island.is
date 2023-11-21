@@ -1,33 +1,31 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Feature } from '@island.is/judicial-system/types'
-
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
 import { Tag, TagVariant } from '@island.is/island-ui/core'
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseAppealRulingDecision,
   CaseAppealState,
+  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { FeatureContext } from '../FeatureProvider/FeatureProvider'
+import useStringHelpers from '../../utils/hooks/useStringHelpers/useStringHelpers'
+import { UserContext } from '../UserProvider/UserProvider'
 
 interface Props {
   appealState?: CaseAppealState | null
   appealRulingDecision?: CaseAppealRulingDecision | null
+  appealCaseNumber?: string | null
 }
 
 const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
   appealRulingDecision,
   appealState,
+  appealCaseNumber,
 }) => {
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
-
-  if (!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)) {
-    return null
-  }
+  const { user } = useContext(UserContext)
+  const { getAppealResultText } = useStringHelpers()
 
   const getTagVariantForAppealState = (
     state?: CaseAppealState | null,
@@ -45,49 +43,33 @@ const TagAppealState: React.FC<React.PropsWithChildren<Props>> = ({
       }
     }
     if (state === CaseAppealState.RECEIVED) {
-      return {
-        color: 'darkerBlue',
-        text: formatMessage(tables.receivedTag),
-      }
+      if (
+        user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
+        !appealCaseNumber
+      ) {
+        return {
+          color: 'purple',
+          text: formatMessage(tables.newTag),
+        }
+      } else
+        return {
+          color: 'darkerBlue',
+          text: formatMessage(tables.receivedTag),
+        }
     }
     if (state === CaseAppealState.COMPLETED) {
-      if (ruling === CaseAppealRulingDecision.ACCEPTING) {
-        return {
-          color: 'mint',
-          text: formatMessage(appealRuling.tagDecisionAccept),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.REPEAL) {
-        return {
-          color: 'rose',
-          text: formatMessage(appealRuling.tagDecisionChange),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.CHANGED) {
-        return {
-          color: 'rose',
-          text: formatMessage(appealRuling.tagDecisionChange),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionDismissed),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionDismissed),
-        }
-      }
-      if (ruling === CaseAppealRulingDecision.REMAND) {
-        return {
-          color: 'blueberry',
-          text: formatMessage(appealRuling.tagDecisionRemand),
-        }
+      return {
+        color:
+          ruling === CaseAppealRulingDecision.ACCEPTING
+            ? 'mint'
+            : ruling === CaseAppealRulingDecision.CHANGED ||
+              ruling === CaseAppealRulingDecision.REPEAL
+            ? 'rose'
+            : 'blueberry',
+        text: getAppealResultText(ruling),
       }
     }
+
     return undefined
   }
 

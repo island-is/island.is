@@ -42,10 +42,10 @@ export const AssetsRepeater: FC<
   const assetName = field?.props?.assetName
   const error = (errors as any)?.estate?.[assetName]
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
-  const { control, clearErrors } = useFormContext()
+  const { control, clearErrors, setValue } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: {
@@ -55,7 +55,7 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate[assetName]) {
-      append(externalData.estate[assetName])
+      replace(externalData.estate[assetName])
     }
   }, [])
 

@@ -1,6 +1,35 @@
 import gql from 'graphql-tag'
 
-export const slices = gql`
+export const processEntryFields = gql`
+  fragment ProcessEntryFields on ProcessEntry {
+    __typename
+    id
+    processTitle
+    processLink
+    openLinkInModal
+    buttonText
+  }
+`
+
+export const htmlFields = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+`
+
+export const assetFields = gql`
+  fragment AssetFields on Asset {
+    __typename
+    id
+    title
+    url
+    contentType
+  }
+`
+
+export const imageFields = gql`
   fragment ImageFields on Image {
     __typename
     id
@@ -10,14 +39,11 @@ export const slices = gql`
     width
     height
   }
+`
 
-  fragment AssetFields on Asset {
-    __typename
-    id
-    title
-    url
-    contentType
-  }
+export const slices = gql`
+  ${imageFields}
+  ${assetFields}
 
   fragment TimelineFields on TimelineSlice {
     __typename
@@ -86,15 +112,21 @@ export const slices = gql`
     }
   }
 
-  fragment LinkCardFields on LinkCardSlice {
+  fragment LinkCardFields on LinkCard {
+    __typename
+    id
+    title
+    body
+    linkUrl
+    linkText
+  }
+
+  fragment LinkCardSectionFields on LinkCardSection {
     __typename
     id
     title
     cards {
-      title
-      body
-      link
-      linkText
+      ...LinkCardFields
     }
   }
 
@@ -178,20 +210,7 @@ export const slices = gql`
     }
   }
 
-  fragment ProcessEntryFields on ProcessEntry {
-    __typename
-    id
-    processTitle
-    processLink
-    openLinkInModal
-    buttonText
-  }
-
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
 
   fragment EmbeddedVideoFields on EmbeddedVideo {
     __typename
@@ -216,6 +235,8 @@ export const slices = gql`
     __typename
     id
     title
+    showTitle
+    showDividerOnTop
     video {
       ...EmbeddedVideoFields
     }
@@ -354,7 +375,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
     }
@@ -363,7 +384,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
       importance
@@ -505,6 +526,7 @@ export const slices = gql`
     id
     title
     intro
+    defaultFieldNamespace
     fields {
       title
       name
@@ -570,6 +592,7 @@ export const slices = gql`
       title
       shortTitle
       slug
+      pageType
       tinyThumbnail {
         url
         title
@@ -583,6 +606,7 @@ export const slices = gql`
   }
 
   fragment SidebarCardFields on SidebarCard {
+    id
     title
     contentString
     type
@@ -702,11 +726,44 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
+  fragment LatestEventsSliceFields on LatestEventsSlice {
+    title
+    events {
+      title
+      slug
+      startDate
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+        freeText
+        useFreeText
+      }
+      thumbnailImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
+    ...LinkCardSectionFields
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
@@ -740,6 +797,8 @@ export const slices = gql`
     ...TableSliceFields
     ...EmailSignupFields
     ...SliceDropdownFields
+    ...EmbedFields
+    ...LatestEventsSliceFields
   }
 
   fragment AllSlices on Slice {
@@ -747,6 +806,7 @@ export const slices = gql`
     ...FaqListFields
     ...FeaturedSupportQNAsFields
   }
+  ${processEntryFields}
 `
 
 export const nestedOneColumnTextFields = gql`
@@ -782,7 +842,7 @@ const nestedContainerFields = `
     }
   }
   ... on TabSection {
-    ...TabSectionFields 
+    ...TabSectionFields
     tabs {
       tabTitle
       contentTitle

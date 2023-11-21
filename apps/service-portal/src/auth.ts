@@ -32,6 +32,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.financeOverview,
   ApiScope.financeSalary,
   ApiScope.financeSchedule,
+  ApiScope.financeLoans,
   ApiScope.internal,
   ApiScope.internalProcuring,
   ApiScope.meDetails,
@@ -41,6 +42,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.vehicles,
   ApiScope.health,
   ApiScope.workMachines,
+  ApiScope.health,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

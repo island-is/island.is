@@ -3,8 +3,8 @@ import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   completedCaseStates,
@@ -16,8 +16,8 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { CaseAppealState } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AppealCaseFilesOverview.strings'
 
@@ -32,6 +32,23 @@ const AppealCaseFilesOverview: React.FC<
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+
+  const fileDate = (category: CaseFileCategory) => {
+    switch (category) {
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF:
+      case CaseFileCategory.PROSECUTOR_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.prosecutorPostponedAppealDate
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT:
+      case CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE:
+        return workingCase.prosecutorStatementDate
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF:
+      case CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE:
+        return workingCase.accusedPostponedAppealDate
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT:
+      case CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE:
+        return workingCase.defendantStatementDate
+    }
+  }
 
   const appealCaseFiles = workingCase.caseFiles?.filter(
     (caseFile) =>
@@ -66,7 +83,7 @@ const AppealCaseFilesOverview: React.FC<
   )
 
   const allFiles =
-    user?.role === UserRole.STAFF
+    user?.role === UserRole.PRISON_SYSTEM_STAFF
       ? appealRulingFiles
       : appealCaseFiles?.concat(appealRulingFiles ?? [])
 
@@ -88,19 +105,16 @@ const AppealCaseFilesOverview: React.FC<
             handleClick={() => onOpen(file.id)}
           >
             {file.category && file.category !== CaseFileCategory.APPEAL_RULING && (
-              <Box display="flex" alignItems="flexEnd" flexDirection="column">
+              <Box display="flex" flexDirection="column">
                 <Text>
-                  {`
-                       ${formatDate(
-                         file.created,
-                         'dd.MM.y',
-                       )}   kl. ${formatDate(
-                    file.created,
+                  {`${formatDate(
+                    fileDate(file.category),
+                    'dd.MM.y',
+                  )} kl. ${formatDate(
+                    fileDate(file.category),
                     constants.TIME_FORMAT,
-                  )}
-                    `}
+                  )}`}
                 </Text>
-
                 <Text variant="small">
                   {formatMessage(strings.submittedBy, {
                     filesCategory: file.category?.includes('PROSECUTOR'),

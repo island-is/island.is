@@ -3,16 +3,16 @@ import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
+  capitalize,
+  formatDate,
+  readableIndictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
+import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 
 import { indictmentInfo as strings } from './IndictmentInfo.strings'
-import {
-  capitalize,
-  formatDate,
-  readableIndictmentSubtypes,
-} from '@island.is/judicial-system/formatters'
 
 interface Props {
   policeCaseNumber: string

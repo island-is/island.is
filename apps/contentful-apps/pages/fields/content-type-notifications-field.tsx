@@ -8,7 +8,7 @@ import {
   DEFAULT_LOCALE,
 } from '../../constants'
 
-const ConentTypeNotificationsField = () => {
+const ContentTypeNotificationsField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
 
@@ -37,4 +37,4 @@ const ConentTypeNotificationsField = () => {
   )
 }
 
-export default ConentTypeNotificationsField
+export default ContentTypeNotificationsField

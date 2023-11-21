@@ -1,5 +1,7 @@
 import fetchMock from 'fetch-mock'
+
 import * as cookies from '@island.is/judicial-system-web/src/utils/cookies'
+
 import { api } from './'
 
 describe('Judicial system web api endpoints', () => {

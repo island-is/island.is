@@ -1,24 +1,23 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
-import { useMutation, useQuery } from '@apollo/client'
 import { useRouter } from 'next/router'
+import { useMutation, useQuery } from '@apollo/client'
 
+import { AlertBanner, Box } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import { titles } from '@island.is/judicial-system-web/messages'
+import { Skeleton } from '@island.is/judicial-system-web/src/components'
+import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
   UpdateUserMutation,
   UserQuery,
 } from '@island.is/judicial-system-web/src/utils/mutations'
-import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { User } from '@island.is/judicial-system-web/src/graphql/schema'
-import { AlertBanner, Box } from '@island.is/island-ui/core'
-import { Skeleton } from '@island.is/judicial-system-web/src/components'
-import * as constants from '@island.is/judicial-system/consts'
-import * as styles from '../Users/Users.css'
-import { adminStrings as strings } from '../Admin.strings'
 
 import UserForm from '../UserForm/UserForm'
+import { adminStrings as strings } from '../Admin.strings'
+import * as styles from '../Users/Users.css'
 
 interface UserData {
   user: User
@@ -42,9 +41,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const {
-    allCourts,
-    prosecutorsOffices,
-    prisonInstitutions,
+    allInstitutions,
     loading: institutionLoading,
     loaded: institutionLoaded,
   } = useInstitution()
@@ -88,9 +85,7 @@ export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
         <PageHeader title={formatMessage(titles.admin.changeUser)} />
         <UserForm
           user={userData?.user}
-          allCourts={allCourts}
-          prosecutorsOffices={prosecutorsOffices}
-          prisonInstitutions={prisonInstitutions}
+          institutions={allInstitutions}
           onSave={saveUser}
           loading={saveLoading}
         />

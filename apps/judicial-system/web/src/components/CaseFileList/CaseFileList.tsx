@@ -11,13 +11,12 @@ import {
 } from '@island.is/island-ui/core'
 import { CaseFile as TCaseFile } from '@island.is/judicial-system/types'
 import { caseFiles as m } from '@island.is/judicial-system-web/messages'
-
 import { FileNotFoundModal } from '@island.is/judicial-system-web/src/components'
-import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 import type {
   CaseFile,
   CaseFileStatus,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   caseId: string
@@ -28,7 +27,9 @@ interface Props {
 }
 
 const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
-  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+  if (status === 'broken') {
+    return { background: 'dark100', border: 'dark200' }
+  }
 
   return { background: 'blue100', border: 'blue300' }
 }

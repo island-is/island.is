@@ -2,30 +2,32 @@ import { useContext } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { TempCase } from '@island.is/judicial-system-web/src/types'
-import { formatDate } from '@island.is/judicial-system/formatters'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
-import { Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, Tooltip } from '@island.is/island-ui/core'
 import {
   APPEAL_ROUTE,
   DEFENDER_APPEAL_ROUTE,
   DEFENDER_STATEMENT_ROUTE,
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseAppealRulingDecision,
+  isDefenceUser,
+  isDistrictCourtUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
+import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
-  CaseAppealRulingDecision,
-  isCourtRole,
-  isProsecutionRole,
-} from '@island.is/judicial-system/types'
-import {
   CaseAppealState,
-  UserRole,
   InstitutionType,
+  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
+import { TempCase } from '@island.is/judicial-system-web/src/types'
 
-import { strings } from './strings'
+import { strings } from './useAppealAlertBanner.strings'
+import * as styles from './useAppealAlertBanner.css'
 
 const renderLinkButton = (text: string, href: string) => {
   return (
@@ -45,28 +47,22 @@ const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
   appealRulingDecision?: CaseAppealRulingDecision,
 ) => {
-  if (appealRulingDecision === CaseAppealRulingDecision.ACCEPTING) {
-    return formatMessage(appealRuling.decisionAccept)
+  switch (appealRulingDecision) {
+    case CaseAppealRulingDecision.ACCEPTING:
+      return formatMessage(appealRuling.decisionAccept)
+    case CaseAppealRulingDecision.REPEAL:
+      return formatMessage(appealRuling.decisionRepeal)
+    case CaseAppealRulingDecision.CHANGED:
+      return formatMessage(appealRuling.decisionChanged)
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+      return formatMessage(appealRuling.decisionDismissedFromCourt)
+    case CaseAppealRulingDecision.REMAND:
+      return formatMessage(appealRuling.decisionRemand)
+    default:
+      return undefined
   }
-  if (appealRulingDecision === CaseAppealRulingDecision.REPEAL) {
-    return formatMessage(appealRuling.decisionRepeal)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.CHANGED) {
-    return formatMessage(appealRuling.decisionChanged)
-  }
-  if (
-    appealRulingDecision ===
-    CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL
-  ) {
-    return formatMessage(appealRuling.decisionDismissedFromCourtOfAppeal)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.DISMISSED_FROM_COURT) {
-    return formatMessage(appealRuling.decisionDismissedFromCourt)
-  }
-  if (appealRulingDecision === CaseAppealRulingDecision.REMAND) {
-    return formatMessage(appealRuling.decisionRemand)
-  }
-  return undefined
 }
 
 const useAppealAlertBanner = (
@@ -76,10 +72,7 @@ const useAppealAlertBanner = (
   onReceiveAppeal?: () => void,
 ) => {
   const { formatMessage } = useIntl()
-  const { user, limitedAccess } = useContext(UserContext)
-  const isCourtRoleUser = isCourtRole(user?.role)
-  const isProsecutionRoleUser = isProsecutionRole(user?.role)
-  const isDefenderRoleUser = limitedAccess
+  const { user } = useContext(UserContext)
   let title = ''
   let description: string | undefined = undefined
   let child: React.ReactElement | null = null
@@ -102,16 +95,16 @@ const useAppealAlertBanner = (
   } = workingCase
 
   const isSharedWithProsecutor =
-    isProsecutionRoleUser &&
+    isProsecutionUser(user) &&
     user?.institution?.id === sharedWithProsecutorsOffice?.id
 
   const hasCurrentUserSentStatement =
-    (isProsecutionRoleUser && prosecutorStatementDate) ||
-    (isDefenderRoleUser && defendantStatementDate)
+    (isProsecutionUser(user) && prosecutorStatementDate) ||
+    (isDefenceUser(user) && defendantStatementDate)
 
-  // HIGH COURT AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
+  // COURT OF APPEALS AND SHARED WITH PROSECUTOR BANNER INFO IS HANDLED HERE
   if (
-    user?.institution?.type === InstitutionType.HIGH_COURT ||
+    user?.institution?.type === InstitutionType.COURT_OF_APPEALS ||
     isSharedWithProsecutor
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
@@ -127,7 +120,7 @@ const useAppealAlertBanner = (
       })
     }
   }
-  // DEFENDER, PROSECUTOR AND COURT BANNER INFO IS HANDLED HERE:
+  // DEFENDER, PROSECUTOR AND DISTRICT COURT BANNER INFO IS HANDLED HERE:
   // When appeal has been received
   else if (appealState === CaseAppealState.RECEIVED) {
     title = formatMessage(strings.statementTitle)
@@ -141,13 +134,13 @@ const useAppealAlertBanner = (
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.statementSentDescription, {
-            statementSentDate: isProsecutionRoleUser
+            statementSentDate: isProsecutionUser(user)
               ? formatDate(prosecutorStatementDate, 'PPPp')
               : formatDate(defendantStatementDate, 'PPPp'),
           })}
         </Text>
       )
-    } else if (isCourtRoleUser) {
+    } else if (isDistrictCourtUser(user)) {
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.appealReceivedNotificationSent, {
@@ -163,7 +156,7 @@ const useAppealAlertBanner = (
       ) : (
         renderLinkButton(
           formatMessage(strings.statementLinkText),
-          isDefenderRoleUser
+          isDefenceUser(user)
             ? `${DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`
             : `${STATEMENT_ROUTE}/${workingCase.id}`,
         )
@@ -188,12 +181,12 @@ const useAppealAlertBanner = (
             appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
             appealDate: formatDate(appealedDate, 'PPPp'),
           })
-    if (isProsecutionRoleUser || isDefenderRoleUser) {
+    if (isProsecutionUser(user) || isDefenceUser(user)) {
       child = hasCurrentUserSentStatement
         ? (child = (
             <Text variant="small" color="mint800" fontWeight="semiBold">
               {formatMessage(strings.statementSentDescription, {
-                statementSentDate: isProsecutionRoleUser
+                statementSentDate: isProsecutionUser(user)
                   ? formatDate(prosecutorStatementDate, 'PPPp')
                   : formatDate(defendantStatementDate, 'PPPp'),
               })}
@@ -202,14 +195,19 @@ const useAppealAlertBanner = (
         : renderLinkButton(
             formatMessage(strings.statementLinkText),
             `${
-              isDefenderRoleUser ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
+              isDefenceUser(user) ? DEFENDER_STATEMENT_ROUTE : STATEMENT_ROUTE
             }/${workingCase.id}`,
           )
-    } else if (isCourtRoleUser) {
+    } else if (isDistrictCourtUser(user)) {
       child = (
-        <Button variant="text" size="small" onClick={onReceiveAppeal}>
-          {formatMessage(strings.appealReceivedNotificationLinkText)}
-        </Button>
+        <Box>
+          <Button variant="text" size="small" onClick={onReceiveAppeal}>
+            {`${formatMessage(strings.appealReceivedNotificationLinkText)} `}
+          </Button>
+          <span className={styles.tooltipContainer}>
+            <Tooltip text={formatMessage(strings.notifyCOATooltip)} />
+          </span>
+        </Box>
       )
     }
   }
@@ -226,7 +224,7 @@ const useAppealAlertBanner = (
     ) : (
       renderLinkButton(
         formatMessage(strings.appealLinkText),
-        `${isDefenderRoleUser ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
+        `${isDefenceUser(user) ? DEFENDER_APPEAL_ROUTE : APPEAL_ROUTE}/${
           workingCase.id
         }`,
       )

@@ -267,6 +267,21 @@ function defaultCacheKey(request: Request) {
   return `${url.pathname}${url.search}`
 }
 
+/**
+ * Create a cache key that includes a header value based on a header name if header is present.
+ *
+ * This is required for clients that are using cache and the URL contains a static placeholder
+ * for the resource identifier, e.g. /users/.national-id where the actual resource identifier is
+ * passed in a header.
+ */
+export function defaultCacheKeyWithHeader(header: string) {
+  return (request: Request) => {
+    const cacheKey = defaultCacheKey(request)
+    const paramHeader = request.headers.get(header)
+    return paramHeader ? `${cacheKey}#${paramHeader}` : cacheKey
+  }
+}
+
 function headersToObject(headers: Headers) {
   const object = Object.create(null)
   for (const [name, value] of headers) {

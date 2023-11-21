@@ -13,29 +13,31 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseAppealRulingDecision,
-  CaseType,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseOrigin,
-  CaseAppealState,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
+  CaseState,
+  CaseType,
+  CourtDocument,
+  RequestSharedWithDefender,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
-import { IndictmentCount } from '../../indictment-count'
 
 @Table({
   tableName: 'case',
@@ -180,15 +182,16 @@ export class Case extends Model {
   defenderPhoneNumber?: string
 
   /**********
-   * Indicates whether the prosecutor's request should be sent to the accused's defender
-   * when a court date has been assigned to the case - optional
+   * Indicates whether, and if so when, the prosecutor's request should become accessible to the accused's
+   * defender - optional
    **********/
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(RequestSharedWithDefender),
   })
-  @ApiPropertyOptional()
-  sendRequestToDefender?: boolean
+  @ApiPropertyOptional({ enum: RequestSharedWithDefender })
+  requestSharedWithDefender?: RequestSharedWithDefender
 
   /**********
    * Indicates whether the secutity level of the case has been heightened -
@@ -1114,4 +1117,21 @@ export class Case extends Model {
   @BelongsTo(() => User, 'appealJudge3Id')
   @ApiPropertyOptional({ type: User })
   appealJudge3?: User
+
+  /**********
+   * The history on when a case's appeal ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealRulingModifiedHistory?: string
+
+  /**********
+   * The case's event logs
+   **********/
+  @HasMany(() => EventLog, 'caseId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }

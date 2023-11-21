@@ -27,12 +27,16 @@ export const ArticleChatPanel = ({
   let Component = null
 
   // LiveChatInc
-  if (article?.organization?.some((o) => o.id in liveChatIncConfig)) {
+  if (
+    article?.organization?.some((o) => o.id in liveChatIncConfig[activeLocale])
+  ) {
     const organizationId = article.organization.find(
-      (o) => o.id in liveChatIncConfig,
+      (o) => o.id in liveChatIncConfig[activeLocale],
     )?.id
     Component = (
-      <LiveChatIncChatPanel {...liveChatIncConfig[organizationId ?? '']} />
+      <LiveChatIncChatPanel
+        {...liveChatIncConfig[activeLocale][organizationId ?? '']}
+      />
     )
   }
   // Watson

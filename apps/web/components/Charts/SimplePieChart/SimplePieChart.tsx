@@ -30,7 +30,12 @@ const CustomTooltip = (props: CustomTooltipProps) => {
       <div className={cn(styles.tooltip)}>
         <p>
           {payload[0].name} (
-          {((payload[0].payload[datakey] / sum) * 100).toFixed(0)}%)
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            ((payload[0].payload[datakey] / sum) * 100).toFixed(0)
+          }
+          %)
         </p>
       </div>
     )

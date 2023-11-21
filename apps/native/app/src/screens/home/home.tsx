@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {TopLine} from '@ui';
+import {Button, TopLine} from '@ui';
 import React, {
   ReactElement,
   useCallback,
@@ -31,6 +31,7 @@ import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from './applications-module';
 import {NotificationsModule} from './notifications-module';
 import {OnboardingModule} from './onboarding-module';
+import {navigateTo} from '../../lib/deep-linking';
 
 interface ListItem {
   id: string;

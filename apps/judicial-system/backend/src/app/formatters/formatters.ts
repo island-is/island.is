@@ -1,3 +1,9 @@
+import type { FormatMessage } from '@island.is/cms-translations'
+
+import {
+  DEFENDER_INDICTMENT_ROUTE,
+  DEFENDER_ROUTE,
+} from '@island.is/judicial-system/consts'
 import {
   capitalize,
   caseTypes,
@@ -8,8 +14,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-
-import type { FormatMessage } from '@island.is/cms-translations'
+import type { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -19,13 +24,8 @@ import {
   isRestrictionCase,
   SessionArrangements,
 } from '@island.is/judicial-system/types'
-import type { Gender } from '@island.is/judicial-system/types'
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
 
-import { core, notifications, custodyNotice } from '../messages'
+import { core, custodyNotice, notifications } from '../messages'
 import { Case } from '../modules/case'
 
 type SubjectAndBody = {
@@ -269,6 +269,7 @@ export function formatProsecutorCourtDateEmailNotification(
   const registrarText = registrarName
     ? formatMessage(notifications.registrar, { registrarName })
     : undefined
+
   const defenderText = formatMessage(notifications.defender, {
     defenderName: defenderName || 'NONE',
     sessionArrangements,
@@ -655,6 +656,35 @@ export function formatDefenderAssignedEmailNotification(
   return { body, subject }
 }
 
+export function formatCourtOfAppealJudgeAssignedEmailNotification(
+  formatMessage: FormatMessage,
+  caseNumber: string,
+  isForeperson: boolean,
+  forepersonName: string,
+  role: UserRole,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.COAJudgeAssigned.subject, {
+    caseNumber,
+  })
+
+  const body = isForeperson
+    ? formatMessage(notifications.COAJudgeAssigned.forepersonBody, {
+        caseNumber,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : formatMessage(notifications.COAJudgeAssigned.body, {
+        role,
+        caseNumber,
+        foreperson: forepersonName,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+
+  return { body, subject }
+}
+
 export function formatCourtIndictmentReadyForCourtEmailNotification(
   formatMessage: FormatMessage,
   theCase: Case,
@@ -678,6 +708,30 @@ export function formatCourtIndictmentReadyForCourtEmailNotification(
   })
 
   return { body, subject }
+}
+
+export function formatDefenderReadyForCourtEmailNotification(
+  formatMessage: FormatMessage,
+  policeCaseNumber: string,
+  courtName: string,
+  overviewUrl?: string,
+) {
+  const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
+    policeCaseNumber: policeCaseNumber,
+  })
+
+  const body = formatMessage(notifications.defenderReadyForCourtBody, {
+    policeCaseNumber: policeCaseNumber,
+  })
+
+  const link = formatMessage(notifications.defenderLink, {
+    defenderHasAccessToRvg: Boolean(overviewUrl),
+    courtName: courtName.replace('dómur', 'dómi'),
+    linkStart: `<a href="${overviewUrl}">`,
+    linkEnd: '</a>',
+  })
+
+  return { subject, body: `${body}${link}` }
 }
 
 export const formatDefenderRoute = (

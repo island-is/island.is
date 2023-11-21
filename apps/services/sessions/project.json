@@ -5,27 +5,10 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "nx:run-commands",
-      "options": {
-        "outputPath": "dist/apps/services/sessions",
-        "commands": ["nx esbuild services-sessions"],
-        "parallel": false
-      },
-      "configurations": {
-        "production": {
-          "commands": [
-            "nx update-geoip services-sessions",
-            "nx esbuild services-sessions --prod"
-          ]
-        }
-      },
-      "outputs": ["{workspaceRoot}/dist/apps/services/sessions"]
-    },
-    "esbuild": {
       "executor": "./tools/executors/node:build",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/services/sessions",
+        "outputPath": "dist/apps/services/sessions/api",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
         "assets": [
@@ -64,7 +47,7 @@
     "serve": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-sessions:esbuild"
+        "buildTarget": "services-sessions:build"
       }
     },
     "lint": {
@@ -85,7 +68,10 @@
     "worker": {
       "executor": "@nx/js:node",
       "options": {
-        "buildTarget": "services-sessions:esbuild",
+        "buildTarget": "services-sessions:build",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/sessions/worker"
+        },
         "args": ["--job", "worker"]
       }
     },
@@ -106,12 +92,12 @@
         "parallel": false
       }
     },
-    "schemas/build-openapi": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/sessions/tsconfig.app.json apps/services/sessions/src/buildOpenApi.ts"
       },
-      "outputs": ["{workspaceRoot}/apps/services/sessions/src/openapi.yaml"]
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
       "executor": "nx:run-commands",

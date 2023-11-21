@@ -1,13 +1,13 @@
 // TODO: Add tests
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 import {
-  User,
   CaseType,
   SessionArrangements,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { isBusiness } from './stepHelper'
 import { TempCase as Case } from '../types'
+import { isBusiness } from './stepHelper'
 
 export type Validation =
   | 'empty'
@@ -163,6 +163,9 @@ export const isDefendantStepValidRC = (
   return (
     policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defenderName
+      ? workingCase.requestSharedWithDefender !== undefined
+      : true) &&
     validate([
       ...policeCaseNumbers.map(
         (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
@@ -181,10 +184,14 @@ export const isDefendantStepValidIC = (
   caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ): boolean => {
+  console.log(workingCase.defenderName)
   return (
     policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
+    (workingCase.defenderName
+      ? workingCase.requestSharedWithDefender !== undefined
+      : true) &&
     validate([
       [workingCase.type, ['empty']],
       ...policeCaseNumbers.map(
@@ -422,9 +429,10 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 export const isAdminUserFormValid = (user: User): boolean => {
   return (
     (user.institution &&
+      user.role &&
       validate([
-        [user.name, ['empty']],
         [user.nationalId, ['empty', 'national-id']],
+        [user.name, ['empty']],
         [user.title, ['empty']],
         [user.mobileNumber, ['empty']],
         [user.email, ['empty', 'email-format']],

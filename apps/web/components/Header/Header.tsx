@@ -26,6 +26,8 @@ interface HeaderProps {
   showSearchInHeader?: boolean
   buttonColorScheme?: ButtonTypes['colorScheme']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
 }
 

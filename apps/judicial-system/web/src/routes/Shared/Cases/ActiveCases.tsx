@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import localeIS from 'date-fns/locale/is'
 import format from 'date-fns/format'
+import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import {
   AnimatePresence,
@@ -11,38 +11,38 @@ import {
   useAnimation,
 } from 'framer-motion'
 
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { Box, Text, Icon, Button } from '@island.is/island-ui/core'
+import {
+  capitalize,
+  displayFirstPlusRemaining,
+  formatDOB,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseState,
-  isExtendedCourtRole,
-  isProsecutionRole,
+  isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-
+import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
+import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
+import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
   TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
-import {
-  capitalize,
-  displayFirstPlusRemaining,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
-import { core, tables } from '@island.is/judicial-system-web/messages'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
-import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import * as styles from './Cases.css'
 import MobileCase from './MobileCase'
 import { cases as m } from './Cases.strings'
-import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
-import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
+import * as styles from './Cases.css'
 
 interface Props {
   cases: CaseListEntry[]
@@ -65,8 +65,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecution = user?.role && isProsecutionRole(user.role)
-  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -92,8 +90,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
           }
           return entry.created
         }
-
-        const compareResult = getColumnValue(a).localeCompare(getColumnValue(b))
+        const compareResult = compareLocaleIS(
+          getColumnValue(a),
+          getColumnValue(b),
+        )
 
         return sortConfig.direction === 'ascending'
           ? compareResult
@@ -131,7 +131,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourt}
+            isCourtRole={isDistrictCourtUser(user)}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -303,7 +303,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
-                      isCourtRole={isCourt}
+                      isCourtRole={isDistrictCourtUser(user)}
                       isValidToDateInThePast={c.isValidToDateInThePast}
                       courtDate={c.courtDate}
                     />
@@ -336,7 +336,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
 
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecution &&
+                  {isProsecutionUser(user) &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||

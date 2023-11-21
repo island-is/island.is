@@ -1,6 +1,8 @@
 import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
+
 import * as styles from './HideableText.css'
 
 interface Props {

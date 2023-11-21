@@ -1,47 +1,26 @@
 import React, { SetStateAction, useCallback } from 'react'
-import { useMutation } from '@apollo/client'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   CreateDefendantInput,
   Defendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { CreateDefendantMutation } from './createDefendantGql'
-import { DeleteDefendantMutation } from './deleteDefendantGql'
-import { UpdateDefendantMutation } from './updateDefendantGql'
-
-interface CreateDefendantMutationResponse {
-  createDefendant: {
-    id: string
-  }
-}
-
-interface DeleteDefendantMutationResponse {
-  deleteDefendant: {
-    deleted: boolean
-  }
-}
-
-export interface UpdateDefendantMutationResponse {
-  updateDefendant: {
-    id: string
-  }
-}
+import { useCreateDefendantMutation } from './createDefendantt.generated'
+import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
+import { useUpdateDefendantMutation } from './updateDefendantt.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
 
   const [createDefendantMutation, { loading: isCreatingDefendant }] =
-    useMutation<CreateDefendantMutationResponse>(CreateDefendantMutation)
-  const [deleteDefendantMutation] =
-    useMutation<DeleteDefendantMutationResponse>(DeleteDefendantMutation)
-  const [updateDefendantMutation] =
-    useMutation<UpdateDefendantMutationResponse>(UpdateDefendantMutation)
+    useCreateDefendantMutation()
+  const [deleteDefendantMutation] = useDeleteDefendantMutation()
+  const [updateDefendantMutation] = useUpdateDefendantMutation()
 
   const createDefendant = useCallback(
     async (defendant: CreateDefendantInput) => {
@@ -54,7 +33,7 @@ const useDefendants = () => {
           })
 
           if (data) {
-            return data.createDefendant.id
+            return data.createDefendant?.id
           }
         }
       } catch (error) {
@@ -71,7 +50,7 @@ const useDefendants = () => {
           variables: { input: { caseId, defendantId } },
         })
 
-        if (data?.deleteDefendant.deleted) {
+        if (data?.deleteDefendant?.deleted) {
           return true
         } else {
           return false

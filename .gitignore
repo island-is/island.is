@@ -6,6 +6,7 @@
 /out-tsc
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
+infra/helm/**/*.tgz
 # Contentful extensions
 libs/contentful-extensions/translation/build
 libs/contentful-extensions/translation/.cache
@@ -51,6 +52,7 @@ yarn-error.log
 testem.log
 /typings
 /debug.log
+*.log
 
 # System Files
 .DS_Store
@@ -94,3 +96,5 @@ apps/**/index.html
 
 # Next.js
 .next
+
+.nx/

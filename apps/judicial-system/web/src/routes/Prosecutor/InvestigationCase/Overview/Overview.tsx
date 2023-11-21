@@ -1,7 +1,7 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/router'
 
 import {
   Accordion,
@@ -10,34 +10,17 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { Text } from '@island.is/island-ui/core'
-import {
-  formatDate,
-  caseTypes,
-  capitalize,
-} from '@island.is/judicial-system/formatters'
-import {
-  NotificationType,
-  CaseState,
-  CaseTransition,
-} from '@island.is/judicial-system/types'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  AccordionListItem,
-  CaseFileList,
-  ProsecutorCaseInfo,
-  CommentsAccordionItem,
-  FormContentContainer,
-  FormFooter,
-  InfoCard,
-  Modal,
-  PageLayout,
-  PdfButton,
-  CaseResubmitModal,
-  FormContext,
-  UserContext,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+  capitalize,
+  caseTypes,
+  formatDate,
+} from '@island.is/judicial-system/formatters'
+import {
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -45,8 +28,25 @@ import {
   requestCourtDate,
   titles,
 } from '@island.is/judicial-system-web/messages'
-import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
+import {
+  AccordionListItem,
+  CaseFileList,
+  CaseResubmitModal,
+  CommentsAccordionItem,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  InfoCard,
+  Modal,
+  PageHeader,
+  PageLayout,
+  PdfButton,
+  ProsecutorCaseInfo,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as styles from './Overview.css'
 

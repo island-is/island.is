@@ -10,19 +10,21 @@ import {
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import {
   DokobitError,
   SigningService,
   SigningServiceResponse,
 } from '@island.is/dokobit-signing'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
+import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealState,
@@ -33,35 +35,30 @@ import {
   CaseTransition,
   CaseType,
   completedCaseStates,
+  EventType,
   isIndictmentCase,
   isRestrictionCase,
   UserRole,
 } from '@island.is/judicial-system/types'
-import type { User as TUser } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import {
-  getRequestPdfAsBuffer,
-  getRulingPdfAsString,
-  getRulingPdfAsBuffer,
-  getCustodyNoticePdfAsBuffer,
-  getCourtRecordPdfAsBuffer,
   getCourtRecordPdfAsString,
-  createCaseFilesRecord,
-  createIndictment,
+  getRulingPdfAsString,
 } from '../../formatters'
+import { AwsS3Service } from '../aws-s3'
+import { CourtService } from '../court'
+import { Defendant, DefendantService } from '../defendant'
+import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
-import { DefendantService, Defendant } from '../defendant'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
 import { User } from '../user'
-import { AwsS3Service } from '../aws-s3'
-import { CourtService } from '../court'
-import { CaseEvent, EventService } from '../event'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
-import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { Case } from './models/case.model'
+import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 
 export interface UpdateCase
@@ -73,7 +70,6 @@ export interface UpdateCase
     | 'defenderNationalId'
     | 'defenderEmail'
     | 'defenderPhoneNumber'
-    | 'sendRequestToDefender'
     | 'isHeightenedSecurityLevel'
     | 'courtId'
     | 'leadInvestigator'
@@ -126,6 +122,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -141,6 +138,8 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
+    | 'requestSharedWithDefender'
   > {
   type?: CaseType
   state?: CaseState
@@ -148,16 +147,16 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
 }
 
+const eventTypes = Object.values(EventType)
+
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
   { model: Institution, as: 'court' },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -168,7 +167,6 @@ export const include: Includeable[] = [
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'judge',
@@ -183,25 +181,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -222,6 +201,27 @@ export const include: Includeable[] = [
     model: User,
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Case,
+    as: 'parentCase',
+  },
+  { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
   },
 ]
 
@@ -260,8 +260,6 @@ export const listOrder: OrderItem[] = [
 
 @Injectable()
 export class CaseService {
-  private throttle = Promise.resolve(Buffer.from(''))
-
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
@@ -308,58 +306,21 @@ export class CaseService {
       })
   }
 
-  private async throttleGetCaseFilesRecordPdf(
+  private async uploadSignedCourtRecordPdfToS3(
     theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    // Serialize all case files pdf generations in this process
-    await this.throttle.catch((reason) => {
-      this.logger.info('Previous case files pdf generation failed', { reason })
-    })
+    pdf: string,
+  ): Promise<boolean> {
+    return this.awsS3Service
+      .putObject(`generated/${theCase.id}/courtRecord.pdf`, pdf)
+      .then(() => true)
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
+          { reason },
+        )
 
-    await this.refreshFormatMessage()
-
-    const caseFiles = theCase.caseFiles
-      ?.filter(
-        (caseFile) =>
-          caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
-          caseFile.type === 'application/pdf' &&
-          caseFile.key &&
-          caseFile.chapter !== null &&
-          caseFile.orderWithinChapter !== null,
-      )
-      ?.sort(
-        (caseFile1, caseFile2) =>
-          (caseFile1.chapter ?? 0) - (caseFile2.chapter ?? 0) ||
-          (caseFile1.orderWithinChapter ?? 0) -
-            (caseFile2.orderWithinChapter ?? 0),
-      )
-      ?.map((caseFile) => async () => {
-        const buffer = await this.awsS3Service
-          .getObject(caseFile.key ?? '')
-          .catch((reason) => {
-            // Tolerate failure, but log error
-            this.logger.error(
-              `Unable to get file ${caseFile.id} of case ${theCase.id} from AWS S3`,
-              { reason },
-            )
-          })
-
-        return {
-          chapter: caseFile.chapter as number,
-          date: caseFile.displayDate ?? caseFile.created,
-          name: caseFile.userGeneratedFilename ?? caseFile.name,
-          buffer: buffer ?? undefined,
-        }
+        return false
       })
-
-    return createCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
-      caseFiles ?? [],
-      this.formatMessage,
-    )
   }
 
   private async createCase(
@@ -609,6 +570,11 @@ export class CaseService {
         user,
         caseId: theCase.id,
       },
+      {
+        type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT,
+        user,
+        caseId: theCase.id,
+      },
       { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId: theCase.id },
     ]
 
@@ -635,8 +601,7 @@ export class CaseService {
       caseId: theCase.id,
     })
 
-    // Case created from LOKE
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -674,7 +639,7 @@ export class CaseService {
       },
     ]
 
-    if (theCase.origin === CaseOrigin.LOKE && !theCase.parentCaseId) {
+    if (theCase.origin === CaseOrigin.LOKE) {
       messages.push({
         type: MessageType.DELIVER_CASE_TO_POLICE,
         user,
@@ -785,6 +750,14 @@ export class CaseService {
       caseId: theCase.id,
     })
 
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
     return this.messageService.sendMessagesToQueue(messages)
   }
 
@@ -839,7 +812,10 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
@@ -906,26 +882,6 @@ export class CaseService {
     }
 
     return theCase
-  }
-
-  async findOriginalAncestor(theCase: Case): Promise<Case> {
-    let originalAncestor: Case = theCase
-
-    while (originalAncestor.parentCaseId) {
-      const parentCase = await this.caseModel.findByPk(
-        originalAncestor.parentCaseId,
-      )
-
-      if (!parentCase) {
-        throw new InternalServerErrorException(
-          `Original ancestor of case ${theCase.id} not found`,
-        )
-      }
-
-      originalAncestor = parentCase
-    }
-
-    return originalAncestor
   }
 
   getAll(user: TUser): Promise<Case[]> {
@@ -1024,98 +980,6 @@ export class CaseService {
       })
   }
 
-  async getRequestPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getRequestPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
-    if (theCase.courtRecordSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/courtRecord.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The court record for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getCourtRecordPdfAsBuffer(theCase, this.formatMessage, user)
-  }
-
-  async getCaseFilesRecordPdf(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<Buffer> {
-    if (
-      ![CaseState.NEW, CaseState.DRAFT, CaseState.SUBMITTED].includes(
-        theCase.state,
-      )
-    ) {
-      if (completedCaseStates.includes(theCase.state)) {
-        try {
-          return await this.awsS3Service.getObject(
-            `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-          )
-        } catch {
-          // Ignore the error and try the original key
-        }
-      }
-
-      try {
-        return await this.awsS3Service.getObject(
-          `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-        )
-      } catch {
-        // Ignore the error and generate the pdf
-      }
-    }
-
-    this.throttle = this.throttleGetCaseFilesRecordPdf(
-      theCase,
-      policeCaseNumber,
-    )
-
-    return this.throttle
-  }
-
-  async getRulingPdf(theCase: Case): Promise<Buffer> {
-    if (theCase.rulingSignatureDate) {
-      try {
-        return await this.awsS3Service.getObject(
-          `generated/${theCase.id}/ruling.pdf`,
-        )
-      } catch (error) {
-        this.logger.info(
-          `The ruling for case ${theCase.id} was not found in AWS S3`,
-          { error },
-        )
-      }
-    }
-
-    await this.refreshFormatMessage()
-
-    return getRulingPdfAsBuffer(theCase, this.formatMessage)
-  }
-
-  async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return createIndictment(theCase, this.formatMessage)
-  }
-
-  async getCustodyPdf(theCase: Case): Promise<Buffer> {
-    await this.refreshFormatMessage()
-
-    return getCustodyNoticePdfAsBuffer(theCase, this.formatMessage)
-  }
-
   async requestCourtRecordSignature(
     theCase: Case,
     user: TUser,
@@ -1162,16 +1026,26 @@ export class CaseService {
         'courtRecord.pdf',
         documentToken,
       )
+      const awsSuccess = await this.uploadSignedCourtRecordPdfToS3(
+        theCase,
+        courtRecordPdf,
+      )
 
-      this.awsS3Service
-        .putObject(`generated/${theCase.id}/courtRecord.pdf`, courtRecordPdf)
-        .catch((reason) => {
-          // Tolerate failure, but log error
-          this.logger.error(
-            `Failed to upload signed court record pdf to AWS S3 for case ${theCase.id}`,
-            { reason },
-          )
-        })
+      if (!awsSuccess) {
+        return { documentSigned: false, message: 'Failed to upload to S3' }
+      }
+
+      await this.update(
+        theCase,
+        {
+          courtRecordSignatoryId: user.id,
+          courtRecordSignatureDate: nowFactory(),
+        },
+        user,
+        false,
+      )
+
+      return { documentSigned: true }
     } catch (error) {
       this.eventService.postErrorEvent(
         'Failed to get a court record signature confirmation',
@@ -1195,18 +1069,6 @@ export class CaseService {
 
       throw error
     }
-
-    await this.update(
-      theCase,
-      {
-        courtRecordSignatoryId: user.id,
-        courtRecordSignatureDate: nowFactory(),
-      },
-      user,
-      false,
-    )
-
-    return { documentSigned: true }
   }
 
   async requestRulingSignature(theCase: Case): Promise<SigningServiceResponse> {

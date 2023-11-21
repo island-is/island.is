@@ -3,6 +3,7 @@ import type {
   DatePickerBackgroundColor,
   IconProps,
   InputBackgroundColor,
+  ResponsiveProp,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import { FormItem, FormText, FormTextArray, StaticText } from './Form'
@@ -10,11 +11,14 @@ import { FormItem, FormText, FormTextArray, StaticText } from './Form'
 import { ApolloClient } from '@apollo/client'
 import { Application } from './Application'
 import { CallToAction } from './StateMachine'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { MessageDescriptor } from 'react-intl'
+
+type Space = keyof typeof theme.spacing
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplicationAndField<T> =
@@ -48,6 +52,11 @@ export type TagVariant =
   | 'mint'
   | 'disabled'
 
+export type AlertMessageLink = {
+  title: MessageDescriptor | string
+  url: MessageDescriptor | string
+  isExternal: boolean
+}
 export interface Option extends TestSupport {
   value: string
   label: FormText
@@ -55,6 +64,7 @@ export interface Option extends TestSupport {
   tooltip?: FormText
   excludeOthers?: boolean
   illustration?: React.FC<React.PropsWithChildren<unknown>>
+  rightContent?: React.ReactNode
   disabled?: boolean
   tag?: {
     label: string
@@ -107,6 +117,7 @@ export enum FieldTypes {
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
+  PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
 }
 
 export enum FieldComponents {
@@ -129,6 +140,7 @@ export enum FieldComponents {
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
+  PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -320,6 +332,9 @@ export interface AlertMessageField extends BaseField {
   component: FieldComponents.ALERT_MESSAGE
   alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
   message?: FormText
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  links?: AlertMessageLink[]
 }
 
 export interface LinkField extends BaseField {
@@ -328,6 +343,16 @@ export interface LinkField extends BaseField {
   s3key?: FormText
   link?: string
   iconProps?: Pick<IconProps, 'icon' | 'type'>
+}
+
+export interface PaymentChargeOverviewField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
+  component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
+  forPaymentLabel: StaticText
+  totalLabel: StaticText
+  getSelectedChargeItems: (
+    application: Application,
+  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
 export type Field =
@@ -351,3 +376,4 @@ export type Field =
   | ExpandableDescriptionField
   | AlertMessageField
   | LinkField
+  | PaymentChargeOverviewField

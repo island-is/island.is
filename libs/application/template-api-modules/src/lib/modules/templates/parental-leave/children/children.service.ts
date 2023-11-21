@@ -213,6 +213,14 @@ export class ChildrenService {
       true,
     )
 
+    // Enable if you want to add ExistingApplications to mockData
+    // const { children: child, existingApplications } =
+    //   await this.childrenAndExistingApplications(
+    //     application,
+    //     customTemplateFindQuery,
+    //     null,
+    //   )
+
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {

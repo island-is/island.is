@@ -28,6 +28,10 @@ import { LinkSyncService } from './importers/link.service'
 import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
+import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
+import { EventSyncService } from './importers/event.service'
+import { ManualSyncService } from './importers/manual.service'
+import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -68,6 +72,10 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly enhancedAssetService: EnhancedAssetSyncService,
     private readonly elasticService: ElasticService,
     private readonly vacancyService: VacancySyncService,
+    private readonly serviceWebPageSyncService: ServiceWebPageSyncService,
+    private readonly eventSyncService: EventSyncService,
+    private readonly manualSyncService: ManualSyncService,
+    private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -86,6 +94,10 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.linkSyncService,
       this.enhancedAssetService,
       this.vacancyService,
+      this.serviceWebPageSyncService,
+      this.eventSyncService,
+      this.manualSyncService,
+      this.manualChapterItemSyncService,
     ]
   }
 

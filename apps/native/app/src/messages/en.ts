@@ -136,7 +136,7 @@ export const en: TranslatedMessages = {
   // Home
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
-  'home.allApplications': 'All digital applications',
+  'home.allApplications': 'Digital applications',
   'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
   'home.onboardingModule.card1':
@@ -159,6 +159,20 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
+  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterOpenedTagTitle': 'Unread',
+  'inbox.filterArchivedTagTitle': 'Archived',
+  'inbox.filterStarredTagTitle': 'Starred',
+
+  // inbox filters
+  'inboxFilters.screenTitle': 'Filter documents',
+  'inboxFilters.unreadOnly': 'Show only unread',
+  'inboxFilters.starred': 'Starred',
+  'inboxFilters.archived': 'Archived',
+
+  // document detail
+  'documentDetail.screenTitle': 'Document',
+  'documentDetail.loadingText': 'Loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -173,6 +187,11 @@ export const en: TranslatedMessages = {
   'walletPass.screenTitle': 'Pass',
   'walletPass.lastUpdate': 'Last updated',
   'walletPass.expirationDate': 'Expiration date',
+  'walletPass.errorTitle': 'Error',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'At the moment it is not possible to add driving licenses to the phone.',
+  'walletPass.moreInfo': 'More information',
+  'walletPass.alertClose': 'Cancel',
 
   // wallet passport
   'walletPassport.screenTitle': 'Passport',
@@ -234,24 +253,25 @@ export const en: TranslatedMessages = {
   'licenseScannerResult.birthDate': 'Birthdate',
   'licenseScannerResult.driverLicenseNumber': 'Driver license number',
 
+  // license details
+  'licenseDetail.pcard.alert.title': 'Remember the parking card!',
+  'licenseDetail.pcard.alert.description':
+    'This summary is not valid as a parking card.',
+
   // notifications
   'notifications.screenTitle': 'Notifications',
 
   // notification detail
   'notificationDetail.screenTitle': 'Notification',
 
-  // document detail
-  'documentDetail.screenTitle': 'Document',
-  'documentDetail.loadingText': 'Loading document',
-
   // profile
-  'profile.screenTitle': 'My info',
-  'profile.bottomTabText': 'Me',
+  'profile.screenTitle': 'More',
+  'profile.bottomTabText': 'More',
   'profile.seeInfo': 'See info',
-  'profile.infoHeading': 'Assets and Family',
   'profile.family': 'Family',
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
+  'profile.finance': 'Finance',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
@@ -282,6 +302,7 @@ export const en: TranslatedMessages = {
   'vehicleDetail.vehicleWeight': 'Vehicle weight',
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
+  'vehicleDetail.odometer': 'Odometer',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
@@ -299,6 +320,34 @@ export const en: TranslatedMessages = {
   'assetsDetail.municipality': 'Municipality',
   'assetsDetail.postNumber': 'Post number',
   'assetsDetail.buildYearDisplay': 'Build Year Display',
+
+  // finance
+  'finance.screenTitle': 'Finance',
+  'finance.statusCard.status': 'Status',
+  'finance.statusCard.paymentBase': 'Payment base',
+  'finance.statusCard.deadline': 'Final due date',
+  'finance.statusCard.amount': 'Amount',
+  'finance.statusCard.total': 'Total',
+  'finance.statusCard.organization': 'Contact information',
+  'finance.statusCard.organizationWebsite': 'Website',
+  'finance.statusCard.organizationEmail': 'Email',
+  'finance.statusCard.organizationPhone': 'Phone',
+  'finance.statusCard.schedulePaymentPlan': 'Make a payment schedule',
+  'finance.heading.title': 'Financial standing with the government',
+  'finance.heading.subtitle':
+    'Here you can see an overview of your debt and/or credit balance with the government.',
+
+  // finance detail
+  'financeDetail.title': 'Detailed information',
+  'financeDetail.paymentBase': 'Payment Base',
+  'financeDetail.yearAndPeriod': `Year and period`,
+  'financeDetail.dueDate': 'Due Date',
+  'financeDetail.finalDueDate': 'Final due date',
+  'financeDetail.principal': 'Principal',
+  'financeDetail.interest': 'Interest',
+  'financeDetail.costs': 'Costs',
+  'financeDetail.payments': 'Payments',
+  'financeDetail.status': 'Status',
 
   // family
   'family.screenTitle': 'Family',
@@ -354,12 +403,18 @@ export const en: TranslatedMessages = {
   'edit.phone.description': 'Here you can change your phone number',
   'edit.phone.inputlabel': 'Phone number',
   'edit.phone.button': 'Save',
+  'edit.phone.button.empty': 'Save empty',
+  'edit.phone.button.error': 'Error',
+  'edit.phone.button.errorMessage': 'Could not send verification code',
 
   // edit email
   'edit.email.screenTitle': 'Edit Email',
   'edit.email.description': 'Here you can change your email',
   'edit.email.inputlabel': 'Email',
   'edit.email.button': 'Save',
+  'edit.email.button.empty': 'Save empty',
+  'edit.email.button.error': 'Error',
+  'edit.email.button.errorMessage': 'Could not send verification code',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Edit Bank Info',

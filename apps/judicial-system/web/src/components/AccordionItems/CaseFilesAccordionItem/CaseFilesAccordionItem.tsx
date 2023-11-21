@@ -2,22 +2,19 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
-import { Box, AccordionItem, Button, Text } from '@island.is/island-ui/core'
+import { AccordionItem, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  isCourtOfAppealsUser,
+  isDistrictCourtUser,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
+import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import {
   UploadState,
   useCourtUpload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  CaseState,
-  completedCaseStates,
-  isCourtRole,
-} from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { caseFilesAccordion as m } from '@island.is/judicial-system-web/messages'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { CaseFileList, InfoBox } from '../..'
 import { UploadStateMessage } from './UploadStateMessage'
@@ -41,26 +38,18 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
 
   const canCaseFilesBeOpened = () => {
     const canProsecutorOpen =
-      user.role === UserRole.PROSECUTOR &&
+      isProsecutionUser(user) &&
       user.institution?.id === workingCase.creatingProsecutor?.institution?.id
 
-    const canCourtRoleOpen =
-      isCourtRole(user.role) &&
-      [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        ...completedCaseStates,
-      ].includes(workingCase.state)
-
-    return canProsecutorOpen || canCourtRoleOpen
+    return (
+      canProsecutorOpen ||
+      isDistrictCourtUser(user) ||
+      isCourtOfAppealsUser(user)
+    )
   }
 
   const canCaseFilesBeUploaded = () => {
-    const canCourtRoleUpload =
-      isCourtRole(user.role) &&
-      [CaseState.RECEIVED, ...completedCaseStates].includes(workingCase.state)
-
-    return canCourtRoleUpload
+    return isDistrictCourtUser(user)
   }
 
   const caseFiles =
@@ -113,7 +102,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
         caseId={workingCase.id}
         files={caseFiles}
         canOpenFiles={canCaseFilesBeOpened()}
-        hideIcons={user?.role === UserRole.PROSECUTOR}
+        hideIcons={isProsecutionUser(user)}
         handleRetryClick={(id: string) =>
           uploadFilesToCourt([
             caseFiles[caseFiles.findIndex((file) => file.id === id)],

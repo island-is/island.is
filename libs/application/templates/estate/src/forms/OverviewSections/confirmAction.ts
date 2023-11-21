@@ -32,4 +32,19 @@ export const overviewConfirmAction = [
             },
           ],
   }),
+  buildCheckboxField({
+    id: 'confirmActionUndividedEstate',
+    title: '',
+    backgroundColor: 'blue',
+    defaultValue: [],
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.permitForUndividedEstate,
+    options: () => [
+      {
+        value: YES,
+        label: m.acceptCorrectAssets.defaultMessage,
+      },
+    ],
+  }),
 ]

@@ -1,9 +1,8 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import sortBy from 'lodash/sortBy'
-import React, { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import { gql, useLazyQuery } from '@apollo/client'
 import {
   Accordion,
   AccordionItem,
@@ -11,10 +10,7 @@ import {
   Box,
   Button,
   DatePicker,
-  Filter,
   FilterInput,
-  GridColumn,
-  GridRow,
   Hidden,
   Pagination,
   SkeletonLoader,
@@ -26,10 +22,12 @@ import { useLocale } from '@island.is/localization'
 import {
   amountFormat,
   ErrorScreen,
+  FootNote,
   formSubmit,
-  IntroHeader,
   m,
+  Filter,
   tableStyles,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { dateFormat } from '@island.is/shared/constants'
 
@@ -38,6 +36,8 @@ import { DocumentsListItemTypes } from './DocumentScreen.types'
 import DropdownExport from '../DropdownExport/DropdownExport'
 import { exportGeneralDocuments } from '../../utils/filesGeneral'
 import * as styles from '../../screens/Finance.css'
+import FinanceIntro from '../FinanceIntro'
+import { useGetFinanceDocumentsListLazyQuery } from './DocumentScreen.generated'
 
 const ITEMS_ON_PAGE = 20
 
@@ -48,29 +48,12 @@ interface Props {
   defaultDateRangeMonths?: number
 }
 
-const getFinanceDocumentsListQuery = gql`
-  query getFinanceDocumentsListQuery($input: GetDocumentsListInput!) {
-    getDocumentsList(input: $input) {
-      downloadServiceURL
-      documentsList {
-        id
-        date
-        type
-        note
-        sender
-        dateOpen
-        amount
-      }
-    }
-  }
-`
-
-const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
+const DocumentScreen = ({
   title,
   intro,
   listPath,
   defaultDateRangeMonths = 3,
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
 
   const [page, setPage] = useState(1)
@@ -81,9 +64,8 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
     months: defaultDateRangeMonths,
   })
 
-  const [loadDocumentsList, { data, loading, called, error }] = useLazyQuery(
-    getFinanceDocumentsListQuery,
-  )
+  const [loadDocumentsList, { data, loading, called, error }] =
+    useGetFinanceDocumentsListLazyQuery()
 
   const billsDataArray: DocumentsListItemTypes[] =
     (data?.getDocumentsList?.documentsList &&
@@ -113,11 +95,13 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (error && !loading) {
@@ -135,39 +119,17 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader title={title} intro={intro} />
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro text={intro} />
       <Stack space={2}>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-            <Box display="flex" printHidden>
-              <Box paddingRight={2}>
-                <Button
-                  colorScheme="default"
-                  icon="print"
-                  iconType="filled"
-                  onClick={() => window.print()}
-                  preTextIconType="filled"
-                  size="default"
-                  type="button"
-                  variant="utility"
-                >
-                  {formatMessage(m.print)}
-                </Button>
-              </Box>
-              <DropdownExport
-                onGetCSV={() =>
-                  exportGeneralDocuments(billsDataArray, title, 'csv')
-                }
-                onGetExcel={() =>
-                  exportGeneralDocuments(billsDataArray, title, 'xlsx')
-                }
-              />
-            </Box>
-          </GridColumn>
-        </GridRow>
         <Hidden print={true}>
-          <Box marginTop={[1, 1, 2, 2, 5]}>
+          <Box
+            display="flex"
+            justifyContent="flexStart"
+            flexWrap="wrap"
+            rowGap={2}
+            columnGap={2}
+          >
             <Filter
               resultCount={0}
               variant="popover"
@@ -187,6 +149,30 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
                   backgroundColor="blue"
                 />
               }
+              additionalFilters={
+                <>
+                  <Button
+                    colorScheme="default"
+                    icon="print"
+                    iconType="filled"
+                    onClick={() => window.print()}
+                    preTextIconType="filled"
+                    size="default"
+                    type="button"
+                    variant="utility"
+                  >
+                    {formatMessage(m.print)}
+                  </Button>
+                  <DropdownExport
+                    onGetCSV={() =>
+                      exportGeneralDocuments(billsDataArray, title, 'csv')
+                    }
+                    onGetExcel={() =>
+                      exportGeneralDocuments(billsDataArray, title, 'xlsx')
+                    }
+                  />
+                </>
+              }
               onFilterClear={clearAllFilters}
             >
               <Box className={styles.dateFilterSingle} paddingX={3}>
@@ -201,7 +187,7 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
                       key="date-accordion-item"
                       id="date-accordion-item"
                       label={formatMessage(m.datesLabel)}
-                      labelColor="blue400"
+                      labelColor="dark400"
                       labelUse="h5"
                       labelVariant="h5"
                       iconVariant="small"
@@ -346,6 +332,7 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
                     cursor="pointer"
                     className={className}
                     onClick={() => setPage(page)}
+                    component="button"
                   >
                     {children}
                   </Box>
@@ -355,6 +342,7 @@ const DocumentScreen: FC<React.PropsWithChildren<Props>> = ({
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

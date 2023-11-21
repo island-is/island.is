@@ -47,8 +47,8 @@ export const serviceSetup = (services: {
       },
       HIDDEN_FEATURES: {
         dev: '',
-        staging: 'APPEAL_TO_COURT_OF_APPEALS',
-        prod: 'APPEAL_TO_COURT_OF_APPEALS',
+        staging: '',
+        prod: '',
       },
     })
     .secrets({
@@ -56,6 +56,7 @@ export const serviceSetup = (services: {
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/judicial-system/CONTENTFUL_ACCESS_TOKEN',
       AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/liveness')
@@ -81,6 +82,16 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
+      },
+    })
+    .resources({
+      limits: {
+        cpu: '350m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '200m',
+        memory: '256Mi',
       },
     })
     .grantNamespaces('nginx-ingress-external')

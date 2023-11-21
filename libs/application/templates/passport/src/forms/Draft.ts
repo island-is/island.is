@@ -9,21 +9,26 @@ import {
   buildSection,
   buildSelectField,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  PassportsApi,
 } from '@island.is/application/types'
 import {
   DeliveryAddressApi,
-  IdentityDocumentApi,
   SyslumadurPaymentCatalogApi,
   UserInfoApi,
   NationalRegistryUser,
 } from '../dataProviders'
-import { DistrictCommissionerAgencies, Services } from '../lib/constants'
+import {
+  DistrictCommissionerAgencies,
+  Passport,
+  Services,
+} from '../lib/constants'
 import { m } from '../lib/messages'
 import { childsPersonalInfo } from './infoSection/childsPersonalInfo'
 import { personalInfo } from './infoSection/personalInfo'
@@ -38,25 +43,6 @@ export const Draft: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    buildSection({
-      id: 'introSection',
-      title: m.introTitle,
-      children: [
-        buildMultiField({
-          id: 'introApplicant',
-          title: m.passport,
-          description: m.introDescription,
-          children: [
-            buildDescriptionField({
-              id: 'introDescription',
-              title: '',
-              description: '',
-            }),
-          ],
-        }),
-      ],
-    }),
-
     buildSection({
       id: 'externalDataSection',
       title: m.dataCollectionTitle,
@@ -78,7 +64,7 @@ export const Draft: Form = buildForm({
               subTitle: m.dataCollectionUserProfileSubtitle,
             }),
             buildDataProviderItem({
-              provider: IdentityDocumentApi,
+              provider: PassportsApi,
               title: m.dataCollectionIdentityDocumentTitle,
               subTitle: m.dataCollectionIdentityDocumentSubtitle,
             }),
@@ -149,6 +135,7 @@ export const Draft: Form = buildForm({
                   Services.EXPRESS,
                 )
                 const expressPrices = getPrice(externalData, expressCode)
+
                 return [
                   {
                     value: Services.REGULAR,
