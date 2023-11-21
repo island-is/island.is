@@ -1,0 +1,31 @@
+{
+  "root": "libs/application/templates/social-insurance-administration/pension-supplement",
+  "sourceRoot": "libs/application/templates/social-insurance-administration/pension-supplement/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/social-insurance-administration/pension-supplement/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/libs/application/templates/social-insurance-administration/pension-supplement"],
+      "options": {
+        "jestConfig": "libs/application/templates/social-insurance-administration/pension-supplement/jest.config.js",
+        "passWithNoTests": true
+      }
+    },
+    "extract-strings": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/social-insurance-administration/pension-supplement/src/lib/messages.ts"
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}

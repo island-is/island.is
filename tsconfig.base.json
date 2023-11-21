@@ -384,8 +384,8 @@
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
-      "@island.is/application/templates/pension-supplement": [
-        "libs/application/templates/pension-supplement/src/index.ts"
+      "@island.is/application/templates/social-insurance-administration/pension-supplement": [
+        "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
       "@island.is/application/templates/passport-annulment": [
         "libs/application/templates/passport-annulment/src/index.ts"

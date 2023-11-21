@@ -137,7 +137,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
   [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
-    import('@island.is/application/templates/pension-supplement'),
+    import(
+      '@island.is/application/templates/social-insurance-administration/pension-supplement'
+    ),
 }
 
 export default templates
