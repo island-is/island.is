@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   width: '100%',
@@ -9,12 +9,11 @@ export const wrapper = style({
   gap: theme.spacing[2],
   maxWidth: '100%',
   flexWrap: 'wrap',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
+  ...themeUtils.responsiveStyle({
+    xl: {
       flexDirection: 'row',
     },
-  },
+  }),
 })
 
 export const numberBox = style({
