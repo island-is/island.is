@@ -62,7 +62,6 @@ export const AudioPlayer = ({ url, title }: Props) => {
     return format(date, 'm:ss')
   }
 
-  console.log(isReady)
   if (!isReady) {
     //return <SkeletonLoader />
   }
