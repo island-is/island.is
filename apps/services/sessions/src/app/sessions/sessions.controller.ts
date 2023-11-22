@@ -96,10 +96,13 @@ export class SessionsController {
         'Sessions can only be registered for the authenticated user.',
       )
 
-    const job = await this.sessionsQueue.add(sessionJobName, session, {
-      removeOnComplete: true,
-      removeOnFail: true,
-    })
-    this.logger.debug(`Added job ${job.id} to queue.`)
+    this.sessionsQueue
+      .add(sessionJobName, session, {
+        removeOnComplete: true,
+        removeOnFail: true,
+      })
+      .then((job) => {
+        this.logger.debug(`Added job ${job.id} to queue.`)
+      })
   }
 }

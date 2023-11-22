@@ -90,11 +90,11 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={messages.medicinePurchaseTitle}
           intro={messages.medicinePurchaseIntroText}
         />
@@ -196,7 +196,13 @@ export const MedicinePurchase = () => {
         columnGap={2}
       >
         <LinkV2 href={formatMessage(messages.medicinePriceListLink)} newTab>
-          <Button variant="utility" icon="open" iconType="outline" as="span">
+          <Button
+            variant="utility"
+            icon="open"
+            iconType="outline"
+            as="span"
+            unfocusable
+          >
             {formatMessage(messages.medicinePriceList)}
           </Button>
         </LinkV2>
@@ -207,6 +213,7 @@ export const MedicinePurchase = () => {
             icon="calculator"
             iconType="outline"
             as="span"
+            unfocusable
           >
             {formatMessage(messages.medicineCalculatorTitle)}
           </Button>

@@ -9,9 +9,8 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseTransition,
-  isAppealsCourtUser,
+  isCourtOfAppealsUser,
   isRestrictionCase,
-  User,
 } from '@island.is/judicial-system/types'
 import {
   FormContext,
@@ -37,7 +36,7 @@ const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
     <Modal
       title={formatMessage(strings.title)}
       text={
-        isAppealsCourtUser(user as unknown as User)
+        isCourtOfAppealsUser(user)
           ? formatMessage(strings.reopenAppealText)
           : formatMessage(strings.reopenCaseText)
       }
@@ -46,14 +45,14 @@ const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
       onPrimaryButtonClick={async () => {
         const caseTransitioned = await transitionCase(
           workingCase.id,
-          isAppealsCourtUser(user as unknown as User)
+          isCourtOfAppealsUser(user)
             ? CaseTransition.REOPEN_APPEAL
             : CaseTransition.REOPEN,
         )
 
         if (caseTransitioned) {
           router.push(
-            isAppealsCourtUser(user as unknown as User)
+            isCourtOfAppealsUser(user)
               ? `${COURT_OF_APPEAL_CASE_ROUTE}/${workingCase.id}`
               : isRestrictionCase(workingCase.type)
               ? `${RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`

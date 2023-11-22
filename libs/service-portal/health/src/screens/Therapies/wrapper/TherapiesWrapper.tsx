@@ -4,7 +4,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
@@ -12,17 +12,17 @@ import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {
-  activeTherapies: boolean
   children: React.ReactNode
   error: boolean
   loading: boolean
+  pathname?: string
 }
 
 export const TherapiesWrapper = ({
   children,
   error,
   loading,
-  activeTherapies,
+  pathname,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -45,29 +45,28 @@ export const TherapiesWrapper = ({
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
-      {activeTherapies ? (
-        <>
-          <TabNavigation
-            label="test"
-            items={
-              healthNavigation.children?.find((itm) => itm.name === m.therapies)
-                ?.children ?? []
-            }
-          />
-          <Box paddingY={4}>
-            {!loading && !error && children && (
-              <Box marginTop={[6]}>{children}</Box>
-            )}
+      <TabNavigation
+        label={formatMessage(messages.therapyTitle)}
+        pathname={pathname}
+        items={
+          healthNavigation.children?.find((itm) => itm.name === m.therapies)
+            ?.children ?? []
+        }
+      />
+      <Box paddingY={4}>
+        {!loading && !error && !children && (
+          <Box marginTop={8}>
+            <EmptyState />
           </Box>
-        </>
-      ) : !loading ? (
-        <Box marginTop={8}>
-          <EmptyState />
-        </Box>
-      ) : null}
+        )}
+
+        {!loading && !error && children && (
+          <Box marginTop={[6]}>{children}</Box>
+        )}
+      </Box>
     </Box>
   )
 }

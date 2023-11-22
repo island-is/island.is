@@ -20,8 +20,8 @@ import {
 } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
-  isExtendedCourtRole,
-  isProsecutionRole,
+  isDistrictCourtUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -65,8 +65,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const isProsecution = user?.role && isProsecutionRole(user.role)
-  const isCourt = (user?.role && isExtendedCourtRole(user.role)) || false
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -133,7 +131,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
           <MobileCase
             onClick={() => onRowClick(theCase.id)}
             theCase={theCase}
-            isCourtRole={isCourt}
+            isCourtRole={isDistrictCourtUser(user)}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -305,7 +303,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     <TagCaseState
                       caseState={c.state}
                       caseType={c.type}
-                      isCourtRole={isCourt}
+                      isCourtRole={isDistrictCourtUser(user)}
                       isValidToDateInThePast={c.isValidToDateInThePast}
                       courtDate={c.courtDate}
                     />
@@ -338,7 +336,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 </td>
 
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecution &&
+                  {isProsecutionUser(user) &&
                     (c.state === CaseState.NEW ||
                       c.state === CaseState.DRAFT ||
                       c.state === CaseState.SUBMITTED ||
