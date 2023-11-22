@@ -96,9 +96,7 @@ export const Review: FC<ReviewScreenProps> = ({
     state === States.TRYGGINGASTOFNUN_SUBMITTED ||
     state === States.TRYGGINGASTOFNUN_IN_REVIEW ||
     state === States.APPROVED ||
-    state === States.REJECTED ||
-    state === States.PENDING ||
-    state === States.DISMISSED
+    state === States.REJECTED 
 
   return (
     <>
