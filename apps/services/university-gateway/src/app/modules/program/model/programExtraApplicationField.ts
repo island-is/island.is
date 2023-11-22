@@ -120,6 +120,17 @@ export class ProgramExtraApplicationField extends Model {
   })
   uploadAcceptedFileType?: string
 
+  @ApiPropertyOptional({
+    description:
+      'If using field type dropdown or testing site, this should be a list of options in selection field, semi-comma separated',
+    example: 'Option 1;Option 2;Option 3',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  options?: string
+
   @ApiHideProperty()
   @CreatedAt
   readonly created!: Date

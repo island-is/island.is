@@ -78,6 +78,7 @@ export class ReykjavikUniversityApplicationClient {
               required: field.required || false,
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
+              options: undefined, //TODO missing in api
             }),
           ),
         })

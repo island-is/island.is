@@ -155,6 +155,7 @@ export class InternalProgramService {
               fieldType: extraApplicationFieldList[k].fieldType,
               uploadAcceptedFileType:
                 extraApplicationFieldList[k].uploadAcceptedFileType,
+              options: extraApplicationFieldList[k].options,
             })
           }
         } catch (e) {
