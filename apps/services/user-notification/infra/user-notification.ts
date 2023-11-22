@@ -27,10 +27,10 @@ export const userNotificationServiceSetup =
       })
       .initContainer({
         containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-        postgres: { passwordSecret: '/k8s/service-portal/api/DB_PASSWORD' },// UPDATE THIS
+        postgres: { passwordSecret: '/k8s/user-notification/api/DB_PASSWORD' },
       })
-      .liveness('/liveness')
       .readiness('/liveness')
+      .readiness('/readiness')
       .ingress({
         primary: {
           host: {
@@ -107,5 +107,5 @@ export const userNotificationWorkerSetup = (services: {
         '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
       CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
-    .liveness('/liveness')
     .readiness('/liveness')
+    .readiness('/readiness')
