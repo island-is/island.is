@@ -1,12 +1,11 @@
 /* eslint-disable */
 export default {
+  displayName: 'services-university-gateway',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
-  coverageDirectory: '<rootDir>/coverage/apps/services/university-gateway',
-  setupFilesAfterEnv: [`${__dirname}/test/setup.ts`],
-  moduleFileExtensions: ['ts', 'js', 'html', 'json'],
   globals: {},
+  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]s$': [
       'ts-jest',
@@ -16,6 +15,6 @@ export default {
       },
     ],
   },
-  displayName: 'services-university-gateway',
-  testEnvironment: 'node',
+  moduleFileExtensions: ['ts', 'js', 'html'],
+  coverageDirectory: '<rootDir>/coverage/apps/services/university-gateway',
 }

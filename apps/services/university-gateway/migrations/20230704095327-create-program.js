@@ -114,16 +114,6 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          languages: {
-            type: Sequelize.ARRAY(Sequelize.STRING),
-            defaultValue: [],
-            allowNull: false,
-          },
-          search_keywords: {
-            type: Sequelize.ARRAY(Sequelize.STRING),
-            defaultValue: [],
-            allowNull: false,
-          },
           external_url_is: {
             type: Sequelize.STRING(500),
             allowNull: true,
@@ -155,6 +145,14 @@ module.exports = {
           cost_information_en: {
             type: Sequelize.TEXT,
             allowNull: true,
+          },
+          allow_exception: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
+          allow_third_level_qualification: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
           },
           active: {
             type: Sequelize.BOOLEAN,

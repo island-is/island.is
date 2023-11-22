@@ -16,6 +16,7 @@ import {
 import { Course } from '../../course/model/course'
 import { Program } from './program'
 import { Requirement, Season } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'program_course',
@@ -28,7 +29,7 @@ export class ProgramCourse extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiHideProperty()
   @Column({
@@ -37,6 +38,10 @@ export class ProgramCourse extends Model {
   })
   @ForeignKey(() => Program)
   programId!: string
+
+  @ApiHideProperty()
+  @BelongsTo(() => Program, 'programId')
+  program?: Program
 
   @ApiHideProperty()
   @Column({
@@ -89,9 +94,9 @@ export class ProgramCourse extends Model {
 
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

@@ -126,6 +126,14 @@
         "commands": ["yarn start services-university-gateway"],
         "parallel": true
       }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/university-gateway"],
+      "options": {
+        "jestConfig": "apps/services/university-gateway/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   },
   "tags": ["scope:nest"]

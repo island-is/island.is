@@ -3,10 +3,13 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { Program } from '../../program/model/program'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'university',
@@ -22,7 +25,7 @@ export class University extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiProperty({
     description: 'University national ID',
@@ -45,10 +48,14 @@ export class University extends Model {
   contentfulKey!: string
 
   @ApiHideProperty()
+  @HasMany(() => Program)
+  programs?: Program[]
+
+  @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

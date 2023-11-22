@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Tag } from './model/tag'
 import { Program } from './model/program'
-import { ProgramTag } from './model/programTag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { University } from '../university/model/university'
@@ -21,14 +19,8 @@ export class InternalProgramService {
     @InjectModel(University)
     private universityModel: typeof University,
 
-    @InjectModel(Tag)
-    private tagModel: typeof Tag,
-
     @InjectModel(Program)
     private programModel: typeof Program,
-
-    @InjectModel(ProgramTag)
-    private programTagModel: typeof ProgramTag,
 
     @InjectModel(ProgramModeOfDelivery)
     private programModeOfDeliveryModel: typeof ProgramModeOfDelivery,
@@ -111,7 +103,6 @@ export class InternalProgramService {
             universityId,
           }
 
-          const tagList = program.tag || []
           const modeOfDeliveryList = program.modeOfDelivery || []
           const extraApplicationFieldList = program.extraApplicationFields || []
 
@@ -133,32 +124,12 @@ export class InternalProgramService {
             id: oldProgramObj?.id,
           })
 
-          // 3a. DELETE program tag
-          await this.programTagModel.destroy({
-            where: { programId: programId },
-          })
-
-          // 3b. CREATE program tag
-          for (let k = 0; k < tagList.length; k++) {
-            const tag = await this.tagModel.findOne({
-              attributes: ['id'],
-              where: { code: tagList[k].code },
-            })
-
-            if (!tag) continue
-
-            await this.programTagModel.create({
-              programId: programId,
-              tagId: tag?.id,
-            })
-          }
-
-          // 4a. DELETE program mode of delivery
+          // 3a. DELETE program mode of delivery
           await this.programModeOfDeliveryModel.destroy({
             where: { programId: programId },
           })
 
-          // 4b. CREATE program mode of delivery
+          // 3b. CREATE program mode of delivery
           for (let k = 0; k < modeOfDeliveryList.length; k++) {
             await this.programModeOfDeliveryModel.create({
               programId: programId,
@@ -166,12 +137,12 @@ export class InternalProgramService {
             })
           }
 
-          // 5a. DELETE program extra application field
+          // 4a. DELETE program extra application field
           await this.programExtraApplicationFieldModel.destroy({
             where: { programId: programId },
           })
 
-          // 5b. CREATE program extra application field
+          // 4b. CREATE program extra application field
           for (let k = 0; k < extraApplicationFieldList.length; k++) {
             await this.programExtraApplicationFieldModel.create({
               programId: programId,
@@ -184,6 +155,7 @@ export class InternalProgramService {
               fieldType: extraApplicationFieldList[k].fieldType,
               uploadAcceptedFileType:
                 extraApplicationFieldList[k].uploadAcceptedFileType,
+              options: extraApplicationFieldList[k].options,
             })
           }
         } catch (e) {
@@ -195,7 +167,7 @@ export class InternalProgramService {
       }
     }
 
-    // 6. UPDATE all programs for this university and make them inactive
+    // 5. UPDATE all programs for this university and make them inactive
     await this.programModel.update(
       {
         active: false,

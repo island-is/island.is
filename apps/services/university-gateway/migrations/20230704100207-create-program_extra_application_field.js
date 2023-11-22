@@ -50,11 +50,19 @@ module.exports = {
               'CHECKBOX',
               'TEXT_INPUT',
               'TEXT_AREA',
+              'DROPDOWN',
+              'DATA_PROVIDER',
+              'APPROVAL_PROVIDER',
+              'TESTING_SITE',
             ),
             allowNull: false,
           },
           upload_accepted_file_type: {
             type: Sequelize.STRING,
+            allowNull: true,
+          },
+          options: {
+            type: Sequelize.TEXT,
             allowNull: true,
           },
           created: {

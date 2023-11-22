@@ -4,6 +4,7 @@ import {
   ApiPropertyOptional,
 } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -14,6 +15,7 @@ import {
 } from 'sequelize-typescript'
 import { Program } from './program'
 import { FieldType } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'program_extra_application_field',
@@ -26,7 +28,7 @@ export class ProgramExtraApplicationField extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiHideProperty()
   @Column({
@@ -35,6 +37,10 @@ export class ProgramExtraApplicationField extends Model {
   })
   @ForeignKey(() => Program)
   programId!: string
+
+  @ApiHideProperty()
+  @BelongsTo(() => Program, 'programId')
+  program?: Program
 
   @ApiProperty({
     description: 'External id for field',
@@ -120,11 +126,22 @@ export class ProgramExtraApplicationField extends Model {
   })
   uploadAcceptedFileType?: string
 
+  @ApiPropertyOptional({
+    description:
+      'If using field type dropdown or testing site, this should be a list of options in selection field, semi-comma separated',
+    example: 'Option 1;Option 2;Option 3',
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  options?: string
+
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import {
@@ -18,11 +18,9 @@ import { InternalProgramService } from '../modules/program/internalProgram.servi
 import { InternalCourseService } from '../modules/course/internalCourse.service'
 import { University } from '../modules/university/model/university'
 import { Course } from '../modules/course/model/course'
-import { Tag } from '../modules/program/model/tag'
 import { ProgramCourse } from '../modules/program/model/programCourse'
 import { ProgramModeOfDelivery } from '../modules/program/model/programModeOfDelivery'
 import { Program } from '../modules/program/model/program'
-import { ProgramTag } from '../modules/program/model/programTag'
 import { ProgramExtraApplicationField } from '../modules/program/model/programExtraApplicationField'
 import { LoggingModule } from '@island.is/logging'
 
@@ -36,9 +34,7 @@ import { LoggingModule } from '@island.is/logging'
     SequelizeModule.forFeature([
       University,
       Course,
-      Tag,
       Program,
-      ProgramTag,
       ProgramModeOfDelivery,
       ProgramExtraApplicationField,
       ProgramCourse,
