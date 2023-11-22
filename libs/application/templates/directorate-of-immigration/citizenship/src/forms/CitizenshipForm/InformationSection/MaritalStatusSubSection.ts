@@ -23,19 +23,25 @@ export const MaritalStatusSubSection = buildSubSection({
       id: Routes.MARITALSTATUS,
       title: information.labels.maritalStatus.pageTitle,
       condition: (_, externalData) => {
+        const spouseDetails = getValueViaPath(
+          externalData,
+          'spouseDetails.data',
+          undefined,
+        ) as NationalRegistrySpouse | undefined
+        const hasSpouse = !!spouseDetails?.nationalId
+
+        // Check if the only residence condition that the applicant can apply for, is related to marital status
         const residenceConditionInfo = getValueViaPath(
           externalData,
           'residenceConditionInfo.data',
           {},
         ) as ApplicantResidenceConditionViewModel
-
-        // Check if the only residence condition that the applicant can apply for, is related to marital status
-        const hasOnlyMaritalStatus =
+        const hasOnlyResConMaritalStatus =
           residenceConditionInfo.isAnyResConValid &&
           residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
 
-        // Only show if individual only has an option related to marital status for residence condition
-        return hasOnlyMaritalStatus || false
+        // return hasSpouse && hasOnlyResConMaritalStatus
+        return hasSpouse
       },
       children: [
         buildDescriptionField({
