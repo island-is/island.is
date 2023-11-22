@@ -52,6 +52,8 @@ export const ProgressBar: FC<Props> = ({
       overflow="hidden"
       borderRadius="large"
       background={variant ? 'white' : 'blue100'}
+      width="full"
+      style={{ top: 0 }}
       onClick={handleClick}
       ref={ref}
     >
