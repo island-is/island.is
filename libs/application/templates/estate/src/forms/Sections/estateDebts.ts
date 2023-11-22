@@ -19,7 +19,19 @@ export const estateDebts = buildSection({
     buildMultiField({
       id: 'debts',
       title: m.debtsTitle,
-      description: m.debtsDescription,
+      description: (application) =>
+        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+          ? /* EIGNALAUST DÁNARBU */
+            m.debtsDescriptionEstateWithoutAssets
+          : application.answers.selectedEstate === EstateTypes.officialDivision
+          ? /* OPINBER SKIPTI */
+            m.debtsDescriptionOfficialDivision
+          : application.answers.selectedEstate ===
+            EstateTypes.permitForUndividedEstate
+          ? /* SETA Í ÓSKIPTU BÚI */
+            m.debtsDescriptionUndividedEstate
+          : /* EINKASKIPTI */
+            m.debtsDescriptionDivisionOfEstateByHeirs,
       children: [
         buildCustomField(
           {

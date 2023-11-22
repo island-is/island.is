@@ -854,6 +854,9 @@
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
       ],
+      "@island.is/service-portal/signature-collection": [
+        "libs/service-portal/signature-collection/src/index.ts"
+      ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"
       ],
