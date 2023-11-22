@@ -104,6 +104,26 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
     description: '',
   },
+  personalInfoProviderSubtitleEstateWithoutAssets: {
+    id: 'es.application:personalInfoProviderSubtitleEstateWithoutAssets',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
+    description: '',
+  },
+  personalInfoProviderSubtitleDivisionOfEstateByHeirs: {
+    id: 'es.application:personalInfoProviderSubtitleDivisionOfEstateByHeirsProviderSubtitle',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
+    description: '',
+  },
+  personalInfoProviderSubtitleUndividedEstate: {
+    id: 'es.application:personalInfoProviderSubtitleUndividedEstate',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
+    description: '',
+  },
+  personalInfoProviderSubtitleOfficialDivision: {
+    id: 'es.application:personalInfoProviderSubtitleOfficialDivision',
+    defaultMessage: 'Upplýsingar frá Þjóðskrá um kennitölu og lögheimili.',
+    description: '',
+  },
   settingsInfoProviderTitle: {
     id: 'es.application:settingsInfoProviderTitle',
     defaultMessage: 'Stillingar frá Ísland.is',
@@ -111,6 +131,26 @@ export const m = defineMessages({
   },
   settingsInfoProviderSubtitle: {
     id: 'es.application:settingsInfoProviderSubtitle',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+  settingsInfoProviderSubtitleDivisionOfEstateByHeirs: {
+    id: 'es.application:settingsInfoProviderSubtitleDivisionOfEstateByHeirs',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+  settingsInfoProviderSubtitleUndividedEstate: {
+    id: 'es.application:settingsInfoProviderSubtitleUndividedEstate',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+  settingsInfoProviderSubtitleOfficialDivision: {
+    id: 'es.application:settingsInfoProviderSubtitleOfficialDivision',
+    defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+  settingsInfoProviderSubtitleEstateWithoutAssets: {
+    id: 'es.application:settingsInfoProviderSubtitleEstateWithoutAssets',
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
     description: '',
   },
@@ -292,6 +332,26 @@ export const m = defineMessages({
   },
   propertiesDescription: {
     id: 'es.application:propertiesDescription#markdown',
+    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
+    description: '',
+  },
+  propertiesDescriptionOfficialDivision: {
+    id: 'es.application:propertiesDescriptionOfficialDivision#markdown',
+    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
+    description: '',
+  },
+  propertiesDescriptionUndividedEstate: {
+    id: 'es.application:propertiesDescriptionUndividedEstate#markdown',
+    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
+    description: '',
+  },
+  propertiesDescriptionEstateWithoutAssets: {
+    id: 'es.application:propertiesDescriptionEstateWithoutAssets#markdown',
+    defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
+    description: '',
+  },
+  propertiesDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:propertiesDescriptionDivisionOfEstateByHeirs#markdown',
     defaultMessage: 'Tilgreina skal allar hjúskapaeignir beggja hjóna.',
     description: '',
   },
@@ -538,6 +598,26 @@ export const m = defineMessages({
   },
   debtsDescription: {
     id: 'es.application:debtsDescription',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsDescriptionOfficialDivision: {
+    id: 'es.application:debtsDescriptionOfficialDivision',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsDescriptionEstateWithoutAssets: {
+    id: 'es.application:debtsDescriptionEstateWithoutAssets',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:debtsDescriptionDivisionOfEstateByHeirs',
+    defaultMessage: 'Innlendar og erlendar skuldir',
+    description: '',
+  },
+  debtsDescriptionUndividedEstate: {
+    id: 'es.application:debtsDescriptionUndividedEstate',
     defaultMessage: 'Innlendar og erlendar skuldir',
     description: '',
   },

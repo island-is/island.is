@@ -10,6 +10,7 @@ import { FjarsyslaModule } from '../fjarsysla/fjarsysla.module'
 import { RecyclingRequestModel } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 import { RecyclingRequestResolver } from './recyclingRequest.resolver'
+import { RecyclingRequestAppSysResolver } from './recyclingRequestAppSys.resolver'
 
 @Module({
   imports: [
@@ -20,7 +21,11 @@ import { RecyclingRequestResolver } from './recyclingRequest.resolver'
     forwardRef(() => RecyclingPartnerModule),
     forwardRef(() => SamgongustofaModule),
   ],
-  providers: [RecyclingRequestResolver, RecyclingRequestService],
+  providers: [
+    RecyclingRequestResolver,
+    RecyclingRequestAppSysResolver,
+    RecyclingRequestService,
+  ],
   exports: [RecyclingRequestService],
 })
 export class RecyclingRequestModule {}

@@ -38,7 +38,11 @@ export const ManualHeader = ({ manual, namespace }: ManualHeaderProps) => {
     if (!searchValue) {
       return
     }
-    router.push(linkResolver('search').href + '?q=' + searchValue)
+    router.push(
+      `${
+        linkResolver('search').href
+      }?q=${searchValue}&type=webManualChapterItem&referencedBy=${manual?.id}`,
+    )
   }
 
   const lastUpdatedDate = useMemo(() => {

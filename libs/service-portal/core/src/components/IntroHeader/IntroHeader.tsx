@@ -20,6 +20,7 @@ interface Props {
   narrow?: boolean
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
+  tooltipVariant?: 'light' | 'dark' | 'white'
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -59,6 +60,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
+            tooltipVariant={props.tooltipVariant ?? 'light'}
           />
         </GridColumn>
       )}

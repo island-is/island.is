@@ -58,6 +58,9 @@ const previewLinkHandler = {
   news: (entry: EntryProps<KeyValueMap>) => {
     return `${DEV_WEB_BASE_URL}/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
+  manual: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/handbaekur/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
 }
 
 const PreviewLinkSidebar = () => {

@@ -11,4 +11,5 @@ export enum InformationPaths {
   PetitionList = '/min-gogn/listar/:listId',
   PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
   Company = '/fyrirtaeki',
+  SignatureCollectionLists = '/min-gogn/medmaelalistar',
 }

@@ -90,7 +90,7 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading

@@ -18,7 +18,7 @@ export const MedicineLicense = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(messages.medicineLicenseIntroTitle)}

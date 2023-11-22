@@ -256,6 +256,18 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
         }
+        ... on ManualChapterItem {
+          id
+          title
+          manual {
+            title
+            slug
+          }
+          manualChapter {
+            title
+            slug
+          }
+        }
       }
       tagCounts {
         key
@@ -270,4 +282,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     }
   }
   ${processEntryFields}
+`
+
+export const GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY = gql`
+  query GetSingleEntryTitleById($input: GetSingleEntryTitleByIdInput!) {
+    getSingleEntryTitleById(input: $input) {
+      title
+    }
+  }
 `

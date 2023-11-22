@@ -30,6 +30,8 @@ export type CategoryCardProps = {
   headingAs?: TextProps['as']
   headingVariant?: TextProps['variant']
   text: string
+  textVariant?: 'default' | 'medium' | 'small'
+  textFontWeight?: 'light' | 'regular'
   tags?: Tag[]
   tagOptions?: Pick<TagProps, 'hyphenate' | 'truncate' | 'textLeft'>
   href?: string
@@ -91,6 +93,8 @@ const Component = forwardRef<
       headingVariant = 'h3',
       icon,
       text,
+      textVariant = 'default',
+      textFontWeight = 'regular',
       href = '/',
       tags = [],
       colorScheme = 'blue',
@@ -166,7 +170,13 @@ const Component = forwardRef<
                 {hyphenate ? <Hyphen>{heading}</Hyphen> : heading}
               </Text>
             </Box>
-            <Text paddingTop={1}>{text}</Text>
+            <Text
+              paddingTop={1}
+              fontWeight={textFontWeight}
+              variant={textVariant}
+            >
+              {text}
+            </Text>
             {hasTags && (
               <Box paddingTop={3}>
                 <Inline space={['smallGutter', 'smallGutter', 'gutter']}>

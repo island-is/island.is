@@ -11,9 +11,10 @@ import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {
   children: React.ReactNode
+  pathname?: string
 }
 
-export const PaymentsWrapper = ({ children }: Props) => {
+export const PaymentsWrapper = ({ children, pathname }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -43,7 +44,8 @@ export const PaymentsWrapper = ({ children }: Props) => {
       </Box>
 
       <TabNavigation
-        label="test"
+        label={formatMessage(messages.payments)}
+        pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.payments)
             ?.children ?? []

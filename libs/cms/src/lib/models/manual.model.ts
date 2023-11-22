@@ -29,20 +29,23 @@ export class Manual {
   chapters!: ManualChapter[]
 }
 
-export const mapManual = ({ sys, fields }: IManual): Manual => ({
-  id: sys.id,
-  title: fields.title ?? '',
-  slug: fields.slug ?? '',
-  organization: fields.organization
-    ? mapOrganization(fields.organization)
-    : null,
-  info: fields.info ? mapDocument(fields.info, sys.id + ':info') : [],
-  description: fields.description
-    ? mapDocument(fields.description, sys.id + ':description')
-    : [],
-  chapters: fields.chapters
-    ? fields.chapters
-        .filter((chapter) => chapter?.fields?.title && chapter?.fields?.slug)
-        .map(mapManualChapter)
-    : [],
-})
+export const mapManual = (manual: IManual): Manual => {
+  const { sys, fields } = manual
+  return {
+    id: sys.id,
+    title: fields.title ?? '',
+    slug: fields.slug ?? '',
+    organization: fields.organization
+      ? mapOrganization(fields.organization)
+      : null,
+    info: fields.info ? mapDocument(fields.info, sys.id + ':info') : [],
+    description: fields.description
+      ? mapDocument(fields.description, sys.id + ':description')
+      : [],
+    chapters: fields.chapters
+      ? fields.chapters
+          .filter((chapter) => chapter?.fields?.title && chapter?.fields?.slug)
+          .map((chapter) => mapManualChapter({ chapter, manual }))
+      : [],
+  }
+}

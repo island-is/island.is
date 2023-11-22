@@ -51,8 +51,9 @@ export class PersonResolver {
   nationalRegistryPerson(
     @CurrentUser() user: AuthUser,
     @Args('api', { nullable: true }) api?: 'v1' | 'v3',
+    @Args('useFakeData', { nullable: true }) useFakeData?: boolean,
   ): Promise<Person | null> {
-    return this.service.getPerson(user.nationalId, api ?? 'v1')
+    return this.service.getPerson(user.nationalId, api ?? 'v1', useFakeData)
   }
 
   @ResolveField('custodians', () => [Custodian], {

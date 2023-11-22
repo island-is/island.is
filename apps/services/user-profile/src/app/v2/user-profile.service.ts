@@ -203,12 +203,10 @@ export class UserProfileService {
     nationalId: string
     mobilePhoneNumber: string
   }) {
-    const formattedPhoneNumber = formatPhoneNumber(mobilePhoneNumber)
-
     await this.verificationService.createSmsVerification(
       {
         nationalId,
-        mobilePhoneNumber: formattedPhoneNumber,
+        mobilePhoneNumber,
       },
       3,
     )
@@ -261,6 +259,9 @@ export class UserProfileService {
      * Remove dashes from mobile phone number and compare last 7 digits of mobilePhoneNumber with the audkenni Phone number
      * Removing the dashes prevents misreading string with format +354-765-4321 as 65-4321
      */
-    return mobilePhoneNumber.replace(/-/g, '').slice(-7) === audkenniSimNumber
+    return (
+      mobilePhoneNumber.replace(/-/g, '').slice(-7) ===
+      audkenniSimNumber.replace(/-/g, '').slice(-7)
+    )
   }
 }

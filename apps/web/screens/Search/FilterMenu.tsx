@@ -1,4 +1,5 @@
 import React, { Dispatch, ReactNode, SetStateAction } from 'react'
+
 import {
   Filter,
   FilterMultiChoice,
@@ -14,6 +15,7 @@ interface FilterMenuProps {
   categories: ReadonlyArray<CategoriesProps>
   filter: FilterOptions
   setFilter: Dispatch<SetStateAction<FilterOptions>>
+  clearFilter: () => void
   children?: ReactNode
   resultCount?: number
 }
@@ -41,6 +43,7 @@ export const FilterMenu = ({
   categories,
   filter,
   setFilter,
+  clearFilter,
   labelClear = 'Hreinsa síu',
   labelClearAll = 'Hreinsa allar síur',
   labelOpen = 'Sía niðurstöður',
@@ -62,9 +65,7 @@ export const FilterMenu = ({
     align={align}
     resultCount={resultCount}
     reverse
-    onFilterClear={() => {
-      setFilter({ category: [], organization: [] })
-    }}
+    onFilterClear={clearFilter}
   >
     <FilterMultiChoice
       labelClear={labelClear}
