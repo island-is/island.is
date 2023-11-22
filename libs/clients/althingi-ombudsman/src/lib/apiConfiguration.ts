@@ -19,15 +19,6 @@ export const ApiConfiguration = {
         name: 'clients-althingi-ombudsman',
         timeout: 30000, // 30 sec timeout
         logErrorResponseBody: true,
-        autoAuth: idsClientConfig.isConfigured
-          ? {
-              mode: 'token',
-              issuer: idsClientConfig.issuer,
-              clientId: idsClientConfig.clientId,
-              clientSecret: idsClientConfig.clientSecret,
-              scope: [],
-            }
-          : undefined,
       }),
       basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
       headers: {
