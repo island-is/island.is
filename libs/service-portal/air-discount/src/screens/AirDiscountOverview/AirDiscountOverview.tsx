@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
@@ -7,8 +7,8 @@ import {
   EmptyState,
   CardLoader,
   FootNote,
-  VEGAGERDIN_ID,
   IntroHeader,
+  VEGAGERDIN_SLUG,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -20,7 +20,6 @@ import {
   Button,
   GridColumn,
   GridRow,
-  SkeletonLoader,
   Stack,
   Text,
   toast,
@@ -132,7 +131,7 @@ export const AirDiscountOverview = () => {
           <GridColumn span={['8/8', '8/8']} order={1}>
             <IntroHeader
               title={formatMessage(m.introTitle)}
-              serviceProviderID={VEGAGERDIN_ID}
+              serviceProviderSlug={VEGAGERDIN_SLUG}
               serviceProviderTooltip={formatMessage(
                 coreMessage.airDiscountTooltip,
               )}
@@ -277,7 +276,7 @@ export const AirDiscountOverview = () => {
           <UsageTable data={flightLegs} />
         </Box>
       )}
-      <FootNote serviceProviderID={VEGAGERDIN_ID} />
+      <FootNote serviceProviderSlug={VEGAGERDIN_SLUG} />
     </>
   )
 }

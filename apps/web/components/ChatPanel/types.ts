@@ -55,6 +55,15 @@ export type WatsonIntegration =
   // Sjúkratryggingar - english
   | 'cba41fa0-12fb-4cb5-bd98-66a57cee42e0'
 
+  // Askur - stofnanir
+  | '9aed32e0-8009-49ef-8c26-1220ed86e250'
+
+  // Grindavík
+  | 'fd247025-59fc-4ccd-83eb-7ae960019e37'
+
+  // Grindavík - english
+  | 'e72d26ef-92eb-4e66-bdae-1f13a72a887a'
+
 export type WatsonServiceInstance =
   // Askur
   'bc3d8312-d862-4750-b8bf-529db282050a'
