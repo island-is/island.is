@@ -247,7 +247,7 @@ export const oldAgePensionFormMessage: MessageDir = {
         'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
     },
     alertMessageForeign: {
-      id: 'oap.application:payment.alert.message.foreign',
+      id: 'oap.application:payment.alert.message.foreign#markdown',
       defaultMessage:
         'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
       description: 'english description',

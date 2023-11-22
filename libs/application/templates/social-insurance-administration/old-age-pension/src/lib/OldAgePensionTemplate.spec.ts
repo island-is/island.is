@@ -8,6 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/types'
 import OldAgePensionTemplate from './OldAgePensionTemplate'
+import { OAPEvents } from './constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -50,6 +51,41 @@ describe('Old Age Pension Template', () => {
   })
 
   describe('state transitions', () => {
+    it('should transition from draft to tryggingastofnunAbort on abort', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            confirmCorrectInfo: true,
+          },
+        }),
+        OldAgePensionTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunAbort')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to tryggingastofnunInReview on inreview', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        OldAgePensionTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.INREVIEW,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunInReview')
+    })
+  })
+
+  describe('state transitions', () => {
     it('should transition from tryggingastofnunSubmitted to draft on edit', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
@@ -63,6 +99,40 @@ describe('Old Age Pension Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('draft')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunAbort to draft on edit', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunAbort',
+        }),
+        OldAgePensionTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('draft')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunAbort to draft on edit', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunAbort',
+        }),
+        OldAgePensionTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.INREVIEW,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunInReview')
     })
   })
 
@@ -101,10 +171,39 @@ describe('Old Age Pension Template', () => {
   })
 
   describe('state transitions', () => {
-    it('should transition from additionalDocumentsRequired to tryggingastofnunInReview on approve', () => {
+    it('should transition from tryggingastofnunInReview to additionalDocumentsRequired on ADDITIONALDOCUMENTSREQUIRED', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunInReview',
+          answers: {
+            fileUploadAdditionalFiles: {
+              additionalDocuments: [],
+              additionalDocumentsRequired: [],
+            }
+          },
+        }),
+        OldAgePensionTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('additionalDocumentsRequired')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from additionalDocumentsRequired to tryggingastofnunInReview on submit', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           state: 'additionalDocumentsRequired',
+          answers: {
+            fileUploadAdditionalFiles: {
+              additionalDocuments: [],
+              additionalDocumentsRequired: [],
+            }
+          },
         }),
         OldAgePensionTemplate,
       )
