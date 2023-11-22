@@ -185,19 +185,19 @@ export const overviewAssetsAndDebts = [
   ),
   buildDividerField({
     condition: (answers) =>
-    getValueViaPath(answers, 'selectedEstate') ===
-    EstateTypes.estateWithoutAssets
-      ? false
-      : true,
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
   }),
   buildDescriptionField({
     id: 'overviewClaimsInfoTitle',
     title: m.claimsTitle,
     condition: (answers) =>
-    getValueViaPath(answers, 'selectedEstate') ===
-    EstateTypes.estateWithoutAssets
-      ? false
-      : true,
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
     description: m.claimsDescription,
     titleVariant: 'h3',
     space: 'gutter',
@@ -207,10 +207,10 @@ export const overviewAssetsAndDebts = [
       title: '',
       id: 'claimsCards',
       condition: (answers) =>
-      getValueViaPath(answers, 'selectedEstate') ===
-      EstateTypes.estateWithoutAssets
-        ? false
-        : true,
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       component: 'Cards',
       doesNotRequireAnswer: true,
     },
