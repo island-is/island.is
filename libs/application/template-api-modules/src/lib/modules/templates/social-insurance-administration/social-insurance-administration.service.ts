@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -13,8 +13,8 @@ import {
   Employment,
   getApplicationAnswers,
   isEarlyRetirement,
-  oldAgePensionFormMessage,
   FileType,
+  errorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   Attachment,
@@ -33,7 +33,7 @@ import { isRunningOnEnvironment } from '@island.is/shared/utils'
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
-export class OldAgePensionService extends BaseTemplateApiService {
+export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
   s3 = new S3()
 
   constructor(
@@ -42,7 +42,7 @@ export class OldAgePensionService extends BaseTemplateApiService {
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
   ) {
-    super(ApplicationTypes.OLD_AGE_PENSION)
+    super('SocialInsuranceAdministration')
   }
 
   private parseErrors(e: Error | OldAgePensionResponseError) {
@@ -233,9 +233,8 @@ export class OldAgePensionService extends BaseTemplateApiService {
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title: oldAgePensionFormMessage.errorMessages.noEmailFound,
-          summary:
-            oldAgePensionFormMessage.errorMessages.noEmailFoundDescription,
+          title: errorMessages.noEmailFound,
+          summary: errorMessages.noEmailFoundDescription,
         },
         500,
       )

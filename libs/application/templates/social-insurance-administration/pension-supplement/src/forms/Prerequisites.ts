@@ -8,11 +8,12 @@ import {
 import {
   Form,
   FormModes,
+  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
+import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -29,6 +30,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: pensionSupplementFormMessage.pre.externalDataSection,
+          subTitle: pensionSupplementFormMessage.pre.externalDataDescription,
           checkboxLabel: pensionSupplementFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
@@ -51,11 +53,13 @@ export const PrerequisitesForm: Form = buildForm({
                 pensionSupplementFormMessage.pre.skraInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: SocialInsuranceAdministrationApplicantApi,
               title:
-                pensionSupplementFormMessage.pre.userProfileInformationTitle,
+                pensionSupplementFormMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
               subTitle:
-                pensionSupplementFormMessage.pre.userProfileInformationSubTitle,
+                pensionSupplementFormMessage.pre
+                  .socialInsuranceAdministrationInformationDescription,
             }),
           ],
         }),

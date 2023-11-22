@@ -24,6 +24,7 @@ import {
   getApplicationAnswers,
 } from '../lib/pensionSupplementUtils'
 import { ApplicationReason, FILE_SIZE_LIMIT } from '../lib/constants'
+import { ApplicantInfo } from '../types'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -55,22 +56,23 @@ export const PensionSupplementForm: Form = buildForm({
                   title: pensionSupplementFormMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
-                  required: true,
+                  disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.email
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.emailAddress
                   },
                 }),
                 buildPhoneField({
                   id: 'applicantInfo.phonenumber',
                   title: pensionSupplementFormMessage.info.applicantPhonenumber,
                   width: 'half',
-                  required: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.mobilePhoneNumber
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.phoneNumber
                   },
                 }),
               ],
@@ -100,13 +102,22 @@ export const PensionSupplementForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.bank',
                   title: pensionSupplementFormMessage.info.paymentBank,
-                  backgroundColor: 'white',
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
-                    const userProfile = application.externalData.userProfile
-                      .data as UserProfile
-                    return userProfile.bankInfo
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+
+                    // TODO: Tímabundið (Þangað til nýja BankAccount component er búið til)
+                    return data.bankAccount &&
+                      data.bankAccount.bank &&
+                      data.bankAccount.ledger &&
+                      data.bankAccount.accountNumber
+                      ? data.bankAccount.bank +
+                          data.bankAccount.ledger +
+                          data.bankAccount.accountNumber
+                      : ''
                   },
                 }),
               ],

@@ -94,8 +94,8 @@ import { CitizenshipService } from './directorate-of-immigration/citizenship/cit
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
-import { OldAgePensionModule } from './social-insurance-administration/social-insurance-administration.module'
-import { OldAgePensionService } from './social-insurance-administration/social-insurance-administration.service'
+import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -147,7 +147,7 @@ export const modules = [
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
   CitizenshipModule,
-  OldAgePensionModule,
+  SocialInsuranceAdministrationModule,
 ]
 
 export const services = [
@@ -200,5 +200,5 @@ export const services = [
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
   CitizenshipService,
-  OldAgePensionService,
+  SocialInsuranceAdministrationService,
 ]

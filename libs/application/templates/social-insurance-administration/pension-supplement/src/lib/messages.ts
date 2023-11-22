@@ -6,7 +6,7 @@ export const pensionSupplementFormMessage: MessageDir = {
     institution: {
       id: 'ul.application:institution.name',
       defaultMessage: 'Tryggingastofnun',
-      description: 'Tryggingastofnun',
+      description: 'Social Insurance Administration',
     },
     applicationTitle: {
       id: 'ul.application:applicationTitle',
@@ -34,36 +34,41 @@ export const pensionSupplementFormMessage: MessageDir = {
     externalDataSection: {
       id: 'ul.application:external.data.section',
       defaultMessage: 'Gagnaöflun',
-      description: 'External Data',
+      description: 'Data collection',
+    },
+    externalDataDescription: {
+      id: 'ul.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      description: 'The following information will be retrieved electronically',
     },
     checkboxProvider: {
       id: 'ul.application:checkbox.provider',
       defaultMessage:
-        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
-      description: 'Checbox to confirm data provider',
-    },
-    userProfileInformationTitle: {
-      id: 'ul.application:userprofile.title',
-      defaultMessage: 'Upplýsingar af mínum síðum Ísland.is',
-      description: 'Information from your account on Ísland.is',
-    },
-    userProfileInformationSubTitle: {
-      id: 'ul.application:userprofile.subtitle',
-      defaultMessage:
-        'Sækir upplýsingar um netfang, símanúmer og bankareikning frá mínum síðum Ísland.is.',
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description:
-        'Information about email adress, phone number and bank account will be retrieved from your account at Ísland.is.',
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'ul.application:skra.info.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
     skraInformationSubTitle: {
       id: 'ul.application:skra.info.subtitle',
-      defaultMessage: 'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá.',
+      defaultMessage: 'Upplýsingar um þig.',
+      description: 'Information about you.',
+    },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'ul.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information regarding income and circumstances',
+    },
+    socialInsuranceAdministrationInformationDescription: {
+      id: 'ul.application:prerequisites.socialInsuranceAdministration.description#markdown',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
       description:
-        'Information about you, spouse and children will be retrieved from Registers Iceland.',
+        'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
     },
     startApplication: {
       id: 'ul.application:start.application',
@@ -86,7 +91,7 @@ export const pensionSupplementFormMessage: MessageDir = {
     subSectionDescription: {
       id: 'ul.application:info.sub.section.description',
       defaultMessage:
-        'Netfang og símanúmer er sótt á mínar síður á Ísland.is. Ef upplýsingarnar eru ekki réttar eða vantar setur þú þær inn hér.',
+        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
       description: 'translation',
     },
     applicantEmail: {
@@ -106,15 +111,15 @@ export const pensionSupplementFormMessage: MessageDir = {
     },
     paymentAlertTitle: {
       id: 'ul.application:info.payment.alert.title',
-      defaultMessage: 'Til athugunar!',
-      description: 'For consideration',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
     },
     paymentAlertMessage: {
       id: 'ul.application:info.payment.alert.message',
       defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
       description:
-        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account.',
     },
     paymentBank: {
       id: 'ul.application:info.payment.bank',
@@ -177,7 +182,7 @@ export const pensionSupplementFormMessage: MessageDir = {
     periodDescription: {
       id: 'ul.application:info.period.description',
       defaultMessage:
-        'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja fyrir árið í ár og 2 ár aftur í tímann.',
+        'Veldu tímabil sem þú vilt byrja að fá greidda uppbót á lífeyri. Hægt er að sækja um fyrir árið í ár og tvö ár aftur í tímann.',
       description: `english translation`,
     },
     periodYear: {
