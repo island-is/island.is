@@ -61,9 +61,11 @@ describe('Summary', () => {
       await userEvent.click(continueButton)
     })
 
-    const { getByText } = within(screen.getByRole('dialog'))
+    const { getByRole } = within(screen.getByRole('dialog'))
 
-    expect(getByText('Máli hefur verið lokið')).toBeInTheDocument()
+    expect(
+      getByRole('heading', { name: 'Máli hefur verið lokið' }),
+    ).toBeInTheDocument()
   })
 
   it('should show a modal window when the appeal ruling is modified', async () => {
