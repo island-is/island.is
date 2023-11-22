@@ -7,11 +7,18 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á modal til að skrá breytingar á úrskurði.',
   },
-  text: {
-    id: 'judicial.system.core:ruling_modified_modal.text',
+  rulingText: {
+    id: 'judicial.system.core:ruling_modified_modal.ruling_text',
     defaultMessage:
       'Skráðu hvað var leiðrétt í úrskurðinum eða þingbókinni. Aðilar máls munu fá skilaboðin og tilkynningu um að nýr úrskurður hafi verið undirritaður.',
     description: 'Notaður sem texti í modal til að skrá breytingar á úrskurði.',
+  },
+  appealRulingText: {
+    id: 'judicial.system.core:ruling_modified_modal.appeal_ruling_text',
+    defaultMessage:
+      'Skráðu hvað var leiðrétt í úrskurðinum. Aðilar máls munu fá skilaboðin og tilkynningu um nýjan úrskurð.',
+    description:
+      'Notaður sem texti í modal til að skrá breytingar á úrskurði á Landsréttar úrskurðarskjá.',
   },
   rulingContinue: {
     id: 'judicial.system.core:ruling_modified_modal.ruling_continue',
