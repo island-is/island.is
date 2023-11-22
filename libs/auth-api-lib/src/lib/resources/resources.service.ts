@@ -385,37 +385,6 @@ export class ResourcesService {
     return arrJoined.sort((a, b) => a.name.localeCompare(b.name))
   }
 
-  /** Returns the count of scopes that are allowed for delegations */
-  async countAllowedDelegationApiScopesForUser(scope: string[], user: User) {
-    const filteredScope = this.filterScopeForCustomDelegation(scope, user)
-    return this.apiScopeModel.count({
-      where: {
-        name: {
-          [Op.in]: filteredScope,
-        },
-        allowExplicitDelegationGrant: true,
-      },
-    })
-  }
-
-  private filterScopeForCustomDelegation(scope: string[], user: User) {
-    const delegationTypes = user.delegationType ?? []
-
-    return scope.filter((scopeName) => {
-      for (const rule of this.delegationConfig.customScopeRules) {
-        if (
-          rule.scopeName === scopeName &&
-          rule.onlyForDelegationType.some((delType: any) =>
-            delegationTypes.includes(delType),
-          ) === false
-        ) {
-          return false
-        }
-      }
-      return true
-    })
-  }
-
   /** Gets api resources by api resource names  */
   async findApiResourcesByNameAsync(
     apiResourceNames: string[],

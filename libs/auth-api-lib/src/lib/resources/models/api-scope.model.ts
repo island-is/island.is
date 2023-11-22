@@ -37,6 +37,7 @@ interface ModelAttributes {
   grantToProcuringHolders: boolean
   grantToPersonalRepresentatives: boolean
   allowExplicitDelegationGrant: boolean
+  customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType[] | null
   automaticDelegationGrant: boolean
   alsoForDelegatedUser: boolean
   isAccessControlled?: boolean
@@ -61,6 +62,7 @@ type CreationAttributes = Optional<
   | 'grantToProcuringHolders'
   | 'grantToPersonalRepresentatives'
   | 'allowExplicitDelegationGrant'
+  | 'customDelegationOnlyFor'
   | 'automaticDelegationGrant'
   | 'alsoForDelegatedUser'
   | 'order'

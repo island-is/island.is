@@ -853,4 +853,8 @@ export const m = defineMessages({
     id: 'ap.ids-admin:type-not-found-message',
     defaultMessage: 'It may have been removed or moved',
   },
+  includeAccessControlUsers: {
+    id: 'ap.ids-admin:include-access-control-users',
+    defaultMessage: 'Include access control users',
+  }
 })

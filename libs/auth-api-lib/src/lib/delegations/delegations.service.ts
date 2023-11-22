@@ -4,46 +4,42 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import { InjectModel } from '@nestjs/sequelize'
-import startOfDay from 'date-fns/startOfDay'
+import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
 import { Op } from 'sequelize'
 import { isUuid } from 'uuidv4'
-import * as kennitala from 'kennitala'
 
-import { AuditService } from '@island.is/nest/audit'
-import { AuthDelegationType } from '@island.is/shared/types'
 import type { User } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { AuditService } from '@island.is/nest/audit'
 import { NoContentException } from '@island.is/nest/problem'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { Client } from '../clients/models/client.model'
 import type { PersonalRepresentativeDTO } from '../personal-representative/dto/personal-representative.dto'
 import { PersonalRepresentativeService } from '../personal-representative/services/personalRepresentative.service'
+import { DelegationResourcesService } from '../resources/delegation-resources.service'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { ResourcesService } from '../resources/resources.service'
 import { DEFAULT_DOMAIN } from '../types'
-import { DelegationConfig } from './DelegationConfig'
 import { DelegationScopeService } from './delegation-scope.service'
-import { UpdateDelegationScopeDTO } from './dto/delegation-scope.dto'
 import { DelegationDTO, DelegationProvider } from './dto/delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
 import { Delegation } from './models/delegation.model'
-import { DelegationValidity } from './types/delegationValidity'
 import { DelegationDirection } from './types/delegationDirection'
+import { DelegationType } from './types/delegationType'
+import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
-import { DelegationType } from './types/delegationType'
-import { DelegationResourcesService } from '../resources/delegation-resources.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -66,8 +62,6 @@ export class DelegationsService {
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(DelegationConfig.KEY)
-    private delegationConfig: ConfigType<typeof DelegationConfig>,
     private rskProcuringClient: RskRelationshipsClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
@@ -355,44 +349,6 @@ export class DelegationsService {
     }
   }
 
-  /**
-   * Finds a delegation by relationship of two users
-   * @param user Authenticated user that has given the delegation
-   * @param toNationalId
-   * @returns
-   */
-  private async findByRelationship(
-    user: User,
-    toNationalId: string,
-  ): Promise<Delegation | null> {
-    const today = startOfDay(new Date())
-    const delegation = await this.delegationModel.findOne({
-      where: {
-        fromNationalId: user.nationalId,
-        toNationalId: toNationalId,
-      },
-      include: [
-        {
-          model: DelegationScope,
-          required: false,
-          where: {
-            validTo: {
-              [Op.or]: [{ [Op.eq]: null }, { [Op.gte]: today }],
-            },
-          },
-        },
-      ],
-    })
-
-    if (delegation) {
-      delegation.delegationScopes = delegation.delegationScopes?.filter((s) =>
-        this.checkIfOutgoingScopeAllowed(s, user),
-      )
-    }
-
-    return delegation
-  }
-
   /***** Private helpers *****/
   /**
    * Find all wards for the user from NationalRegistry
@@ -671,36 +627,5 @@ export class DelegationsService {
         },
       })
     ).map((s) => s.scopeName)
-  }
-
-  /**
-   * Validates that the delegation scopes belong to user and are valid for delegation
-   * @param user user scopes from the currently authenticated user
-   * @param requestedScopes requested scopes from a delegation
-   * @returns
-   */
-  private async validateScopesAccess(
-    user: User,
-    requestedScopes?: UpdateDelegationScopeDTO[],
-  ): Promise<boolean> {
-    if (!requestedScopes || requestedScopes.length === 0) {
-      return true
-    }
-
-    for (const scope of requestedScopes) {
-      // Delegation scopes need to be associated with the user scopes
-      if (!user.scope.includes(scope.name)) {
-        return false
-      }
-    }
-
-    // Check if the requested scopes are valid
-    const scopes = requestedScopes.map((scope) => scope.name)
-    const allowedApiScopesCount =
-      await this.resourcesService.countAllowedDelegationApiScopesForUser(
-        scopes,
-        user,
-      )
-    return requestedScopes.length === allowedApiScopesCount
   }
 }

@@ -24,12 +24,6 @@ import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
 import type { ConfigType } from '@island.is/nest/config'
-type DelegationConfigType = ConfigType<typeof DelegationConfig>
-type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
-  infer ScopeRule
->
-  ? ScopeRule
-  : never
 
 @Injectable()
 export class DelegationResourcesService {
@@ -67,7 +61,11 @@ export class DelegationResourcesService {
     const domains = await this.domainModel.findAll({
       where: onlyDelegations
         ? and(
-            ...this.apiScopeFilter({ user, prefix: 'scopes', direction }),
+            ...(await this.apiScopeFilter({
+              user,
+              prefix: 'scopes',
+              direction,
+            })),
             domainNameFilter,
           )
         : domainNameFilter,
@@ -101,7 +99,7 @@ export class DelegationResourcesService {
         {
           name: domainName,
         },
-        ...this.apiScopeFilter({ user, prefix: 'scopes' }),
+        ...(await this.apiScopeFilter({ user, prefix: 'scopes' })),
       ),
       include: [
         {
@@ -185,7 +183,7 @@ export class DelegationResourcesService {
     return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
   }
 
-  apiScopeFilter({
+  async apiScopeFilter({
     user,
     prefix,
     direction,
@@ -203,7 +201,7 @@ export class DelegationResourcesService {
 
     if (direction === DelegationDirection.OUTGOING) {
       apiScopeFilter.push(
-        ...this.skipScopeFilter(user, prefix),
+        ...(await this.skipScopeFilter(user, prefix)),
         ...this.accessControlFilter(user, prefix),
         ...this.delegationTypeFilter(user, prefix),
         ...this.grantToAuthenticatedUserFilter(user, prefix),
@@ -243,7 +241,7 @@ export class DelegationResourcesService {
         {
           domainName,
         },
-        ...this.apiScopeFilter({ user, direction }),
+        ...(await this.apiScopeFilter({ user, direction })),
       ),
       include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
       order: [
@@ -259,13 +257,31 @@ export class DelegationResourcesService {
     return scopes
   }
 
-  private skipScopeFilter(
+  private async skipScopeFilter(
     user: User,
     prefix?: string,
-  ): Array<WhereOptions<ApiScope>> {
-    const skipScopes = this.delegationConfig.customScopeRules
-      .filter((scopeRule) => !this.scopeRuleMatchesUser(user, scopeRule))
-      .map((scopeRule) => scopeRule.scopeName)
+  ): Promise<Array<WhereOptions<ApiScope>>> {
+    const skipScopes = await this.apiScopeModel
+      .findAll({
+        attributes: ['name', 'customDelegationOnlyFor'],
+        where: {
+          customDelegationOnlyFor: {
+            [Op.not]: null,
+          },
+        },
+      })
+      .then((scopes) =>
+        scopes
+          .filter(
+            (scopeRule) =>
+              !this.scopeRuleMatchesUser(
+                user,
+                scopeRule.customDelegationOnlyFor || [],
+              ),
+          )
+          .map((scopeRule) => scopeRule.name),
+      )
+
     return skipScopes.length === 0
       ? []
       : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
@@ -374,7 +390,7 @@ export class DelegationResourcesService {
 
   private scopeRuleMatchesUser(
     { delegationType }: User,
-    { onlyForDelegationType }: ScopeRule,
+    onlyForDelegationType: string[],
   ) {
     if (!delegationType) {
       return false

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useLocale } from '@island.is/localization'
-import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
+import { Box, Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -120,14 +120,23 @@ export const PermissionAccessControl = () => {
           }}
           {...commonProps}
           children={
-            <Checkbox
-              label={formatMessage(m.onlyForCompanies)}
-              subLabel={formatMessage(m.onlyForCompaniesDescription)}
-              name="onlyFoCompanies"
-              checked={false}
-              onChange={(e) => {}}
-              {...commonProps}
-            />
+            <Box marginX={3} marginBottom={2}>
+              <Checkbox
+                label={formatMessage(m.onlyForCompanies)}
+                subLabel={formatMessage(m.onlyForCompaniesDescription)}
+                name="onlyFoCompanies"
+                checked={false}
+                {...commonProps}
+                children={
+                  <Box marginX={8} marginTop={0} marginBottom={3}>
+                    <Checkbox
+                      checked={false}
+                      label={formatMessage(m.includeAccessControlUsers)}
+                    ></Checkbox>
+                  </Box>
+                }
+              />
+            </Box>
           }
         />
         <Checkbox
