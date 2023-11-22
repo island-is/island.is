@@ -47,7 +47,7 @@ export const AccessibilityTableRenderer = ({
               const xAxisValue = row[xAxisKey]
 
               return (
-                <tr>
+                <tr key={xAxisValue}>
                   <th scope="row">
                     {xAxisValueType === 'date' && xAxisValue !== null
                       ? formatDate(xAxisValue)

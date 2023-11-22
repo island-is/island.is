@@ -1,5 +1,7 @@
 import { Area, Bar, Cell, Label, Line, Pie } from 'recharts'
 
+import type { Locale } from '@island.is/shared/types'
+
 import { PREDEFINED_LINE_DASH_PATTERNS } from '../constants'
 import {
   ChartComponentType,
@@ -65,6 +67,7 @@ type CustomLabelProps = {
     name?: string
     value?: string | number
   }
+  activeLocale: Locale
 }
 
 const RADIAN = Math.PI / 180
@@ -75,6 +78,7 @@ const renderCustomizedLabel = ({
   outerRadius,
   innerRadius,
   payload,
+  activeLocale,
 }: CustomLabelProps) => {
   const radius = innerRadius + (outerRadius - innerRadius) * 1.6
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
@@ -93,7 +97,8 @@ const renderCustomizedLabel = ({
         fontSize="12px"
         fontWeight={500}
       >
-        {`${formatValueForPresentation(value)}`} {payload?.name?.toLowerCase()}
+        {`${value ? formatValueForPresentation(activeLocale, value) : ''}`}{' '}
+        {payload?.name?.toLowerCase()}
       </text>
     </g>
   )
@@ -102,6 +107,7 @@ const renderCustomizedLabel = ({
 export const renderPieChartComponents = (
   components: ChartComponentWithRenderProps[],
   data: ChartData,
+  activeLocale: Locale,
 ) => {
   const pieData = data?.[0]?.statisticsForDate
 
@@ -114,7 +120,12 @@ export const renderPieChartComponents = (
       cy="50%"
       innerRadius="30%"
       outerRadius="60%"
-      label={renderCustomizedLabel}
+      label={(props) =>
+        renderCustomizedLabel({
+          ...props,
+          activeLocale,
+        })
+      }
       startAngle={90}
       endAngle={360 + 90}
     >
@@ -144,15 +155,21 @@ interface ChartComponentsRendererProps {
   componentsWithAddedProps: ChartComponentWithRenderProps[]
   chartType: ChartType
   data: ChartData
+  activeLocale: Locale
 }
 
 export const renderChartComponents = ({
   componentsWithAddedProps,
   chartType,
   data,
+  activeLocale,
 }: ChartComponentsRendererProps) => {
   if (chartType === ChartType.pie) {
-    return renderPieChartComponents(componentsWithAddedProps, data)
+    return renderPieChartComponents(
+      componentsWithAddedProps,
+      data,
+      activeLocale,
+    )
   }
 
   return componentsWithAddedProps.map((component) =>

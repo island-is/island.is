@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { CartesianGrid, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import React, { useMemo, useState } from 'react'
+import { ResponsiveContainer } from 'recharts'
 
 import {
   AccordionCard,
@@ -8,7 +8,6 @@ import {
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -19,7 +18,7 @@ import {
 } from '../hooks'
 import { messages } from '../messages'
 import { ChartType } from '../types'
-import { decideChartBase, formatDate } from '../utils'
+import { decideChartBase, getCartesianGridComponents } from '../utils'
 import { AccessibilityTableRenderer } from './AccessibilityTableRenderer'
 import { renderChartComponents } from './ChartComponentRenderer'
 import { renderLegend } from './LegendRenderer'
@@ -43,6 +42,10 @@ export const Chart = ({ slice }: ChartProps) => {
   const chartUsesGrid = chartType !== ChartType.pie
   const [expanded, setExpanded] = useState(true)
   const { activeLocale } = useI18n()
+  const cartesianGridComponents = useMemo(
+    () => getCartesianGridComponents(activeLocale, chartUsesGrid),
+    [activeLocale, chartUsesGrid],
+  )
 
   if (BaseChartComponent === null || chartType === null) {
     return messages[activeLocale].renderError
@@ -90,7 +93,7 @@ export const Chart = ({ slice }: ChartProps) => {
               width={400}
               height={400}
             >
-              {chartUsesGrid && CARTESIAN_GRID_HELPERS.map((helper) => helper)}
+              {cartesianGridComponents}
               {renderLegend({
                 componentsWithAddedProps,
                 data: queryResult.data,
@@ -107,6 +110,7 @@ export const Chart = ({ slice }: ChartProps) => {
                 componentsWithAddedProps,
                 chartType,
                 data: queryResult.data,
+                activeLocale,
               })}
             </BaseChartComponent>
           </ResponsiveContainer>
@@ -121,42 +125,3 @@ export const Chart = ({ slice }: ChartProps) => {
     </Box>
   )
 }
-
-const CARTESIAN_GRID_HELPERS = [
-  <CartesianGrid
-    stroke="rgb(0, 97, 255, 0.2)"
-    strokeDasharray="4 4"
-    vertical={false}
-  />,
-
-  <XAxis
-    axisLine={{ stroke: '#CCDFFF' }}
-    aria-hidden="true"
-    dataKey="date"
-    tickFormatter={formatDate}
-    style={{
-      fontSize: '1rem',
-      fontFamily: 'IBM Plex Sans',
-      color: 'red',
-    }}
-    dy={theme.spacing.p2}
-  />,
-  <YAxis
-    axisLine={{ stroke: '#CCDFFF' }}
-    aria-hidden="true"
-    type="number"
-    style={{
-      fontSize: '1rem',
-      fontFamily: 'IBM Plex Sans',
-    }}
-    tickFormatter={(v) => {
-      if (typeof v === 'number') {
-        if (v < 1000) {
-          return v
-        }
-        return `${Math.round(v / 1000)} þ`
-      }
-      return v
-    }}
-  />,
-]

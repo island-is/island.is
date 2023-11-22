@@ -5,6 +5,8 @@ export const messages = {
     noDataForChart: 'Engin gögn fundust fyrir grafið',
     changeMOM: 'Breyting milli mánaða',
     changeYOY: 'Breyting milli ára',
+    millionPostfix: 'm',
+    thousandPostfix: 'þ',
   },
   en: {
     skipGraph: 'Skip graph with title',
@@ -12,5 +14,7 @@ export const messages = {
     noDataForChart: 'No data was found for the chart',
     changeMOM: 'Change month over month',
     changeYOY: 'Change year over year',
+    millionPostfix: 'm',
+    thousandPostfix: 'k',
   },
 }

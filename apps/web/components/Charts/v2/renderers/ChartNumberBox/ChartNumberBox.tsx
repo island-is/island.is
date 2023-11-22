@@ -112,7 +112,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               )}
               <span>
                 {data.valueType === 'number'
-                  ? formatValueForPresentation(result)
+                  ? formatValueForPresentation(activeLocale, result)
                   : `${Math.abs(result) * 100}%`}
               </span>
             </p>
