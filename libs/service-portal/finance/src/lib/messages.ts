@@ -65,4 +65,13 @@ export const m = defineMessages({
     id: 'sp.finance-loans:payment',
     defaultMessage: 'Afborgun',
   },
+
+  openLoanPayments: {
+    id: 'sp.finance-loans:open-loan-payments',
+    defaultMessage: 'Opna greiðsluyfirlit',
+  },
+  closeLoanPayments: {
+    id: 'sp.finance-loans:close-loan-payments',
+    defaultMessage: 'Loka greiðsluyfirliti',
+  },
 })

@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
   Table as T,
   Box,
-  Pagination,
   Button,
   GridContainer,
   GridRow,
@@ -20,7 +19,6 @@ import { m as messages } from '../../lib/messages'
 import { FinanceLoansTableDetail } from './FinanceLoansTableDetail'
 import { FinanceLoansPaymenthistory } from './FinanceLoansPaymenthistory'
 import * as styles from './FinanceLoans.css'
-const ITEMS_ON_PAGE = 20
 
 interface Props {
   loanOverview: Exclude<
@@ -30,10 +28,12 @@ interface Props {
 }
 
 export const FinanceLoansTable = ({ loanOverview }: Props) => {
-  const [page, setPage] = useState(1)
   const { formatMessage } = useLocale()
 
-  const [getHmsLoansLoanhistoryPdf] = useGetHmsLoansLoanhistoryPdfLazyQuery({
+  const [
+    getHmsLoansLoanhistoryPdf,
+    { loading: loanhistoryPdfLoading, error: loanhistoryPdfError },
+  ] = useGetHmsLoansLoanhistoryPdfLazyQuery({
     onCompleted: (data) => {
       if (data.hmsLoansLoanhistoryPdf?.data) {
         const downloadLink = document.createElement('a')
@@ -47,8 +47,6 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
     },
   })
 
-  console.log({ loan: loanOverview[0] })
-
   return (
     <>
       <Box marginBottom={4}>
@@ -59,11 +57,14 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
           size="default"
           type="button"
           variant="utility"
+          disabled={loanhistoryPdfLoading}
           onClick={() => {
             getHmsLoansLoanhistoryPdf()
           }}
         >
-          {formatMessage(messages.download)}
+          {loanhistoryPdfError
+            ? formatMessage(m.errorTitle)
+            : formatMessage(messages.download)}
         </Button>
       </Box>
       <T.Table>
@@ -109,15 +110,15 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                         data={[
                           {
                             title: 'Fastanúmer',
-                            value: loan.propertyId,
+                            value: loan.propertyId || '-',
                           },
                           {
                             title: 'Veðstaður',
-                            value: loan.propertyAddress,
+                            value: loan.municipalityNumber || '-',
                           },
                           {
                             title: 'Númer leggs',
-                            value: loan.municipalityNumber,
+                            value: loan.installments || '-',
                           },
                           {
                             title: 'Gjaldmiðill',
@@ -125,19 +126,20 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           },
                           {
                             title: 'Fyrsti vaxtadagur',
-                            value: formatDate(loan.firstInterestDate),
+                            value: formatDate(loan.firstInterestDate) || '-',
                           },
                           {
                             title: 'Næsti gjalddagi',
-                            value: formatDate(loan.nextPaymentDate),
+                            value: formatDate(loan.nextPaymentDate) || '-',
                           },
                           {
                             title: 'Síðasti gjalddagi',
-                            value: formatDate(loan.lastPaymentDate),
+                            value: formatDate(loan.lastPaymentDate) || '-',
                           },
                           {
                             title: 'Elsti ógreiddi gjalddagi',
-                            value: formatDate(loan.lastUnpaidInvoiceDate),
+                            value:
+                              formatDate(loan.lastUnpaidInvoiceDate) || '-',
                           },
                         ]}
                       />
@@ -147,39 +149,40 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                         data={[
                           {
                             title: 'Fjöldi gjalddaga',
-                            value: loan.totalNumberOfPayments,
+                            value: loan.totalNumberOfPayments || '-',
                           },
                           {
                             title: 'Fjöldi gjalddaga á ári',
-                            value: loan.numberOfPaymentPerYear,
+                            value: loan.numberOfPaymentPerYear || '-',
                           },
                           {
                             title: 'Fjöldi gjalddaga eftir',
-                            value: loan.numberOfPaymentDatesRemaining,
+                            value: loan.numberOfPaymentDatesRemaining || '-',
                           },
                           {
                             title: 'Greiðslujöfnun',
-                            value: loan.balancePayment,
+                            value: loan.balancePayment || '-',
                           },
                           {
                             title: 'Uppgreiðsluákvæði',
-                            value: loan.paymentFee,
+                            value: loan.paymentFee || '-',
                           },
                           {
                             title: 'Breytilegir vextir',
-                            value: loan.variableInterest,
+                            value: loan.variableInterest || '-',
                           },
                           {
                             title: 'Tegund vísitölu',
-                            value: loan.priceIndexType,
+                            value: loan.priceIndexType || '-',
                           },
                           {
                             title: 'Grunnvísitala',
-                            value: loan.baseIndex,
+                            value: loan.baseIndex || '-',
                           },
                           {
                             title: 'Staða á jöfnunarreikning',
-                            value: amountFormat(loan.statusSettlementPayment),
+                            value:
+                              amountFormat(loan.statusSettlementPayment) || '-',
                           },
                         ]}
                       />
@@ -197,29 +200,32 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           },
                           {
                             title: 'Nafnverðseftirstöðvar',
-                            value: amountFormat(
-                              loan.balanceWithoutInterestPriceImprovements,
-                            ),
+                            value:
+                              amountFormat(
+                                loan.balanceWithoutInterestPriceImprovements,
+                              ) || '-',
                           },
                           {
                             title: 'Áfallnir vextir með verðbótum',
-                            value: amountFormat(
-                              loan.accruedInterestPriceImprovements,
-                            ),
+                            value:
+                              amountFormat(
+                                loan.accruedInterestPriceImprovements,
+                              ) || '-',
                           },
                           {
                             title: 'Eftirstöðvar með verðbótum miðað við skil',
-                            value: amountFormat(
-                              loan.remainingBalanceWithoutDebt,
-                            ),
+                            value:
+                              amountFormat(loan.remainingBalanceWithoutDebt) ||
+                              '-',
                           },
                           {
                             title: 'Uppgreiðsluþóknun',
-                            value: amountFormat(loan.repaymentFee),
+                            value: amountFormat(loan.repaymentFee) || '-',
                           },
                           {
                             title: 'Uppgreiðlsuverðmæti',
-                            value: amountFormat(loan.loanAmountWithRepayment),
+                            value:
+                              amountFormat(loan.loanAmountWithRepayment) || '-',
                           },
                         ]}
                       />
