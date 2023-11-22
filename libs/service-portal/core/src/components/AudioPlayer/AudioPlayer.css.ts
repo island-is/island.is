@@ -7,7 +7,7 @@ export const container = style({
 
   ...themeUtils.responsiveStyle({
     sm: {
-      width: '546px',
+      width: theme.breakpoints.sm,
       marginRight: theme.spacing[2],
     },
   }),
