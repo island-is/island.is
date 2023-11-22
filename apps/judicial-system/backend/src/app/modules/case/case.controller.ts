@@ -40,9 +40,7 @@ import {
   CaseTransition,
   CaseType,
   indictmentCases,
-  InstitutionType,
   investigationCases,
-  isCourtRole,
   isIndictmentCase,
   restrictionCases,
   UserRole,
@@ -50,13 +48,16 @@ import {
 
 import { nowFactory } from '../../factories'
 import {
-  assistantRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
   defenderRule,
-  judgeRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -70,16 +71,22 @@ import { CaseReadGuard } from './guards/caseRead.guard'
 import { CaseTypeGuard } from './guards/caseType.guard'
 import { CaseWriteGuard } from './guards/caseWrite.guard'
 import {
-  assistantTransitionRule,
-  assistantUpdateRule,
-  judgeTransitionRule,
-  judgeUpdateRule,
+  courtOfAppealsAssistantTransitionRule,
+  courtOfAppealsAssistantUpdateRule,
+  courtOfAppealsJudgeTransitionRule,
+  courtOfAppealsJudgeUpdateRule,
+  courtOfAppealsRegistrarTransitionRule,
+  courtOfAppealsRegistrarUpdateRule,
+  districtCourtAssistantTransitionRule,
+  districtCourtAssistantUpdateRule,
+  districtCourtJudgeTransitionRule,
+  districtCourtJudgeUpdateRule,
+  districtCourtRegistrarTransitionRule,
+  districtCourtRegistrarUpdateRule,
   prosecutorRepresentativeTransitionRule,
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
-  registrarTransitionRule,
-  registrarUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
@@ -102,22 +109,18 @@ export class CaseController {
 
   private async validateAssignedUser(
     assignedUserId: string,
-    assignedUserRole: UserRole[],
-    institutionType: InstitutionType,
+    assignableUserRoles: UserRole[],
     institutionId?: string,
   ) {
     const assignedUser = await this.userService.findById(assignedUserId)
 
-    if (!assignedUserRole.includes(assignedUser.role)) {
+    if (!assignableUserRoles.includes(assignedUser.role)) {
       throw new ForbiddenException(
-        `User ${assignedUserId} does not have an acceptable role ${assignedUserRole}}`,
+        `User ${assignedUserId} does not have an acceptable role ${assignableUserRoles}}`,
       )
     }
 
-    if (
-      assignedUser.institution?.type !== institutionType ||
-      (institutionId && assignedUser.institutionId !== institutionId)
-    ) {
+    if (institutionId && assignedUser.institutionId !== institutionId) {
       throw new ForbiddenException(
         `User ${assignedUserId} belongs to the wrong institution`,
       )
@@ -145,9 +148,12 @@ export class CaseController {
   @RolesRules(
     prosecutorUpdateRule,
     prosecutorRepresentativeUpdateRule,
-    judgeUpdateRule,
-    registrarUpdateRule,
-    assistantUpdateRule,
+    districtCourtJudgeUpdateRule,
+    districtCourtRegistrarUpdateRule,
+    districtCourtAssistantUpdateRule,
+    courtOfAppealsJudgeUpdateRule,
+    courtOfAppealsRegistrarUpdateRule,
+    courtOfAppealsAssistantUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -166,7 +172,6 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
-        InstitutionType.PROSECUTORS_OFFICE,
         theCase.creatingProsecutor?.institutionId,
       )
 
@@ -179,8 +184,7 @@ export class CaseController {
     if (update.judgeId) {
       await this.validateAssignedUser(
         update.judgeId,
-        [UserRole.JUDGE, UserRole.ASSISTANT],
-        InstitutionType.DISTRICT_COURT,
+        [UserRole.DISTRICT_COURT_JUDGE, UserRole.DISTRICT_COURT_ASSISTANT],
         theCase.courtId,
       )
     }
@@ -188,42 +192,33 @@ export class CaseController {
     if (update.registrarId) {
       await this.validateAssignedUser(
         update.registrarId,
-        [UserRole.REGISTRAR],
-        InstitutionType.DISTRICT_COURT,
+        [UserRole.DISTRICT_COURT_REGISTRAR],
         theCase.courtId,
       )
     }
 
     if (update.appealAssistantId) {
-      await this.validateAssignedUser(
-        update.appealAssistantId,
-        [UserRole.ASSISTANT],
-        InstitutionType.COURT_OF_APPEALS,
-      )
+      await this.validateAssignedUser(update.appealAssistantId, [
+        UserRole.COURT_OF_APPEALS_ASSISTANT,
+      ])
     }
 
     if (update.appealJudge1Id) {
-      await this.validateAssignedUser(
-        update.appealJudge1Id,
-        [UserRole.JUDGE],
-        InstitutionType.COURT_OF_APPEALS,
-      )
+      await this.validateAssignedUser(update.appealJudge1Id, [
+        UserRole.COURT_OF_APPEALS_JUDGE,
+      ])
     }
 
     if (update.appealJudge2Id) {
-      await this.validateAssignedUser(
-        update.appealJudge2Id,
-        [UserRole.JUDGE],
-        InstitutionType.COURT_OF_APPEALS,
-      )
+      await this.validateAssignedUser(update.appealJudge2Id, [
+        UserRole.COURT_OF_APPEALS_JUDGE,
+      ])
     }
 
     if (update.appealJudge3Id) {
-      await this.validateAssignedUser(
-        update.appealJudge3Id,
-        [UserRole.JUDGE],
-        InstitutionType.COURT_OF_APPEALS,
-      )
+      await this.validateAssignedUser(update.appealJudge3Id, [
+        UserRole.COURT_OF_APPEALS_JUDGE,
+      ])
     }
 
     if (update.rulingModifiedHistory) {
@@ -265,9 +260,12 @@ export class CaseController {
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
-    judgeTransitionRule,
-    registrarTransitionRule,
-    assistantTransitionRule,
+    districtCourtJudgeTransitionRule,
+    districtCourtRegistrarTransitionRule,
+    districtCourtAssistantTransitionRule,
+    courtOfAppealsJudgeTransitionRule,
+    courtOfAppealsRegistrarTransitionRule,
+    courtOfAppealsAssistantTransitionRule,
   )
   @Patch('case/:caseId/state')
   @ApiOkResponse({
@@ -361,9 +359,12 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
     defenderRule,
   )
@@ -384,9 +385,12 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Gets an existing case' })
@@ -404,7 +408,15 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
+  @RolesRules(
+    prosecutorRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Get('case/:caseId/request')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -435,9 +447,9 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Get('case/:caseId/caseFilesRecord/:policeCaseNumber')
   @ApiOkResponse({
@@ -476,7 +488,15 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
+  @RolesRules(
+    prosecutorRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Get('case/:caseId/courtRecord')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -505,7 +525,15 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule, assistantRule)
+  @RolesRules(
+    prosecutorRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Get('case/:caseId/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -532,7 +560,11 @@ export class CaseController {
     CaseReadGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(prosecutorRule, judgeRule, registrarRule)
+  @RolesRules(
+    prosecutorRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+  )
   @Get('case/:caseId/custodyNotice')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({
@@ -570,9 +602,9 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
   )
   @Get('case/:caseId/indictment')
   @Header('Content-Type', 'application/pdf')
@@ -601,7 +633,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
   @Post('case/:caseId/courtRecord/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -615,12 +647,6 @@ export class CaseController {
     this.logger.debug(
       `Requesting a signature for the court record of case ${caseId}`,
     )
-
-    if (!isCourtRole(user.role)) {
-      throw new ForbiddenException(
-        'A court record must be a judge or a registrar',
-      )
-    }
 
     return this.caseService
       .requestCourtRecordSignature(theCase, user)
@@ -648,7 +674,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
   @Get('case/:caseId/courtRecord/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -665,12 +691,6 @@ export class CaseController {
       `Confirming a signature for the court record of case ${caseId}`,
     )
 
-    if (!isCourtRole(user.role)) {
-      throw new ForbiddenException(
-        'A court record must be a judge or a registrar',
-      )
-    }
-
     return this.caseService.getCourtRecordSignatureConfirmation(
       theCase,
       user,
@@ -685,7 +705,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(judgeRule)
+  @RolesRules(districtCourtJudgeRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -728,7 +748,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(judgeRule)
+  @RolesRules(districtCourtJudgeRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -788,7 +808,11 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard, CaseExistsGuard, CaseWriteGuard)
-  @RolesRules(judgeRule, registrarRule, assistantRule)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Post('case/:caseId/court')
   @ApiCreatedResponse({
     type: Case,

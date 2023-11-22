@@ -2,7 +2,10 @@ import * as React from 'react'
 import cn from 'classnames'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
 
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import {
+  shouldLinkBeAnAnchorTag,
+  shouldLinkOpenInNewWindow,
+} from '@island.is/shared/utils'
 
 import * as styles from './Link.css'
 
@@ -54,6 +57,23 @@ export const LinkV2: React.FC<React.PropsWithChildren<LinkProps>> = ({
   )
 
   if (isInternal) {
+    const hrefString = href?.toString()
+
+    if (shouldLinkBeAnAnchorTag(hrefString)) {
+      return (
+        <a
+          className={classNames}
+          data-testid={dataTestId}
+          href={hrefString}
+          {...linkProps}
+          {...(newTab && { target: '_blank' })}
+          tabIndex={skipTab ? -1 : undefined}
+        >
+          {children}
+        </a>
+      )
+    }
+
     return (
       <NextLink
         href={href}

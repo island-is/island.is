@@ -7,7 +7,11 @@ import {
   BreadcrumbsDeprecated as Breadcrumbs,
   Button,
 } from '@island.is/island-ui/core'
-import { m, ModuleAlertBannerSection } from '@island.is/service-portal/core'
+import {
+  m,
+  ModuleAlertBannerSection,
+  TabNavigation,
+} from '@island.is/service-portal/core'
 import * as styles from './Layout.css'
 import { useLocale } from '@island.is/localization'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -16,7 +20,6 @@ import { Link, matchPath, useNavigate } from 'react-router-dom'
 import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
-import { TabNavigation } from '../TabNavigation/TabNavigation'
 
 interface FullWidthLayoutProps {
   activeParent?: PortalNavigationItem
@@ -107,13 +110,14 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                     <IntroHeader
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
-                      serviceProviderID={activeParent?.serviceProvider}
+                      serviceProviderSlug={activeParent?.serviceProvider}
                       serviceProviderTooltip={
                         activeParent?.description
                           ? formatMessage(activeParent.description)
                           : undefined
                       }
                       backgroundColor="white"
+                      tooltipVariant="white"
                     />
                   </GridColumn>
                 </GridRow>
