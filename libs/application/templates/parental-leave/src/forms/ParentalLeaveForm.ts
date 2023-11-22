@@ -4,6 +4,7 @@ import {
   buildAsyncSelectField,
   buildCustomField,
   buildDateField,
+  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -99,10 +100,15 @@ export const ParentalLeaveForm: Form = buildForm({
           title: parentalLeaveFormMessages.applicant.subSection,
           children: [
             buildMultiField({
-              id: 'contactInfo',
-              title: parentalLeaveFormMessages.applicant.title,
-              description: parentalLeaveFormMessages.applicant.description,
+              id: 'infoSection',
+              title: parentalLeaveFormMessages.applicant.subSection,
               children: [
+                buildDescriptionField({
+                  id: 'contactInfo',
+                  title: parentalLeaveFormMessages.applicant.title,
+                  titleVariant: 'h4',
+                  description: parentalLeaveFormMessages.applicant.description,
+                }),
                 buildTextField({
                   width: 'half',
                   title: parentalLeaveFormMessages.applicant.email,
@@ -136,9 +142,28 @@ export const ParentalLeaveForm: Form = buildForm({
                   format: '###-####',
                   placeholder: '000-0000',
                 }),
+                buildRadioField({
+                  id: 'applicant.language',
+                  title:
+                    parentalLeaveFormMessages.applicant.languageTitle,
+                  width: 'half',
+                  space: 3,
+                  options: [
+                    {
+                      value: '',
+                      label:
+                        parentalLeaveFormMessages.applicant.icelandic,
+                    },
+                    {
+                      value: 'EN',
+                      label:
+                        parentalLeaveFormMessages.applicant.english,
+                    },
+                  ],
+                }),
               ],
             }),
-          ],
+          ]
         }),
         buildSubSection({
           id: 'otherParentObj',

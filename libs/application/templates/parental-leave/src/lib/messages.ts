@@ -1074,8 +1074,8 @@ export const parentalLeaveFormMessages: MessageDir = {
     },
     title: {
       id: 'pl.application:applicant.title',
-      defaultMessage: 'Er þetta réttur sími og netfang?',
-      description: 'What is your email and phone number?',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email address and phone number',
     },
     description: {
       id: 'pl.application:applicant.description',
@@ -1102,6 +1102,21 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Kennitala',
       description: 'National id',
     },
+    languageTitle : {
+      id: 'pl.application:applicant.languageTitle',
+      defaultMessage: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
+      description: 'Please select language to use in communication with the parental leave fund',      
+    },
+    icelandic: {
+      id:'pl.application:applicant.icelandic',
+      defaultMessage: 'Íslenska',
+      description: 'icelandic',
+    },
+    english: {
+      id:'pl.application:applicant.english',
+      defaultMessage: 'Enska',
+      description: 'english',
+    }
   }),
 
   errors: defineMessages({
