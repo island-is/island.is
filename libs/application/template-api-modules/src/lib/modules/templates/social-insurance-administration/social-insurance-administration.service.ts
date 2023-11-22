@@ -13,8 +13,8 @@ import {
   Employment,
   getApplicationAnswers,
   isEarlyRetirement,
-  oldAgePensionFormMessage,
   FileType,
+  errorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   Attachment,
@@ -221,9 +221,9 @@ export class OldAgePensionService extends BaseTemplateApiService {
         //   (res.bankAccount.currency = 'AUD')
       }
 
-      if (!res.emailAddress) {
-        res.emailAddress = 'mail@mail.is'
-      }
+      // if (!res.emailAddress) {
+      //   res.emailAddress = 'mail@mail.is'
+      // }
 
       if (!res.phoneNumber) {
         res.phoneNumber = '888-8888'
@@ -233,9 +233,8 @@ export class OldAgePensionService extends BaseTemplateApiService {
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title: oldAgePensionFormMessage.errorMessages.noEmailFound,
-          summary:
-            oldAgePensionFormMessage.errorMessages.noEmailFoundDescription,
+          title: errorMessages.noEmailFound,
+          summary: errorMessages.noEmailFoundDescription,
         },
         500,
       )
@@ -246,10 +245,14 @@ export class OldAgePensionService extends BaseTemplateApiService {
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     try {
+      const applicationType = getApplicationType(application).toLowerCase()
+      console.log('application type ', applicationType)
+
+     
+     
       if (isRunningOnEnvironment('local')) {
         return { isEligible: true }
       }
-      const applicationType = getApplicationType(application).toLowerCase()
       return await this.siaClientService.getIsEligible(auth, applicationType)
     } catch (e) {
       throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)

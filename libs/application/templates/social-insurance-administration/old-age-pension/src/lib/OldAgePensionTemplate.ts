@@ -95,7 +95,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -135,7 +135,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_ABORT,
           progress: 0.75,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -313,7 +313,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(90),
           progress: 0.5,
           roles: [
             {
