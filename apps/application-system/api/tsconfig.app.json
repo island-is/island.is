@@ -5,5 +5,5 @@
     "types": ["node"]
   },
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "test/**", "jest.config.ts"],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../../../libs/application/api/form/src/lib/dto/form.dto.ts"]
 }

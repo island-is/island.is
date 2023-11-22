@@ -262,7 +262,7 @@
     "regenerator-runtime": "0.13.7",
     "remark-parse": "9.0.0",
     "rosetta": "1.0.0",
-    "rxjs": "7.0.0",
+    "rxjs": "^7.8.0",
     "sanitize-html": "2.10.0",
     "sequelize": "6.19.0",
     "sequelize-replace-enum-postgres": "1.5.0",

@@ -220,6 +220,7 @@ export abstract class FieldBuilderBase {
       title: field.title,
       placeholder: field.placeholder,
       width: data.width,
+      defaultValue: '',
     })
     this.pushToChildrenArray(textField)
     return this

@@ -24,7 +24,7 @@ import {
 } from 'class-validator'
 import { FormatMessage } from '@island.is/cms-translations'
 
-export class FormResponseDto {
+export class FormDto {
   @IsArray()
   @Expose()
   @Type(() => Object)
@@ -73,7 +73,7 @@ export class FormResponseDto {
 }
 
 export function formToDto(form: Form, formatMessage: FormatMessage): object {
-  const dto = new FormResponseDto()
+  const dto = new FormDto()
   dto.children = form.children
   dto.icon = form.icon
   dto.id = form.id
@@ -103,7 +103,7 @@ export class Section extends FormItem {
   @IsArray()
   @Expose()
   @ValidateNested({ each: true })
-  children!: Array<SubSection>
+  children!: Array<SubSection | MultiField>
 
   @Expose()
   @IsEnum(FormItemTypes)
@@ -151,7 +151,7 @@ export class MultiField extends FormItem {
 export class BaseField extends FormItem {
   @IsString()
   @Expose()
-  id!: string
+  override id!: string
 
   @IsString()
   @Expose()
@@ -159,7 +159,7 @@ export class BaseField extends FormItem {
 
   @IsString()
   @Expose()
-  title!: string
+  override title!: string
 
   @IsString()
   @Expose()
@@ -225,7 +225,7 @@ export class SubmitField extends BaseField {
 
   @IsString()
   @Expose()
-  component!: FieldComponents.SUBMIT
+  override component!: FieldComponents.SUBMIT
 
   @IsArray()
   @Expose()
@@ -294,7 +294,7 @@ export class RadioField extends BaseField {
 
   @IsString()
   @Expose()
-  component!: FieldComponents.RADIO
+  override component!: FieldComponents.RADIO
 }
 
 export class DescriptionField extends BaseField {
@@ -304,7 +304,7 @@ export class DescriptionField extends BaseField {
 
   @IsString()
   @Expose()
-  component!: FieldComponents.DESCRIPTION
+  override component!: FieldComponents.DESCRIPTION
 
   @IsString()
   @Expose()

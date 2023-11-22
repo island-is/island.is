@@ -13,7 +13,7 @@ import {
   IsArray,
   IsBoolean,
 } from 'class-validator'
-import { FormResponseDto } from './form.response.dto'
+import { FormResponseDto } from '../../../../../../../../libs/application/api/form/src/lib/dto/form.dto'
 
 class ActionCardTag {
   @ApiPropertyOptional()

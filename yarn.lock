@@ -33864,7 +33864,7 @@ __metadata:
     regenerator-runtime: 0.13.7
     remark-parse: 9.0.0
     rosetta: 1.0.0
-    rxjs: 7.0.0
+    rxjs: ^7.8.0
     sanitize-html: 2.10.0
     sequelize: 6.19.0
     sequelize-cli: 6.4.1
@@ -47046,15 +47046,6 @@ __metadata:
   peerDependencies:
     rxjs: ^6.0.0
   checksum: 034662b7a984ab1d401dd56adfdaeca90ccc2a56dfabcea54bce0c1adac68a6c89854b62000756c910839c811b427e666598645a5cfd809df99e097eca22b9e1
-  languageName: node
-  linkType: hard
-
-"rxjs@npm:7.0.0":
-  version: 7.0.0
-  resolution: "rxjs@npm:7.0.0"
-  dependencies:
-    tslib: ~2.1.0
-  checksum: 18838ae66565fb61c054c14bdeac00ffbf3ecb33fef652a6de075f00b79c8d59eb36e7b0c1a6dc8fd8beefc56243361be01d5a8814d57a1e02946a7ae90a018b
   languageName: node
   linkType: hard
 
