@@ -37,6 +37,7 @@ import {
   ShipRegistry,
   DistrictCommissioners,
   DirectorateOfImmigration,
+  Hunting,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -338,6 +339,7 @@ export const serviceSetup = (services: {
     .xroad(
       AdrAndMachine,
       JudicialAdministration,
+      Hunting,
       Firearm,
       Disability,
       Base,
