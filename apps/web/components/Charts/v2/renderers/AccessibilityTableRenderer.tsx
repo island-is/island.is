@@ -44,20 +44,16 @@ export const AccessibilityTableRenderer = ({
           </thead>
           <tbody>
             {data.map((row) => {
-              // eslint-disable-next-line
-              // @ts-ignore
               const xAxisValue = row[xAxisKey]
 
               return (
                 <tr>
                   <th scope="row">
-                    {xAxisValueType === 'date'
+                    {xAxisValueType === 'date' && xAxisValue !== null
                       ? formatDate(xAxisValue)
                       : xAxisValue}
                   </th>
                   {tableSettings.tableHead.map((key) => {
-                    // eslint-disable-next-line
-                    // @ts-ignore
                     const rowValue = row[key]
 
                     return <td>{rowValue}</td>

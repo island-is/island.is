@@ -39,5 +39,13 @@ export type ChartComponentWithRenderProps = ChartComponent & {
   fill?: string
 }
 
-export type ChartData =
-  GetMultipleStatisticsQuery['getStatisticsByKeys']['statistics']
+export type DataItemDynamicKeys = {
+  [key: string]: string | number | null
+}
+
+type SingleStatistic =
+  GetMultipleStatisticsQuery['getStatisticsByKeys']['statistics'][number]
+
+export type DataItem = SingleStatistic & DataItemDynamicKeys
+
+export type ChartData = DataItem[]

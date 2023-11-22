@@ -1,3 +1,4 @@
+import omit from 'lodash/omit'
 import pick from 'lodash/pick'
 import { useQuery } from '@apollo/client'
 
@@ -8,7 +9,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { GET_MULTIPLE_STATISTICS } from '@island.is/web/screens/queries/Statistics'
 
-import { ChartType } from '../types'
+import { ChartType, DataItem, DataItemDynamicKeys } from '../types'
 
 type QueryResponse = {
   getStatisticsByKeys: GetMultipleStatisticsQuery['getStatisticsByKeys']
@@ -46,13 +47,18 @@ export const useGetChartData = ({
     (chartType === ChartType.pie
       ? queryResult?.data?.getStatisticsByKeys?.statistics?.slice(-1)
       : queryResult?.data?.getStatisticsByKeys?.statistics
-    )?.map((s) => ({
-      ...s,
-      ...s.statisticsForDate.reduce((obj, current) => {
-        obj[current.key] = current.value
-        return obj
-      }, {} as Record<string, unknown>),
-    })) ?? []
+    )?.map(
+      (s) =>
+        ({
+          ...s,
+          ...s.statisticsForDate.reduce((obj, current) => {
+            if (current.value !== undefined) {
+              obj[current.key] = current.value
+            }
+            return obj
+          }, {} as DataItemDynamicKeys),
+        } as DataItem),
+    ) ?? []
 
   return {
     ...pick(queryResult, ['loading', 'error']),

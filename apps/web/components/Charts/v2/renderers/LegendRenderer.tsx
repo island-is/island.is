@@ -18,9 +18,18 @@ const renderLegendItemLabel = (value: string, entry?: any) => {
   )
 }
 
+type InferredArrayType<T> = T extends (infer U)[] ? U : never
+
 interface CustomLegendRendererProps extends LegendProps {
   components: ChartComponentWithRenderProps[]
   data: ChartData
+  payload?:
+    | (InferredArrayType<LegendProps['payload']> & {
+        payload: {
+          dataKey: string
+          stroke: string
+        }
+      })[]
 }
 
 const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
@@ -49,11 +58,7 @@ const CustomLegendRenderer = (props: CustomLegendRendererProps) => {
       }}
     >
       {payload.map((entry, index) => {
-        // eslint-disable-next-line
-        // @ts-ignore yes it exists
-        const id = entry.payload!.dataKey!
-        // eslint-disable-next-line
-        // @ts-ignore yes it exists
+        const id = entry.payload?.dataKey
         const stroke = entry?.payload?.stroke
 
         const component = props.components.find((c) => c.sourceDataKey === id)

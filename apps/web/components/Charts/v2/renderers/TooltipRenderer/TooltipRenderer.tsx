@@ -2,7 +2,8 @@ import { Tooltip, TooltipProps } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 
-import { formatValueForPresentation } from '../utils'
+import { formatValueForPresentation } from '../../utils'
+import * as style from './TooltipRenderer.css'
 
 export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
   const { active, payload } = props
@@ -13,14 +14,7 @@ export const CustomTooltipRenderer = (props: TooltipProps<string, number>) => {
   }
 
   return (
-    <ul
-      style={{
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
-        padding: '10px',
-        borderRadius: '4px',
-      }}
-    >
+    <ul className={style.list}>
       {payload.map((item) => {
         let labelColor =
           (item as any)?.stroke ?? item?.payload?.stroke ?? theme.color.dark400

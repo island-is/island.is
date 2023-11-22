@@ -83,15 +83,13 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
   return (
     <div className={styles.wrapper}>
       {boxData.map((data, index) => {
-        const value =
-          // eslint-disable-next-line
-          // @ts-ignore
-          queryResult.data?.[data.sourceDataIndex]?.[data.sourceDataKey]
-
-        const mostRecentValue =
-          // eslint-disable-next-line
-          // @ts-ignore
-          queryResult.data[queryResult.data.length - 1][data.sourceDataKey]
+        // We assume that the data that key that is provided is a valid number
+        const value = queryResult.data?.[data.sourceDataIndex]?.[
+          data.sourceDataKey
+        ] as number
+        const mostRecentValue = queryResult.data[queryResult.data.length - 1][
+          data.sourceDataKey
+        ] as number
 
         const divider = index === 0 ? 1 : mostRecentValue
 
