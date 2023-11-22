@@ -41,7 +41,9 @@ export class CarRecyclingService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      const response = await this.recyclingFundService.getVehicles(auth)
+      const response = await this.recyclingFundService.createRecyclingRequest(
+        auth,
+      )
 
       if (!response) {
         throw new Error(`Failed to get vehicles from: ${response}`)

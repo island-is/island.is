@@ -33,6 +33,6 @@
       ]
     }
   },
-  "implicitDependencies": ["air-discount-scheme-api"],
+  "implicitDependencies": ["skilavottord-ws"],
   "tags": ["lib:client", "scope:client"]
 }
