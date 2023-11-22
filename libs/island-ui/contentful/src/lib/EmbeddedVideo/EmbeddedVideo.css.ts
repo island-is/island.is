@@ -1,3 +1,4 @@
+import { theme } from '@island.is/island-ui/theme'
 import { style } from '@vanilla-extract/css'
 
 export const container = style({
@@ -17,4 +18,28 @@ export const content = style({
 
 export const link = style({
   textDecoration: 'underline',
+})
+
+export const playIconContainer = style({
+  position: 'absolute',
+  zIndex: 1,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  background: theme.color.blue400,
+  padding: '14px',
+  borderRadius: '50%',
+  cursor: 'pointer',
+})
+
+export const modal = style({
+  background: theme.color.blue100,
+  zIndex: 2,
+})
+
+export const closeButton = style({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  background: theme.color.blue100,
+  cursor: 'pointer',
 })

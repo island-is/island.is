@@ -1,5 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import cn from 'classnames'
+
 import {
   Button,
   Box,
@@ -7,6 +9,8 @@ import {
   Text,
   LinkContext,
   Checkbox,
+  Icon,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 
 import * as styles from './EmbeddedVideo.css'
@@ -20,7 +24,7 @@ export interface EmbeddedVideoProps {
 const Texts = ({ termsUrl = '#' }) => ({
   is: {
     message: (
-      <Text variant="intro">
+      <Text variant="default">
         Þetta efni er hýst af þriðja aðila. Með því að birta efnið samþykkir þú
         {` `}
         <a href={termsUrl}>skilmála</a> þeirra.
@@ -28,6 +32,7 @@ const Texts = ({ termsUrl = '#' }) => ({
     ),
     remember: `Muna þessa stillingu.`,
     view: `Birta`,
+    cancel: 'Hætta við',
   },
   en: {
     message: (
@@ -39,6 +44,7 @@ const Texts = ({ termsUrl = '#' }) => ({
     ),
     remember: `Remember this choice.`,
     view: `View`,
+    cancel: 'Cancel',
   },
 })
 
@@ -49,8 +55,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
 }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  const [showDisclaimer, setShowDisclaimer] = useState<boolean>(false)
   const [termsUrl, setTermsUrl] = useState<string>(null)
   const [itemKey, setItemKey] = useState<string>('')
   const [type, setType] = useState<'YOUTUBE' | 'VIMEO' | ''>('')
@@ -98,57 +103,56 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
     }
   }, [type])
 
-  useEffect(() => {
-    if (itemKey) {
-      const itemValue = localStorage.getItem(itemKey)
-      if (itemValue === 'true') {
-        setAllowed(true)
-      }
-    }
-  }, [itemKey])
-
   if (!embedUrl) {
     return null
   }
 
-  const textSettings = { termsUrl }
+  const TextsData = Texts({ termsUrl })
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const TextsData = Texts(textSettings)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
-  const texts = Object.prototype.hasOwnProperty.call(TextsData, locale)
-    ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore make web strict
-      TextsData[locale]
-    : TextsData['is']
+  const texts: typeof TextsData[keyof typeof TextsData] =
+    Object.prototype.hasOwnProperty.call(TextsData, locale)
+      ? TextsData[locale]
+      : TextsData['is']
+
+  const onPlayButtonClick = () => {
+    // TODO: refactor
+    if (itemKey) {
+      const itemValue = localStorage.getItem(itemKey)
+      if (itemValue === 'true') {
+        setShowDisclaimer(false)
+        setAllowed(true)
+      } else {
+        setShowDisclaimer(
+          (isDisclaimerBeingShown) => isDisclaimerBeingShown || !allowed,
+        )
+      }
+    } else {
+      setShowDisclaimer(
+        (isDisclaimerBeingShown) => isDisclaimerBeingShown || !allowed,
+      )
+    }
+  }
 
   return (
-    <>
-      {allowed && (
-        <Box className={styles.container}>
-          <iframe
-            title={title}
-            src={embedUrl}
-            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
-            frameBorder="0"
-            allowFullScreen
-            className={styles.content}
-          ></iframe>
-        </Box>
-      )}
-      {!allowed && (
-        <Box
-          borderRadius="large"
-          paddingY={4}
-          paddingX={[3, 3, 3, 3, 4]}
-          display="inlineFlex"
-          justifyContent="center"
-          alignItems="center"
-          flexDirection="column"
-          background="blue100"
-        >
+    <Box className={styles.container}>
+      {showDisclaimer && (
+        <Box className={cn(styles.content, styles.modal)}>
+          <FocusableBox
+            tabIndex={0}
+            className={styles.closeButton}
+            aria-label={texts.cancel}
+            onKeyDown={(ev) => {
+              if (ev.key === 'Enter' || ev.key === ' ') {
+                setShowDisclaimer(false)
+                ev.preventDefault()
+              }
+            }}
+            onClick={() => {
+              setShowDisclaimer(false)
+            }}
+          >
+            <Icon icon="close" size="medium" />
+          </FocusableBox>
           <LinkContext.Provider
             value={{
               linkRenderer: (href, children) => (
@@ -165,15 +169,6 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
           >
             <Stack space={3}>
               <Box>{texts.message}</Box>
-              <Box>
-                <Button
-                  onClick={() => setAllowed(true)}
-                  iconType="filled"
-                  icon="playCircle"
-                >
-                  {texts.view}
-                </Button>
-              </Box>
               <Box>
                 <Controller
                   name="contentAllowed"
@@ -192,11 +187,76 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
                   )}
                 />
               </Box>
+              <Box>
+                <Button
+                  colorScheme="default"
+                  size="small"
+                  onClick={() => {
+                    setShowDisclaimer(false)
+                    setAllowed(true)
+                  }}
+                >
+                  {texts.view}
+                </Button>
+              </Box>
+              <Box>
+                <Button
+                  variant="ghost"
+                  colorScheme="default"
+                  size="small"
+                  onClick={() => {
+                    setShowDisclaimer(false)
+                  }}
+                >
+                  {texts.cancel}
+                </Button>
+              </Box>
             </Stack>
           </LinkContext.Provider>
         </Box>
       )}
-    </>
+      {!allowed && (
+        <Box className={styles.content}>
+          <Box
+            position="relative"
+            style={{
+              backgroundImage:
+                'url(http://i3.ytimg.com/vi/SUetxOg9gWI/hqdefault.jpg)',
+              width: '100%',
+              height: '100%',
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          >
+            <FocusableBox
+              tabIndex={0}
+              onKeyDown={(ev) => {
+                if (ev.key === 'Enter' || ev.key === ' ') {
+                  onPlayButtonClick()
+                  ev.preventDefault()
+                }
+              }}
+              onClick={onPlayButtonClick}
+              className={styles.playIconContainer}
+              as="button"
+            >
+              <Icon size="large" icon="playCircle" color="white" />
+            </FocusableBox>
+          </Box>
+        </Box>
+      )}
+      {allowed && (
+        <iframe
+          title={title}
+          src={embedUrl}
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+          frameBorder="0"
+          allowFullScreen
+          className={styles.content}
+        />
+      )}
+    </Box>
   )
 }
 
