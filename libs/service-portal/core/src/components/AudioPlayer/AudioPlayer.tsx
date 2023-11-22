@@ -11,12 +11,16 @@ import {
 import format from 'date-fns/format'
 import * as styles from './AudioPlayer.css'
 import { ProgressBar } from '../ProgressBar/ProgressBar'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../lib/messages'
 interface Props {
   url: string
   title?: string
 }
 
 export const AudioPlayer = ({ url, title }: Props) => {
+  const { formatMessage } = useLocale()
+
   const [trackProgress, setTrackProgress] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -83,17 +87,17 @@ export const AudioPlayer = ({ url, title }: Props) => {
                   <button
                     title={
                       hasEnded
-                        ? 'Replay audio'
+                        ? formatMessage(m.replayAudio)
                         : isPlaying
-                        ? 'Pause audio'
-                        : 'Play audio'
+                        ? formatMessage(m.pauseAudio)
+                        : formatMessage(m.playAudio)
                     }
                     aria-label={
                       hasEnded
-                        ? 'Replay audio'
+                        ? formatMessage(m.replayAudio)
                         : isPlaying
-                        ? 'Pause audio'
-                        : 'Play audio'
+                        ? formatMessage(m.pauseAudio)
+                        : formatMessage(m.playAudio)
                     }
                     onClick={toggleAudio}
                   >
@@ -130,8 +134,16 @@ export const AudioPlayer = ({ url, title }: Props) => {
             <GridColumn span="1/12">
               <Box display="flex" justifyContent="center">
                 <button
-                  title={isMuted ? 'Unmute audio' : 'Mute audio'}
-                  aria-label={isMuted ? 'Unmute audio' : 'Mute audio'}
+                  title={
+                    isMuted
+                      ? formatMessage(m.unmuteAudio)
+                      : formatMessage(m.muteAudio)
+                  }
+                  aria-label={
+                    isMuted
+                      ? formatMessage(m.unmuteAudio)
+                      : formatMessage(m.muteAudio)
+                  }
                   onClick={() => setIsMuted(!isMuted)}
                 >
                   <Icon
