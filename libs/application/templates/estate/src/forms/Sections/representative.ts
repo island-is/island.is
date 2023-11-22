@@ -38,6 +38,7 @@ export const representative = buildSection({
           id: 'representative.email',
           title: m.email,
           width: 'half',
+          required: true,
         }),
       ],
     }),
