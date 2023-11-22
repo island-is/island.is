@@ -18,8 +18,6 @@ export const galleryItemHero = style({
   },
 })
 
-export const galleryItemInner = style({})
-
 export const itemImage = style({
   position: 'absolute',
   inset: 0,

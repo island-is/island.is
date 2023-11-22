@@ -24,7 +24,7 @@ export const GalleryItem = ({
         [styles.galleryItemHero]: !thumbnail,
       })}
     >
-      <Box className={styles.galleryItemInner}>
+      <Box>
         {cloneElement(children, {
           className: cn(styles.itemImage, {
             [styles.activeImage]: active || thumbnail,
