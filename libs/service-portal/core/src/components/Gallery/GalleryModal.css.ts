@@ -6,12 +6,13 @@ export const container = style({
   width: '100%',
   display: 'grid',
   borderRadius: theme.border.radius.large,
-  gridTemplateRows: `${theme.spacing[8]}px 2fr ${theme.spacing[1]}px 1fr`,
+  gridTemplateRows: `${theme.spacing[4]}px 2fr ${theme.spacing[1]}px 1fr`,
   gridTemplateColumns: `${theme.spacing[6]}px 1fr ${theme.spacing[6]}px`,
   gridTemplateAreas:
     '"header header exit""left main right" ". counter ." " swiper swiper swiper"',
   rowGap: '5px',
   backgroundColor: white,
+  padding: `${theme.spacing[3]}px ${theme.spacing[3]}px ${theme.spacing[1]}px ${theme.spacing[3]}px`,
 
   ...themeUtils.responsiveStyle({
     md: {
@@ -19,7 +20,7 @@ export const container = style({
       gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
     },
     lg: {
-      gridTemplateRows: `${theme.spacing[8]}px 5fr ${theme.spacing[2]}px 1fr`,
+      gridTemplateRows: `${theme.spacing[4]}px 5fr ${theme.spacing[2]}px 1fr`,
       gridTemplateColumns: `${theme.spacing[15]}px 1fr ${theme.spacing[15]}px`,
     },
   }),
@@ -72,26 +73,32 @@ export const imageWrap = style({
 export const closeButton = style({
   gridArea: 'exit',
   display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  justifyContent: 'end',
+  alignItems: 'top',
 })
 
 export const rightCaret = style({
   gridArea: 'right',
+  justifyContent: 'end',
 })
 
 export const leftCaret = style({
   gridArea: 'left',
+  justifyContent: 'start',
 })
 
 export const carets = style({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
 })
 
 export const swiper = style({
   gridArea: 'swiper',
+  paddingLeft: '24px',
+  paddingRight: '24px',
+  display: 'flex',
+  alignItems: 'end',
+  overflow: 'auto ',
 })
 
 export const counter = style({

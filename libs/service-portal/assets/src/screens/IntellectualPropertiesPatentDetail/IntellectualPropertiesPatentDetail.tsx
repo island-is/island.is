@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom'
 import {
   ErrorScreen,
   ExcludesFalse,
-  HUGVERKASTOFAN_ID,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   NotFound,

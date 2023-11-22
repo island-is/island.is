@@ -5,7 +5,6 @@ import {
   ErrorScreen,
   Gallery,
   GalleryItem,
-  HUGVERKASTOFAN_ID,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   TableGrid,

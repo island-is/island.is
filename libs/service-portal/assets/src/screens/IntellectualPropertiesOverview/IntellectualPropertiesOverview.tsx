@@ -5,7 +5,6 @@ import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
-  HUGVERKASTOFAN_ID,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   ServicePortalPath,
