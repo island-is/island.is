@@ -289,16 +289,6 @@ export class ProgramBase extends Model {
   languages!: string[]
 
   @ApiProperty({
-    description: 'Search keywords for the program',
-    example: ['stærðfræði'],
-  })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-  })
-  searchKeywords!: string[]
-
-  @ApiProperty({
     description: 'Modes of deliveries available for the program',
     type: [ProgramModeOfDelivery],
   })

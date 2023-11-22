@@ -84,9 +84,6 @@ export class UniversityGatewayProgram {
   languages!: string[]
 
   @Field(() => [String])
-  searchKeywords!: string[]
-
-  @Field(() => [String])
   modeOfDelivery!: string[]
 }
 

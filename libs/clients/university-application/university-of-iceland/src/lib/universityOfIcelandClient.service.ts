@@ -51,7 +51,6 @@ export class UniversityOfIcelandApplicationClient {
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
           languages: [], //TODO will not be used yet
-          searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
           admissionRequirementsIs: program.admissionRequirementsIs,

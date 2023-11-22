@@ -25,7 +25,6 @@ export interface IProgram {
   costPerYear?: number
   iscedCode: string
   languages: string[]
-  searchKeywords: string[]
   externalUrlIs?: string
   externalUrlEn?: string
   admissionRequirementsIs?: string
