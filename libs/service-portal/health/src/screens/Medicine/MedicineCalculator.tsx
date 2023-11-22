@@ -25,8 +25,8 @@ import {
 import * as styles from './Medicine.css'
 import { EmptyTable } from './components/EmptyTable/EmptyTable'
 import { DrugRow } from './components/DrugRow/DrugRow'
-import { useIntl } from 'react-intl'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -36,13 +36,10 @@ export const MedicineCalulator = () => {
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [pageNumber, setPageNumber] = useState(DEFAULT_PAGE_NUMBER)
-  const [hasCalculated, setHasCalculated] = useState(false)
   const [hoveredDrug, setHoveredDrug] = useState(-1)
   const [selectedDrugList, setSelectedDrugList] = useState<
     RightsPortalCalculatorRequestInput[]
   >([])
-
-  const intl = useIntl()
 
   useDebounce(
     () => {
@@ -75,7 +72,10 @@ export const MedicineCalulator = () => {
   const CALCULATOR_DISABLED = selectedDrugList.length === 0
 
   const handleCalculate = () => {
-    if (!hasCalculated) setHasCalculated(true)
+    if (selectedDrugList.length === 0) {
+      setCalculatorResults(null)
+      return
+    }
     const input = {
       drugCalculatorRequestDTO: {
         drugs: selectedDrugList.map((d) => ({
@@ -99,10 +99,7 @@ export const MedicineCalulator = () => {
   }
 
   useEffect(() => {
-    if (selectedDrugList.length === 0) setCalculatorResults(null)
-    if (hasCalculated) {
-      handleCalculate()
-    }
+    handleCalculate()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDrugList])
 
@@ -127,11 +124,11 @@ export const MedicineCalulator = () => {
   }
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={formatMessage(messages.medicineCalculatorIntroTitle)}
           intro={formatMessage(messages.medicineCalculatorIntroText)}
         />
@@ -254,18 +251,6 @@ export const MedicineCalulator = () => {
           flexWrap="wrap"
         >
           <Text variant="h5">{formatMessage(messages.medicineResults)}</Text>
-          <Button
-            dataTestId="calculate-button"
-            size="medium"
-            variant="primary"
-            disabled={CALCULATOR_DISABLED}
-            onClick={() => {
-              if (!hasCalculated) setHasCalculated(true)
-              handleCalculate()
-            }}
-          >
-            {formatMessage(messages.calculate)}
-          </Button>
         </Box>
         <Box className={CALCULATOR_DISABLED ? styles.disabledTable : ''}>
           <T.Table>
@@ -337,20 +322,10 @@ export const MedicineCalulator = () => {
                   <T.Data></T.Data>
                   <T.Data></T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalPrice
-                        ? intl.formatNumber(calculatorResults.totalPrice)
-                        : calculatorResults.totalPrice,
-                    })}
+                    {amountFormat(calculatorResults.totalPrice ?? 0)}
                   </T.Data>
                   <T.Data>
-                    {formatMessage(messages.medicinePaymentPaidAmount, {
-                      amount: calculatorResults.totalCustomerPrice
-                        ? intl.formatNumber(
-                            calculatorResults.totalCustomerPrice,
-                          )
-                        : calculatorResults.totalCustomerPrice,
-                    })}
+                    {amountFormat(calculatorResults.totalCustomerPrice ?? 0)}
                   </T.Data>
                   <T.Data></T.Data>
                 </tr>

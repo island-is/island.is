@@ -24,14 +24,13 @@ import {
   useGetPaymentOverviewLazyQuery,
   useGetPaymentOverviewServiceTypesQuery,
 } from './Payments.generated'
-import { useIntl } from 'react-intl'
 import sub from 'date-fns/sub'
 import { isDefined } from '@island.is/shared/utils'
 import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 export const PaymentOverview = () => {
-  const intl = useIntl()
   const { formatMessage, formatDateFns } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
@@ -93,7 +92,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <PaymentsWrapper>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
         <AlertMessage
           type="error"
@@ -114,19 +113,11 @@ export const PaymentOverview = () => {
                 title={formatMessage(messages.statusOfRights)}
                 titlePadding={2}
                 label={formatMessage(messages.credit)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: overview?.credit
-                    ? intl.formatNumber(overview.credit)
-                    : overview?.credit,
-                })}
+                content={amountFormat(overview?.credit ?? 0)}
               />
               <UserInfoLine
                 label={formatMessage(messages.debit)}
-                content={formatMessage(messages.medicinePaymentPaidAmount, {
-                  amount: overview?.debt
-                    ? intl.formatNumber(overview.debt)
-                    : overview?.debt,
-                })}
+                content={amountFormat(overview?.debt ?? 0)}
               />
             </Stack>
           </Box>

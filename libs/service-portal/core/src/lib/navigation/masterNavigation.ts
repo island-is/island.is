@@ -111,11 +111,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: m.petitions,
             path: ServicePortalPath.Petitions,
           },
-          {
-            // Petitions Admin
-            name: m.endorsementsAdmin,
-            path: ServicePortalPath.PetitionsAdminView,
-          },
         ],
       },
 
