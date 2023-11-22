@@ -92,6 +92,9 @@ export const carets = style({
 
 export const swiper = style({
   gridArea: 'swiper',
+  //reverse the swiper negative margins
+  paddingLeft: `${theme.grid.gutter.mobile * 2}px`,
+  paddingRight: `${theme.grid.gutter.mobile * 2}px`,
 })
 
 export const counter = style({
