@@ -9,8 +9,9 @@ import {
   ApplicationLifecycle,
   institutionMapper,
 } from '@island.is/application/types'
-import { Application } from './application.model'
+import { Application, ApplicationPaginatedResponse } from './application.model'
 import { invertBy } from 'lodash'
+import { PaginationDto, paginate } from '@island.is/nest/pagination'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -117,11 +118,18 @@ export class ApplicationService {
     nationalId: string,
     status?: string,
     applicantNationalId?: string,
-  ): Promise<Application[]> {
+    query?: PaginationDto,
+  ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
     const typeIds = this.getTypeIdsForInstitution(nationalId)
 
-    return this.applicationModel.findAll({
+    return await paginate({
+      Model: this.applicationModel,
+      limit: query?.limit ?? 12,
+      after: query?.after ?? '',
+      before: query?.before ?? '',
+      primaryKeyField: 'id',
+      orderOption: [['modified', 'DESC']],
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
@@ -137,7 +145,6 @@ export class ApplicationService {
           [Op.eq]: true,
         },
       },
-      order: [['modified', 'DESC']],
     })
   }
 

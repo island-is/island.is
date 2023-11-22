@@ -1,3 +1,5 @@
+import {} from '@island.is/clients/smartsolutions'
+import { PaginationInput } from '@island.is/nest/pagination'
 import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql'
 import { IsOptional } from 'class-validator'
 
@@ -12,6 +14,8 @@ class FiltersAdminInput {
   status?: string[]
 }
 
+@InputType()
+class PaginationQuery extends PaginationInput() {}
 @InputType()
 export class ApplicationApplicationsAdminInput extends PartialType(
   FiltersAdminInput,
@@ -28,4 +32,8 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   @Field(() => String, { nullable: true })
   @IsOptional()
   applicantNationalId?: string
+
+  @Field(() => PaginationQuery, { nullable: true })
+  @IsOptional()
+  query?: PaginationQuery
 }

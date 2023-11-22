@@ -13,7 +13,10 @@ import {
   ApplicationApplicationsAdminInput,
   ApplicationApplicationsInstitutionAdminInput,
 } from './dto/applications-applications-admin-input'
-import { ApplicationAdmin } from '../application.model'
+import {
+  ApplicationAdmin,
+  ApplicationAdminPaginatedResponse,
+} from '../application.model'
 import { ApplicationService } from '../application.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -33,14 +36,14 @@ export class ApplicationAdminResolver {
     return this.applicationService.findAllAdmin(user, locale, input)
   }
 
-  @Query(() => [ApplicationAdmin], { nullable: true })
+  @Query(() => ApplicationAdminPaginatedResponse, { nullable: true })
   async applicationApplicationsInstitutionAdmin(
     @CurrentUser() user: User,
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
     @Args('input')
     input: ApplicationApplicationsInstitutionAdminInput,
-  ): Promise<ApplicationAdmin[] | null> {
+  ): Promise<ApplicationAdminPaginatedResponse | null> {
     return this.applicationService.findAllInstitutionAdmin(user, locale, input)
   }
 }

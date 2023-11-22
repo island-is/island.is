@@ -11,6 +11,7 @@ import {
   ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/types'
+import { PaginatedResponse } from '@island.is/nest/pagination'
 
 @Table({
   tableName: 'application',
@@ -150,3 +151,7 @@ export class Application extends Model {
   @ApiProperty()
   draftTotalSteps!: number
 }
+
+export class ApplicationPaginatedResponse extends PaginatedResponse(
+  Application,
+) {}

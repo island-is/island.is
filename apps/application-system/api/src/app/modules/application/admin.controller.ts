@@ -19,8 +19,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
-import { ApplicationListAdminResponseDto } from './dto/applicationAdmin.response.dto'
+import {
+  ApplicationAdminPaginatedResponse,
+  ApplicationListAdminResponseDto,
+} from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import { PaginationDto } from '@island.is/nest/pagination'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -94,14 +98,14 @@ export class AdminController {
   @BypassDelegation()
   @Get('admin/institution/:nationalId/applications')
   @UseInterceptors(ApplicationAdminSerializer)
-  @Audit<ApplicationListAdminResponseDto[]>({
-    resources: (apps) => apps.map((app) => app.id),
+  @Audit<ApplicationAdminPaginatedResponse>({
+    resources: (apps) => apps.data.map((app) => app.id),
   })
   @Documentation({
     description: 'Get applications for a specific institution',
     response: {
       status: 200,
-      type: [ApplicationListAdminResponseDto],
+      type: ApplicationAdminPaginatedResponse,
     },
     request: {
       params: {
@@ -123,6 +127,11 @@ export class AdminController {
           required: false,
           description: 'To filter applications by applicant nationalId.',
         },
+        query: {
+          type: PaginationDto,
+          required: false,
+          description: 'Pagination info',
+        },
       },
     },
   })
@@ -130,6 +139,7 @@ export class AdminController {
     @Param('nationalId') nationalId: string,
     @Query('status') status?: string,
     @Query('applicantNationalId') applicantNationalId?: string,
+    @Query('query') query?: PaginationDto,
   ) {
     this.logger.debug(`Getting institution applications with status ${status}`)
 
@@ -137,6 +147,7 @@ export class AdminController {
       nationalId,
       status,
       applicantNationalId,
+      query,
     )
   }
 }
