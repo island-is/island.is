@@ -39,6 +39,9 @@ export const Confirmation: Form = buildForm({
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
       alertMessage: confirmation.general.alertMessage,
+      //TODOx link to pdf
+      //TODOx sannreyna text
+      //TODOx skip what happens next
     }),
   ],
 })

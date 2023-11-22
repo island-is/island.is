@@ -30,6 +30,11 @@ export const personal = {
         defaultMessage: 'Nafn',
         description: 'User information name label',
       },
+      birthDate: {
+        id: 'hlc.application:personal.labels.userInformation.birthDate',
+        defaultMessage: 'Fæðingardagur',
+        description: 'User information birth date label',
+      },
       email: {
         id: 'hlc.application:personal.labels.userInformation.email',
         defaultMessage: 'Netfang',

@@ -4,8 +4,9 @@ import {
   buildSection,
   buildTextField,
 } from '@island.is/application/core'
-import { personal } from '../../../lib/messages'
+import { personal } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { formatDate } from '../../utils'
 
 export const PersonalSection = buildSection({
   id: 'personal',
@@ -28,7 +29,7 @@ export const PersonalSection = buildSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.identity?.data?.nationalId,
+            application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
           id: 'userInformation.name',
@@ -37,7 +38,18 @@ export const PersonalSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.identity?.data?.name,
+            application.externalData?.nationalRegistry?.data?.fullName,
+        }),
+        buildTextField({
+          id: 'userInformation.birthDate',
+          title: personal.labels.userInformation.birthDate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) =>
+            formatDate(
+              application.externalData?.nationalRegistry?.data?.birthDate,
+            ),
         }),
         buildTextField({
           id: 'userInformation.email',

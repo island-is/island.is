@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -22,7 +23,6 @@ import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { HealthcareLicenseCertificateSchema } from './dataSchema'
 import {
-  IdentityApi,
   UserProfileApi,
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
@@ -82,7 +82,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                IdentityApi,
+                NationalRegistryUserApi,
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,

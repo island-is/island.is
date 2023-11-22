@@ -5,7 +5,10 @@ import {
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
 
-export { IdentityApi, UserProfileApi } from '@island.is/application/types'
+export {
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
 
 export const EmbaettiLandlaeknisPaymentCatalogApi = PaymentCatalogApi.configure(
   {

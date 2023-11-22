@@ -2,9 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
 import { HealthcareLicenseCertificateAnswers } from '@island.is/application/templates/healthcare-license-certificate'
-import { HealthDirectorateClientService } from '@island.is/clients/health-directorate'
+import {
+  HealthDirectorateClientService,
+  HealthcareLicense,
+  InnsigladSkjal,
+} from '@island.is/clients/health-directorate'
 
 @Injectable()
 export class HealthcareLicenseCertificateService extends BaseTemplateApiService {
@@ -17,14 +24,15 @@ export class HealthcareLicenseCertificateService extends BaseTemplateApiService 
 
   async getMyHealthcareLicenses({
     auth,
-  }: TemplateApiModuleActionProps): Promise<any[]> {
+  }: TemplateApiModuleActionProps): Promise<HealthcareLicense[]> {
+    //TODOx kasta villu ef tómt
     return this.healthDirectorateClientService.getMyHealthcareLicenses(auth)
   }
 
   async submitApplication({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<void> {
+  }: TemplateApiModuleActionProps): Promise<InnsigladSkjal[]> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
@@ -45,9 +53,19 @@ export class HealthcareLicenseCertificateService extends BaseTemplateApiService 
 
     const answers = application.answers as HealthcareLicenseCertificateAnswers
 
+    const nationalRegistryData = application.externalData.nationalRegistry
+      ?.data as NationalRegistryIndividual
+
     // Submit the application
-    await this.healthDirectorateClientService.submitApplicationHealthcareLicenseCertificate(
+    return await this.healthDirectorateClientService.submitApplicationHealthcareLicenseCertificate(
       auth,
+      {
+        fullName: nationalRegistryData.fullName,
+        dateOfBirth: nationalRegistryData.birthDate,
+        email: answers.userInformation?.email,
+        phone: answers.userInformation?.phone,
+        professionIdList: answers.selectLicence.professionIds,
+      },
     )
   }
 }
