@@ -24,6 +24,24 @@
           "codeCoverage": true
         }
       }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/health-directorate"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/hunting-license/gen/fetch -i libs/clients/hunting-license/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": []
