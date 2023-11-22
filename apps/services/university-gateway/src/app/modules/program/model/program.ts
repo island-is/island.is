@@ -15,7 +15,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
-import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ProgramCourse } from './programCourse'
@@ -298,14 +297,6 @@ export class ProgramBase extends Model {
     allowNull: false,
   })
   searchKeywords!: string[]
-
-  @ApiProperty({
-    description:
-      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
-    type: [ProgramTag],
-  })
-  @HasMany(() => ProgramTag)
-  tag?: ProgramTag[]
 
   @ApiProperty({
     description: 'Modes of deliveries available for the program',

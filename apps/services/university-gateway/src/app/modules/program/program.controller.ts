@@ -10,7 +10,6 @@ import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { ProgramsResponse } from './dto/programsResponse'
 import { Program } from './model/program'
-import { TagsResponse } from './dto/tagsResponse'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -122,19 +121,6 @@ export class ProgramController {
   })
   getProgramById(@Param('id') id: string): Promise<Program> {
     return this.programService.getProgramById(id)
-  }
-
-  @BypassAuth()
-  @Get('tags')
-  @Documentation({
-    description: 'Get all tags',
-    response: {
-      status: 200,
-      type: TagsResponse,
-    },
-  })
-  getTags(): Promise<TagsResponse> {
-    return this.programService.getTags()
   }
 
   @BypassAuth()

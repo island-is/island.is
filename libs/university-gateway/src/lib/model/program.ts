@@ -1,4 +1,3 @@
-import { ITag } from './tag'
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
 import { IProgramSpecialization } from './programSpecialization'
 import { Season } from '../types/season'
@@ -35,7 +34,6 @@ export interface IProgram {
   studyRequirementsEn?: string
   costInformationIs?: string
   costInformationEn?: string
-  tag?: ITag[]
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
   specializations?: IProgramSpecialization[]

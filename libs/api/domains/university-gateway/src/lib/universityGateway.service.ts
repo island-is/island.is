@@ -63,12 +63,6 @@ export class UniversityGatewayApi {
         iscedCode: item.iscedCode,
         languages: item.languages,
         searchKeywords: item.searchKeywords,
-        tag: item.tag.map((t) => ({
-          id: t.tagId,
-          code: t.details.code,
-          nameIs: t.details.nameIs,
-          nameEn: t.details.nameEn,
-        })),
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
@@ -109,12 +103,6 @@ export class UniversityGatewayApi {
       iscedCode: item.iscedCode,
       languages: item.languages,
       searchKeywords: item.searchKeywords,
-      tag: item.tag.map((t) => ({
-        id: t.tagId,
-        code: t.details.code,
-        nameIs: t.details.nameIs,
-        nameEn: t.details.nameEn,
-      })),
       modeOfDelivery: item.modeOfDelivery.map((m) =>
         m.modeOfDelivery.toString(),
       ),

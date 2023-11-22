@@ -60,7 +60,6 @@ export class UniversityOfIcelandApplicationClient {
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
-          tag: [], //TODO will not be used yet
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
               // TODO handle when ráðuneyti has made decisions

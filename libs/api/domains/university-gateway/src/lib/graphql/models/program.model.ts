@@ -86,9 +86,6 @@ export class UniversityGatewayProgram {
   @Field(() => [String])
   searchKeywords!: string[]
 
-  @Field(() => [UniversityGatewayProgramTag])
-  tag!: UniversityGatewayProgramTag[]
-
   @Field(() => [String])
   modeOfDelivery!: string[]
 }
@@ -166,21 +163,6 @@ class UniversityGatewayProgramCourse {
 
   @Field()
   requirement!: string
-}
-
-@ObjectType('UniversityGatewayProgramTag')
-class UniversityGatewayProgramTag {
-  @Field()
-  id!: string
-
-  @Field()
-  code!: string
-
-  @Field()
-  nameIs!: string
-
-  @Field()
-  nameEn!: string
 }
 
 // @ObjectType('UniversityGatewayProgramExtraApplicationField')
