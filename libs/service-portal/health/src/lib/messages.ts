@@ -111,7 +111,8 @@ export const messages = defineMessages({
   },
   readAboutPaymentParticipationSystemsLink: {
     id: 'sp.health:read-about-payment-participation-systems-link',
-    defaultMessage: 'https://island.is/greidsluthatttokukerfi-lyfja',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
   },
   paymentOverview: {
     id: 'sp.health:payment-overview',
@@ -158,6 +159,22 @@ export const messages = defineMessages({
   healthInsuranceStatus: {
     id: 'sp.health:health-insurance-status',
     defaultMessage: 'Staða sjúkratryggingar',
+  },
+  healthInsuranceConfirmation: {
+    id: 'sp.health:health-insurance-confirmation',
+    defaultMessage: 'Staðfesting á sjúkratryggingu',
+  },
+  healthInsuranceConfirmationButton: {
+    id: 'sp.health:health-insurance-confirmation-button',
+    defaultMessage: 'Sækja staðfestingu',
+  },
+  healthInsuranceConfirmationLoading: {
+    id: 'sp.health:health-insurance-confirmation-loading',
+    defaultMessage: 'Sæki skjal',
+  },
+  healthInsuranceConfirmationTransferError: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
   },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
@@ -699,10 +716,6 @@ export const messages = defineMessages({
   medicinePaymentStatus: {
     id: 'sp.health:medicine-payment-status',
     defaultMessage: 'Greiðslustaða',
-  },
-  medicinePaymentPaidAmount: {
-    id: 'sp.health:medicine-payment-paid-amount',
-    defaultMessage: '{amount} kr.',
   },
   medicineStep: {
     id: 'sp.health:medicine-step',

@@ -157,6 +157,10 @@ export const msg = defineMessages({
     id: 'sp.settings:save-email',
     defaultMessage: 'Vista netfang',
   },
+  changeEmail: {
+    id: 'sp.settings:change-email',
+    defaultMessage: 'Breyta netfangi',
+  },
   editEmailText: {
     id: 'sp.settings:edit-email-text',
     defaultMessage:
@@ -165,6 +169,10 @@ export const msg = defineMessages({
   saveTel: {
     id: 'sp.settings:save-tel',
     defaultMessage: 'Vista símanúmer',
+  },
+  changeTel: {
+    id: 'sp.settings:change-tel',
+    defaultMessage: 'Breyta símanúmeri',
   },
   editTelText: {
     id: 'sp.settings:edit-tel-text',
