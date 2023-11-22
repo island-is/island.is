@@ -4,13 +4,14 @@ import {
   FieldTypes,
 } from '@island.is/application/types'
 import { VehiclesCurrentVehicle } from '../../shared/types'
-import { FC } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { Box, Tag } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { information } from '../../lib/messages/information'
 import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { useFormContext } from 'react-hook-form'
-
+import { getValueViaPath } from '@island.is/application/core'
+import format from 'date-fns/format'
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
@@ -19,14 +20,36 @@ export const VehicleCheckboxField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, field }) => {
   const { formatMessage } = useLocale()
-  const { answers } = application
 
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
+
+  const vehicleValue = getValueViaPath(
+    application.answers,
+    'selectVehicle.plate',
+    '',
+  ) as string
+
+  const [currentVehicle, setCurrentVehicle] = useState<
+    VehiclesCurrentVehicle | undefined
+  >(
+    vehicleValue
+      ? currentVehicleList.find((z) => z.permno === vehicleValue)
+      : undefined,
+  )
 
   const onCheckboxControllerSelect = (s: string) => {
-    const currentVehicle = currentVehicleList[parseInt(s, 10)]
-    setValue('selectVehicle.plate', currentVehicle.permno || '')
+    setCurrentVehicle(currentVehicleList.find((x) => x.permno === s))
   }
+
+  useEffect(() => {
+    if (currentVehicle) {
+      setValue('selectVehicle.color', currentVehicle?.color || '')
+      setValue('selectVehicle.type', currentVehicle?.make || '')
+      setValue('selectVehicle.plate', currentVehicle?.permno || '')
+    }
+
+    console.log('values', getValues())
+  }, [currentVehicle])
 
   const vehicleCheckboxes = currentVehicleList.map(
     (vehicle: VehiclesCurrentVehicle) => {
@@ -34,9 +57,14 @@ export const VehicleCheckboxField: FC<
 
       return {
         value: vehicle.permno ?? '',
-        label: vehicle.make ?? '',
+        label: `${vehicle.make ?? ''} - ${vehicle.permno}`,
         excludeOthers: true,
-        subLabel: `${vehicle.color} - ${vehicle.permno}`,
+        subLabel: `${vehicle.color} - ${formatMessage(
+          information.labels.pickVehicle.registrationDate,
+        )}: ${
+          vehicle.registrationDate &&
+          format(new Date(vehicle.registrationDate), 'dd.MM.yyyy')
+        }`,
         rightContent: (
           <div style={{ display: 'flex' }}>
             {!isCheckable && (
@@ -74,7 +102,7 @@ export const VehicleCheckboxField: FC<
         <CheckboxFormField
           application={application}
           field={{
-            id: field.id,
+            id: `${field.id}.plate`,
             title: 'Vehicles',
             large: true,
             backgroundColor: 'blue',
@@ -85,7 +113,6 @@ export const VehicleCheckboxField: FC<
             options: vehicleCheckboxes,
             onSelect: (newAnswer) => {
               onCheckboxControllerSelect(newAnswer[0])
-              return { ...answers, selectVehicle: newAnswer[0] }
             },
           }}
         />

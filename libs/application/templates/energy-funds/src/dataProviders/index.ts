@@ -9,11 +9,6 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
 })
 
 export const CurrentVehiclesApi = defineTemplateApi({
-  action: 'currentVehicles',
+  action: 'getCurrentVehiclesWithDetails',
   externalDataId: 'currentVehicles',
-  namespace: 'VehiclesShared',
-  params: {
-    showOwned: true,
-    showCoOwned: true,
-  },
 })

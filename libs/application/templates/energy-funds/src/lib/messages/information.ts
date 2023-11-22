@@ -14,6 +14,66 @@ export const information = {
     },
   }),
   labels: {
+    bankInformation: defineMessages({
+      title: {
+        id: 'ef.application:information.labels.bankInformation.title',
+        defaultMessage: 'Styrkur vegna kaupa á rafbíl',
+        description: 'bankInformation title',
+      },
+      grantAmount: {
+        id: 'ef.application:information.labels.bankInformation.grantAmount',
+        defaultMessage: 'Styrkupphæð',
+        description: 'bankInformation grant amount label',
+      },
+      accountInfo: {
+        id: 'ef.application:information.labels.bankInformation.accountInfo',
+        defaultMessage: 'Bankaupplýsingar',
+        description: 'accountInfo title',
+      },
+      accountNumer: {
+        id: 'ef.application:information.labels.bankInformation.accountNumer',
+        defaultMessage: 'Reikningsnúmer',
+        description: 'account number',
+      },
+      informationTitle: {
+        id: 'ef.application:information.labels.bankInformation.informationTitle',
+        defaultMessage: 'Til athugunar!',
+        description: 'information title',
+      },
+      informationDescription: {
+        id: 'ef.application:information.labels.bankInformation.informationDescription',
+        defaultMessage:
+          'Styrkurinn verður lagður inn á reikning þinn innan tveggja daga.',
+        description: 'information description',
+      },
+    }),
+    applicant: defineMessages({
+      description: {
+        id: 'ef.application:information.labels.applicant.description',
+        defaultMessage: 'Umsækjandi',
+        description: 'applicant description',
+      },
+      nationalId: {
+        id: 'ef.application:information.labels.applicant.nationalId',
+        defaultMessage: 'Kennitala',
+        description: 'applicant national ID label',
+      },
+      name: {
+        id: 'ef.application:information.labels.applicant.name',
+        defaultMessage: 'Fullt nafn',
+        description: 'applicant name label',
+      },
+      email: {
+        id: 'ef.application:information.labels.applicant.email',
+        defaultMessage: 'Netfang',
+        description: 'applicant email label',
+      },
+      phone: {
+        id: 'ef.application:information.labels.applicant.phone',
+        defaultMessage: 'Símanúmer',
+        description: 'applicant phone number label',
+      },
+    }),
     vehicle: defineMessages({
       sectionTitle: {
         id: 'ef.application:information.labels.vehicle.sectionTitle',
@@ -45,6 +105,16 @@ export const information = {
         id: 'ef.application:information.labels.vehicle.type',
         defaultMessage: 'Tegund ökutækis',
         description: 'Vehicle type label',
+      },
+      price: {
+        id: 'ef.application:information.labels.vehicle.price',
+        defaultMessage: 'Kaupverð án styrksupphæð með vsk.',
+        description: 'Vehicle price label',
+      },
+      registrationDate: {
+        id: 'ef.application:information.labels.vehicle.registrationDate',
+        defaultMessage: 'Nýskráningar dagsetning',
+        description: 'Vehicle registrationDate label',
       },
     }),
     pickVehicle: defineMessages({
@@ -83,6 +153,11 @@ export const information = {
         id: 'ef.application:information.labels.pickVehicle.checkboxCheckableTag',
         defaultMessage: 'Styrkur {amount}',
         description: 'Checkbox checkable tag label',
+      },
+      registrationDate: {
+        id: 'ef.application:information.labels.pickVehicle.registrationDate',
+        defaultMessage: 'Fyrsti skráningardagur',
+        description: 'Vehicle registrationDate label',
       },
     }),
   },

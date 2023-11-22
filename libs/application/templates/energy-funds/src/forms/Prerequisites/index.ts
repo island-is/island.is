@@ -14,6 +14,7 @@ import {
 } from '../../dataProviders'
 import { confirmation } from '../../lib/messages/confirmation'
 import { information } from '../../lib/messages/information'
+import { grant } from '../../lib/messages/grant'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -25,10 +26,6 @@ export const Prerequisites: Form = buildForm({
     buildSection({
       id: 'externalData',
       title: externalData.dataProvider.sectionTitle,
-      condition: (_, application) => {
-        console.log('application', application)
-        return true
-      },
       children: [
         buildExternalDataProvider({
           title: externalData.dataProvider.pageTitle,
@@ -50,6 +47,11 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
+              provider: CurrentVehiclesApi,
+              title: externalData.transportAuthority.title,
+              subTitle: externalData.transportAuthority.subTitle,
+            }),
+            buildDataProviderItem({
               provider: NationalRegistryIndividualApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
@@ -59,28 +61,18 @@ export const Prerequisites: Form = buildForm({
               title: externalData.userProfile.title,
               subTitle: externalData.userProfile.subTitle,
             }),
-            buildDataProviderItem({
-              provider: CurrentVehiclesApi,
-              title: 'TODO',
-              subTitle: 'TODO',
-            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'selectVehicle',
-      title: information.labels.pickVehicle.title,
+      id: 'information',
+      title: information.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'vehicleInformation',
-      title: 'TODO',
-      children: [],
-    }),
-    buildSection({
-      id: 'grantInformation',
-      title: 'TODO',
+      id: 'grant',
+      title: grant.general.sectionTitle,
       children: [],
     }),
     buildSection({

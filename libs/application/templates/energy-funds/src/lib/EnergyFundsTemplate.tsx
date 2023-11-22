@@ -95,18 +95,12 @@ const template: ApplicationTemplate<
               label: applicationMessage.actionCardDraft,
               variant: 'blue',
             },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentStarted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-            ],
           },
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+          // onExit: defineTemplateApi({
+          //   action: ApiActions.validateApplication,
+          // }),
           roles: [
             {
               id: Roles.APPLICANT,

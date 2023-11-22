@@ -54,6 +54,20 @@ export const externalData = {
       description: 'User profile sub title',
     },
   }),
+  transportAuthority: defineMessages({
+    title: {
+      id: 'ef.application:externalData.transportAuthority.title',
+      defaultMessage:
+        'Upplýsingar um rafbifreiðar í þinni eigu og stöðu þeirra',
+      description: 'transport authority title',
+    },
+    subTitle: {
+      id: 'ef.application:externalData.transportAuthority.subTitle',
+      defaultMessage:
+        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar bifreiðar og stöðu þeirra',
+      description: 'transport authority sub title',
+    },
+  }),
   financialManagementAuthority: defineMessages({
     title: {
       id: 'ef.application:externalData.financialManagementAuthority.title',

@@ -9,13 +9,8 @@ export const confirmation = {
     },
     alertTitle: {
       id: 'ef.application:confirmation.general.alertTitle',
-      defaultMessage: '',
-      description: 'Confirmation alert title',
-    },
-    alertMessage: {
-      id: 'ef.application:confirmation.general.alertMessage',
       defaultMessage: 'Styrkveiting hefur verið samþykkt!',
-      description: 'Confirmation alert message',
+      description: 'Confirmation alert title',
     },
     accordionTitle: {
       id: 'ef.application:confirmation.general.accordionTitle',
@@ -24,7 +19,7 @@ export const confirmation = {
     },
     accordionText: {
       id: 'ef.application:confirmation.general.accordionText',
-      defaultMessage: `* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu nulla porta, luctus mi ac, pharetra mauris\n`,
+      defaultMessage: `Styrkurinn verður lagður inn á reikning þinn innan tveggja daga.`,
       description: 'Confirmation accordion text',
     },
   }),

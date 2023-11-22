@@ -5,8 +5,8 @@ export const Logo: FC<React.PropsWithChildren<unknown>> = () => (
     <rect width="318" height="112" rx="8" fill="#F8F5FA" />
     <path d="M31.3043 63.1048V49.019H34.6435V63.1048H31.3043Z" fill="#0044B3" />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M80 33V79.0548L16 79.4V33H80ZM46.3304 36.3143H19.3391V75.7405H46.3304V36.3143ZM49.6696 75.7405H76.6609V50.6762L63.0261 50.6762V47.3619H76.6609V36.3143H49.6696V61.4476L63.8609 61.4476V64.7619L49.6696 64.7619V75.7405Z"
       fill="#0044B3"
     />

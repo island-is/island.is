@@ -3,4 +3,5 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
+  registrationDate?: string
 }
