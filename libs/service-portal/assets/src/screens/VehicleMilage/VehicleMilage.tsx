@@ -101,7 +101,7 @@ const VehicleMilage = () => {
 
   const details = data?.vehicleMileageDetails
   const hasData = details && details?.length > 0
-  const isFormEditable = hasSuccess
+  const isFormEditable = hasSuccess // TODO: Add {canEdit} from service
 
   return (
     <>

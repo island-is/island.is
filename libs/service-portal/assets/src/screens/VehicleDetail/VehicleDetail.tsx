@@ -144,6 +144,7 @@ const VehicleDetail = () => {
     })
   }
 
+  // TODO: add 'isServicePortalVehicleMileagePageEnabled' to check if vehicle mileage links should be shown.
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>

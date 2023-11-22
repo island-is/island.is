@@ -104,7 +104,7 @@ export const assetsModule: PortalModule = {
         name: m.vehicleMilage,
         path: AssetsPaths.AssetsVehiclesDetailMilage,
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
-        // key: 'VehicleMilage', // TODO: Add to configcat
+        key: 'VehicleMileage',
         element: <VehicleMilage />,
       },
       {
