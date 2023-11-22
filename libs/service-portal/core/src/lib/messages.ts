@@ -915,6 +915,10 @@ export const m = defineMessages({
     id: 'service.portal:register',
     defaultMessage: 'Skrá',
   },
+  update: {
+    id: 'service.portal:update',
+    defaultMessage: 'Uppfæra',
+  },
   startPage: {
     id: 'service.portal:start-page',
     defaultMessage: 'upphafssíðu',

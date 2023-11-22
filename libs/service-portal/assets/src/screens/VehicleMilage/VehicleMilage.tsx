@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import {
@@ -45,8 +45,8 @@ const VehicleMilage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [formValue, setFormValue] = useState('')
+  const [hasSuccess, setSuccess] = useState(false)
   const { id } = useParams() as UseParams
-  const buttonRef = useRef<HTMLButtonElement>(null)
   const {
     control,
     handleSubmit,
@@ -70,13 +70,15 @@ const VehicleMilage = () => {
     variables: { input: { permno: id } },
   })
 
-  const [postAction, { loading: postActionLoading }] =
+  const [postAction, { loading: postActionLoading, data: updateData }] =
     usePostVehicleMileageMutation({
       onError: (e) => {
         toast.error(formatMessage(m.errorTitle))
       },
       onCompleted: (mutationData) => {
-        // Clear form and errors on success.
+        // Clear form, state and errors on success.
+        setSuccess(true)
+        setFormValue('')
         reset()
 
         // Update useGetUsersMileageQuery on mutation success.
@@ -99,6 +101,7 @@ const VehicleMilage = () => {
 
   const details = data?.vehicleMileageDetails
   const hasData = details && details?.length > 0
+  const isFormEditable = hasSuccess
 
   return (
     <>
@@ -126,10 +129,27 @@ const VehicleMilage = () => {
           <form onSubmit={handleSubmit(handleSubmitForm)}>
             <GridContainer>
               <GridRow marginBottom={2}>
-                <GridColumn span="1/1">
-                  <Text as="h3" variant="h5">
-                    {formatMessage(messages.vehicleMilageInputTitle)}
-                  </Text>
+                <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
+                  {isFormEditable ? (
+                    <>
+                      <Text as="h3" variant="h5">
+                        {formatMessage(messages.mileageSuccessFormTitle)}
+                      </Text>
+                      <Text variant="default" paddingTop={1}>
+                        {formatMessage(messages.mileageSuccessFormText, {
+                          date: updateData?.vehicleMileagePost?.readDate
+                            ? icelandLocalTime(
+                                updateData?.vehicleMileagePost?.readDate,
+                              )
+                            : '',
+                        })}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text as="h3" variant="h5">
+                      {formatMessage(messages.vehicleMilageInputTitle)}
+                    </Text>
+                  )}
                 </GridColumn>
               </GridRow>
               <GridRow
@@ -201,26 +221,8 @@ const VehicleMilage = () => {
                       loading={postActionLoading}
                       disabled={formValue.length === 0}
                     >
-                      {formatMessage(m.register)}
+                      {formatMessage(isFormEditable ? m.update : m.register)}
                     </Button>
-
-                    {/* <Box display="none">
-                      <Button
-                        variant="primary"
-                        size="small"
-                        fluid
-                        type="submit"
-                        loading={postActionLoading}
-                        ref={buttonRef}
-                      >
-                        {formatMessage(m.register)}
-                      </Button>
-                    </Box> */}
-                    {/* <MileageConfirmation
-                      postActionLoading={postActionLoading}
-                      formValue={formValue}
-                      buttonRef={buttonRef}
-                    /> */}
                   </Box>
                 </GridColumn>
               </GridRow>

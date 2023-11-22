@@ -833,6 +833,15 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:mileage-errors-min-length',
     defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
   },
+  mileageSuccessFormTitle: {
+    id: 'sp.vehicles:mileage-success-form-title',
+    defaultMessage: 'Kílómetrastaða skráð',
+  },
+  mileageSuccessFormText: {
+    id: 'sp.vehicles:mileage-success-form-text',
+    defaultMessage:
+      'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}',
+  },
 })
 
 export const urls = defineMessages({
