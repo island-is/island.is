@@ -21,7 +21,7 @@ export const StatisticsClientConfig = defineConfig({
     const cacheTtl = cacheTtlEnv ? Number(cacheTtlEnv) : DEFAULT_CACHE_TTL
 
     return {
-      sourceDataPaths: env.required('CHART_STATISTIC_SOURCE_DATA_PATHS') ?? '',
+      sourceDataPaths: env.required('CHART_STATISTIC_SOURCE_DATA_PATHS', ''),
       redis: {
         nodes: env.requiredJSON('APOLLO_CACHE_REDIS_NODES', []),
         ssl: env.optionalJSON('APOLLO_CACHE_REDIS_SSL', false) ?? true,
