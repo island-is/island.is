@@ -6,6 +6,7 @@ import {
   Gallery,
   GalleryItem,
   HUGVERKASTOFAN_ID,
+  HUGVERKASTOFAN_SLUG,
   IntroHeader,
   TableGrid,
   UserInfoLine,
@@ -67,7 +68,7 @@ const IntellectualPropertiesDesignDetail = () => {
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
           title={id}
-          serviceProviderID={HUGVERKASTOFAN_ID}
+          serviceProviderSlug={HUGVERKASTOFAN_SLUG}
           serviceProviderTooltip={formatMessage(
             m.intellectualPropertiesTooltip,
           )}

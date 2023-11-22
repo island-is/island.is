@@ -6,6 +6,7 @@ import {
   ErrorScreen,
   ExcludesFalse,
   HUGVERKASTOFAN_ID,
+  HUGVERKASTOFAN_SLUG,
   IntroHeader,
   ServicePortalPath,
   m,
@@ -66,7 +67,7 @@ const IntellectualPropertiesOverview = () => {
       <IntroHeader
         title={ipMessages.title}
         intro={ipMessages.description}
-        serviceProviderID={HUGVERKASTOFAN_ID}
+        serviceProviderSlug={HUGVERKASTOFAN_SLUG}
         serviceProviderTooltip={formatMessage(m.intellectualPropertiesTooltip)}
       />
       {loading && (

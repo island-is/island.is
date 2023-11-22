@@ -4,6 +4,7 @@ import {
   EmptyState,
   ErrorScreen,
   HUGVERKASTOFAN_ID,
+  HUGVERKASTOFAN_SLUG,
   IntroHeader,
   TableGrid,
   UserInfoLine,
@@ -72,7 +73,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
           title={id}
-          serviceProviderID={HUGVERKASTOFAN_ID}
+          serviceProviderSlug={HUGVERKASTOFAN_SLUG}
           serviceProviderTooltip={formatMessage(
             m.intellectualPropertiesTooltip,
           )}
