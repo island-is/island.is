@@ -27,7 +27,7 @@ export const userNotificationServiceSetup =
       })
       .initContainer({
         containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-        postgres: { passwordSecret: '/k8s/user-notification/api/DB_PASSWORD' },
+        postgres: { passwordSecret: '/k8s/user-notification/DB_PASSWORD' },
       })
       .readiness('/liveness')
       .readiness('/readiness')
