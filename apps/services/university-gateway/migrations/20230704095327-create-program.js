@@ -114,11 +114,6 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
           },
-          languages: {
-            type: Sequelize.ARRAY(Sequelize.STRING),
-            defaultValue: [],
-            allowNull: false,
-          },
           external_url_is: {
             type: Sequelize.STRING(500),
             allowNull: true,

@@ -81,9 +81,6 @@ export class UniversityGatewayProgram {
   iscedCode!: string
 
   @Field(() => [String])
-  languages!: string[]
-
-  @Field(() => [String])
   modeOfDelivery!: string[]
 }
 

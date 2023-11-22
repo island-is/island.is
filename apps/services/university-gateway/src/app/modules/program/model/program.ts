@@ -278,17 +278,6 @@ export class ProgramBase extends Model {
   iscedCode!: string
 
   @ApiProperty({
-    description:
-      'Languages used in the program. Should be array of two letter language code',
-    example: ['IS', 'EN'],
-  })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-  })
-  languages!: string[]
-
-  @ApiProperty({
     description: 'Modes of deliveries available for the program',
     type: [ProgramModeOfDelivery],
   })

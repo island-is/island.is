@@ -61,7 +61,6 @@ export class UniversityGatewayApi {
         durationInYears: item.durationInYears,
         costPerYear: item.costPerYear,
         iscedCode: item.iscedCode,
-        languages: item.languages,
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
@@ -100,7 +99,6 @@ export class UniversityGatewayApi {
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,
       iscedCode: item.iscedCode,
-      languages: item.languages,
       modeOfDelivery: item.modeOfDelivery.map((m) =>
         m.modeOfDelivery.toString(),
       ),

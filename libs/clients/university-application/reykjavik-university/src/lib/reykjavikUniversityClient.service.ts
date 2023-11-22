@@ -51,7 +51,6 @@ export class ReykjavikUniversityApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
-          languages: [], //TODO will not be used yet
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
           admissionRequirementsIs: program.admissionRequirementsIs,
