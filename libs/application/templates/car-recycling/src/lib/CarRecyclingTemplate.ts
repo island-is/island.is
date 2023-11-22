@@ -28,7 +28,6 @@ import { AuthDelegationType } from '@island.is/shared/types'
 const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
-  IN_REVIEW = 'inReview',
   SUBMITTED = 'submitted',
 }
 type ReferenceTemplateEvent =

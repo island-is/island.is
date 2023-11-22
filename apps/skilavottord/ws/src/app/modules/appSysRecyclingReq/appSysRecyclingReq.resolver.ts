@@ -2,7 +2,7 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { AppSysRecyclingReqService } from './appSysRecyclingReq.service'
 import { AppSysVehicleInformation } from './appSysRecyclingReq.model'
 import { UseGuards } from '@nestjs/common'
-import { ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
+import { ScopesGuard, Scopes, IdsUserGuard } from '@island.is/auth-nest-tools'
 
 import { JWTTokenGuard } from '../auth/jwtToken.guard'
 

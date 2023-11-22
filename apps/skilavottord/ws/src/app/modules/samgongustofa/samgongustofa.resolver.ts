@@ -5,24 +5,15 @@ import { Authorize, CurrentUser, User } from '../auth'
 import { VehicleInformation } from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
 
-// @Authorize()
+@Authorize()
 @Resolver(() => VehicleInformation)
 export class SamgongustofaResolver {
-  constructor(private samgongustofaService: SamgongustofaService) {
-    console.log('HUMMMM')
-  }
+  constructor(private samgongustofaService: SamgongustofaService) {}
 
   @Query(() => [VehicleInformation])
-  async skilavottordVehicles(): Promise<Array<VehicleInformation>> {
-    console.log('------------ OLD ENDPOINT HITTTT  1536 ------------------')
-
-    return this.samgongustofaService.getUserVehiclesInformation('3012755609')
+  async skilavottordVehicles(
+    @CurrentUser() user: User,
+  ): Promise<Array<VehicleInformation>> {
+    return this.samgongustofaService.getUserVehiclesInformation(user.nationalId)
   }
-
-  // @Query(() => [VehicleInformation])
-  // async skilavottordVehicles(
-  //   @CurrentUser() user: User,
-  // ): Promise<Array<VehicleInformation>> {
-  //   return this.samgongustofaService.getUserVehiclesInformation(user.nationalId)
-  // }
 }

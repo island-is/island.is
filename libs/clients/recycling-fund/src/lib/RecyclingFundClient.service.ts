@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common'
 import { RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 import { gql } from '@apollo/client'
 import { GraphQLClient } from 'graphql-request'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { getSdk } from '../../gen/graphql-request'
+import jwt from 'jsonwebtoken'
 
 const graphqlEndpoint = 'http://localhost:3339/app/skilavottord/api/graphql' // Replace with your actual GraphQL endpoint
 const tokenEndpoint = 'http://your-token-endpoint' // Replace with your actual token endpoint
@@ -84,83 +87,43 @@ export class RecyclingFundClientService {
       new AuthMiddleware(user as Auth),
     )
 
+  private getClientWithAuth(user: User) {
+    /* return new GraphQLClient(graphqlEndpoint, {
+      fetch: createEnhancedFetch({
+        name: 'clients-recycling-fund',
+        autoAuth: {
+          mode: 'tokenExchange',
+          issuer: 'https://identity-server.dev01.devland.is',
+          clientId: '@island.is/clients/dev',
+          clientSecret: 'AzNw3K0jMkmq3mxF2svt8YvXU',
+          scope: ['@urvinnslusjodur.is/skilavottord'],
+        },
+      }),
+      //requestMiddleware,
+    }) 
+    */
+  }
+
   async getVehicles(user: User): Promise<any> {
-    console.log(
-      'recyclingFundGraphQLClientApi',
-      this.recyclingFundGraphQLClientApi,
-    )
-    console.log('USER', user)
+    console.log('getVehiclesBB', `Bearer ${user}`)
 
-    // Perform token exchange to obtain an access token with initial scope
-    /*  const initialAccessToken = await this.performTokenExchange(
-      clientId,
-      clientSecret,
-      username,
-      password,
-      initialScope,
-    )
-
-    // Create a GraphQL client with the obtained access token
-    const initialGraphQLClient = this.createGraphQLClient(initialAccessToken)
-*/
-    const graphQLClient = new GraphQLClient(
-      'http://localhost:3339/app/skilavottord/api/graphql',
-      {
-        headers: {
-          authorization: user.authorization,
-        },
+    const client = new GraphQLClient(graphqlEndpoint, {
+      headers: {
+        Authorization: `Bearer ${user}`,
       },
-    )
+    })
 
-    const query = gql`
-      {
-        skilavottordAppSysVehicles {
-          permno
-        }
-      }
-    `
+    console.log('postCarRecyclingApplication in client service', { user })
 
-    /*const results = await graphQLClient.request(query)
-    console.log('results', results)
-    return results
-*/
-    // Make a request to the GraphQL endpoint
-    //const resp = await graphQLClient.request(query)
+    const sdk = getSdk(client)
+    const respsonse = await sdk.getVehiclesQuery()
 
-    // console.log('getVehicles22 -resp ', resp)
+    console.log('postCarRecyclingApplication result', {
+      respsonse,
+    })
 
-    // Make a request to the GraphQL endpoint with the GraphQL client and initial scope
-    //const initialResult = await initialGraphQLClient.request(query)
-    //console.log('Initial GraphQL response:', initialResult)
+    return respsonse
 
-    //return initialResult
-
-    /* const response = await fetch(
-      'http://localhost:3339/app/skilavottord/api/graphql',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(SkilavottordRecyclingPartnerVehiclesQuery),
-      },
-    )
-
-    console.log('rRRRRRResponse', response.text())
-
-    const result = await response.json()
-
-    console.log('DONE!!!!', result)
-
-    return result.data
-*/
-    /* try {
-      return await this.graphQLClient.request(SkilavottordRecyclingPartnerVehiclesQuery, undefined);
-    } catch (error) {
-      console.error('GraphQL request error:', error);
-      throw error;
-    }
-  */
     return await this.getRecyclingFundGraphQLClient(user).recyclingFundQuery({
       body: { query: '{skilavottordAppSysVehicles{ permno }}' },
       // body: { query: '{skilavottordVehicles{ permno }}' },
