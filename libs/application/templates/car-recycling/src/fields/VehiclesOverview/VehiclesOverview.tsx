@@ -1,7 +1,14 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import { ActionCard, Box, Text } from '@island.is/island-ui/core'
+import {
+  ActionCard,
+  AlertBanner,
+  AlertMessage,
+  Box,
+  Pagination,
+  Text,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 
 import { formatText } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
@@ -31,6 +38,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   const [allVehiclesList, setAllVehiclesList] = useState<VehicleMiniDto[]>([])
 
   const { setValue } = useFormContext()
+
+  const [page, setPage] = useState(1)
+
+  const ITEMS_ON_PAGE = 8
+  const totalPages =
+    allVehiclesList.length > ITEMS_ON_PAGE
+      ? Math.ceil(allVehiclesList.length / ITEMS_ON_PAGE)
+      : 0
 
   useEffect(() => {
     const { selectedVehicles, allVehicles } = getApplicationAnswers(
@@ -109,6 +124,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     ])
   }
 
+  const handlePageChange = useCallback((page: number) => setPage(page), [])
+
   return (
     <Box id="vehicles">
       <Box paddingTop={2}>
@@ -122,6 +139,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             formatMessage,
           )}
           onChange={(e) => {
+            if (page !== 1) {
+              setPage(1)
+            }
             const filteredList = allVehiclesList.filter((vehicle) =>
               vehicle.permno
                 ?.toLowerCase()
@@ -173,46 +193,66 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         <Label>{formatMessage(carRecyclingMessages.cars.overview)}</Label>
       </Box>
 
-      {currentVehiclesList.map((vehicle: VehicleMiniDto, index) => {
-        return (
-          <Box
-            marginBottom={2}
-            key={index + '_currentbox'}
-            id="vehicles.allVehicles"
-          >
-            <ActionCard
-              key={vehicle.permno}
-              tag={{
-                label: getRoleLabel(vehicle),
-                variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
-                outlined: false,
-              }}
-              cta={{
-                icon: undefined,
-                buttonType: {
-                  variant: 'primary',
-                  colorScheme: 'default',
-                },
-                label: formatMessage(carRecyclingMessages.cars.recycle),
-                onClick: () => {
-                  onRecycle(vehicle)
-                },
-              }}
-              heading={vehicle.permno || ''}
-              text={`${vehicle.make}, ${vehicle.color}`}
-              unavailable={{
-                active: vehicle.role !== 'Eigandi',
-                label: formatMessage(
-                  carRecyclingMessages.cars.onlyOwnerCanRecyle,
-                ),
-              }}
-            />
-          </Box>
-        )
-      })}
-      {error && (
-        <Box marginBottom={2}>
-          <Text color="red600">{error}</Text>
+      {currentVehiclesList
+        .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
+        .map((vehicle: VehicleMiniDto, index) => {
+          return (
+            <Box
+              marginBottom={2}
+              key={index + '_currentbox'}
+              id="vehicles.allVehicles"
+            >
+              <ActionCard
+                key={vehicle.permno}
+                tag={{
+                  label: getRoleLabel(vehicle),
+                  variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
+                  outlined: false,
+                }}
+                cta={{
+                  icon: undefined,
+                  buttonType: {
+                    variant: 'primary',
+                    colorScheme: 'default',
+                  },
+                  label: formatMessage(carRecyclingMessages.cars.recycle),
+                  onClick: () => {
+                    onRecycle(vehicle)
+                  },
+                }}
+                heading={vehicle.permno || ''}
+                text={`${vehicle.make}, ${vehicle.color}`}
+                unavailable={{
+                  active: vehicle.role !== 'Eigandi',
+                  label: formatMessage(
+                    carRecyclingMessages.cars.onlyOwnerCanRecyle,
+                  ),
+                }}
+              />
+            </Box>
+          )
+        })}
+      {totalPages > 0 ? (
+        <Box paddingTop={8}>
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            renderLink={(page, className, children) => (
+              <Box
+                cursor="pointer"
+                className={className}
+                onClick={() => setPage(page)}
+              >
+                {children}
+              </Box>
+            )}
+          />
+        </Box>
+      ) : null}
+
+      {error && selectedVehiclesList.length === 0 && (
+        <Box marginTop={3}>
+          <AlertMessage type="error" title="" message={error} />
         </Box>
       )}
     </Box>
