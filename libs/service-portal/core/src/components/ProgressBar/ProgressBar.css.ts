@@ -5,7 +5,7 @@ export const inner = style({
   left: 0,
   right: 0,
   top: 0,
-  transition: 'transform 0.5s ease-out',
+  transition: 'transform 0.2s linear',
   willChange: 'transform',
 })
 
