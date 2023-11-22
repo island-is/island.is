@@ -238,7 +238,6 @@ export class NotificationsService {
 
 
   async update(user: User,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
-    // return updateNotificationDto
     const notification = await this.notificationModel.findOne({
       where: {
         id: id,
