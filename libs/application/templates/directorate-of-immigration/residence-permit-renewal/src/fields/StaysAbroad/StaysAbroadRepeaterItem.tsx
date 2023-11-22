@@ -100,7 +100,6 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
         {itemNumber > 0 && (
           <Button
             variant="text"
-            textSize="sm"
             size="small"
             onClick={() => handleRemove(index)}
           >

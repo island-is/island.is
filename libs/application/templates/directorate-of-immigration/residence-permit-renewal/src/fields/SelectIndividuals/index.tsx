@@ -8,7 +8,7 @@ import {
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
+
 import { formatDate } from '../../utils'
 import { useLocale } from '@island.is/localization'
 
@@ -30,7 +30,7 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
   const applicantCurrentResidencePermit = getValueViaPath(
     application.externalData,
     'applicantCurrentResidencePermit.data',
-  ) as CurrentResidencePermit
+  ) as any //TODO: SET CORRECT TYPE
 
   const canApplyRenewal = true
   // !!applicantCurrentResidencePermit?.canApplyRenewal
@@ -67,12 +67,12 @@ export const SelectIndividuals = ({ field, application, error }: any) => {
     application.externalData,
     'childrenCurrentResidencePermit.data',
     [],
-  ) as CurrentResidencePermit[]
+  ) as any //TODO: Set correct type
 
   const childrenCheckboxes = children.map(
     (child: ApplicantChildCustodyInformation) => {
       const childCurrentResidencePermit = childrenCurrentResidencePermit.find(
-        (x) => x.nationalId === child.nationalId,
+        (x: any) => x.nationalId === child.nationalId,
       )
 
       const canApplyRenewal =

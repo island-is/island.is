@@ -6,7 +6,7 @@ import {
   buildCustomField,
   buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
-import { CurrentResidencePermit } from '@island.is/clients/directorate-of-immigration'
+
 import { applicant } from '../../../lib/messages'
 import DescriptionText from '../../../components/DescriptionText'
 import { DescriptionInlineLink } from '../../../fields'
@@ -16,16 +16,16 @@ export const PermanentSubSection = buildSubSection({
   title: applicant.labels.permanent.subSectionTitle,
 
   condition: (_, externalData) => {
-    const applicantCurrentResidencePermit = getValueViaPath(
-      externalData,
-      'applicantCurrentResidencePermit.data',
-    ) as CurrentResidencePermit
+    // const applicantCurrentResidencePermit = getValueViaPath(
+    //   externalData,
+    //   'applicantCurrentResidencePermit.data',
+    // ) as CurrentResidencePermit
 
-    const childrenCurrentResidencePermit = getValueViaPath(
-      externalData,
-      'childrenCurrentResidencePermit.data',
-      [],
-    ) as CurrentResidencePermit[]
+    // const childrenCurrentResidencePermit = getValueViaPath(
+    //   externalData,
+    //   'childrenCurrentResidencePermit.data',
+    //   [],
+    // ) as CurrentResidencePermit[]
 
     // const canAtLeastOneApplyPermanent = !![
     //   applicantCurrentResidencePermit,
