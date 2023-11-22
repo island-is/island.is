@@ -4,7 +4,7 @@ import fetch from 'isomorphic-fetch'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { createWrappedFetchWithLogging } from './utils'
-import { RecyclingFundClientService } from './RecyclingFundClient.service'
+import { RecyclingFundClientService } from './recyclingFundClient.service'
 
 import {
   createEnhancedFetch,
