@@ -60,6 +60,7 @@ const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
         exit={{ opacity: 0 }}
         role="dialog"
         aria-modal="true"
+        data-testid="modal"
       >
         <motion.div
           className={styles.modalContainer}
