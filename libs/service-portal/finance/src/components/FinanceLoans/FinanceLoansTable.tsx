@@ -96,6 +96,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                   align: 'right',
                 },
               ]}
+              startExpanded={loanOverview.length === 1}
             >
               <Box background="blue100">
                 <Box marginBottom={2} paddingTop={4} paddingLeft={2}>
