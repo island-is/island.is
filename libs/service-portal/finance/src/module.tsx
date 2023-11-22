@@ -79,6 +79,7 @@ export const financeModule: PortalModule = {
       path: FinancePaths.FinanceLoans,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       element: <FinanceLoans />,
+      key: 'FinanceHmsLoans',
     },
   ],
 }

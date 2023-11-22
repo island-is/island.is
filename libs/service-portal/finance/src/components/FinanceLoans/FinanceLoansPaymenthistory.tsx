@@ -74,51 +74,53 @@ export const FinanceLoansPaymenthistory = ({ loanId }: Props) => {
         ) : historyOpen && loanPaymentsData ? (
           <T.Table box={{ className: styles.zebraTable }}>
             <T.Head>
-              <T.HeadData>
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.paymentDate)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData>
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.transactionDate)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.payment)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.defaultInterest)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.costPayment)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.priceImprovementPayment)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.priceImprovementInterest)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(messages.interests)}
-                </Text>
-              </T.HeadData>
-              <T.HeadData align="right">
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(m.total)}
-                </Text>
-              </T.HeadData>
+              <T.Row>
+                <T.HeadData>
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.paymentDate)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData>
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.transactionDate)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.payment)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.defaultInterest)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.costPayment)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.priceImprovementPayment)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.priceImprovementInterest)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(messages.interests)}
+                  </Text>
+                </T.HeadData>
+                <T.HeadData align="right">
+                  <Text fontWeight="semiBold" variant="small">
+                    {formatMessage(m.total)}
+                  </Text>
+                </T.HeadData>
+              </T.Row>
             </T.Head>
             <T.Body>
               {loanPaymentsData?.hmsLoansPaymenthistory?.map((payment) => (
