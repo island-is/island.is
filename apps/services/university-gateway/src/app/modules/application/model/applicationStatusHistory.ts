@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript'
 import { Application } from './application'
 import { ApplicationStatus } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'application_status_history',
@@ -20,7 +21,7 @@ export class ApplicationStatusHistory extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @Column({
     type: DataType.UUID,
@@ -37,8 +38,8 @@ export class ApplicationStatusHistory extends Model {
   status!: ApplicationStatus
 
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import {

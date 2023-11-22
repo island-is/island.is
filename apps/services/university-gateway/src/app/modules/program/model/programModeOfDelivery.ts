@@ -1,5 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -10,6 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { Program } from './program'
 import { ModeOfDelivery } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'program_mode_of_delivery',
@@ -22,7 +24,7 @@ export class ProgramModeOfDelivery extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiHideProperty()
   @Column({
@@ -31,6 +33,10 @@ export class ProgramModeOfDelivery extends Model {
   })
   @ForeignKey(() => Program)
   programId!: string
+
+  @ApiHideProperty()
+  @BelongsTo(() => Program, 'programId')
+  program?: Program
 
   @ApiProperty({
     description: 'Modes of deliveries available for the program',
@@ -46,9 +52,9 @@ export class ProgramModeOfDelivery extends Model {
 
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }
