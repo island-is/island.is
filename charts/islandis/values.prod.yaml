@@ -2412,11 +2412,11 @@ user-notification:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2460,7 +2460,7 @@ user-notification:
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
-      DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+      DB_PASS: '/k8s/user-notification/api/DB_PASSWORD'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -2511,11 +2511,11 @@ user-notification-worker:
   healthCheck:
     liveness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/'
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/liveness'
+      path: '/readiness'
       timeoutSeconds: 3
   hpa:
     scaling:
