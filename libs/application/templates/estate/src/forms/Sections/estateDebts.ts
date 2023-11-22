@@ -10,11 +10,12 @@ import { EstateTypes, YES } from '../../lib/constants'
 export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
-  condition: (answers) =>
-    getValueViaPath(answers, 'selectedEstate') ===
+  condition: (answers) => {
+
+    return getValueViaPath(answers, 'selectedEstate') ===
     EstateTypes.estateWithoutAssets
-      ? getValueViaPath(answers, 'estateAssets.estateDebtsExist') === YES
-      : true,
+      ? getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+      : true},
   children: [
     buildMultiField({
       id: 'debts',
