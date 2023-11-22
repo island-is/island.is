@@ -70,11 +70,11 @@ export const serviceSetup =
       .resources({
         limits: {
           cpu: '400m',
-          memory: '256Mi',
+          memory: '512Mi',
         },
         requests: {
           cpu: '100m',
-          memory: '192Mi',
+          memory: '256Mi',
         },
       })
       .ingress({

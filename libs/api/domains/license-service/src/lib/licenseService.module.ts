@@ -19,6 +19,7 @@ import { LicenseMapperModule } from './mappers/licenseMapper.module'
 import { DrivingLicensePayloadMapper } from './mappers/drivingLicenseMapper'
 import { LicenseClientModule } from '@island.is/clients/license-client'
 import { PCardPayloadMapper } from './mappers/pCardMapper'
+import { EHICCardPayloadMapper } from './mappers/ehicCardMapper'
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -81,6 +82,16 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.PCard,
   },
+  {
+    type: GenericLicenseType.Ehic,
+    provider: {
+      id: GenericLicenseProviderId.IcelandicHealthInsurance,
+    },
+    pkpass: false,
+    pkpassVerify: false,
+    timeout: 100,
+    orgSlug: GenericLicenseOrganizationSlug.EHIC,
+  },
 ]
 @Module({
   imports: [LicenseClientModule, LicenseMapperModule, CmsModule],
@@ -101,6 +112,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
           firearm: FirearmLicensePayloadMapper,
           driving: DrivingLicensePayloadMapper,
           pCard: PCardPayloadMapper,
+          ehic: EHICCardPayloadMapper,
         ) =>
         async (
           type: GenericLicenseType,
@@ -118,6 +130,8 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
               return driving
             case GenericLicenseType.PCard:
               return pCard
+            case GenericLicenseType.Ehic:
+              return ehic
             default:
               return null
           }
@@ -129,6 +143,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
         FirearmLicensePayloadMapper,
         DrivingLicensePayloadMapper,
         PCardPayloadMapper,
+        EHICCardPayloadMapper,
       ],
     },
   ],

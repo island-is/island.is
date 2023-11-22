@@ -129,6 +129,7 @@ const useSearch = (
                   SearchableContentTypes['WebOrganizationSubpage'],
                   SearchableContentTypes['WebDigitalIcelandService'],
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                  SearchableContentTypes['WebManual'],
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',
@@ -173,10 +174,18 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
   return useCallback(
     (item: SubmitType) => {
+      const query: Record<string, string | string[]> = {
+        q: item.string,
+      }
+
+      if (Router.query.referencedBy) {
+        query.referencedBy = Router.query.referencedBy
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q: item.string },
+          query,
         }),
         ...(item.type === 'link' && {
           pathname: item.string,
@@ -245,7 +254,8 @@ export const SearchInput = forwardRef<
     return (
       <Downshift<SubmitType>
         id={id}
-        initialInputValue={initialInputValue}
+        // Since the search supports '*' we don't want to display it in the UI
+        initialInputValue={initialInputValue === '*' ? '' : initialInputValue}
         onChange={(item) => {
           if (!item?.string) {
             return false

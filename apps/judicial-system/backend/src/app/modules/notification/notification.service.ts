@@ -116,6 +116,14 @@ export class NotificationService {
       })
   }
 
+  private async hasSentNotification(caseId: string, type: NotificationType) {
+    const previousNotifications = await this.notificationModel.findAll({
+      where: { caseId, type },
+    })
+
+    return previousNotifications.length > 0
+  }
+
   private async hasReceivedNotification(
     caseId: string,
     type: NotificationType | NotificationType[],
@@ -178,6 +186,10 @@ export class NotificationService {
       return { address: mobileNumbers, success: true }
     }
 
+    smsText = smsText.match(/rettarvorslugatt.island.is/g)
+      ? smsText
+      : `${smsText} ${this.formatMessage(notifications.smsTail)}`
+
     return this.smsService
       .sendSms(mobileNumbers?.split(',') ?? '', smsText)
       .then(() => ({ address: mobileNumbers, success: true }))
@@ -200,11 +212,17 @@ export class NotificationService {
     recipientName?: string,
     recipientEmail?: string,
     attachments?: Attachment[],
+    skipTail?: boolean,
   ): Promise<Recipient> {
     try {
       // This is to handle a comma separated list of emails
       // We use the first one as the main recipient and the rest as CC
       const recipients = recipientEmail ? recipientEmail.split(',') : undefined
+
+      html =
+        html.match(/<a/g) || skipTail
+          ? html
+          : `${html} ${this.formatMessage(notifications.emailTail)}`
 
       await this.emailService.sendEmail({
         from: {
@@ -223,10 +241,10 @@ export class NotificationService {
         ],
         cc:
           recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
-        subject: subject,
+        subject,
         text: stripHtmlTags(html),
         html: html,
-        attachments: attachments,
+        attachments,
       })
     } catch (error) {
       this.logger.error('Failed to send email', { error })
@@ -380,7 +398,7 @@ export class NotificationService {
       theCase.defenderNationalId &&
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
-      theCase.courtCaseNumber,
+      theCase.courtCaseNumber ?? theCase.policeCaseNumbers[0],
     )
 
     return this.sendEmail(
@@ -388,6 +406,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -447,6 +467,8 @@ export class NotificationService {
       body,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -680,6 +702,7 @@ export class NotificationService {
       theCase.defenderName,
       theCase.defenderEmail,
       calendarInvite ? [calendarInvite] : undefined,
+      Boolean(theCase.defenderNationalId) === false,
     ).then((recipient) => {
       if (recipient.success) {
         // No need to wait
@@ -699,7 +722,7 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const linkSubject = `${
-      theCase.requestSharedWithDefender ? 'Gögn í máli' : 'Yfirlit máls'
+      theCase.requestSharedWithDefender ? 'Krafa í máli' : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
@@ -710,12 +733,13 @@ export class NotificationService {
       theCase.courtCaseNumber,
       Boolean(theCase.requestSharedWithDefender),
     )
-
     return this.sendEmail(
       linkSubject,
       linkHtml,
       theCase.defenderName,
       theCase.defenderEmail,
+      undefined,
+      Boolean(theCase.defenderNationalId) === false,
     )
   }
 
@@ -853,6 +877,8 @@ export class NotificationService {
           }),
       defenderName ?? '',
       defenderEmail ?? '',
+      undefined,
+      Boolean(defenderNationalId) === false,
     )
   }
 
@@ -1350,7 +1376,14 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
     )
 
-    return this.sendEmail(subject, body, defenderName, defenderEmail)
+    return this.sendEmail(
+      subject,
+      body,
+      defenderName,
+      defenderEmail,
+      undefined,
+      Boolean(defenderNationalId) === false,
+    )
   }
 
   private async sendDefenderAssignedNotifications(
@@ -1492,6 +1525,8 @@ export class NotificationService {
       html,
       theCase.registrar.name,
       theCase.registrar.email,
+      undefined,
+      true,
     )
 
     return this.recordNotification(
@@ -1578,6 +1613,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1680,6 +1717,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1808,6 +1847,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }
@@ -1829,21 +1870,37 @@ export class NotificationService {
   private async sendAppealCompletedNotifications(
     theCase: Case,
   ): Promise<SendNotificationResponse> {
+    /**
+     * If anyone has received the APPEAL_COMPLETED notification before,
+     * we know that the case is being reopened.
+     */
+    const isReopened = await this.hasSentNotification(
+      theCase.id,
+      NotificationType.APPEAL_COMPLETED,
+    )
+
     const subject = this.formatMessage(
-      notifications.caseAppealCompleted.subject,
+      isReopened
+        ? notifications.caseAppealResent.subject
+        : notifications.caseAppealCompleted.subject,
       {
         courtCaseNumber: theCase.courtCaseNumber,
         appealCaseNumber: theCase.appealCaseNumber,
       },
     )
 
-    const html = this.formatMessage(notifications.caseAppealCompleted.body, {
-      userHasAccessToRVG: true,
-      courtCaseNumber: theCase.courtCaseNumber,
-      appealCaseNumber: theCase.appealCaseNumber,
-      linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
-      linkEnd: '</a>',
-    })
+    const html = this.formatMessage(
+      isReopened
+        ? notifications.caseAppealResent.body
+        : notifications.caseAppealCompleted.body,
+      {
+        userHasAccessToRVG: true,
+        courtCaseNumber: theCase.courtCaseNumber,
+        appealCaseNumber: theCase.appealCaseNumber,
+        linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
+        linkEnd: '</a>',
+      },
+    )
 
     const promises = [
       this.sendEmail(subject, html, theCase.judge?.name, theCase.judge?.email),
@@ -1910,6 +1967,8 @@ export class NotificationService {
           defenderHtml,
           theCase.defenderName,
           theCase.defenderEmail,
+          undefined,
+          Boolean(theCase.defenderNationalId) === false,
         ),
       )
     }

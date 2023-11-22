@@ -457,6 +457,14 @@ export const m = defineMessages({
     id: 'service.portal:viewPetition',
     defaultMessage: 'Nánar um lista',
   },
+  signatureCollectionLists: {
+    id: 'service.portal:signatureCollectionLists',
+    defaultMessage: 'Meðmælalistar',
+  },
+  viewSignatureList: {
+    id: 'service.portal:viewSignatureList',
+    defaultMessage: 'Skoða nánar',
+  },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
     defaultMessage: 'Meðmæli - Admin',
@@ -755,6 +763,10 @@ export const m = defineMessages({
   goBackToDashboard: {
     id: 'service.portal:go-back-to-dashboard',
     defaultMessage: 'Til baka í yfirlit',
+  },
+  goBackToDashboardShort: {
+    id: 'service.portal:go-back-to-dashboard-short',
+    defaultMessage: 'Yfirlit',
   },
   viewDetail: {
     id: 'service.portal:view-detail',
@@ -1087,11 +1099,7 @@ export const m = defineMessages({
     id: 'service.portal:userprofile-tooltip',
     defaultMessage: 'Ísland.is hefur umsjón með gögnum á þínum stillingum.',
   },
-  healthTooltip: {
-    id: 'service.portal:health-tooltip',
-    defaultMessage:
-      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
-  },
+
   universityOfIcelandTooltip: {
     id: 'service.portal:uni-iceland-tooltip',
     defaultMessage:

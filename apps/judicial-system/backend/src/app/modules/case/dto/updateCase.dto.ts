@@ -396,6 +396,11 @@ export class UpdateCaseDto {
   readonly appealConclusion?: string
 
   @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealRulingModifiedHistory?: string
+
+  @IsOptional()
   @IsEnum(CaseAppealRulingDecision)
   @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   readonly appealRulingDecision?: CaseAppealRulingDecision

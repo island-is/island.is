@@ -57,9 +57,6 @@ export enum ServicePortalPath {
   PetitionList = '/min-gogn/listar/:listId',
   PetitionListOwned = '/min-gogn/listar/minn-listi/:listId',
 
-  PetitionsAdminView = '/min-gogn/listar-admin',
-  PetitionListAdmin = '/min-gogn/listar-admin/:listId',
-
   RealEstateExternal = 'https://minarsidur.island.is/minar-sidur/min-gogn/fasteignir',
 
   // Fjarmal
@@ -126,6 +123,7 @@ export enum ServicePortalPath {
   MachineLicensesDetail = '/skirteini/vinnueftirlitid/vinnuvelarettindi',
   DisabilityLicense = '/skirteini/tryggingastofnun/ororkuskirteini',
   PCardDetail = '/skirteini/syslumenn/pkort',
+  EhicDetail = '/skirteini/sjukratryggingar/ehic',
   LicensesPassportDetail = '/skirteini/tjodskra/vegabref/:id',
   LicensesDetail = '/skirteini/:provider/:type',
 }
