@@ -11,11 +11,11 @@ export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
   condition: (answers) => {
-
     return getValueViaPath(answers, 'selectedEstate') ===
-    EstateTypes.estateWithoutAssets
+      EstateTypes.estateWithoutAssets
       ? getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
-      : true},
+      : true
+  },
   children: [
     buildMultiField({
       id: 'debts',
