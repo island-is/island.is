@@ -1,4 +1,3 @@
-
 export const SYSLUMENN_SLUG = 'syslumenn'
 export const ISLANDIS_SLUG = 'stafraent-island'
 export const MENNTAMALASTOFNUN_SLUG = 'menntamalastofnun'
