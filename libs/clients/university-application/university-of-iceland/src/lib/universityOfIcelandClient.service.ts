@@ -58,6 +58,8 @@ export class UniversityOfIcelandApplicationClient {
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
+          allowException: false, //TODO missing in api
+          allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
               // TODO handle when ráðuneyti has made decisions

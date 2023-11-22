@@ -110,6 +110,8 @@ export class UniversityGatewayApi {
       studyRequirementsEn: item.studyRequirementsEn,
       costInformationIs: item.costInformationIs,
       costInformationEn: item.costInformationEn,
+      allowException: item.allowException,
+      allowThirdLevelQualification: item.allowThirdLevelQualification,
       courses: item.courses.map((c) => ({
         id: c.details.id,
         externalId: c.details.externalId,
@@ -127,6 +129,7 @@ export class UniversityGatewayApi {
           : undefined,
         semesterSeason: c.semesterSeason.toString(),
       })),
+      extraApplicationFields: item.extraApplicationFields,
     }
   }
 

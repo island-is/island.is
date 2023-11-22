@@ -32,6 +32,8 @@ export interface IProgram {
   studyRequirementsEn?: string
   costInformationIs?: string
   costInformationEn?: string
+  allowException: boolean
+  allowThirdLevelQualification: boolean
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
   specializations?: IProgramSpecialization[]

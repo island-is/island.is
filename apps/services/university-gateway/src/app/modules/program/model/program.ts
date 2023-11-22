@@ -398,6 +398,28 @@ export class Program extends ProgramBase {
   costInformationEn?: string
 
   @ApiProperty({
+    description:
+      'Whether the program allows applicants to apply using exception',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowException!: boolean
+
+  @ApiProperty({
+    description:
+      'Whether the program allows applicants to apply using third level qualification',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowThirdLevelQualification!: boolean
+
+  @ApiProperty({
     description: 'List of courses that belong to this program',
     type: [ProgramCourse],
   })

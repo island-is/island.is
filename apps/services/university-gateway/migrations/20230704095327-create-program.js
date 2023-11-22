@@ -146,6 +146,14 @@ module.exports = {
             type: Sequelize.TEXT,
             allowNull: true,
           },
+          allow_exception: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
+          allow_third_level_qualification: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+          },
           active: {
             type: Sequelize.BOOLEAN,
             allowNull: false,

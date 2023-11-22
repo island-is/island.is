@@ -110,11 +110,17 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field({ nullable: true })
   costInformationEn?: string
 
+  @Field()
+  allowException!: boolean
+
+  @Field()
+  allowThirdLevelQualification!: boolean
+
   @Field(() => [UniversityGatewayProgramCourse])
   courses!: UniversityGatewayProgramCourse[]
 
-  // @Field(() => [UniversityGatewayProgramExtraApplicationField])
-  // extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
+  @Field(() => [UniversityGatewayProgramExtraApplicationField])
+  extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
 }
 
 @ObjectType('UniversityGatewayProgramCourse')
@@ -159,29 +165,32 @@ class UniversityGatewayProgramCourse {
   requirement!: string
 }
 
-// @ObjectType('UniversityGatewayProgramExtraApplicationField')
-// class UniversityGatewayProgramExtraApplicationField {
-//   @Field()
-//   externalId!: string
+@ObjectType('UniversityGatewayProgramExtraApplicationField')
+class UniversityGatewayProgramExtraApplicationField {
+  @Field()
+  externalId!: string
 
-//   @Field()
-//   nameIs!: string
+  @Field()
+  nameIs!: string
 
-//   @Field()
-//   nameEn!: string
+  @Field()
+  nameEn!: string
 
-//   @Field({ nullable: true })
-//   descriptionIs?: string
+  @Field({ nullable: true })
+  descriptionIs?: string
 
-//   @Field({ nullable: true })
-//   descriptionEn?: string
+  @Field({ nullable: true })
+  descriptionEn?: string
 
-//   @Field()
-//   required!: boolean
+  @Field()
+  required!: boolean
 
-//   @Field()
-//   fieldType!: string
+  @Field()
+  fieldType!: string
 
-//   @Field({ nullable: true })
-//   uploadAcceptedFileType?: string
-// }
+  @Field({ nullable: true })
+  uploadAcceptedFileType?: string
+
+  @Field({ nullable: true })
+  options?: string
+}
