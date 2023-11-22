@@ -12,3 +12,8 @@ export const inner = style({
 export const progress = style({
   height: '12px',
 })
+
+export const vertical = style({
+  width: '12px',
+  height: 'auto',
+})
