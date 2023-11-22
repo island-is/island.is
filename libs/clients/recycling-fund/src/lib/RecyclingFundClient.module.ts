@@ -3,7 +3,6 @@ import fetch from 'isomorphic-fetch'
 
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-import { Configuration, RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 import { createWrappedFetchWithLogging } from './utils'
 import { RecyclingFundClientService } from './RecyclingFundClient.service'
 
@@ -41,46 +40,20 @@ const configFactory = (
 })
 
 @Module({
-  providers: [RecyclingFundClientService],
+  providers: [
+    // {
+    //   provide: RecyclingFundClientService,
+    //   //useFactory: () => {
+    //   useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) => {
+    //     const api = new RecyclingFundGraphQLClientApi(
+    //       new Configuration(configFactory(idsClientConfig)),
+    //     )
+    //
+    //     return new RecyclingFundClientService(api)
+    //   },
+    // },
+    RecyclingFundClientService,
+  ],
   exports: [RecyclingFundClientService],
 })
-export class RecyclingFundClientModule {
-  static register(): DynamicModule {
-    // if (!config.apiKey) {
-    //   logger.error('VMSTModule XROAD_VMST_API_KEY not provided.')
-    // }
-
-    // if (!config.xRoadClient) {
-    //   logger.error('VMSTModule XROAD_CLIENT_ID not provided.')
-    // }
-
-    // const headers = {
-    //   'api-key': config.apiKey,
-    //   'X-Road-Client': config.xRoadClient,
-    // }
-
-    /* const providerConfiguration = new Configuration({
-      fetchApi: isRunningOnProduction ? fetch : createWrappedFetchWithLogging,
-    })
-*/
-    //const exportedApis = [RecyclingFundGraphQLClientApi]
-
-    return {
-      module: RecyclingFundClientModule,
-      providers: [
-        {
-          provide: RecyclingFundClientService,
-          //useFactory: () => {
-          useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) => {
-            const api = new RecyclingFundGraphQLClientApi(
-              new Configuration(configFactory(idsClientConfig)),
-            )
-
-            return new RecyclingFundClientService(api)
-          },
-        },
-      ],
-      exports: [RecyclingFundClientService],
-    }
-  }
-}
+export class RecyclingFundClientModule {}

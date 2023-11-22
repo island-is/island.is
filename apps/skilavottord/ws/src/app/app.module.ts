@@ -15,8 +15,9 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
-  AppSysRecyclingReqModule,
+  //AppSysRecyclingReqModule,
 } from './modules'
+import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
 
@@ -39,6 +40,10 @@ const autoSchemaFile = environment.production
       useClass: SequelizeConfigService,
     }),
     AuthModule,
+    AuthJwtModule.register({
+      audience: null,
+      issuer: 'https://identity-server.dev01.devland.is',
+    }),
     AccessControlModule,
     RecyclingRequestModule,
     SamgongustofaModule,
@@ -47,7 +52,7 @@ const autoSchemaFile = environment.production
     RecyclingPartnerModule,
     VehicleModule,
     VehicleOwnerModule,
-    AppSysRecyclingReqModule,
+    //AppSysRecyclingReqModule,
   ],
 })
 export class AppModule {}

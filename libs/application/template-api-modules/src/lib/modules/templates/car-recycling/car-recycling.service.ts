@@ -52,4 +52,11 @@ export class CarRecyclingService extends BaseTemplateApiService {
       throw this.parseErrors(e)
     }
   }
+
+  async completeApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    console.log('going to call skilavottord gql')
+  }
 }

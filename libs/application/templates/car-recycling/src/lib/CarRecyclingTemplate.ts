@@ -115,10 +115,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
             throwOnError: false,
           }),
           progress: 0.5,
-          /* onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),*/
+          // onExit: defineTemplateApi({
+          //   action: ApiActions.completeApplication,
+          //   throwOnError: true,
+          // }),
           actionCard: {
             pendingAction: {
               title: 'corePendingActionMessages.applicationReceivedTitle',

@@ -1,0 +1,16 @@
+schema:
+  - apps/skilavottord/ws/src/api.graphql
+documents:
+  - libs/clients/recycling-fund/src/**/*.graphql
+generates:
+  libs/clients/recycling-fund/gen/graphql-request.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-graphql-request
+    config:
+      namingConvention:
+        enumValues: keep
+hooks:
+  afterAllFileWrite:
+    - prettier --write
