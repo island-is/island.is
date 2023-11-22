@@ -1,4 +1,4 @@
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const grid = style({
@@ -28,4 +28,10 @@ export const detailsGrid = style({
   overflow: 'hidden',
   width: 'auto',
   marginLeft: '2px',
+})
+
+export const zebraTable = style({})
+
+globalStyle(`${zebraTable} tbody tr:nth-child(2n-1)`, {
+  background: '#fff',
 })

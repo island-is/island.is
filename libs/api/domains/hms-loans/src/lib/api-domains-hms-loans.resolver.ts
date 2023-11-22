@@ -15,6 +15,7 @@ import { Audit } from '@island.is/nest/audit'
 import { Loanhistory } from './models/loanHistory.model'
 import { Paymenthistory } from './models/paymenthistory.model'
 import { GetHmsLoansPaymenthistoryInput } from './dto/getHmsLoansPaymenthistory.input'
+import { LoanhistoryPdf } from './models/loanHistoryPdf.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
@@ -29,7 +30,10 @@ export class HmsLoansResolver {
     return await this.hmsLoansService.getHmsLoansLoanhistory(user)
   }
 
-  @Query(() => String, { name: 'hmsLoansLoanhistoryPdf', nullable: true })
+  @Query(() => LoanhistoryPdf, {
+    name: 'hmsLoansLoanhistoryPdf',
+    nullable: true,
+  })
   @Audit()
   async getHmsLoansLoanhistoryPdf(@CurrentUser() user: User) {
     return await this.hmsLoansService.getHmsLoansLoanhistoryPdf(user)

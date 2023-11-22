@@ -57,7 +57,11 @@ query GetHmsLoansLoanhistory {
 }
 
 query GetHmsLoansLoanhistoryPdf {
-  hmsLoansLoanhistoryPdf
+  hmsLoansLoanhistoryPdf {
+    mime
+    data
+    name
+  }
 }
 
 query GetHmsLoansPaymenthistory($input: GetHmsLoansPaymenthistoryInput!) {

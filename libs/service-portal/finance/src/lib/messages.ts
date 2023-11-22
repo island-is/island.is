@@ -44,6 +44,23 @@ export const m = defineMessages({
     defaultMessage: 'Upphafleg fjárhæð',
   },
 
+  defaultInterest: {
+    id: 'sp.finance-loans:default-interest',
+    defaultMessage: 'Dráttarvextir',
+  },
+  costPayment: {
+    id: 'sp.finance-loans:cost-payment',
+    defaultMessage: 'Kostnaður',
+  },
+  priceImprovementPayment: {
+    id: 'sp.finance-loans:cost-payment',
+    defaultMessage: 'Verð afborgun',
+  },
+  priceImprovementInterest: {
+    id: 'sp.finance-loans:cost-payment',
+    defaultMessage: 'Verð vextir',
+  },
+
   payment: {
     id: 'sp.finance-loans:payment',
     defaultMessage: 'Afborgun',

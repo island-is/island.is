@@ -8,7 +8,9 @@
   "paths": {
     "/api/v{version}/Libra/loanhistory": {
       "post": {
-        "tags": ["Libra"],
+        "tags": [
+          "Libra"
+        ],
         "summary": "Retrieves information about loan history for logged in individual in the Libra HMS loan system.",
         "parameters": [
           {
@@ -116,7 +118,9 @@
     },
     "/api/v{version}/Libra/paymenthistory": {
       "post": {
-        "tags": ["Libra"],
+        "tags": [
+          "Libra"
+        ],
         "summary": "Retrieves information about payment history for all loans for logged in individual in the Libra HMS loan system.",
         "parameters": [
           {
@@ -224,7 +228,9 @@
     },
     "/api/v{version}/Libra/paymenthistorybyloanid": {
       "post": {
-        "tags": ["Libra"],
+        "tags": [
+          "Libra"
+        ],
         "summary": "Returns a payment summary of loans for the relevant person that are in HMS's Libra system.",
         "parameters": [
           {
@@ -342,7 +348,9 @@
     },
     "/api/v{version}/Libra/loanhistorypdf": {
       "post": {
-        "tags": ["Libra"],
+        "tags": [
+          "Libra"
+        ],
         "summary": "Returns loan history as pdf.",
         "parameters": [
           {
@@ -361,20 +369,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/FileReturnModel"
                 }
               },
               "application/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/FileReturnModel"
                 }
               },
               "text/json": {
                 "schema": {
-                  "type": "string",
-                  "format": "byte"
+                  "$ref": "#/components/schemas/FileReturnModel"
                 }
               }
             }
@@ -472,6 +477,29 @@
         },
         "additionalProperties": false,
         "description": "Information about the co-payer of loan."
+      },
+      "FileReturnModel": {
+        "type": "object",
+        "properties": {
+          "mime": {
+            "type": "string",
+            "description": "Mime of document.",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "description": "Base64 encoded document.",
+            "format": "byte",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of document.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information about file returned."
       },
       "LoanHistoryReturnModel": {
         "type": "object",
@@ -854,7 +882,7 @@
   },
   "security": [
     {
-      "Bearer": []
+      "Bearer": [ ]
     }
   ]
 }
