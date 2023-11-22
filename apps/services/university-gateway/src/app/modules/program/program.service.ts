@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Program } from './model/program'
-import { ProgramTag } from './model/programTag'
-import { Tag } from './model/tag'
 import { ProgramModeOfDelivery } from './model/programModeOfDelivery'
 import { ProgramCourse } from './model/programCourse'
 import { ProgramExtraApplicationField } from './model/programExtraApplicationField'
 import { ProgramsResponse } from './dto/programsResponse'
-import { TagsResponse } from './dto/tagsResponse'
 import { Course } from '../course/model/course'
 import { University } from '../university/model/university'
 import { InjectModel } from '@nestjs/sequelize'
@@ -19,9 +16,6 @@ export class ProgramService {
   constructor(
     @InjectModel(Program)
     private programModel: typeof Program,
-
-    @InjectModel(Tag)
-    private tagModel: typeof Tag,
   ) {}
 
   async getPrograms(
@@ -65,21 +59,16 @@ export class ProgramService {
           'studyRequirementsEn',
           'costInformationIs',
           'costInformationEn',
+          'allowException',
+          'allowThirdLevelQualification',
           'courses',
           'extraApplicationFields',
+          //TODOx add all apiHideProperty fields
         ],
       },
       include: [
         {
           model: University,
-        },
-        {
-          model: ProgramTag,
-          include: [
-            {
-              model: Tag,
-            },
-          ],
         },
         {
           model: ProgramModeOfDelivery,
@@ -103,14 +92,6 @@ export class ProgramService {
           ],
         },
         {
-          model: ProgramTag,
-          include: [
-            {
-              model: Tag,
-            },
-          ],
-        },
-        {
           model: ProgramModeOfDelivery,
         },
         {
@@ -124,11 +105,6 @@ export class ProgramService {
     }
 
     return program
-  }
-
-  async getTags(): Promise<TagsResponse> {
-    const tags = await this.tagModel.findAll()
-    return { data: tags }
   }
 
   async getDurationInYears(): Promise<string[]> {

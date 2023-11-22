@@ -1,4 +1,3 @@
-import { ITag } from './tag'
 import { IProgramExtraApplicationField } from './programExtraApplicationField'
 import { IProgramSpecialization } from './programSpecialization'
 import { Season } from '../types/season'
@@ -25,8 +24,6 @@ export interface IProgram {
   durationInYears: number
   costPerYear?: number
   iscedCode: string
-  languages: string[]
-  searchKeywords: string[]
   externalUrlIs?: string
   externalUrlEn?: string
   admissionRequirementsIs?: string
@@ -35,7 +32,8 @@ export interface IProgram {
   studyRequirementsEn?: string
   costInformationIs?: string
   costInformationEn?: string
-  tag?: ITag[]
+  allowException: boolean
+  allowThirdLevelQualification: boolean
   modeOfDelivery: ModeOfDelivery[]
   extraApplicationFields?: IProgramExtraApplicationField[]
   specializations?: IProgramSpecialization[]

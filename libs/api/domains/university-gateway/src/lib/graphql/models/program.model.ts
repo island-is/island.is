@@ -81,15 +81,6 @@ export class UniversityGatewayProgram {
   iscedCode!: string
 
   @Field(() => [String])
-  languages!: string[]
-
-  @Field(() => [String])
-  searchKeywords!: string[]
-
-  @Field(() => [UniversityGatewayProgramTag])
-  tag!: UniversityGatewayProgramTag[]
-
-  @Field(() => [String])
   modeOfDelivery!: string[]
 }
 
@@ -119,11 +110,17 @@ export class UniversityGatewayProgramDetails extends UniversityGatewayProgram {
   @Field({ nullable: true })
   costInformationEn?: string
 
+  @Field()
+  allowException!: boolean
+
+  @Field()
+  allowThirdLevelQualification!: boolean
+
   @Field(() => [UniversityGatewayProgramCourse])
   courses!: UniversityGatewayProgramCourse[]
 
-  // @Field(() => [UniversityGatewayProgramExtraApplicationField])
-  // extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
+  @Field(() => [UniversityGatewayProgramExtraApplicationField])
+  extraApplicationFields!: UniversityGatewayProgramExtraApplicationField[]
 }
 
 @ObjectType('UniversityGatewayProgramCourse')
@@ -168,44 +165,32 @@ class UniversityGatewayProgramCourse {
   requirement!: string
 }
 
-@ObjectType('UniversityGatewayProgramTag')
-class UniversityGatewayProgramTag {
+@ObjectType('UniversityGatewayProgramExtraApplicationField')
+class UniversityGatewayProgramExtraApplicationField {
   @Field()
-  id!: string
-
-  @Field()
-  code!: string
+  externalId!: string
 
   @Field()
   nameIs!: string
 
   @Field()
   nameEn!: string
+
+  @Field({ nullable: true })
+  descriptionIs?: string
+
+  @Field({ nullable: true })
+  descriptionEn?: string
+
+  @Field()
+  required!: boolean
+
+  @Field()
+  fieldType!: string
+
+  @Field({ nullable: true })
+  uploadAcceptedFileType?: string
+
+  @Field({ nullable: true })
+  options?: string
 }
-
-// @ObjectType('UniversityGatewayProgramExtraApplicationField')
-// class UniversityGatewayProgramExtraApplicationField {
-//   @Field()
-//   externalId!: string
-
-//   @Field()
-//   nameIs!: string
-
-//   @Field()
-//   nameEn!: string
-
-//   @Field({ nullable: true })
-//   descriptionIs?: string
-
-//   @Field({ nullable: true })
-//   descriptionEn?: string
-
-//   @Field()
-//   required!: boolean
-
-//   @Field()
-//   fieldType!: string
-
-//   @Field({ nullable: true })
-//   uploadAcceptedFileType?: string
-// }

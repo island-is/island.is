@@ -13,6 +13,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { University } from '../../university/model/university'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'course',
@@ -28,7 +29,7 @@ export class Course extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiProperty({
     description: 'External ID for the course (from University)',
@@ -126,9 +127,9 @@ export class Course extends Model {
 
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

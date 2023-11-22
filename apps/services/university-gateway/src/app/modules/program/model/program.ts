@@ -15,11 +15,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ProgramExtraApplicationField } from './programExtraApplicationField'
-import { ProgramTag } from './programTag'
 import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 export class ProgramBase extends Model {
   @ApiProperty({
@@ -32,7 +32,7 @@ export class ProgramBase extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiProperty({
     description: 'External ID for the program (from University)',
@@ -279,35 +279,6 @@ export class ProgramBase extends Model {
   iscedCode!: string
 
   @ApiProperty({
-    description:
-      'Languages used in the program. Should be array of two letter language code',
-    example: ['IS', 'EN'],
-  })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-  })
-  languages!: string[]
-
-  @ApiProperty({
-    description: 'Search keywords for the program',
-    example: ['stærðfræði'],
-  })
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: false,
-  })
-  searchKeywords!: string[]
-
-  @ApiProperty({
-    description:
-      'List of (interest) tags connected to this program (to be able to categorize programs after interest)',
-    type: [ProgramTag],
-  })
-  @HasMany(() => ProgramTag)
-  tag?: ProgramTag[]
-
-  @ApiProperty({
     description: 'Modes of deliveries available for the program',
     type: [ProgramModeOfDelivery],
   })
@@ -334,11 +305,11 @@ export class ProgramBase extends Model {
 
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }
 
 @Table({
@@ -426,6 +397,28 @@ export class Program extends ProgramBase {
     allowNull: true,
   })
   costInformationEn?: string
+
+  @ApiProperty({
+    description:
+      'Whether the program allows applicants to apply using exception',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowException!: boolean
+
+  @ApiProperty({
+    description:
+      'Whether the program allows applicants to apply using third level qualification',
+    example: true,
+  })
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  allowThirdLevelQualification!: boolean
 
   @ApiProperty({
     description: 'List of courses that belong to this program',

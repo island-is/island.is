@@ -61,14 +61,6 @@ export class UniversityGatewayApi {
         durationInYears: item.durationInYears,
         costPerYear: item.costPerYear,
         iscedCode: item.iscedCode,
-        languages: item.languages,
-        searchKeywords: item.searchKeywords,
-        tag: item.tag.map((t) => ({
-          id: t.tagId,
-          code: t.details.code,
-          nameIs: t.details.nameIs,
-          nameEn: t.details.nameEn,
-        })),
         modeOfDelivery: item.modeOfDelivery.map((m) =>
           m.modeOfDelivery.toString(),
         ),
@@ -107,14 +99,6 @@ export class UniversityGatewayApi {
       durationInYears: item.durationInYears,
       costPerYear: item.costPerYear,
       iscedCode: item.iscedCode,
-      languages: item.languages,
-      searchKeywords: item.searchKeywords,
-      tag: item.tag.map((t) => ({
-        id: t.tagId,
-        code: t.details.code,
-        nameIs: t.details.nameIs,
-        nameEn: t.details.nameEn,
-      })),
       modeOfDelivery: item.modeOfDelivery.map((m) =>
         m.modeOfDelivery.toString(),
       ),
@@ -126,6 +110,8 @@ export class UniversityGatewayApi {
       studyRequirementsEn: item.studyRequirementsEn,
       costInformationIs: item.costInformationIs,
       costInformationEn: item.costInformationEn,
+      allowException: item.allowException,
+      allowThirdLevelQualification: item.allowThirdLevelQualification,
       courses: item.courses.map((c) => ({
         id: c.details.id,
         externalId: c.details.externalId,
@@ -143,6 +129,7 @@ export class UniversityGatewayApi {
           : undefined,
         semesterSeason: c.semesterSeason.toString(),
       })),
+      extraApplicationFields: item.extraApplicationFields,
     }
   }
 

@@ -60,8 +60,6 @@ export class ReykjavikUniversityApplicationClient {
           durationInYears: program.durationInYears || 0,
           costPerYear: program.costPerYear,
           iscedCode: program.iscedCode || '',
-          languages: [], //TODO will not be used yet
-          searchKeywords: [], //TODO missing in api
           externalUrlIs: program.externalUrlIs,
           externalUrlEn: program.externalUrlEn,
           admissionRequirementsIs: program.admissionRequirementsIs,
@@ -70,7 +68,8 @@ export class ReykjavikUniversityApplicationClient {
           studyRequirementsEn: program.studyRequirementsEn,
           costInformationIs: program.costInformationIs,
           costInformationEn: program.costInformationEn,
-          tag: [], //TODO will not be used yet
+          allowException: false, //TODO missing in api
+          allowThirdLevelQualification: false, //TODO missing in api
           modeOfDelivery:
             program.modeOfDelivery?.map((m) => {
               // TODO why is this value empty
@@ -90,6 +89,7 @@ export class ReykjavikUniversityApplicationClient {
               required: field.required || false,
               fieldType: field.fieldType as unknown as FieldType,
               uploadAcceptedFileType: field.uploadAcceptedFileType,
+              options: undefined, //TODO missing in api
             }),
           ),
         })

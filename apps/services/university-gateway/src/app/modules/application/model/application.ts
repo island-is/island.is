@@ -12,6 +12,7 @@ import { Program } from '../../program/model/program'
 import { ProgramModeOfDelivery } from '../../program/model/programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ApplicationStatus } from '@island.is/university-gateway'
+import { CreationOptional } from 'sequelize'
 
 @Table({
   tableName: 'application',
@@ -28,7 +29,7 @@ export class Application extends Model {
     defaultValue: DataType.UUIDV4,
     allowNull: false,
   })
-  id!: string
+  id!: CreationOptional<string>
 
   @ApiProperty({
     description: 'External ID for the application (from University)',
@@ -97,9 +98,9 @@ export class Application extends Model {
 
   @ApiHideProperty()
   @CreatedAt
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @ApiHideProperty()
   @UpdatedAt
-  readonly modified!: Date
+  readonly modified!: CreationOptional<Date>
 }

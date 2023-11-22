@@ -9,4 +9,5 @@ export interface IProgramExtraApplicationField {
   required: boolean
   fieldType: FieldType
   uploadAcceptedFileType?: string
+  options?: string
 }
