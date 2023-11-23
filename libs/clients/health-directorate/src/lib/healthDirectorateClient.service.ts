@@ -1,14 +1,13 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
-  InnsigladSkjal,
   MinarSidur,
   StarfsleyfiAMinumSidumApi,
-  StarfsleyfiVottord,
   VottordApi,
 } from '../../gen/fetch'
 import { Injectable } from '@nestjs/common'
 import {
   HealthcareLicense,
+  HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
 } from './healthDirectorateClient.types'
 
@@ -76,46 +75,34 @@ export class HealthDirectorateClientService {
       }
     }
 
-    //TODOx only for testing
-    result.push({
-      professionId: 'ABC',
-      professionNameIs: 'Ljósmóðir',
-      professionNameEn: 'Ljósmóðir',
-      specialityList: [],
-      isTemporary: true,
-      validTo: new Date('2024-01-01'),
-      isRestricted: false,
-    })
-    result.push({
-      professionId: 'ABC',
-      professionNameIs: 'Sjúkraliði',
-      professionNameEn: 'Sjúkraliði',
-      specialityList: [],
-      isTemporary: false,
-      isRestricted: true,
-    })
-
     return result
   }
 
   async submitApplicationHealthcareLicenseCertificate(
     auth: User,
     request: HealthcareLicenseCertificateRequest,
-  ): Promise<InnsigladSkjal[]> {
-    const result: InnsigladSkjal[] = []
+  ): Promise<HealthcareLicenseCertificate[]> {
+    const result: HealthcareLicenseCertificate[] = []
 
     for (let i = 0; i < request.professionIdList.length; i++) {
       const item = await this.vottordApiWithAuth(auth).vottordUtbuaSkjalPost({
-        formDataModel: {
+        utbuaSkjalRequest: {
           name: request.fullName,
-          dateOfBirth: request.dateOfBirth.toISOString(),
+          dateOfBirth: request.dateOfBirth.toISOString().substring(0, 10),
           email: request.email,
           phoneNo: request.phone,
           idProfession: request.professionIdList[i],
         },
       })
 
-      result.push(item[0]) // TODOx why is this an array?
+      if (!item.base64String) {
+        throw new Error('Empty file')
+      }
+
+      result.push({
+        professionId: request.professionIdList[i],
+        base64: item.base64String,
+      })
     }
 
     return result

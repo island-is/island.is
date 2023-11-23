@@ -18,3 +18,8 @@ export interface HealthcareLicenseCertificateRequest {
   phone: string
   professionIdList: string[]
 }
+
+export interface HealthcareLicenseCertificate {
+  professionId: string
+  base64: string
+}

@@ -160,13 +160,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+              "schema": { "$ref": "#/components/schemas/UtbuaSkjalRequest" }
             },
             "text/json": {
-              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+              "schema": { "$ref": "#/components/schemas/UtbuaSkjalRequest" }
             },
             "application/*+json": {
-              "schema": { "$ref": "#/components/schemas/FormDataModel" }
+              "schema": { "$ref": "#/components/schemas/UtbuaSkjalRequest" }
             }
           }
         },
@@ -175,22 +175,13 @@
             "description": "Skilar base64 streng",
             "content": {
               "text/plain": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
-                }
+                "schema": { "$ref": "#/components/schemas/UtbuaSkjalResponse" }
               },
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
-                }
+                "schema": { "$ref": "#/components/schemas/UtbuaSkjalResponse" }
               },
               "text/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/InnsigladSkjal" }
-                }
+                "schema": { "$ref": "#/components/schemas/UtbuaSkjalResponse" }
               }
             }
           },
@@ -707,29 +698,54 @@
         },
         "additionalProperties": false
       },
-      "FormDataModel": {
+      "UtbuaSkjalRequest": {
         "type": "object",
         "properties": {
-          "name": { "type": "string", "nullable": true },
-          "dateOfBirth": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true },
-          "phoneNo": { "type": "string", "nullable": true },
-          "idProfession": { "type": "string", "nullable": true }
+          "name": {
+            "type": "string",
+            "description": "nafn heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "Afmælisdagur heilbrigðisstarfsmanns. Þarf að vera á 'DD.MM.YYYY' sniði",
+            "nullable": true,
+            "example": "01.01.2000"
+          },
+          "email": {
+            "type": "string",
+            "description": "Netfang heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "jonjonsson@landlaeknir.is"
+          },
+          "phoneNo": {
+            "type": "string",
+            "description": "Símanúmer heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "0000000"
+          },
+          "idProfession": {
+            "type": "string",
+            "description": "Auðkenni Starfstétt heilbrigðisstarfsmanns",
+            "nullable": true,
+            "example": "HJ"
+          }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir Innsigluð vottorð"
       },
-      "InnsigladSkjal": {
+      "UtbuaSkjalResponse": {
         "type": "object",
         "properties": {
           "base64String": {
             "type": "string",
             "description": "Base64 strengur",
             "nullable": true,
-            "example": ""
+            "example": "\"%PDF-1.5\\..."
           }
         },
-        "additionalProperties": false,
-        "description": "Gagnaklasi fyrir Innsigluð vottorð"
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

@@ -6,12 +6,16 @@ import {
   ApplicationTypes,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
-import { HealthcareLicenseCertificateAnswers } from '@island.is/application/templates/healthcare-license-certificate'
+import {
+  HealthcareLicenseCertificateAnswers,
+  error as errorMsg,
+} from '@island.is/application/templates/healthcare-license-certificate'
 import {
   HealthDirectorateClientService,
   HealthcareLicense,
-  InnsigladSkjal,
+  HealthcareLicenseCertificate,
 } from '@island.is/clients/health-directorate'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class HealthcareLicenseCertificateService extends BaseTemplateApiService {
@@ -25,14 +29,27 @@ export class HealthcareLicenseCertificateService extends BaseTemplateApiService 
   async getMyHealthcareLicenses({
     auth,
   }: TemplateApiModuleActionProps): Promise<HealthcareLicense[]> {
-    //TODOx kasta villu ef tómt
-    return this.healthDirectorateClientService.getMyHealthcareLicenses(auth)
+    const result =
+      await this.healthDirectorateClientService.getMyHealthcareLicenses(auth)
+
+    // Validate that user has at least 1 vehicle
+    if (!result || !result.length) {
+      throw new TemplateApiError(
+        {
+          title: errorMsg.emptyHealthLicenseList,
+          summary: errorMsg.emptyHealthLicenseList,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   async submitApplication({
     application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<InnsigladSkjal[]> {
+  }: TemplateApiModuleActionProps): Promise<HealthcareLicenseCertificate[]> {
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
