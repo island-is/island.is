@@ -33,6 +33,7 @@ export class RecyclingFundClientService {
     @Inject(IdsClientConfig.KEY)
     private readonly idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {
+    // ToDo: this should probably be moved to a Provider
     this.fetch = createEnhancedFetch({
       name: 'clients-recycling-fund',
       autoAuth: {
@@ -46,6 +47,7 @@ export class RecyclingFundClientService {
   }
 
   async createRecyclingRequest(user: User) {
+    // This could be abstratcted into a more generic fetch method with types
     const response = await this.fetch(this.config.gqlBasePath, {
       ...baseGqlRequestOptions,
       auth: user,
