@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -21,6 +21,7 @@ export class Application extends Model {
   @ApiProperty({
     description: 'Application ID',
     example: '00000000-0000-0000-0000-000000000000',
+    type: String,
   })
   @Column({
     type: DataType.UUID,
@@ -85,15 +86,11 @@ export class Application extends Model {
   })
   status!: ApplicationStatus
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiHideProperty()
   @CreatedAt
   readonly created!: CreationOptional<Date>
 
-  @ApiProperty({
-    type: String,
-  })
+  @ApiHideProperty()
   @UpdatedAt
   readonly modified!: CreationOptional<Date>
 }
