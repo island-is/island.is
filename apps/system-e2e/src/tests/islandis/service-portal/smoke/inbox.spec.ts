@@ -1,4 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { sleep } from '../../../../support/utils'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
@@ -7,7 +8,7 @@ import { messages } from '@island.is/service-portal/documents/messages'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Pósthólf overview', () => {
@@ -33,7 +34,9 @@ test.describe('MS - Pósthólf overview', () => {
 
     await test.step('Filter by searchbox', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
+      await page.goto(
+        icelandicAndNoPopupUrl(`${ProjectBasePath.ServicePortal}/postholf`),
+      )
 
       const inputField = page.getByRole('textbox', {
         name: label(m.searchLabel),
@@ -57,7 +60,9 @@ test.describe('MS - Pósthólf overview', () => {
 
     await test.step('Filter by filter-button', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
+      await page.goto(
+        icelandicAndNoPopupUrl(`${ProjectBasePath.ServicePortal}/postholf`),
+      )
 
       // Act
       await page

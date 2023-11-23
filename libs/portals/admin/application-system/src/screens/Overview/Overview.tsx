@@ -22,6 +22,7 @@ import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
 import { getFilteredApplications } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 const defaultFilters: ApplicationFilters = {
   nationalId: '',
@@ -153,7 +154,7 @@ const Overview = () => {
     <Box>
       <Breadcrumbs
         items={[
-          { title: 'Ísland.is', href: '/stjornbord' },
+          { title: 'Ísland.is', href: ProjectBasePath.AdminPortal },
           { title: formatMessage(m.applicationSystem) },
         ]}
       />

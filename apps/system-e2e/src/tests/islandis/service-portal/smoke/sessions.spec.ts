@@ -1,12 +1,13 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { format } from 'kennitala'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { env, icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 const sessionHistoryUrl = icelandicAndNoPopupUrl(
-  '/minarsidur/adgangsstyring/notkun',
+  `${ProjectBasePath.ServicePortal}/adgangsstyring/notkun`,
 )
 
 test.use({ baseURL: urls.islandisBaseUrl })

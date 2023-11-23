@@ -1,7 +1,9 @@
+import { ProjectBasePath } from '@island.is/shared/constants'
+
 export enum ServicePortalPath {
   // Mínar síður
   MinarSidurRoot = '/',
-  MinarSidurPath = '/minarsidur',
+  MinarSidurPath = ProjectBasePath.ServicePortal,
   MinarSidurSignInOidc = '/signin-oidc',
   MinarSidurSilentSignInOidc = '/silent/signin-oidc',
 

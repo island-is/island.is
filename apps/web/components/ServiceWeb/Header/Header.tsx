@@ -1,20 +1,22 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import NextLink from 'next/link'
 import cn from 'classnames'
+import NextLink from 'next/link'
+
 import {
   Box,
+  Button,
   Column,
   Columns,
+  getTextStyles,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
+  Link,
   Logo,
   ResponsiveSpace,
-  Link,
-  getTextStyles,
-  Button,
 } from '@island.is/island-ui/core'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import {
   LanguageToggler,
   ServiceWebContext,
@@ -22,12 +24,12 @@ import {
 } from '@island.is/web/components'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { TextModes } from '../types'
 
+import { TextModes } from '../types'
 import * as styles from './Header.css'
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
-const minarsidurLink = '/minarsidur/'
+const minarsidurLink = `${ProjectBasePath.ServicePortal}/`
 
 interface HeaderProps {
   title?: string

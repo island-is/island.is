@@ -1,11 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - University graduation', () => {
@@ -34,7 +35,9 @@ test.describe('MS - University graduation', () => {
       async () => {
         // Arrange
         await page.goto(
-          icelandicAndNoPopupUrl('/minarsidur/menntun/haskoli/brautskraning'),
+          icelandicAndNoPopupUrl(
+            `${ProjectBasePath.ServicePortal}/menntun/haskoli/brautskraning`,
+          ),
         )
         await page.waitForLoadState('networkidle')
 

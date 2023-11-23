@@ -1,11 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Work licenses', () => {
@@ -31,7 +32,9 @@ test.describe('Work licenses', () => {
 
     await test.step('Renders the page', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/starfsleyfi'))
+      await page.goto(
+        icelandicAndNoPopupUrl(`${ProjectBasePath.ServicePortal}/starfsleyfi`),
+      )
       await page.waitForLoadState('networkidle')
 
       // Act

@@ -8,6 +8,7 @@ import {
   NationalRegistryScope,
   UserProfileScope,
 } from '@island.is/auth/scopes'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { environment } from './environments'
 
@@ -54,7 +55,7 @@ if (userMocked) {
   })
 } else {
   configure({
-    baseUrl: `${window.location.origin}/minarsidur`,
+    baseUrl: `${window.location.origin}${ProjectBasePath.ServicePortal}`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     initiateLoginPath: '/login',

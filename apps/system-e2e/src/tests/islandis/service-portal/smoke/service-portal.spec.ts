@@ -1,5 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { messages as m } from '@island.is/service-portal/documents/messages'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -14,7 +15,7 @@ test.describe('Service portal', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-afrika.json',
-      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`,
       phoneNumber: '0103019',
       idsLoginOn: true,
     })
@@ -22,7 +23,9 @@ test.describe('Service portal', () => {
   test.afterAll(async () => {
     await context.close()
   })
-  const servicePortalHome = icelandicAndNoPopupUrl('/minarsidur')
+  const servicePortalHome = icelandicAndNoPopupUrl(
+    ProjectBasePath.ServicePortal,
+  )
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
     const { findByRole } = helpers(page)

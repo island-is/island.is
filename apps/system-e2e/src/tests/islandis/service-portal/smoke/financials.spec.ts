@@ -1,9 +1,11 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
+
 const timeout = 15000
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -14,7 +16,7 @@ test.describe('MS - Fjármál overview', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-bretland.json',
-      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`,
       phoneNumber: '0104929',
       idsLoginOn: true,
     })
@@ -30,7 +32,11 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Filter returns any data', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/stada'))
+      await page.goto(
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/fjarmal/stada`,
+        ),
+      )
       // Assert
       await expect(
         page
@@ -47,7 +53,11 @@ test.describe('MS - Fjármál overview', () => {
 
     await test.step('Data is returned', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/faerslur'))
+      await page.goto(
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/fjarmal/faerslur`,
+        ),
+      )
 
       const inputField = page.getByRole('textbox', {
         name: label(m.searchPlaceholder),
@@ -77,7 +87,7 @@ test.describe('MS - Fjármál overview', () => {
       // Arrange
       await page.goto(
         icelandicAndNoPopupUrl(
-          '/minarsidur/fjarmal/greidslusedlar-og-greidslukvittanir',
+          `${ProjectBasePath.ServicePortal}/fjarmal/greidslusedlar-og-greidslukvittanir`,
         ),
       )
 
@@ -113,7 +123,9 @@ test.describe('MS - Fjármál overview', () => {
     await test.step('Can filter table and find a claim', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/fjarmal/laungreidendakrofur'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/fjarmal/laungreidendakrofur`,
+        ),
       )
 
       // Act

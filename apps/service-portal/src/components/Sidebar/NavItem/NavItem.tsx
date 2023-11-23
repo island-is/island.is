@@ -4,6 +4,7 @@ import * as styles from './NavItem.css'
 import { Link } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import cn from 'classnames'
 import Chevron from './Chevron'
 import { iconTypeToSVG, iconIdMapper } from '../../../utils/Icons/idMapper'
@@ -37,7 +38,7 @@ const NavItemContent: FC<React.PropsWithChildren<Props>> = ({
   const isMobile = width < theme.breakpoints.md
   const showLock = enabled === false
   const pathName = window.location.pathname
-  const isDashboard = pathName === '/minarsidur'
+  const isDashboard = pathName === ProjectBasePath.ServicePortal
 
   const navItemActive: keyof typeof styles.navItemActive = active
     ? 'active'

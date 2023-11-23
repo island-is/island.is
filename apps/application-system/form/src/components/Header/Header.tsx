@@ -6,6 +6,7 @@ import {
   GridContainer,
   Header as UIHeader,
 } from '@island.is/island-ui/core'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { useHeaderInfo } from '@island.is/application/ui-shell'
 import { UserMenu } from '@island.is/shared/components'
 
@@ -34,7 +35,9 @@ export const Header: FC<React.PropsWithChildren<unknown>> = () => {
                 }
               : undefined
           }
-          logoRender={(logo) => <a href="/minarsidur/umsoknir">{logo}</a>}
+          logoRender={(logo) => (
+            <a href={`${ProjectBasePath.ServicePortal}/umsoknir`}>{logo}</a>
+          )}
           headerItems={<UserMenu showDropdownLanguage small />}
         />
       </GridContainer>

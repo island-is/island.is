@@ -2,6 +2,7 @@ import { configure, configureMock } from '@island.is/auth/react'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import environment from './environments/environment'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 const userMocked = process.env.API_MOCKS === 'true'
 
@@ -12,7 +13,7 @@ if (userMocked) {
   })
 } else {
   configure({
-    baseUrl: `${window.location.origin}/stjornbord`,
+    baseUrl: `${window.location.origin}${ProjectBasePath.AdminPortal}`,
     redirectPath: '/signin-oidc',
     redirectPathSilent: '/silent/signin-oidc',
     switchUserRedirectUrl: '/',

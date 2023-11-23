@@ -2,6 +2,7 @@ import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { UserDropdownItem } from './UserDropdownItem'
 import { userMessages } from '@island.is/shared/translations'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 interface UserProfileInfoProps {
   onClick: () => void
@@ -10,7 +11,7 @@ interface UserProfileInfoProps {
 export const UserProfileInfo = ({ onClick }: UserProfileInfoProps) => {
   const { formatMessage } = useLocale()
   const origin = window.location.origin
-  const baseUrl = `${origin}/minarsidur/stillingar`
+  const baseUrl = `${origin}${ProjectBasePath.ServicePortal}/stillingar`
 
   return (
     <UserDropdownItem

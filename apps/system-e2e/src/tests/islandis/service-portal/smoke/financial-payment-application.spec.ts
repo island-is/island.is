@@ -1,4 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -14,7 +15,7 @@ test.describe('MS - Fjármál overview', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-faereyjar.json',
-      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`,
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
@@ -31,7 +32,9 @@ test.describe('MS - Fjármál overview', () => {
     await test.step('Application button is visible', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/fjarmal/greidsluaetlanir`,
+        ),
       )
 
       // Act
@@ -46,7 +49,9 @@ test.describe('MS - Fjármál overview', () => {
     await test.step('Application opens', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/fjarmal/greidsluaetlanir`,
+        ),
       )
 
       // Act
@@ -75,7 +80,7 @@ test.describe('MS - Fjármál overview', () => {
 
     // await test.step('Table contains data', async () => {
     //   // Arrange
-    //   await page.goto(icelandicAndNoPopupUrl('/minarsidur/fjarmal/greidsluaetlanir'))
+    //   await page.goto(icelandicAndNoPopupUrl(`${ProjectBasePath.ServicePortal}/fjarmal/greidsluaetlanir`))
     //
     //   // Assert
     //   await expect(page.locator('role=table')).toContainText(

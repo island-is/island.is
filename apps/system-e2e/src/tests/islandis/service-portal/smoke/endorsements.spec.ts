@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { disableI18n } from '../../../../support/disablers'
@@ -11,7 +12,7 @@ test.describe('Endorsements', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-amerika.json',
-      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`,
       phoneNumber: '0102989',
       idsLoginOn: true,
     })
@@ -26,7 +27,11 @@ test.describe('Endorsements', () => {
     await disableI18n(page)
 
     // Navigate to the specified page
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/listar'))
+    await page.goto(
+      icelandicAndNoPopupUrl(
+        `${ProjectBasePath.ServicePortal}/min-gogn/listar`,
+      ),
+    )
 
     // Check for ui things
     await expect(

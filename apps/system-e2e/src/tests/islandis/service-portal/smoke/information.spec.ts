@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -14,7 +15,7 @@ test.describe('MS - Mínar upplýsingar', () => {
     context = await session({
       browser: browser,
       storageState: 'service-portal-othekkt.json',
-      homeUrl: `${urls.islandisBaseUrl}/minarsidur`,
+      homeUrl: `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`,
       phoneNumber: '0104359',
       idsLoginOn: true,
     })
@@ -27,7 +28,11 @@ test.describe('MS - Mínar upplýsingar', () => {
     // Arrange
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
+    await page.goto(
+      icelandicAndNoPopupUrl(
+        `${ProjectBasePath.ServicePortal}/min-gogn/yfirlit`,
+      ),
+    )
 
     // Act
     const element = page.getByText(label(m.natreg)).first()
@@ -43,7 +48,9 @@ test.describe('MS - Mínar upplýsingar', () => {
     const page = await context.newPage()
     await disableI18n(page)
     await page.goto(
-      icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit/minar-upplysingar'),
+      icelandicAndNoPopupUrl(
+        `${ProjectBasePath.ServicePortal}/min-gogn/yfirlit/minar-upplysingar`,
+      ),
     )
 
     // Act
@@ -62,7 +69,11 @@ test.describe('MS - Mínar upplýsingar', () => {
   test.skip('should display child information', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur/min-gogn/yfirlit'))
+    await page.goto(
+      icelandicAndNoPopupUrl(
+        `${ProjectBasePath.ServicePortal}/min-gogn/yfirlit`,
+      ),
+    )
     await page.waitForLoadState('networkidle')
 
     // Act

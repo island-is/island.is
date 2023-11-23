@@ -1,7 +1,8 @@
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 export const getMobileMenuFigure = (path?: string) => {
-  const basePath = '/minarsidur/assets/images/'
+  const basePath = `${ProjectBasePath.ServicePortal}/assets/images/`
   let imgName
 
   switch (path) {

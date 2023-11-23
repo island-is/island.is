@@ -1,3 +1,4 @@
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (services: {
@@ -17,7 +18,7 @@ export const serviceSetup = (services: {
       requests: { cpu: '5m', memory: '32Mi' },
     })
     .env({
-      BASEPATH: '/minarsidur',
+      BASEPATH: ProjectBasePath.ServicePortal,
       SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
@@ -58,7 +59,7 @@ export const serviceSetup = (services: {
             'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-        paths: ['/minarsidur'],
+        paths: [ProjectBasePath.ServicePortal],
       },
     })
     .grantNamespaces(

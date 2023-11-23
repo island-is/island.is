@@ -7,6 +7,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { m } from '../lib/messages'
 import { EstateTypes } from '../lib/constants'
 
@@ -41,7 +42,7 @@ export const done: Form = buildForm({
         buildMessageWithLinkButtonField({
           id: 'goToServicePortal',
           title: '',
-          url: '/minarsidur/umsoknir',
+          url: `${ProjectBasePath.ServicePortal}/umsoknir`,
           buttonTitle: coreMessages.openServicePortalButtonTitle,
           message: coreMessages.openServicePortalMessageText,
         }),

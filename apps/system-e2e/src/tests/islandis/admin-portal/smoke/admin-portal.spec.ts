@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
@@ -11,7 +12,7 @@ test.describe('Admin portal', () => {
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
-      homeUrl: `/stjornbord`,
+      homeUrl: ProjectBasePath.AdminPortal,
       phoneNumber: '0102399',
       idsLoginOn: true,
     })
@@ -22,7 +23,7 @@ test.describe('Admin portal', () => {
   test('should see welcome title', async () => {
     const page = await context.newPage()
     const { findByTestId } = helpers(page)
-    await page.goto('/stjornbord')
+    await page.goto(ProjectBasePath.AdminPortal)
     await expect(findByTestId('active-module-name')).toBeVisible()
   })
 })

@@ -1,9 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur/adgangsstyring/gagnaoflun`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}/adgangsstyring/gagnaoflun`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal access control concents', () => {

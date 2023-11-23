@@ -1,11 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-const homeUrl = `${
-  urls.islandisBaseUrl
-}/stjornbord/innskraningarkerfi/${encodeURIComponent('@island.is')}/forrit`
+const homeUrl = `${urls.islandisBaseUrl}${
+  ProjectBasePath.AdminPortal
+}/innskraningarkerfi/${encodeURIComponent('@island.is')}/forrit`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Admin portal tenant applications', () => {

@@ -1,4 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
@@ -8,9 +9,9 @@ import {
 } from '../../../../utils/pageHelpers'
 
 const applicationId = '@island.is/web'
-const homeUrl = `${
-  urls.islandisBaseUrl
-}/stjornbord/innskraningarkerfi/${encodeURIComponent(
+const homeUrl = `${urls.islandisBaseUrl}${
+  ProjectBasePath.AdminPortal
+}/innskraningarkerfi/${encodeURIComponent(
   '@island.is',
 )}/forrit/${encodeURIComponent(applicationId)}`
 

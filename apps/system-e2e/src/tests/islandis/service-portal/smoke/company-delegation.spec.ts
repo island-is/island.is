@@ -6,11 +6,12 @@ import { label } from '../../../../support/i18n'
 import { coreDelegationsMessages } from '@island.is/application/core/messages'
 import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/service-portal/core/messages'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { mCompany } from '@island.is/service-portal/information/messages'
 import { disableI18n } from '../../../../support/disablers'
 import { switchDelegation } from './auth.spec'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal', () => {
@@ -35,7 +36,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     const { findByRole } = helpers(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
+    await page.goto(icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal))
 
     // Act
     const companyName = await switchDelegation(page, 'Prókúra')
@@ -51,7 +52,7 @@ test.describe('Service portal', () => {
     // Arrange
     const page = await context.newPage()
     await disableI18n(page)
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
+    await page.goto(icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal))
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()

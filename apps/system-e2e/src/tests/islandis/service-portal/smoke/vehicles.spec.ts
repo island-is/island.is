@@ -6,10 +6,10 @@ import {
   vehicleMessage,
   messages,
 } from '@island.is/service-portal/assets/messages'
-import { m } from '@island.is/service-portal/core/messages'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { disableI18n } from '../../../../support/disablers'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Vehicles', () => {
@@ -37,7 +37,9 @@ test.describe('MS - Vehicles', () => {
     await test.step('should display data and filter overview', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/min-okutaeki'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/okutaeki/min-okutaeki`,
+        ),
       )
 
       // Act
@@ -69,7 +71,9 @@ test.describe('MS - Vehicles', () => {
     await test.step('should display detail', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/min-okutaeki'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/okutaeki/min-okutaeki`,
+        ),
       )
       await page.waitForLoadState('networkidle')
 
@@ -102,7 +106,9 @@ test.describe('MS - Vehicles', () => {
     await test.step('should allow lookup of cars', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/leit'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/okutaeki/leit`,
+        ),
       )
 
       // Act
@@ -136,7 +142,9 @@ test.describe('MS - Vehicles', () => {
     await test.step('should display and filter data', async () => {
       // Arrange
       await page.goto(
-        icelandicAndNoPopupUrl('/minarsidur/eignir/okutaeki/okutaekjaferill'),
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/okutaeki/okutaekjaferill`,
+        ),
       )
 
       // Act

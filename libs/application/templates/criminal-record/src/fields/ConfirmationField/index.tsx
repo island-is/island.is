@@ -14,9 +14,10 @@ import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { m } from '../../lib/messages'
-import * as styles from './ConfirmationField.css'
 import { Bus } from '../../assets'
+import * as styles from './ConfirmationField.css'
 
 type ConfirmationFieldProps = {
   field: {
@@ -59,7 +60,10 @@ export const ConfirmationField: FC<
             icon="arrowForward"
             iconType="outline"
             onClick={() => {
-              window.open(`${window.location.origin}/minarsidur`, '_blank')
+              window.open(
+                `${window.location.origin}${ProjectBasePath.ServicePortal}`,
+                '_blank',
+              )
             }}
           >
             {formatText(m.openMySites, application, formatMessage)}
@@ -182,7 +186,7 @@ export const ConfirmationField: FC<
         onClick={() => {
           window.open(
             formatText(
-              `${window.location.origin}/minarsidur/postholf`,
+              `${window.location.origin}${ProjectBasePath.ServicePortal}/postholf`,
               application,
               formatMessage,
             ),

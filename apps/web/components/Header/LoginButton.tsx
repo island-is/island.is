@@ -1,3 +1,5 @@
+import React, { MouseEvent } from 'react'
+
 import {
   Button,
   ButtonTypes,
@@ -5,11 +7,11 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { webLoginButtonSelect } from '@island.is/plausible'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { useI18n } from '@island.is/web/i18n'
-import React, { MouseEvent } from 'react'
 
-const minarsidurLink = '/minarsidur/'
-const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'
+const minarsidurLink = `${ProjectBasePath.ServicePortal}/`
+const minarsidurDelegationsLink = `${minarsidurLink}login?prompt=select_account`
 
 export function LoginButton(props: {
   colorScheme: ButtonTypes['colorScheme']
@@ -23,7 +25,7 @@ export function LoginButton(props: {
     event.preventDefault()
     const href = event.currentTarget.href
 
-    // If the plausible script is not loaded (For example in case of adBlocker) the user will be navigated directly to /minarsidur.
+    // If the plausible script is not loaded (For example in case of adBlocker) the user will be navigated directly to the service portal.
     if (window?.plausible) {
       // In case the script is there, but the event is not firing (different adBlock settings) then the user is navigated without Plausible callback.
       const id = window.setTimeout(() => {

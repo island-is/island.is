@@ -1,9 +1,10 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { switchUser } from '../../../../support/login'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}/`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal, in access control', () => {
@@ -45,7 +46,9 @@ test.describe('Service portal, in access control', () => {
     // Arrange
     const granterPage = await contextGranter.newPage()
     await granterPage.goto(
-      icelandicAndNoPopupUrl('/minarsidur/adgangsstyring/umbod'),
+      icelandicAndNoPopupUrl(
+        `${ProjectBasePath.ServicePortal}/adgangsstyring/umbod`,
+      ),
     )
     await expect(
       granterPage.locator(
@@ -54,7 +57,9 @@ test.describe('Service portal, in access control', () => {
     ).not.toHaveCount(0, { timeout: 20000 })
 
     const receiverPage = await contextReceiver.newPage()
-    await receiverPage.goto(icelandicAndNoPopupUrl('/minarsidur/'))
+    await receiverPage.goto(
+      icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal),
+    )
 
     await test.step('Remove delegations', async () => {
       // Act

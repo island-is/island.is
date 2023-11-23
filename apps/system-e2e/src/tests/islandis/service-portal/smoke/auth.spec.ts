@@ -1,8 +1,9 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 export async function switchDelegation(
@@ -51,7 +52,7 @@ test.describe('Service portal', () => {
   test('can sign in as legal guardian', async () => {
     // Arrange
     const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
+    await page.goto(icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal))
 
     // Act
     const delegationName = await switchDelegation(page, 'Forsjá')
@@ -66,7 +67,7 @@ test.describe('Service portal', () => {
   test('can sign out', async () => {
     // Arrange
     const page = await context.newPage()
-    await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
+    await page.goto(icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal))
 
     // Act
     await page.locator('data-testid=user-menu >> visible=true').click()
@@ -90,7 +91,7 @@ test('Service portal can use english sign-in', async ({ browser }) => {
     idsLoginOn: false,
   })
   const page = await context.newPage()
-  await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
+  await page.goto(icelandicAndNoPopupUrl(ProjectBasePath.ServicePortal))
 
   // Act
   await page.getByRole('link', { name: 'English' }).click()

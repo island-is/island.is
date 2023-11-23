@@ -1,4 +1,5 @@
 import { test, BrowserContext, expect } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { label } from '../../../../support/i18n'
@@ -6,7 +7,7 @@ import { messages } from '@island.is/service-portal/assets/messages'
 import { m } from '@island.is/service-portal/core/messages'
 import { disableI18n } from '../../../../support/disablers'
 
-const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
+const homeUrl = `${urls.islandisBaseUrl}${ProjectBasePath.ServicePortal}`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('MS - Work Machines', () => {
@@ -32,7 +33,11 @@ test.describe('MS - Work Machines', () => {
 
     await test.step('should display data and filter overview', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/eignir/vinnuvelar'))
+      await page.goto(
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/vinnuvelar`,
+        ),
+      )
 
       // Act
       const filterButton = page
@@ -59,7 +64,11 @@ test.describe('MS - Work Machines', () => {
 
     await test.step('should display detail', async () => {
       // Arrange
-      await page.goto(icelandicAndNoPopupUrl('/minarsidur/eignir/vinnuvelar'))
+      await page.goto(
+        icelandicAndNoPopupUrl(
+          `${ProjectBasePath.ServicePortal}/eignir/vinnuvelar`,
+        ),
+      )
 
       // Act
       const actionCardButton = page.getByTestId('action-card-cta').first()

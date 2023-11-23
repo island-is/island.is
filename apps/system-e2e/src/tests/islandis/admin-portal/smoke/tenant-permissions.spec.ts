@@ -1,13 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
+import { ProjectBasePath } from '@island.is/shared/constants'
 
 import { urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 
-const homeUrl = `${
-  urls.islandisBaseUrl
-}/stjornbord/innskraningarkerfi/${encodeURIComponent(
-  '@admin.island.is',
-)}/rettindi`
+const homeUrl = `${urls.islandisBaseUrl}${
+  ProjectBasePath.AdminPortal
+}/innskraningarkerfi/${encodeURIComponent('@admin.island.is')}/rettindi`
 test.use({ baseURL: urls.islandisBaseUrl })
 
 const permissionId = '@admin.island.is/delegations'
