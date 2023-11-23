@@ -1,8 +1,8 @@
-#mutation createRequest($input: CreateRecyclingRequestInput!) {
-# createRecyclingRequestAppSys(input: $input) {
-#    status
-#  }
-#}
+mutation createRequest($input: CreateRecyclingRequestInput!) {
+  createRecyclingRequestAppSys(input: $input) {
+    status
+  }
+}
 
 mutation skilavottordVehicleOwnerMutation($name: String!) {
   createSkilavottordVehicleOwnerAppSys(name: $name)
@@ -38,9 +38,3 @@ query skilavottordUserRecyclingRequestQuery($permno: String!) {
     createdAt
   }
 }
-
-#query getVehiclesQuery {
-# skilavottordAppSysVehicles {
-#   permno
-# }
-#}

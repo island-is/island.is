@@ -9,6 +9,12 @@ import {
 } from '@island.is/clients/middlewares'
 import { ConfigType, IdsClientConfig } from '@island.is/nest/config'
 
+import {
+  CreateRequestDocument,
+  CreateRequestMutation,
+  CreateRequestMutationVariables,
+} from './createRecyclingRequest.generated'
+
 import { RecyclingFundClientConfig } from './recyclingFundClient.config'
 import { RecyclingRequestTypes } from '../../gen/schema'
 
@@ -44,7 +50,7 @@ export class RecyclingFundClientService {
 
   async createRecyclingRequest(user: User) {
     // This could be abstratcted into a more generic fetch method with types
-    /* const response = await this.fetch(this.config.gqlBasePath, {
+    const response = await this.fetch(this.config.gqlBasePath, {
       ...baseGqlRequestOptions,
       auth: user,
       body: JSON.stringify({
@@ -69,7 +75,7 @@ export class RecyclingFundClientService {
       data,
     })
 
-    return data.createRecyclingRequestAppSys.status*/
+    return data.createRecyclingRequestAppSys.status
   }
 
   async createOwner(user: User) {

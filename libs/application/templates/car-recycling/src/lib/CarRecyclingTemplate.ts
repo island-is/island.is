@@ -111,8 +111,8 @@ const CarRecyclingTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
-            action: ApiActions.CREATE_OWNER,
-            shouldPersistToExternalData: false,
+            action: ApiActions.getVehicles,
+            externalDataId: 'vehicles',
             throwOnError: false,
           }),
           progress: 0.5,

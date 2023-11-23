@@ -7,13 +7,13 @@ import { ScopesGuard, Scopes, IdsUserGuard } from '@island.is/auth-nest-tools'
 import { JWTTokenGuard } from '../auth/jwtToken.guard'
 
 //@Authorize()
-@UseGuards(JWTTokenGuard)
-@Scopes('@urvinnslusjodur.is/skilavottord')
+//@UseGuards(JWTTokenGuard)
+//@Scopes('@urvinnslusjodur.is/skilavottord')
 @Resolver(() => AppSysVehicleInformation)
 export class AppSysRecyclingReqResolver {
   constructor(private appSysRecyclingReqService: AppSysRecyclingReqService) {}
 
-  @Scopes('@island.is/applications/urvinnslusjodur')
+  //////@Scopes('@island.is/applications/urvinnslusjodur')
   @Query(() => [AppSysVehicleInformation])
   async skilavottordAppSysVehicles(): Promise<Array<AppSysVehicleInformation>> {
     console.log('------------ NEW ENDPOINT HITTTT  1242 ------------------')

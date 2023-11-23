@@ -1,6 +1,7 @@
 export enum ApiActions {
   CREATE_OWNER = 'createOwner',
   SEND_APPLICATION = 'sendApplication',
+  getVehicles = 'getVehicles',
 }
 
 export enum Actions {

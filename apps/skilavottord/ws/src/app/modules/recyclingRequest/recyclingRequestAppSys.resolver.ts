@@ -1,4 +1,9 @@
-import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  NotFoundException,
+  UseGuards,
+  forwardRef,
+} from '@nestjs/common'
 import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
 
 import { Authorize, Role, CurrentUser, User } from '../auth'
@@ -7,11 +12,14 @@ import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
   RecyclingRequestResponse,
+  RequestStatus,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 import { SamgongustofaService } from '../samgongustofa'
+import { CreateRecyclingRequestInput } from './dto/createRecyclingRequest.input'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
-// @Authorize()
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestAppSysResolver {
   constructor(
@@ -19,6 +27,18 @@ export class RecyclingRequestAppSysResolver {
     @Inject(forwardRef(() => SamgongustofaService))
     private samgongustofaService: SamgongustofaService,
   ) {}
+
+  @Mutation(() => RequestStatus)
+  async createRecyclingRequestAppSys(
+    @CurrentUser() user: User,
+    @Args('input') input: CreateRecyclingRequestInput,
+  ): Promise<RequestStatus> {
+    console.log('received request to create recycling request', { input, user })
+
+    return {
+      status: true,
+    }
+  }
 
   @Authorize({ roles: [Role.developer, Role.recyclingFund] })
   @Query(() => [RecyclingRequestModel])
