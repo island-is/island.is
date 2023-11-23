@@ -10,7 +10,8 @@ import {
 import { GetStatisticsQuery } from './types'
 import { StatisticsClientConfig } from './statistics.config'
 import { FetchWithCache } from './fetchConfig'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class StatisticsClientService {
