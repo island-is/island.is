@@ -1,254 +1,8 @@
 {
   "openapi": "3.0.1",
-  "info": { "title": "Miðlun API - V0.2", "version": "v0.2" },
+  "info": { "title": "Miðlun API - V1.0", "version": "v1.0" },
   "paths": {
-    "/Midlun/v0.2/Einstaklingar/margir": {
-      "post": {
-        "tags": ["Einstaklingar"],
-        "parameters": [
-          {
-            "name": "LastUpdate",
-            "in": "query",
-            "schema": { "type": "string", "format": "date-time" }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "type": "array", "items": { "type": "string" } },
-              "example": ["1234567890", "0987654321", "5432109876"]
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EinstaklingurDTOAlltList"
-                },
-                "examples": {
-                  "Grunnpakkinn - 2 einstaklingar": {
-                    "value": {
-                      "einstaklingar": [
-                        {
-                          "nafn": "Jón Jónsson",
-                          "kennitala": "1234567890",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": false,
-                          "afdrif": null,
-                          "heimilisfang": {
-                            "husHeiti": "Aðalgata 1",
-                            "ibud": "0101",
-                            "postnumer": "101",
-                            "poststod": "Reykjavík",
-                            "sveitarfelag": "Reykjavík",
-                            "tegundHeimilisfangs": "Lögheimili"
-                          }
-                        },
-                        {
-                          "nafn": "Jóna Jónsdóttir",
-                          "kennitala": "1122335678",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": null,
-                          "afdrif": "LÉST",
-                          "heimilisfang": null
-                        }
-                      ],
-                      "kerfiskennitolur": [],
-                      "latnir": [],
-                      "ogildir": [],
-                      "count": 2,
-                      "notFoundOrHidden": 0
-                    }
-                  },
-                  "Allir pakkar - 2 einstaklingar": {
-                    "value": {
-                      "einstaklingar": [
-                        {
-                          "nafn": "Jón Jónsson",
-                          "kennitala": "1234567890",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": false,
-                          "afdrif": null,
-                          "heimilisfang": {
-                            "husHeiti": "Aðalgata 1",
-                            "ibud": "0101",
-                            "postnumer": "101",
-                            "poststod": "Reykjavík",
-                            "sveitarfelag": "Reykjavík",
-                            "tegundHeimilisfangs": "Lögheimili"
-                          },
-                          "logheimilistengsl": {
-                            "logheimilistengsl": "1234567890",
-                            "logheimilismedlimir": [
-                              {
-                                "kennitala": "0011221400",
-                                "nafn": "Stúlka Jónsdóttir"
-                              },
-                              {
-                                "kennitala": "0011221500",
-                                "nafn": "Drengur Jónsson"
-                              },
-                              {
-                                "kennitala": "1234567890",
-                                "nafn": "Jón Jónsson"
-                              }
-                            ]
-                          },
-                          "itarupplysingar": {
-                            "logheimiliskodi": "000000100010",
-                            "logheimiliskodi112": "000000100010",
-                            "logheimiliskodiSIsl": null,
-                            "adsetur": {
-                              "husHeiti": "Aðalstræti 1",
-                              "ibud": null,
-                              "postnumer": "800",
-                              "poststod": "Selfoss",
-                              "sveitarfelag": "Sveitarfélagið Árborg",
-                              "tegundHeimilisfangs": "Aðsetur"
-                            }
-                          },
-                          "hjuskaparstada": {
-                            "hjuskaparstadaKodi": "3",
-                            "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                            "sambudTexti": null,
-                            "makiKennitala": "0987654321",
-                            "makiNafn": "Anna Önnudóttir"
-                          },
-                          "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
-                          "rikisfang": {
-                            "rikisfangKodi": "IS",
-                            "rikisfangLand": "Ísland"
-                          },
-                          "forsja": {
-                            "born": [
-                              {
-                                "barnKennitala": "0011221400",
-                                "barnNafn": "Stúlka Jónsdóttir",
-                                "forsjaAdiliKennitala": "1234567890",
-                                "forsjaAdiliNafn": "Jón Jónsson",
-                                "forsjaKodi": "18",
-                                "forsjaTexti": "Sameiginleg forsjá",
-                                "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                              },
-                              {
-                                "barnKennitala": "0011221500",
-                                "barnNafn": "Drengur Jónsson",
-                                "forsjaAdiliKennitala": "1234567890",
-                                "forsjaAdiliNafn": "Jón Jónsson",
-                                "forsjaKodi": "18",
-                                "forsjaTexti": "Sameiginleg forsjá",
-                                "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                              }
-                            ],
-                            "forsjaradilar": []
-                          },
-                          "faedingarstadur": {
-                            "faedingarDagur": "1956-01-01T00:00:00",
-                            "faedingarStadurKodi": "0000",
-                            "faedingarStadurHeiti": "Reykjavík"
-                          },
-                          "logforeldrar": {
-                            "logForeldrar": [
-                              {
-                                "barnKennitala": "1234567890",
-                                "barnNafn": "Jón Jónsson",
-                                "logForeldriKennitala": "0101226789",
-                                "logForeldriNafn": "Jón Sigurðsson",
-                                "logForeldriFaedingardagur": "1922-01-01T00:00:00",
-                                "logForeldriAfdrif": "LÉST",
-                                "barnAfdrif": null
-                              }
-                            ],
-                            "born": [
-                              {
-                                "barnKennitala": "0011221400",
-                                "barnNafn": "Stúlka Jónsdóttir",
-                                "logForeldriKennitala": "1234567890",
-                                "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                                "logForeldriAfdrif": null,
-                                "barnAfdrif": null
-                              },
-                              {
-                                "barnKennitala": "0011221500",
-                                "barnNafn": "Drengur Jónsson",
-                                "logForeldriKennitala": "1234567890",
-                                "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                                "logForeldriAfdrif": null,
-                                "barnAfdrif": null
-                              }
-                            ]
-                          },
-                          "fulltNafn": {
-                            "eiginNafn": "Jón Þór",
-                            "milliNafn": null,
-                            "kenniNafn": "Jónsson",
-                            "fulltNafn": "Jón Þór Jónsson",
-                            "nafnStadfest": "true"
-                          },
-                          "trufelag": {
-                            "trufelagKodi": "1",
-                            "trufelagHeiti": "Þjóðkirkjan"
-                          }
-                        },
-                        {
-                          "nafn": "Jóna Jónsdóttir",
-                          "kennitala": "1122335678",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": null,
-                          "afdrif": "LÉST",
-                          "heimilisfang": null,
-                          "latnir": {
-                            "andlatsDagur": "1992-01-01T00:00:00",
-                            "andlatsStadur": {
-                              "husHeiti": "Aðalgata 2",
-                              "ibud": "0101",
-                              "postnumer": "101",
-                              "poststod": "Reykjavík",
-                              "sveitarfelag": "Reykjavík",
-                              "tegundHeimilisfangs": "Andlátsstaður"
-                            }
-                          },
-                          "latnirItar": {
-                            "andlatKynKodi": "2",
-                            "andlatKynTexti": "Kona",
-                            "andlatHjuKodi": "6",
-                            "andlatHjuTexti": "Skilin(n) að lögum",
-                            "andlatMakiKennitala": null,
-                            "andlatMakiNafn": null,
-                            "andlatLoghTengsl": "1122335678",
-                            "andlatFaedingarStadurKodi": "0000",
-                            "andlatFaedingarStadurHeiti": "Reykjavík"
-                          }
-                        }
-                      ],
-                      "kerfiskennitolur": [],
-                      "latnir": [],
-                      "ogildir": [],
-                      "count": 2,
-                      "notFoundOrHidden": 0
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}": {
+    "/Midlun/v1/Einstaklingar/{nationalId}": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -272,7 +26,7 @@
                     "value": {
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -289,7 +43,7 @@
                     "value": {
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -330,7 +84,7 @@
                       "hjuskaparstada": {
                         "hjuskaparstadaKodi": "3",
                         "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                        "sambudTexti": null,
+                        "sambudTexti": false,
                         "makiKennitala": "0987654321",
                         "makiNafn": "Anna Önnudóttir"
                       },
@@ -374,9 +128,7 @@
                             "barnNafn": "Jón Jónsson",
                             "logForeldriKennitala": "0101226789",
                             "logForeldriNafn": "Jón Sigurðsson",
-                            "logForeldriFaedingardagur": "1922-01-01T00:00:00",
-                            "logForeldriAfdrif": "LÉST",
-                            "barnAfdrif": null
+                            "logForeldriFaedingardagur": "1922-01-01T00:00:00"
                           }
                         ],
                         "born": [
@@ -385,18 +137,14 @@
                             "barnNafn": "Stúlka Jónsdóttir",
                             "logForeldriKennitala": "1234567890",
                             "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                            "logForeldriAfdrif": null,
-                            "barnAfdrif": null
+                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
                           },
                           {
                             "barnKennitala": "0011221500",
                             "barnNafn": "Drengur Jónsson",
                             "logForeldriKennitala": "1234567890",
                             "logForeldriNafn": "Jón Jónsson",
-                            "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                            "logForeldriAfdrif": null,
-                            "barnAfdrif": null
+                            "logForeldriFaedingardagur": "1956-01-01T00:00:00"
                           }
                         ]
                       },
@@ -413,11 +161,53 @@
                       }
                     }
                   },
+                  "Kerfiskennitölur - Grunnpakki": {
+                    "value": {
+                      "nafn": "Jens Larson",
+                      "kennitala": "1122335000",
+                      "tegundKennitolu": "Kerfiskennitala",
+                      "bannmerking": false,
+                      "afdrif": null,
+                      "heimilisfang": {
+                        "husHeiti": "Aðalgata 3",
+                        "ibud": "0101",
+                        "postnumer": "101",
+                        "poststod": "Reykjavík",
+                        "sveitarfelag": "Reykjavík",
+                        "tegundHeimilisfangs": "Dvalarstaður"
+                      }
+                    }
+                  },
+                  "Kerfiskennitölur - Allir pakkar": {
+                    "value": {
+                      "nafn": "Jens Larson",
+                      "kennitala": "1122335000",
+                      "tegundKennitolu": "Kerfiskennitala",
+                      "bannmerking": false,
+                      "afdrif": null,
+                      "heimilisfang": {
+                        "husHeiti": "Aðalgata 3",
+                        "ibud": "0101",
+                        "postnumer": "101",
+                        "poststod": "Reykjavík",
+                        "sveitarfelag": "Reykjavík",
+                        "tegundHeimilisfangs": "Dvalarstaður"
+                      },
+                      "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
+                      "rikisfang": {
+                        "rikisfangKodi": "DK",
+                        "rikisfangLand": "Danmörk"
+                      },
+                      "nyskraningDagsetning": {
+                        "nyskraningDagur": "2023-11-23T09:12:17.6185525+00:00"
+                      }
+                    }
+                  },
                   "Látnir - grunnpakki": {
                     "value": {
                       "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": null,
                       "afdrif": "LÉST",
                       "heimilisfang": null
@@ -427,7 +217,7 @@
                     "value": {
                       "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": null,
                       "afdrif": "LÉST",
                       "heimilisfang": null,
@@ -471,7 +261,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Grunn": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Grunn": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -495,7 +285,7 @@
                     "value": {
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -524,7 +314,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Heimilisfang": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Heimilisfang": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -570,7 +360,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Itar": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Itar": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -629,7 +419,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Logheimilistengsl": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Logheimilistengsl": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -681,7 +471,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Hju": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Hju": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -705,7 +495,7 @@
                     "value": {
                       "hjuskaparstadaKodi": "3",
                       "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                      "sambudTexti": null,
+                      "sambudTexti": false,
                       "makiKennitala": "0987654321",
                       "makiNafn": "Anna Önnudóttir"
                     }
@@ -726,7 +516,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Kyn": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Kyn": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -763,7 +553,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Rikisfang": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Rikisfang": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -805,7 +595,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Forsja": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Forsja": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -866,7 +656,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Faedingarstadur": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Faedingarstadur": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -909,7 +699,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Latnir": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Latnir": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -958,7 +748,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/LatnirItar": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/LatnirItar": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1016,7 +806,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Logforeldrar": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Logforeldrar": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1044,9 +834,7 @@
                           "barnNafn": "Jón Jónsson",
                           "logForeldriKennitala": "0101226789",
                           "logForeldriNafn": "Jón Sigurðsson",
-                          "logForeldriFaedingardagur": "1922-01-01T00:00:00",
-                          "logForeldriAfdrif": "LÉST",
-                          "barnAfdrif": null
+                          "logForeldriFaedingardagur": "1922-01-01T00:00:00"
                         }
                       ],
                       "born": [
@@ -1055,18 +843,14 @@
                           "barnNafn": "Stúlka Jónsdóttir",
                           "logForeldriKennitala": "1234567890",
                           "logForeldriNafn": "Jón Jónsson",
-                          "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                          "logForeldriAfdrif": null,
-                          "barnAfdrif": null
+                          "logForeldriFaedingardagur": "1956-01-01T00:00:00"
                         },
                         {
                           "barnKennitala": "0011221500",
                           "barnNafn": "Drengur Jónsson",
                           "logForeldriKennitala": "1234567890",
                           "logForeldriNafn": "Jón Jónsson",
-                          "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                          "logForeldriAfdrif": null,
-                          "barnAfdrif": null
+                          "logForeldriFaedingardagur": "1956-01-01T00:00:00"
                         }
                       ]
                     }
@@ -1087,7 +871,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Nafn": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Nafn": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1124,7 +908,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/NafnItar": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/NafnItar": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1170,7 +954,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Nyskraning": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Nyskraning": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1209,7 +993,7 @@
         }
       }
     },
-    "/Midlun/v0.2/Einstaklingar/{nationalId}/Tru": {
+    "/Midlun/v1/Einstaklingar/{nationalId}/Tru": {
       "get": {
         "tags": ["Einstaklingar"],
         "parameters": [
@@ -1247,7 +1031,7 @@
         }
       }
     },
-    "/Midlun/v0.2/GerviEinstaklingar/{nationalId}": {
+    "/Midlun/v1/GerviEinstaklingar/{nationalId}": {
       "get": {
         "tags": ["GerviEinstaklingar"],
         "parameters": [
@@ -1256,6 +1040,11 @@
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
+          },
+          {
+            "name": "LoghTengsl",
+            "in": "query",
+            "schema": { "type": "boolean", "default": true }
           },
           {
             "name": "GrunnAuka",
@@ -1331,7 +1120,7 @@
                     "value": {
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
-                      "tegundKennitolu": "Einstaklingur",
+                      "tegundKennitolu": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -1360,308 +1149,7 @@
         }
       }
     },
-    "/Midlun/v0.2/GerviEinstaklingar/margir": {
-      "post": {
-        "tags": ["GerviEinstaklingar"],
-        "parameters": [
-          {
-            "name": "GrunnAuka",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Hjuskapur",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Kyn",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Rikisfang",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Forsja",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "FaedStad",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Latinn1",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Latinn2",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Nafn",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Nyskraning",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "LogForeldrar",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          },
-          {
-            "name": "Tru",
-            "in": "query",
-            "schema": { "type": "boolean", "default": true }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { "type": "array", "items": { "type": "string" } },
-              "example": ["1234567890", "0987654321", "5432109876"]
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EinstaklingurDTOAlltList"
-                },
-                "examples": {
-                  "Grunnpakkinn - 2 einstaklingar": {
-                    "value": {
-                      "einstaklingar": [
-                        {
-                          "nafn": "Jón Jónsson",
-                          "kennitala": "1234567890",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": false,
-                          "afdrif": null,
-                          "heimilisfang": {
-                            "husHeiti": "Aðalgata 1",
-                            "ibud": "0101",
-                            "postnumer": "101",
-                            "poststod": "Reykjavík",
-                            "sveitarfelag": "Reykjavík",
-                            "tegundHeimilisfangs": "Lögheimili"
-                          }
-                        },
-                        {
-                          "nafn": "Jóna Jónsdóttir",
-                          "kennitala": "1122335678",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": null,
-                          "afdrif": "LÉST",
-                          "heimilisfang": null
-                        }
-                      ],
-                      "kerfiskennitolur": [],
-                      "latnir": [],
-                      "ogildir": [],
-                      "count": 2,
-                      "notFoundOrHidden": 0
-                    }
-                  },
-                  "Allir pakkar - 2 einstaklingar": {
-                    "value": {
-                      "einstaklingar": [
-                        {
-                          "nafn": "Jón Jónsson",
-                          "kennitala": "1234567890",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": false,
-                          "afdrif": null,
-                          "heimilisfang": {
-                            "husHeiti": "Aðalgata 1",
-                            "ibud": "0101",
-                            "postnumer": "101",
-                            "poststod": "Reykjavík",
-                            "sveitarfelag": "Reykjavík",
-                            "tegundHeimilisfangs": "Lögheimili"
-                          },
-                          "logheimilistengsl": {
-                            "logheimilistengsl": "1234567890",
-                            "logheimilismedlimir": [
-                              {
-                                "kennitala": "0011221400",
-                                "nafn": "Stúlka Jónsdóttir"
-                              },
-                              {
-                                "kennitala": "0011221500",
-                                "nafn": "Drengur Jónsson"
-                              },
-                              {
-                                "kennitala": "1234567890",
-                                "nafn": "Jón Jónsson"
-                              }
-                            ]
-                          },
-                          "itarupplysingar": {
-                            "logheimiliskodi": "000000100010",
-                            "logheimiliskodi112": "000000100010",
-                            "logheimiliskodiSIsl": null,
-                            "adsetur": {
-                              "husHeiti": "Aðalstræti 1",
-                              "ibud": null,
-                              "postnumer": "800",
-                              "poststod": "Selfoss",
-                              "sveitarfelag": "Sveitarfélagið Árborg",
-                              "tegundHeimilisfangs": "Aðsetur"
-                            }
-                          },
-                          "hjuskaparstada": {
-                            "hjuskaparstadaKodi": "3",
-                            "hjuskaparstadaTexti": "Gift(ur) eða staðfest samvist",
-                            "sambudTexti": null,
-                            "makiKennitala": "0987654321",
-                            "makiNafn": "Anna Önnudóttir"
-                          },
-                          "kyn": { "kynKodi": "1", "kynTexti": "Karl" },
-                          "rikisfang": {
-                            "rikisfangKodi": "IS",
-                            "rikisfangLand": "Ísland"
-                          },
-                          "forsja": {
-                            "born": [
-                              {
-                                "barnKennitala": "0011221400",
-                                "barnNafn": "Stúlka Jónsdóttir",
-                                "forsjaAdiliKennitala": "1234567890",
-                                "forsjaAdiliNafn": "Jón Jónsson",
-                                "forsjaKodi": "18",
-                                "forsjaTexti": "Sameiginleg forsjá",
-                                "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                              },
-                              {
-                                "barnKennitala": "0011221500",
-                                "barnNafn": "Drengur Jónsson",
-                                "forsjaAdiliKennitala": "1234567890",
-                                "forsjaAdiliNafn": "Jón Jónsson",
-                                "forsjaKodi": "18",
-                                "forsjaTexti": "Sameiginleg forsjá",
-                                "forsjaAdiliFaedingardagur": "1956-01-01T00:00:00"
-                              }
-                            ],
-                            "forsjaradilar": []
-                          },
-                          "faedingarstadur": {
-                            "faedingarDagur": "1956-01-01T00:00:00",
-                            "faedingarStadurKodi": "0000",
-                            "faedingarStadurHeiti": "Reykjavík"
-                          },
-                          "logforeldrar": {
-                            "logForeldrar": [
-                              {
-                                "barnKennitala": "1234567890",
-                                "barnNafn": "Jón Jónsson",
-                                "logForeldriKennitala": "0101226789",
-                                "logForeldriNafn": "Jón Sigurðsson",
-                                "logForeldriFaedingardagur": "1922-01-01T00:00:00",
-                                "logForeldriAfdrif": "LÉST",
-                                "barnAfdrif": null
-                              }
-                            ],
-                            "born": [
-                              {
-                                "barnKennitala": "0011221400",
-                                "barnNafn": "Stúlka Jónsdóttir",
-                                "logForeldriKennitala": "1234567890",
-                                "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                                "logForeldriAfdrif": null,
-                                "barnAfdrif": null
-                              },
-                              {
-                                "barnKennitala": "0011221500",
-                                "barnNafn": "Drengur Jónsson",
-                                "logForeldriKennitala": "1234567890",
-                                "logForeldriNafn": "Jón Jónsson",
-                                "logForeldriFaedingardagur": "1956-01-01T00:00:00",
-                                "logForeldriAfdrif": null,
-                                "barnAfdrif": null
-                              }
-                            ]
-                          },
-                          "fulltNafn": {
-                            "eiginNafn": "Jón Þór",
-                            "milliNafn": null,
-                            "kenniNafn": "Jónsson",
-                            "fulltNafn": "Jón Þór Jónsson",
-                            "nafnStadfest": "true"
-                          },
-                          "trufelag": {
-                            "trufelagKodi": "1",
-                            "trufelagHeiti": "Þjóðkirkjan"
-                          }
-                        },
-                        {
-                          "nafn": "Jóna Jónsdóttir",
-                          "kennitala": "1122335678",
-                          "tegundKennitolu": "Einstaklingur",
-                          "bannmerking": null,
-                          "afdrif": "LÉST",
-                          "heimilisfang": null,
-                          "latnir": {
-                            "andlatsDagur": "1992-01-01T00:00:00",
-                            "andlatsStadur": {
-                              "husHeiti": "Aðalgata 2",
-                              "ibud": "0101",
-                              "postnumer": "101",
-                              "poststod": "Reykjavík",
-                              "sveitarfelag": "Reykjavík",
-                              "tegundHeimilisfangs": "Andlátsstaður"
-                            }
-                          },
-                          "latnirItar": {
-                            "andlatKynKodi": "2",
-                            "andlatKynTexti": "Kona",
-                            "andlatHjuKodi": "6",
-                            "andlatHjuTexti": "Skilin(n) að lögum",
-                            "andlatMakiKennitala": null,
-                            "andlatMakiNafn": null,
-                            "andlatLoghTengsl": "1122335678",
-                            "andlatFaedingarStadurKodi": "0000",
-                            "andlatFaedingarStadurHeiti": "Reykjavík"
-                          }
-                        }
-                      ],
-                      "kerfiskennitolur": [],
-                      "latnir": [],
-                      "ogildir": [],
-                      "count": 2,
-                      "notFoundOrHidden": 0
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/Midlun/v0.2/GerviEinstaklingar/kennitolur": {
+    "/Midlun/v1/GerviEinstaklingar/kennitolur": {
       "get": {
         "tags": ["GerviEinstaklingar"],
         "parameters": [
@@ -1719,34 +1207,6 @@
             "$ref": "#/components/schemas/EinstaklingurDTONyskra"
           },
           "trufelag": { "$ref": "#/components/schemas/EinstaklingurDTOTru" }
-        },
-        "additionalProperties": false
-      },
-      "EinstaklingurDTOAlltList": {
-        "type": "object",
-        "properties": {
-          "einstaklingar": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTOAllt" },
-            "nullable": true
-          },
-          "kerfiskennitolur": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTOAllt" },
-            "nullable": true
-          },
-          "latnir": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTOAllt" },
-            "nullable": true
-          },
-          "ogildir": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/EinstaklingurDTOAllt" },
-            "nullable": true
-          },
-          "count": { "type": "integer", "format": "int32" },
-          "notFoundOrHidden": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -1814,7 +1274,7 @@
           "kennitala": { "type": "string", "nullable": true },
           "nafn": { "type": "string", "nullable": true },
           "tegundKennitolu": { "type": "string", "nullable": true },
-          "bannmerking": { "type": "string", "nullable": true },
+          "bannmerking": { "type": "boolean", "nullable": true },
           "afdrif": { "type": "string", "nullable": true },
           "heimilisfang": {
             "$ref": "#/components/schemas/EinstaklingurDTOHeimili"
@@ -1839,7 +1299,7 @@
         "properties": {
           "hjuskaparstadaKodi": { "type": "string", "nullable": true },
           "hjuskaparstadaTexti": { "type": "string", "nullable": true },
-          "sambudTexti": { "type": "boolean", "default": true },
+          "sambudTexti": { "type": "boolean", "nullable": true },
           "makiKennitala": { "type": "string", "nullable": true },
           "makiNafn": { "type": "string", "nullable": true }
         },
@@ -1939,9 +1399,7 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          },
-          "logForeldriAfdrif": { "type": "string", "nullable": true },
-          "barnAfdrif": { "type": "string", "nullable": true }
+          }
         },
         "additionalProperties": false
       },
