@@ -274,15 +274,16 @@ export const estateSchema = z.object({
   stocks: z
     .object({
       organization: z.string(),
-      nationalId: z.string(),
+      nationalId: z.string().optional(),
       faceValue: z.string(),
       rateOfExchange: z.string(),
       value: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
-      ({ organization, nationalId, faceValue, rateOfExchange }) => {
-        return organization !== '' || faceValue !== '' || rateOfExchange !== ''
+      // only validate nationalId if it is not empty
+      ({ nationalId }) => {
+        return nationalId !== ''
           ? nationalId && kennitala.isValid(nationalId)
           : true
       },
@@ -408,6 +409,16 @@ export const estateSchema = z.object({
       },
       {
         path: ['balance'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || balance !== '' || loanIdentity !== ''
+          ? isValidString(creditorName)
+          : true
+      },
+      {
+        path: ['creditorName'],
       },
     )
     .array()

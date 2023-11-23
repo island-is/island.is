@@ -457,6 +457,14 @@ export const m = defineMessages({
     id: 'service.portal:viewPetition',
     defaultMessage: 'Nánar um lista',
   },
+  signatureCollectionLists: {
+    id: 'service.portal:signatureCollectionLists',
+    defaultMessage: 'Meðmælalistar',
+  },
+  viewSignatureList: {
+    id: 'service.portal:viewSignatureList',
+    defaultMessage: 'Skoða nánar',
+  },
   endorsementsAdmin: {
     id: 'service.portal:endorsements-admin',
     defaultMessage: 'Meðmæli - Admin',
@@ -755,6 +763,10 @@ export const m = defineMessages({
   goBackToDashboard: {
     id: 'service.portal:go-back-to-dashboard',
     defaultMessage: 'Til baka í yfirlit',
+  },
+  goBackToDashboardShort: {
+    id: 'service.portal:go-back-to-dashboard-short',
+    defaultMessage: 'Yfirlit',
   },
   viewDetail: {
     id: 'service.portal:view-detail',
@@ -1182,5 +1194,25 @@ export const m = defineMessages({
   totalPrice: {
     id: 'service.portal:total-price',
     defaultMessage: 'Heildarverð',
+  },
+  replayAudio: {
+    id: 'service.portal:replay-audio',
+    defaultMessage: 'Spila aftur',
+  },
+  pauseAudio: {
+    id: 'service.portal:pause-audio',
+    defaultMessage: 'Gera hlé',
+  },
+  playAudio: {
+    id: 'service.portal:play-audio',
+    defaultMessage: 'Spila',
+  },
+  muteAudio: {
+    id: 'service.portal:mute-audio',
+    defaultMessage: 'Hljóð af',
+  },
+  unmuteAudio: {
+    id: 'service.portal:unmute-audio',
+    defaultMessage: 'Hljóð á',
   },
 })
