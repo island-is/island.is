@@ -4,7 +4,14 @@ import { RecyclingFundGraphQLClientApi } from '../../gen/fetch'
 import { gql } from '@apollo/client'
 import { GraphQLClient } from 'graphql-request'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import { getSdk } from '../../gen/graphql-request'
+import {
+  RecyclingRequestTypes,
+  SkilavottordRecyclingRequestMutationMutation,
+  SkilavottordVehicleMutationMutation,
+  SkilavottordVehicleOwnerMutationMutation,
+  Vehicle,
+  getSdk,
+} from '../../gen/graphql-request'
 import jwt from 'jsonwebtoken'
 
 const graphqlEndpoint = 'http://localhost:3339/app/skilavottord/api/graphql' // Replace with your actual GraphQL endpoint
@@ -104,18 +111,20 @@ export class RecyclingFundClientService {
     */
   }
 
-  async getVehicles(user: User): Promise<any> {
-    console.log('getVehiclesBB', `Bearer ${user}`)
-
+  private getSdk(user: Auth) {
     const client = new GraphQLClient(graphqlEndpoint, {
       headers: {
-        Authorization: `Bearer ${user}`,
+        Authorization: `Bearer ${user.authorization}`,
       },
     })
 
+    return getSdk(client)
+  }
+
+  async getVehicles(user: User): Promise<any> {
     console.log('postCarRecyclingApplication in client service', { user })
 
-    const sdk = getSdk(client)
+    const sdk = this.getSdk(user)
     const respsonse = await sdk.getVehiclesQuery()
 
     console.log('postCarRecyclingApplication result', {
@@ -127,6 +136,46 @@ export class RecyclingFundClientService {
     return await this.getRecyclingFundGraphQLClient(user).recyclingFundQuery({
       body: { query: '{skilavottordAppSysVehicles{ permno }}' },
       // body: { query: '{skilavottordVehicles{ permno }}' },
+    })
+  }
+
+  async createOwner(
+    user: Auth,
+  ): Promise<SkilavottordVehicleOwnerMutationMutation> {
+    const sdk = this.getSdk(user)
+
+    console.log('createOwner', user)
+
+    return sdk.skilavottordVehicleOwnerMutation({
+      name: user.nationalId || '',
+    })
+  }
+
+  async createVehicle(
+    user: Auth,
+    permno: string,
+  ): Promise<SkilavottordVehicleMutationMutation> {
+    const sdk = this.getSdk(user)
+
+    console.log('createVehicle', permno)
+
+    return sdk.skilavottordVehicleMutation({
+      permno,
+    })
+  }
+
+  async recycleVehicle(
+    user: Auth,
+    permno: string,
+    requestType: RecyclingRequestTypes,
+  ): Promise<SkilavottordRecyclingRequestMutationMutation> {
+    const sdk = this.getSdk(user)
+
+    console.log('recycleVehicle', permno, requestType)
+
+    return sdk.skilavottordRecyclingRequestMutation({
+      permno,
+      requestType,
     })
   }
 }

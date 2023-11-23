@@ -16,9 +16,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as VehicleMiniDto[]
 
+  const canceledVehicles = getValueViaPath(
+    answers,
+    'vehicles.canceledVehicles',
+    [],
+  ) as VehicleMiniDto[]
+
   return {
     selectedVehicles,
     allVehicles,
+    canceledVehicles,
   }
 }
 

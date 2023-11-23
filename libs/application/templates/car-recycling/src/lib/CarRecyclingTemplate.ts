@@ -1,6 +1,5 @@
 import {
   DefaultStateLifeCycle,
-  coreHistoryMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import {
@@ -17,13 +16,16 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 
-import { DataSchema } from './dataSchema'
-import { carRecyclingMessages, statesMessages } from './messages'
-import { ApiActions } from '../shared'
-import { CurrentVehiclesApi } from '../dataProviders'
-import { answerValidators } from './answerValidators'
 import { ApiScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { CurrentVehiclesApi } from '../dataProviders'
+import { ApiActions } from '../shared'
+import { answerValidators } from './answerValidators'
+import { DataSchema } from './dataSchema'
+import { carRecyclingMessages, statesMessages } from './messages'
+
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -39,7 +41,6 @@ type ReferenceTemplateEvent =
 
 enum Roles {
   APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
 }
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
@@ -104,20 +105,21 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        entry: ['clearCanceldVehicles'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
-            action: ApiActions.getVehicles,
-            externalDataId: 'vehicles',
+            action: ApiActions.CREATE_OWNER,
+            shouldPersistToExternalData: false,
             throwOnError: false,
           }),
           progress: 0.5,
-          /* onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
+          onExit: defineTemplateApi({
+            action: ApiActions.SEND_APPLICATION,
             throwOnError: true,
-          }),*/
+          }),
           actionCard: {
             pendingAction: {
               title: 'corePendingActionMessages.applicationReceivedTitle',
@@ -185,7 +187,13 @@ const CarRecyclingTemplate: ApplicationTemplate<
     },
   },
   stateMachineOptions: {
-    actions: {},
+    actions: {
+      clearCanceledVehicles: assign((context) => {
+        const { application } = context
+        unset(application.answers, 'vehicles.canceledVehicles')
+        return context
+      }),
+    },
   },
   mapUserToRole(
     nationalId: string,

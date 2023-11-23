@@ -1,10 +1,6 @@
 export enum ApiActions {
-  createApplication = 'createApplication',
-  doStuffThatFails = 'doStuffThatFails',
-  completeApplication = 'completeApplication',
-  getReferenceData = 'getReferenceData',
-  getAnotherReferenceData = 'getAnotherReferenceData',
-  getVehicles = 'getVehicles',
+  CREATE_OWNER = 'createOwner',
+  SEND_APPLICATION = 'sendApplication',
 }
 
 export enum Actions {

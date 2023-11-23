@@ -101,6 +101,8 @@ export class RecyclingRequestAppSysResolver {
     requestType: RecyclingRequestTypes,
     @Args('permno') permno: string,
   ): Promise<typeof RecyclingRequestResponse> {
+    console.log('createSkilavottordRecyclingRequestAppSys', requestType)
+
     if (requestType === 'pendingRecycle' || requestType === 'cancelled') {
       const vehicle = await this.samgongustofaService.getUserVehicle(
         user.nationalId,

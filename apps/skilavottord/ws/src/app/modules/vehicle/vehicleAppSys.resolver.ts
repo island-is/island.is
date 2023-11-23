@@ -9,7 +9,7 @@ import { VehicleModel, VehicleConnection } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { SamgongustofaService } from '../samgongustofa'
 
-@Authorize()
+//@Authorize()
 @Resolver(() => VehicleModel)
 export class VehicleAppSysResolver {
   constructor(
@@ -81,6 +81,8 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('permno') permno: string,
   ) {
+    console.log('createSkilavottordVehicleAppSys')
+
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       permno,

@@ -5,7 +5,7 @@ import { Authorize, CurrentUser, User } from '../auth'
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
-@Authorize()
+//@Authorize()
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerAppSysResolver {
   constructor(private vehicleOwnerService: VehicleOwnerService) {}
@@ -15,6 +15,8 @@ export class VehicleOwnerAppSysResolver {
     @CurrentUser() user: User,
     @Args('name') name: string,
   ) {
+    console.log('createSkilavottordVehicleOwnerAppSys', name)
+    console.log('user', user)
     const vm = new VehicleOwnerModel()
     vm.nationalId = user.nationalId
     vm.personname = name

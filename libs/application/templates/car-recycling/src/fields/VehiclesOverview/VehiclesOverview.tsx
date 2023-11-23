@@ -1,14 +1,12 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   ActionCard,
-  AlertBanner,
   AlertMessage,
   Box,
   Pagination,
-  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 import { formatText } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
@@ -22,11 +20,7 @@ import { carRecyclingMessages } from '../../lib/messages'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { useFormContext } from 'react-hook-form'
 
-const VehiclesOverview: FC<FieldBaseProps> = ({
-  application,
-  field,
-  error,
-}) => {
+const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
   const { formatMessage } = useLocale()
 
   const [currentVehiclesList, setCurrentVehiclesList] = useState<
@@ -36,6 +30,10 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     VehicleMiniDto[]
   >([])
   const [allVehiclesList, setAllVehiclesList] = useState<VehicleMiniDto[]>([])
+
+  const [canceledVehiclesList, setCanceledVehiclesList] = useState<
+    VehicleMiniDto[]
+  >([])
 
   const { setValue } = useFormContext()
 
@@ -71,6 +69,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   useEffect(() => {
     setValue('vehicles.selectedVehicles', selectedVehiclesList)
     setValue('vehicles.allVehicles', currentVehiclesList)
+    setValue('vehicles.canceledVehicles', canceledVehiclesList)
   }, [selectedVehiclesList, setValue])
 
   function filterSelectedVehiclesFromList(
@@ -104,9 +103,17 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   function onRecycle(vehicle: VehicleMiniDto): void {
     setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle }])
 
+    // Remove selected vehicle from current list
     const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
-
     setCurrentVehiclesList(filterdVehiclesList)
+
+    // Remove selected vehicle from cancel list if user changes his mind about canceling recycling
+    const filteredCanceledVehiclesList = filterVehiclesList(
+      vehicle,
+      canceledVehiclesList,
+    )
+
+    setCanceledVehiclesList(filteredCanceledVehiclesList)
   }
 
   function onCancel(vehicle: VehicleMiniDto): void {
@@ -122,9 +129,13 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
       vehicle,
       ...vehicles,
     ])
-  }
 
-  const handlePageChange = useCallback((page: number) => setPage(page), [])
+    // Keep bookkeeping about canceled recycling
+    setCanceledVehiclesList((vehicles: VehicleMiniDto[]) => [
+      vehicle,
+      ...vehicles,
+    ])
+  }
 
   return (
     <Box id="vehicles">
