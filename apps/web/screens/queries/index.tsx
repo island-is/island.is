@@ -1,3 +1,4 @@
+export * from './AnchorPage'
 export * from './Applications'
 export * from './Article'
 export * from './Namespace'

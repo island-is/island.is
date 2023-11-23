@@ -652,6 +652,36 @@ export class CmsContentfulService {
     return (result.items as types.IAnchorPage[]).map(mapAnchorPage)[0] ?? null
   }
 
+  async getAnchorPages(lang: string): Promise<AnchorPage[]> {
+    const params = {
+      ['content_type']: 'anchorPage',
+      order: 'sys.createdAt',
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPages'))
+
+    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)
+  }
+
+  async getAnchorPagesInCategory(
+    lang: string,
+    slug: string,
+  ): Promise<AnchorPage[]> {
+    const params = {
+      ['content_type']: 'anchorPage',
+      'fields.category.sys.contentType.sys.id': 'articleCategory',
+      'fields.category.fields.slug': slug,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
+      .catch(errorHandler('getAnchorPagesInCategory'))
+
+    return (result.items as types.IAnchorPage[]).map(mapAnchorPage)
+  }
+
   async getAlertBanner({
     lang,
     id,
