@@ -432,125 +432,130 @@ describe('friendlyFormat & valid', () => {
     const formattedSWIFT = friendlyFormatSWIFT(bankInfo.swift)
 
     expect('NEDS ZA JJ XXX').toEqual(formattedSWIFT)
-  }),
-    it('format iban', () => {
-      const application = buildApplication({
-        externalData: {
-          socialInsuranceAdministrationApplicant: {
-            data: {
-              bankAccount: {
-                iban: 'NL91ABNA0417164300',
-                swift: 'NEDSZAJJXXX',
-                foreignBankName: 'Heiti banka',
-                foreignBankAddress: 'Heimili banka',
-                currency: 'EUR',
-              },
+  })
+
+  it('format iban', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NL91ABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
             },
-            date: new Date(),
-            status: 'success',
           },
+          date: new Date(),
+          status: 'success',
         },
-      })
-
-      const { bankInfo } = getApplicationExternalData(application.externalData)
-      const formattedIBAN = friendlyFormatIBAN(bankInfo.iban)
-
-      expect('NL91 ABNA 0417 1643 00').toEqual(formattedIBAN)
-    }),
-    it('valid iban - should return false because the check digits should be numbers', () => {
-      const application = buildApplication({
-        externalData: {
-          socialInsuranceAdministrationApplicant: {
-            data: {
-              bankAccount: {
-                iban: 'NLLLABNA0417164300',
-                swift: 'NEDSZAJJXXX',
-                foreignBankName: 'Heiti banka',
-                foreignBankAddress: 'Heimili banka',
-                currency: 'EUR',
-              },
-            },
-            date: new Date(),
-            status: 'success',
-          },
-        },
-      })
-
-      const { bankInfo } = getApplicationExternalData(application.externalData)
-      const iban = validIBAN(bankInfo.iban!)
-
-      expect(false).toEqual(iban)
-    }),
-    it('valid iban - should return true if the iban is right structured', () => {
-      const application = buildApplication({
-        externalData: {
-          socialInsuranceAdministrationApplicant: {
-            data: {
-              bankAccount: {
-                iban: 'NL91ABNA0417164300',
-                swift: 'NEDSZAJJXXX',
-                foreignBankName: 'Heiti banka',
-                foreignBankAddress: 'Heimili banka',
-                currency: 'EUR',
-              },
-            },
-            date: new Date(),
-            status: 'success',
-          },
-        },
-      })
-
-      const { bankInfo } = getApplicationExternalData(application.externalData)
-      const iban = validIBAN(bankInfo.iban!)
-
-      expect(true).toEqual(iban)
-    }),
-    it('valid swift - should return false because the country code should be letters', () => {
-      const application = buildApplication({
-        externalData: {
-          socialInsuranceAdministrationApplicant: {
-            data: {
-              bankAccount: {
-                iban: 'NLLLABNA0417164300',
-                swift: 'NE32ZAJJXXX',
-                foreignBankName: 'Heiti banka',
-                foreignBankAddress: 'Heimili banka',
-                currency: 'EUR',
-              },
-            },
-            date: new Date(),
-            status: 'success',
-          },
-        },
-      })
-
-      const { bankInfo } = getApplicationExternalData(application.externalData)
-      const swift = validSWIFT(bankInfo.swift!)
-
-      expect(false).toEqual(swift)
-    }),
-    it('valid swift - should return true if the swift is right structured', () => {
-      const application = buildApplication({
-        externalData: {
-          socialInsuranceAdministrationApplicant: {
-            data: {
-              bankAccount: {
-                iban: 'NL91ABNA0417164300',
-                swift: 'NEDSZAJJXXX',
-                foreignBankName: 'Heiti banka',
-                foreignBankAddress: 'Heimili banka',
-                currency: 'EUR',
-              },
-            },
-            date: new Date(),
-            status: 'success',
-          },
-        },
-      })
-
-      const { bankInfo } = getApplicationExternalData(application.externalData)
-      const swift = validSWIFT(bankInfo.swift!)
-
-      expect(true).toEqual(swift)
+      },
     })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const formattedIBAN = friendlyFormatIBAN(bankInfo.iban)
+
+    expect('NL91 ABNA 0417 1643 00').toEqual(formattedIBAN)
+  })
+
+  it('valid iban - should return false because the check digits should be numbers', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NLLLABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const iban = validIBAN(bankInfo.iban || '')
+
+    expect(false).toEqual(iban)
+  })
+
+  it('valid iban - should return true if the iban is right structured', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NL91ABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const iban = validIBAN(bankInfo.iban || '')
+
+    expect(true).toEqual(iban)
+  })
+
+  it('valid swift - should return false because the country code should be letters', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NLLLABNA0417164300',
+              swift: 'NE32ZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const swift = validSWIFT(bankInfo.swift || '')
+
+    expect(false).toEqual(swift)
+  })
+
+  it('valid swift - should return true if the swift is right structured', () => {
+    const application = buildApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NL91ABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const { bankInfo } = getApplicationExternalData(application.externalData)
+    const swift = validSWIFT(bankInfo.swift || '')
+
+    expect(true).toEqual(swift)
+  })
 })

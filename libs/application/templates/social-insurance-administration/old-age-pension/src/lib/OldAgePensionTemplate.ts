@@ -91,7 +91,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearTemp', 'restoreAnswersFromTemp'],
+        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -477,8 +477,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
           unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
           unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
-          unset(application.answers, 'fileUpload.foreignBankAccount')
         }
 
         if (bankAccountType === BankAccountType.FOREIGN) {

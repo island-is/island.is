@@ -1012,9 +1012,9 @@ export const errorMessages = defineMessages({
     description: 'english translation',
   },
   noEmailFoundDescription: {
-    id: 'oap.application:error.no.email.found.description#markdown',
+    id: 'oap.application:error.no.email.found.description',
     defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um ellilífeyri.',
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það inná mínum síðum á tr.is og komdu svo aftur til að sækja um ellilífeyri.',
     description: 'english translation',
   },
   iban: {
