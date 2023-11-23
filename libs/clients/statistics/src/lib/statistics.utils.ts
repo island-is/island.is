@@ -9,10 +9,11 @@ import {
   SourceValue,
   StatisticSourceData,
 } from './types'
-import { MONTH_NAMES } from './statistics.constants'
+import {
+  DEFAULT_NUMBER_OF_DATA_POINTS,
+  MONTH_NAMES,
+} from './statistics.constants'
 import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
-
-const DEFAULT_NUMBER_OF_DATA_POINTS = 6
 
 export const _tryToGetDate = (value: string | null) => {
   if (!value) {

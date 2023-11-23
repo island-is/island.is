@@ -1,7 +1,6 @@
 import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
-
-const DEFAULT_CACHE_TTL = 15 * 60 * 1000 // 15 minutes
+import { DEFAULT_CACHE_TTL } from './statistics.constants'
 
 const schema = z.object({
   sourceDataPaths: z.string(),
