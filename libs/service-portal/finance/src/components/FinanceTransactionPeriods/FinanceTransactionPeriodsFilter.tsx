@@ -29,6 +29,8 @@ import {
 import FinanceTransactionSelectedPeriod from './FinanceTransactionSelectedPeriod'
 import { m as messages } from '../../lib/messages'
 
+const DEFAULT_CHARGE_TYPE = '**' // ** finds all charge types
+
 const FinanceTransactionPeriodsFilter = () => {
   const { formatMessage } = useLocale()
   const selectedPeriodsRef = useRef<HTMLElement>(null)
@@ -41,7 +43,8 @@ const FinanceTransactionPeriodsFilter = () => {
   >([])
 
   const [chargeTypes, setChargeTypes] = useState<ChargeTypesByYear>()
-  const [activeChargeType, setActiveChargeType] = useState<string>('**')
+  const [activeChargeType, setActiveChargeType] =
+    useState<string>(DEFAULT_CHARGE_TYPE)
 
   const [chargeTypeDetails, setChargeTypeDetails] =
     useState<ChargeTypesDetailsByYear>()
@@ -116,7 +119,7 @@ const FinanceTransactionPeriodsFilter = () => {
 
   function clearFilter() {
     setDropdownSelect([])
-    setActiveChargeType('**')
+    setActiveChargeType(DEFAULT_CHARGE_TYPE)
     setFinanceTransactionPeriodsState({ year: assessmentYears[0].value })
   }
 
@@ -264,7 +267,7 @@ const FinanceTransactionPeriodsFilter = () => {
               type="button"
               variant="utility"
             >
-              Birta valin tímabil
+              {formatMessage(messages.displaySelectedPeriods)}
             </Button>
           </Box>
 

@@ -39,6 +39,10 @@ export const m = defineMessages({
     id: 'service.portal:selected-periods',
     defaultMessage: 'Valin tímabil',
   },
+  displaySelectedPeriods: {
+    id: 'service.portal:display-selected-periods',
+    defaultMessage: 'Birta valin tímabil',
+  },
   lastMovement: {
     id: 'service.portal:last-movement',
     defaultMessage: 'Síðasta hreyfing',
