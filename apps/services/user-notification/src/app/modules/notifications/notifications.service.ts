@@ -17,13 +17,10 @@ import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
 
 
-// 
 
-import { CreateNotificationDto } from './dto/create-notification.dto'
-import { UpdateNotificationDto } from './dto/update-notification.dto'
 import { Op } from 'sequelize'
-import { NotificationDTO, NotificationStatus } from './dto/notification.dto'
 import { User } from '@island.is/auth-nest-tools'
+import { PaginatedNotificationDto,ExtendedNotificationDto, UpdateNotificationDto, NotificationStatus, RenderedNotificationDto } from './dto/notification.dto'
 
 
 
@@ -172,7 +169,7 @@ export class NotificationsService {
     return template
   }
 
-  async findOne(user: User,id: number): Promise<any> {
+  async findOne(user: User,id: number,locale:string): Promise<RenderedNotificationDto> {
     
     let notification = await this.notificationModel.findOne({
       where: {
@@ -184,19 +181,35 @@ export class NotificationsService {
     if (!notification) {
       throw new NotFoundException('Notification not found or does not belong to the user');
     } else {
-      const template = await this.getTemplate(notification.templateId);
+      const template = await this.getTemplate(notification.templateId,locale);
       const formattedTemplate = this.formatArguments(notification, template);
-      const response = {
-        ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-        message: {
+      // const response = {
+      //   ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+      //   message: {
+      //     title: formattedTemplate.notificationTitle,
+      //     body: formattedTemplate.notificationBody,
+      //     dataCopy: formattedTemplate.notificationDataCopy,
+      //     clickAction: formattedTemplate.clickAction,
+      //   }
+      // };
+
+      // return response;
+      return {
+        // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+        // message: i a
+        // notification: {
+          id: notification.id,
+          messageId: notification.messageId,
+          sender: "Hnipp Stofnun",
           title: formattedTemplate.notificationTitle,
           body: formattedTemplate.notificationBody,
           dataCopy: formattedTemplate.notificationDataCopy,
           clickAction: formattedTemplate.clickAction,
-        }
-      };
-
-      return response;
+          created: notification.created,
+          updated: notification.updated,
+          status: notification.status,
+        // }
+      }
   }
     }
 
@@ -205,8 +218,8 @@ export class NotificationsService {
     
   
 
-  async findMany(user:User,query: any): Promise<any> {
-    const templates = await this.getTemplates();
+  async findMany(user:User,query: any): Promise<PaginatedNotificationDto> {
+    const templates = await this.getTemplates(query.locale);
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -222,13 +235,20 @@ export class NotificationsService {
       if(template){
         const formattedTemplate = this.formatArguments(notification, template);
         return {
-          ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-          message: {
+          // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+          // message: i a
+          // notification: {
+            id: notification.id,
+            messageId: notification.messageId,
+            sender: "Hnipp Stofnun",
             title: formattedTemplate.notificationTitle,
             body: formattedTemplate.notificationBody,
             dataCopy: formattedTemplate.notificationDataCopy,
             clickAction: formattedTemplate.clickAction,
-          }
+            created: notification.created,
+            updated: notification.updated,
+            status: notification.status,
+          // }
         }
       };
     });
@@ -236,8 +256,11 @@ export class NotificationsService {
     return paginatedListResponse
   }
 
-
-  async update(user: User,id: number, updateNotificationDto: UpdateNotificationDto): Promise<any> {
+  async update(
+    user: User,
+    id: number,
+    updateNotificationDto: UpdateNotificationDto
+  ): Promise<RenderedNotificationDto> {
     const notification = await this.notificationModel.findOne({
       where: {
         id: id,
@@ -248,9 +271,37 @@ export class NotificationsService {
     if (!notification) {
       throw new NotFoundException('Notification not found or does not belong to the user');
     } else {
-      notification.status = updateNotificationDto.status as unknown as NotificationStatus; // TODO FIX
+      notification.status = updateNotificationDto.status
       const res = await notification.save();
-      return res
+      const template = await this.getTemplate(notification.templateId);
+      const formattedTemplate = this.formatArguments(notification, template);
+      const response = {
+        ...res.toJSON(), // Convert Sequelize model instance to a plain object
+        message: {
+          title: formattedTemplate.notificationTitle,
+          body: formattedTemplate.notificationBody,
+          dataCopy: formattedTemplate.notificationDataCopy,
+          clickAction: formattedTemplate.clickAction,
+        }
+      };
+
+      // return response;
+      return {
+        // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+        // message: i a
+        // notification: {
+          id: notification.id,
+          messageId: notification.messageId,
+          sender: "Hnipp Stofnun",
+          title: formattedTemplate.notificationTitle,
+          body: formattedTemplate.notificationBody,
+          dataCopy: formattedTemplate.notificationDataCopy,
+          clickAction: formattedTemplate.clickAction,
+          created: notification.created,
+          updated: notification.updated,
+          status: notification.status,
+        // }
+      }
     }
    
   }

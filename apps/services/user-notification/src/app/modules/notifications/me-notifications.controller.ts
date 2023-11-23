@@ -12,24 +12,14 @@ import { Controller, Post, HttpCode } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-
 import { NotificationsScope } from '@island.is/auth/scopes'
-
 import { NotificationsService } from './notifications.service'
 import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard, User } from '@island.is/auth-nest-tools'
+import { PaginationDto } from '@island.is/nest/pagination'
+import { ExtendedNotificationDto, UpdateNotificationDto, PaginatedNotificationDto, RenderedNotificationDto } from './dto/notification.dto'
+import { Documentation } from '@island.is/nest/swagger'
 
-import { Notification } from './notification.model'
 
-// import { CreateNotificationDto } from './dto/create-notification.dto'
-import { UpdateNotificationDto } from './dto/update-notification.dto'
-// import { NotificationDTO } from './dto/notification.dto'; // Import your DTO
-import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
-
-export class PaginatedNotificationDto {
-  totalCount!: number
-  data!: Notification[]
-  pageInfo!: PageInfoDto
-}
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
@@ -42,8 +32,8 @@ export class MeNotificationsController {
     private readonly notificationService: NotificationsService,
   ) {}
   
-  /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
-  @Post()
+  /// REMOVE ME BEFORE MERGING
+  @Post()/// TEMPORARY FOR EASY CREATING NOTIFICATIONS
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -52,8 +42,9 @@ export class MeNotificationsController {
     @CurrentUser() user: User
   ): Promise<any>{
     return this.notificationService.create(user);
-  }
+  } /// REMOVE ME BEFORE MERGING
 
+ 
   @Get()
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
@@ -61,7 +52,6 @@ export class MeNotificationsController {
   findMany(
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
-    // @Query('limit') limit: number
   ): Promise<PaginatedNotificationDto> {
     return this.notificationService.findMany(user,query)
   }
@@ -73,9 +63,10 @@ export class MeNotificationsController {
   @ApiSecurity('oauth2', [NotificationsScope.read])
   findOne(
     @CurrentUser() user: User,
-    @Param('id') id: number
-  ) {
-    return this.notificationService.findOne(user,id);
+    @Param('id') id: number,
+    @Query('locale') locale: string
+  ): Promise<RenderedNotificationDto> {
+    return this.notificationService.findOne(user,id,locale);
   }
 
   @Patch(':id')
@@ -86,7 +77,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto
-  ) {
+  ): Promise<RenderedNotificationDto> {
     return this.notificationService.update(user,id, updateNotificationDto);
   }
 

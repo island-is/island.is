@@ -12,6 +12,7 @@ class ArgumentDto {
   @ApiProperty({ example: 'value' })
   value!: string
 }
+
 export class CreateHnippNotificationDto {
   @IsNationalId()
   @ApiProperty({ example: '1234567890' })

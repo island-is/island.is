@@ -3,12 +3,32 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const MAIN_QUEUE_NAME = 'user-notification'
 const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
+
+const dbName = 'services_user_notification'
+
+
+const servicePostgresInfo = {
+  // The service has only read permissions
+  username: 'services_sessions_read',
+  name: dbName,
+  passwordSecret: '/k8s/services-user-notifications/readonly/DB_PASSWORD',
+}
+
+const workerPostgresInfo = {
+  // Worker has write permissions
+  username: 'services_sessions',
+  name: dbName,
+  passwordSecret: '/k8s/services-user-notifications/DB_PASSWORD',
+  extensions: ['uuid-ossp'],
+}
+
 export const userNotificationServiceSetup =
   (): ServiceBuilder<'user-notification'> =>
     service('user-notification')
       .image('services-user-notification')
       .namespace('user-notification')
       .serviceAccount('user-notification')
+      .postgres(servicePostgresInfo)
       .command('node')
       .args('--no-experimental-fetch', 'main.js')
       .env({
@@ -25,10 +45,7 @@ export const userNotificationServiceSetup =
         CONTENTFUL_ACCESS_TOKEN:
           '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
       })
-      .initContainer({
-        containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
-        postgres: { passwordSecret: '/k8s/user-notification/DB_PASSWORD' },
-      })
+      
       .readiness('/liveness')
       .readiness('/readiness')
       .ingress({
@@ -77,6 +94,11 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount('user-notification-worker')
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .postgres(workerPostgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: workerPostgresInfo,
+    })
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
