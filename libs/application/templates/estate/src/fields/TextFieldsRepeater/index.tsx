@@ -43,8 +43,8 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-  const [rateOfExchange, setRateOfExchange] = useState({...initialValue})
-  const [faceValue, setFaceValue] = useState({...initialValue})
+  const [rateOfExchange, setRateOfExchange] = useState({ ...initialValue })
+  const [faceValue, setFaceValue] = useState({ ...initialValue })
   const [index, setIndex] = useState('0')
 
   const { setValue, clearErrors } = useFormContext()
