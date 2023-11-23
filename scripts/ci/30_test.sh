@@ -24,7 +24,7 @@ projects_uncollectible_coverage=(
 )
 # shellcheck disable=SC2076
 if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
-  EXTRA_OPTS="--codeCoverage --skip-nx-cache"
+  EXTRA_OPTS="--codeCoverage"
 fi
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
