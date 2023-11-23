@@ -2064,6 +2064,9 @@ export interface IManualChapterFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: Document | undefined
 
@@ -3034,6 +3037,7 @@ export interface IProjectPageFields {
     | 'opinbernyskopun'
     | 'gagnasidur-fiskistofu'
     | 'directorate-of-health'
+    | 'grindavik'
 
   /** Sidebar */
   sidebar: boolean

@@ -100,6 +100,8 @@ import { GetEventsInput } from './dto/getEvents.input'
 import { EventList } from './models/eventList.model'
 import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
+import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
+import { EntryTitle } from './models/entryTitle.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -582,6 +584,19 @@ export class CmsResolver {
       getElasticsearchIndex(input.lang),
       { type: 'webManual', slug: input.slug },
     )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => EntryTitle, { nullable: true })
+  async getSingleEntryTitleById(
+    @Args('input') input: GetSingleEntryTitleByIdInput,
+  ): Promise<EntryTitle | null> {
+    const document = await this.cmsElasticsearchService.getSingleDocumentById(
+      getElasticsearchIndex(input.lang),
+      input.id,
+    )
+    if (typeof document?.title !== 'string') return null
+    return { title: document.title }
   }
 }
 
