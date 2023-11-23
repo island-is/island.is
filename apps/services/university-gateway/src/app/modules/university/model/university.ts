@@ -18,6 +18,7 @@ export class University extends Model {
   @ApiProperty({
     description: 'University ID',
     example: '00000000-0000-0000-0000-000000000000',
+    type: String,
   })
   @Column({
     type: DataType.UUID,

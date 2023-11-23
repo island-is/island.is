@@ -25,6 +25,7 @@ export class ProgramBase extends Model {
   @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',
+    type: String,
   })
   @Column({
     type: DataType.UUID,

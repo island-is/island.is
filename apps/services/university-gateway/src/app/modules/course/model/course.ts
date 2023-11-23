@@ -22,6 +22,7 @@ export class Course extends Model {
   @ApiProperty({
     description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',
+    type: String,
   })
   @Column({
     type: DataType.UUID,
