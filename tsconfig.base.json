@@ -42,9 +42,6 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
-      "@island.is/api/domains/administration-of-occupational-safety-and-health": [
-        "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
-      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
@@ -247,9 +244,6 @@
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
       ],
-      "@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership": [
-        "libs/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership/src/index.ts"
-      ],
       "@island.is/application/templates/alcohol-tax-redemption": [
         "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
@@ -258,6 +252,9 @@
       ],
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
+      ],
+      "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
+        "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -452,9 +449,6 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
-      ],
-      "@island.is/clients/administration-of-occupational-safety-and-health/transfer-of-machine-ownership": [
-        "libs/clients/administration-of-occupational-safety-and-health/transfer-of-machine-ownership/src/index.ts"
       ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"

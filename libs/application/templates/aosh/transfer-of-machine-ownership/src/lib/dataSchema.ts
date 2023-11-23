@@ -1,0 +1,110 @@
+import { z } from 'zod'
+import * as kennitala from 'kennitala'
+
+const UserSchemaBase = z.object({
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        nationalId &&
+        nationalId.length !== 0 &&
+        kennitala.isValid(nationalId) &&
+        (kennitala.isCompany(nationalId) ||
+          kennitala.info(nationalId).age >= 18),
+    ),
+  name: z.string().min(1),
+  email: z.string().min(1),
+  phone: z.string().min(1),
+})
+
+const RemovableUserSchemaBase = z
+  .object({
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    wasRemoved: z.string().optional(),
+  })
+  .refine(
+    ({ nationalId, wasRemoved }) => {
+      return (
+        wasRemoved === 'true' ||
+        (nationalId &&
+          nationalId.length !== 0 &&
+          kennitala.isValid(nationalId) &&
+          (kennitala.isCompany(nationalId) ||
+            kennitala.info(nationalId).age >= 18))
+      )
+    },
+    { path: ['nationalId'] },
+  )
+  .refine(
+    ({ name, wasRemoved }) => {
+      return wasRemoved === 'true' || (name && name.length > 0)
+    },
+    { path: ['name'] },
+  )
+  .refine(
+    ({ email, wasRemoved }) => {
+      return wasRemoved === 'true' || (email && email.length > 0)
+    },
+    { path: ['email'] },
+  )
+  .refine(
+    ({ phone, wasRemoved }) => {
+      return wasRemoved === 'true' || (phone && phone.length > 0)
+    },
+    { path: ['phone'] },
+  )
+
+export const UserInformationSchema = z.intersection(
+  UserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+  }),
+)
+
+export const CoOwnerAndOperatorSchema = z.intersection(
+  RemovableUserSchemaBase,
+  z.object({
+    approved: z.boolean().optional(),
+    type: z.enum(['operator', 'coOwner']),
+  }),
+)
+
+export const RejecterSchema = z.object({
+  plate: z.string(),
+  name: z.string(),
+  nationalId: z.string(),
+  type: z.enum(['buyer', 'buyerCoOwner', 'sellerCoOwner', 'operator']),
+})
+
+export const MachineAnswersSchema = z.object({
+  buyer: UserInformationSchema,
+  seller: UserInformationSchema,
+  machine: z.object({
+    id: z.string().optional(),
+    date: z.string().optional(),
+    type: z.string().optional(),
+    plate: z.string().optional(),
+    subType: z.string().optional(),
+    category: z.string().optional(),
+    regNumber: z.string().optional(),
+    ownerNumber: z.string().optional(),
+  }),
+  pickMachine: z.object({
+    index: z.string().optional(),
+    id: z.string().min(1),
+  }),
+  location: z.object({
+    address: z.string(),
+    postCode: z.number(),
+    moreInfo: z.string(),
+  }),
+  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
+  approveExternalData: z.boolean(),
+})
+
+export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>
+
+//export { TransferOfVehicleOwnershipSchema, TransferOfVehicleOwnership }

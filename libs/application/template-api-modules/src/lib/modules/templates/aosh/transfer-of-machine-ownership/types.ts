@@ -1,8 +1,6 @@
 export enum EmailRole {
   seller,
-  sellerCoOwner,
   buyer,
-  buyerCoOwner,
   buyerOperator,
 }
 

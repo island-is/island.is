@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState, ReactNode } from 'react'
 import { Box } from '../Box/Box'
 import type { Document, Page, Outline, pdfjs } from 'react-pdf'
 import * as styles from './PdfViewer.css'

@@ -2,8 +2,6 @@ import Agent, { HttpsOptions, HttpsAgent } from 'agentkeepalive'
 import { SecureContextOptions } from 'tls'
 import { FetchMiddlewareOptions, MiddlewareAPI } from './nodeFetch'
 
-import { URL } from 'url' // Import URL from the Node.js core library.
-
 export type AgentOptions = HttpsOptions
 
 // Cherry-pick the supported types of certs from TLS

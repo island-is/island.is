@@ -45,7 +45,7 @@ import {
   CommunicationsConfig,
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
-import { AoshModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
+import { AoshModule } from '@island.is/api/domains/aosh'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'

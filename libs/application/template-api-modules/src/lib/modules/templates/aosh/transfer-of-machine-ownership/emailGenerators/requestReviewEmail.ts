@@ -1,4 +1,3 @@
-import { TransferOfVehicleOwnershipAnswers } from '@island.is/application/templates/transport-authority/transfer-of-vehicle-ownership'
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
 import { ApplicationConfigurations } from '@island.is/application/types'
@@ -8,6 +7,7 @@ import {
 } from '../transfer-of-machine-ownership.utils'
 import { EmailRecipient } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
+import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 
 export type RequestReviewEmail = (
   props: EmailTemplateGeneratorProps,
@@ -22,7 +22,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
     application,
     options: { email, clientLocationOrigin },
   } = props
-  const answers = application.answers as TransferOfVehicleOwnershipAnswers
+  const answers = application.answers as TransferOfMachineOwnerShipAnswers
   const regNumber = getValueViaPath(answers, 'machine.regNumber') as string
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
@@ -74,7 +74,7 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}`,
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfMachineOwnership.slug}/${application.id}`,
           },
         },
       ],

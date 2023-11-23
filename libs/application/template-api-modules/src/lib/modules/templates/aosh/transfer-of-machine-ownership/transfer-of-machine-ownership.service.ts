@@ -5,10 +5,9 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 
 import { TemplateApiError } from '@island.is/nest/problem'
-import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 import { EmailRecipient, EmailRole } from './types'
-//import { getRecipients } from './transfer-of-machine-ownership.utils'
-import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership'
+import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
 import { getRecipients } from './transfer-of-machine-ownership.utils'
 import type { Logger } from '@island.is/logging'
@@ -26,7 +25,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
   ) {
-    super(ApplicationTypes.ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH) // Maybe change
+    super(ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP)
   }
 
   async getMachines({ auth }: TemplateApiModuleActionProps) {
@@ -36,27 +35,8 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     if (!result || !result.length) {
       throw new TemplateApiError(
         {
-          title: coreErrorMessages.vehiclesEmptyListDefault,
-          summary: coreErrorMessages.vehiclesEmptyListDefault,
-        },
-        400,
-      )
-    }
-
-    return result
-  }
-
-  async getMachineDetail({ auth }: TemplateApiModuleActionProps, id: string) {
-    const result = await this.transferOfMachineOwnershipClient.getMachineDetail(
-      auth,
-      id,
-    )
-
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.vehiclesEmptyListDefault,
-          summary: coreErrorMessages.vehiclesEmptyListDefault,
+          title: coreErrorMessages.machinesEmptyListDefault,
+          summary: coreErrorMessages.machinesEmptyListDefault,
         },
         400,
       )
@@ -70,7 +50,6 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     // Validate payment
-    console.log('WE HERERERERE')
     // Make sure a paymentUrl was created
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
@@ -89,16 +68,12 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
-
-    // TODO continue...
   }
   async initReview({
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
-    //Promise<Array<EmailRecipient>> {
     // 1. Validate payment
-    console.log('InitReview')
 
     // 1a. Make sure a paymentUrl was created
     const { paymentUrl, id: paymentId } = application.externalData.createCharge
@@ -121,13 +96,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     } else if (payment?.fulfilled) {
-      console.log('Payment fulfilled')
-
       const answers = application.answers as TransferOfMachineOwnerShipAnswers
-      console.log('answers', answers)
       const ownerChange: ChangeMachineOwner = {
         id: application.id,
-        machineId: answers.machine.id,
+        machineId: answers.machine?.id,
         buyerNationalId: answers.buyer.nationalId,
         sellerNationalId: answers.seller.nationalId,
         delegateNationalId: answers.seller.nationalId,
@@ -136,25 +108,18 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         phoneNumber: answers.buyer.phone,
         email: answers.buyer.email,
       }
-      console.log('ownerChange', ownerChange)
 
-      try {
-        await this.transferOfMachineOwnershipClient.changeMachineOwner(
-          auth,
-          ownerChange,
-        )
-      } catch (error) {
-        console.log('Error in initReview: ', error)
-      }
+      await this.transferOfMachineOwnershipClient.changeMachineOwner(
+        auth,
+        ownerChange,
+      )
     }
-    console.log('Before getRecipients')
 
     const answers = application.answers as TransferOfMachineOwnerShipAnswers
     const recipientList = getRecipients(answers, [
       EmailRole.buyer,
       EmailRole.buyerOperator,
     ])
-    console.log('recipientList', recipientList)
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
       if (recipientList[i].email) {

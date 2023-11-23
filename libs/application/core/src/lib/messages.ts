@@ -565,6 +565,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
   },
+  machinesEmptyListDefault: {
+    id: 'application.system:core.fetch.data.vehiclesEmptyListDefault',
+    defaultMessage: 'Ekki fundust nein tæki',
+    description: 'Did not find any machines',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

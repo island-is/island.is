@@ -1,7 +1,6 @@
 import { join } from 'path'
 import { EmailRecipient, EmailRole } from './types'
-import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership'
-
+import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 export const getApplicationPruneDateStr = (
   applicationCreated: Date,
 ): string => {

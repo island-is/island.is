@@ -123,9 +123,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
     ),
-  [ApplicationTypes.ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH]: () =>
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: () =>
     import(
-      '@island.is/application/templates/administration-of-occupational-safety-and-health/transfer-of-machine-ownership'
+      '@island.is/application/templates/aosh/transfer-of-machine-ownership'
     ),
 }
 

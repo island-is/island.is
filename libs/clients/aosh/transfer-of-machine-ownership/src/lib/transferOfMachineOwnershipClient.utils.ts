@@ -3,13 +3,10 @@ import {
   MachineOwnerChangeCompleteDto,
   ApiMachineOwnerChangePostRequest,
   MachineOwnerChangeCreateDto,
-  ApiMachineSupervisorChangePostRequest,
-  MachineSupervisorChangeDto,
 } from '../../gen/fetch'
 import {
   ConfirmOwnerChange,
   ChangeMachineOwner,
-  ChangeMachineSupervisor,
 } from './transferOfMachineOwnershipClient.types'
 
 export const confirmChangeToApiRequest = (
@@ -48,18 +45,3 @@ export const apiChangeMachineOwnerToApiRequest = (
 
   return { machineOwnerChangeCreateDto }
 }
-
-// export const apiChangeMachineSupervisorToApiRequest = (
-//   changeMachineSupervisor: ChangeMachineSupervisor,
-// ): ApiMachineSupervisorChangePostRequest => {
-//   const supervisorUpdateDto: MachineSupervisorChangeDto = {
-//     machineId: changeMachineSupervisor.machineId || undefined,
-//     delegateNationalId: changeMachineSupervisor.delegateNationalId || null,
-//     ownerNationalId: changeMachineSupervisor.ownerNationalId || null,
-//     supervisorNationalId: changeMachineSupervisor.supervisorNationalId || null,
-//     phoneNumber: changeMachineSupervisor.phoneNumber || null,
-//     email: changeMachineSupervisor.email || null,
-//   }
-
-//   return { supervisorUpdateDto }
-// }

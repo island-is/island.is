@@ -48,7 +48,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   CITIZENSHIP = 'Citizenship',
-  ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH = 'AdministrationOfOccupationalSafetyAndHealth',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
 }
 
 export const ApplicationConfigurations = {
@@ -248,7 +248,7 @@ export const ApplicationConfigurations = {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
   },
-  [ApplicationTypes.ADMINISTRATION_OF_OCCUPATIONAL_SAFETY_AND_HEALTH]: {
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'vinnueftirlitid',
     translation: 'aosh.application',
   },
