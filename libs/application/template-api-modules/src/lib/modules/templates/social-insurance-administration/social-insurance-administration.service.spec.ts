@@ -3,18 +3,18 @@ import { SocialInsuranceAdministrationClientService } from '@island.is/clients/s
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
-  OldAgePensionService,
+  SocialInsuranceAdministrationService,
 } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
-describe('OldAgePensionService', () => {
-  let oldAgePensionService: OldAgePensionService
+describe('SocialInsuranceAdministrationService', () => {
+  let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        OldAgePensionService,
+        SocialInsuranceAdministrationService,
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
@@ -35,8 +35,10 @@ describe('OldAgePensionService', () => {
       ],
     }).compile()
 
-    oldAgePensionService =
-      module.get<OldAgePensionService>(OldAgePensionService)
+    socialInsuranceAdministrationService =
+      module.get<SocialInsuranceAdministrationService>(
+        SocialInsuranceAdministrationService,
+      )
   })
 
   it('should send old age pension application', async () => {
@@ -51,9 +53,11 @@ describe('OldAgePensionService', () => {
     })
 
     // Also need to mock the pdf here
-    jest.spyOn(oldAgePensionService, 'getPdf').mockImplementation(jest.fn())
+    jest
+      .spyOn(socialInsuranceAdministrationService, 'getPdf')
+      .mockImplementation(jest.fn())
 
-    const result = await oldAgePensionService.sendApplication({
+    const result = await socialInsuranceAdministrationService.sendApplication({
       application,
       auth,
       currentUserLocale: 'is',

@@ -6,6 +6,15 @@ import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
 import { formatBankInfo } from './pensionSupplementUtils'
 
+const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
+
+const validateOptionalPhoneNumber = (value: string) => {
+  return isValidPhoneNumber(value) || value === ''
+}
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   questions: z.object({
@@ -14,22 +23,9 @@ export const dataSchema = z.object({
   }),
   applicantInfo: z.object({
     email: z.string().email(),
-    phonenumber: z.string().refine(
-      (p) => {
-        const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-        const phoneNumberStartStr = ['6', '7', '8']
-        return (
-          phoneNumber &&
-          phoneNumber.isValid() &&
-          (phoneNumber.country === 'IS'
-            ? phoneNumberStartStr.some((substr) =>
-                phoneNumber.nationalNumber.startsWith(substr),
-              )
-            : true)
-        )
-      },
-      { params: errorMessages.phoneNumber },
-    ),
+    phonenumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
+      params: errorMessages.phoneNumber,
+    }),
   }),
   paymentInfo: z.object({
     bank: z.string().refine(

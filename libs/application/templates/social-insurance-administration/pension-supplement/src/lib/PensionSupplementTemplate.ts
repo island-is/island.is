@@ -8,7 +8,6 @@ import {
   ApplicationRole,
   DefaultEvents,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -19,6 +18,7 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { pensionSupplementFormMessage, statesMessages } from './messages'
+import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -58,7 +58,10 @@ const PensionSupplementTemplate: ApplicationTemplate<
                 },
               ],
               write: 'all',
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                SocialInsuranceAdministrationApplicantApi,
+              ],
               delete: true,
             },
           ],

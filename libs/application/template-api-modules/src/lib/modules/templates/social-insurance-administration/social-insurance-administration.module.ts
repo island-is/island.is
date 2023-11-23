@@ -9,7 +9,7 @@ import {
 
 import {
   APPLICATION_ATTACHMENT_BUCKET,
-  OldAgePensionService,
+  SocialInsuranceAdministrationService,
 } from './social-insurance-administration.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
@@ -21,10 +21,10 @@ const XROAD_SIA_API_PATH = process.env.XROAD_TR_API_PATH ?? ''
 const XROAD_CLIENT_ID = process.env.XROAD_CLIENT_ID ?? ''
 const XROAD_SIA_API_KEY = process.env.XROAD_TR_API_KEY ?? ''
 
-export class OldAgePensionModule {
+export class SocialInsuranceAdministrationModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
-      module: OldAgePensionModule,
+      module: SocialInsuranceAdministrationModule,
       imports: [
         SocialInsuranceAdministrationClientModule.register({
           xRoadPath: createXRoadAPIPath(
@@ -41,13 +41,13 @@ export class OldAgePensionModule {
         NationalRegistryClientModule,
       ],
       providers: [
-        OldAgePensionService,
+        SocialInsuranceAdministrationService,
         {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useFactory: () => config.attachmentBucket,
         },
       ],
-      exports: [OldAgePensionService],
+      exports: [SocialInsuranceAdministrationService],
     }
   }
 }

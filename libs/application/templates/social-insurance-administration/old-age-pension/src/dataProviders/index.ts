@@ -15,14 +15,17 @@ export const SocialInsuranceAdministrationIsApplicantEligibleApi =
   defineTemplateApi({
     action: 'getIsEligible',
     externalDataId: 'socialInsuranceAdministrationIsApplicantEligible',
+    namespace: 'SocialInsuranceAdministration',
   })
 
 export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   action: 'getApplicant',
   externalDataId: 'socialInsuranceAdministrationApplicant',
+  namespace: 'SocialInsuranceAdministration',
 })
 
 export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
   action: 'getCurrencies',
   externalDataId: 'socialInsuranceAdministrationCurrencies',
+  namespace: 'SocialInsuranceAdministration',
 })

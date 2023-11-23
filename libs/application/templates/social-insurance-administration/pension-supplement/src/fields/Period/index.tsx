@@ -50,7 +50,7 @@ export const Period: FC<FieldBaseProps> = ({ application }) => {
   }
 
   return (
-    <Box paddingTop={6} paddingBottom={6}>
+    <Box paddingBottom={6}>
       <Box display={'flex'} className={styles.flexBox}>
         <Box width="half" marginRight={3} className={styles.yearBox}>
           <SelectFormField
