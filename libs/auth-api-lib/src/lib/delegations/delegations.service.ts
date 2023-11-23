@@ -40,6 +40,8 @@ import { DelegationType } from './types/delegationType'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
+import { DelegationConfig } from './DelegationConfig'
+import { ConfigType } from '@nestjs/config'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -62,6 +64,8 @@ export class DelegationsService {
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    @Inject(DelegationConfig.KEY)
+    private delegationConfig: ConfigType<typeof DelegationConfig>,
     private rskProcuringClient: RskRelationshipsClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
