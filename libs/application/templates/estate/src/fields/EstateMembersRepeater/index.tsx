@@ -163,31 +163,35 @@ export const EstateMembersRepeater: FC<
                   />
                 </GridColumn>
               )}
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
-                  required
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].phone`}
-                  name={`${id}[${index}].phone`}
-                  label={m.phone.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  format="###-####"
-                  defaultValue={member.phone || ''}
-                  error={error && error[index] && error[index].phone}
-                  required
-                />
-              </GridColumn>
+              {!member.advocate && (
+                <>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].email`}
+                      name={`${id}[${index}].email`}
+                      label={m.email.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.email || ''}
+                      error={error && error[index] && error[index].email}
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].phone`}
+                      name={`${id}[${index}].phone`}
+                      label={m.phone.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.phone || ''}
+                      error={error && error[index] && error[index].phone}
+                      required
+                    />
+                  </GridColumn>
+                </>
+              )}
             </GridRow>
 
             {/* ADVOCATE */}
