@@ -430,8 +430,7 @@ export class CourtService {
           return ''
         }
 
-        const r = reason as Error
-        r.message = r.message
+        const sanitizedReason = JSON.stringify(reason)
           .replace(
             /Participant with id: \d{10}/g,
             'Participant with id: **********',
@@ -448,10 +447,10 @@ export class CourtService {
             courtCaseNumber,
             defenderEmail,
           },
-          r,
+          JSON.parse(sanitizedReason),
         )
 
-        throw r
+        throw JSON.parse(sanitizedReason)
       })
   }
 
