@@ -10,7 +10,9 @@ import {
   Text,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
-import { Answers } from '../../types'
+import { Answers, InitialValue } from '../../types'
+import { makeValues } from '../../lib/utils'
+
 import * as styles from '../styles.css'
 
 type Field = {
@@ -34,7 +36,7 @@ type Props = {
   }
 }
 
-const initialValue = { formatted: '', raw: 0 }
+const initialValue: InitialValue = { formatted: '', raw: 0 }
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
@@ -48,20 +50,6 @@ export const TextFieldsRepeater: FC<
   const [index, setIndex] = useState('0')
 
   const { setValue, clearErrors } = useFormContext()
-
-  const makeValues = (value: string): typeof rateOfExchange => {
-    const formatted = value.slice()
-
-    let rawValue = value.replace(/[^\d.,]/g, '')
-    rawValue = rawValue.replace(',', '.')
-
-    const raw = rawValue ? parseFloat(rawValue) : 0
-
-    return {
-      formatted,
-      raw: Number.isNaN(raw) ? 0 : raw,
-    }
-  }
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: Field) => {
@@ -88,11 +76,11 @@ export const TextFieldsRepeater: FC<
       handleAddRepeaterFields()
     }
 
-    const sum = Math.round(faceValue.raw * rateOfExchange.raw)
+    const total = Math.round(faceValue.raw * rateOfExchange.raw)
 
-    setValue(`${index}.value`, String(sum))
+    setValue(`${index}.value`, String(total))
 
-    if (sum > 0) {
+    if (total > 0) {
       clearErrors(`${index}.value`)
     }
   }, [fields, faceValue, rateOfExchange, setValue])
@@ -156,7 +144,9 @@ export const TextFieldsRepeater: FC<
                         setIndex(fieldIndex)
 
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(makeValues(e.target.value ?? ''))
+                          setRateOfExchange(
+                            makeValues(e.target.value ?? '', true),
+                          )
                         } else if (field.id === 'faceValue') {
                           setFaceValue(makeValues(e.target.value ?? ''))
                         }

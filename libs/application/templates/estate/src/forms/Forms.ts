@@ -30,9 +30,9 @@ export const privateDivisionForm: Form = buildForm({
     estateAssets,
     estateDebts,
     attachments,
+    overview,
     representative,
     approvePrivateDivisionSubmission,
-    overview,
   ],
 })
 
@@ -51,8 +51,8 @@ export const undividedEstateForm: Form = buildForm({
     testamentInfo,
     estateAssets,
     estateDebts,
-    attachments,
     overview,
+    attachments,
   ],
 })
 
@@ -72,8 +72,8 @@ export const estateWithoutAssetsForm: Form = buildForm({
     estateWithoutAssets,
     estateAssets,
     estateDebts,
-    attachments,
     overview,
+    attachments,
   ],
 })
 

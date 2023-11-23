@@ -5,6 +5,7 @@ import { EstateInfo } from '@island.is/clients/syslumenn'
 import { EstateTypes } from './constants'
 import { m } from './messages'
 import { Application, FormValue } from '@island.is/application/types'
+import { InitialValue } from '../types'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -90,4 +91,27 @@ export const getEstateMembersDescriptionText = (
       m.estateMembersDescriptionUndividedEstate
     : /* EINKASKIPTI */
       m.estateMembersDescriptionDivisionOfEstateByHeirs
+}
+
+export const makeValues = (
+  value: string,
+  withDecimal?: boolean,
+): InitialValue => {
+  const formatted = value.slice()
+
+  let rawValue = '0'
+
+  if (withDecimal) {
+    rawValue = value.replace(/[^\d.,]/g, '')
+    rawValue = rawValue.replace(',', '.')
+  } else {
+    rawValue = value.replace(/[^\d]/g, '')
+  }
+
+  const raw = rawValue ? parseFloat(rawValue) : 0
+
+  return {
+    formatted,
+    raw: Number.isNaN(raw) ? 0 : raw,
+  }
 }

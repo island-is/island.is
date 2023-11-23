@@ -260,7 +260,7 @@ export const overviewAssetsAndDebts = [
             `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
               stock.nationalId ?? '',
             )}`,
-            `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
+            `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(stock.faceValue ?? 0)}`,
             `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
             `${m.stocksValue.defaultMessage}: ${formatCurrency(
               stock.value ?? '0',
