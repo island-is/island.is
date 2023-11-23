@@ -179,7 +179,7 @@ describe('Old Age Pension Template', () => {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
               additionalDocumentsRequired: [],
-            }
+            },
           },
         }),
         OldAgePensionTemplate,
@@ -202,7 +202,7 @@ describe('Old Age Pension Template', () => {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
               additionalDocumentsRequired: [],
-            }
+            },
           },
         }),
         OldAgePensionTemplate,
