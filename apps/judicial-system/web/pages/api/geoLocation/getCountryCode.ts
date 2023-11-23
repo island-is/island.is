@@ -8,8 +8,6 @@ async function getCountryCode(): Promise<{ countryCode: string }> {
     },
   })
 
-  console.log('getCountryCode', response)
-
   if (response.ok) {
     const ip = await response.json()
 
