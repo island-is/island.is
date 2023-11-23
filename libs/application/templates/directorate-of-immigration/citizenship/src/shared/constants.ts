@@ -1,5 +1,4 @@
 export enum ApiActions {
-  createCharge = 'createCharge',
   getResidenceConditionInfo = 'getResidenceConditionInfo',
   getCurrentCountryOfResidenceList = 'getCurrentCountryOfResidenceList',
   getResidenceInIcelandLastChangeDate = 'getResidenceInIcelandLastChangeDate',
