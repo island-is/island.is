@@ -28,10 +28,16 @@ export const detailsGrid = style({
   overflow: 'hidden',
   width: 'auto',
   marginLeft: '2px',
+  maxWidth: '90vw',
 })
 
 export const zebraTable = style({})
 
 globalStyle(`${zebraTable} tbody tr:nth-child(2n-1)`, {
   background: '#fff',
+})
+
+export const scrollBox = style({
+  overflowX: 'auto',
+  maxWidth: '85vw',
 })

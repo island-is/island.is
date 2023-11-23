@@ -62,7 +62,7 @@ export const FinanceLoansPaymenthistory = ({ loanId }: Props) => {
           )}
         </Button>
       </Box>
-      <Box padding={2} paddingBottom={4}>
+      <Box padding={2} paddingBottom={4} className={styles.scrollBox}>
         {loanPaymentsError ? (
           <AlertMessage
             type="error"
