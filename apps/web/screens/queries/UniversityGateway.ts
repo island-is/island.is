@@ -23,19 +23,11 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM_LIST = gql`
         schoolAnswerDate
         id
         iscedCode
-        languages
-        searchKeywords
         studentAnswerDate
         startingSemesterSeason
         modeOfDelivery
         startingSemesterYear
         universityContentfulKey
-        tag {
-          code
-          id
-          nameEn
-          nameIs
-        }
       }
     }
   }
@@ -83,7 +75,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       id
       schoolAnswerDate
       iscedCode
-      searchKeywords
       studentAnswerDate
       startingSemesterSeason
       startingSemesterYear
@@ -92,7 +83,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
       costInformationEn
       costInformationIs
       costPerYear
-      languages
       externalUrlEn
       externalUrlIs
       modeOfDelivery
@@ -113,12 +103,6 @@ export const GET_UNIVERSITY_GATEWAY_PROGRAM = gql`
         semesterSeason
         semesterYear
         semesterYearNumber
-      }
-      tag {
-        code
-        id
-        nameEn
-        nameIs
       }
     }
   }
