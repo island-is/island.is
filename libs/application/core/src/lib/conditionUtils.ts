@@ -1,23 +1,32 @@
 import {
   AllOrAny,
-  FormItem,
   Answer,
-  ExternalData,
-  FormValue,
   Comparators,
+  ExternalData,
+  FormItem,
+  FormValue,
   SingleConditionCheck,
   StaticCheck,
 } from '@island.is/application/types'
 import { getValueViaPath } from './formUtils'
+import { User } from 'user'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,
+  externalData: ExternalData,
   check: StaticCheck,
+  user: User | null,
 ): boolean {
-  const { value, questionId, comparator } = check
+  const { value, questionId, comparator, externalDataId, userPropId } = check
   let isValid = false
-  const answer = getValueViaPath(formValue, questionId) as Answer | undefined
-
+  let answer
+  if (questionId) {
+    answer = getValueViaPath(formValue, questionId) as Answer
+  } else if (externalDataId) {
+    answer = getValueViaPath(externalData, externalDataId) as Answer
+  } else if (userPropId && user) {
+    answer = getValueViaPath(user, userPropId) as Answer
+  }
   switch (comparator) {
     case Comparators.EQUALS:
       isValid = answer === value
@@ -45,6 +54,16 @@ function applyStaticConditionalCheck(
         isValid = answer <= value
       }
       break
+    case Comparators.CONTAINS:
+      if (answer && Array.isArray(answer)) {
+        isValid = answer.includes(value)
+      }
+      break
+    case Comparators.NOT_CONTAINS:
+      if (answer && Array.isArray(answer)) {
+        isValid = !answer.includes(value)
+      }
+      break
   }
   return isValid
 }
@@ -53,6 +72,7 @@ export function shouldShowFormItem(
   formItem: FormItem,
   formValue: FormValue,
   externalData: ExternalData = {},
+  user: User | null,
 ): boolean {
   const { condition } = formItem
   if (!condition) {
@@ -60,7 +80,7 @@ export function shouldShowFormItem(
   }
 
   if (typeof condition === 'function') {
-    return condition(formValue, externalData)
+    return condition(formValue, externalData, user)
   }
 
   if (condition.isMultiCheck) {
@@ -70,9 +90,14 @@ export function shouldShowFormItem(
       const conditionalCheck: SingleConditionCheck = check[i]
       let isValid: boolean
       if (typeof conditionalCheck === 'function') {
-        isValid = conditionalCheck(formValue, externalData)
+        isValid = conditionalCheck(formValue, externalData, user)
       } else {
-        isValid = applyStaticConditionalCheck(formValue, conditionalCheck)
+        isValid = applyStaticConditionalCheck(
+          formValue,
+          externalData,
+          conditionalCheck,
+          user,
+        )
       }
 
       if (on === AllOrAny.ALL) {
@@ -86,5 +111,10 @@ export function shouldShowFormItem(
     return on === AllOrAny.ALL ? show : !show
   }
 
-  return applyStaticConditionalCheck(formValue, condition as StaticCheck)
+  return applyStaticConditionalCheck(
+    formValue,
+    externalData,
+    condition as StaticCheck,
+    user,
+  )
 }
