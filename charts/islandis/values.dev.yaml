@@ -2707,7 +2707,7 @@ user-notification:
       DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/user-notification/api/DB_PASSWORD'
+      DB_PASS: '/k8s/user-notification/DB_PASSWORD'
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
