@@ -34,6 +34,8 @@ type Props = {
   }
 }
 
+const initialValue = { formatted: '', raw: 0 }
+
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
 > = ({ field, errors }) => {
@@ -41,12 +43,25 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-
-  const [rateOfExchange, setRateOfExchange] = useState('')
-  const [faceValue, setFaceValue] = useState('')
+  const [rateOfExchange, setRateOfExchange] = useState({...initialValue})
+  const [faceValue, setFaceValue] = useState({...initialValue})
   const [index, setIndex] = useState('0')
 
   const { setValue, clearErrors } = useFormContext()
+
+  const makeValues = (value: string): typeof rateOfExchange => {
+    const formatted = value.slice()
+
+    let rawValue = value.replace(/[^\d.,]/g, '')
+    rawValue = rawValue.replace(',', '.')
+
+    const raw = rawValue ? parseFloat(rawValue) : 0
+
+    return {
+      formatted,
+      raw: Number.isNaN(raw) ? 0 : raw,
+    }
+  }
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: Field) => {
@@ -73,16 +88,11 @@ export const TextFieldsRepeater: FC<
       handleAddRepeaterFields()
     }
 
-    const formattedFaceValue = Number(faceValue.replace(',', '.')) || 0
-    const formattedRateOfExchange =
-      Number(rateOfExchange.replace(',', '.')) || 0
+    const sum = Math.round(faceValue.raw * rateOfExchange.raw)
 
-    setValue(
-      `${index}.value`,
-      String(formattedFaceValue * formattedRateOfExchange),
-    )
+    setValue(`${index}.value`, String(sum))
 
-    if (formattedRateOfExchange * formattedRateOfExchange > 0) {
+    if (sum > 0) {
       clearErrors(`${index}.value`)
     }
   }, [fields, faceValue, rateOfExchange, setValue])
@@ -144,10 +154,11 @@ export const TextFieldsRepeater: FC<
                       }
                       onChange={(e) => {
                         setIndex(fieldIndex)
+
                         if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(e.target.value)
+                          setRateOfExchange(makeValues(e.target.value ?? ''))
                         } else if (field.id === 'faceValue') {
-                          setFaceValue(e.target.value)
+                          setFaceValue(makeValues(e.target.value ?? ''))
                         }
                       }}
                     />
