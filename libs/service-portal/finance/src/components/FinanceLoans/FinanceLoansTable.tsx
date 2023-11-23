@@ -109,8 +109,15 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                       <FinanceLoansTableDetail
                         data={[
                           {
-                            title: 'Meðgreiðandi',
-                            value: loan.coPayerName || '-',
+                            title:
+                              loan.coPayers?.length && loan.coPayers.length > 1
+                                ? 'Meðgreiðendur'
+                                : 'Meðgreiðandi',
+                            value: loan.coPayers?.length
+                              ? loan.coPayers
+                                  .map((c) => c.coPayerName)
+                                  .join(', ')
+                              : '-',
                           },
                           {
                             title: 'Fastanúmer',
@@ -128,16 +135,6 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Hlutdeildarlán',
                             value: loan.affiliateLoan === 48 ? 'Já' : 'Nei',
                           },
-                          /*
-                          { // Not needed for now
-                            title: 'Númer leggs',
-                            value: loan.installments || '-',
-                          },
-                          { // Always ISK, not needed for now
-                            title: 'Gjaldmiðill',
-                            value: 'ISK',
-                          },
-                          */
                           {
                             title: 'Fyrsti vaxtadagur',
                             value: formatDate(loan.firstInterestDate) || '-',
@@ -209,7 +206,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                       <FinanceLoansTableDetail
                         data={[
                           {
-                            title: 'Áætluð greiðlsubyrði á mánuði',
+                            title: 'Áætluð greiðslubyrði á mánuði',
                             value: amountFormat(loan.lastPaymentAmount),
                           },
                           {
@@ -217,7 +214,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             value: amountFormat(loan.totalDueAmount) || '-',
                           },
                           {
-                            title: 'Nafnverðseftirstöðvar',
+                            title: 'Nafnverðseftirstöðvar mv. skil',
                             value:
                               amountFormat(
                                 loan.balanceWithoutInterestPriceImprovements,
@@ -241,7 +238,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             value: amountFormat(loan.repaymentFee) || '-',
                           },
                           {
-                            title: 'Uppgreiðlsuverðmæti',
+                            title: 'Uppgreiðsluverðmæti',
                             value:
                               amountFormat(loan.loanAmountWithRepayment) || '-',
                           },
