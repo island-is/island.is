@@ -109,6 +109,10 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                       <FinanceLoansTableDetail
                         data={[
                           {
+                            title: 'Meðgreiðandi',
+                            value: loan.coPayerName || '-',
+                          },
+                          {
                             title: 'Fastanúmer',
                             value: loan.propertyId || '-',
                           },
@@ -119,6 +123,10 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           {
                             title: 'Kröfuhafi',
                             value: loan.creditor || '-',
+                          },
+                          {
+                            title: 'Hlutdeildarlán',
+                            value: loan.affiliateLoan === 48 ? 'Já' : 'Nei',
                           },
                           /*
                           { // Not needed for now
