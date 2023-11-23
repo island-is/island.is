@@ -737,6 +737,12 @@
             },
             "description": "List of co-payers that are registered on this loan.",
             "nullable": true
+          },
+          "creditor": {
+            "type": "string",
+            "description": "Name of creditor",
+            "nullable": true,
+            "readOnly": true
           }
         },
         "additionalProperties": false,

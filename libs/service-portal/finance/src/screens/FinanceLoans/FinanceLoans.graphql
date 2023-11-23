@@ -40,6 +40,7 @@ query GetHmsLoansLoanhistory {
     municipalityNumber
     loanType
     installments
+    creditor
     coPayerName
     coPayerNationalId
     properties {

@@ -150,6 +150,9 @@ export class Loanhistory {
   installments?: number
 
   @Field(() => String, { nullable: true })
+  creditor?: string
+
+  @Field(() => String, { nullable: true })
   coPayerName?: string
 
   @Field(() => String, { nullable: true })

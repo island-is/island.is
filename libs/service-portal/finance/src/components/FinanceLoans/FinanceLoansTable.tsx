@@ -116,6 +116,10 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Veðstaður',
                             value: loan.municipalityNumber || '-',
                           },
+                          {
+                            title: 'Kröfuhafi',
+                            value: loan.creditor || '-',
+                          },
                           /*
                           { // Not needed for now
                             title: 'Númer leggs',
