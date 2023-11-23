@@ -1,0 +1,5 @@
+mutation createRequest($input: CreateRecyclingRequestInput!) {
+    createRecyclingRequestAppSys(input: $input) {
+        status
+    }
+}

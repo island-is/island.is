@@ -85,6 +85,7 @@ import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-lic
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
+
 import { FinanceClientConfig } from '@island.is/clients/finance'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'

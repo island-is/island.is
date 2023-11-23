@@ -22,10 +22,17 @@
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/clients/recycling-fund/src/codegen.yml"
-      }
+        "command": "graphql-codegen --config libs/clients/recycling-fund/codegen.yaml"
+      },
+      "inputs": [
+        "default",
+        "{workspaceRoot}/apps/air-discount-scheme/api/src/api.graphql"
+      ],
+      "outputs": [
+        "{projectRoot}/gen"
+      ]
     }
   },
-  "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["skilavottord-ws"]
+  "implicitDependencies": ["skilavottord-ws"],
+  "tags": ["lib:client", "scope:client"]
 }

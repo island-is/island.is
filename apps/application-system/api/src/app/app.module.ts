@@ -30,6 +30,7 @@ import { EhicClientConfig } from '@island.is/clients/ehic-client-v1'
 import { JudicialAdministrationClientConfig } from '@island.is/clients/judicial-administration'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directorate-of-immigration'
+import { RecyclingFundClientConfig } from '@island.is/clients/recycling-fund'
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { DirectorateOfImmigrationClientConfig } from '@island.is/clients/directo
         JudicialAdministrationClientConfig,
         AuthPublicApiClientConfig,
         DirectorateOfImmigrationClientConfig,
+        RecyclingFundClientConfig,
       ],
     }),
   ],

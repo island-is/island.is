@@ -11,7 +11,7 @@ export class CarRecyclingModule {
     return {
       module: CarRecyclingModule,
       imports: [
-        RecyclingFundClientModule.register(),
+        RecyclingFundClientModule,
         SharedTemplateAPIModule.register(config),
         ApplicationApiCoreModule,
       ],

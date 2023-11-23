@@ -1,3 +1,3 @@
-export { RecyclingFundClientModule } from './lib/RecyclingFundClient.module'
-export { RecyclingFundClientService } from './lib/RecyclingFundClient.service'
-export * from '../gen/graphql-request'
+export { RecyclingFundClientModule } from './lib/recyclingFundClient.module'
+export { RecyclingFundClientService } from './lib/recyclingFundClient.service'
+export { RecyclingFundClientConfig } from './lib/recyclingFundClient.config'
