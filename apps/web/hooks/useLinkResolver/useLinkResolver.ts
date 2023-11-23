@@ -179,7 +179,10 @@ export const routesTemplate = {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-
+  anchorpage: {
+    is: '/lifsvidburdir/[slug]',
+    en: '/en/life-events/[slug]',
+  },
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',

@@ -29,7 +29,7 @@ import {
   Article,
   SubArticle,
   SearchableContentTypes,
-  LifeEventPage,
+  AnchorPage,
   News,
   OrganizationSubpage,
 } from '@island.is/web/graphql/schema'
@@ -381,7 +381,7 @@ export const SearchInput = forwardRef<
 
 type SearchResultItem =
   | Article
-  | LifeEventPage
+  | AnchorPage
   | News
   | SubArticle
   | OrganizationSubpage
@@ -452,8 +452,8 @@ const Results = ({
                   item: {
                     type: 'link',
                     string: linkResolver(
-                      typename === 'lifeeventpage'
-                        ? extractAnchorPageLinkType(item as LifeEventPage)
+                      typename === 'anchorpage'
+                        ? extractAnchorPageLinkType(item as AnchorPage)
                         : typename,
                       variables,
                     )?.href,
