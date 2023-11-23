@@ -1182,6 +1182,9 @@ export interface IFrontpageFields {
   /** Life Events */
   lifeEvents?: ILifeEventPage[] | undefined
 
+  /** Anchor Pages */
+  anchorPages?: IAnchorPage[] | undefined
+
   /** Namespace */
   namespace: IUiConfiguration
 

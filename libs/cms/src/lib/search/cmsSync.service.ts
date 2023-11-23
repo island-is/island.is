@@ -11,7 +11,6 @@ import {
 import { ArticleSyncService } from './importers/article.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { ContentfulService } from './contentful.service'
-import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { AnchorPageSyncService } from './importers/anchorPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
@@ -58,7 +57,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly subArticleSyncService: SubArticleSyncService,
-    private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly anchorPageSyncService: AnchorPageSyncService,
     private readonly adgerdirPageSyncService: AdgerdirPageSyncService,
     private readonly contentfulService: ContentfulService,
@@ -80,7 +78,6 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     this.contentSyncProviders = [
       this.articleSyncService,
       this.subArticleSyncService,
-      this.lifeEventsPageSyncService,
       this.anchorPageSyncService,
       this.articleCategorySyncService,
       this.newsSyncService,
