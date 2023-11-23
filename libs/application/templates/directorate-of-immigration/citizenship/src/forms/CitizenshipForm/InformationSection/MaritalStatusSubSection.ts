@@ -18,32 +18,35 @@ import {
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
   title: information.labels.maritalStatus.subSectionTitle,
+  condition: (_, externalData) => {
+    const spouseDetails = getValueViaPath(
+      externalData,
+      'spouseDetails.data',
+      undefined,
+    ) as NationalRegistrySpouse | undefined
+    const maritalStatus = spouseDetails?.maritalStatus
+    const hasSpouse = !!spouseDetails?.nationalId
+    const isMarriedOrCohabitation =
+      maritalStatus === '3' || (maritalStatus === '1' && hasSpouse)
+
+    // Check if the only residence condition that the applicant can apply for, is related to marital status
+    const residenceConditionInfo = getValueViaPath(
+      externalData,
+      'residenceConditionInfo.data',
+      {},
+    ) as ApplicantResidenceConditionViewModel
+    const hasOnlyResConMaritalStatus =
+      residenceConditionInfo.isAnyResConValid &&
+      residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
+
+    // TODO revert
+    // return isMarriedOrCohabitation && hasOnlyResConMaritalStatus
+    return isMarriedOrCohabitation
+  },
   children: [
     buildMultiField({
       id: Routes.MARITALSTATUS,
       title: information.labels.maritalStatus.pageTitle,
-      condition: (_, externalData) => {
-        const spouseDetails = getValueViaPath(
-          externalData,
-          'spouseDetails.data',
-          undefined,
-        ) as NationalRegistrySpouse | undefined
-        const hasSpouse = !!spouseDetails?.nationalId
-
-        // Check if the only residence condition that the applicant can apply for, is related to marital status
-        const residenceConditionInfo = getValueViaPath(
-          externalData,
-          'residenceConditionInfo.data',
-          {},
-        ) as ApplicantResidenceConditionViewModel
-        const hasOnlyResConMaritalStatus =
-          residenceConditionInfo.isAnyResConValid &&
-          residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
-
-        // TODO revert
-        // return hasSpouse && hasOnlyResConMaritalStatus
-        return hasSpouse
-      },
       children: [
         buildDescriptionField({
           id: 'maritalStatus.title',

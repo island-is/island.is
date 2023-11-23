@@ -11,22 +11,22 @@ import { ApplicantResidenceConditionViewModel } from '@island.is/clients/directo
 export const ParentsSubSection = buildSubSection({
   id: Routes.PARENTINFORMATION,
   title: information.labels.parents.subSectionTitle,
+  condition: (_, externalData) => {
+    const residenceConditionInfo = getValueViaPath(
+      externalData,
+      'residenceConditionInfo.data',
+      {},
+    ) as ApplicantResidenceConditionViewModel
+    const isAnyResConValid = residenceConditionInfo.isAnyResConValid
+
+    // TODO revert
+    // return !isAnyResConValid
+    return true
+  },
   children: [
     buildMultiField({
       id: Routes.PARENTINFORMATION,
       title: information.labels.parents.pageTitle,
-      condition: (_, externalData) => {
-        const residenceConditionInfo = getValueViaPath(
-          externalData,
-          'residenceConditionInfo.data',
-          {},
-        ) as ApplicantResidenceConditionViewModel
-        const isAnyResConValid = residenceConditionInfo.isAnyResConValid
-
-        // TODO revert
-        // return !isAnyResConValid
-        return true
-      },
       children: [
         buildCustomField({
           id: 'parentInformation',
