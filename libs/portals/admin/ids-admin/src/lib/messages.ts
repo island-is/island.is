@@ -856,5 +856,5 @@ export const m = defineMessages({
   includeAccessControlUsers: {
     id: 'ap.ids-admin:include-access-control-users',
     defaultMessage: 'Include access control users',
-  }
+  },
 })

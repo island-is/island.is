@@ -83,7 +83,7 @@ export const DelegationConfig = defineConfig<z.infer<typeof schema>>({
           DelegationType.ProcurationHolder,
           DelegationType.Custom,
         ],
-      }
+      },
     ],
     userInfoUrl:
       env.required(

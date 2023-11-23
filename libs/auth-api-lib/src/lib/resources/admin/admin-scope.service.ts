@@ -154,7 +154,7 @@ export class AdminScopeService {
           displayName,
           description,
           domainName: tenantId,
-          customDelegationOnlyFor: []
+          customDelegationOnlyFor: [],
         },
         { transaction },
       )
@@ -304,7 +304,9 @@ export class AdminScopeService {
           ...omit(input, ['displayName', 'description']),
           ...(displayName && { displayName }),
           ...(description && { description }),
-          customDelegationOnlyFor: this.sequelize.literal(`ARRAY['ProcurationHolder'::enum_api_scope_custom_delegation_only_for]`)
+          customDelegationOnlyFor: this.sequelize.literal(
+            `ARRAY['ProcurationHolder'::enum_api_scope_custom_delegation_only_for]`,
+          ),
         },
         {
           where: {
