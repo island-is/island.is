@@ -46,7 +46,6 @@ export const AssetsRepeater: FC<
     name: id,
   })
   const { control, clearErrors, setValue } = useFormContext()
-  console.log({assetName, error})
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: {

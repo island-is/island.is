@@ -17,7 +17,7 @@ const asset = z
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    share: z.number().optional(),
+    share: z.number().refine((v => v > 0 && v <= 1 )),
   })
   .refine(
     ({ enabled, marketValue }) => {
