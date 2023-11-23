@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Table as T,
   Box,
@@ -117,14 +116,16 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Veðstaður',
                             value: loan.municipalityNumber || '-',
                           },
-                          /*{
+                          /*
+                          { // Not needed for now
                             title: 'Númer leggs',
                             value: loan.installments || '-',
                           },
-                          {
+                          { // Always ISK, not needed for now
                             title: 'Gjaldmiðill',
                             value: 'ISK',
-                          },*/
+                          },
+                          */
                           {
                             title: 'Fyrsti vaxtadagur',
                             value: formatDate(loan.firstInterestDate) || '-',
@@ -197,7 +198,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                         data={[
                           {
                             title: 'Áætluð greiðlsubyrði á mánuði',
-                            value: null, //loan.,
+                            value: amountFormat(loan.lastPaymentAmount),
                           },
                           {
                             title: 'Útreiknað ógreitt',
