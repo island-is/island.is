@@ -117,17 +117,21 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Veðstaður',
                             value: loan.municipalityNumber || '-',
                           },
-                          {
+                          /*{
                             title: 'Númer leggs',
                             value: loan.installments || '-',
                           },
                           {
                             title: 'Gjaldmiðill',
                             value: 'ISK',
-                          },
+                          },*/
                           {
                             title: 'Fyrsti vaxtadagur',
                             value: formatDate(loan.firstInterestDate) || '-',
+                          },
+                          {
+                            title: 'Fyrsti gjalddagi',
+                            value: formatDate(loan.firstPaymentDate) || '-',
                           },
                           {
                             title: 'Næsti gjalddagi',
@@ -197,7 +201,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           },
                           {
                             title: 'Útreiknað ógreitt',
-                            value: null, //loan.,
+                            value: amountFormat(loan.totalDueAmount) || '-',
                           },
                           {
                             title: 'Nafnverðseftirstöðvar',
