@@ -572,7 +572,7 @@ components:
           type: string
           nullable: true
         language:
-          type: string  
+          type: string
     PaymentInfo:
       type: object
       additionalProperties: false

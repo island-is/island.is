@@ -1102,21 +1102,23 @@ export const parentalLeaveFormMessages: MessageDir = {
       defaultMessage: 'Kennitala',
       description: 'National id',
     },
-    languageTitle : {
+    languageTitle: {
       id: 'pl.application:applicant.languageTitle',
-      defaultMessage: 'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
-      description: 'Please select language to use in communication with the parental leave fund',      
+      defaultMessage:
+        'Vinasamlegast veldu tungumál fyrir samskipti við sjóðinn',
+      description:
+        'Please select language to use in communication with the parental leave fund',
     },
     icelandic: {
-      id:'pl.application:applicant.icelandic',
+      id: 'pl.application:applicant.icelandic',
       defaultMessage: 'Íslenska',
       description: 'icelandic',
     },
     english: {
-      id:'pl.application:applicant.english',
+      id: 'pl.application:applicant.english',
       defaultMessage: 'Enska',
       description: 'english',
-    }
+    },
   }),
 
   errors: defineMessages({

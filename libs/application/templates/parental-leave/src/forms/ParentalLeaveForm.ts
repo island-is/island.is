@@ -144,26 +144,23 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
                 buildRadioField({
                   id: 'applicant.language',
-                  title:
-                    parentalLeaveFormMessages.applicant.languageTitle,
+                  title: parentalLeaveFormMessages.applicant.languageTitle,
                   width: 'half',
                   space: 3,
                   options: [
                     {
                       value: '',
-                      label:
-                        parentalLeaveFormMessages.applicant.icelandic,
+                      label: parentalLeaveFormMessages.applicant.icelandic,
                     },
                     {
                       value: 'EN',
-                      label:
-                        parentalLeaveFormMessages.applicant.english,
+                      label: parentalLeaveFormMessages.applicant.english,
                     },
                   ],
                 }),
               ],
             }),
-          ]
+          ],
         }),
         buildSubSection({
           id: 'otherParentObj',

@@ -371,7 +371,7 @@ export const transformApplicationToParentalLeaveDTO = (
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
-    language
+    language,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
