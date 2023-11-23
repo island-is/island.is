@@ -198,6 +198,11 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'claims',
       title: m.claimsTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'claims',
