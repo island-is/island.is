@@ -15,7 +15,7 @@ import {
 } from 'sequelize-typescript'
 import { Course } from '../../course/model/course'
 import { Program } from './program'
-import { Requirement, Season } from '@island.is/university-gateway'
+import { CourseSeason, Requirement } from '@island.is/university-gateway'
 import { CreationOptional } from 'sequelize'
 
 @Table({
@@ -82,15 +82,15 @@ export class ProgramCourse extends Model {
 
   @ApiProperty({
     description: 'Which season this course is taught on',
-    example: Season.FALL,
-    enum: Season,
+    example: CourseSeason.FALL,
+    enum: CourseSeason,
   })
   @Column({
     type: DataType.ENUM,
-    values: Object.values(Season),
+    values: Object.values(CourseSeason),
     allowNull: false,
   })
-  semesterSeason!: Season
+  semesterSeason!: CourseSeason
 
   @ApiHideProperty()
   @CreatedAt

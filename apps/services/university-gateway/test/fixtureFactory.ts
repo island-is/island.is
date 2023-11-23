@@ -8,6 +8,7 @@ import { TestApp } from '@island.is/testing/nest'
 import { Program } from '../src/app/modules/program/model/program'
 import { University } from '../src/app/modules/university/model/university'
 import {
+  CourseSeason,
   DegreeType,
   ModeOfDelivery,
   Requirement,
@@ -80,7 +81,7 @@ export class FixtureFactory {
       courseId: course.id,
       requirement: Requirement.MANDATORY,
       semesterYear: 2023,
-      semesterSeason: Season.FALL,
+      semesterSeason: CourseSeason.FALL,
     })
 
     return course
