@@ -208,7 +208,10 @@ export class ReykjavikUniversityApplicationClient {
           residenceState: application.applicant.municipalityCode,
           countryCode: application.applicant.countryCode,
           preferredLanguage: application.preferredLanguage,
-          educations: application.educationList,
+          educations: application.educationList.map((x) => ({
+            school: x.schoolName,
+            degree: x.degree,
+          })),
           jobs: application.workExperienceList,
         },
         // extraApplicationFields: application.extraFieldList, // TODO waiting for change in API

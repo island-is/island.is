@@ -30,7 +30,7 @@ export interface IApplicationApplicant {
 }
 
 export interface IApplicationEducation {
-  school: string
+  schoolName: string
   degree: string
 }
 

@@ -34,20 +34,6 @@ class CreateApplicationApplicantDto {
 
   @IsString()
   @ApiProperty({
-    description: 'Email',
-    example: 'jon.jonsson@island.is',
-  })
-  email!: string
-
-  @IsString()
-  @ApiProperty({
-    description: 'Phone number',
-    example: '+3548123456',
-  })
-  phone!: string
-
-  @IsString()
-  @ApiProperty({
     description: 'Gender code',
     example: '1',
   })
@@ -94,6 +80,20 @@ class CreateApplicationApplicantDto {
     example: 'IS',
   })
   countryCode!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Email',
+    example: 'jon.jonsson@island.is',
+  })
+  email!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Phone number',
+    example: '+3548123456',
+  })
+  phone!: string
 }
 
 class CreateApplicationEducationDto {
@@ -102,7 +102,7 @@ class CreateApplicationEducationDto {
     description: 'School name',
     example: 'Menntaskólinn í Reykjavík',
   })
-  school!: string
+  schoolName!: string
 
   @IsString()
   @ApiProperty({
@@ -158,6 +158,14 @@ export class CreateApplicationDto {
     example: '00000000-0000-0000-0000-000000000000',
   })
   programId!: string
+
+  // @IsString()
+  // @IsOptional()
+  // @ApiPropertyOptional({
+  //   description: 'External ID for the specialization(from University)',
+  //   example: 'BLA567',
+  // })
+  // specializationExternalId?: string
 
   @IsEnum(ModeOfDelivery)
   @ApiProperty({
