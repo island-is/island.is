@@ -40,8 +40,6 @@ import { DelegationType } from './types/delegationType'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
-import { DelegationConfig } from './DelegationConfig'
-import { ConfigType } from '@nestjs/config'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -64,8 +62,8 @@ export class DelegationsService {
     private clientAllowedScopeModel: typeof ClientAllowedScope,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    @Inject(DelegationConfig.KEY)
-    private delegationConfig: ConfigType<typeof DelegationConfig>,
+    @InjectModel(ApiScope)
+    private apiScopeModel: typeof ApiScope,
     private rskProcuringClient: RskRelationshipsClient,
     private nationalRegistryClient: NationalRegistryClientService,
     private delegationScopeService: DelegationScopeService,
@@ -172,10 +170,21 @@ export class DelegationsService {
       throw new NotFoundException()
     }
 
+    const customScopes = await this.apiScopeModel.findAll({
+      attributes: ['name', 'customDelegationOnlyFor'],
+      where: {
+        customDelegationOnlyFor: {
+          [Op.ne]: null,
+        },
+      },
+    })
+
     await this.delegationScopeService.delete(
       id,
       isOutgoing
-        ? user.scope.filter((scope) => this.filterCustomScopeRule(scope, user))
+        ? user.scope.filter((scope) =>
+            this.filterCustomScopeRule(scope, user, customScopes),
+          )
         : null,
     )
 
@@ -586,26 +595,17 @@ export class DelegationsService {
     return allowedScopes.includes(scope.scopeName)
   }
 
-  private checkIfOutgoingScopeAllowed(
-    scope: DelegationScope,
+  private filterCustomScopeRule(
+    scope: string,
     user: User,
+    customScopes: ApiScope[],
   ): boolean {
-    const allowedScopes = user.scope.filter((scope) =>
-      this.filterCustomScopeRule(scope, user),
-    )
-
-    return allowedScopes.includes(scope.scopeName)
-  }
-
-  private filterCustomScopeRule(scope: string, user: User): boolean {
-    const customRule = this.delegationConfig.customScopeRules.find(
-      (rule) => rule.scopeName === scope,
-    )
+    const customRule = customScopes.find((rule) => rule.name === scope)
 
     return (
-      !customRule ||
-      customRule.onlyForDelegationType.some((type) =>
-        user.delegationType?.includes(type as AuthDelegationType),
+      !customRule?.customDelegationOnlyFor ||
+      customRule.customDelegationOnlyFor.some((type) =>
+        user.delegationType?.includes(type as unknown as AuthDelegationType),
       )
     )
   }

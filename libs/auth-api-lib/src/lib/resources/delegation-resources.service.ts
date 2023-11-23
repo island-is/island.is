@@ -1,14 +1,13 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
-import { and, Op, or } from 'sequelize'
+import { Op, and, or } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { AuthDelegationType } from '@island.is/shared/types'
 
-import { DelegationConfig } from '../delegations/DelegationConfig'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationDirection } from '../delegations/types/delegationDirection'
@@ -23,7 +22,6 @@ import { col } from './utils/col'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
-import type { ConfigType } from '@island.is/nest/config'
 
 @Injectable()
 export class DelegationResourcesService {
@@ -33,8 +31,6 @@ export class DelegationResourcesService {
     @InjectModel(Domain)
     private domainModel: typeof Domain,
     private resourceTranslationService: ResourceTranslationService,
-    @Inject(DelegationConfig.KEY)
-    private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
 
   async findAllDomains(

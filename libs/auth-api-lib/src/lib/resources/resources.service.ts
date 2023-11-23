@@ -33,7 +33,6 @@ import { IdentityResourceUserClaim } from './models/identity-resource-user-claim
 import { IdentityResource } from './models/identity-resource.model'
 import { ResourceTranslationService } from './resource-translation.service'
 
-import type { User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 @Injectable()
