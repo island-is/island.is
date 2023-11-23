@@ -430,6 +430,14 @@ export class CourtService {
           return ''
         }
 
+        const r = reason as Error
+        r.message = r.message
+          .replace(
+            /Participant with id: \d{10}/g,
+            'Participant with id: **********',
+          )
+          .replace(/\) gegn(.*?)'/g, ') gegn **********')
+
         this.eventService.postErrorEvent(
           'Failed to update case with defendant',
           {
@@ -440,10 +448,10 @@ export class CourtService {
             courtCaseNumber,
             defenderEmail,
           },
-          reason,
+          r,
         )
 
-        throw reason
+        throw r
       })
   }
 
