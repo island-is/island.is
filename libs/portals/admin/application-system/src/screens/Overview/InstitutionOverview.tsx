@@ -156,8 +156,6 @@ const InstitutionOverview = () => {
     applicationAdminList ?? [],
     { multiChoiceFilters, institutionFilters, period: filters.period },
   )
-  console.log(organizations)
-  console.log(filteredApplicationList)
   return (
     <Box>
       <Breadcrumbs
