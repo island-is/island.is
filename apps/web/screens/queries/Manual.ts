@@ -1,29 +1,17 @@
 import gql from 'graphql-tag'
 
-import { nestedFields, slices } from './fragments'
+import {
+  assetFields,
+  htmlFields,
+  imageFields,
+  nestedFields,
+  slices,
+} from './fragments'
 
 export const GET_SINGLE_MANUAL_QUERY = gql`
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
-  fragment AssetFields on Asset {
-    __typename
-    id
-    title
-    url
-    contentType
-  }
-  fragment ImageFields on Image {
-    __typename
-    id
-    title
-    url
-    contentType
-    width
-    height
-  }
+  ${htmlFields}
+  ${assetFields}
+  ${imageFields}
   query GetSingleManual($input: GetSingleManualInput!) {
     getSingleManual(input: $input) {
       id
@@ -66,6 +54,7 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
         id
         title
         slug
+        intro
         changelog {
           items {
             dateOfChange
@@ -83,10 +72,6 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
             ...HtmlFields
             ...AssetFields
             ...ImageFields
-          }
-          link {
-            url
-            text
           }
         }
       }
