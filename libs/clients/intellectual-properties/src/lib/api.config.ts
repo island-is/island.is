@@ -20,7 +20,6 @@ export const ApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-intellectual-properties',
         organizationSlug: 'hugverkastofan',
-        logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'tokenExchange',
@@ -35,6 +34,7 @@ export const ApiConfig = {
       headers: {
         'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
+        ApiKey: config.apiKey,
       },
     }),
   inject: [
