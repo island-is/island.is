@@ -40,6 +40,7 @@ export const MaritalStatusSubSection = buildSubSection({
           residenceConditionInfo.isAnyResConValid &&
           residenceConditionInfo.isOnlyMarriedOrCohabitationWithISCitizen
 
+        // TODO revert
         // return hasSpouse && hasOnlyResConMaritalStatus
         return hasSpouse
       },

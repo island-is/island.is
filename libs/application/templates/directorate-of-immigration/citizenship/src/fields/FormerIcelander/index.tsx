@@ -41,7 +41,8 @@ export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
           },
         ]}
       />
-      {isFormerIcelander === NO && (
+      {/* TODO revert */}
+      {/* {isFormerIcelander === NO && (
         <AlertMessage
           type="error"
           title={formatMessage(information.labels.formerIcelander.alertTitle)}
@@ -49,7 +50,7 @@ export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
             information.labels.formerIcelander.alertDescription,
           )}
         />
-      )}
+      )} */}
     </Box>
   )
 }

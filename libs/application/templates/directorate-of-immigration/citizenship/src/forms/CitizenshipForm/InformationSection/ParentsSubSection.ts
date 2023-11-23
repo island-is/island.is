@@ -23,6 +23,7 @@ export const ParentsSubSection = buildSubSection({
         ) as ApplicantResidenceConditionViewModel
         const isAnyResConValid = residenceConditionInfo.isAnyResConValid
 
+        // TODO revert
         // return !isAnyResConValid
         return true
       },

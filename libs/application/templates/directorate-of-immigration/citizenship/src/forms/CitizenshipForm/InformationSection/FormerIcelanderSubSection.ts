@@ -31,6 +31,7 @@ export const FormerIcelanderSubSection = buildSubSection({
         ) as ApplicantResidenceConditionViewModel
         const isAnyResConValid = residenceConditionInfo.isAnyResConValid
 
+        // TODO revert
         // return !isAnyResConValid && !hasValidParents
         return !hasValidParents
       },
