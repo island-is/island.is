@@ -1,5 +1,46 @@
-mutation createRequest($input: CreateRecyclingRequestInput!) {
-    createRecyclingRequestAppSys(input: $input) {
-        status
-    }
+#mutation createRequest($input: CreateRecyclingRequestInput!) {
+# createRecyclingRequestAppSys(input: $input) {
+#    status
+#  }
+#}
+
+mutation skilavottordVehicleOwnerMutation($name: String!) {
+  createSkilavottordVehicleOwnerAppSys(name: $name)
 }
+
+mutation skilavottordVehicleMutation($permno: String!) {
+  createSkilavottordVehicleAppSys(permno: $permno)
+}
+
+mutation skilavottordRecyclingRequestMutation(
+  $permno: String!
+  $requestType: RecyclingRequestTypes!
+) {
+  createSkilavottordRecyclingRequestAppSys(
+    permno: $permno
+    requestType: $requestType
+  ) {
+    ... on RequestErrors {
+      message
+      operation
+    }
+    ... on RequestStatus {
+      status
+    }
+  }
+}
+
+query skilavottordUserRecyclingRequestQuery($permno: String!) {
+  skilavottordUserRecyclingRequestAppSys(permno: $permno) {
+    id
+    requestType
+    nameOfRequestor
+    createdAt
+  }
+}
+
+#query getVehiclesQuery {
+# skilavottordAppSysVehicles {
+#   permno
+# }
+#}

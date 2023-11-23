@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   RecyclingFundClientService,
-  RecyclingRequestTypes,
+  //RecyclingRequestTypes,
 } from '@island.is/clients/recycling-fund'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -50,10 +50,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
         auth,
       )
 
-      if (!response) {
+      /* if (!response) {
         throw new Error(`Failed to get vehicles from: ${response}`)
       }
-      return response
+      return response*/
     } catch (e) {
       this.logger.error('Failed to vehicles', e)
       throw this.parseErrors(e)
@@ -70,10 +70,10 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
       const response = await this.recyclingFundService.createOwner(auth)
 
-      if (!response) {
+      /* if (!response) {
         throw new Error(`Failed to create owner: ${response}`)
       }
-      return response
+      return response*/
     } catch (e) {
       this.logger.error('Failed to create owner', e)
       throw this.parseErrors(e)
@@ -103,7 +103,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
             )
           }
 */
-          const response1 = await this.recyclingFundService.recycleVehicle(
+          /* const response1 = await this.recyclingFundService.recycleVehicle(
             auth,
             vehicle.permno,
             RecyclingRequestTypes.pendingRecycle,
@@ -113,7 +113,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
             throw new Error(
               `Failed to recycle vehicle:  ${vehicle} -  ${response1}`,
             )
-          }
+          }*/
         }
       })
 

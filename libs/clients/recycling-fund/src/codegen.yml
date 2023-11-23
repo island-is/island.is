@@ -1,16 +1,28 @@
 schema:
   - apps/skilavottord/ws/src/api.graphql
-documents:
-  - libs/clients/recycling-fund/src/**/*.graphql
 generates:
-  libs/clients/recycling-fund/gen/graphql-request.ts:
+  libs/clients/recycling-fund/gen/schema.ts:
     plugins:
       - typescript
-      - typescript-operations
-      - typescript-graphql-request
     config:
       namingConvention:
         enumValues: keep
+  libs/clients/recycling-fund/src/:
+    documents:
+      - libs/clients/recycling-fund/src/**/*.graphql
+    preset: 'near-operation-file'
+    presetConfig:
+      # location from the `src` folder of the library
+      baseTypesPath: '../gen/schema'
+    plugins:
+      # Only use the typescript and typescript-operations plugins to generate types
+      - typescript-operations
+      - typescript-document-nodes
+    config:
+      namingConvention:
+        enumValues: keep
+      skipTypename: true
+      nameSuffix: 'Document'
 hooks:
   afterAllFileWrite:
     - prettier --write
