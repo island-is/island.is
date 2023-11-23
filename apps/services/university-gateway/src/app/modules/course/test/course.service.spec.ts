@@ -12,7 +12,7 @@ import faker from 'faker'
 
 const currentUser = createCurrentUser()
 
-describe('ProgramService', () => {
+describe('CourseService', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let fixtureFactory: FixtureFactory
@@ -45,9 +45,10 @@ describe('ProgramService', () => {
     await app.cleanUp()
   })
 
-  describe('getPrograms', () => {
-    it('should return 5 programs', async () => {
-      const numPrograms = 5
+  describe('getCourses', () => {
+    it('should return 10 courses for university', async () => {
+      const numPrograms = 2
+      const numCourses = 5
 
       for (let i = 0; i < numPrograms; i++) {
         const program = await fixtureFactory.createProgram({
@@ -55,59 +56,71 @@ describe('ProgramService', () => {
           durationInYears: 3,
         })
         assert(program)
+
+        for (let j = 0; j < numCourses; j++) {
+          const course = await fixtureFactory.createCourse({
+            programId: program.id,
+          })
+          assert(course)
+        }
       }
 
-      const result = await server.get('/v1/programs')
+      const result = await server.get(
+        `/v1/courses?universityId=${universityId}`,
+      )
 
       expect(result.status).toBe(200)
-      expect(result.body.totalCount).toEqual(numPrograms)
+      expect(result.body.totalCount).toEqual(numPrograms * numCourses)
     })
-  })
 
-  describe('getProgramById', () => {
-    it('should return program', async () => {
+    it('should return 5 courses for program', async () => {
+      const numCourses = 5
+
       const program = await fixtureFactory.createProgram({
         universityId: universityId,
         durationInYears: 3,
       })
       assert(program)
 
-      const result = await server.get(`/v1/programs/${program.id}`)
+      for (let i = 0; i < numCourses; i++) {
+        const course = await fixtureFactory.createCourse({
+          programId: program.id,
+        })
+        assert(course)
+      }
+
+      const result = await server.get(`/v1/courses?programId=${program.id}`)
 
       expect(result.status).toBe(200)
-      // Note: the JSON.parse(JSON.stringify()) is needed to match date fields that are passed over the wire as they are strings on the response object.
-      expect(result.body).toMatchObject(JSON.parse(JSON.stringify(program)))
-    })
-
-    it('should not find program', async () => {
-      const randomId = faker.datatype.uuid()
-
-      const result = await server.get(`/v1/programs/${randomId}`)
-
-      expect(result.status).toBe(HttpStatus.NO_CONTENT)
+      expect(result.body.totalCount).toEqual(numCourses)
     })
   })
 
-  describe('getDurationInYears', () => {
-    it('should return unique list of duration in years', async () => {
-      const possibleDurations = [2, 3, 5]
+  describe('getCourseById', () => {
+    it('should return course', async () => {
+      const program = await fixtureFactory.createProgram({
+        universityId: universityId,
+        durationInYears: 3,
+      })
+      assert(program)
 
-      // create five programs with each possible duration
-      for (let i = 0; i < possibleDurations.length; i++) {
-        const cntPrograms = 5
-        for (let j = 0; j < cntPrograms; j++) {
-          const program = await fixtureFactory.createProgram({
-            universityId: universityId,
-            durationInYears: possibleDurations[i],
-          })
-          assert(program)
-        }
-      }
+      const course = await fixtureFactory.createCourse({
+        programId: program.id,
+      })
+      assert(course)
 
-      const result = await server.get('/v1/duration-in-years')
+      const result = await server.get(`/v1/courses/${course.id}`)
 
       expect(result.status).toBe(200)
-      expect(result.body.length).toEqual(possibleDurations.length)
+      expect(result.body).toMatchObject(JSON.parse(JSON.stringify(course)))
+    })
+
+    it('should not find course', async () => {
+      const randomId = faker.datatype.uuid()
+
+      const result = await server.get(`/v1/courses/${randomId}`)
+
+      expect(result.status).toBe(HttpStatus.NO_CONTENT)
     })
   })
 })
