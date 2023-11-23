@@ -41,15 +41,6 @@ export const FormerIcelander: FC<FieldBaseProps> = ({ application }) => {
           },
         ]}
       />
-      {isFormerIcelander === NO && (
-        <AlertMessage
-          type="error"
-          title={formatMessage(information.labels.formerIcelander.alertTitle)}
-          message={formatMessage(
-            information.labels.formerIcelander.alertDescription,
-          )}
-        />
-      )}
     </Box>
   )
 }
