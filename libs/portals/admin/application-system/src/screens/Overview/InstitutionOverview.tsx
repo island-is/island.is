@@ -58,30 +58,32 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
-  const { data, loading: queryLoading } = useGetInstitutionApplicationsQuery({
-    ssr: false,
-    variables: {
-      input: {
-        nationalId: userInfo.profile.nationalId,
-        applicantNationalId: filters.nationalId
-          ? filters.nationalId.replace('-', '')
-          : '',
+  const { data: response, loading: queryLoading } =
+    useGetInstitutionApplicationsQuery({
+      ssr: false,
+      variables: {
+        input: {
+          nationalId: userInfo.profile.nationalId,
+          applicantNationalId: filters.nationalId
+            ? filters.nationalId.replace('-', '')
+            : '',
+        },
       },
-    },
-    onCompleted: (q) => {
-      // Initialize available applications from the initial response
-      // So that we can use them to filter by
-      const names = q.applicationApplicationsInstitutionAdmin
-        ?.filter((x) => !!x.name)
-        .map((x) => x.name ?? '')
-      if (names) {
-        setAvailableApplications(uniq(names))
-      }
-    },
-  })
+      onCompleted: (q) => {
+        // Initialize available applications from the initial response
+        // So that we can use them to filter by
+        const names = q.applicationApplicationsInstitutionAdmin?.data
+          ?.filter((x) => !!x.name)
+          .map((x) => x.name ?? '')
+        if (names) {
+          setAvailableApplications(uniq(names))
+        }
+      },
+    })
 
   const isLoading = queryLoading || orgsLoading
-  const { applicationApplicationsInstitutionAdmin = [] } = data ?? {}
+  const applicationApplicationsInstitutionAdmin =
+    response?.applicationApplicationsInstitutionAdmin?.data ?? []
   const applicationAdminList =
     applicationApplicationsInstitutionAdmin as AdminApplication[]
   const organizations = (orgData?.getOrganizations?.items ??
@@ -94,6 +96,7 @@ const InstitutionOverview = () => {
     return allApplications?.some((x) => typeIds?.includes(x))
   })
 
+  console.log(availableOrganizations)
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
       setFilters((prev) => ({
@@ -153,7 +156,8 @@ const InstitutionOverview = () => {
     applicationAdminList ?? [],
     { multiChoiceFilters, institutionFilters, period: filters.period },
   )
-
+  console.log(organizations)
+  console.log(filteredApplicationList)
   return (
     <Box>
       <Breadcrumbs
