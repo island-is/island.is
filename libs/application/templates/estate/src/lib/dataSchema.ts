@@ -410,6 +410,16 @@ export const estateSchema = z.object({
         path: ['balance'],
       },
     )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || balance !== '' || loanIdentity !== ''
+          ? isValidString(creditorName)
+          : true
+      },
+      {
+        path: ['creditorName'],
+      },
+    )
     .array()
     .optional(),
   acceptDebts: z.array(z.enum([YES, NO])).nonempty(),
