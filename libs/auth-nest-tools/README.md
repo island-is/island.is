@@ -20,12 +20,11 @@ Import and configure the AuthModule, example:
 @Module({
   imports: [
     AuthModule.register({
-      audience: 'protected_resource',
-      issuer: 'https://localhost:6001',
+      issuer: 'https://localhost:6001'
     }),
 ```
 
-where `audience` is the name your resource was registered under in IdS and `issuer` the IdS url.
+where `issuer` is the IdS url.
 
 ### Using in REST controller
 
