@@ -71,8 +71,8 @@ export class Loanhistory {
   @Field(() => String, { nullable: true })
   variableInterest?: string
 
-  @Field(() => Number, { nullable: true })
-  affiliateLoan?: number
+  @Field(() => String, { nullable: true })
+  affiliateLoan?: string
 
   @Field(() => String, { nullable: true })
   priceIndexType?: string

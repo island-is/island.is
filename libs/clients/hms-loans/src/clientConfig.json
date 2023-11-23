@@ -571,9 +571,9 @@
             "nullable": true
           },
           "affiliateLoan": {
-            "type": "integer",
+            "type": "string",
             "description": "Number loan type. If empty then the loan is not type 48 which is (AffiliateLoan)Hlutdeildarlán.",
-            "format": "int32"
+            "nullable": true
           },
           "priceIndexType": {
             "type": "string",

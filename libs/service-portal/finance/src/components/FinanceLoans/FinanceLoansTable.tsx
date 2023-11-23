@@ -133,7 +133,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           },
                           {
                             title: 'Hlutdeildarlán',
-                            value: loan.affiliateLoan === 48 ? 'Já' : 'Nei',
+                            value: loan.affiliateLoan,
                           },
                           {
                             title: 'Fyrsti vaxtadagur',
