@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS Rest API",
-    "description": "Mileage reading API developed in .Net6.0 - Release-3 : 20231114.1",
+    "description": "Mileage reading API developed in .Net6.0 - Release-5 : 20231122.2",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -179,6 +179,90 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutMileageReadingModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
       }
     },
     "/{permno}": {
@@ -219,6 +303,106 @@
           }
         }
       }
+    },
+    "/nextavailablemileageregistration/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          },
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/canregistermileage/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/requiresmileageregistration/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -239,6 +423,11 @@
             "type": "string",
             "description": "Vehicle permanent number",
             "nullable": true
+          },
+          "internalId": {
+            "type": "integer",
+            "description": "Internal id",
+            "format": "int32"
           },
           "readDate": {
             "type": "string",
@@ -314,6 +503,31 @@
           "instance": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
+      },
+      "PutMileageReadingModel": {
+        "required": ["internalId", "mileage", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "internalId": {
+            "type": "integer",
+            "description": "Internal id",
+            "format": "int32"
+          },
+          "mileage": {
+            "maxLength": 7,
+            "minLength": 1,
+            "type": "string",
+            "description": "Mileage reading"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model to post mileage reading"
       },
       "ReturnTypeMessage": {
         "type": "object",

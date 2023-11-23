@@ -11,3 +11,15 @@ export class PostVehicleMileageInput {
   @Field()
   mileage!: string
 }
+
+@InputType()
+export class PutVehicleMileageInput {
+  @Field()
+  permno!: string
+
+  @Field()
+  internalId!: number
+
+  @Field()
+  mileage!: string
+}

@@ -34,6 +34,15 @@ export class VehiclesMainInfo {
 
   @Field(() => Number, { nullable: true })
   trailerWithoutBrakesWeight?: number | null
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()

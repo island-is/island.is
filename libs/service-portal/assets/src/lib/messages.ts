@@ -842,6 +842,14 @@ export const vehicleMessage = defineMessages({
     defaultMessage:
       'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}',
   },
+  mileageTagText: {
+    id: 'sp.vehicles:mileage-tag-text',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  mileageAlreadyRegistered: {
+    id: 'sp.vehicles:mileage-already-registered',
+    defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð. ',
+  },
 })
 
 export const urls = defineMessages({

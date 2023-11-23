@@ -45,6 +45,15 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
             }
           : undefined
       }
+      secondaryTag={
+        vehicle.requiresMileageRegistration
+          ? {
+              label: formatMessage(vehicleMessage.mileageTagText),
+              variant: 'warn',
+              outlined: false,
+            }
+          : undefined
+      }
       cta={{
         label: formatMessage(messages.seeInfo),
         variant: 'text',

@@ -8,18 +8,34 @@ import {
   VehicleSearchDto,
 } from '@island.is/clients/vehicles'
 import {
+  CanregistermileagePermnoGetRequest,
   GetMileageReadingRequest,
   MileageReadingApi,
   PostMileageReadingModel,
-  ReturnTypeMessage,
+  PutMileageReadingModel,
+  RequiresmileageregistrationPermnoGetRequest,
   RootPostRequest,
+  RootPutRequest,
 } from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
-import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
+import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
+import isSameDay from 'date-fns/isSameDay'
+
+const isReadDateToday = (d?: Date) => {
+  if (!d) {
+    return false
+  }
+
+  const today = new Date()
+  const inputDate = new Date(d)
+
+  // TODO: What about localization of dates?
+  return isSameDay(today, inputDate)
+}
 
 @Injectable()
 export class VehiclesService {
@@ -122,22 +138,73 @@ export class VehiclesService {
   async getVehicleMileage(
     auth: User,
     input: GetMileageReadingRequest,
-  ): Promise<VehicleMileageDetail[] | null> {
+  ): Promise<VehicleMileageOverview | null> {
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
     })
-    return res
+
+    const latestDate = res?.[0]?.readDate
+
+    return {
+      data: res,
+      editing: isReadDateToday(latestDate ?? undefined),
+    }
   }
 
   async postMileageReading(
     auth: User,
     input: RootPostRequest['postMileageReadingModel'],
-  ): Promise<PostMileageReadingModel | ReturnTypeMessage[] | null> {
+  ): Promise<PostMileageReadingModel | null> {
     if (!input) return null
 
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
     })
+
+    return res
+  }
+
+  async putMileageReading(
+    auth: User,
+    input: RootPutRequest['putMileageReadingModel'],
+  ): Promise<PutMileageReadingModel | null> {
+    if (!input) return null
+
+    const res = await this.getMileageWithAuth(auth).rootPut({
+      putMileageReadingModel: input,
+    })
+    return res
+  }
+
+  async canRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    const res = await this.getMileageWithAuth(auth).canregistermileagePermnoGet(
+      {
+        permno: input.permno,
+      },
+    )
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
+    return res
+  }
+
+  async requiresMileageRegistration(
+    auth: User,
+    input: RequiresmileageregistrationPermnoGetRequest,
+  ): Promise<boolean> {
+    const res = await this.getMileageWithAuth(
+      auth,
+    ).requiresmileageregistrationPermnoGet({
+      permno: input.permno,
+    })
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
     return res
   }
 }

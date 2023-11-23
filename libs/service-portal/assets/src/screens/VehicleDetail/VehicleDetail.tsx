@@ -339,30 +339,35 @@ const VehicleDetail = () => {
           </>
         )}
 
-        {data?.vehiclesDetail?.inspectionInfo?.odometer && ( // TODO: Should this come from here, or should this come from the `Mileagereading` service?
-          <>
-            <UserInfoLine
-              label={formatMessage(messages.lastKnownOdometerStatus)}
-              content={displayWithUnit(
-                data.vehiclesDetail.inspectionInfo.odometer,
-                'km',
-                true,
-              )}
-              loading={loading}
-              editLink={{
-                title: m.viewDetail,
-                url: id
-                  ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
-                      ':id',
-                      id.toString(),
-                    )
-                  : '',
-                external: false,
-              }}
-            />
-            <Divider />
-          </>
-        )}
+        {data?.vehiclesDetail?.inspectionInfo?.odometer &&
+          data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration && ( // TODO: Should this come from here, or should this come from the `Mileagereading` service?
+            <>
+              <UserInfoLine
+                label={formatMessage(messages.lastKnownOdometerStatus)}
+                content={displayWithUnit(
+                  data.vehiclesDetail.inspectionInfo.odometer,
+                  'km',
+                  true,
+                )}
+                loading={loading}
+                editLink={
+                  data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration
+                    ? {
+                        title: m.viewDetail,
+                        url: id
+                          ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                              ':id',
+                              id.toString(),
+                            )
+                          : '',
+                        external: false,
+                      }
+                    : undefined
+                }
+              />
+              <Divider />
+            </>
+          )}
       </Stack>
       <Box marginBottom={5} />
 

@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {
@@ -21,9 +21,6 @@ import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
-import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
-import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
-import { PostVehicleMileageInput } from '../dto/postVehicleMileageInput'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
@@ -67,32 +64,6 @@ export class VehiclesResolver {
   async getExcelVehicles(@CurrentUser() user: User) {
     const res = await this.vehiclesService.getExcelVehiclesForUser(user)
     return { ...res }
-  }
-
-  @Scopes(ApiScope.vehicles)
-  @Query(() => [VehicleMileageDetail], {
-    name: 'vehicleMileageDetails',
-    nullable: true,
-  })
-  @Audit()
-  async getVehicleMileage(
-    @Args('input') input: GetVehicleMileageInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.getVehicleMileage(user, input)
-  }
-
-  @Scopes(ApiScope.vehicles)
-  @Mutation(() => VehicleMileageDetail, {
-    name: 'vehicleMileagePost',
-    nullable: true,
-  })
-  @Audit()
-  async postVehicleMileageReading(
-    @Args('input') input: PostVehicleMileageInput,
-    @CurrentUser() user: User,
-  ) {
-    return await this.vehiclesService.postMileageReading(user, input)
   }
 
   @Scopes(

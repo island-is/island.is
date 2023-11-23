@@ -13,6 +13,40 @@ export class VehicleMileageDetail {
 
   @Field(() => String, { nullable: true })
   mileage?: string | null
+
+  @Field(() => Number, { nullable: true })
+  internalId?: number | null
+}
+
+@ObjectType()
+export class VehicleMileageOverview {
+  @Field(() => [VehicleMileageDetail], { nullable: true })
+  data?: VehicleMileageDetail[]
+
+  @Field(() => Boolean, {
+    nullable: true,
+    description:
+      'Indicates that the user has already posted a reading today. So instead of posting a new reading, should be editing the reading from today',
+  })
+  editing?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresRegistrationOfMileage?: boolean | null
+}
+
+@ObjectType()
+export class VehicleMileagePutModel {
+  @Field(() => String, { nullable: true })
+  permno?: string
+
+  @Field(() => Number, { nullable: true })
+  internalId?: number
+
+  @Field(() => String, { nullable: true })
+  mileage?: string
 }
 
 @ObjectType()

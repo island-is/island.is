@@ -1,18 +1,32 @@
-fragment VehicleMileageDetail on VehicleMileageDetail {
+fragment VehicleMileageDetailFragment on VehicleMileageDetail {
   permno
   readDate
   originCode
   mileage
+  internalId
 }
 
 query GetUsersMileage($input: GetVehicleMileageInput!) {
   vehicleMileageDetails(input: $input) {
-    ...VehicleMileageDetail
+    data {
+      ...VehicleMileageDetailFragment
+    }
+    editing
+    canRegisterMileage
+    requiresMileageRegistration
   }
 }
 
 mutation PostVehicleMileage($input: PostVehicleMileageInput!) {
   vehicleMileagePost(input: $input) {
-    ...VehicleMileageDetail
+    ...VehicleMileageDetailFragment
+  }
+}
+
+mutation PutVehicleMileage($input: PutVehicleMileageInput!) {
+  vehicleMileagePut(input: $input) {
+    permno
+    internalId
+    mileage
   }
 }

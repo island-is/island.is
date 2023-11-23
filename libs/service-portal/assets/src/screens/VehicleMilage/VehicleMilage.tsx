@@ -27,6 +27,7 @@ import { vehicleMessage as messages } from '../../lib/messages'
 import {
   useGetUsersMileageQuery,
   usePostVehicleMileageMutation,
+  usePutVehicleMileageMutation,
 } from './VehicleDetail.generated'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
@@ -45,7 +46,6 @@ const VehicleMilage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [formValue, setFormValue] = useState('')
-  const [hasSuccess, setSuccess] = useState(false)
   const { id } = useParams() as UseParams
   const {
     control,
@@ -55,53 +55,81 @@ const VehicleMilage = () => {
   } = useForm<FormData>()
 
   const handleSubmitForm = async (submitData: FormData) => {
-    postAction({
-      variables: {
-        input: {
-          permno: id,
-          originCode: ORIGIN_CODE,
-          mileage: String(submitData.odometerStatus),
+    if (isFormEditable) {
+      if (details?.[0]?.internalId) {
+        putAction({
+          variables: {
+            input: {
+              internalId: details?.[0]?.internalId,
+              permno: id,
+              mileage: String(submitData.odometerStatus),
+            },
+          },
+        })
+      } else {
+        toast.error(formatMessage(m.errorTitle))
+      }
+    } else {
+      postAction({
+        variables: {
+          input: {
+            permno: id,
+            originCode: ORIGIN_CODE,
+            mileage: String(submitData.odometerStatus),
+          },
         },
-      },
-    })
+      })
+    }
   }
 
-  const { data, loading, error, updateQuery } = useGetUsersMileageQuery({
+  const { data, loading, error, refetch } = useGetUsersMileageQuery({
     variables: { input: { permno: id } },
   })
 
-  const [postAction, { loading: postActionLoading, data: updateData }] =
-    usePostVehicleMileageMutation({
-      onError: (e) => {
+  const [putAction, { loading: putActionLoading }] =
+    usePutVehicleMileageMutation({
+      onError: () => {
         toast.error(formatMessage(m.errorTitle))
       },
-      onCompleted: (mutationData) => {
+      onCompleted: () => {
         // Clear form, state and errors on success.
-        setSuccess(true)
         setFormValue('')
         reset()
-
-        // Update useGetUsersMileageQuery on mutation success.
-        const updatedMileage = mutationData.vehicleMileagePost
+        refetch()
         toast.success(formatMessage(messages.postSuccess))
-
-        updateQuery((prevData) => {
-          const prevDetails = prevData.vehicleMileageDetails ?? []
-
-          const updatedDetails = updatedMileage
-            ? [updatedMileage, ...prevDetails]
-            : prevDetails
-
-          return {
-            vehicleMileageDetails: updatedDetails,
-          }
-        })
       },
     })
 
-  const details = data?.vehicleMileageDetails
+  const [postAction, { loading: postActionLoading, data: updateData }] =
+    usePostVehicleMileageMutation({
+      onError: () => {
+        toast.error(formatMessage(m.errorTitle))
+      },
+      onCompleted: () => {
+        // Clear form, state and errors on success.
+        setFormValue('')
+        reset()
+
+        refetch()
+
+        toast.success(formatMessage(messages.postSuccess))
+      },
+    })
+
+  const details = data?.vehicleMileageDetails?.data
   const hasData = details && details?.length > 0
-  const isFormEditable = hasSuccess // TODO: Add {canEdit} from service
+  const isFormEditable = data?.vehicleMileageDetails?.editing
+  const canRegisterMileage = data?.vehicleMileageDetails?.canRegisterMileage
+  const requiresMileageRegistration =
+    data?.vehicleMileageDetails?.requiresMileageRegistration
+  const canRegisterKm = true // canRegisterKm from service :pray:
+
+  console.log('canRegisterMileage', canRegisterMileage)
+  console.log('requiresMileageRegistration', requiresMileageRegistration)
+
+  // TODO: Limit this screen from non registerable cars.
+
+  const actionLoading = putActionLoading || postActionLoading
 
   return (
     <>
@@ -145,9 +173,13 @@ const VehicleMilage = () => {
                         })}
                       </Text>
                     </>
-                  ) : (
+                  ) : canRegisterKm === true ? (
                     <Text as="h3" variant="h5">
                       {formatMessage(messages.vehicleMilageInputTitle)}
+                    </Text>
+                  ) : (
+                    <Text as="h3" variant="h5">
+                      {formatMessage(messages.mileageAlreadyRegistered)}
                     </Text>
                   )}
                 </GridColumn>
@@ -218,7 +250,7 @@ const VehicleMilage = () => {
                       size="small"
                       fluid
                       type="submit"
-                      loading={postActionLoading}
+                      loading={actionLoading || loading}
                       disabled={formValue.length === 0}
                     >
                       {formatMessage(isFormEditable ? m.update : m.register)}
