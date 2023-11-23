@@ -26,7 +26,7 @@ import { useApplicationTitle } from '../hooks/useApplicationTitle'
 import { useHeaderInfo } from '../context/HeaderInfoProvider'
 import * as styles from './FormShell.css'
 import { ErrorShell } from '../components/ErrorShell'
-import { useAuth, useUserInfo } from '@island.is/auth/react'
+import { useAuth } from '@island.is/auth/react'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
