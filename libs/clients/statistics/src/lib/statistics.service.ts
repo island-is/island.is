@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { ConfigType } from '@island.is/nest/config'
-import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 
 import {
   getMultipleStatistics as _getMultipleStatistics,
