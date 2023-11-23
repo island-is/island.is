@@ -20,10 +20,11 @@ projects_uncollectible_coverage=(
   "api-domains-email-signup"
   "skilavottord-web"
   "shared-babel"
+  "service-portal-core"
 )
 # shellcheck disable=SC2076
 if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then
-  EXTRA_OPTS="--codeCoverage"
+  EXTRA_OPTS="--codeCoverage --skip-nx-cache"
 fi
 
 export DD_CIVISIBILITY_AGENTLESS_ENABLED \
