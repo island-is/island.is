@@ -582,10 +582,10 @@ export interface IEmbedFields {
   embedUrl?: string | undefined
 
   /** Alt Text */
-  altText: string
+  altText?: string | undefined
 
   /** Aspect Ratio */
-  aspectRatio?: '713/630' | '16/9' | undefined
+  aspectRatio?: '713/630' | '16/9' | '795/450' | undefined
 }
 
 /** A content type which allows you to embed an iframe (but only from sources that have been approved of) */
@@ -1929,6 +1929,9 @@ export interface IManualChapterFields {
   /** Slug */
   slug: string
 
+  /** Intro */
+  intro?: string | undefined
+
   /** Description */
   description?: Document | undefined
 
@@ -2898,6 +2901,7 @@ export interface IProjectPageFields {
     | 'opinbernyskopun'
     | 'gagnasidur-fiskistofu'
     | 'directorate-of-health'
+    | 'grindavik'
 
   /** Sidebar */
   sidebar: boolean
@@ -3290,6 +3294,7 @@ export interface ISliceConnectedComponentFields {
     | 'DrivingInstructorList'
     | 'HousingBenefitCalculator'
     | 'PublicShipSearch'
+    | 'Meistaraleyfi/MasterLicences'
     | undefined
 
   /** Localized JSON */
