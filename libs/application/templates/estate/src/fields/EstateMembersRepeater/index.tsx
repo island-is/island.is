@@ -146,23 +146,24 @@ export const EstateMembersRepeater: FC<
                 />
               </GridColumn>
               {application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate && (
-                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                  <SelectController
-                    id={`${id}[${index}].relationWithApplicant`}
-                    name={`${id}[${index}].relationWithApplicant`}
-                    label={formatMessage(
-                      m.inheritanceRelationWithApplicantLabel,
-                    )}
-                    defaultValue={member.relationWithApplicant}
-                    options={relationsWithApplicant}
-                    error={error?.relationWithApplicant}
-                    backgroundColor="blue"
-                    disabled={!member.enabled}
-                    required
-                  />
-                </GridColumn>
-              )}
+                EstateTypes.permitForUndividedEstate &&
+                member.relation !== 'Maki' && (
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <SelectController
+                      id={`${id}[${index}].relationWithApplicant`}
+                      name={`${id}[${index}].relationWithApplicant`}
+                      label={formatMessage(
+                        m.inheritanceRelationWithApplicantLabel,
+                      )}
+                      defaultValue={member.relationWithApplicant}
+                      options={relationsWithApplicant}
+                      error={error?.relationWithApplicant}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      required
+                    />
+                  </GridColumn>
+                )}
               {!member.advocate && (
                 <>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
