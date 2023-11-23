@@ -77,17 +77,13 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { isAuthenticated, user } = useContext(UserContext)
   const [isRobot, setIsRobot] = useState<boolean>()
 
+  const { practice, email, phoneNr } =
+    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
+  const { countryCode } = useGeoLocation()
+
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch('/api/geoLocation/getCountryCode')
-      const countryCode = await res.json()
-
-      console.log(countryCode)
-      setIsRobot(countryCode?.countryCode !== 'IS')
-    }
-
-    fetchData()
-  }, [])
+    setIsRobot(countryCode !== 'IS')
+  }, [countryCode])
 
   const logoHref =
     !user || !isAuthenticated
@@ -103,9 +99,6 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
   const handleLogout = () => {
     api.logout()
   }
-
-  const { practice, email, phoneNr } =
-    useGetLawyer(user?.nationalId, isDefenceUser(user)) ?? {}
 
   return (
     <Container>

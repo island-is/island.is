@@ -12,8 +12,6 @@ export const useGeoLocation = (): { countryCode: string } => {
     },
   )
 
-  console.log('useGeoLocation', data, error)
-
   if (!data || error) {
     return { countryCode: '' }
   }

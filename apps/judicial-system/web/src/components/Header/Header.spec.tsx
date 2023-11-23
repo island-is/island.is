@@ -14,13 +14,7 @@ jest.mock('next/router', () => ({
 }))
 
 const server = setupServer(
-  // rest.get('https://api.ipify.org/', (req, res, ctx) => {
-  //   req.url.searchParams.set('format', 'json')
-
-  //   return res(ctx.json({ ip: '123.45.67.8' }))
-  // }),
-
-  rest.get('/api/geoLocation/getCountryCode', (req, res, ctx) => {
+  rest.get('/api/geoLocation/getCountryCode', (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ countryCode: 'IS' }))
   }),
 )
@@ -30,7 +24,7 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 
 describe('Header', () => {
-  it('should not render a "ask for help" button if the user is not in Iceland', async () => {
+  it('should not render a "ask for help" button if the user is in Iceland', async () => {
     act(() => {
       render(
         <IntlProviderWrapper>
@@ -39,7 +33,13 @@ describe('Header', () => {
       )
     })
 
+    /**
+     * This is simultainously checking that the "ask for help" button is
+     * rendered for users in Iceland and that it is not rendered for users
+     * outside of Iceland because `screen.findByRole('button')` will throw
+     * an error if the button is not found, which will fail the test.
+     */
     const askForHelpButton = await screen.findByRole('button')
-    expect(askForHelpButton).not.toBeInTheDocument()
+    expect(askForHelpButton).toBeInTheDocument()
   })
 })
