@@ -65,6 +65,6 @@ export const mapAnchorPage = ({ fields, sys }: IAnchorPage): AnchorPage => ({
   category: fields.category ? mapArticleCategory(fields.category) : null,
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
-  pageType: fields.pageType ?? 'Digital Iceland Service',
+  pageType: fields.pageType ?? 'Life Event',
   featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
 })
