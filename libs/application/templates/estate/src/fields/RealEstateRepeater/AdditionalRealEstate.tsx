@@ -135,14 +135,19 @@ export const AdditionalRealEstate = ({
           <InputController
             id={shareTempField}
             label={formatMessage(m.propertyShare)}
+            type='number'
             defaultValue={field?.share ? (field.share * 100).toFixed() : '100'}
             onChange={(e) => {
               const value = e.target.value
-              setValue(shareField, Number(value) / 100)
+              const cleanedText = value.replace(/%/g, '');
+              // pareseFloat will sometimes add a tiny fracition to the number, so we call toFixed to get rid of it
+              const convertedValue = parseFloat(cleanedText).toFixed(2)
+              const share = Number(convertedValue) / 100
+              setValue(shareField, share)
             }}
             placeholder="100%"
+            suffix='%'
             error={error?.share}
-            size="sm"
             required
           />
         </GridColumn>

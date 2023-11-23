@@ -54,7 +54,6 @@ export const RealEstateRepeater: FC<
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
-          console.log({fieldError})
           if (!asset.initial) {
             return acc
           }
@@ -115,7 +114,6 @@ export const RealEstateRepeater: FC<
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field: AssetFormField, index) => (
-        console.log(field),
         <Box key={field.id} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
