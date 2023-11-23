@@ -66,11 +66,14 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Saksóknari'
       case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.JUDGE:
+      case UserRole.DISTRICT_COURT_JUDGE:
+      case UserRole.COURT_OF_APPEALS_JUDGE:
         return 'Dómari'
-      case UserRole.REGISTRAR:
+      case UserRole.DISTRICT_COURT_REGISTRAR:
+      case UserRole.COURT_OF_APPEALS_REGISTRAR:
         return 'Dómritari'
-      case UserRole.ASSISTANT:
+      case UserRole.DISTRICT_COURT_ASSISTANT:
+      case UserRole.COURT_OF_APPEALS_ASSISTANT:
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'

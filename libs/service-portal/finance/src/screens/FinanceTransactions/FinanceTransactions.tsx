@@ -1,8 +1,6 @@
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
-import React, { useEffect, useState } from 'react'
-import { useLazyQuery, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
+import { useEffect, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
@@ -12,26 +10,18 @@ import {
   DatePicker,
   FilterInput,
   FilterMultiChoice,
-  Text,
   Hidden,
   SkeletonLoader,
   Stack,
-  Column,
-  Columns,
-  GridContainer,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
-  FJARSYSLAN_ID,
   FootNote,
   m,
   Filter,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
-import {
-  GET_CUSTOMER_CHARGETYPE,
-  GET_CUSTOMER_RECORDS,
-} from '@island.is/service-portal/graphql'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -43,6 +33,10 @@ import {
   CustomerRecords,
 } from './FinanceTransactionsData.types'
 import FinanceIntro from '../../components/FinanceIntro'
+import {
+  useGetCustomerChargeTypeQuery,
+  useGetCustomerRecordsLazyQuery,
+} from './FinanceTransactions.generated'
 
 const FinanceTransactions = () => {
   useNamespaces('sp.finance-transactions')
@@ -60,7 +54,7 @@ const FinanceTransactions = () => {
     data: customerChartypeData,
     loading: chargeTypeDataLoading,
     error: chargeTypeDataError,
-  } = useQuery<Query>(GET_CUSTOMER_CHARGETYPE, {
+  } = useGetCustomerChargeTypeQuery({
     onCompleted: (data) => {
       if (data?.getCustomerChargeType?.chargeType) {
         setEmptyChargeTypes()
@@ -74,7 +68,7 @@ const FinanceTransactions = () => {
     customerChartypeData?.getCustomerChargeType || {}
 
   const [loadCustomerRecords, { data, loading, called, error }] =
-    useLazyQuery(GET_CUSTOMER_RECORDS)
+    useGetCustomerRecordsLazyQuery()
 
   useEffect(() => {
     if (toDate && fromDate && dropdownSelect) {
@@ -91,11 +85,13 @@ const FinanceTransactions = () => {
         },
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toDate, fromDate, dropdownSelect])
 
   useEffect(() => {
     setFromDate(backInTheDay)
     setToDate(new Date())
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function getAllChargeTypes() {
@@ -114,7 +110,7 @@ const FinanceTransactions = () => {
     setQ('')
   }
 
-  const recordsData: CustomerRecords = data?.getCustomerRecords || {}
+  const recordsData = (data?.getCustomerRecords || {}) as CustomerRecords
   const recordsDataArray =
     (recordsData?.records && transactionFilter(recordsData?.records, q)) || []
   const chargeTypeSelect = (chargeTypeData?.chargeType || []).map((item) => ({
@@ -283,7 +279,7 @@ const FinanceTransactions = () => {
           </Box>
         </Stack>
       </Box>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </DynamicWrapper>
   )
 }

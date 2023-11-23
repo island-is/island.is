@@ -390,7 +390,7 @@ ProjectPage.getProps = async ({ apolloClient, locale, query }) => {
       )
   }
 
-  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields ?? '{}')
+  const projectNamespace = JSON.parse(getProjectPage.namespace?.fields || '{}')
 
   return {
     projectPage: getProjectPage,

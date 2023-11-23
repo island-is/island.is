@@ -2,6 +2,9 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
 import { EstateInfo } from '@island.is/clients/syslumenn'
+import { EstateTypes } from './constants'
+import { m } from './messages'
+import { Application, FormValue } from '@island.is/application/types'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -34,3 +37,23 @@ export function isEstateInfo(
 
 export const isValidString = (string: string | undefined) =>
   string && /\S/.test(string)
+
+export const isNumericalString = (string: string | undefined) =>
+  string && /^[0-9]+$|^[0-9][0-9,.]+[0-9]$/.test(string)
+
+export const getAssetDescriptionText = (
+  application: Application<FormValue>,
+) => {
+  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ? /* EIGNALAUST DÁNARBU */
+      m.propertiesDescriptionEstateWithoutAssets
+    : application.answers.selectedEstate === EstateTypes.officialDivision
+    ? /* OPINBER SKIPTI */
+      m.propertiesDescriptionOfficialDivision
+    : application.answers.selectedEstate ===
+      EstateTypes.permitForUndividedEstate
+    ? /* SETA Í ÓSKIPTU BÚI */
+      m.propertiesDescriptionUndividedEstate
+    : /* EINKASKIPTI */
+      m.propertiesDescriptionDivisionOfEstateByHeirs
+}

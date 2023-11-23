@@ -5,26 +5,25 @@ import {
 } from '../../gen/schema'
 import { ServiceErrorCode } from './smartSolutions.types'
 
-export const ErrorMessageToActionStatusCodeMap: Record<string, number> = {
-  'Invalid barcode. Please try to refresh the pass.': 3,
-  'Expired barcode. Please refresh the pass.': 3,
-  'Request contains some field errors': 4,
-}
-
-export function mapErrorMessageToActionStatusCode(
-  message?: string,
+export function mapErrorToActionStatusCode(
+  exception?: string,
 ): ServiceErrorCode {
-  if (!message) {
-    return 99
+  switch (exception) {
+    case 'NotFoundException':
+      return 3
+    case 'IllegalArgumentException':
+      return 4
+    case 'InvalidDataException':
+      return 4
+    case 'ForbiddenException':
+      return 7
+    case 'UnauthorizedException':
+      return 6
+    case 'PersistenceException':
+      return 13
+    default:
+      return 99
   }
-  //Check for mandatory input fields
-  if (message.startsWith('Missing following mandatory inputfields')) {
-    return 4
-  }
-
-  return message in ErrorMessageToActionStatusCodeMap
-    ? (ErrorMessageToActionStatusCodeMap[message] as ServiceErrorCode)
-    : 99
 }
 
 export function mapPassToPassDataInput(pass: Pass): PassDataInput {

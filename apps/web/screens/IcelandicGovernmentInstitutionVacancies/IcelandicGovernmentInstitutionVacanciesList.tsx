@@ -1,25 +1,31 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
+
 import {
-  Text,
-  FocusableBox,
-  GridContainer,
-  GridColumn,
   Box,
-  GridRow,
   Breadcrumbs,
-  Stack,
-  Pagination,
-  Hidden,
   Filter,
-  FilterMultiChoice,
   FilterInput,
+  FilterMultiChoice,
+  FocusableBox,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
   Inline,
+  Pagination,
+  Stack,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { sortAlpha } from '@island.is/shared/utils'
+import {
+  FilterTag,
+  HeadWithSocialSharing,
+  Webreader,
+} from '@island.is/web/components'
 import {
   GetIcelandicGovernmentInstitutionVacanciesQuery,
   GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
@@ -28,15 +34,14 @@ import {
   IcelandicGovernmentInstitutionVacanciesResponse,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver, useNamespace } from '@island.is/web/hooks'
-import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
-import { GET_NAMESPACE_QUERY } from '../queries'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
-import { FilterTag, HeadWithSocialSharing } from '@island.is/web/components'
-import { sortAlpha } from '@island.is/shared/utils'
-import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
+import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
+import { GET_NAMESPACE_QUERY } from '../queries'
+import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
 import * as styles from './IcelandicGovernmentInstitutionVacanciesList.css'
 
 type Vacancy =
@@ -370,9 +375,16 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
           <GridRow marginBottom={[5, 5, 5, 0]}>
             <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
               <Breadcrumbs items={[{ title: 'Ísland.is', href: '/' }]} />
-              <Text marginTop={2} variant="h1" as="h1">
-                {mainTitle}
-              </Text>
+              <Box className="rs_read" marginTop={2}>
+                <Text variant="h1" as="h1">
+                  {mainTitle}
+                </Text>
+              </Box>
+              <Webreader
+                marginBottom={[0, 0, 0, 4]}
+                readId={undefined}
+                readClass="rs_read"
+              />
             </GridColumn>
             <GridColumn span="1/2">
               <Hidden below="lg">
@@ -482,7 +494,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
       </GridContainer>
       <Box paddingTop={3} paddingBottom={6} background="blue100">
         <GridContainer>
-          <Box marginBottom={6}>
+          <Box className="rs_read" marginBottom={6}>
             <Text>
               {filteredVacancies.length}{' '}
               {filteredVacancies.length % 10 === 1 &&
@@ -546,40 +558,56 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                               <Text variant="eyebrow">
                                 {vacancy.fieldOfWork}
                               </Text>
-                              <Text color="blue400" variant="h3">
-                                {vacancy.title}
-                              </Text>
-                              <Text>
-                                {shortenText(
-                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                  // @ts-ignore make web strict
-                                  vacancy.intro,
-                                  VACANCY_INTRO_MAX_LENGTH,
-                                )}
-                              </Text>
-                              <Inline space={1}>
-                                {vacancy.institutionName && (
-                                  <Tag outlined={true} disabled={true}>
-                                    {vacancy.institutionName}
-                                  </Tag>
-                                )}
-                                {vacancy.locations &&
-                                  vacancy.locations
-                                    .filter((location) => location.title)
-                                    .map((location, index) => (
-                                      <Tag key={index} outlined={true} disabled>
-                                        {location.title}
-                                      </Tag>
-                                    ))}
-                              </Inline>
+                              <Box className="rs_read">
+                                <Text color="blue400" variant="h3">
+                                  {vacancy.title}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Text>
+                                  {shortenText(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore make web strict
+                                    vacancy.intro,
+                                    VACANCY_INTRO_MAX_LENGTH,
+                                  )}
+                                </Text>
+                              </Box>
+                              <Box className="rs_read">
+                                <Inline space={1}>
+                                  {vacancy.institutionName && (
+                                    <Tag outlined={true} disabled={true}>
+                                      {vacancy.institutionName}
+                                    </Tag>
+                                  )}
+                                  {vacancy.locations &&
+                                    vacancy.locations
+                                      .filter((location) => location.title)
+                                      .map((location, index) => (
+                                        <Tag
+                                          key={index}
+                                          outlined={true}
+                                          disabled
+                                        >
+                                          {location.title}
+                                        </Tag>
+                                      ))}
+                                </Inline>
+                              </Box>
                               {vacancy.applicationDeadlineTo && (
-                                <Tag outlined={true} disabled variant="purple">
-                                  {n(
-                                    'applicationDeadlineTo',
-                                    'Umsóknarfrestur',
-                                  )}{' '}
-                                  {vacancy.applicationDeadlineTo}
-                                </Tag>
+                                <Box className="rs_read">
+                                  <Tag
+                                    outlined={true}
+                                    disabled
+                                    variant="purple"
+                                  >
+                                    {n(
+                                      'applicationDeadlineTo',
+                                      'Umsóknarfrestur',
+                                    )}{' '}
+                                    {vacancy.applicationDeadlineTo}
+                                  </Tag>
+                                </Box>
                               )}
                             </Stack>
                           </GridColumn>
@@ -686,6 +714,7 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   return {
     vacancies,
     namespace,
+    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 
