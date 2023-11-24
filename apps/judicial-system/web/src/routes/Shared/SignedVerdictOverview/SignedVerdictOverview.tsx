@@ -15,8 +15,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
-  CaseDecision,
   CaseState,
   CaseTransition,
   isDistrictCourtUser,
@@ -24,8 +22,6 @@ import {
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -60,7 +56,11 @@ import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
+  CaseAppealState,
+  CaseDecision,
   InstitutionType,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {

@@ -28,7 +28,10 @@ import {
   PdfButton,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  RequestSharedWithDefender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
@@ -246,7 +249,10 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           <AppealCaseFilesOverview />
 
-          {(workingCase.requestSharedWithDefender ||
+          {(workingCase.requestSharedWithDefender ===
+            RequestSharedWithDefender.READY_FOR_COURT ||
+            workingCase.requestSharedWithDefender ===
+              RequestSharedWithDefender.COURT_DATE ||
             completedCaseStates.includes(workingCase.state)) && (
             <Box marginBottom={10}>
               <Text as="h3" variant="h3" marginBottom={3}>

@@ -11,7 +11,6 @@ import {
 } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealRulingDecision,
   isDefenceUser,
   isDistrictCourtUser,
   isProsecutionUser,
@@ -20,6 +19,7 @@ import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appea
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseAppealState,
   InstitutionType,
   UserRole,

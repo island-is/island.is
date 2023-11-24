@@ -11,7 +11,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  CaseAppealState,
   CaseFileCategory,
   CaseTransition,
   NotificationType,
@@ -29,7 +28,10 @@ import {
   RulingModifiedModal,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealRulingDecision,
+  CaseAppealState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
