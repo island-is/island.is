@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -38,6 +38,8 @@ type Props = {
 
 const initialValue: InitialValue = { formatted: '', raw: 0 }
 
+const valueKeys = ['rateOfExchange', 'faceValue']
+
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
 > = ({ field, errors }) => {
@@ -45,13 +47,9 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-  const [rateOfExchange, setRateOfExchange] = useState({ ...initialValue })
-  const [faceValue, setFaceValue] = useState({ ...initialValue })
-  const [index, setIndex] = useState('0')
-
   const { setValue, clearErrors } = useFormContext()
 
-  const handleAddRepeaterFields = () => {
+  const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
       return Object.values(field)[1]
     })
@@ -69,21 +67,29 @@ export const TextFieldsRepeater: FC<
     } else {
       append(repeaterFields)
     }
-  }
+  }, [append, fields.length, props.fields, replace])
 
   useEffect(() => {
     if (fields.length === 0) {
       handleAddRepeaterFields()
     }
+  }, [fields.length, handleAddRepeaterFields])
 
-    const total = Math.round(faceValue.raw * rateOfExchange.raw)
+  const updateValue = (
+    fieldIndex: string,
+    value: string,
+    withDecimal?: boolean,
+  ) => {
+    const values = makeValues(value ?? '', withDecimal)
 
-    setValue(`${index}.value`, String(total))
+    const total = Math.round(values.raw * values.raw)
+
+    setValue(`${fieldIndex}.value`, String(total))
 
     if (total > 0) {
-      clearErrors(`${index}.value`)
+      clearErrors(`${fieldIndex}.value`)
     }
-  }, [fields, faceValue, rateOfExchange, setValue])
+  }
 
   return (
     <Box>
@@ -141,14 +147,12 @@ export const TextFieldsRepeater: FC<
                           : undefined
                       }
                       onChange={(e) => {
-                        setIndex(fieldIndex)
-
-                        if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(
-                            makeValues(e.target.value ?? '', true),
+                        if (valueKeys.includes(field.id)) {
+                          updateValue(
+                            fieldIndex,
+                            e.target.value ?? '',
+                            field.id === 'rateOfExchange',
                           )
-                        } else if (field.id === 'faceValue') {
-                          setFaceValue(makeValues(e.target.value ?? ''))
                         }
                       }}
                     />
