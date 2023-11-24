@@ -1,4 +1,3 @@
-import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   HouseholdSupplementHousing,
@@ -12,31 +11,17 @@ import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
-
-interface FileType {
-  key: string
-  name: string
-}
-
-interface FileUpload {
-  leaseAgreement?: FileType[]
-  schoolConfirmation?: FileType[]
-}
+import { 
+  AdditionalInformation, 
+  Attachments, 
+  FileType, 
+  FileUpload 
+} from '../types'
 
 enum AttachmentTypes {
   LEASE_AGREEMENT = 'leaseAgreement',
   SCHOOL_CONFIRMATION = 'schoolConfirmation',
   ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
-
-interface Attachments {
-  attachments: FileType[]
-  label: MessageDescriptor
-}
-
-interface AdditionalInformation {
-  additionalDocuments?: FileType[]
-  additionalDocumentsRequired?: FileType[]
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
