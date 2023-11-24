@@ -9,7 +9,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 describe('SocialInsuranceAdministrationService', () => {
-  let oldAgePensionService: SocialInsuranceAdministrationService
+  let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,9 +35,10 @@ describe('SocialInsuranceAdministrationService', () => {
       ],
     }).compile()
 
-    oldAgePensionService = module.get<SocialInsuranceAdministrationService>(
-      SocialInsuranceAdministrationService,
-    )
+    socialInsuranceAdministrationService =
+      module.get<SocialInsuranceAdministrationService>(
+        SocialInsuranceAdministrationService,
+      )
   })
 
   it('should send old age pension application', async () => {
@@ -52,9 +53,11 @@ describe('SocialInsuranceAdministrationService', () => {
     })
 
     // Also need to mock the pdf here
-    jest.spyOn(oldAgePensionService, 'getPdf').mockImplementation(jest.fn())
+    jest
+      .spyOn(socialInsuranceAdministrationService, 'getPdf')
+      .mockImplementation(jest.fn())
 
-    const result = await oldAgePensionService.sendApplication({
+    const result = await socialInsuranceAdministrationService.sendApplication({
       application,
       auth,
       currentUserLocale: 'is',
