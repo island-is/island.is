@@ -79,10 +79,6 @@ const MultipleStatistics = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.MultipleStatistics),
 )
 
-const LifeEventPageListSlice = dynamic(() =>
-  import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
-)
-
 const AnchorPageListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.AnchorPageListSlice),
 )
@@ -146,14 +142,6 @@ const renderSlice = (
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
-    case 'LifeEventPageListSlice':
-      return (
-        <LifeEventPageListSlice
-          slice={slice}
-          namespace={namespace}
-          {...params}
-        />
-      )
     case 'AnchorPageListSlice':
       return (
         <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
