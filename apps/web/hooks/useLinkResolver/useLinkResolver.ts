@@ -175,10 +175,6 @@ export const routesTemplate = {
     is: '/lifsvidburdir',
     en: '/en/life-events',
   },
-  lifeeventpage: {
-    is: '/lifsvidburdir/[slug]',
-    en: '/en/life-events/[slug]',
-  },
   anchorpage: {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',

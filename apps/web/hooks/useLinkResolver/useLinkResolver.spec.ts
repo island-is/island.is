@@ -17,7 +17,7 @@ describe('Link resolver', () => {
   })
 
   it('should return correct path to type with variable', () => {
-    const nextLinks = linkResolver('lifeeventpage', ['cat'], 'is')
+    const nextLinks = linkResolver('anchorpage', ['cat'], 'is')
     expect(nextLinks).toEqual({
       href: '/lifsvidburdir/cat',
     })
