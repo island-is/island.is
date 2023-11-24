@@ -15,7 +15,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/core"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/core"
+      ],
       "options": {
         "jestConfig": "libs/application/templates/social-insurance-administration/core/jest.config.js",
         "passWithNoTests": true
