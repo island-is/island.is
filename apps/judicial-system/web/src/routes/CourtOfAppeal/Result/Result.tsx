@@ -37,11 +37,12 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, isLoadingAppealBanner } =
+    useAppealAlertBanner(workingCase)
 
   return (
     <>
-      {!isLoadingWorkingCase && (
+      {isLoadingAppealBanner && (
         <AlertBanner
           variant="warning"
           title={title}
