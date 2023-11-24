@@ -170,6 +170,34 @@ export interface IAnchorPage extends Entry<IAnchorPageFields> {
   }
 }
 
+
+export interface IAnchorPageListFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Pages */
+  pages?: IAnchorPage[] | undefined
+}
+
+/** !!DO NOT USE!! - This is part of the life events data migration */
+
+export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPageList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -4538,6 +4566,7 @@ export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
   | 'anchorPage'
+  | 'anchorPageList'
   | 'appUri'
   | 'article'
   | 'articleCategory'

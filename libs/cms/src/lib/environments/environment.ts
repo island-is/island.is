@@ -26,6 +26,7 @@ export default {
   ],
   nestedContentTypes: [
     'alertBanner',
+    'anchorPageList',
     'organizationPage',
     'organization',
     'subArticle',

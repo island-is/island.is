@@ -83,6 +83,10 @@ const LifeEventPageListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LifeEventPageListSlice),
 )
 
+const AnchorPageListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.AnchorPageListSlice),
+)
+
 const PowerBiSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
 )
@@ -145,6 +149,14 @@ const renderSlice = (
     case 'LifeEventPageListSlice':
       return (
         <LifeEventPageListSlice
+          slice={slice}
+          namespace={namespace}
+          {...params}
+        />
+      )
+    case 'AnchorPageListSlice':
+      return (
+        <AnchorPageListSlice
           slice={slice}
           namespace={namespace}
           {...params}
