@@ -8,8 +8,8 @@ export enum Comparators {
   GTE = 'gte',
   LT = 'lt',
   LTE = 'lte',
-  CONTAINS = 'c',
-  NOT_CONTAINS = 'nc',
+  CONTAINS = 'in',
+  NOT_CONTAINS = 'nin',
 }
 
 export enum AllOrAny {
