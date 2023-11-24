@@ -17,6 +17,8 @@ import {
   AlcoholLicencesList,
   BrokersList,
   CatchQuotaCalculator,
+  Chart,
+  ChartNumberBox,
   ChartsCard,
   DrivingInstructorList,
   EmailSignup,
@@ -40,6 +42,8 @@ import {
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
+  Chart as ChartSchema,
+  ChartNumberBox as ChartNumberBoxSchema,
   Embed as EmbedSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -144,6 +148,10 @@ const defaultRenderComponent = {
   Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
   OverviewLinks: (slice: OverviewLinksSliceSchema) => (
     <OverviewLinksSlice slice={slice} />
+  ),
+  Chart: (slice: ChartSchema) => <Chart slice={slice} />,
+  ChartNumberBox: (slice: ChartNumberBoxSchema) => (
+    <ChartNumberBox slice={slice} />
   ),
 }
 

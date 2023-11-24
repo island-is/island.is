@@ -39,7 +39,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import { isReopenedCOACase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
@@ -114,12 +114,7 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   const handleNextButtonClick = async () => {
-    if (
-      hasSentNotification(
-        NotificationType.APPEAL_COMPLETED,
-        workingCase.notifications,
-      )
-    ) {
+    if (isReopenedCOACase(workingCase.appealState, workingCase.notifications)) {
       setVisibleModal('AppealRulingModified')
     } else {
       await handleComplete()
