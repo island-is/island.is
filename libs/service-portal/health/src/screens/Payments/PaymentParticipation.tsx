@@ -26,6 +26,7 @@ import {
 } from './Payments.generated'
 import sub from 'date-fns/sub'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 export const PaymentPartication = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -68,7 +69,7 @@ export const PaymentPartication = () => {
   const bills = billsData?.rightsPortalCopaymentBills.items
 
   return (
-    <PaymentsWrapper>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
       {error ? (
         <AlertMessage
           type="error"
