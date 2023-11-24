@@ -7,10 +7,12 @@ import {
   Option,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { dateFormat } from '@island.is/shared/constants'
-import format from 'date-fns/format'
 import * as styles from './FinanceTransactionPeriodsTableDetail.css'
-import { amountFormat, periodFormat } from '@island.is/service-portal/core'
+import {
+  amountFormat,
+  formatDate,
+  periodFormat,
+} from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { useEffect, useMemo, useState } from 'react'
@@ -231,9 +233,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
                       </Text>
                     </T.Data>
                     <T.Data>{period.description}</T.Data>
-                    <T.Data>
-                      {format(new Date(period.lastMoveDate), dateFormat.is)}
-                    </T.Data>
+                    <T.Data>{formatDate(period.lastMoveDate)}</T.Data>
                     <T.Data align="right">
                       <Text variant="small" whiteSpace="nowrap">
                         {amountFormat(Number(period.amount))}

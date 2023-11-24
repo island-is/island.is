@@ -1,7 +1,5 @@
-import { ExpandRow } from '@island.is/service-portal/core'
+import { ExpandRow, formatDate } from '@island.is/service-portal/core'
 import FinanceTransactionPeriodsTableDetail from './FinanceTransactionPeriodsTableDetail'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
 import { useGetChargeItemSubjectsByYearLazyQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { cropText } from '../../utils/cropText'
 import { useFinanceTransactionPeriodsState } from './FinanceTransactionPeriodsContext'
@@ -35,7 +33,7 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
         },
         { value: record.chargeItemSubjectDescription },
         {
-          value: format(new Date(record.lastMovementDate), dateFormat.is),
+          value: formatDate(record.lastMovementDate),
         },
       ]}
       onExpandCallback={() =>

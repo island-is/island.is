@@ -5,18 +5,17 @@ import {
   AlertBanner,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { dateFormat } from '@island.is/shared/constants'
 import { useLocale } from '@island.is/localization'
 import {
   ExpandHeader,
   ExpandRow,
   amountFormat,
+  formatDate,
   m,
   periodFormat,
 } from '@island.is/service-portal/core'
 import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransactionPeriods/FinanceTransactionPeriods.generated'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
-import format from 'date-fns/format'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 import { m as messages } from '../../lib/messages'
 
@@ -99,7 +98,7 @@ export default function FinanceTransactionSelectedPeriod({
                 key={`${record.category}-${record.chargeItemSubject}-${record.createTime}-${record.amount}`}
                 data={[
                   {
-                    value: format(new Date(record.createDate), dateFormat.is),
+                    value: formatDate(record.createDate),
                   },
                   { value: record.itemCode },
                   { value: record.category },
@@ -111,7 +110,7 @@ export default function FinanceTransactionSelectedPeriod({
                   data={[
                     {
                       title: formatMessage(m.effectiveDate),
-                      value: format(new Date(record.valueDate), dateFormat.is),
+                      value: formatDate(record.valueDate),
                     },
                     {
                       title: formatMessage(m.performingOrganization),

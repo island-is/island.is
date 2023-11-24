@@ -1,10 +1,13 @@
 import { useState } from 'react'
-import format from 'date-fns/format'
 import { Table as T, Box, Pagination } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, amountFormat, periodFormat } from '@island.is/service-portal/core'
+import {
+  m,
+  amountFormat,
+  periodFormat,
+  formatDate,
+} from '@island.is/service-portal/core'
 import sortBy from 'lodash/sortBy'
-import { dateFormat } from '@island.is/shared/constants'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import { CustomerRecordsDetails } from '../../screens/FinanceTransactions/FinanceTransactionsData.types'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
@@ -48,7 +51,7 @@ const FinanceTransactionsTable = ({ recordsArray }: Props) => {
               <ExpandRow
                 key={`${record.createTime}-${record.createDate}-${record.accountReference}-${record.reference}-${record.amount}`}
                 data={[
-                  { value: format(new Date(record.createDate), dateFormat.is) },
+                  { value: formatDate(record.createDate) },
                   { value: record.chargeType },
                   { value: record.itemCode },
                   { value: record.chargeItemSubject },
@@ -60,7 +63,7 @@ const FinanceTransactionsTable = ({ recordsArray }: Props) => {
                   data={[
                     {
                       title: formatMessage(m.effectiveDate),
-                      value: format(new Date(record.valueDate), dateFormat.is),
+                      value: formatDate(record.valueDate),
                     },
                     {
                       title: formatMessage(m.performingOrganization),
