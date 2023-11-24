@@ -226,11 +226,22 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
-  buildDividerField({}),
+  buildDividerField({
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
+  }),
   buildDescriptionField({
     id: 'overviewStocksTitle',
     title: m.stocksTitle,
     description: m.stocksDescription,
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
     titleVariant: 'h3',
     space: 'gutter',
   }),
