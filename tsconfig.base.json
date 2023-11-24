@@ -588,6 +588,9 @@
       "@island.is/clients/ship-registry": [
         "libs/clients/ship-registry/src/index.ts"
       ],
+      "@island.is/clients/signature-collection": [
+        "libs/clients/signature-collection/src/index.ts"
+      ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
