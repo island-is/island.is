@@ -8,7 +8,11 @@ import {
   TaxLevelOptions,
 } from './constants'
 import { errorMessages } from './messages'
-import { formatBankInfo, validIBAN, validSWIFT } from './oldAgePensionUtils'
+import {
+  formatBankInfo,
+  validIBAN,
+  validSWIFT,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

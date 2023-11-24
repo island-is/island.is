@@ -28,7 +28,6 @@ import addDays from 'date-fns/addDays'
 import {
   CombinedResidenceHistory,
   Employer,
-  BankInfo,
   IncompleteEmployer,
   FileType,
   SelfEmployed,
@@ -36,6 +35,8 @@ import {
   FileUpload,
   Attachments,
 } from '../types'
+import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 
 enum AttachmentTypes {
@@ -103,16 +104,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.personalAllowanceUsage',
   ) as string
 
-  const spouseAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowance',
-  ) as YesOrNo
-
-  const spouseAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowanceUsage',
-  ) as string
-
   const taxLevel = getValueViaPath(
     answers,
     'paymentInfo.taxLevel',
@@ -147,6 +138,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'fileUpload.earlyRetirement',
   ) as FileType[]
+
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
 
   const bankAccountType = getValueViaPath(
     answers,
@@ -198,9 +194,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employers,
     rawEmployers,
     personalAllowance,
-    spouseAllowance,
     personalAllowanceUsage,
-    spouseAllowanceUsage,
     additionalAttachments,
     additionalAttachmentsRequired,
     pensionAttachments,
@@ -208,6 +202,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selfEmployedAttachments,
     earlyRetirementAttachments,
     taxLevel,
+    tempAnswers,
     bankAccountType,
     iban,
     swift,
@@ -629,26 +624,8 @@ export const filterValidEmployers = (
   return filtered as Employer[]
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
-  if (formattedBankInfo && formattedBankInfo.length === 12) {
-    return formattedBankInfo
-  }
-
-  return bankInfo
-}
-
 export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-}
-
-export const getBankIsk = (bankInfo: BankInfo) => {
-  return !isEmpty(bankInfo) &&
-    bankInfo.bank &&
-    bankInfo.ledger &&
-    bankInfo.accountNumber
-    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
-    : ''
 }
 
 // We should only send bank account to TR if applicant is registering
@@ -672,6 +649,7 @@ export const shouldNotUpdateBankAccount = (
     return getBankIsk(bankInfo) === bank ?? false
   } else {
     return (
+      !isEmpty(bankInfo) &&
       bankInfo.iban === iban &&
       bankInfo.swift === swift &&
       bankInfo.foreignBankName === bankName &&
@@ -679,48 +657,4 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   }
-}
-
-export const friendlyFormatIBAN = (value: string | undefined) => {
-  return !isEmpty(value) && value
-    ? value
-        .toUpperCase()
-        .replace(/[\s]+/g, '')
-        .replace(/(.{4})(?!$)/g, '$1 ')
-    : ''
-}
-
-export const validIBAN = (value: string) => {
-  const ibanRegex = new RegExp(
-    /^[A-Z]{2}[0-9]{2}[A-Z0-9]{4}[0-9]{7}([A-Z0-9]?){0,19}$/,
-  )
-
-  return ibanRegex.test(value)
-}
-
-export const friendlyFormatSWIFT = (value: string | undefined) => {
-  return !isEmpty(value) && value
-    ? value
-        .toUpperCase()
-        .replace(/[\s]+/g, '')
-        .replace(/(.{4})(?!$)/g, '$1 ')
-        .replace(/(.{4}[\s].{2})(?!$)/g, '$1 ')
-    : ''
-}
-
-export const validSWIFT = (value: string) => {
-  const swiftRegex = new RegExp(
-    /^[A-Z]{4}[-]{0,1}[A-Z]{2}[-]{0,1}[A-Z0-9]{2}[-]{0,1}([A-Z0-9]?){3}$/,
-  )
-
-  return swiftRegex.test(value)
-}
-
-export const useCurrencies = (currencies: Array<string>) => {
-  return (
-    currencies.map((i) => ({
-      label: i,
-      value: i,
-    })) ?? []
-  )
 }

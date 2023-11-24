@@ -42,7 +42,7 @@ import {
   getYesNOOptions,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
-import { ApplicantInfo } from '../types'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -272,38 +272,19 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   maxLength: 4,
                 }),
-                buildRadioField({
-                  id: 'paymentInfo.spouseAllowance',
-                  title: oldAgePensionFormMessage.payment.spouseAllowance,
-                  options: getYesNOOptions(),
-                  required: true,
-                  width: 'half',
-                  largeButtons: true,
-                  space: 'containerGutter',
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  message:
+                    oldAgePensionFormMessage.payment.alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
                   condition: (_, externalData) => {
                     const { hasSpouse } =
                       getApplicationExternalData(externalData)
                     if (hasSpouse) return true
                     return false
                   },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.spouseAllowanceUsage',
-                  title:
-                    oldAgePensionFormMessage.payment
-                      .personalAllowancePercentage,
-                  suffix: '%',
-                  condition: (answers, externalData) => {
-                    const { spouseAllowance } = getApplicationAnswers(answers)
-                    const { hasSpouse } =
-                      getApplicationExternalData(externalData)
-                    return hasSpouse && spouseAllowance === YES
-                  },
-                  placeholder: '1%',
-                  defaultValue: '100',
-                  variant: 'number',
-                  width: 'half',
-                  maxLength: 4,
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',
@@ -764,6 +745,15 @@ export const OldAgePensionForm: Form = buildForm({
                   placement: 'footer',
                   title: oldAgePensionFormMessage.review.confirmTitle,
                   actions: [
+                    {
+                      event: DefaultEvents.ABORT,
+                      name: oldAgePensionFormMessage.review.cancelButton,
+                      type: 'reject',
+                      condition: (answers) => {
+                        const { tempAnswers } = getApplicationAnswers(answers)
+                        return !!tempAnswers
+                      },
+                    },
                     {
                       event: DefaultEvents.SUBMIT,
                       name: oldAgePensionFormMessage.review.confirmTitle,

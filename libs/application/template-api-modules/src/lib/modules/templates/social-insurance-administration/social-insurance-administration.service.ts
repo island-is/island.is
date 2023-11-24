@@ -19,7 +19,7 @@ import {
 import {
   Attachment,
   AttachmentTypeEnum,
-  OldAgePensionResponseError,
+  ResponseError,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
@@ -45,7 +45,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     super('SocialInsuranceAdministration')
   }
 
-  private parseErrors(e: Error | OldAgePensionResponseError) {
+  private parseErrors(e: Error | ResponseError) {
     if (e instanceof Error) {
       return e.message
     }
@@ -180,21 +180,23 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const attachments = await this.getAttachments(application)
+      if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+        const attachments = await this.getAttachments(application)
 
-      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
-        application,
-        attachments,
-      )
+        const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+          application,
+          attachments,
+        )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+        const applicationType = getApplicationType(application).toLowerCase()
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
-      return response
+        const response = await this.siaClientService.sendApplication(
+          auth,
+          oldAgePensionDTO,
+          applicationType,
+        )
+        return response
+      }
     } catch (e) {
       this.logger.error('Failed to send the old age pension application', e)
       throw this.parseErrors(e)

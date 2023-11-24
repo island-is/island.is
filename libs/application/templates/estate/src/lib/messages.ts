@@ -248,8 +248,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
-  estateMembersSubtitle: {
-    id: 'es.application:estateMembersSubtitle',
+  estateMembersDescriptionEstateWithoutAssets: {
+    id: 'es.application:estateMembersDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionOfficialDivision: {
+    id: 'es.application:estateMembersDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionUndividedEstate: {
+    id: 'es.application:estateMembersDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:estateMembersDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
@@ -279,8 +297,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá og kaupmáli',
     description: '',
   },
-  willsAndAgreementsDescription: {
-    id: 'es.application:willsAndAgreementsDescription',
+  willsAndAgreementsDescriptionEstateWithoutAssets: {
+    id: 'es.application:willsAndAgreementsDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionOfficialDivision: {
+    id: 'es.application:willsAndAgreementsDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDescriptionUndividedEstate: {
+    id: 'es.application:willsAndAgreementsDescriptionDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:willsAndAgreementsDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',

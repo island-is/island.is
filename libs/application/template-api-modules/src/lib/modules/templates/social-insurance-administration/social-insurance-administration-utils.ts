@@ -7,7 +7,6 @@ import {
 import {
   ApplicationType,
   getApplicationAnswers,
-  isEarlyRetirement,
   BankAccountType,
   formatBank,
   shouldNotUpdateBankAccount,
@@ -29,9 +28,7 @@ export const transformApplicationToOldAgePensionDTO = (
     onePaymentPerYear,
     comment,
     personalAllowance,
-    spouseAllowance,
     personalAllowanceUsage,
-    spouseAllowanceUsage,
     taxLevel,
     iban,
     swift,
@@ -74,9 +71,7 @@ export const transformApplicationToOldAgePensionDTO = (
       }),
     }),
     taxInfo: {
-      spouseAllowance: YES === spouseAllowance,
       personalAllowance: YES === personalAllowance,
-      spouseAllowanceUsage: YES === spouseAllowance ? +spouseAllowanceUsage : 0,
       personalAllowanceUsage:
         YES === personalAllowance ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,

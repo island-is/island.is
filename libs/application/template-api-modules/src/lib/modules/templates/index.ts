@@ -146,8 +146,8 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
-  CitizenshipModule,
   SocialInsuranceAdministrationModule,
+  CitizenshipModule,
 ]
 
 export const services = [
@@ -199,6 +199,6 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
-  CitizenshipService,
   SocialInsuranceAdministrationService,
+  CitizenshipService,
 ]

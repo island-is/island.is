@@ -242,6 +242,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                         @island-is/deloitte
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
 /libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
 /libs/clients/social-insurance-administration/                                                           @island-is/deloitte
 

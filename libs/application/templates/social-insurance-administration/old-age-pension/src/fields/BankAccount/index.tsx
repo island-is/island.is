@@ -25,11 +25,13 @@ import { Markdown } from '@island.is/shared/components'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+} from '../../lib/oldAgePensionUtils'
+import {
   friendlyFormatSWIFT,
   useCurrencies,
   getBankIsk,
   friendlyFormatIBAN,
-} from '../../lib/oldAgePensionUtils'
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
 
 export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {

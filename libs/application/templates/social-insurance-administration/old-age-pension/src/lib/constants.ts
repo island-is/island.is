@@ -49,6 +49,7 @@ export type Events =
   | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
   | { type: OAPEvents.PENDING }
   | { type: OAPEvents.DISMISSED }
+  | { type: DefaultEvents.ABORT }
 
 export enum Roles {
   APPLICANT = 'applicant',
@@ -63,9 +64,6 @@ export enum States {
   TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview', // I_VINNSLU = 562
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
-
-  PENDING = 'pending', // I_BID = 561
-  DISMISSED = 'dismissed', // VISAD_FRA = 1637
 
   REJECTED = 'rejected', // SYNJAD = 1281
   APPROVED = 'approved', // AFGREIDD = 563
