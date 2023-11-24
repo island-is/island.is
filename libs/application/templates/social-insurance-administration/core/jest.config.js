@@ -1,6 +1,5 @@
 module.exports = {
-  displayName:
-    'application-templates-social-insurance-administration-pension-supplement',
+  displayName: 'application-templates-social-insurance-administration-core',
   preset: './jest.preset.js',
   rootDir: '../../../../..',
   roots: [__dirname],
@@ -9,5 +8,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/social-insurance-administration/pension-supplement',
+    '<rootDir>/coverage/libs/application/templates/social-insurance-administration/core',
 }

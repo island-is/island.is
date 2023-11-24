@@ -14,7 +14,7 @@ import {
 import { RadioFormField } from '@island.is/application/ui-fields'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getErrorViaPath } from '@island.is/application/core'
-import { oldAgePensionFormMessage } from '../../lib/messages'
+import { pensionSupplementFormMessage } from '../../lib/messages'
 import { BankAccountType } from '../../lib/constants'
 import {
   InputController,
@@ -25,7 +25,7 @@ import { Markdown } from '@island.is/shared/components'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../lib/oldAgePensionUtils'
+} from '../../lib/pensionSupplementUtils'
 import {
   friendlyFormatSWIFT,
   useCurrencies,
@@ -68,11 +68,11 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
   const currencyFieldId = `${id}.currency`
 
   return (
-    <Box>
-      <Box marginTop={2} marginBottom={5}>
+    <Box marginTop={7}>
+      <Box marginBottom={5}>
         <AlertMessage
           type="info"
-          title={formatMessage(oldAgePensionFormMessage.shared.alertTitle)}
+          title={formatMessage(pensionSupplementFormMessage.shared.alertTitle)}
           message={
             <Box>
               <Box component="span" display="block">
@@ -80,8 +80,9 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                   <Markdown>
                     {formatText(
                       selectedBankAccountType === BankAccountType.ICELANDIC
-                        ? oldAgePensionFormMessage.payment.alertMessage
-                        : oldAgePensionFormMessage.payment.alertMessageForeign,
+                        ? pensionSupplementFormMessage.payment.alertMessage
+                        : pensionSupplementFormMessage.payment
+                            .alertMessageForeign,
                       application,
                       formatMessage,
                     )}
@@ -103,11 +104,11 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
           children: undefined,
           options: [
             {
-              label: oldAgePensionFormMessage.payment.icelandicBankAccount,
+              label: pensionSupplementFormMessage.payment.icelandicBankAccount,
               value: BankAccountType.ICELANDIC,
             },
             {
-              label: oldAgePensionFormMessage.payment.foreignBankAccount,
+              label: pensionSupplementFormMessage.payment.foreignBankAccount,
               value: BankAccountType.FOREIGN,
             },
           ],
@@ -124,7 +125,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
           id={bankFieldId}
           placeholder="0000-00-000000"
           label={formatText(
-            oldAgePensionFormMessage.payment.bank,
+            pensionSupplementFormMessage.payment.bank,
             application,
             formatMessage,
           )}
@@ -141,7 +142,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                 id={ibanFieldId}
                 placeholder="AB00 XXXX XXXX XXXX XXXX XX"
                 label={formatText(
-                  oldAgePensionFormMessage.payment.iban,
+                  pensionSupplementFormMessage.payment.iban,
                   application,
                   formatMessage,
                 )}
@@ -161,7 +162,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                 id={swiftFieldId}
                 placeholder="AAAA BB CC XXX"
                 label={formatText(
-                  oldAgePensionFormMessage.payment.swift,
+                  pensionSupplementFormMessage.payment.swift,
                   application,
                   formatMessage,
                 )}
@@ -180,12 +181,12 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
                 id={currencyFieldId}
                 name={currencyFieldId}
                 label={formatText(
-                  oldAgePensionFormMessage.payment.currency,
+                  pensionSupplementFormMessage.payment.currency,
                   application,
                   formatMessage,
                 )}
                 placeholder={formatMessage(
-                  oldAgePensionFormMessage.payment.selectCurrency,
+                  pensionSupplementFormMessage.payment.selectCurrency,
                 )}
                 defaultValue={!isEmpty(bankInfo) ? bankInfo.currency : ''}
                 options={currenciesOptions}
@@ -199,7 +200,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
               <InputController
                 id={bankNameFieldId}
                 label={formatText(
-                  oldAgePensionFormMessage.payment.bankName,
+                  pensionSupplementFormMessage.payment.bankName,
                   application,
                   formatMessage,
                 )}
@@ -214,7 +215,7 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
               <InputController
                 id={bankAddressFieldId}
                 label={formatText(
-                  oldAgePensionFormMessage.payment.bankAddress,
+                  pensionSupplementFormMessage.payment.bankAddress,
                   application,
                   formatMessage,
                 )}

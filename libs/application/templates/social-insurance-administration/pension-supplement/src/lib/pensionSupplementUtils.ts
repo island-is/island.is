@@ -1,10 +1,16 @@
 import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, Option } from '@island.is/application/types'
-import { ApplicationReason, AttachmentLabel, MONTHS } from './constants'
+import {
+  ApplicationReason,
+  AttachmentLabel,
+  MONTHS,
+  BankAccountType,
+} from './constants'
 import { pensionSupplementFormMessage } from './messages'
 import subYears from 'date-fns/subYears'
 import addMonths from 'date-fns/addMonths'
+import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 interface FileType {
   key: string
@@ -48,8 +54,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'applicantInfo.phonenumber',
   ) as string
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-
   const applicationReason = getValueViaPath(
     answers,
     'applicationReason',
@@ -61,14 +65,40 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bankAccountType = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountType',
+  ) as BankAccountType
+
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
+
+  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
+
+  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
+
+  const bankAddress = getValueViaPath(
+    answers,
+    'paymentInfo.bankAddress',
+  ) as string
+
+  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
+
   return {
     applicantEmail,
     applicantPhonenumber,
-    bank,
     applicationReason,
     selectedYear,
     selectedMonth,
     comment,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
   }
 }
 
@@ -102,17 +132,23 @@ export function getApplicationExternalData(
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const bank = getValueViaPath(
+  const bankInfo = getValueViaPath(
     externalData,
-    'userProfile.data.bankInfo',
-  ) as string
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
+  ) as BankInfo
+
+  const currencies = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
 
   return {
     applicantName,
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
-    bank,
+    bankInfo,
+    currencies,
   }
 }
 
@@ -120,35 +156,32 @@ export function getApplicationReasonOptions() {
   const options: Option[] = [
     {
       value: ApplicationReason.MEDICINE_COST,
-      label: pensionSupplementFormMessage.info.applicationReasonMedicineCost,
+      label: pensionSupplementFormMessage.applicationReason.medicineCost,
     },
     {
       value: ApplicationReason.ASSISTED_CARE_AT_HOME,
-      label:
-        pensionSupplementFormMessage.info.applicationReasonAssistedCareAtHome,
+      label: pensionSupplementFormMessage.applicationReason.assistedCareAtHome,
     },
     {
       value: ApplicationReason.OXYGEN_FILTER_COST,
-      label:
-        pensionSupplementFormMessage.info.applicationReasonOxygenFilterCost,
+      label: pensionSupplementFormMessage.applicationReason.oxygenFilterCost,
     },
     {
       value: ApplicationReason.PURCHASE_OF_HEARING_AIDS,
       label:
-        pensionSupplementFormMessage.info
-          .applicationReasonPurchaseOfHearingAids,
+        pensionSupplementFormMessage.applicationReason.purchaseOfHearingAids,
     },
     {
       value: ApplicationReason.ASSISTED_LIVING,
-      label: pensionSupplementFormMessage.info.applicationReasonAssistedLiving,
+      label: pensionSupplementFormMessage.applicationReason.assistedLiving,
     },
     {
       value: ApplicationReason.HALFWAY_HOUSE,
-      label: pensionSupplementFormMessage.info.applicationReasonHalfwayHouse,
+      label: pensionSupplementFormMessage.applicationReason.halfwayHouse,
     },
     {
       value: ApplicationReason.HOUSE_RENT,
-      label: pensionSupplementFormMessage.info.applicationReasonHouseRent,
+      label: pensionSupplementFormMessage.applicationReason.houseRent,
     },
   ]
   return options
@@ -277,13 +310,4 @@ export function getAvailableMonths(
   }
 
   return months
-}
-
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
-  if (formattedBankInfo && formattedBankInfo.length === 12) {
-    return formattedBankInfo
-  }
-
-  return bankInfo
 }

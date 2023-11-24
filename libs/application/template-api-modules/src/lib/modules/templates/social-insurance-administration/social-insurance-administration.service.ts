@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application } from '@island.is/application/types'
+import { Application, ApplicationTypes } from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -180,21 +180,23 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
-      const attachments = await this.getAttachments(application)
+      if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+        const attachments = await this.getAttachments(application)
 
-      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
-        application,
-        attachments,
-      )
+        const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+          application,
+          attachments,
+        )
 
-      const applicationType = getApplicationType(application).toLowerCase()
+        const applicationType = getApplicationType(application).toLowerCase()
 
-      const response = await this.siaClientService.sendApplication(
-        auth,
-        oldAgePensionDTO,
-        applicationType,
-      )
-      return response
+        const response = await this.siaClientService.sendApplication(
+          auth,
+          oldAgePensionDTO,
+          applicationType,
+        )
+        return response
+      }
     } catch (e) {
       this.logger.error('Failed to send the old age pension application', e)
       throw this.parseErrors(e)

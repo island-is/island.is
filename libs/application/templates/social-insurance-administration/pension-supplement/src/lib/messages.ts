@@ -28,6 +28,11 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Nei',
       description: 'No',
     },
+    alertTitle: {
+      id: 'ul.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
   }),
 
   pre: defineMessages({
@@ -104,76 +109,6 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
-    paymentTitle: {
-      id: 'ul.application:info.payment.title',
-      defaultMessage: 'Greiðsluupplýsingar',
-      description: 'Payment information',
-    },
-    paymentAlertTitle: {
-      id: 'ul.application:info.payment.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
-    },
-    paymentAlertMessage: {
-      id: 'ul.application:info.payment.alert.message',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
-      description:
-        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account.',
-    },
-    paymentBank: {
-      id: 'ul.application:info.payment.bank',
-      defaultMessage: 'Banki',
-      description: 'Bank',
-    },
-    applicationReasonTitle: {
-      id: 'ul.application:info.application.reason.title',
-      defaultMessage: 'Ástæða umsóknar',
-      description: 'Reason for application',
-    },
-    applicationReasonDescription: {
-      id: 'ul.application:info.application.reason.description',
-      defaultMessage:
-        'Hægt er að merkja við marga möguleika en skylda að merkja við einhvern.',
-      description: 'You can check many options, but you must check someone.',
-    },
-    applicationReasonMedicineCost: {
-      id: 'ul.application:info.application.reason.medicine.cost',
-      defaultMessage: 'Lyfja- eða sjúkrahjálp',
-      description: 'Medicine cost',
-    },
-    applicationReasonAssistedCareAtHome: {
-      id: 'ul.application:info.application.reason.assisted.care.at.home',
-      defaultMessage: 'Umönnun í heimahúsi',
-      description: 'Assisted care at home',
-    },
-    applicationReasonHouseRent: {
-      id: 'ul.application:info.application.reason.house.rent',
-      defaultMessage:
-        'Húsaleiga sem fellur utan húsaleigubóta frá sveitarfélagi',
-      description:
-        'House rent that falls outside the rent allowance from the municipality',
-    },
-    applicationReasonAssistedLiving: {
-      id: 'ul.application:info.application.reason.assisted.living',
-      defaultMessage: 'Dvöl á sambýli eða áfangaheimili',
-      description: 'Assisted living',
-    },
-    applicationReasonPurchaseOfHearingAids: {
-      id: 'ul.application:info.application.reason.purchase.of.hearing.aids',
-      defaultMessage: 'Kaup á heyrnartækjum',
-      description: 'Purchase of hearing aids',
-    },
-    applicationReasonOxygenFilterCost: {
-      id: 'ul.application:info.application.reason.oxygen.filter.cost',
-      defaultMessage: 'Rafmagn á súrefnissíu',
-      description: 'Oxygen filter voltage/cost',
-    },
-    applicationReasonHalfwayHouse: {
-      id: 'ul.application:info.application.reason.halfway.house',
-      defaultMessage: 'Dvöl á áfangaheimili',
-      description: 'Halfway house',
-    },
     periodTitle: {
       id: 'ul.application:info.period.title',
       defaultMessage: 'Tímabil',
@@ -204,6 +139,124 @@ export const pensionSupplementFormMessage: MessageDir = {
       id: 'ul.application:info.period.month.default.text',
       defaultMessage: 'Veldu mánuð',
       description: 'Select month',
+    },
+  }),
+
+  payment: defineMessages({
+    title: {
+      id: 'ul.application:info.payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertMessage: {
+      id: 'ul.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
+      description:
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account.',
+    },
+    alertMessageForeign: {
+      id: 'ul.application:payment.alert.message.foreign',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+      description:
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the social Insurance Administration will be paid into that account. \n\nIt is important to ensure that the bank details are correct. We advise that applicants contact their commercial bank to make sure all bank information is correct as well as receive information about IBAN and SWIFT numbers. \n\nPlease note that payments made to foreign accounts can take 3-4 days. The bank that handles the transaction will charge a service fee.',
+    },
+    icelandicBankAccount: {
+      id: 'ul.application:payment.icelandic.bank.account',
+      defaultMessage: 'Íslenskur reikningur',
+      description: 'Icelandic account',
+    },
+    foreignBankAccount: {
+      id: 'ul.application:payment.foreign.bank.account',
+      defaultMessage: 'Erlendur reikningur',
+      description: 'Foreign account',
+    },
+    iban: {
+      id: 'ul.application:payment.iban',
+      defaultMessage: 'IBAN',
+      description: 'IBAN',
+    },
+    swift: {
+      id: 'ul.application:payment.swift',
+      defaultMessage: 'SWIFT',
+      description: 'SWIFT',
+    },
+    bankName: {
+      id: 'ul.application:payment.bank.name',
+      defaultMessage: 'Heiti banka',
+      description: 'Bank name',
+    },
+    bankAddress: {
+      id: 'ul.application:payment.bank.address',
+      defaultMessage: 'Heimili banka',
+      description: 'Bank address',
+    },
+    currency: {
+      id: 'ul.application:payment.currency',
+      defaultMessage: 'Mynt',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'ul.application:payment.select.currency',
+      defaultMessage: 'Veldu mynt',
+      description: 'Select currency',
+    },
+    bank: {
+      id: 'ul.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+  }),
+
+  applicationReason: defineMessages({
+    title: {
+      id: 'ul.application:application.reason.title',
+      defaultMessage: 'Ástæða umsóknar',
+      description: 'Reason for application',
+    },
+    description: {
+      id: 'ul.application:application.reason.description',
+      defaultMessage:
+        'Hægt er að merkja við marga möguleika en skylda að merkja við einhvern.',
+      description: 'You can check many options, but you must check someone.',
+    },
+    medicineCost: {
+      id: 'ul.application:application.reason.medicine.cost',
+      defaultMessage: 'Lyfja- eða sjúkrahjálp',
+      description: 'Medicine cost',
+    },
+    assistedCareAtHome: {
+      id: 'ul.application:application.reason.assisted.care.at.home',
+      defaultMessage: 'Umönnun í heimahúsi',
+      description: 'Assisted care at home',
+    },
+    houseRent: {
+      id: 'ul.application:application.reason.house.rent',
+      defaultMessage:
+        'Húsaleiga sem fellur utan húsaleigubóta frá sveitarfélagi',
+      description:
+        'House rent that falls outside the rent allowance from the municipality',
+    },
+    assistedLiving: {
+      id: 'ul.application:application.reason.assisted.living',
+      defaultMessage: 'Dvöl á sambýli eða áfangaheimili',
+      description: 'Assisted living',
+    },
+    purchaseOfHearingAids: {
+      id: 'ul.application:application.reason.purchase.of.hearing.aids',
+      defaultMessage: 'Kaup á heyrnartækjum',
+      description: 'Purchase of hearing aids',
+    },
+    oxygenFilterCost: {
+      id: 'ul.application:application.reason.oxygen.filter.cost',
+      defaultMessage: 'Rafmagn á súrefnissíu',
+      description: 'Oxygen filter voltage/cost',
+    },
+    halfwayHouse: {
+      id: 'ul.application:application.reason.halfway.house',
+      defaultMessage: 'Dvöl á áfangaheimili',
+      description: 'Halfway house',
     },
   }),
 
@@ -522,6 +575,16 @@ export const errorMessages = defineMessages({
     id: 'ul.application:error.period',
     defaultMessage: 'Tímabil þarf að vera gilt.',
     description: 'The period must be valid.',
+  },
+  iban: {
+    id: 'ul.application:error.iban',
+    defaultMessage: 'Ógilt IBAN',
+    description: 'Invalid IBAN',
+  },
+  swift: {
+    id: 'ul.application:error.swift',
+    defaultMessage: 'Ógilt SWIFT',
+    description: 'Invalid SWIFT',
   },
 })
 
