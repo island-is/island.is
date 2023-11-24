@@ -666,6 +666,7 @@ export const shouldNotUpdateBankAccount = (
     return getBankIsk(bankInfo) === bank ?? false
   } else {
     return (
+      !isEmpty(bankInfo) &&
       bankInfo.iban === iban &&
       bankInfo.swift === swift &&
       bankInfo.foreignBankName === bankName &&
