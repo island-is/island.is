@@ -248,8 +248,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
-  estateMembersSubtitle: {
-    id: 'es.application:estateMembersSubtitle',
+  estateMembersDescriptionEstateWithoutAssets: {
+    id: 'es.application:estateMembersDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionOfficialDivision: {
+    id: 'es.application:estateMembersDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionUndividedEstate: {
+    id: 'es.application:estateMembersDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:estateMembersDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
