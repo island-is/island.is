@@ -387,9 +387,6 @@
       "@island.is/application/templates/passport": [
         "libs/application/templates/passport/src/index.ts"
       ],
-      "@island.is/application/templates/social-insurance-administration/pension-supplement": [
-        "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
-      ],
       "@island.is/application/templates/passport-annulment": [
         "libs/application/templates/passport-annulment/src/index.ts"
       ],
@@ -410,6 +407,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/pension-supplement": [
+        "libs/application/templates/social-insurance-administration/pension-supplement/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
