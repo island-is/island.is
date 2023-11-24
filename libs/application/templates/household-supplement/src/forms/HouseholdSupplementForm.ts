@@ -285,7 +285,7 @@ export const HouseholdSupplementForm: Form = buildForm({
           title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.additionalDocuments',
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
                 householdSupplementFormMessage.fileUpload.additionalFileTitle,
               description:

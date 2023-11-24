@@ -293,7 +293,8 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         const { answers } = application
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
-
+        console.log('additionalAttachments: ', additionalAttachments)
+        console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
         const mergedAdditionalDocumentRequired = [
           ...additionalAttachments,
           ...additionalAttachmentsRequired,
@@ -301,10 +302,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 
         set(
           answers,
-          'fileUpload.additionalDocuments',
+          'fileUploadAdditionalFiles.additionalDocuments',
           mergedAdditionalDocumentRequired,
         )
-        unset(answers, 'fileUpload.additionalDocumentsRequired')
+        unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
 
         return context
       }),

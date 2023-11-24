@@ -18,10 +18,9 @@ interface FileType {
   name: string
 }
 
-interface LeaseAgreementSchoolConfirmationAdditionalDocuments {
+interface FileUpload {
   leaseAgreement?: FileType[]
   schoolConfirmation?: FileType[]
-  additionalDocuments?: FileType[]
 }
 
 enum AttachmentTypes {
@@ -33,6 +32,11 @@ enum AttachmentTypes {
 interface Attachments {
   attachments: FileType[]
   label: MessageDescriptor
+}
+
+interface AdditionalInformation {
+  additionalDocuments?: FileType[]
+  additionalDocumentsRequired?: FileType[]
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -64,12 +68,12 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalAttachments = getValueViaPath(
     answers,
-    'fileUpload.additionalDocuments',
+    'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
-    'fileUpload.additionalDocumentsRequired',
+    'fileUploadAdditionalFiles.additionalDocumentsRequired',
   ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -218,29 +222,41 @@ export function getAttachments(application: Application) {
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
-  const leaseAgrSchoolConfAdditionalDoc = answers.fileUpload as LeaseAgreementSchoolConfirmationAdditionalDocuments
-
+  const fileUpload = answers.fileUpload as FileUpload
+  console.log('FileUpload: ', fileUpload)
   if (householdSupplementHousing === HouseholdSupplementHousing.RENTER) {
     getAttachmentDetails(
-      leaseAgrSchoolConfAdditionalDoc?.leaseAgreement,
+      fileUpload?.leaseAgreement,
       AttachmentTypes.LEASE_AGREEMENT,
     )
   }
   if (householdSupplementChildren === YES) {
     getAttachmentDetails(
-      leaseAgrSchoolConfAdditionalDoc?.schoolConfirmation,
+      fileUpload?.schoolConfirmation,
       AttachmentTypes.SCHOOL_CONFIRMATION,
     )
   }
-  if (
-    leaseAgrSchoolConfAdditionalDoc.additionalDocuments &&
-    leaseAgrSchoolConfAdditionalDoc.additionalDocuments?.length > 0
-  ) {
-    getAttachmentDetails(
-      leaseAgrSchoolConfAdditionalDoc?.additionalDocuments,
-      AttachmentTypes.ADDITIONAL_DOCUMENTS,
-    )
-  }
+
+  const additionalInfo =
+  answers.fileUploadAdditionalFiles as AdditionalInformation
+  console.log('additionalInfo: ', additionalInfo)
+const additionalDocuments = [
+  ...(additionalInfo.additionalDocuments &&
+  additionalInfo.additionalDocuments?.length > 0
+    ? additionalInfo.additionalDocuments
+    : []),
+  ...(additionalInfo.additionalDocumentsRequired &&
+  additionalInfo.additionalDocumentsRequired?.length > 0
+    ? additionalInfo.additionalDocumentsRequired
+    : []),
+]
+
+if (additionalDocuments.length > 0) {
+  getAttachmentDetails(
+    additionalDocuments,
+    AttachmentTypes.ADDITIONAL_DOCUMENTS,
+  )
+}
 
   return attachments
 }
