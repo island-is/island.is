@@ -19,6 +19,15 @@ const validateOptionalPhoneNumber = (value: string) => {
   return isValidPhoneNumber(value) || value === ''
 }
 
+const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
+
+const validateOptionalPhoneNumber = (value: string) => {
+  return isValidPhoneNumber(value) || value === ''
+}
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   questions: z.object({

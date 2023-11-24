@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
-import { UserProfile } from '@island.is/api/schema'
 import {
   getApplicationReasonOptions,
   getApplicationAnswers,
