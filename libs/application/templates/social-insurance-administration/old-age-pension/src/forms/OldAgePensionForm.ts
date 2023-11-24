@@ -42,7 +42,7 @@ import {
   getYesNOOptions,
   isEarlyRetirement,
 } from '../lib/oldAgePensionUtils'
-import { ApplicantInfo } from '../types'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',

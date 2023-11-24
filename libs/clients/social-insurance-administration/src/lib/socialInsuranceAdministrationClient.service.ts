@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   OldAgePension,
   SendApplicationApi,
-  OldAgePensionResponse,
+  Response,
   GetIsApplicantEligibleApi,
   Eligible,
   GetApplicantInfoApi,
@@ -35,7 +35,7 @@ export class SocialInsuranceAdministrationClientService {
     user: User,
     oldAgePension: OldAgePension,
     applicationType: string,
-  ): Promise<OldAgePensionResponse> {
+  ): Promise<Response> {
     return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
       oldAgePension,
       applicationType,
