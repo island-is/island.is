@@ -3,6 +3,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
 import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
 import { parseNumber, LoadModal } from '@island.is/service-portal/core'
+import { formatPhoneNumber } from '@island.is/shared/utils'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,
@@ -288,7 +289,13 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
               (v2UserProfileEnabled ? (
                 <ReadOnlyWithLinks
                   title={formatMessage(msg.saveTel)}
-                  value={userProfile?.mobilePhoneNumber || ''}
+                  value={
+                    userProfile?.mobilePhoneNumber
+                      ? formatPhoneNumber(
+                          parseNumber(userProfile?.mobilePhoneNumber),
+                        )
+                      : ''
+                  }
                   verified={userProfile?.mobilePhoneNumberVerified || false}
                   link={getIDSLink(IdsUserProfileLinks.PHONE_NUMBER)}
                   linkTitle={formatMessage(msg.changeTel)}
