@@ -29,6 +29,7 @@ export const customZodError = (
   return zodValidation
 }
 
+
 export function isEstateInfo(
   data: string | number | boolean | object | undefined,
 ): data is { estate: EstateInfo } {
