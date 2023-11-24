@@ -93,7 +93,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
    */
   const getIDSLink = (linkPath: IdsUserProfileLinks) =>
-    `${authority}${linkPath}?redirectUrl=${window.location}&continue_onboarding=false`
+    `${authority}${linkPath}?returnUrl=${window.location}&continue_onboarding=false`
 
   const isFlagEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
