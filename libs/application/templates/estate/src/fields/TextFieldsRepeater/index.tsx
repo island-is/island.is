@@ -10,8 +10,7 @@ import {
   Text,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
-import { Answers, InitialValue } from '../../types'
-import { makeValues } from '../../lib/utils'
+import { Answers } from '../../types'
 
 import * as styles from '../styles.css'
 
@@ -36,8 +35,6 @@ type Props = {
   }
 }
 
-const initialValue: InitialValue = { formatted: '', raw: 0 }
-
 const valueKeys = ['rateOfExchange', 'faceValue']
 
 export const TextFieldsRepeater: FC<
@@ -47,7 +44,7 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-  const { setValue, clearErrors } = useFormContext()
+  const { setValue, getValues, clearErrors } = useFormContext()
 
   const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
@@ -75,19 +72,26 @@ export const TextFieldsRepeater: FC<
     }
   }, [fields.length, handleAddRepeaterFields])
 
-  const updateValue = (
-    fieldIndex: string,
-    value: string,
-    withDecimal?: boolean,
-  ) => {
-    const values = makeValues(value ?? '', withDecimal)
+  const updateValue = (fieldIndex: string) => {
+    const stockValues: { faceValue?: string; rateOfExchange?: string } =
+      getValues(fieldIndex)
 
-    const total = Math.round(values.raw * values.raw)
+    let total
 
-    setValue(`${fieldIndex}.value`, String(total))
+    const faceValue = stockValues?.faceValue
+    const rateOfExchange = stockValues?.rateOfExchange
 
-    if (total > 0) {
-      clearErrors(`${fieldIndex}.value`)
+    if (faceValue && rateOfExchange) {
+      const a = faceValue.replace(/[^\d]/g, '')
+      const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
+
+      total = Math.round(parseFloat(a) * parseFloat(b))
+
+      setValue(`${fieldIndex}.value`, String(total))
+
+      if (total > 0) {
+        clearErrors(`${fieldIndex}.value`)
+      }
     }
   }
 
@@ -121,7 +125,7 @@ export const TextFieldsRepeater: FC<
             )}
 
             <GridRow>
-              {props.fields.map((field: Field) => {
+              {props.fields.map((field: Field, idx) => {
                 return (
                   <GridColumn
                     span={['1/1', '1/2']}
@@ -148,11 +152,7 @@ export const TextFieldsRepeater: FC<
                       }
                       onChange={(e) => {
                         if (valueKeys.includes(field.id)) {
-                          updateValue(
-                            fieldIndex,
-                            e.target.value ?? '',
-                            field.id === 'rateOfExchange',
-                          )
+                          updateValue(fieldIndex)
                         }
                       }}
                     />

@@ -70,8 +70,3 @@ export interface EstateMember {
   phone?: string
   email?: string
 }
-
-export type InitialValue = {
-  formatted: string
-  raw: number
-}
