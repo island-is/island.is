@@ -84,23 +84,10 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           marginTop={5}
           marginBottom={[2, 1, 0]}
         >
-          <SubTabItem
-            colorScheme={
-              activeItemChildren.filter((item) => item.active).length === 0
-                ? 'default'
-                : 'light'
-            }
-            title={formatMessage(activeItem.name)}
-            onClick={
-              activeItem.path
-                ? () => tabChangeHandler(activeItem.path)
-                : undefined
-            }
-            marginLeft={0}
-          />
           {activeItemChildren?.map((itemChild, ii) => (
             <SubTabItem
               key={`subnav-${ii}`}
+              href={itemChild.path ?? '/'}
               onClick={
                 itemChild.path
                   ? () => tabChangeHandler(itemChild.path)
@@ -112,6 +99,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                   ? 'default'
                   : 'light'
               }
+              marginLeft={ii === 0 ? 0 : 2}
             />
           ))}
         </Box>

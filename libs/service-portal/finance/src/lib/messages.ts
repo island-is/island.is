@@ -14,6 +14,16 @@ export const m = defineMessages({
     defaultMessage: 'Í gildi',
   },
 
+  transactionsLabel: {
+    id: 'service.portal:finance-transactions-label',
+    defaultMessage: 'Veldu gjaldflokk',
+  },
+
+  transactionsYear: {
+    id: 'service.portal:finance-transactions-label',
+    defaultMessage: 'Ár',
+  },
+
   feeCategory: {
     id: 'service.portal:fee-category',
     defaultMessage: 'Gjaldflokkur / stofnun',
@@ -33,6 +43,10 @@ export const m = defineMessages({
   feeBaseDescription: {
     id: 'service.portal:fee-category-description',
     defaultMessage: 'Skýring á gjaldgrunni',
+  },
+  combinedStatus: {
+    id: 'service.portal:fee-combined-status',
+    defaultMessage: 'Uppsöfnuð staða',
   },
 
   selectedPeriods: {

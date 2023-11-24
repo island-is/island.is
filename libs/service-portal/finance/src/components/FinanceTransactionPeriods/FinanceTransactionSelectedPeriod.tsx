@@ -10,6 +10,7 @@ import { useLocale } from '@island.is/localization'
 import {
   ExpandHeader,
   ExpandRow,
+  amountFormat,
   m,
   periodFormat,
 } from '@island.is/service-portal/core'
@@ -82,9 +83,14 @@ export default function FinanceTransactionSelectedPeriod({
             data={[
               { value: '', printHidden: true, width: '56' },
               { value: formatMessage(m.dateShort), width: '15%' },
-              { value: formatMessage(m.feeItem), width: '30%' },
-              { value: formatMessage(m.recordCategory), width: '30%' },
+              { value: formatMessage(m.feeItem), width: '25%' },
+              { value: formatMessage(m.recordCategory), width: '25%' },
               { value: formatMessage(m.amount), align: 'right', width: '15%' },
+              {
+                value: formatMessage(messages.combinedStatus),
+                align: 'right',
+                width: '15%',
+              },
             ]}
           />
           <T.Body>
@@ -97,7 +103,8 @@ export default function FinanceTransactionSelectedPeriod({
                   },
                   { value: record.itemCode },
                   { value: record.category },
-                  { value: record.amount, align: 'right' },
+                  { value: amountFormat(record.amount), align: 'right' },
+                  { value: '??', align: 'right' },
                 ]}
               >
                 <FinanceTransactionsDetail

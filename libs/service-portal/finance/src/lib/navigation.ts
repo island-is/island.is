@@ -15,6 +15,10 @@ export const financeNavigation: PortalNavigationItem = {
       path: FinancePaths.FinanceTransactions,
       children: [
         {
+          name: m.financeTransactionsCategories,
+          path: FinancePaths.FinanceTransactions,
+        },
+        {
           name: m.financeTransactionPeriods,
           path: FinancePaths.FinanceTransactionPeriods,
         },

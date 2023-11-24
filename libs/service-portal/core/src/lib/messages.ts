@@ -127,10 +127,7 @@ export const m = defineMessages({
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-  transactionsLabel: {
-    id: 'service.portal:transactions-label',
-    defaultMessage: 'Veldu gjaldflokk',
-  },
+
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -572,6 +569,10 @@ export const m = defineMessages({
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionsCategories: {
+    id: 'service.portal:finance-transactions-categories',
+    defaultMessage: 'Gjaldflokkar',
   },
   financeTransactionPeriods: {
     id: 'service.portal:finance-transaction-periods',

@@ -19,13 +19,22 @@ const FinanceTransactionPeriods = () => {
       <FinanceTransactionPeriodsProvider>
         <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
           <FinanceIntro
-            text={formatMessage({
-              id: 'sp.finance-transaction-periods:intro',
-              defaultMessage: `Hér sérð þú þær hreyfingar sem tilheyra ákveðnum reikningi eða álagningu.
-                Þeir gjaldflokkar sem birtast hér að neðan eru þeir gjaldflokkar sem hafa haft hreyfingu síðustu 12 mánuði.
-                Veldu gjaldflokk með því að smella á hann og síðan þann gjaldgrunn og tímabil sem við á.\n\n
-                Ef þú vilt annað tímabil eða gjaldflokka geturðu valið það með því að opna síuna.`,
-            })}
+            text={formatMessage(
+              {
+                id: 'sp.finance-transaction-periods:intro',
+                defaultMessage: `Hér sérð þú þær hreyfingar sem tilheyra ákveðnu gjaldatímabili innan hvers gjaldflokks. {br}
+              Þeir gjaldflokkar sem birtast hér að neðan eru þeir gjaldflokkar sem hafa haft hreyfingu síðustu 12 mánuði. Veldu gjaldflokk með því að smella á hann og síðan þann gjaldgrunn (t.d. VSK-númer eða bílnúmer) og gjaldatímabil sem við á. {br}
+              Ef þú vilt sjá annað gjaldatímabil eða gjaldflokka, geturðu valið það með því að opna síuna.`,
+              },
+              {
+                br: (
+                  <>
+                    <br />
+                    <br />
+                  </>
+                ),
+              },
+            )}
           />
 
           <FinanceTransactionPeriodsFilter />

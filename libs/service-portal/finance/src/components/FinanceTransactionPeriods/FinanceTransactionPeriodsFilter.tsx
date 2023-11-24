@@ -192,7 +192,7 @@ const FinanceTransactionPeriodsFilter = () => {
               categories={[
                 {
                   id: 'years',
-                  label: formatMessage(m.yearAndSeason),
+                  label: formatMessage(messages.transactionsYear),
                   selected: financeTransactionPeriodsState.year
                     ? [financeTransactionPeriodsState.year]
                     : [],
@@ -202,7 +202,7 @@ const FinanceTransactionPeriodsFilter = () => {
                 },
                 {
                   id: 'flokkur',
-                  label: formatMessage(m.transactionsLabel),
+                  label: formatMessage(messages.transactionsLabel),
                   selected: dropdownSelect ? [...dropdownSelect] : [],
                   filters: chargeTypeSelect,
                   inline: false,
