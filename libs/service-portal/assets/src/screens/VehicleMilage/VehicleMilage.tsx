@@ -122,12 +122,11 @@ const VehicleMilage = () => {
   const canRegisterMileage = data?.vehicleMileageDetails?.canRegisterMileage
   const requiresMileageRegistration =
     data?.vehicleMileageDetails?.requiresMileageRegistration
-  const canRegisterKm = true // canRegisterKm from service :pray:
 
   console.log('canRegisterMileage', canRegisterMileage)
   console.log('requiresMileageRegistration', requiresMileageRegistration)
 
-  // TODO: Limit this screen from non registerable cars.
+  // TODO: Limit this screen from non registerable cars. requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
 
@@ -173,7 +172,7 @@ const VehicleMilage = () => {
                         })}
                       </Text>
                     </>
-                  ) : canRegisterKm === true ? (
+                  ) : canRegisterMileage === true ? (
                     <Text as="h3" variant="h5">
                       {formatMessage(messages.vehicleMilageInputTitle)}
                     </Text>
