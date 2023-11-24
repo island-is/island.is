@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useState } from 'react'
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
 
 type FinanceTransactionPeriodsStateProps = {
+  searchQuery?: string
   year?: string
   selectedPeriods?: SelectedPeriod[]
 }
@@ -14,6 +15,7 @@ type FinanceTransactionPeriodsContext = {
 }
 
 const financeTransactionPeriodsStateDefaults = {
+  searchQuery: '',
   year: '',
   selectedPeriods: [],
 }

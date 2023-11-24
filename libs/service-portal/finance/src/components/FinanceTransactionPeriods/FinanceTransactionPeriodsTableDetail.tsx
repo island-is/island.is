@@ -62,14 +62,29 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
   }, [subjects])
 
   useEffect(() => {
-    if (subjectsFilter.length) {
+    if (subjectsFilter.length || financeTransactionPeriodsState.searchQuery) {
       setFilteredSubjects(
-        subjects.filter((s) => subjectsFilter.includes(s.chargeItemSubject)),
+        subjects.filter((s) => {
+          const subjectFilter = subjectsFilter.length
+            ? subjectsFilter.includes(s.chargeItemSubject)
+            : true
+          const queryFilter = financeTransactionPeriodsState.searchQuery
+            ? s.chargeItemSubject.includes(
+                financeTransactionPeriodsState.searchQuery,
+              )
+            : true
+          return subjectFilter && queryFilter
+        }),
       )
     } else {
       setFilteredSubjects(subjects)
     }
-  }, [subjects, subjectsFilter, activeSubjects])
+  }, [
+    subjects,
+    subjectsFilter,
+    activeSubjects,
+    financeTransactionPeriodsState.searchQuery,
+  ])
 
   const totalPages =
     filteredSubjects && filteredSubjects.length > ITEMS_ON_PAGE
@@ -78,36 +93,43 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
 
   const setActivePeriods = (
     subject: ChargeItemSubject,
-    period: ChargeItemSubjectsPeriod,
+    periods: ChargeItemSubjectsPeriod[],
     checked: boolean,
   ) => {
     let selectedPeriods = [
       ...(financeTransactionPeriodsState.selectedPeriods ?? []),
     ]
-    const findPeriod = (p: SelectedPeriod) =>
-      typeId === p.typeId &&
-      p.period === period.period &&
-      p.subject === subject.chargeItemSubject
 
-    if (checked && !selectedPeriods.find(findPeriod)) {
-      selectedPeriods.push({
-        typeId,
-        period: period.period,
-        subject: subject.chargeItemSubject,
-        year: financeTransactionPeriodsState.year ?? '',
-      })
-    } else if (!checked && selectedPeriods.find(findPeriod)) {
-      selectedPeriods = selectedPeriods.filter(
-        (p) =>
-          !(
-            typeId === p.typeId &&
-            p.period === period.period &&
-            p.subject === subject.chargeItemSubject
-          ),
-      )
-    }
+    periods.forEach((period) => {
+      const findPeriod = (p: SelectedPeriod) =>
+        typeId === p.typeId &&
+        p.period === period.period &&
+        p.subject === subject.chargeItemSubject
+
+      if (checked && !selectedPeriods.find(findPeriod)) {
+        selectedPeriods.push({
+          typeId,
+          period: period.period,
+          subject: subject.chargeItemSubject,
+          year: financeTransactionPeriodsState.year ?? '',
+        })
+      } else if (!checked && selectedPeriods.find(findPeriod)) {
+        selectedPeriods = selectedPeriods.filter(
+          (p) =>
+            !(
+              typeId === p.typeId &&
+              p.period === period.period &&
+              p.subject === subject.chargeItemSubject
+            ),
+        )
+      }
+    })
 
     setFinanceTransactionPeriodsState({ selectedPeriods })
+  }
+
+  const toggleAllPeriods = (subject: ChargeItemSubject, checked: boolean) => {
+    setActivePeriods(subject, subject.periods, checked)
   }
 
   return (
@@ -133,10 +155,10 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
       ) : null}
       {filteredSubjects
         .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
-        .map((item) => (
+        .map((subject) => (
           <Box
             className={styles.innerCol}
-            key={item.chargeItemSubject}
+            key={subject.chargeItemSubject}
             padding={2}
             paddingBottom={4}
           >
@@ -145,14 +167,23 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
                 {formatMessage(messages.feeBase)} -{' '}
               </Text>
               <Text variant="medium" as="span">
-                {item.chargeItemSubject}
+                {subject.chargeItemSubject}
               </Text>
             </Box>
 
             <T.Table box={{ className: styles.zebraTable }}>
               <T.Head>
                 <T.Row>
-                  <T.HeadData width={56}></T.HeadData>
+                  <T.HeadData width={56}>
+                    {subject.periods.length > 1 && (
+                      <Checkbox
+                        // TODO: Needs aria-label instead of label, not supported by Checkbox component
+                        onChange={(e) => {
+                          toggleAllPeriods(subject, e.target.checked)
+                        }}
+                      />
+                    )}
+                  </T.HeadData>
                   <T.HeadData width="15%">
                     <Text variant="small" fontWeight="semiBold">
                       {formatMessage(m.period)}
@@ -176,13 +207,21 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
                 </T.Row>
               </T.Head>
               <T.Body>
-                {item.periods.map((period, i) => (
+                {subject.periods.map((period, i) => (
                   <T.Row key={`${period.period}-${i}-${period.lastMoveDate}`}>
                     <T.Data>
                       <Checkbox
                         // TODO: Needs aria-label instead of label, not supported by Checkbox component
+                        checked={
+                          !!financeTransactionPeriodsState.selectedPeriods?.find(
+                            (p) =>
+                              typeId === p.typeId &&
+                              p.period === period.period &&
+                              p.subject === subject.chargeItemSubject,
+                          )
+                        }
                         onChange={(e) => {
-                          setActivePeriods(item, period, e.target.checked)
+                          setActivePeriods(subject, [period], e.target.checked)
                         }}
                       />
                     </T.Data>
@@ -212,7 +251,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
                   </T.Data>
                   <T.Data colSpan={2} align="right">
                     <Text variant="small" fontWeight="semiBold">
-                      {amountFormat(item.totalAmount)}
+                      {amountFormat(subject.totalAmount)}
                     </Text>
                   </T.Data>
                 </T.Row>

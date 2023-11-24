@@ -49,7 +49,6 @@ const FinanceTransactionPeriodsFilter = () => {
   const [chargeTypeDetails, setChargeTypeDetails] =
     useState<ChargeTypesDetailsByYear>()
 
-  const [q, setQ] = useState<string>('')
   const [dropdownSelect, setDropdownSelect] = useState<string[]>([])
 
   const [selectedPeriodsActive, setSelectedPeriodsActive] = useState(false)
@@ -125,13 +124,13 @@ const FinanceTransactionPeriodsFilter = () => {
 
   function clearAllFilters() {
     clearFilter()
-    setQ('')
+    setFinanceTransactionPeriodsState({ searchQuery: '' })
   }
 
   const recordsDataArray =
     transactionPeriodFilter(
       chargeTypeDetails?.chargeType ?? [],
-      q,
+      financeTransactionPeriodsState.searchQuery ?? '',
       dropdownSelect,
     ) || []
 
@@ -156,8 +155,10 @@ const FinanceTransactionPeriodsFilter = () => {
               <FilterInput
                 placeholder={formatMessage(m.searchPlaceholder)}
                 name="finance-transaction-periods-input"
-                value={q}
-                onChange={(e) => setQ(e)}
+                value={financeTransactionPeriodsState.searchQuery ?? ''}
+                onChange={(e) =>
+                  setFinanceTransactionPeriodsState({ searchQuery: e })
+                }
                 backgroundColor="blue"
               />
             }
