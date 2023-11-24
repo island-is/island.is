@@ -61,7 +61,6 @@ export enum States {
   DRAFT = 'draft',
 
   TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
-  TRYGGINGASTOFNUN_ABORT = 'tryggingastofnunAbort',
   TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview', // I_VINNSLU = 562
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
