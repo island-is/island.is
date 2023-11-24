@@ -4,7 +4,7 @@ import { CaseStatuses } from '../../types/enums'
 import Error404 from '../Error404/Error404'
 import CaseMobile from './CaseMobile'
 import CaseDesktop from './CaseDesktop'
-import { getStakeholdersList } from './utils'
+import { getStakeholdersList, shouldShowStakeholdersBox } from './utils'
 
 interface Props {
   chosenCase: Case
@@ -34,14 +34,20 @@ const CaseScreen = ({ chosenCase, caseId }: Props) => {
   const isChosenCaseNull = Object.values(chosenCase).every(
     (value) => value === null,
   )
+  const isStakeholdersBoxVisible = shouldShowStakeholdersBox({ chosenCase })
+  const shouldDisplayHidden =
+    chosenCase.allowUsersToSendPrivateAdvices &&
+    chosenCase.advicePublishTypeId !== 3
 
   const expressions = {
-    isDocumentsNotEmpty: isDocumentsNotEmpty,
-    isAdditionalDocumentsNotEmpty: isAdditionalDocumentsNotEmpty,
-    isStatusNameNotPublished: isStatusNameNotPublished,
-    isStatusNameForReview: isStatusNameForReview,
-    isStakeholdersNotEmpty: isStakeholdersNotEmpty,
-    isRelatedCasesNotEmpty: isRelatedCasesNotEmpty,
+    isDocumentsNotEmpty,
+    isAdditionalDocumentsNotEmpty,
+    isStatusNameNotPublished,
+    isStatusNameForReview,
+    isStakeholdersNotEmpty,
+    isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
+    shouldDisplayHidden,
   }
 
   if (isChosenCaseNull) {

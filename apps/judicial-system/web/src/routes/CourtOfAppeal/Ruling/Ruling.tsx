@@ -11,8 +11,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  CaseAppealState,
   CaseFileCategory,
   CaseTransition,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
@@ -24,6 +26,7 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  RulingModifiedModal,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -36,9 +39,12 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { isReopenedCOACase } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { courtOfAppealRuling as strings } from './Ruling.strings'
+
+type ModalType = 'UploadComplete' | 'AppealRulingModified' | 'none'
 
 const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -54,11 +60,16 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { updateCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const {
+    updateCase,
+    transitionCase,
+    isTransitioningCase,
+    setAndSendCaseToServer,
+  } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { id } = router.query
-  const [visibleModal, setVisibleModal] = useState(false)
+  const [visibleModal, setVisibleModal] = useState<ModalType>('none')
 
   const [appealConclusionErrorMessage, setAppealConclusionErrorMessage] =
     useState<string>('')
@@ -85,6 +96,29 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       workingCase,
       setWorkingCase,
     )
+  }
+
+  const handleComplete = async () => {
+    const caseTransitioned =
+      workingCase.appealState !== CaseAppealState.COMPLETED
+        ? await transitionCase(
+            workingCase.id,
+            CaseTransition.COMPLETE_APPEAL,
+            setWorkingCase,
+          )
+        : true
+
+    if (caseTransitioned) {
+      setVisibleModal('UploadComplete')
+    }
+  }
+
+  const handleNextButtonClick = async () => {
+    if (isReopenedCOACase(workingCase.appealState, workingCase.notifications)) {
+      setVisibleModal('AppealRulingModified')
+    } else {
+      await handleComplete()
+    }
   }
 
   return (
@@ -296,33 +330,30 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.COURT_OF_APPEAL_CASE_ROUTE}/${id}`}
-          onNextButtonClick={async () => {
-            const caseTransitioned = await transitionCase(
-              workingCase.id,
-              CaseTransition.COMPLETE_APPEAL,
-              setWorkingCase,
-            )
-
-            if (caseTransitioned) {
-              setVisibleModal(true)
-            }
-          }}
-          nextIsDisabled={!isStepValid}
+          onNextButtonClick={async () => await handleNextButtonClick()}
+          nextIsDisabled={!isStepValid || isTransitioningCase}
           nextButtonIcon="arrowForward"
           nextButtonText={formatMessage(strings.nextButtonFooter)}
         />
       </FormContentContainer>
-      {visibleModal && (
+      {visibleModal === 'UploadComplete' && (
         <Modal
           title={formatMessage(strings.uploadCompletedModalTitle)}
           text={formatMessage(strings.uploadCompletedModalText)}
           secondaryButtonText={formatMessage(core.closeModal)}
-          onClose={() => setVisibleModal(false)}
+          onClose={() => setVisibleModal('none')}
           onSecondaryButtonClick={() => {
             router.push(
               `${constants.COURT_OF_APPEAL_RESULT_ROUTE}/${workingCase.id}`,
             )
           }}
+        />
+      )}
+      {visibleModal === 'AppealRulingModified' && (
+        <RulingModifiedModal
+          onCancel={() => setVisibleModal('none')}
+          onContinue={handleComplete}
+          continueDisabled={isTransitioningCase}
         />
       )}
     </PageLayout>

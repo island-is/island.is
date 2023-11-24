@@ -36,6 +36,7 @@ import {
   OccupationalLicenses,
   ShipRegistry,
   DistrictCommissioners,
+  DirectorateOfImmigration,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -182,7 +183,6 @@ export const serviceSetup = (services: {
         staging: 'https://samradapi-test.devland.is',
         prod: 'https://samradapi.island.is',
       },
-      NO_UPDATE_NOTIFIER: 'true',
       FISKISTOFA_ZENTER_CLIENT_ID: '1114',
       SOFFIA_SOAP_URL: {
         dev: ref((h) => h.svc('https://soffiaprufa.skra.is')),
@@ -334,6 +334,9 @@ export const serviceSetup = (services: {
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY',
       DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY:
         '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PUBLIC_IBM_KEY',
+      CHART_STATISTIC_SOURCE_DATA_PATHS:
+        '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS',
+      CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL',
     })
     .xroad(
       AdrAndMachine,
@@ -371,6 +374,7 @@ export const serviceSetup = (services: {
       AircraftRegistry,
       HousingBenefitCalculator,
       ShipRegistry,
+      DirectorateOfImmigration,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

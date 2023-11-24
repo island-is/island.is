@@ -1,8 +1,7 @@
-import React, { FC, ReactElement } from 'react'
+import { ReactElement } from 'react'
 import { Box, DropdownMenu } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import * as styles from './DropdownExport.css'
 
 interface Props {
   onGetCSV: () => void
@@ -18,11 +17,11 @@ interface Props {
     ) => ReactElement
   }[]
 }
-const DropdownExport: FC<React.PropsWithChildren<Props>> = ({
+const DropdownExport = ({
   onGetCSV,
   onGetExcel,
   dropdownItems = [],
-}) => {
+}: Props) => {
   const { formatMessage } = useLocale()
   return (
     <Box>

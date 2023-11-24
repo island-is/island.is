@@ -1,5 +1,7 @@
-import { WatsonChatPanelProps } from '@island.is/web/components'
 import { Locale } from 'locale'
+
+import { WatsonChatPanelProps } from '@island.is/web/components'
+
 import { BackgroundVariations, Options } from './types'
 
 export const options: Record<BackgroundVariations, Options> = {
@@ -89,6 +91,16 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+    // Fyrir Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6FmFpyXBuW9oEd36Uhr0u2
+    '6FmFpyXBuW9oEd36Uhr0u2': {
+      integrationID: 'fd247025-59fc-4ccd-83eb-7ae960019e37',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   en: {
     [Organization.DIGITAL_ICELAND]: {
@@ -108,7 +120,17 @@ export const watsonConfig: Record<
       namespaceKey: 'default',
     },
     [Organization.DIRECTORATE_OF_IMMIGRATION]: {
-      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
+      integrationID: '53c6e788-8178-448d-94c3-f5d71ec3b80e',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+    // For Grindavík
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6FmFpyXBuW9oEd36Uhr0u2
+    '6FmFpyXBuW9oEd36Uhr0u2': {
+      integrationID: 'e72d26ef-92eb-4e66-bdae-1f13a72a887a',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,

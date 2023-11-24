@@ -125,6 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/hms-loans": [
+        "libs/api/domains/hms-loans/src/index.ts"
+      ],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -184,6 +187,9 @@
       ],
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/statistics": [
+        "libs/api/domains/statistics/src/index.ts"
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
@@ -272,6 +278,9 @@
       ],
       "@island.is/application/templates/data-protection-complaint/messages": [
         "libs/application/templates/data-protection-complaint/src/lib/messages/index.ts"
+      ],
+      "@island.is/application/templates/directorate-of-immigration/citizenship": [
+        "libs/application/templates/directorate-of-immigration/citizenship/src/index.ts"
       ],
       "@island.is/application/templates/document-provider-onboarding": [
         "libs/application/templates/document-provider-onboarding/src/index.ts"
@@ -387,6 +396,12 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
+      "@island.is/application/templates/signature-collection/signature-list-creation": [
+        "libs/application/templates/signature-collection/signature-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/signature-list-signing": [
+        "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -452,6 +467,9 @@
       "@island.is/clients/aircraft-registry": [
         "libs/clients/aircraft-registry/src/index.ts"
       ],
+      "@island.is/clients/althingi-ombudsman": [
+        "libs/clients/althingi-ombudsman/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/admin-api": [
         "libs/clients/auth/admin-api/src/index.ts"
@@ -477,6 +495,9 @@
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-immigration": [
+        "libs/clients/directorate-of-immigration/src/index.ts"
+      ],
       "@island.is/clients/disability-license": [
         "libs/clients/disability-license/src/index.ts"
       ],
@@ -497,6 +518,7 @@
         "libs/clients/electronic-registration-statistics/src/index.ts"
       ],
       "@island.is/clients/finance": ["libs/clients/finance/src/index.ts"],
+      "@island.is/clients/finance-v2": ["libs/clients/finance-v2/src/index.ts"],
       "@island.is/clients/financial-statements-inao": [
         "libs/clients/financial-statements-inao/src/index.ts"
       ],
@@ -510,6 +532,7 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
@@ -571,6 +594,7 @@
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
+      "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
@@ -836,6 +860,9 @@
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
+      ],
+      "@island.is/service-portal/signature-collection": [
+        "libs/service-portal/signature-collection/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

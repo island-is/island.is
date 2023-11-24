@@ -5,7 +5,7 @@ import {
   IntroHeader,
   FootNote,
   m as coreMessage,
-  ISLAND_SYSLUMENN_ID,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
@@ -21,6 +21,9 @@ import { Box, Tabs } from '@island.is/island-ui/core'
 import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useState, useEffect } from 'react'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -84,20 +87,52 @@ export const LicensesOverview = () => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
+  const featureFlagClient = useFeatureFlagClient()
+
+  const [includedTypes, setIncludedTypes] = useState([
+    GenericLicenseType.DriversLicense,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.FirearmLicense,
+    GenericLicenseType.DisabilityLicense,
+  ])
+
+  useEffect(() => {
+    const checkIncluded = async () => {
+      const ehicEnabled = await featureFlagClient.getValue(
+        'isEHICCardEnabled',
+        false,
+      )
+      const pcardEnabled = await featureFlagClient.getValue(
+        'isPcardEnabled',
+        false,
+      )
+
+      let included = includedTypes
+      if (ehicEnabled) {
+        included = [...included, GenericLicenseType.Ehic]
+      }
+
+      if (pcardEnabled) {
+        included = [...included, GenericLicenseType.PCard]
+      }
+
+      setIncludedTypes(included)
+    }
+
+    checkIncluded()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
       locale,
       input: {
-        includedTypes: [
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-        ],
+        includedTypes,
       },
     },
   })
+
   const { genericLicenses = [] } = data ?? {}
   const {
     data: passportData,
@@ -140,7 +175,7 @@ export const LicensesOverview = () => {
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
         marginBottom={4}
-        serviceProviderID={ISLAND_SYSLUMENN_ID}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
         serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
@@ -184,7 +219,9 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
-      <FootNote serviceProviderID={ISLAND_SYSLUMENN_ID} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </>
   )
 }

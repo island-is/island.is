@@ -92,7 +92,7 @@ const AppealCaseFilesOverview: React.FC<
     allFiles.length > 0 ? (
     <>
       <Box marginBottom={5}>
-        <Text as="h3" variant="h3">
+        <Text as="h3" variant="h3" marginBottom={3}>
           {formatMessage(strings.title)}
         </Text>
         {allFiles.map((file) => (

@@ -118,6 +118,7 @@ export enum CaseTransition {
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
+  REOPEN_APPEAL = 'REOPEN_APPEAL',
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -283,6 +284,7 @@ export interface Case {
   appealReceivedByCourtDate?: string
   appealConclusion?: string
   appealRulingDecision?: CaseAppealRulingDecision
+  appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
 }
@@ -403,6 +405,7 @@ export interface UpdateCase
     | 'appealCaseNumber'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -510,6 +513,37 @@ export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
+
+const RequestSharedWithDefenderAllowedStates: {
+  [key in RequestSharedWithDefender]: CaseState[]
+} = {
+  [RequestSharedWithDefender.READY_FOR_COURT]: [
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+    ...completedCaseStates,
+  ],
+  [RequestSharedWithDefender.COURT_DATE]: [
+    CaseState.RECEIVED,
+    ...completedCaseStates,
+  ],
+}
+
+export function canDefenderViewRequest(theCase: Case) {
+  const { requestSharedWithDefender, state, courtDate } = theCase
+
+  if (!requestSharedWithDefender) {
+    return completedCaseStates.includes(state)
+  }
+
+  const allowedStates =
+    RequestSharedWithDefenderAllowedStates[requestSharedWithDefender]
+
+  return (
+    allowedStates?.includes(state) &&
+    (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
+      Boolean(courtDate))
+  )
+}
 
 export function hasCaseBeenAppealed(theCase: Case): boolean {
   return (

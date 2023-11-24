@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { processEntryFields } from './fragments'
 
 export const GET_SEARCH_RESULTS_QUERY = gql`
@@ -44,6 +45,11 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           organizationPage {
             slug
           }
+        }
+        ... on Manual {
+          id
+          title
+          slug
         }
       }
     }
@@ -246,8 +252,21 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         }
 
         ... on Manual {
+          id
           title
           slug
+        }
+        ... on ManualChapterItem {
+          id
+          title
+          manual {
+            title
+            slug
+          }
+          manualChapter {
+            title
+            slug
+          }
         }
       }
       tagCounts {
@@ -263,4 +282,12 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     }
   }
   ${processEntryFields}
+`
+
+export const GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY = gql`
+  query GetSingleEntryTitleById($input: GetSingleEntryTitleByIdInput!) {
+    getSingleEntryTitleById(input: $input) {
+      title
+    }
+  }
 `

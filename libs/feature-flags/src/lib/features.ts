@@ -17,6 +17,8 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  signatureListCreation = 'isSignatureListCreationEnabled',
+  citizenship = 'isCitizenshipEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -31,6 +33,7 @@ export enum Features {
   servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
+  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
@@ -47,6 +50,9 @@ export enum Features {
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
+
+  // Userprofile Collection
+  isIASSpaPagesEnabled = 'isiasspapagesenabled',
 }
 
 export enum ServerSideFeature {
