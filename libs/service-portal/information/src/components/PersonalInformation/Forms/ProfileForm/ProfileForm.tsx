@@ -292,7 +292,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   value={
                     userProfile?.mobilePhoneNumber
                       ? formatPhoneNumber(
-                          parseNumber(userProfile?.mobilePhoneNumber),
+                          parseNumber(userProfile.mobilePhoneNumber),
                         )
                       : ''
                   }
