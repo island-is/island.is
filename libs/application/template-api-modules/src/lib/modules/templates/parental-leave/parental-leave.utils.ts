@@ -439,7 +439,7 @@ export const transformApplicationToParentalLeaveDTO = (
         ? multipleBirths.toString()
         : undefined,
     type,
-    language,
+    //language,
   }
 }
 

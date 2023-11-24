@@ -117,18 +117,19 @@ export const estateSchema = z.object({
         },
       )
 
-      /* Validating email and phone depending on whether the field is enabled */
+      /* Validating email and phone of member depending on whether the field is 
+        enabled and whether member has advocate */
       .refine(
-        ({ enabled, phone }) => {
-          return enabled ? isValidPhoneNumber(phone) : true
+        ({ enabled, advocate, phone }) => {
+          return enabled && !advocate ? isValidPhoneNumber(phone) : true
         },
         {
           path: ['phone'],
         },
       )
       .refine(
-        ({ enabled, email }) => {
-          return enabled ? isValidEmail(email) : true
+        ({ enabled, advocate, email }) => {
+          return enabled && !advocate ? isValidEmail(email) : true
         },
         {
           path: ['email'],
