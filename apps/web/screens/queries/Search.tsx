@@ -12,7 +12,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
         }
-        ... on LifeEventPage {
+        ... on AnchorPage {
           id
           title
           slug
@@ -143,7 +143,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           }
         }
 
-        ... on LifeEventPage {
+        ... on AnchorPage {
           id
           title
           slug
