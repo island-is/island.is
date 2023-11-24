@@ -46,6 +46,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
+      console.log('getVehicles')
+
       const response = await this.recyclingFundService.createRecyclingRequest(
         auth,
       )
@@ -66,8 +68,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps) {
     try {
-      return true
-
       const response = await this.recyclingFundService.createOwner(auth)
 
       /* if (!response) {

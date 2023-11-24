@@ -4,15 +4,15 @@ mutation createRequest($input: CreateRecyclingRequestInput!) {
   }
 }
 
-mutation skilavottordVehicleOwnerMutation($name: String!) {
-  createSkilavottordVehicleOwnerAppSys(name: $name)
+mutation skilavottordVehicleOwner($input: CreateOwnerInput!) {
+  createSkilavottordVehicleOwnerAppSys(input: $input)
 }
 
-mutation skilavottordVehicleMutation($permno: String!) {
+mutation skilavottordVehicle($permno: String!) {
   createSkilavottordVehicleAppSys(permno: $permno)
 }
 
-mutation skilavottordRecyclingRequestMutation(
+mutation skilavottordRecyclingRequest(
   $permno: String!
   $requestType: RecyclingRequestTypes!
 ) {
@@ -30,7 +30,7 @@ mutation skilavottordRecyclingRequestMutation(
   }
 }
 
-query skilavottordUserRecyclingRequestQuery($permno: String!) {
+query skilavottordUserRecyclingRequest($permno: String!) {
   skilavottordUserRecyclingRequestAppSys(permno: $permno) {
     id
     requestType

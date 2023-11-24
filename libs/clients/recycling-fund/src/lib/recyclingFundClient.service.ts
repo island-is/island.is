@@ -13,6 +13,9 @@ import {
   CreateRequestDocument,
   CreateRequestMutation,
   CreateRequestMutationVariables,
+  SkilavottordVehicleOwnerDocument,
+  SkilavottordVehicleOwnerMutation,
+  SkilavottordVehicleOwnerMutationVariables,
 } from './createRecyclingRequest.generated'
 
 import { RecyclingFundClientConfig } from './recyclingFundClient.config'
@@ -48,6 +51,14 @@ export class RecyclingFundClientService {
     })
   }
 
+  async doRecyclingFundRequest(user: User, body: any) {
+    return await this.fetch(this.config.gqlBasePath, {
+      ...baseGqlRequestOptions,
+      auth: user,
+      body: JSON.stringify(body),
+    })
+  }
+
   async createRecyclingRequest(user: User) {
     // This could be abstratcted into a more generic fetch method with types
     const response = await this.fetch(this.config.gqlBasePath, {
@@ -79,12 +90,34 @@ export class RecyclingFundClientService {
   }
 
   async createOwner(user: User) {
-    /*const sdk = this.getSdk(user)
- console.log('createOwner', user)
+    console.log('createOwner', user)
 
-    return sdk.skilavottordVehicleOwnerMutation({
-      name: user.nationalId || '',
-    })*/
+    const response = await this.fetch(this.config.gqlBasePath, {
+      ...baseGqlRequestOptions,
+      auth: user,
+      body: JSON.stringify({
+        query: print(SkilavottordVehicleOwnerDocument),
+        variables: {
+          input: {
+            name: 'asdfkas asdfkaklsdf',
+          },
+        } as SkilavottordVehicleOwnerMutationVariables,
+      }),
+    })
+
+    if (!response.ok) {
+      // ToDo: Decide how to handle errors
+      throw new Error(`Failed to creating owner ${user.nationalId}`)
+    }
+
+    const data = (await response.json()) as SkilavottordVehicleOwnerMutation
+
+    console.log('response from createRecyclingRequest GQL', {
+      status: response.status,
+      data,
+    })
+
+    return data.createSkilavottordVehicleOwnerAppSys
   }
 
   async createVehicle(user: User, permno: string) {
