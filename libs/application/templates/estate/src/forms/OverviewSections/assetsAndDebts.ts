@@ -14,6 +14,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
+import { EstateTypes } from '../../lib/constants'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -182,10 +183,21 @@ export const overviewAssetsAndDebts = [
         ),
     },
   ),
-  buildDividerField({}),
+  buildDividerField({
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
+  }),
   buildDescriptionField({
     id: 'overviewClaimsInfoTitle',
     title: m.claimsTitle,
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
     description: m.claimsDescription,
     titleVariant: 'h3',
     space: 'gutter',
@@ -194,6 +206,11 @@ export const overviewAssetsAndDebts = [
     {
       title: '',
       id: 'claimsCards',
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       component: 'Cards',
       doesNotRequireAnswer: true,
     },
@@ -209,11 +226,22 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
-  buildDividerField({}),
+  buildDividerField({
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
+  }),
   buildDescriptionField({
     id: 'overviewStocksTitle',
     title: m.stocksTitle,
     description: m.stocksDescription,
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
     titleVariant: 'h3',
     space: 'gutter',
   }),

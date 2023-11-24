@@ -26,6 +26,8 @@ export interface User {
   role: UserRole
   institution?: Institution
   active: boolean
+  latestLogin?: string
+  loginCount?: number
 }
 
 export interface CreateUser {

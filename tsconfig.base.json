@@ -191,6 +191,9 @@
       "@island.is/api/domains/signature-collection": [
         "libs/api/domains/signature-collection/src/index.ts"
       ],
+      "@island.is/api/domains/statistics": [
+        "libs/api/domains/statistics/src/index.ts"
+      ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
       ],
@@ -467,6 +470,9 @@
       "@island.is/clients/aircraft-registry": [
         "libs/clients/aircraft-registry/src/index.ts"
       ],
+      "@island.is/clients/althingi-ombudsman": [
+        "libs/clients/althingi-ombudsman/src/index.ts"
+      ],
       "@island.is/clients/assets": ["libs/clients/assets/src/index.ts"],
       "@island.is/clients/auth/admin-api": [
         "libs/clients/auth/admin-api/src/index.ts"
@@ -594,6 +600,7 @@
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
+      "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
