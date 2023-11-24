@@ -241,6 +241,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  relationToDeceased: {
+    id: 'es.application:relationToDeceased',
+    defaultMessage: 'Tengsl við hinn látna',
+    description: 'Relation label',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {
