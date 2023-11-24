@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { VehicleMileageDetail } from './getVehicleMileage.model'
 
 @ObjectType()
 export class VehiclesMainInfo {
@@ -342,6 +343,9 @@ export class VehiclesDetail {
 
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
+
+  @Field(() => VehicleMileageDetail, { nullable: true })
+  lastMileage?: VehicleMileageDetail | null
 }
 
 @ObjectType()

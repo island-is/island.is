@@ -1,5 +1,6 @@
 import isNumber from 'lodash/isNumber'
 import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 import {
   VehiclesCurrentOwnerInfo,
   VehiclesOperator,
@@ -46,6 +47,7 @@ import Dropdown from '../../components/Dropdown/Dropdown'
 import { getDateLocale } from '../../utils/constants'
 import { useGetUsersVehiclesDetailQuery } from './VehicleDetail.generated'
 import { AssetsPaths } from '../../lib/paths'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 type UseParams = {
   id: string
@@ -55,6 +57,23 @@ const VehicleDetail = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
+
+  // Remove flag functionality once feature goes live.
+  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehicleMileagePageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnabledMileageFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data, loading, error } = useGetUsersVehiclesDetailQuery({
     variables: {
@@ -143,9 +162,10 @@ const VehicleDetail = () => {
     })
   }
 
-  // TODO: add 'isServicePortalVehicleMileagePageEnabled' to check if vehicle mileage links should be shown.
   const reqMileageReg =
-    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration
+    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration &&
+    enabledMileageFlag
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -346,35 +366,34 @@ const VehicleDetail = () => {
           </>
         )}
 
-        {data?.vehiclesDetail?.inspectionInfo?.odometer && // TODO: Should this come from here, or should this come from the `Mileagereading` service?
-          reqMileageReg && (
-            <>
-              <UserInfoLine
-                label={formatMessage(messages.lastKnownOdometerStatus)}
-                content={displayWithUnit(
-                  data.vehiclesDetail.inspectionInfo.odometer,
-                  'km',
-                  true,
-                )}
-                loading={loading}
-                editLink={
-                  reqMileageReg
-                    ? {
-                        title: m.viewDetail,
-                        url: id
-                          ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
-                              ':id',
-                              id.toString(),
-                            )
-                          : '',
-                        external: false,
-                      }
-                    : undefined
-                }
-              />
-              <Divider />
-            </>
-          )}
+        {data?.vehiclesDetail?.inspectionInfo?.odometer && reqMileageReg && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.lastKnownOdometerStatus)}
+              content={displayWithUnit(
+                data.vehiclesDetail.lastMileage?.mileage,
+                'km',
+                true,
+              )}
+              loading={loading}
+              editLink={
+                reqMileageReg
+                  ? {
+                      title: m.viewDetail,
+                      url: id
+                        ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                            ':id',
+                            id.toString(),
+                          )
+                        : '',
+                      external: false,
+                    }
+                  : undefined
+              }
+            />
+            <Divider />
+          </>
+        )}
       </Stack>
       <Box marginBottom={5} />
 

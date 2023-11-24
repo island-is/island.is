@@ -112,5 +112,8 @@ query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
       endDate
     }
     downloadServiceURL
+    lastMileage {
+      mileage
+    }
   }
 }

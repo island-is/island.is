@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import {

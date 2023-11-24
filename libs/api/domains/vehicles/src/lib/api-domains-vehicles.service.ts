@@ -33,7 +33,6 @@ const isReadDateToday = (d?: Date) => {
   const today = new Date()
   const inputDate = new Date(d)
 
-  // TODO: What about localization of dates?
   return isSameDay(today, inputDate)
 }
 
