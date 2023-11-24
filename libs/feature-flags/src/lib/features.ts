@@ -17,9 +17,9 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  oldAgePensionApplication = 'isOldAgePensionEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
-  oldAgePensionApplication = 'isOldAgePensionEnable',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

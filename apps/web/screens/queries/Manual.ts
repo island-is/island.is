@@ -54,6 +54,7 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
         id
         title
         slug
+        intro
         changelog {
           items {
             dateOfChange

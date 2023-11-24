@@ -247,7 +247,7 @@ export const oldAgePensionFormMessage: MessageDir = {
         'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
     },
     alertMessageForeign: {
-      id: 'oap.application:payment.alert.message.foreign',
+      id: 'oap.application:payment.alert.message.foreign#markdown',
       defaultMessage:
         'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
       description: 'english description',
@@ -262,11 +262,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
       description: 'Do you want to use your personal allowance?',
     },
-    spouseAllowance: {
-      id: 'oap.application:payment.spouse.allowance',
-      defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
-      description: 'Do you want to use your spouse personal allowance?',
-    },
     personalAllowancePercentage: {
       id: 'oap.application:payment.personal.allowance.percentage',
       defaultMessage: 'Skráðu tölu á bilinu 1-100',
@@ -276,6 +271,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:payment.tax.level',
       defaultMessage: 'Skattþrep',
       description: 'Tax level',
+    },
+    alertSpouseAllowance: {
+      id: 'oap.application:payment.alert.spouse.allowance',
+      defaultMessage:
+        'Ef þú vilt nýta persónuafslátt maka þíns þá verður makinn þinn að fara inná mínar síður hjá Tryggingastofnun og veita leyfi.',
+      description: 'english translation',
     },
     taxIncomeLevel: {
       id: 'oap.application:payment.tax.first.level',
@@ -463,6 +464,11 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage:
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
+    },
+    cancelButton: {
+      id: 'oap.application:cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
     },
     bank: {
       id: 'oap.application:conformation.bank',
@@ -1007,9 +1013,9 @@ export const errorMessages = defineMessages({
     description: 'english translation',
   },
   noEmailFoundDescription: {
-    id: 'oap.application:error.no.email.found.description#markdown',
+    id: 'oap.application:error.no.email.found.description',
     defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um ellilífeyri.',
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það inná mínum síðum á tr.is og komdu svo aftur til að sækja um ellilífeyri.',
     description: 'english translation',
   },
   iban: {

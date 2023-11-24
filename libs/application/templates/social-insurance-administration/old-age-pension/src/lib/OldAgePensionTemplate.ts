@@ -1,6 +1,7 @@
 import { assign } from 'xstate'
-import set from 'lodash/set'
 import unset from 'lodash/unset'
+import set from 'lodash/set'
+import cloneDeep from 'lodash/cloneDeep'
 
 import {
   ApplicationTemplate,
@@ -90,10 +91,11 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -105,6 +107,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
             namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
             throwOnError: true,
           }),
           roles: [
@@ -128,16 +131,17 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
         entry: ['assignOrganization'],
-        exit: ['clearAssignees'],
+        exit: ['clearAssignees', 'createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           progress: 0.75,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -195,7 +199,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           progress: 0.75,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
@@ -234,8 +238,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          PENDING: { target: States.PENDING },
-          // DISMISSED: { target: States.DISMISSED },
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
@@ -255,7 +257,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(90),
           progress: 0.5,
           roles: [
             {
@@ -279,34 +281,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
-        },
-      },
-      [States.PENDING]: {
-        meta: {
-          name: States.PENDING,
-          progress: 1,
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: statesMessages.pendingTag,
-            },
-            pendingAction: {
-              title: statesMessages.applicationPending,
-              content: statesMessages.applicationPendingDescription,
-              displayStatus: 'info',
-            },
-          },
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              read: 'all',
-            },
-          ],
         },
       },
       [States.APPROVED]: {
@@ -370,6 +344,57 @@ const OldAgePensionTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Copy the current answers to temp. If the user cancels the edits,
+       * we will restore the answers to their original state from temp.
+       */
+      createTempAnswers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempAnswers', cloneDeep(answers))
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the answers to their original state from temp.
+       */
+      restoreAnswersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+        const { tempAnswers } = getApplicationAnswers(answers)
+
+        if (answers.tempAnswers) {
+          Object.assign(answers, tempAnswers)
+          unset(answers, 'tempAnswers')
+        }
+
+        return context
+      }),
+      /**
+       * The edits were submitted. Clear out temp.
+       */
+      clearTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempAnswers')
+
+        return context
+      }),
       assignOrganization: assign((context) => {
         const { application } = context
         const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN ?? ''
@@ -396,8 +421,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
           unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
           unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
-          unset(application.answers, 'fileUpload.foreignBankAccount')
         }
 
         if (bankAccountType === BankAccountType.FOREIGN) {

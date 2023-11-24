@@ -18,8 +18,13 @@ export function initializeReducer(
 ): ApplicationUIState {
   const { application, form } = state
   const { answers, externalData } = application
-  const sections = getNavigableSectionsInForm(form, answers, externalData)
-  const screens = convertFormToScreens(form, answers, externalData)
+  const sections = getNavigableSectionsInForm(
+    form,
+    answers,
+    externalData,
+    state.user,
+  )
+  const screens = convertFormToScreens(form, answers, externalData, state.user)
   const currentScreen =
     form.mode === FormModes.IN_PROGRESS
       ? 0
@@ -48,11 +53,13 @@ const addNewAnswersToState = (
       state.form,
       newAnswers,
       state.application.externalData,
+      state.user,
     ),
     screens: convertFormToScreens(
       state.form,
       newAnswers,
       state.application.externalData,
+      state.user,
     ),
   }
 }
@@ -140,7 +147,12 @@ function expandRepeater(state: ApplicationUIState): ApplicationUIState {
     [repeater.id]: [...repeaterValues, {}],
   })
 
-  const newScreens = convertFormToScreens(form, newAnswers, externalData)
+  const newScreens = convertFormToScreens(
+    form,
+    newAnswers,
+    externalData,
+    state.user,
+  )
 
   return {
     ...state,

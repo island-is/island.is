@@ -19,7 +19,7 @@ import {
 import {
   Attachment,
   AttachmentTypeEnum,
-  OldAgePensionResponseError,
+  ResponseError,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
@@ -45,7 +45,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     super('SocialInsuranceAdministration')
   }
 
-  private parseErrors(e: Error | OldAgePensionResponseError) {
+  private parseErrors(e: Error | ResponseError) {
     if (e instanceof Error) {
       return e.message
     }

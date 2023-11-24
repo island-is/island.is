@@ -37,6 +37,7 @@ import {
 } from '../types'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import isEmpty from 'lodash/isEmpty'
 
 enum AttachmentTypes {
   PENSION = 'pension',
@@ -103,16 +104,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.personalAllowanceUsage',
   ) as string
 
-  const spouseAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowance',
-  ) as YesOrNo
-
-  const spouseAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowanceUsage',
-  ) as string
-
   const taxLevel = getValueViaPath(
     answers,
     'paymentInfo.taxLevel',
@@ -147,6 +138,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'fileUpload.earlyRetirement',
   ) as FileType[]
+
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
 
   const bankAccountType = getValueViaPath(
     answers,
@@ -198,9 +194,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employers,
     rawEmployers,
     personalAllowance,
-    spouseAllowance,
     personalAllowanceUsage,
-    spouseAllowanceUsage,
     additionalAttachments,
     additionalAttachmentsRequired,
     pensionAttachments,
@@ -208,6 +202,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     selfEmployedAttachments,
     earlyRetirementAttachments,
     taxLevel,
+    tempAnswers,
     bankAccountType,
     iban,
     swift,
@@ -654,6 +649,7 @@ export const shouldNotUpdateBankAccount = (
     return getBankIsk(bankInfo) === bank ?? false
   } else {
     return (
+      !isEmpty(bankInfo) &&
       bankInfo.iban === iban &&
       bankInfo.swift === swift &&
       bankInfo.foreignBankName === bankName &&
