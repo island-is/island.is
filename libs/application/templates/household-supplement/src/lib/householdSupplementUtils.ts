@@ -62,8 +62,20 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
 
-  const comment = getValueViaPath(answers, 'comment') as string
+  const additionalAttachments = getValueViaPath(
+    answers,
+    'fileUpload.additionalDocuments',
+  ) as FileType[]
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUpload.additionalDocumentsRequired',
+  ) as FileType[]
+
+  const comment = getValueViaPath(answers, 'comment') as string
+  console.log('additionalAttachments: ', additionalAttachments)
+  console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
+  
   return {
     applicantEmail,
     applicantPhonenumber,
@@ -72,6 +84,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bank,
     selectedYear,
     selectedMonth,
+    additionalAttachments,
+    additionalAttachmentsRequired,
     comment,
   }
 }

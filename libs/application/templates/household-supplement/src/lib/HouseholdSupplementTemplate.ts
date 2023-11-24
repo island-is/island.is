@@ -21,6 +21,10 @@ import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
 import { NationalRegistryCohabitantsApi } from '../dataProviders'
+import { assign } from 'xstate'
+import set from 'lodash/set'
+import unset from 'lodash/unset'
+import { getApplicationAnswers } from './householdSupplementUtils'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -194,6 +198,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['moveAdditionalDocumentRequired'],
         meta: {
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           status: 'inprogress',
@@ -280,6 +285,30 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
     },
+  },
+  stateMachineOptions: {
+    actions: {
+      moveAdditionalDocumentRequired: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { additionalAttachmentsRequired, additionalAttachments } =
+          getApplicationAnswers(answers)
+
+        const mergedAdditionalDocumentRequired = [
+          ...additionalAttachments,
+          ...additionalAttachmentsRequired,
+        ]
+
+        set(
+          answers,
+          'fileUpload.additionalDocuments',
+          mergedAdditionalDocumentRequired,
+        )
+        unset(answers, 'fileUpload.additionalDocumentsRequired')
+
+        return context
+      }),
+    }
   },
   mapUserToRole(
     id: string,
