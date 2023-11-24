@@ -102,6 +102,8 @@ export const UsersQuery = gql`
         name
       }
       active
+      latestLogin
+      loginCount
     }
   }
 `
