@@ -279,8 +279,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá og kaupmáli',
     description: '',
   },
-  willsAndAgreementsDescription: {
-    id: 'es.application:willsAndAgreementsDescription',
+  willsAndAgreementsDescriptionEstateWithoutAssets: {
+    id: 'es.application:willsAndAgreementsDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionOfficialDivision: {
+    id: 'es.application:willsAndAgreementsDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDescriptionUndividedEstate: {
+    id: 'es.application:willsAndAgreementsDescriptionDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:willsAndAgreementsDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
