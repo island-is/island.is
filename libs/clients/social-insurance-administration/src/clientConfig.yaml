@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.5
+  version: 1.0.6
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -311,17 +311,11 @@ components:
       type: object
       additionalProperties: false
       required:
-        - spouseAllowance
         - personalAllowance
         - taxLevel
       properties:
-        spouseAllowance:
-          type: boolean
         personalAllowance:
           type: boolean
-        spouseAllowanceUsage:
-          type: number
-          format: float
         personalAllowanceUsage:
           type: number
           format: float

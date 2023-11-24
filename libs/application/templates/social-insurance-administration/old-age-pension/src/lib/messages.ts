@@ -262,11 +262,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
       description: 'Do you want to use your personal allowance?',
     },
-    spouseAllowance: {
-      id: 'oap.application:payment.spouse.allowance',
-      defaultMessage: 'Vilt þú nýta persónuafsláttinn maka þíns?',
-      description: 'Do you want to use your spouse personal allowance?',
-    },
     personalAllowancePercentage: {
       id: 'oap.application:payment.personal.allowance.percentage',
       defaultMessage: 'Skráðu tölu á bilinu 1-100',
@@ -276,6 +271,12 @@ export const oldAgePensionFormMessage: MessageDir = {
       id: 'oap.application:payment.tax.level',
       defaultMessage: 'Skattþrep',
       description: 'Tax level',
+    },
+    alertSpouseAllowance: {
+      id: 'oap.application:payment.alert.spouse.allowance',
+      defaultMessage:
+        'Ef þú vilt nýta persónuafslátt maka þíns þá verður makinn þinn að fara inná mínar síður hjá Tryggingastofnun og veita leyfi.',
+      description: 'english translation',
     },
     taxIncomeLevel: {
       id: 'oap.application:payment.tax.first.level',

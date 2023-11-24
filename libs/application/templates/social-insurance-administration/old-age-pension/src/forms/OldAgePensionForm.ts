@@ -272,38 +272,19 @@ export const OldAgePensionForm: Form = buildForm({
                   width: 'half',
                   maxLength: 4,
                 }),
-                buildRadioField({
-                  id: 'paymentInfo.spouseAllowance',
-                  title: oldAgePensionFormMessage.payment.spouseAllowance,
-                  options: getYesNOOptions(),
-                  required: true,
-                  width: 'half',
-                  largeButtons: true,
-                  space: 'containerGutter',
+                buildAlertMessageField({
+                  id: 'payment.spouseAllowance.alert',
+                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  message:
+                    oldAgePensionFormMessage.payment.alertSpouseAllowance,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
                   condition: (_, externalData) => {
                     const { hasSpouse } =
                       getApplicationExternalData(externalData)
                     if (hasSpouse) return true
                     return false
                   },
-                }),
-                buildTextField({
-                  id: 'paymentInfo.spouseAllowanceUsage',
-                  title:
-                    oldAgePensionFormMessage.payment
-                      .personalAllowancePercentage,
-                  suffix: '%',
-                  condition: (answers, externalData) => {
-                    const { spouseAllowance } = getApplicationAnswers(answers)
-                    const { hasSpouse } =
-                      getApplicationExternalData(externalData)
-                    return hasSpouse && spouseAllowance === YES
-                  },
-                  placeholder: '1%',
-                  defaultValue: '100',
-                  variant: 'number',
-                  width: 'half',
-                  maxLength: 4,
                 }),
                 buildRadioField({
                   id: 'paymentInfo.taxLevel',

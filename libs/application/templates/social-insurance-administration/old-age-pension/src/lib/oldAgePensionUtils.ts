@@ -103,16 +103,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'paymentInfo.personalAllowanceUsage',
   ) as string
 
-  const spouseAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowance',
-  ) as YesOrNo
-
-  const spouseAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.spouseAllowanceUsage',
-  ) as string
-
   const taxLevel = getValueViaPath(
     answers,
     'paymentInfo.taxLevel',
@@ -203,9 +193,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     employers,
     rawEmployers,
     personalAllowance,
-    spouseAllowance,
     personalAllowanceUsage,
-    spouseAllowanceUsage,
     additionalAttachments,
     additionalAttachmentsRequired,
     pensionAttachments,

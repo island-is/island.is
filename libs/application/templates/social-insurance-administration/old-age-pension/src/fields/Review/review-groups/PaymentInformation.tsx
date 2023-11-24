@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getApplicationExternalData } from '../../../lib/oldAgePensionUtils'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
@@ -22,9 +21,7 @@ export const PaymentInformation = ({
     {
       taxLevel,
       personalAllowance,
-      spouseAllowance,
       personalAllowanceUsage,
-      spouseAllowanceUsage,
       bank,
       bankAccountType,
       iban,
@@ -34,8 +31,6 @@ export const PaymentInformation = ({
       currency,
     },
   ] = useStatefulAnswers(application)
-
-  const { hasSpouse } = getApplicationExternalData(application.externalData)
 
   const { formatMessage } = useLocale()
 
@@ -135,34 +130,6 @@ export const PaymentInformation = ({
           </GridColumn>
         )}
       </GridRow>
-
-      {hasSpouse && (
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '5/12']}
-            paddingBottom={3}
-          >
-            <RadioValue
-              label={formatMessage(
-                oldAgePensionFormMessage.review.spouseAllowance,
-              )}
-              value={spouseAllowance}
-            />
-          </GridColumn>
-
-          {spouseAllowance === YES && (
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '5/12']}
-              paddingBottom={3}
-            >
-              <DataValue
-                label={formatMessage(oldAgePensionFormMessage.review.ratio)}
-                value={`${spouseAllowanceUsage}%`}
-              />
-            </GridColumn>
-          )}
-        </GridRow>
-      )}
 
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
