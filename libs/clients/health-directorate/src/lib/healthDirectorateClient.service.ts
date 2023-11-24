@@ -88,7 +88,10 @@ export class HealthDirectorateClientService {
       const item = await this.vottordApiWithAuth(auth).vottordUtbuaSkjalPost({
         utbuaSkjalRequest: {
           name: request.fullName,
-          dateOfBirth: request.dateOfBirth.toISOString().substring(0, 10),
+          // TODOx fix format DD.MM.YYYY
+          dateOfBirth: new Date(request.dateOfBirth)
+            .toISOString()
+            .substring(0, 10),
           email: request.email,
           phoneNo: request.phone,
           idProfession: request.professionIdList[i],
