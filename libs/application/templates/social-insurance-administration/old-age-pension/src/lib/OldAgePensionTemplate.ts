@@ -104,6 +104,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           },
           progress: 0.25,
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -125,65 +131,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
-          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_ABORT },
-        },
-      },
-      [States.TRYGGINGASTOFNUN_ABORT]: {
-        entry: ['assignOrganization'],
-        exit: ['clearAssignees', 'createTempAnswers'],
-        meta: {
-          name: States.TRYGGINGASTOFNUN_ABORT,
-          progress: 0.75,
-          status: 'inprogress',
-          lifecycle: pruneAfterDays(365),
-          actionCard: {
-            tag: {
-              label: statesMessages.pendingTag,
-            },
-            pendingAction: {
-              title: statesMessages.tryggingastofnunSubmittedTitle,
-              content: statesMessages.tryggingastofnunSubmittedContent,
-              displayStatus: 'info',
-            },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.applicationEdited,
-              },
-            ],
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.EDIT,
-                  name: 'Breyta umsókn',
-                  type: 'primary',
-                },
-              ],
-              read: 'all',
-              write: 'all',
-            },
-            {
-              id: Roles.ORGINISATION_REVIEWER,
-              formLoader: () =>
-                import('../forms/InReview').then((val) =>
-                  Promise.resolve(val.InReview),
-                ),
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.EDIT]: { target: States.DRAFT },
-          INREVIEW: {
-            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          },
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
@@ -210,10 +158,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
               },
             ],
           },
-          onEntry: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),
           roles: [
             {
               id: Roles.APPLICANT,

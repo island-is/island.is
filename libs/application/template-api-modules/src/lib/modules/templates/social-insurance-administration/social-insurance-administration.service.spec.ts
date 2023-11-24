@@ -3,18 +3,18 @@ import { SocialInsuranceAdministrationClientService } from '@island.is/clients/s
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
-  OldAgePensionService,
+  SocialInsuranceAdministrationService,
 } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
-describe('OldAgePensionService', () => {
-  let oldAgePensionService: OldAgePensionService
+describe('SocialInsuranceAdministrationService', () => {
+  let oldAgePensionService: SocialInsuranceAdministrationService
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        OldAgePensionService,
+        SocialInsuranceAdministrationService,
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
@@ -35,8 +35,9 @@ describe('OldAgePensionService', () => {
       ],
     }).compile()
 
-    oldAgePensionService =
-      module.get<OldAgePensionService>(OldAgePensionService)
+    oldAgePensionService = module.get<SocialInsuranceAdministrationService>(
+      SocialInsuranceAdministrationService,
+    )
   })
 
   it('should send old age pension application', async () => {

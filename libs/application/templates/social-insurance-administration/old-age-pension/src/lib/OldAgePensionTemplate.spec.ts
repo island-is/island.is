@@ -51,7 +51,7 @@ describe('Old Age Pension Template', () => {
   })
 
   describe('state transitions', () => {
-    it('should transition from draft to tryggingastofnunAbort on abort', () => {
+    it('should transition from draft to tryggingastofnunSubmitted on abort', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
           answers: {
@@ -64,7 +64,7 @@ describe('Old Age Pension Template', () => {
         type: DefaultEvents.ABORT,
       })
       expect(hasChanged).toBe(true)
-      expect(newState).toBe('tryggingastofnunAbort')
+      expect(newState).toBe('tryggingastofnunSubmitted')
     })
   })
 
@@ -99,40 +99,6 @@ describe('Old Age Pension Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('draft')
-    })
-  })
-
-  describe('state transitions', () => {
-    it('should transition from tryggingastofnunAbort to draft on edit', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          state: 'tryggingastofnunAbort',
-        }),
-        OldAgePensionTemplate,
-      )
-
-      const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.EDIT,
-      })
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe('draft')
-    })
-  })
-
-  describe('state transitions', () => {
-    it('should transition from tryggingastofnunAbort to draft on edit', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          state: 'tryggingastofnunAbort',
-        }),
-        OldAgePensionTemplate,
-      )
-
-      const [hasChanged, newState] = helper.changeState({
-        type: OAPEvents.INREVIEW,
-      })
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe('tryggingastofnunInReview')
     })
   })
 
