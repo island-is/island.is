@@ -5,6 +5,7 @@ import { z } from 'zod'
 const schema = z.object({
   xRoadServicePath: z.string(),
   scope: z.array(z.string()),
+  apiKey: z.string(),
 })
 
 export const IntellectualPropertiesClientConfig = defineConfig<
@@ -18,5 +19,6 @@ export const IntellectualPropertiesClientConfig = defineConfig<
       'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI',
     ),
     scope: [IpOfficeScope.ipScope],
+    apiKey: env.required('INTELLECTUAL_PROPERTY_API_KEY', ''),
   }),
 })
