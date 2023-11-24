@@ -292,15 +292,15 @@ const PensionSupplementTemplate: ApplicationTemplate<
         const { bankAccountType } = getApplicationAnswers(application.answers)
 
         if (bankAccountType === BankAccountType.ICELANDIC) {
-          unset(application.answers, 'paymentInfo.bankAccountInfo.iban')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.swift')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bankName')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bankAddress')
-          unset(application.answers, 'paymentInfo.bankAccountInfo.currency')
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
         }
 
         if (bankAccountType === BankAccountType.FOREIGN) {
-          unset(application.answers, 'paymentInfo.bankAccountInfo.bank')
+          unset(application.answers, 'paymentInfo.bank')
         }
 
         return context
