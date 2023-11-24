@@ -31,6 +31,7 @@ import {
 } from './VehicleDetail.generated'
 import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
+import { Problem } from '@island.is/react-spa/shared'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -123,12 +124,11 @@ const VehicleMilage = () => {
   const requiresMileageRegistration =
     data?.vehicleMileageDetails?.requiresMileageRegistration
 
-  console.log('canRegisterMileage', canRegisterMileage)
-  console.log('requiresMileageRegistration', requiresMileageRegistration)
-
-  // TODO: Limit this screen from non registerable cars. requiresMileageRegistration
-
   const actionLoading = putActionLoading || postActionLoading
+
+  if ((error || requiresMileageRegistration === false) && !loading) {
+    return <Problem type="not_found" />
+  }
 
   return (
     <>
@@ -206,9 +206,18 @@ const VehicleMilage = () => {
                       validate: {
                         value: (value: number) => {
                           // Input number must be higher than the highest known mileage registration value
+
                           if (details) {
+                            // If we're in editing mode, we want to find the highest number ignoring the most recent one.
+                            const [, ...rest] = details
+                            const detailArray = isFormEditable
+                              ? rest
+                              : [...details]
+
                             const highestRegistration = Math.max(
-                              ...details.map((o) => parseInt(o.mileage ?? '0')),
+                              ...detailArray.map((o) =>
+                                parseInt(o.mileage ?? '0'),
+                              ),
                             )
                             if (highestRegistration > value) {
                               return formatMessage(messages.mileageInputTooLow)

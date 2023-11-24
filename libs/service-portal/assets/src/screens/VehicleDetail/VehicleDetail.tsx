@@ -83,7 +83,6 @@ const VehicleDetail = () => {
   const color = registrationInfo?.color ? `- ${registrationInfo.color}` : ''
   const noInfo = data?.vehiclesDetail === null
 
-  console.log('data', data)
   if (error && !loading) {
     return (
       <ErrorScreen
@@ -145,6 +144,8 @@ const VehicleDetail = () => {
   }
 
   // TODO: add 'isServicePortalVehicleMileagePageEnabled' to check if vehicle mileage links should be shown.
+  const reqMileageReg =
+    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -171,52 +172,58 @@ const VehicleDetail = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {!loading && downloadServiceURL && (
+        {!loading && (downloadServiceURL || reqMileageReg) && (
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
               <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <Button
-                    colorScheme="default"
-                    icon="pencil"
-                    iconType="outline"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                  >
-                    <LinkResolver
-                      href={
-                        id
-                          ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
-                              ':id',
-                              id.toString(),
-                            )
-                          : ''
-                      }
+                {reqMileageReg && (
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <Button
+                      colorScheme="default"
+                      icon="pencil"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
                     >
-                      {formatMessage(messages.vehicleMilageInputTitle)}
-                    </LinkResolver>
-                  </Button>
-                </Box>
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <Button
-                    colorScheme="default"
-                    icon="receipt"
-                    iconType="outline"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                    onClick={() => formSubmit(`${downloadServiceURL}`)}
-                  >
-                    {formatMessage(messages.vehicleHistoryReport)}
-                  </Button>
-                </Box>
-                <Box paddingRight={2}>
-                  <Dropdown
-                    label={formatMessage(messages.actions)}
-                    dropdownItems={dropdownArray}
-                  />
-                </Box>
+                      <LinkResolver
+                        href={
+                          id
+                            ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                                ':id',
+                                id.toString(),
+                              )
+                            : ''
+                        }
+                      >
+                        {formatMessage(messages.vehicleMilageInputTitle)}
+                      </LinkResolver>
+                    </Button>
+                  </Box>
+                )}
+                {downloadServiceURL && (
+                  <>
+                    <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                      <Button
+                        colorScheme="default"
+                        icon="receipt"
+                        iconType="outline"
+                        size="default"
+                        type="button"
+                        variant="utility"
+                        onClick={() => formSubmit(`${downloadServiceURL}`)}
+                      >
+                        {formatMessage(messages.vehicleHistoryReport)}
+                      </Button>
+                    </Box>
+                    <Box paddingRight={2}>
+                      <Dropdown
+                        label={formatMessage(messages.actions)}
+                        dropdownItems={dropdownArray}
+                      />
+                    </Box>
+                  </>
+                )}
               </Box>
             </GridColumn>
           </GridRow>
@@ -339,8 +346,8 @@ const VehicleDetail = () => {
           </>
         )}
 
-        {data?.vehiclesDetail?.inspectionInfo?.odometer &&
-          data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration && ( // TODO: Should this come from here, or should this come from the `Mileagereading` service?
+        {data?.vehiclesDetail?.inspectionInfo?.odometer && // TODO: Should this come from here, or should this come from the `Mileagereading` service?
+          reqMileageReg && (
             <>
               <UserInfoLine
                 label={formatMessage(messages.lastKnownOdometerStatus)}
@@ -351,7 +358,7 @@ const VehicleDetail = () => {
                 )}
                 loading={loading}
                 editLink={
-                  data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration
+                  reqMileageReg
                     ? {
                         title: m.viewDetail,
                         url: id
