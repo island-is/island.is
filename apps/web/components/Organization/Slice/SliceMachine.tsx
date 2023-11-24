@@ -156,11 +156,7 @@ const renderSlice = (
       )
     case 'AnchorPageListSlice':
       return (
-        <AnchorPageListSlice
-          slice={slice}
-          namespace={namespace}
-          {...params}
-        />
+        <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
       )
     case 'EmailSignup':
       return <EmailSignup slice={slice} marginLeft={[0, 0, 0, 6]} />

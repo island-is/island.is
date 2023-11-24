@@ -23,7 +23,5 @@ export const mapAnchorPageListSlice = ({
   typename: 'AnchorPageListSlice',
   id: sys.id,
   title: fields.title ?? '',
-  pages: fields.pages
-    ? fields.pages.map(mapAnchorPage)
-    : [],
+  pages: fields.pages ? fields.pages.map(mapAnchorPage) : [],
 })

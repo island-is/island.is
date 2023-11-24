@@ -170,7 +170,6 @@ export interface IAnchorPage extends Entry<IAnchorPageFields> {
   }
 }
 
-
 export interface IAnchorPageListFields {
   /** Title */
   title?: string | undefined
