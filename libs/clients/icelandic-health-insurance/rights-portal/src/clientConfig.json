@@ -2332,9 +2332,29 @@
             "type": "string",
             "nullable": true
           },
+          "processed": {
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true
+          },
           "approved": {
             "type": "boolean",
             "nullable": true
+          },
+          "rejected": {
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true
+          },
+          "expired": {
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true
+          },
+          "valid": {
+            "type": "boolean",
+            "nullable": true,
+            "readOnly": true
           },
           "comment": {
             "type": "string",
