@@ -12,7 +12,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/portals/core'
-import { EmptyState, ErrorScreen } from '@island.is/service-portal/core'
+import {
+  EmptyState,
+  ErrorScreen,
+  ExcludesFalse,
+} from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'
 import { m } from '@island.is/service-portal/core'
@@ -24,11 +28,17 @@ import { HealthPaths } from '../../lib/paths'
 import { formatHealthCenterName } from '../../utils/format'
 import { RegisterModal } from '../../components/RegisterModal'
 import {
+  useGetHealthCenterDoctorsLazyQuery,
   useGetHealthCenterQuery,
   useRightsPortalTransferHealthCenterMutation,
 } from './HealthCenterRegistration.generated'
 
 type SelectedHealthCenter = Pick<RightsPortalHealthCenter, 'id' | 'name'>
+
+export type HealthCenterDoctorOption = {
+  label: string
+  value: number
+}
 
 export interface Dictionary<T> {
   [index: string]: T
@@ -50,12 +60,44 @@ const HealthCenterRegistration = () => {
   const [errorTransfer, setErrorTransfer] = useState(false)
   const [selectedHealthCenter, setSelectedHealthCenter] =
     useState<SelectedHealthCenter | null>(null)
+  const [healthCenterDoctors, setHealthCenterDoctors] = useState<
+    HealthCenterDoctorOption[]
+  >([])
 
   const handleOnError = () => {
     setSelectedHealthCenter(null)
     setLoadingTransfer(false)
     setErrorTransfer(true)
   }
+
+  const [getHealthCenterDoctors] = useGetHealthCenterDoctorsLazyQuery({
+    onCompleted: (data) => {
+      setHealthCenterDoctors(
+        data?.rightsPortalHealthCenterDoctors
+          ?.map((d) => {
+            if (d.id && d.name) {
+              return { value: d.id, label: d.name }
+            }
+            return null
+          })
+          .filter(Boolean as unknown as ExcludesFalse) ?? [],
+      )
+      console.log({ data })
+    },
+  })
+
+  useEffect(() => {
+    if (selectedHealthCenter) {
+      getHealthCenterDoctors({
+        variables: {
+          input: {
+            id: selectedHealthCenter.id,
+          },
+        },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedHealthCenter])
 
   const [transferHealthCenter] = useRightsPortalTransferHealthCenterMutation({
     onError: () => {
@@ -83,13 +125,14 @@ const HealthCenterRegistration = () => {
     }
   }, [errorTransfer])
 
-  const handleHealthCenterTransfer = async () => {
+  const handleHealthCenterTransfer = async (doctorId?: number) => {
     setLoadingTransfer(true)
     if (selectedHealthCenter && selectedHealthCenter?.id) {
       await transferHealthCenter({
         variables: {
           input: {
             id: selectedHealthCenter.id,
+            doctorId: doctorId,
           },
         },
       })
@@ -202,9 +245,10 @@ const HealthCenterRegistration = () => {
         })}
         description={formatMessage(messages.healthCenterRegistrationModalInfo)}
         onClose={() => setSelectedHealthCenter(null)}
-        onAccept={() => handleHealthCenterTransfer()}
+        onAccept={handleHealthCenterTransfer}
         isVisible={!!selectedHealthCenter}
         buttonLoading={loadingTransfer}
+        healthCenterDoctors={healthCenterDoctors}
       />
 
       <Box className={styles.filterWrapperStyle} marginBottom={3}>

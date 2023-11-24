@@ -20,6 +20,8 @@ import { HealthCenterHistoryInput } from './dto/healthCenterHistory.input'
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
 import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.model'
 import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
+import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
+import { HealthCenterDoctors } from './models/healthCenterDoctors.model'
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalHealthRightsModule)
@@ -47,6 +49,22 @@ export class HealthCenterResolver {
       input?.dateFrom,
       input?.dateTo,
     )
+  }
+
+  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
+  @Scopes(ApiScope.health)
+  @Query(() => [HealthCenterDoctors], {
+    name: 'rightsPortalHealthCenterDoctors',
+    nullable: true,
+  })
+  @Audit()
+  getRightsPortalHealthCenterDoctors(
+    @CurrentUser() user: User,
+    @Args('input') input: HealthCenterDoctorsInput,
+  ) {
+    console.log({ input })
+
+    return this.service.getHealthCenterDoctors(user, input)
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)

@@ -1,16 +1,26 @@
-import { ModalBase, Icon, Box, Button, Text } from '@island.is/island-ui/core'
+import {
+  ModalBase,
+  Icon,
+  Box,
+  Button,
+  Text,
+  Select,
+} from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import * as styles from './RegisterModal.css'
 import { useLocale } from '@island.is/localization'
+import { useState } from 'react'
+import { HealthCenterDoctorOption } from '../../screens/HealthCenterRegistration/HealthCenterRegistration'
 
 type RegisterModalProps = {
   onClose: () => void
-  onAccept: () => void
+  onAccept: (doctorId?: number) => void
   id: string
   title: string
   description: string
   buttonLoading?: boolean
   isVisible?: boolean
+  healthCenterDoctors?: HealthCenterDoctorOption[]
 }
 
 export const RegisterModal = ({
@@ -21,8 +31,10 @@ export const RegisterModal = ({
   description,
   buttonLoading = false,
   isVisible = false,
+  healthCenterDoctors,
 }: RegisterModalProps) => {
   const { formatMessage } = useLocale()
+  const [doctorId, setDoctorId] = useState<number>()
 
   return (
     <ModalBase
@@ -45,6 +57,19 @@ export const RegisterModal = ({
             <Text marginTop={2} marginBottom={3}>
               {description}
             </Text>
+            {healthCenterDoctors?.length ? (
+              <Box marginBottom={3}>
+                <Select
+                  isClearable
+                  options={healthCenterDoctors}
+                  label="Viltu velja heimilislækni?"
+                  placeholder="Heimilislæknir"
+                  onChange={(val) => {
+                    setDoctorId(val?.value)
+                  }}
+                />
+              </Box>
+            ) : null}
             <Box className={styles.modalGridButtonGroup}>
               <Button size="small" variant="primary" onClick={onClose}>
                 {formatMessage(messages.healthRegisterModalDecline)}
@@ -52,7 +77,7 @@ export const RegisterModal = ({
               <Button
                 size="small"
                 variant="ghost"
-                onClick={onAccept}
+                onClick={() => onAccept(doctorId)}
                 loading={buttonLoading}
               >
                 {formatMessage(messages.healthRegisterModalAccept)}
