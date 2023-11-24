@@ -44,7 +44,7 @@ describe('Link resolver', () => {
 
   it('should handle content type with uppercase', () => {
     // @ts-expect-error  (testing wrong input)
-    const randomCasedInput: LinkType = 'lifeEventPage'
+    const randomCasedInput: LinkType = 'anchorPage'
     const nextLinks = linkResolver(randomCasedInput, ['cat'], 'is')
     expect(nextLinks).toEqual({
       href: '/lifsvidburdir/cat',
