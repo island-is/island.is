@@ -104,6 +104,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           progress: 0.25,
           onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
             throwOnError: true,
           }),
           roles: [
