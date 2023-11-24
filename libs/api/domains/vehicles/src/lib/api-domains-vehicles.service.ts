@@ -39,9 +39,9 @@ const isReadDateToday = (d?: Date) => {
 @Injectable()
 export class VehiclesService {
   constructor(
-    @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
-    @Inject(MileageReadingApi) private mileageReadingApi: MileageReadingApi,
-    @Inject(PdfApi) private vehiclesPDFApi: PdfApi,
+    private vehiclesApi: VehicleSearchApi,
+    private mileageReadingApi: MileageReadingApi,
+    private vehiclesPDFApi: PdfApi,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}

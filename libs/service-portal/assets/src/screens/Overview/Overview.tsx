@@ -155,7 +155,6 @@ const VehiclesOverview = () => {
       />
     )
   }
-
   return (
     <>
       <IntroHeader

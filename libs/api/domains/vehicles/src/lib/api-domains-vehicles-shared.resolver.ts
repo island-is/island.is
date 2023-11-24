@@ -30,7 +30,6 @@ export class VehiclesSharedResolver {
       permno: overview.basicInfo?.permno ?? '',
     })
 
-    this.logger.debug('resolveLastMileage data', res?.data)
     if (res?.data && res?.data.length > 0) {
       return res?.data[0]
     }

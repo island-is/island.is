@@ -177,8 +177,8 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
-  vehicleMilageIntro: {
-    id: 'sp.vehicles:vehicle-milage-intro',
+  vehicleMileageIntro: {
+    id: 'sp.vehicles:vehicle-mileage-intro',
     defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil, <href>sjá nánar um það hér.</href>`,
   },
   historyIntro: {
@@ -805,20 +805,20 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:last-known-odometer-status',
     defaultMessage: 'Síðasta kílómetrastaða',
   },
-  vehicleMilageInputLabel: {
-    id: 'sp.vehicles:milage-input-label',
+  vehicleMileageInputLabel: {
+    id: 'sp.vehicles:mileage-input-label',
     defaultMessage: 'Kílómetrastaða',
   },
-  vehicleMilageInputPlaceholder: {
-    id: 'sp.vehicles:milage-input-placeholder',
+  vehicleMileageInputPlaceholder: {
+    id: 'sp.vehicles:mileage-input-placeholder',
     defaultMessage: '20.000',
   },
-  vehicleMilageInputTitle: {
-    id: 'sp.vehicles:milage-input-title',
+  vehicleMileageInputTitle: {
+    id: 'sp.vehicles:mileage-input-title',
     defaultMessage: 'Skrá kílómetrastöðu',
   },
-  vehicleMilageRegistration: {
-    id: 'sp.vehicles:milage-registration',
+  vehicleMileageRegistration: {
+    id: 'sp.vehicles:mileage-registration',
     defaultMessage: 'Skráning',
   },
   searchForPlate: {
@@ -827,7 +827,7 @@ export const vehicleMessage = defineMessages({
   },
   mileageInputTooLow: {
     id: 'sp.vehicles:mileage-errors-input-too-low',
-    defaultMessage: 'Verður að vera hærri en hæsta skráning',
+    defaultMessage: 'Verður að vera hærri en hæsta staðfesta skráning',
   },
   mileageInputMinLength: {
     id: 'sp.vehicles:mileage-errors-min-length',

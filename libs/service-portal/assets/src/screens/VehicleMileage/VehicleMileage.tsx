@@ -43,7 +43,7 @@ interface FormData {
   odometerStatus: number
 }
 
-const VehicleMilage = () => {
+const VehicleMileage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
   const [formValue, setFormValue] = useState('')
@@ -54,6 +54,16 @@ const VehicleMilage = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>()
+
+  const clearAll = () => {
+    // Clear form, state and errors on success.
+    setFormValue('')
+    reset()
+
+    refetch()
+
+    toast.success(formatMessage(messages.postSuccess))
+  }
 
   const handleSubmitForm = async (submitData: FormData) => {
     if (isFormEditable) {
@@ -93,11 +103,7 @@ const VehicleMilage = () => {
         toast.error(formatMessage(m.errorTitle))
       },
       onCompleted: () => {
-        // Clear form, state and errors on success.
-        setFormValue('')
-        reset()
-        refetch()
-        toast.success(formatMessage(messages.postSuccess))
+        clearAll()
       },
     })
 
@@ -107,13 +113,7 @@ const VehicleMilage = () => {
         toast.error(formatMessage(m.errorTitle))
       },
       onCompleted: () => {
-        // Clear form, state and errors on success.
-        setFormValue('')
-        reset()
-
-        refetch()
-
-        toast.success(formatMessage(messages.postSuccess))
+        clearAll()
       },
     })
 
@@ -134,8 +134,8 @@ const VehicleMilage = () => {
     <>
       <Box marginBottom={[2, 2, 6]}>
         <IntroHeader
-          title={m.vehicleMilage}
-          introComponent={formatMessage(messages.vehicleMilageIntro, {
+          title={m.vehicleMileage}
+          introComponent={formatMessage(messages.vehicleMileageIntro, {
             href: (str: any) => (
               <span>
                 <a
@@ -174,7 +174,7 @@ const VehicleMilage = () => {
                     </>
                   ) : canRegisterMileage === true ? (
                     <Text as="h3" variant="h5">
-                      {formatMessage(messages.vehicleMilageInputTitle)}
+                      {formatMessage(messages.vehicleMileageInputTitle)}
                     </Text>
                   ) : (
                     <Text as="h3" variant="h5">
@@ -234,15 +234,15 @@ const VehicleMilage = () => {
                         message: formatMessage(messages.mileageInputMinLength),
                       },
                     }}
-                    label={formatMessage(messages.vehicleMilageInputLabel)}
+                    label={formatMessage(messages.vehicleMileageInputLabel)}
                     placeholder={formatMessage(
-                      messages.vehicleMilageInputPlaceholder,
+                      messages.vehicleMileageInputPlaceholder,
                     )}
                   />
                 </GridColumn>
                 <GridColumn
                   span={['1/1', '7/9', '6/9', '5/9', '2/9']}
-                  offset={['0', '0', '0', '0', '0']}
+                  offset="0"
                   paddingBottom={[1, 1, 2, 0, 0]}
                   paddingTop="smallGutter"
                 >
@@ -295,7 +295,7 @@ const VehicleMilage = () => {
                       <Table.Row>
                         <Table.HeadData>{formatMessage(m.date)}</Table.HeadData>
                         <Table.HeadData align="center">
-                          {formatMessage(messages.vehicleMilageRegistration)}
+                          {formatMessage(messages.vehicleMileageRegistration)}
                         </Table.HeadData>
                         <Table.HeadData align="right">
                           {formatMessage(messages.odometer)}
@@ -335,4 +335,4 @@ const VehicleMilage = () => {
   )
 }
 
-export default VehicleMilage
+export default VehicleMileage

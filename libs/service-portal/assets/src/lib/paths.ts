@@ -5,7 +5,7 @@ export enum AssetsPaths {
   AssetsVehicles = '/eignir/okutaeki',
   AssetsMyVehicles = '/eignir/okutaeki/min-okutaeki',
   AssetsVehiclesDetail = '/eignir/okutaeki/min-okutaeki/:id',
-  AssetsVehiclesDetailMilage = '/eignir/okutaeki/min-okutaeki/:id/kilometrastada',
+  AssetsVehiclesDetailMileage = '/eignir/okutaeki/min-okutaeki/:id/kilometrastada',
   AssetsVehiclesLookup = '/eignir/okutaeki/leit',
   AssetsVehiclesHistory = '/eignir/okutaeki/okutaekjaferill',
   AssetsWorkMachines = '/eignir/vinnuvelar',

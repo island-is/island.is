@@ -270,8 +270,8 @@ export const m = defineMessages({
     id: 'service.portal:my-vehicles',
     defaultMessage: 'Ökutækin mín',
   },
-  vehicleMilage: {
-    id: 'service.portal:my-vehicles-milage',
+  vehicleMileage: {
+    id: 'service.portal:my-vehicles-mileage',
     defaultMessage: 'Kílómetrastaða',
   },
   incoming: {

@@ -4,9 +4,11 @@ import { VehiclesScope } from '@island.is/auth/scopes'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
+  fetch: z
+    .object({
+      timeout: z.number().int(),
+    })
+    .optional(),
   scope: z.array(z.string()),
 })
 
@@ -20,9 +22,6 @@ export const VehiclesMileageClientConfig = defineConfig<z.infer<typeof schema>>(
           'XROAD_VEHICLES_MILEAGE_PATH',
           'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
         ),
-        fetch: {
-          timeout: 30000,
-        },
         scope: [VehiclesScope.vehicle],
       }
     },

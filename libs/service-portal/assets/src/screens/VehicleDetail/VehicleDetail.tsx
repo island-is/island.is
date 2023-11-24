@@ -209,14 +209,14 @@ const VehicleDetail = () => {
                       <LinkResolver
                         href={
                           id
-                            ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                            ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
                                 ':id',
                                 id.toString(),
                               )
                             : ''
                         }
                       >
-                        {formatMessage(messages.vehicleMilageInputTitle)}
+                        {formatMessage(messages.vehicleMileageInputTitle)}
                       </LinkResolver>
                     </Button>
                   </Box>
@@ -381,7 +381,7 @@ const VehicleDetail = () => {
                   ? {
                       title: m.viewDetail,
                       url: id
-                        ? AssetsPaths.AssetsVehiclesDetailMilage.replace(
+                        ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
                             ':id',
                             id.toString(),
                           )

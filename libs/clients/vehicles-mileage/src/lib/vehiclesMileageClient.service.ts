@@ -22,7 +22,6 @@ export const VehiclesMileageApiProvider: Provider<MileageReadingApi> = {
         fetchApi: createEnhancedFetch({
           name: 'clients-mileage-vehicles',
           organizationSlug: 'samgongustofa',
-          timeout: config.fetch.timeout,
           autoAuth: idsClientConfig.isConfigured
             ? {
                 mode: 'tokenExchange',
