@@ -1,14 +1,13 @@
-import { Args, Resolver, Mutation } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 
-import { Authorize, CurrentUser, User } from '../auth'
+import { CurrentUser, User } from '../auth'
 
-import { VehicleOwnerModel } from './vehicleOwner.model'
-import { VehicleOwnerService } from './vehicleOwner.service'
-import { CreateOwnerInput } from './dto/createOwner.input'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
+import { CreateOwnerInput } from './dto/createOwner.input'
+import { VehicleOwnerModel } from './vehicleOwner.model'
+import { VehicleOwnerService } from './vehicleOwner.service'
 
-//@Authorize()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerAppSysResolver {

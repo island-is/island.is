@@ -4,22 +4,21 @@ import {
   UseGuards,
   forwardRef,
 } from '@nestjs/common'
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 
-import { Authorize, Role, CurrentUser, User } from '../auth'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { Authorize, CurrentUser, Role, User } from '../auth'
+import { SamgongustofaService } from '../samgongustofa'
 import { VehicleModel } from '../vehicle'
+import { CreateRecyclingRequestInput } from './dto/createRecyclingRequest.input'
 import {
   RecyclingRequestModel,
-  RecyclingRequestTypes,
   RecyclingRequestResponse,
   RequestStatus,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
-import { SamgongustofaService } from '../samgongustofa'
-import { CreateRecyclingRequestInput } from './dto/createRecyclingRequest.input'
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
-//@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestAppSysResolver {
   constructor(

@@ -113,9 +113,9 @@ const CarRecyclingTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
-            action: Actions.getVehicles,
+            action: Actions.CREATE_OWNER,
             shouldPersistToExternalData: false,
-            // externalDataId: 'vehicles',
+
             throwOnError: true,
           }),
           progress: 0.5,
@@ -124,11 +124,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
               title: 'corePendingActionMessages.applicationReceivedTitle',
               displayStatus: 'success',
             },
-            //  description: statesMessages.draftDescription,
-            // historyLogs: {
-            //  onEvent: DefaultEvents.SUBMIT,
-            //  logMessage: coreHistoryMessages.applicationSent,
-            // },
           },
           roles: [
             {

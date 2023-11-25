@@ -14,18 +14,15 @@ import {
   CreateRequestMutation,
   CreateRequestMutationVariables,
   SkilavottordRecyclingRequestDocument,
-  SkilavottordRecyclingRequestMutation,
   SkilavottordRecyclingRequestMutationVariables,
   SkilavottordVehicleDocument,
-  SkilavottordVehicleMutation,
   SkilavottordVehicleMutationVariables,
   SkilavottordVehicleOwnerDocument,
-  SkilavottordVehicleOwnerMutation,
   SkilavottordVehicleOwnerMutationVariables,
 } from './createRecyclingRequest.generated'
 
-import { RecyclingFundClientConfig } from './recyclingFundClient.config'
 import { RecyclingRequestTypes } from '../../gen/schema'
+import { RecyclingFundClientConfig } from './recyclingFundClient.config'
 
 const baseGqlRequestOptions = {
   method: 'POST',
@@ -106,25 +103,14 @@ export class RecyclingFundClientService {
       } as SkilavottordVehicleOwnerMutationVariables,
     })
 
-    console.log('Response', response)
-
-    if (!response.ok) {
-      // ToDo: Decide how to handle errors
+    if (!response || !response.ok) {
       throw new Error(`Failed to creating owner ${user.nationalId}`)
     }
 
-    const data = (await response.json()) as SkilavottordVehicleOwnerMutation
-
-    console.log('response from createRecyclingRequest GQLs', {
-      data,
-    })
-
-    return data.createSkilavottordVehicleOwnerAppSys
+    return await response.json()
   }
 
   async createVehicle(user: User, permno: string) {
-    console.log('createVehicle', permno)
-
     const response = await this.createRecyclingFundRequest(user, {
       query: print(SkilavottordVehicleDocument),
       variables: {
@@ -132,14 +118,16 @@ export class RecyclingFundClientService {
       } as SkilavottordVehicleMutationVariables,
     })
 
-    if (!response.ok) {
+    if (!response || !response.ok) {
       // ToDo: Decide how to handle errors
       throw new Error(`Failed to creating vehicle ${user.nationalId}`)
     }
 
-    const data = (await response.json()) as SkilavottordVehicleMutation
+    const data = await response.json()
 
-    console.log('createVehicle-data', data)
+    if (data.errors) {
+      throw new Error(`Failed to creating vehicle ${permno} - ${data.errors}`)
+    }
 
     return data.createSkilavottordVehicleAppSys
   }
@@ -149,8 +137,6 @@ export class RecyclingFundClientService {
     permno: string,
     requestType: RecyclingRequestTypes,
   ) {
-    console.log('recycleVehicle', permno, requestType)
-
     const response = await this.createRecyclingFundRequest(user, {
       query: print(SkilavottordRecyclingRequestDocument),
       variables: {
@@ -159,15 +145,13 @@ export class RecyclingFundClientService {
       } as SkilavottordRecyclingRequestMutationVariables,
     })
 
-    if (!response.ok) {
+    if (!response || !response.ok) {
       // ToDo: Decide how to handle errors
-      throw new Error(`Failed to creating vehicle ${user.nationalId}`)
+      throw new Error(
+        `Failed to recycle vehicle ${permno} - RequestType: ${requestType}`,
+      )
     }
 
-    const data = (await response.json()) as SkilavottordRecyclingRequestMutation
-
-    console.log('createVehicle-data', data)
-
-    return data.createSkilavottordRecyclingRequestAppSys
+    return await response.json()
   }
 }

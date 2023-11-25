@@ -9,6 +9,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  errorMessages,
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
@@ -17,14 +18,6 @@ import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
-
-interface VMSTError {
-  type: string
-  title: string
-  status: number
-  traceId: string
-  errors: Record<string, string[]>
-}
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
@@ -35,24 +28,8 @@ export class CarRecyclingService extends BaseTemplateApiService {
     super(ApplicationTypes.CAR_RECYCLING)
   }
 
-  private parseErrors(e: Error | VMSTError) {
-    if (e instanceof Error) {
-      return e.message
-    }
-
-    return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
-    }
-  }
-
-  async getVehicles({
-    application,
-    params = undefined,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async getVehicles({ auth }: TemplateApiModuleActionProps) {
     try {
-      console.log('getVehicles')
-
       const response = await this.recyclingFundService.createRecyclingRequest(
         auth,
       )
@@ -63,39 +40,27 @@ export class CarRecyclingService extends BaseTemplateApiService {
       return response*/
     } catch (e) {
       this.logger.error('Failed to vehicles', e)
-      throw this.parseErrors(e)
     }
   }
 
-  async createOwner({
-    application,
-    params = undefined,
-    auth,
-  }: TemplateApiModuleActionProps) {
-    try {
-      const { applicantName } = getApplicationExternalData(
-        application.externalData,
-      )
-      console.log('application', application)
-      const response = await this.recyclingFundService.createOwner(
-        auth,
-        applicantName,
-      )
+  async createOwner({ application, auth }: TemplateApiModuleActionProps) {
+    const { applicantName } = getApplicationExternalData(
+      application.externalData,
+    )
 
-      /* if (!response) {
-        throw new Error(`Failed to create owner: ${response}`)
-      }
-      return response*/
-    } catch (e) {
+    const response = await this.recyclingFundService.createOwner(
+      auth,
+      applicantName,
+    )
+
+    if (response.errors) {
       throw new TemplateApiError(
         {
-          title: 'messages.serviceErrors.createOwner.title',
-          summary: 'messages.serviceErrors.createApplication.summary',
+          title: errorMessages.errorTitle,
+          summary: errorMessages.createOwnerDescription,
         },
         500,
       )
-      this.logger.error('Failed to create owner', e)
-      throw this.parseErrors(e)
     }
   }
 
@@ -106,11 +71,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
         vehicle.permno,
       )
 
-      if (!response) {
-        throw new Error(
-          `Failed to create vechicle: ${JSON.stringify(
-            vehicle,
-          )} - ${JSON.stringify(response)} `,
+      if (response.errors) {
+        throw new TemplateApiError(
+          {
+            title: errorMessages.errorTitle,
+            summary:
+              errorMessages.createVehicleDescription + ' ' + vehicle.permno,
+          },
+          500,
         )
       }
     }
@@ -127,48 +95,46 @@ export class CarRecyclingService extends BaseTemplateApiService {
         vehicle.permno,
         recyclingRequestType,
       )
-
-      if (!response) {
-        throw new Error(`Failed to recycle vehicle:  ${vehicle} -  ${response}`)
+      if (response.errors) {
+        throw new Error(vehicle.permno)
       }
     }
   }
 
-  async sendApplication({
-    application,
-    params = undefined,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
+    const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
+      application.answers,
+    )
     try {
-      const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
-        application.answers,
-      )
-
       selectedVehicles.forEach(async (vehicle) => {
-        // this.createVehicle(auth, vehicle)
+        this.createVehicle(auth, vehicle)
         this.recycleVehicles(
           auth,
           vehicle,
           RecyclingRequestTypes.pendingRecycle,
         )
       })
-
-      canceledVehicles.forEach(async (vehicle) => {
-        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
-      })
-
-      return true
-    } catch (e) {
+    } catch (error) {
       throw new TemplateApiError(
         {
-          title: 'messages.serviceErrors.createApplication.title',
-          summary: 'messages.serviceErrors.createApplication.summary',
+          title: errorMessages.errorTitle,
+          summary: errorMessages.recycleVehicleDescription + ' ' + error,
         },
         500,
       )
-
-      this.logger.error('Failed to send application ${application.id}', e)
-      throw this.parseErrors(e)
+    }
+    try {
+      canceledVehicles.forEach(async (vehicle) => {
+        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
+      })
+    } catch (error) {
+      throw new TemplateApiError(
+        {
+          title: errorMessages.errorTitle,
+          summary: errorMessages.cancelRecycleVehicleDescription + ' ' + error,
+        },
+        500,
+      )
     }
   }
 }

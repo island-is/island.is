@@ -28,12 +28,12 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Prerequisites',
     },
     externalDataSubSection: {
-      id: 'rf.cr.application:externalData.sub.section',
+      id: 'rf.cr.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
       description: 'External Data',
     },
     externalDataDescription: {
-      id: 'rf.cr.application:externalData.description',
+      id: 'rf.cr.application:external.data.description',
       defaultMessage:
         'Eftirfarandi upplýsingar verða sóttar rafrænt með þínu samþykki',
       description: 'External data description',
@@ -61,12 +61,12 @@ export const carRecyclingMessages: MessageDir = {
         'Information about email address and phone number will be retrieved from your account at Ísland.is.',
     },
     externalDataTransportAuthorityTitle: {
-      id: 'rf.cr.application:externalData.transport.authority.title',
+      id: 'rf.cr.application:external.data.transport.authority.title',
       defaultMessage: 'Upplýsingar frá Samgöngustofu',
       description: 'External data Transport authority title',
     },
     externalDataTransportAuthoritySubtitle: {
-      id: 'rf.cr.application:externalData.transport.authority.description',
+      id: 'rf.cr.application:external.data.transport.authority.description',
       defaultMessage: 'Upplýsingar um þín ökutæki',
       description: 'External data Transport authority description',
     },
@@ -124,7 +124,7 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Operator',
     },
     onlyOwnerCanRecyle: {
-      id: 'rf.cr.application:onlyOwnerCanRecyle',
+      id: 'rf.cr.application:only.owner.can.recyle',
       defaultMessage: 'Aðeins eigandi ökutækis má skrá í endurvinnslu',
       description: 'Only the owner of the vehicle may place it for recycling',
     },
@@ -157,7 +157,7 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Name',
     },
     nationalId: {
-      id: 'rf.cr.application:review.nationalId',
+      id: 'rf.cr.application:review.national.id',
       defaultMessage: 'Kennitala',
       description: 'National registry ID',
     },
@@ -195,17 +195,17 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Vehicles ready for deregistration',
     },
     bulletList: {
-      id: `rf.cr.application:conclusionScreen.bulletList#markdown`,
+      id: `rf.cr.application:conclusion.screen.bullet.list#markdown`,
       defaultMessage: `* Þú ferð með ökutæki til móttökuaðila.\n* Móttökuaðili tekur á móti ökutæki og afskráir.\n* Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.`,
       description: 'BulletList',
     },
     nextStepsLabel: {
-      id: 'rf.cr.application:conclusionScreen.nextStepsLabel',
+      id: 'rf.cr.application:conclusion.screen.next.steps.label',
       defaultMessage: 'Hvað gerist næst?',
       description: 'What happens next?',
     },
     buttonsViewApplication: {
-      id: 'rf.cr.application:conclusionScreen.buttonsViewApplication',
+      id: 'rf.cr.application:conclusion.screen.buttons.view.application',
       defaultMessage: 'Skoða umsókn',
       description: 'View application',
     },
@@ -232,16 +232,43 @@ export const statesMessages = defineMessages({
 
 export const errorMessages = defineMessages({
   mustSelectACar: {
-    id: 'rf.cr.application:validator.mustSelectACar',
+    id: 'rf.cr.application:validator.must.select.a.car',
     defaultMessage:
       'Vinsamlegast veldu að minnsta kosti eitt ökutæki til að halda áfram.',
     description: 'Please select a vehicle then continue',
+  },
+  errorTitle: {
+    id: 'rf.cr.application:error.error.title',
+    defaultMessage: 'Það kom upp villa',
+    description: 'Application check error title',
+  },
+  createOwnerDescription: {
+    id: 'rf.cr.application:error.create.owner.description',
+    defaultMessage: 'Ekki tókst að stofna eiganda bifreiðar hjá Úrvinnslusjóði',
+    description: 'Could not create vehicle owner',
+  },
+  createVehicleDescription: {
+    id: 'rf.cr.application:error.create.vehicle.description',
+    defaultMessage: 'Ekki tókst að stofna valda bifreið hjá Úrvinnslusjóði',
+    description: 'Could not create vehicle',
+  },
+  recycleVehicleDescription: {
+    id: 'rf.cr.application:error.recycle.vehicle.description',
+    defaultMessage:
+      'Ekki tókst að skrá bifreið til endurvinnslu hjá Úrvinnslusjóði',
+    description: 'Could not create vehicle',
+  },
+  cancelRecycleVehicleDescription: {
+    id: 'rf.cr.application:error.cancel.recycle.vehicle.description',
+    defaultMessage:
+      'Ekki tókst að afskrá bifreið úr endurvinnslu hjá Úrvinnslusjóði',
+    description: 'Could not create vehicle',
   },
 })
 
 export const inReviewFormMessages = defineMessages({
   formTitle: {
-    id: 'rf.cr.application:inReview.formTitle',
+    id: 'rf.cr.application:in.review.form.title',
     defaultMessage: 'Skilavottorð',
     description: 'Application for car recycle',
   },
