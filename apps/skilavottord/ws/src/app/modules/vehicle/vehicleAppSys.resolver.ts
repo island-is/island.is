@@ -1,4 +1,9 @@
-import { Inject, NotFoundException, forwardRef } from '@nestjs/common'
+import {
+  Inject,
+  NotFoundException,
+  UseGuards,
+  forwardRef,
+} from '@nestjs/common'
 import { Query, Resolver, Mutation, Args, Int } from '@nestjs/graphql'
 import parse from 'date-fns/parse'
 
@@ -8,8 +13,10 @@ import { Authorize, CurrentUser, User, Role } from '../auth'
 import { VehicleModel, VehicleConnection } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { SamgongustofaService } from '../samgongustofa'
+import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
 //@Authorize()
+//@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
 export class VehicleAppSysResolver {
   constructor(

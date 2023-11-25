@@ -18,7 +18,7 @@ export class VehicleOwnerAppSysResolver {
   async createSkilavottordVehicleOwnerAppSys(
     @CurrentUser() user: User,
     @Args('input') input: CreateOwnerInput,
-  ) {
+  ): Promise<boolean> {
     console.log('createSkilavottordVehicleOwnerAppSys', input.name)
     console.log('user', user)
     console.log('NATIONAL ID', user.nationalId.replace('**REMOVE_PII:', ''))

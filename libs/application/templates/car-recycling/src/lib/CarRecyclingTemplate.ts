@@ -19,13 +19,14 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { CurrentVehiclesApi } from '../dataProviders'
-import { ApiActions } from '../shared'
+import { Actions } from '../shared'
 import { answerValidators } from './answerValidators'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
 import { assign } from 'xstate'
 import unset from 'lodash/unset'
+import { Features } from '@island.is/feature-flags'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -57,6 +58,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
   institution: carRecyclingMessages.institutionName,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
+  featureFlag: Features.carRecyclingApplication,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   allowMultipleApplicationsInDraft: true,
   requiredScopes: [ApiScope.recyclingFund],
@@ -72,7 +74,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
           progress: 0.25,
           actionCard: {
             pendingAction: {
-              title: 'corePendingActionMessages.applicationReceivedTitle2222',
+              title: '',
               displayStatus: 'success',
             },
           },
@@ -111,16 +113,12 @@ const CarRecyclingTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfterDays(30),
           onEntry: defineTemplateApi({
-            action: ApiActions.CREATE_OWNER,
+            action: Actions.getVehicles,
             shouldPersistToExternalData: false,
             // externalDataId: 'vehicles',
-            throwOnError: false,
-          }),
-          progress: 0.5,
-          onExit: defineTemplateApi({
-            action: ApiActions.SEND_APPLICATION,
             throwOnError: true,
           }),
+          progress: 0.5,
           actionCard: {
             pendingAction: {
               title: 'corePendingActionMessages.applicationReceivedTitle',
@@ -160,7 +158,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
           name: States.SUBMITTED,
           progress: 1,
           status: 'completed',
-
+          onEntry: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            throwOnError: true,
+          }),
           actionCard: {
             pendingAction: {
               title: statesMessages.applicationSent,

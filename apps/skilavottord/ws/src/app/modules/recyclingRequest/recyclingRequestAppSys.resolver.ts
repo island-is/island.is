@@ -19,7 +19,7 @@ import { SamgongustofaService } from '../samgongustofa'
 import { CreateRecyclingRequestInput } from './dto/createRecyclingRequest.input'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+//@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => RecyclingRequestModel)
 export class RecyclingRequestAppSysResolver {
   constructor(
@@ -117,16 +117,17 @@ export class RecyclingRequestAppSysResolver {
   @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequestAppSys(
     @CurrentUser() user: User,
-    @Args({ name: 'requestType', type: () => RecyclingRequestTypes })
-    requestType: RecyclingRequestTypes,
-    @Args('permno') permno: string,
+    @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<typeof RecyclingRequestResponse> {
-    console.log('createSkilavottordRecyclingRequestAppSys', requestType)
+    console.log('createSkilavottordRecyclingRequestAppSys', input.requestType)
 
-    if (requestType === 'pendingRecycle' || requestType === 'cancelled') {
+    if (
+      input.requestType === 'pendingRecycle' ||
+      input.requestType === 'cancelled'
+    ) {
       const vehicle = await this.samgongustofaService.getUserVehicle(
         user.nationalId,
-        permno,
+        input.permno,
       )
       // Check if user owns the vehicle
       if (!vehicle) {
@@ -140,7 +141,7 @@ export class RecyclingRequestAppSysResolver {
       Role.recyclingCompany,
       Role.recyclingCompanyAdmin,
     ].includes(user.role)
-    if (requestType === 'deregistered' && !hasPermission) {
+    if (input.requestType === 'deregistered' && !hasPermission) {
       throw new NotFoundException(
         `User doesn't have right to deregistered the vehicle`,
       )
@@ -148,8 +149,8 @@ export class RecyclingRequestAppSysResolver {
 
     return this.recyclingRequestService.createRecyclingRequest(
       user,
-      requestType,
-      permno,
+      input.requestType,
+      input.permno,
     )
   }
 }

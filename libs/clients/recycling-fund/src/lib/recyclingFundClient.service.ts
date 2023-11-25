@@ -13,6 +13,12 @@ import {
   CreateRequestDocument,
   CreateRequestMutation,
   CreateRequestMutationVariables,
+  SkilavottordRecyclingRequestDocument,
+  SkilavottordRecyclingRequestMutation,
+  SkilavottordRecyclingRequestMutationVariables,
+  SkilavottordVehicleDocument,
+  SkilavottordVehicleMutation,
+  SkilavottordVehicleMutationVariables,
   SkilavottordVehicleOwnerDocument,
   SkilavottordVehicleOwnerMutation,
   SkilavottordVehicleOwnerMutationVariables,
@@ -51,7 +57,7 @@ export class RecyclingFundClientService {
     })
   }
 
-  async doRecyclingFundRequest(user: User, body: any) {
+  async createRecyclingFundRequest(user: User, body: any) {
     return await this.fetch(this.config.gqlBasePath, {
       ...baseGqlRequestOptions,
       auth: user,
@@ -69,6 +75,7 @@ export class RecyclingFundClientService {
         variables: {
           input: {
             permno: 'THS45',
+            requestType: RecyclingRequestTypes.pendingRecycle,
           },
         } as CreateRequestMutationVariables,
       }),
@@ -89,21 +96,17 @@ export class RecyclingFundClientService {
     return data.createRecyclingRequestAppSys.status
   }
 
-  async createOwner(user: User) {
-    console.log('createOwner', user)
-
-    const response = await this.fetch(this.config.gqlBasePath, {
-      ...baseGqlRequestOptions,
-      auth: user,
-      body: JSON.stringify({
-        query: print(SkilavottordVehicleOwnerDocument),
-        variables: {
-          input: {
-            name: 'asdfkas asdfkaklsdf',
-          },
-        } as SkilavottordVehicleOwnerMutationVariables,
-      }),
+  async createOwner(user: User, applicantName: string) {
+    const response = await this.createRecyclingFundRequest(user, {
+      query: print(SkilavottordVehicleOwnerDocument),
+      variables: {
+        input: {
+          name: applicantName,
+        },
+      } as SkilavottordVehicleOwnerMutationVariables,
     })
+
+    console.log('Response', response)
 
     if (!response.ok) {
       // ToDo: Decide how to handle errors
@@ -112,8 +115,7 @@ export class RecyclingFundClientService {
 
     const data = (await response.json()) as SkilavottordVehicleOwnerMutation
 
-    console.log('response from createRecyclingRequest GQL', {
-      status: response.status,
+    console.log('response from createRecyclingRequest GQLs', {
       data,
     })
 
@@ -122,13 +124,24 @@ export class RecyclingFundClientService {
 
   async createVehicle(user: User, permno: string) {
     console.log('createVehicle', permno)
-    /*const sdk = this.getSdk(user)
 
-    
+    const response = await this.createRecyclingFundRequest(user, {
+      query: print(SkilavottordVehicleDocument),
+      variables: {
+        permno,
+      } as SkilavottordVehicleMutationVariables,
+    })
 
-    return sdk.skilavottordVehicleMutation({
-      permno,
-    })*/
+    if (!response.ok) {
+      // ToDo: Decide how to handle errors
+      throw new Error(`Failed to creating vehicle ${user.nationalId}`)
+    }
+
+    const data = (await response.json()) as SkilavottordVehicleMutation
+
+    console.log('createVehicle-data', data)
+
+    return data.createSkilavottordVehicleAppSys
   }
 
   async recycleVehicle(
@@ -137,10 +150,24 @@ export class RecyclingFundClientService {
     requestType: RecyclingRequestTypes,
   ) {
     console.log('recycleVehicle', permno, requestType)
-    /* const sdk = this.getSdk(user)
-    return sdk.skilavottordRecyclingRequestMutation({
-      permno,
-      requestType,
-    })*/
+
+    const response = await this.createRecyclingFundRequest(user, {
+      query: print(SkilavottordRecyclingRequestDocument),
+      variables: {
+        permno,
+        requestType,
+      } as SkilavottordRecyclingRequestMutationVariables,
+    })
+
+    if (!response.ok) {
+      // ToDo: Decide how to handle errors
+      throw new Error(`Failed to creating vehicle ${user.nationalId}`)
+    }
+
+    const data = (await response.json()) as SkilavottordRecyclingRequestMutation
+
+    console.log('createVehicle-data', data)
+
+    return data.createSkilavottordRecyclingRequestAppSys
   }
 }
