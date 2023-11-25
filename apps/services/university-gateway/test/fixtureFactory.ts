@@ -1,10 +1,8 @@
 import { getModelToken } from '@nestjs/sequelize'
 import faker from 'faker'
-import { InferCreationAttributes, Model } from 'sequelize'
-
+import { Model } from 'sequelize'
 import { createNationalId } from '@island.is/testing/fixtures'
 import { TestApp } from '@island.is/testing/nest'
-
 import { Program } from '../src/app/modules/program/model/program'
 import { University } from '../src/app/modules/university/model/university'
 import {
@@ -16,12 +14,7 @@ import {
 } from '@island.is/university-gateway'
 import { Course } from '../src/app/modules/course/model/course'
 import { ProgramCourse } from '../src/app/modules/program/model/programCourse'
-
-type CreateProgram = Partial<InferCreationAttributes<Program>> &
-  Pick<Program, 'universityId' | 'durationInYears'>
-
-type CreateProgramCourse = Partial<InferCreationAttributes<ProgramCourse>> &
-  Pick<ProgramCourse, 'programId'>
+import { ProgramModeOfDelivery } from '../src/app/modules/program/model/programModeOfDelivery'
 
 export class FixtureFactory {
   constructor(private app: TestApp) {}
@@ -37,8 +30,16 @@ export class FixtureFactory {
     })
   }
 
-  async createProgram({ universityId, durationInYears }: CreateProgram) {
-    return this.get(Program).create({
+  async createProgram({
+    universityId,
+    durationInYears,
+    modeOfDeliveryList,
+  }: {
+    universityId: string
+    durationInYears: number
+    modeOfDeliveryList: ModeOfDelivery[]
+  }) {
+    const program = await this.get(Program).create({
       externalId: faker.datatype.uuid(),
       nameIs: faker.random.word(),
       nameEn: faker.random.word(),
@@ -57,15 +58,24 @@ export class FixtureFactory {
       descriptionEn: faker.random.words(),
       durationInYears: durationInYears,
       iscedCode: faker.random.word(),
-      modeOfDelivery: [ModeOfDelivery.ON_SITE],
+      modeOfDelivery: modeOfDeliveryList,
       active: true,
       tmpActive: false,
       allowException: false,
       allowThirdLevelQualification: false,
     })
+
+    for (let i = 0; i < modeOfDeliveryList.length; i++) {
+      await this.get(ProgramModeOfDelivery).create({
+        programId: program.id,
+        modeOfDelivery: modeOfDeliveryList[i],
+      })
+    }
+
+    return program
   }
 
-  async createCourse({ programId }: CreateProgramCourse) {
+  async createCourse({ programId }: { programId: string }) {
     const program = await this.get(Program).findByPk(programId)
 
     const course = await this.get(Course).create({

@@ -127,24 +127,10 @@ export class UniversityOfIcelandApplicationClient {
           throw new Error(`Not able to map requirement: ${course.required}`)
         }
 
-        let semesterSeason: CourseSeason | undefined = undefined
-        switch (course.semesterSeason) {
-          case 'SPRING':
-            semesterSeason = CourseSeason.SPRING
-            break
-          case 'FALL':
-            semesterSeason = CourseSeason.FALL
-            break
-          case 'SUMMER':
-            semesterSeason = CourseSeason.SUMMER
-            break
-          case 'WHOLE_YEAR':
-            semesterSeason = CourseSeason.WHOLE_YEAR
-            break
-          case 'ANY':
-            semesterSeason = CourseSeason.ANY
-            break
-        }
+        const semesterSeason = mapStringToEnum(
+          course.semesterSeason?.toString(),
+          CourseSeason,
+        )
         if (!semesterSeason) {
           throw new Error(
             `Not able to map semester season: ${course.semesterSeason?.toString()}`,

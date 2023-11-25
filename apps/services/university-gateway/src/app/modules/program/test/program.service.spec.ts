@@ -9,6 +9,7 @@ import { FixtureFactory } from '../../../../../test/fixtureFactory'
 import { SequelizeConfigService } from '../../../../sequelizeConfig.service'
 import { AppModule } from '../../../app.module'
 import faker from 'faker'
+import { ModeOfDelivery } from '@island.is/university-gateway'
 
 const currentUser = createCurrentUser()
 
@@ -53,6 +54,7 @@ describe('ProgramService', () => {
         const program = await fixtureFactory.createProgram({
           universityId: universityId,
           durationInYears: 3,
+          modeOfDeliveryList: [ModeOfDelivery.ON_SITE],
         })
         assert(program)
       }
@@ -69,6 +71,7 @@ describe('ProgramService', () => {
       const program = await fixtureFactory.createProgram({
         universityId: universityId,
         durationInYears: 3,
+        modeOfDeliveryList: [ModeOfDelivery.ON_SITE, ModeOfDelivery.ONLINE],
       })
       assert(program)
 
@@ -99,6 +102,7 @@ describe('ProgramService', () => {
           const program = await fixtureFactory.createProgram({
             universityId: universityId,
             durationInYears: possibleDurations[i],
+            modeOfDeliveryList: [ModeOfDelivery.ON_SITE],
           })
           assert(program)
         }
