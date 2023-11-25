@@ -28,9 +28,7 @@
         "default",
         "{workspaceRoot}/apps/air-discount-scheme/api/src/api.graphql"
       ],
-      "outputs": [
-        "{projectRoot}/gen"
-      ]
+      "outputs": ["{projectRoot}/gen"]
     }
   },
   "implicitDependencies": ["skilavottord-ws"],
