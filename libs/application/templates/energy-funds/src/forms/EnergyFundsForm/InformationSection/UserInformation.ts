@@ -4,7 +4,6 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
-  buildDateField,
 } from '@island.is/application/core'
 import format from 'date-fns/format'
 
@@ -13,21 +12,21 @@ import { VehiclesCurrentVehicle } from '../../../shared/types'
 import { getSelectedVehicle } from '../../../utils'
 
 export const userInformationSubSection = buildSubSection({
-  id: 'vehicle',
+  id: 'vehicleDetails',
   title: information.labels.vehicle.sectionTitle,
   children: [
     buildMultiField({
-      id: 'vehicleMultiField',
+      id: 'vehicleDetailsMultiField',
       title: information.labels.vehicle.pageTitle,
       description: information.labels.vehicle.description,
       children: [
         buildDescriptionField({
-          id: 'vehicle.title',
+          id: 'vehicleDetails.title',
           title: information.labels.vehicle.title,
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'selectVehicle.plate',
+          id: 'vehicleDetails.plate',
           title: information.labels.vehicle.plate,
           backgroundColor: 'white',
           width: 'half',
@@ -42,7 +41,7 @@ export const userInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'selectVehicle.type',
+          id: 'vehicleDetails.type',
           title: information.labels.vehicle.type,
           backgroundColor: 'white',
           width: 'half',
@@ -64,7 +63,7 @@ export const userInformationSubSection = buildSubSection({
           required: true,
         }),
         buildTextField({
-          id: 'vehicleDetails.registrationDate',
+          id: 'vehicleDetails.firstRegistrationDate',
           title: information.labels.vehicle.registrationDate,
           width: 'half',
           readOnly: true,
@@ -74,19 +73,19 @@ export const userInformationSubSection = buildSubSection({
               application.answers,
             ) as VehiclesCurrentVehicle
             return (
-              vehicle.registrationDate &&
-              format(new Date(vehicle.registrationDate), 'dd.MM.yyyy')
+              vehicle.firstRegistrationDate &&
+              format(new Date(vehicle.firstRegistrationDate), 'dd.MM.yyyy')
             )
           },
         }),
         buildDescriptionField({
-          id: 'seller.mainSeller',
+          id: 'applicant.description',
           title: information.labels.applicant.description,
           titleVariant: 'h5',
           space: 'gutter',
         }),
         buildTextField({
-          id: 'seller.name',
+          id: 'applicant.name',
           title: information.labels.applicant.name,
           backgroundColor: 'white',
           width: 'half',
@@ -95,7 +94,7 @@ export const userInformationSubSection = buildSubSection({
             `${application.externalData?.individual?.data?.givenName} ${application.externalData?.individual?.data?.familyName}`,
         }),
         buildTextField({
-          id: 'seller.nationalId',
+          id: 'applicant.nationalId',
           title: information.labels.applicant.nationalId,
           backgroundColor: 'white',
           width: 'half',
@@ -103,25 +102,6 @@ export const userInformationSubSection = buildSubSection({
           format: '######-####',
           defaultValue: (application: Application) =>
             application.externalData?.individual?.data?.nationalId,
-        }),
-        buildTextField({
-          id: 'seller.email',
-          title: information.labels.applicant.email,
-          width: 'half',
-          variant: 'email',
-          required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.email,
-        }),
-        buildTextField({
-          id: 'seller.phone',
-          title: information.labels.applicant.phone,
-          width: 'half',
-          variant: 'tel',
-          format: '###-####',
-          required: true,
-          defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
         }),
       ],
     }),

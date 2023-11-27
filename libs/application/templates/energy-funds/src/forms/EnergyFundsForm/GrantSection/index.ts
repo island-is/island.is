@@ -34,7 +34,7 @@ export const GrantSection = buildSection({
         }),
         buildTextField({
           title: information.labels.bankInformation.accountNumer,
-          id: 'grant.banknumber',
+          id: 'grant.bankNumber',
           dataTestId: 'bank-account-number',
           readOnly: true,
           format: '####-##-######',

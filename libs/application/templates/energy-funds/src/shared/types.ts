@@ -3,5 +3,11 @@ export type VehiclesCurrentVehicle = {
   make?: string
   color?: string
   role?: string
-  registrationDate?: string
+  firstRegistrationDate?: string
+  newRegistrationDate?: string
+  fuelCode?: string
+  importCode?: string
+  vehicleRegistrationCode?: string
+  vin?: string
+  vehicleGrant?: number
 }

@@ -38,10 +38,7 @@ export const VehicleSelectField: FC<
   }
 
   useEffect(() => {
-    if (currentVehicle) {
-      setValue('selectVehicle.color', currentVehicle?.color || '')
-      setValue('selectVehicle.type', currentVehicle?.make || '')
-    }
+    setValue('selectVehicle.vin', currentVehicle?.vin || '')
   }, [currentVehicle])
 
   return (

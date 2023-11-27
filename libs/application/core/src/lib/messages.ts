@@ -565,6 +565,13 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
   },
+  electricVehicleListEmptyOwner: {
+    id: 'application.system:copyLink.electricVehicleListEmptyOwner',
+    defaultMessage:
+      'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
+    description:
+      'You do not have any electric vehicles where you are the main owner',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

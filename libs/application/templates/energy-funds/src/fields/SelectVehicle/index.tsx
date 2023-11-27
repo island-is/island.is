@@ -5,6 +5,7 @@ import { FC } from 'react'
 import { VehiclesCurrentVehicle } from '../../shared/types'
 import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleCheckboxField } from './VehicleChekboxField'
+import { getVehicleGrantAmount } from '../../utils/getVehicleGrantAmount'
 
 export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,

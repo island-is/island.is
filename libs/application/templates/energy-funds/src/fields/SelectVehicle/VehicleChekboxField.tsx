@@ -21,7 +21,7 @@ export const VehicleCheckboxField: FC<
 > = ({ currentVehicleList, application, field }) => {
   const { formatMessage } = useLocale()
 
-  const { setValue, getValues } = useFormContext()
+  const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
     application.answers,
@@ -43,12 +43,9 @@ export const VehicleCheckboxField: FC<
 
   useEffect(() => {
     if (currentVehicle) {
-      setValue('selectVehicle.color', currentVehicle?.color || '')
-      setValue('selectVehicle.type', currentVehicle?.make || '')
-      setValue('selectVehicle.plate', currentVehicle?.permno || '')
+      setValue('selectVehicle.plate', currentVehicle.permno || '')
+      setValue('selectVehicle.vin', currentVehicle.vin || '')
     }
-
-    console.log('values', getValues())
   }, [currentVehicle])
 
   const vehicleCheckboxes = currentVehicleList.map(
@@ -62,8 +59,8 @@ export const VehicleCheckboxField: FC<
         subLabel: `${vehicle.color} - ${formatMessage(
           information.labels.pickVehicle.registrationDate,
         )}: ${
-          vehicle.registrationDate &&
-          format(new Date(vehicle.registrationDate), 'dd.MM.yyyy')
+          vehicle.firstRegistrationDate &&
+          format(new Date(vehicle.firstRegistrationDate), 'dd.MM.yyyy')
         }`,
         rightContent: (
           <div style={{ display: 'flex' }}>
@@ -84,7 +81,7 @@ export const VehicleCheckboxField: FC<
               {formatMessage(
                 information.labels.pickVehicle.checkboxCheckableTag,
                 {
-                  amount: '900 þús', //TODO
+                  amount: `${vehicle.vehicleGrant} þús`,
                 },
               )}
             </Tag>
