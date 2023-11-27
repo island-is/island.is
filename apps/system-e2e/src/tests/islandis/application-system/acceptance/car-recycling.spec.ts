@@ -94,8 +94,6 @@ applicationTest.describe('Car recycling', () => {
           .click()
       })
 
-      await page.pause()
-
       await applicationTest.step(
         'Check that conclusion screen header is visible and proceed to view the application',
         async () => {
