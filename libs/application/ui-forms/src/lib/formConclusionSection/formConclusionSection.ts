@@ -28,6 +28,7 @@ type props = {
     base64: string
     buttonText?: StaticText
     customButtonText?: { is: string; en: string }
+    filename: string
   }[]
 }
 

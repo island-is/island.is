@@ -31,6 +31,7 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
         base64: string
         buttonText?: StaticText
         customButtonText?: { is: string; en: string }
+        filename: string
       }
     | undefined
   >(undefined)
@@ -60,7 +61,7 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
           />
           <a
             href={`data:application/pdf;base64,${fileToView.base64}`}
-            download="sakavottord.pdf"
+            download={fileToView.filename}
             className={styles.linkWithoutDecorations}
           >
             <Button icon="download" iconType="outline" variant="text">

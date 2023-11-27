@@ -53,6 +53,7 @@ export const Confirmation: Form = buildForm({
             application.externalData,
             x.professionId,
           ),
+          filename: 'vottord_vegna_starfsleyfis_' + x.professionId + '.pdf',
         }))
       },
     }),

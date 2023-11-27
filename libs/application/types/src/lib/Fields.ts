@@ -368,6 +368,7 @@ export interface PdfLinkButtonField extends BaseField {
     base64: string
     buttonText?: StaticText
     customButtonText?: { is: string; en: string }
+    filename: string
   }[]
   // isViewingFile: boolean
   // setIsViewingFile: (value: boolean) => void
