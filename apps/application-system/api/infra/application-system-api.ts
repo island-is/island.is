@@ -288,6 +288,12 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
+      ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

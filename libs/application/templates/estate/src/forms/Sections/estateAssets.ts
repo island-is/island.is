@@ -9,7 +9,6 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { EstateTypes, YES } from '../../lib/constants'
-import { application } from 'express'
 import { getAssetDescriptionText } from '../../lib/utils'
 
 export const estateAssets = buildSection({
@@ -198,6 +197,11 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'claims',
       title: m.claimsTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'claims',
@@ -240,6 +244,11 @@ export const estateAssets = buildSection({
     buildSubSection({
       id: 'stocks',
       title: m.stocksTitle,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
       children: [
         buildMultiField({
           id: 'stocks',
@@ -273,15 +282,18 @@ export const estateAssets = buildSection({
                   {
                     title: m.stocksFaceValue.defaultMessage,
                     id: 'faceValue',
+                    currency: true,
                   },
                   {
                     title: m.stocksRateOfChange.defaultMessage,
                     id: 'rateOfExchange',
+                    type: 'number',
                   },
                   {
                     title: m.stocksValue.defaultMessage,
                     id: 'value',
                     backgroundColor: 'white',
+                    currency: true,
                     readOnly: true,
                   },
                 ],
