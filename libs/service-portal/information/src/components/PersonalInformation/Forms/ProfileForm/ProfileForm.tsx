@@ -9,7 +9,6 @@ import {
   PhoneInput,
 } from '@island.is/island-ui/core'
 import { parseNumber, LoadModal } from '@island.is/service-portal/core'
-import { formatPhoneNumber } from '@island.is/shared/utils'
 import {
   useUserProfile,
   useUpdateOrCreateUserProfile,
@@ -263,10 +262,12 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       })}
                     />
                   }
-                  link={getIDSLink(IdsUserProfileLinks.EMAIL)}
-                  linkTitle={formatMessage(
-                    userProfile?.email ? msg.change : msg.add,
-                  )}
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.EMAIL),
+                    title: formatMessage(
+                      userProfile?.email ? msg.change : msg.add,
+                    ),
+                  }}
                 />
               ) : (
                 <InputEmail
@@ -319,10 +320,12 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       })}
                     />
                   }
-                  link={getIDSLink(IdsUserProfileLinks.PHONE_NUMBER)}
-                  linkTitle={formatMessage(
-                    userProfile?.mobilePhoneNumber ? msg.change : msg.add,
-                  )}
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
+                    title: formatMessage(
+                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                    ),
+                  }}
                 />
               ) : (
                 <InputPhone
