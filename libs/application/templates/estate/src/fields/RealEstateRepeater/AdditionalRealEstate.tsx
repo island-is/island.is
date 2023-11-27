@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -15,6 +15,8 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
+import { convertToShare, isNumericalString } from '../../lib/utils'
+import { COMMA_REGEX, PERCENTAGE_REGEX } from '../../lib/constants'
 
 export const AdditionalRealEstate = ({
   field,
@@ -42,9 +44,13 @@ export const AdditionalRealEstate = ({
   const shareField = `${fieldIndex}.share`
   const shareTempField = `${fieldIndex}.shareTemp`
   const marketValueField = `${fieldIndex}.marketValue`
-
-  const { control, setValue, getValues, clearErrors } = useFormContext()
-
+  
+  const {
+    control,
+    setValue,
+    clearErrors,
+    getValues,
+  } = useFormContext()
   const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
@@ -76,6 +82,19 @@ export const AdditionalRealEstate = ({
       })
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
+
+  const handleShareInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const inputValue = event.target.value
+    if (isNumericalString(inputValue)) {
+      const numericValueStr = inputValue
+        .replace(PERCENTAGE_REGEX, '')
+        .replace(COMMA_REGEX, '.')
+      const share = convertToShare(numericValueStr)
+      setValue(shareField, share)
+    }
+  }
 
   return (
     <Box position="relative" key={field.id} marginTop={2}>
@@ -135,19 +154,11 @@ export const AdditionalRealEstate = ({
           <InputController
             id={shareTempField}
             label={formatMessage(m.propertyShare)}
-            type='number'
             defaultValue={field?.share ? (field.share * 100).toFixed() : '100'}
-            onChange={(e) => {
-              const value = e.target.value
-              const cleanedText = value.replace(/%/g, '');
-              // pareseFloat will sometimes add a tiny fracition to the number, so we call toFixed to get rid of it
-              const convertedValue = parseFloat(cleanedText).toFixed(2)
-              const share = Number(convertedValue) / 100
-              setValue(shareField, share)
-            }}
+            onChange={(e) => handleShareInputChange(e)}
             placeholder="100%"
-            suffix='%'
-            error={error?.share}
+            suffix="%"
+            error={error?.share || error?.shareTemp}
             required
           />
         </GridColumn>

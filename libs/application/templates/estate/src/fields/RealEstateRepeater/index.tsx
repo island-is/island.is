@@ -18,7 +18,7 @@ import { InputController } from '@island.is/shared/form-fields'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -26,7 +26,7 @@ export const RealEstateRepeater: FC<
     name: id,
   })
 
-  const { clearErrors } = useFormContext()
+  const { clearErrors, getValues } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }

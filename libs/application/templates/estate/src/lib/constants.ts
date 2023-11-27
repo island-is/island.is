@@ -47,3 +47,6 @@ export const relationWithApplicant = [
   'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
   'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
 ]
+
+export const PERCENTAGE_REGEX = /%/g;
+export const COMMA_REGEX = /,/g;

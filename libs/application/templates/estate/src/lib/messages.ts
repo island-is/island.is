@@ -885,6 +885,11 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
+  errorOnlyNumbers: {
+    id: 'es.application:error.errorOnlyNumbers',
+    defaultMessage: 'Eingöngu tölustafir leyfðir',
+    description: 'Letter entered in number field',
+  },
 
   // Assets
   errorNumberEmpty: {
