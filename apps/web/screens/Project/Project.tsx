@@ -262,7 +262,7 @@ const ProjectPage: Screen<PageProps> = ({
           <Stack space={3}>
             {(subpage ?? projectPage)?.slices.map((slice: Slice) =>
               slice.__typename === 'OneColumnText' ? (
-                <Box marginTop={6} className="rs_read">
+                <Box paddingTop={3} className="rs_read">
                   <SliceMachine
                     key={slice.id}
                     slice={slice}
