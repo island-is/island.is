@@ -294,7 +294,10 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
         console.log('additionalAttachments: ', additionalAttachments)
-        console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
+        console.log(
+          'additionalAttachmentsRequired: ',
+          additionalAttachmentsRequired,
+        )
         const mergedAdditionalDocumentRequired = [
           ...additionalAttachments,
           ...additionalAttachmentsRequired,
@@ -309,7 +312,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
 
         return context
       }),
-    }
+    },
   },
   mapUserToRole(
     id: string,

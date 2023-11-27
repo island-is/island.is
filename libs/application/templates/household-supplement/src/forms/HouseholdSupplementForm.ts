@@ -208,9 +208,8 @@ export const HouseholdSupplementForm: Form = buildForm({
           id: 'fileUploadLeaseAgreement',
           title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,
           condition: (answers) => {
-            const { householdSupplementHousing } = getApplicationAnswers(
-              answers,
-            )
+            const { householdSupplementHousing } =
+              getApplicationAnswers(answers)
             return (
               householdSupplementHousing === HouseholdSupplementHousing.RENTER
             )
@@ -244,9 +243,8 @@ export const HouseholdSupplementForm: Form = buildForm({
           title:
             householdSupplementFormMessage.fileUpload.schoolConfirmationTitle,
           condition: (answers) => {
-            const { householdSupplementChildren } = getApplicationAnswers(
-              answers,
-            )
+            const { householdSupplementChildren } =
+              getApplicationAnswers(answers)
             return householdSupplementChildren === YES
           },
           children: [

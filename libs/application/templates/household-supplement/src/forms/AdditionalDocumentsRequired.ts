@@ -60,9 +60,8 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               refetchApplicationAfterSubmit: true,
               actions: [
                 {
-                  name:
-                    householdSupplementFormMessage.fileUpload
-                      .additionalDocumentsEditSubmit,
+                  name: householdSupplementFormMessage.fileUpload
+                    .additionalDocumentsEditSubmit,
                   type: 'primary',
                   event: 'APPROVE',
                 },

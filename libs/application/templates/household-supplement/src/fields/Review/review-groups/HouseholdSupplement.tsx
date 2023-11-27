@@ -15,9 +15,8 @@ export const HouseholdSupplement = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [
-    { householdSupplementHousing, householdSupplementChildren },
-  ] = useStatefulAnswers(application)
+  const [{ householdSupplementHousing, householdSupplementChildren }] =
+    useStatefulAnswers(application)
 
   const { formatMessage } = useLocale()
 

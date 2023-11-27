@@ -460,9 +460,8 @@ export class NationalRegistryService extends BaseTemplateApiService {
   async getCohabitants({
     auth,
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
-    const cohabitants:
-      | string[]
-      | null = await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+    const cohabitants: string[] | null =
+      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
 
     if (!cohabitants) {
       throw new TemplateApiError(

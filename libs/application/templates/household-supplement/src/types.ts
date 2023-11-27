@@ -1,4 +1,4 @@
-import { MessageDescriptor } from "react-intl"
+import { MessageDescriptor } from 'react-intl'
 
 export interface FileType {
   key: string

@@ -15,10 +15,8 @@ export const fileUploadValidationSection = (
 ) => {
   const obj = newAnswer as Record<string, Answer>
   const { FILEUPLOAD } = AnswerValidationConstants
-  const {
-    householdSupplementHousing,
-    householdSupplementChildren,
-  } = getApplicationAnswers(application.answers)
+  const { householdSupplementHousing, householdSupplementChildren } =
+    getApplicationAnswers(application.answers)
 
   if (householdSupplementChildren === YES && obj.schoolConfirmation) {
     if (
