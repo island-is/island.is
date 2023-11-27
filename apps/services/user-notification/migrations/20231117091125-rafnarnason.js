@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -7,46 +7,46 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true,
-        autoIncrement: true
+        autoIncrement: true,
       },
       message_id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.UUIDV4,
-        allowNull: false
+        allowNull: false,
       },
       recipient: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       template_id: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
       },
       args: {
         type: Sequelize.JSON,
-        allowNull: false
+        allowNull: false,
       },
       created: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       updated: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
       },
       status: {
         type: Sequelize.ENUM('read', 'unread'),
         defaultValue: 'unread',
-        allowNull: false
-      }
-    });
+        allowNull: false,
+      },
+    })
 
-    await queryInterface.addIndex('user_notification', ['recipient']); // Adding index
+    await queryInterface.addIndex('user_notification', ['recipient']) // Adding index
   },
 
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('user_notification');
-  }
-};
+    await queryInterface.dropTable('user_notification')
+  },
+}

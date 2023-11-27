@@ -1,13 +1,23 @@
-import { Table, Column, Model, DataType, AutoIncrement, PrimaryKey, CreatedAt, UpdatedAt, Index } from 'sequelize-typescript';
+import {
+  Table,
+  Column,
+  Model,
+  DataType,
+  AutoIncrement,
+  PrimaryKey,
+  CreatedAt,
+  UpdatedAt,
+  Index,
+} from 'sequelize-typescript'
 
 interface ArgItem {
-  key: string;
-  value: string;
+  key: string
+  value: string
 }
 
 enum NotificationStatus {
   READ = 'read',
-  UNREAD = 'unread'
+  UNREAD = 'unread',
 }
 @Table({
   tableName: 'user_notification', // Explicitly setting the table name
@@ -19,62 +29,60 @@ export class Notification extends Model<Notification> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    field: 'id'
+    field: 'id',
   })
-  id!: number;
+  id!: number
 
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
     unique: true, // Adding the unique constraint
-    field: 'message_id'
+    field: 'message_id',
   })
-  messageId!: string;
+  messageId!: string
 
   @Index // Adding an index
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'recipient'
+    field: 'recipient',
   })
-  recipient!: string;
+  recipient!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'template_id'
+    field: 'template_id',
   })
-  templateId!: string;
+  templateId!: string
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    field: 'args'
+    field: 'args',
   })
-  args!: ArgItem[];
+  args!: ArgItem[]
 
   @CreatedAt
   @Column({
     type: DataType.DATE,
-    field: 'created'
+    field: 'created',
   })
-  created!: Date;
+  created!: Date
 
   @UpdatedAt
   @Column({
     type: DataType.DATE,
-    field: 'updated'
+    field: 'updated',
   })
-  updated!: Date;
+  updated!: Date
 
   @Column({
     type: DataType.ENUM,
     values: [NotificationStatus.READ, NotificationStatus.UNREAD],
     defaultValue: NotificationStatus.UNREAD,
     allowNull: false,
-    field: 'status'
+    field: 'status',
   })
-  status!: NotificationStatus;
-
-  
+  status!: NotificationStatus
 }
