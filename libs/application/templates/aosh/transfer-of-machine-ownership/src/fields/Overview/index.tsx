@@ -22,7 +22,7 @@ import {
   SellerSection,
   BuyerSection,
   OperatorSection,
-  InsuranceSection,
+  LocationSection,
 } from './sections'
 import {
   getApproveAnswers,
@@ -49,7 +49,7 @@ export const Overview: FC<
   mainOperator = '',
   ...props
 }) => {
-  const { application, refetch, location = undefined } = props
+  const { application, refetch } = props
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] =
@@ -72,13 +72,7 @@ export const Overview: FC<
 
   const [loading, setLoading] = useState(false)
 
-  const isBuyer =
-    (getValueViaPath(application.answers, 'buyer.nationalId', '') as string) ===
-    reviewerNationalId
-
   const doApproveAndSubmit = async () => {
-    // Need to get updated application answers, in case buyer has changed co-owner
-    // or any other reviewer has approved
     const applicationInfo = await getApplicationInfo({
       variables: {
         input: {
@@ -117,7 +111,6 @@ export const Overview: FC<
           updatedApplication2.answers,
           coOwnersAndOperators,
         )
-
         // Then check if user is the last approver (using newer updated application answers), if so we
         // need to submit the application (event=SUBMIT) to change the state to COMPLETED
         if (isLast) {
@@ -125,16 +118,28 @@ export const Overview: FC<
             reviewerNationalId,
             updatedApplication2.answers,
           )
+          console.log('updatedApplication2', updatedApplication2)
           const answers =
-            application.answers as TransferOfMachineOwnerShipAnswers
-          changeMachineOwnerMutation({
+            updatedApplication2.answers as TransferOfMachineOwnerShipAnswers
+          console.log('answers', answers)
+          console.log('approveAnswers', approveAnswers)
+          console.log('input', {
+            id: application.id,
+            machineId: answers.machine?.id,
+            machineMoreInfo: answers.location?.moreInfo,
+            machinePostalCode: answers.location?.postCode,
+            machineAddress: answers.location?.address,
+            buyerNationalId: answers.buyer.nationalId,
+            delegateNationalId: reviewerNationalId,
+          })
+          await changeMachineOwnerMutation({
             variables: {
               input: {
                 id: application.id,
                 machineId: answers.machine?.id,
                 machineMoreInfo: answers.location?.moreInfo,
-                machinePostalCode: answers.location.postCode,
-                machineAddress: answers.location.address,
+                machinePostalCode: answers.location?.postCode,
+                machineAddress: answers.location?.address,
                 buyerNationalId: answers.buyer.nationalId,
                 delegateNationalId: reviewerNationalId,
               },
@@ -217,7 +222,7 @@ export const Overview: FC<
           {...props}
         />
 
-        <InsuranceSection
+        <LocationSection
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}

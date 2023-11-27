@@ -73,10 +73,10 @@ export const CoOwnerAndOperatorSchema = z.intersection(
 )
 
 export const RejecterSchema = z.object({
-  plate: z.string(),
+  regNumber: z.string(),
   name: z.string(),
   nationalId: z.string(),
-  type: z.enum(['buyer', 'buyerCoOwner', 'sellerCoOwner', 'operator']),
+  type: z.enum(['buyer', 'operator']),
 })
 
 export const MachineAnswersSchema = z.object({
@@ -103,8 +103,7 @@ export const MachineAnswersSchema = z.object({
   }),
   buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
   approveExternalData: z.boolean(),
+  rejecter: RejecterSchema,
 })
 
 export type MachineAnswers = z.TypeOf<typeof MachineAnswersSchema>
-
-//export { TransferOfVehicleOwnershipSchema, TransferOfVehicleOwnership }

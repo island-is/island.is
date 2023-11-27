@@ -38,7 +38,7 @@ export const RejectedConclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {formatMessage(conclusion.rejected.firstText, {
             plate: (
               <Text as="span" variant="h5">
-                {rejecter.plate || ''}
+                {rejecter.regNumber || ''}
               </Text>
             ),
           })}

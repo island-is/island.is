@@ -80,7 +80,7 @@ export const conclusion = {
     },
     firstText: {
       id: 'aosh.application:conclusion.rejected.firstText',
-      defaultMessage: `Beiðni um eigendaskipti á ökutækinu {plate} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
+      defaultMessage: `Beiðni um eigendaskipti á tækinu {regNumber} hefur verið afturkölluð þar sem eftirfarandi aðili hafnaði:`,
       description: 'Conclusion rejected first text',
     },
     secondText: {
@@ -90,23 +90,13 @@ export const conclusion = {
     },
     thirdText: {
       id: 'aosh.application:conclusion.rejected.thirdText',
-      defaultMessage: `Vinsamlegast hafið samband við Þjónustuver Samgöngustofu, afgreidsla@samgongustofa.is, ef nánari upplýsinga er þörf.`,
+      defaultMessage: `Vinsamlegast hafið samband við Vinnueftirlitið, someemail@vinnueftirlitid.is, ef nánari upplýsinga er þörf.`,
       description: 'Conclusion rejected third text',
     },
     buyer: {
       id: 'aosh.application:conclusion.rejected.buyer',
       defaultMessage: `kaupandi`,
       description: 'Buyer label',
-    },
-    buyerCoOwner: {
-      id: 'aosh.application:conclusion.rejected.buyerCoOwner',
-      defaultMessage: `meðeigandi kaupanda`,
-      description: 'Buyer coowner label',
-    },
-    sellerCoOwner: {
-      id: 'aosh.application:conclusion.rejected.sellerCoOwner',
-      defaultMessage: `meðeigandi seljanda`,
-      description: 'Seller coowner label',
     },
     operator: {
       id: 'aosh.application:conclusion.rejected.operator',

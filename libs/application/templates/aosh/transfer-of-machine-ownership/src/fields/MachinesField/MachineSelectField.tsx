@@ -10,7 +10,6 @@ import {
   SkeletonLoader,
   InputError,
 } from '@island.is/island-ui/core'
-import { MachineDetailsInput } from '@island.is/api/schema'
 import { information, error } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
@@ -57,7 +56,7 @@ export const MachineSelectField: FC<
 
   const getMachineDetails = useLazyMachineDetails()
   const getMachineDetailsCallback = useCallback(
-    async ({ id }: MachineDetailsInput) => {
+    async (id: string) => {
       const { data } = await getMachineDetails({
         id: id,
       })
@@ -70,9 +69,7 @@ export const MachineSelectField: FC<
     const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
     if (currentMachine.id) {
-      getMachineDetailsCallback({
-        id: currentMachine.id,
-      })
+      getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
           setSelectedMachine({
             id: currentMachine.id,

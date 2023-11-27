@@ -26,6 +26,13 @@ export const RejectConfirmationModal: FC<
   refetch,
 }) => {
   const { formatMessage } = useLocale()
+  console.log('application', application)
+  console.log('visibility', visibility)
+  console.log('setVisibility', setVisibility)
+  console.log(
+    'getRejecter(reviewerNationalId, application.answers)',
+    getRejecter(reviewerNationalId, application.answers),
+  )
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
     {

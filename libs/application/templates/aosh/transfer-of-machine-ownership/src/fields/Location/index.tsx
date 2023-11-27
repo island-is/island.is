@@ -120,7 +120,11 @@ export const Location: FC<
                 postCode: parseInt(event.target.value),
               })
             }}
-            defaultValue={selectedValue.postCode?.toString()}
+            defaultValue={
+              selectedValue.postCode === 0
+                ? ''
+                : selectedValue.postCode?.toString()
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1']} paddingTop={2}>

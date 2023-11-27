@@ -9,7 +9,7 @@ import {
   ChangeMachineOwner,
   ConfirmOwnerChange,
 } from './transferOfMachineOwnershipClient.types'
-import { CustomMachineApi } from './customMachineApi'
+import { CustomMachineApi } from './apiConfiguration'
 import {
   apiChangeMachineOwnerToApiRequest,
   confirmChangeToApiRequest,
