@@ -134,6 +134,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
               >
                 <Button
                   as="span"
+                  unfocusable
                   circle
                   icon="download"
                   iconType="outline"

@@ -52,9 +52,9 @@ export const courtRecordAccordion = {
           'Notaður sem titill í "Lagt er fram" svæði í þingbókarfellilistanum.',
       },
       text: {
-        id: 'judicial.system.core:court_record_accordion.court_documents.text',
+        id: 'judicial.system.core:court_record_accordion.court_documents.text_v2',
         defaultMessage:
-          '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
+          '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} DISTRICT_COURT_JUDGE { lagt fram af dómnum} other {}}.',
       },
     }),
     firstCourtDocument: defineMessage({

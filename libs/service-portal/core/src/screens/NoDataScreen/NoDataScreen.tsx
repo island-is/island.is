@@ -47,6 +47,7 @@ export const NoDataScreen: FC<React.PropsWithChildren<Props>> = ({
           <Link to={button.link}>
             <Button
               as="span"
+              unfocusable
               variant={button.variant}
               size="small"
               icon={button.icon ? button.icon.icon : undefined}
@@ -60,6 +61,7 @@ export const NoDataScreen: FC<React.PropsWithChildren<Props>> = ({
           <a href={button.link}>
             <Button
               as="span"
+              unfocusable
               variant={button.variant}
               size="small"
               icon={button.icon ? button.icon.icon : undefined}

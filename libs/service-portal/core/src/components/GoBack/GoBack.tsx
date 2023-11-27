@@ -7,6 +7,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { LinkResolver, m } from '../../'
 import * as styles from './GoBack.css'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 type GoBackProps = {
   display?: ResponsiveProp<
@@ -27,7 +29,8 @@ export const GoBack = ({
   label,
 }: GoBackProps) => {
   const { formatMessage } = useLocale()
-
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
   return (
     <Box
       display={display}
@@ -44,8 +47,11 @@ export const GoBack = ({
           variant="text"
           truncate={truncate}
           as="span"
+          unfocusable
         >
-          {label ?? formatMessage(m.goBackToDashboard)}
+          {formatMessage(
+            isMobile ? m.goBackToDashboardShort : m.goBackToDashboard,
+          )}
         </Button>
       </LinkResolver>
     </Box>

@@ -431,6 +431,7 @@ const LicenseDetail = () => {
                     >
                       <Button
                         as="span"
+                        unfocusable
                         variant="utility"
                         size="small"
                         icon={
