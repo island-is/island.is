@@ -890,14 +890,7 @@ export const m = defineMessages({
     defaultMessage: 'Eingöngu tölustafir leyfðir',
     description: 'Letter entered in number field',
   },
-
-  // Assets
-  errorNumberEmpty: {
-    id: 'es.application:error.errorNumberEmpty',
-    defaultMessage: 'Númer má ekki vera tómt',
-    description: 'Invalid general asset number error message',
-  },
-
+  
   // Inheritance step
   inheritanceAddMember: {
     id: 'es.application:inheritanceAddMember',
