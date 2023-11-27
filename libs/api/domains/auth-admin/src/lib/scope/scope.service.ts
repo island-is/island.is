@@ -14,7 +14,6 @@ import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { CustomDelegationOnlyForDelegationType } from '@island.is/clients/auth/admin-api'
 
 @Injectable()
@@ -75,7 +74,8 @@ export class ScopeService extends MultiEnvironmentService {
       throw new Error('Nothing provided to update')
     }
 
-    const custom = this.translateCustomDelegationGrant({
+    // Translate the customDelegationOnlyFor field to the correct format
+    const customDelegationOnlyFor = this.translateCustomDelegationGrant({
       ...pick(adminPatchScopeDto, [
         'onlyForCompanies',
         'onlyForProcurationHolder',
@@ -93,8 +93,7 @@ export class ScopeService extends MultiEnvironmentService {
           scopeName,
           adminPatchScopeDto: {
             ...adminPatchScopeDto,
-            // Translate the customDelegationOnlyFor field to the correct format
-            customDelegationOnlyFor: custom,
+            customDelegationOnlyFor: customDelegationOnlyFor,
           },
         })
       }),

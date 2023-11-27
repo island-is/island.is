@@ -13,8 +13,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 
-import { AuthDelegationType } from '@island.is/shared/types'
-
 import { DelegationScope } from '../../delegations/models/delegation-scope.model'
 import { PersonalRepresentativeScopePermission } from '../../personal-representative/models/personal-representative-scope-permission.model'
 import { ApiScopeDTO } from '../dto/api-scope.dto'
