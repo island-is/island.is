@@ -62,6 +62,6 @@ export const mapFrontpage = ({ fields, sys }: IFrontpage): Frontpage => ({
   featured: (fields.featured ?? []).map(mapFeatured),
   slides: (fields.slides ?? []).map(mapFrontpageSlider),
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
-  lifeEvents: (fields.anchorPages ?? []).map(mapAnchorPage),
+  lifeEvents: (fields.lifeEvents ?? []).map(mapAnchorPage),
   linkList: fields.linkList ? mapLinkList(fields.linkList) : null,
 })

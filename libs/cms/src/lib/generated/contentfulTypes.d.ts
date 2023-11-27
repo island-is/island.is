@@ -1207,10 +1207,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: ILifeEventPage[] | undefined
-
-  /** Anchor Pages */
-  anchorPages?: IAnchorPage[] | undefined
+  lifeEvents?: IAnchorPage[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
