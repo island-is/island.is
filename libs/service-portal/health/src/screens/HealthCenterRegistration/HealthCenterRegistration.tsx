@@ -82,7 +82,6 @@ const HealthCenterRegistration = () => {
           })
           .filter(Boolean as unknown as ExcludesFalse) ?? [],
       )
-      console.log({ data })
     },
   })
 
@@ -244,7 +243,10 @@ const HealthCenterRegistration = () => {
           healthCenter: selectedHealthCenter?.name,
         })}
         description={formatMessage(messages.healthCenterRegistrationModalInfo)}
-        onClose={() => setSelectedHealthCenter(null)}
+        onClose={() => {
+          setSelectedHealthCenter(null)
+          setHealthCenterDoctors([])
+        }}
         onAccept={handleHealthCenterTransfer}
         isVisible={!!selectedHealthCenter}
         buttonLoading={loadingTransfer}

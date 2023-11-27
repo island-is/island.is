@@ -111,7 +111,6 @@ export class HealthCenterService {
   }
 
   async getHealthCenterDoctors(user: User, input: HealthCenterDoctorsInput) {
-    console.log({ input })
     return this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
       .getHealthCenterDoctors(input)

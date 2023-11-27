@@ -62,8 +62,8 @@ export const RegisterModal = ({
                 <Select
                   isClearable
                   options={healthCenterDoctors}
-                  label="Viltu velja heimilislækni?"
-                  placeholder="Heimilislæknir"
+                  label={formatMessage(messages.chooseDoctorLabel)}
+                  placeholder={formatMessage(messages.chooseDoctorPlaceholder)}
                   onChange={(val) => {
                     setDoctorId(val?.value)
                   }}

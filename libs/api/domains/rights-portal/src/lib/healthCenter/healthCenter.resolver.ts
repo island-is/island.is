@@ -62,8 +62,6 @@ export class HealthCenterResolver {
     @CurrentUser() user: User,
     @Args('input') input: HealthCenterDoctorsInput,
   ) {
-    console.log({ input })
-
     return this.service.getHealthCenterDoctors(user, input)
   }
 
