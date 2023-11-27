@@ -21,7 +21,11 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link' | 'lifeeventpage'
+export type LinkType =
+  | keyof typeof routesTemplate
+  | 'linkurl'
+  | 'link'
+  | 'lifeeventpage'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -313,7 +317,7 @@ export const linkResolver = (
 
   // Temporarily reassign life event pages to anchor pages
   if (type === 'lifeeventpage') {
-    type = 'anchorpage';
+    type = 'anchorpage'
   }
 
   // special case for external url resolution
