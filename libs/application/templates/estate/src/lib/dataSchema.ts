@@ -117,18 +117,19 @@ export const estateSchema = z.object({
         },
       )
 
-      /* Validating email and phone depending on whether the field is enabled */
+      /* Validating email and phone of member depending on whether the field is 
+          enabled and whether member has advocate */
       .refine(
-        ({ enabled, phone }) => {
-          return enabled ? isValidPhoneNumber(phone) : true
+        ({ enabled, advocate, phone }) => {
+          return enabled && !advocate ? isValidPhoneNumber(phone) : true
         },
         {
           path: ['phone'],
         },
       )
       .refine(
-        ({ enabled, email }) => {
-          return enabled ? isValidEmail(email) : true
+        ({ enabled, advocate, email }) => {
+          return enabled && !advocate ? isValidEmail(email) : true
         },
         {
           path: ['email'],
@@ -274,15 +275,16 @@ export const estateSchema = z.object({
   stocks: z
     .object({
       organization: z.string(),
-      nationalId: z.string(),
+      nationalId: z.string().optional(),
       faceValue: z.string(),
       rateOfExchange: z.string(),
       value: z.string().optional(),
     })
     /* ---- Validating whether the fields are either all filled out or all empty ---- */
     .refine(
-      ({ organization, nationalId, faceValue, rateOfExchange }) => {
-        return organization !== '' || faceValue !== '' || rateOfExchange !== ''
+      // only validate nationalId if it is not empty
+      ({ nationalId }) => {
+        return nationalId !== ''
           ? nationalId && kennitala.isValid(nationalId)
           : true
       },
@@ -408,6 +410,16 @@ export const estateSchema = z.object({
       },
       {
         path: ['balance'],
+      },
+    )
+    .refine(
+      ({ creditorName, nationalId, balance, loanIdentity }) => {
+        return nationalId !== '' || balance !== '' || loanIdentity !== ''
+          ? isValidString(creditorName)
+          : true
+      },
+      {
+        path: ['creditorName'],
       },
     )
     .array()
