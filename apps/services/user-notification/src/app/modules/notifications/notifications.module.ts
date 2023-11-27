@@ -25,9 +25,7 @@ import { Notification } from './notification.model'
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([
-      Notification
-    ]),
+    SequelizeModule.forFeature([Notification]),
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
       max: 100, // 100 items max
@@ -45,10 +43,7 @@ import { Notification } from './notification.model'
       },
     }),
   ],
-  controllers: [
-    NotificationsController, 
-    MeNotificationsController
-  ],
+  controllers: [NotificationsController, MeNotificationsController],
   providers: [
     NotificationsService,
     NotificationDispatchService,

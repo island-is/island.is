@@ -35,7 +35,7 @@
             "input": "apps/services/user-notification",
             "output": "./"
           }
-      ]
+        ]
       },
       "configurations": {
         "production": {
@@ -121,8 +121,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn start services-user-notification"],
+        "commands": ["yarn start services-user-notification"],
         "parallel": true
       }
     },

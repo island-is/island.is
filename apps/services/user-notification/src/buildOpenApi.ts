@@ -20,7 +20,6 @@ import { SequelizeConfigService } from './app/sequelizeConfig.service'
         name: 'notifications',
         queueName: '',
       },
-      
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,

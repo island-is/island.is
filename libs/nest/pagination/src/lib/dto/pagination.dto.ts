@@ -37,5 +37,4 @@ export class PaginationDto {
   })
   @IsString()
   locale?: string
-
 }

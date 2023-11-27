@@ -16,21 +16,19 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { paginate } from '@island.is/nest/pagination'
 
-
-
 import { Op } from 'sequelize'
 import { User } from '@island.is/auth-nest-tools'
-import { PaginatedNotificationDto, UpdateNotificationDto, NotificationStatus, RenderedNotificationDto } from './dto/notification.dto'
-
-
+import {
+  PaginatedNotificationDto,
+  UpdateNotificationDto,
+  NotificationStatus,
+  RenderedNotificationDto,
+} from './dto/notification.dto'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
 
-  
-  
-  
 @Injectable()
 export class NotificationsService {
   constructor(
@@ -169,20 +167,25 @@ export class NotificationsService {
     return template
   }
 
-  async findOne(user: User,id: number,locale:string): Promise<RenderedNotificationDto> {
-    
+  async findOne(
+    user: User,
+    id: number,
+    locale: string,
+  ): Promise<RenderedNotificationDto> {
     let notification = await this.notificationModel.findOne({
       where: {
         id: id,
-        recipient: user.nationalId
-      }
-    });
+        recipient: user.nationalId,
+      },
+    })
 
     if (!notification) {
-      throw new NotFoundException('Notification not found or does not belong to the user');
+      throw new NotFoundException(
+        'Notification not found or does not belong to the user',
+      )
     } else {
-      const template = await this.getTemplate(notification.templateId,locale);
-      const formattedTemplate = this.formatArguments(notification, template);
+      const template = await this.getTemplate(notification.templateId, locale)
+      const formattedTemplate = this.formatArguments(notification, template)
       // const response = {
       //   ...notification.toJSON(), // Convert Sequelize model instance to a plain object
       //   message: {
@@ -198,28 +201,23 @@ export class NotificationsService {
         // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
         // message: i a
         // notification: {
-          id: notification.id,
-          messageId: notification.messageId,
-          sender: "Hnipp Stofnun",
-          title: formattedTemplate.notificationTitle,
-          body: formattedTemplate.notificationBody,
-          dataCopy: formattedTemplate.notificationDataCopy,
-          clickAction: formattedTemplate.clickAction,
-          created: notification.created,
-          updated: notification.updated,
-          status: notification.status,
+        id: notification.id,
+        messageId: notification.messageId,
+        sender: 'Hnipp Stofnun',
+        title: formattedTemplate.notificationTitle,
+        body: formattedTemplate.notificationBody,
+        dataCopy: formattedTemplate.notificationDataCopy,
+        clickAction: formattedTemplate.clickAction,
+        created: notification.created,
+        updated: notification.updated,
+        status: notification.status,
         // }
       }
-  }
     }
+  }
 
- 
-
-    
-  
-
-  async findMany(user:User,query: any): Promise<PaginatedNotificationDto> {
-    const templates = await this.getTemplates(query.locale);
+  async findMany(user: User, query: any): Promise<PaginatedNotificationDto> {
+    const templates = await this.getTemplates(query.locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -227,20 +225,23 @@ export class NotificationsService {
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
-      where: { recipient: user.nationalId }
+      where: { recipient: user.nationalId },
     })
     // loop through notifications and format them as a new property like in the method above
-    const formattedNotifications = paginatedListResponse.data.map((notification) => {
-      const template = templates.find((template) => template.templateId === notification.templateId);
-      if(template){
-        const formattedTemplate = this.formatArguments(notification, template);
-        return {
-          // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-          // message: i a
-          // notification: {
+    const formattedNotifications = paginatedListResponse.data.map(
+      (notification) => {
+        const template = templates.find(
+          (template) => template.templateId === notification.templateId,
+        )
+        if (template) {
+          const formattedTemplate = this.formatArguments(notification, template)
+          return {
+            // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
+            // message: i a
+            // notification: {
             id: notification.id,
             messageId: notification.messageId,
-            sender: "Hnipp Stofnun",
+            sender: 'Hnipp Stofnun',
             title: formattedTemplate.notificationTitle,
             body: formattedTemplate.notificationBody,
             dataCopy: formattedTemplate.notificationDataCopy,
@@ -248,33 +249,36 @@ export class NotificationsService {
             created: notification.created,
             updated: notification.updated,
             status: notification.status,
-          // }
+            // }
+          }
         }
-      };
-    });
-    paginatedListResponse.data = formattedNotifications;
+      },
+    )
+    paginatedListResponse.data = formattedNotifications
     return paginatedListResponse
   }
 
   async update(
     user: User,
     id: number,
-    updateNotificationDto: UpdateNotificationDto
+    updateNotificationDto: UpdateNotificationDto,
   ): Promise<RenderedNotificationDto> {
     const notification = await this.notificationModel.findOne({
       where: {
         id: id,
-        recipient: user.nationalId // Check if the recipient matches the nationalId
-      }
-    });
-  
+        recipient: user.nationalId, // Check if the recipient matches the nationalId
+      },
+    })
+
     if (!notification) {
-      throw new NotFoundException('Notification not found or does not belong to the user');
+      throw new NotFoundException(
+        'Notification not found or does not belong to the user',
+      )
     } else {
       notification.status = updateNotificationDto.status
-      const res = await notification.save();
-      const template = await this.getTemplate(notification.templateId);
-      const formattedTemplate = this.formatArguments(notification, template);
+      const res = await notification.save()
+      const template = await this.getTemplate(notification.templateId)
+      const formattedTemplate = this.formatArguments(notification, template)
       const response = {
         ...res.toJSON(), // Convert Sequelize model instance to a plain object
         message: {
@@ -282,57 +286,51 @@ export class NotificationsService {
           body: formattedTemplate.notificationBody,
           dataCopy: formattedTemplate.notificationDataCopy,
           clickAction: formattedTemplate.clickAction,
-        }
-      };
+        },
+      }
 
       // return response;
       return {
         // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
         // message: i a
         // notification: {
-          id: notification.id,
-          messageId: notification.messageId,
-          sender: "Hnipp Stofnun",
-          title: formattedTemplate.notificationTitle,
-          body: formattedTemplate.notificationBody,
-          dataCopy: formattedTemplate.notificationDataCopy,
-          clickAction: formattedTemplate.clickAction,
-          created: notification.created,
-          updated: notification.updated,
-          status: notification.status,
+        id: notification.id,
+        messageId: notification.messageId,
+        sender: 'Hnipp Stofnun',
+        title: formattedTemplate.notificationTitle,
+        body: formattedTemplate.notificationBody,
+        dataCopy: formattedTemplate.notificationDataCopy,
+        clickAction: formattedTemplate.clickAction,
+        created: notification.created,
+        updated: notification.updated,
+        status: notification.status,
         // }
       }
     }
-   
   }
-  
-  
 
   // Just a test function for easy creating WHILE DEVELOPING
-  async create(user:User): Promise<any> {
+  async create(user: User): Promise<any> {
     let exampleNotificationData = {
       recipient: user.nationalId,
-      templateId: "HNIPP.POSTHOLF.NEW_DOCUMENT",
+      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
       args: [
         {
-          key: "organization",
-          value: "Hnipp Test Crew"
+          key: 'organization',
+          value: 'Hnipp Test Crew',
         },
         {
-          key: "documentId",
-          value: "abcd-abcd-abcd-abcd"
-        }
+          key: 'documentId',
+          value: 'abcd-abcd-abcd-abcd',
+        },
       ],
       status: NotificationStatus.UNREAD,
-    };
+    }
 
     try {
-      return this.notificationModel.create(exampleNotificationData as any);
+      return this.notificationModel.create(exampleNotificationData as any)
     } catch (error) {
       return Error
     }
-    
   }
-
-  
 }

@@ -3,9 +3,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const MAIN_QUEUE_NAME = 'user-notification'
 const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
-
 const dbName = 'services_user_notification'
-
 
 const servicePostgresInfo = {
   // The service has only read permissions
@@ -30,7 +28,7 @@ export const userNotificationServiceSetup =
       .serviceAccount('user-notification')
       .postgres(servicePostgresInfo)
       .command('node')
-      
+
       .args('--no-experimental-fetch', 'main.js')
       .env({
         MAIN_QUEUE_NAME,
@@ -46,7 +44,7 @@ export const userNotificationServiceSetup =
         CONTENTFUL_ACCESS_TOKEN:
           '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
       })
-      
+
       .readiness('/liveness')
       .readiness('/readiness')
       .ingress({
@@ -105,7 +103,7 @@ export const userNotificationWorkerSetup = (services: {
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: workerPostgresInfo,
     })
-    
+
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
