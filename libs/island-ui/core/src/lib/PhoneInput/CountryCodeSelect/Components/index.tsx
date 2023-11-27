@@ -151,7 +151,9 @@ export const ValueContainer = (
   return (
     <components.ValueContainer
       className={cn({
-        [styles.valueContainer]: !!inputHasLabel,
+        [styles.valueContainer({
+          size,
+        })]: !!inputHasLabel,
         [styles.valueContainerSmall]: size === 'sm',
       })}
       {...props}

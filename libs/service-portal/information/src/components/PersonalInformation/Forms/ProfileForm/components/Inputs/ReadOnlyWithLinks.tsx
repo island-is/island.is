@@ -1,44 +1,44 @@
-import React from 'react'
-import { ArrowLink, Box, Input } from '@island.is/island-ui/core'
+import React, { ReactNode } from 'react'
+import { Box, Icon, Link, Text } from '@island.is/island-ui/core'
 import * as styles from './ReadOnlyWithLinks.css'
+
 interface ReadonlyWithLinkProps {
-  title: string
-  value: string
-  verified: boolean
+  input: ReactNode
   link: string
   linkTitle: string
 }
-export function ReadOnlyWithLinks({
-  title,
-  value,
-  verified,
+
+export const ReadOnlyWithLinks = ({
+  input,
   link,
   linkTitle,
-}: ReadonlyWithLinkProps) {
-  return (
-    <Box
-      display="flex"
-      flexWrap="wrap"
-      flexDirection={['column', 'row']}
-      alignItems={['flexStart', 'flexEnd']}
-      justifyContent={['flexStart', 'flexStart']}
-      columnGap={3}
-      rowGap={1}
+}: ReadonlyWithLinkProps) => (
+  <Box
+    display="flex"
+    width="full"
+    flexDirection={['column', 'column', 'column', 'row']}
+    columnGap={3}
+    rowGap={2}
+  >
+    {input}
+    <Link
+      href={link}
+      underlineVisibility="always"
+      underline="small"
+      color="blue400"
+      className={styles.linkContainer}
     >
-      <Input
-        name="email"
-        placeholder={title}
-        value={value}
-        size="xs"
-        label={title}
-        icon={(verified && { name: 'checkmark' }) || undefined}
-        readOnly
-      />
-      <Box display="flex" alignItems="center" className={styles.linkContainer}>
-        <ArrowLink href={link} color="blue400">
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        columnGap="smallGutter"
+      >
+        <Text variant="eyebrow" color="blue400">
           {linkTitle}
-        </ArrowLink>
+        </Text>
+        <Icon icon="open" type="outline" color="currentColor" size="small" />
       </Box>
-    </Box>
-  )
-}
+    </Link>
+  </Box>
+)

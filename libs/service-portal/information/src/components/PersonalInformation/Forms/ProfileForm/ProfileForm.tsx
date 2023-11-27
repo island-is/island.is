@@ -1,7 +1,13 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Input,
+  PhoneInput,
+} from '@island.is/island-ui/core'
 import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import { formatPhoneNumber } from '@island.is/shared/utils'
 import {
@@ -244,11 +250,23 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             {!userLoading &&
               (v2UserProfileEnabled ? (
                 <ReadOnlyWithLinks
-                  title={formatMessage(msg.saveEmail)}
-                  value={userProfile?.email || ''}
-                  verified={userProfile?.emailVerified || false}
+                  input={
+                    <Input
+                      name="email"
+                      placeholder={formatMessage(msg.email)}
+                      value={userProfile?.email || ''}
+                      size="xs"
+                      label={formatMessage(msg.email)}
+                      readOnly
+                      {...(userProfile?.emailVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
+                  }
                   link={getIDSLink(IdsUserProfileLinks.EMAIL)}
-                  linkTitle={formatMessage(msg.changeEmail)}
+                  linkTitle={formatMessage(
+                    userProfile?.email ? msg.change : msg.add,
+                  )}
                 />
               ) : (
                 <InputEmail
@@ -288,17 +306,23 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             {!userLoading &&
               (v2UserProfileEnabled ? (
                 <ReadOnlyWithLinks
-                  title={formatMessage(msg.saveTel)}
-                  value={
-                    userProfile?.mobilePhoneNumber
-                      ? formatPhoneNumber(
-                          parseNumber(userProfile.mobilePhoneNumber),
-                        )
-                      : ''
+                  input={
+                    <PhoneInput
+                      name="phoneNumber"
+                      label={formatMessage(msg.tel)}
+                      placeholder="000-0000"
+                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      size="xs"
+                      readOnly
+                      {...(userProfile?.mobilePhoneNumberVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
                   }
-                  verified={userProfile?.mobilePhoneNumberVerified || false}
                   link={getIDSLink(IdsUserProfileLinks.PHONE_NUMBER)}
-                  linkTitle={formatMessage(msg.changeTel)}
+                  linkTitle={formatMessage(
+                    userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                  )}
                 />
               ) : (
                 <InputPhone

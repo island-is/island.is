@@ -1,5 +1,10 @@
 import React, { forwardRef, SyntheticEvent, useRef, useState } from 'react'
-import { AriaError, InputBackgroundColor, InputProps } from '../Input/types'
+import {
+  AriaError,
+  InputBackgroundColor,
+  InputIcon,
+  InputProps,
+} from '../Input/types'
 import * as styles from './PhoneInput.css'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
@@ -87,6 +92,7 @@ export type PhoneInputProps = Omit<
   format?: string
   onFormatValueChange?: (...event: any[]) => void
   disableDropdown?: boolean
+  icon?: InputIcon
 }
 
 export const PhoneInput = forwardRef(
@@ -116,6 +122,7 @@ export const PhoneInput = forwardRef(
       loading,
       allowedCountryCodes,
       disableDropdown,
+      icon,
       onFormatValueChange,
       onFocus,
       onBlur,
@@ -195,10 +202,13 @@ export const PhoneInput = forwardRef(
           {size === 'xs' && label && (
             <label
               htmlFor={id}
-              className={cn(styles.label, styles.labelSizes[size], {
-                [styles.labelDisabledEmptyInput]:
-                  disabled && !value && !defaultValue,
-              })}
+              className={cn(
+                styles.label({
+                  readOnly,
+                  labelDisabledEmpty: disabled && !value && !defaultValue,
+                }),
+                styles.labelSizes[size],
+              )}
             >
               {label}
               {required && (
@@ -232,10 +242,13 @@ export const PhoneInput = forwardRef(
               {size !== 'xs' && label && (
                 <label
                   htmlFor={id}
-                  className={cn(styles.label, styles.labelSizes[size], {
-                    [styles.labelDisabledEmptyInput]:
-                      disabled && !value && !defaultValue,
-                  })}
+                  className={cn(
+                    styles.label({
+                      readOnly,
+                      labelDisabledEmpty: disabled && !value && !defaultValue,
+                    }),
+                    styles.labelSizes[size],
+                  )}
                 >
                   {label}
                   {required && (
@@ -366,8 +379,26 @@ export const PhoneInput = forwardRef(
               <Icon
                 icon="warning"
                 skipPlaceholderSize
-                className={cn(styles.icon, styles.iconError)}
+                className={cn(
+                  styles.icon({
+                    size,
+                  }),
+                  styles.iconError,
+                )}
                 ariaHidden
+              />
+            )}
+            {icon && !(!loading && hasError) && (
+              <Icon
+                icon={icon.name}
+                type={icon.type}
+                ariaHidden
+                className={cn(
+                  styles.icon({
+                    size,
+                    noLabel: !label,
+                  }),
+                )}
               />
             )}
           </Box>
