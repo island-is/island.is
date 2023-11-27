@@ -58,11 +58,13 @@ export * from './lib/PdfViewer/PdfViewer'
 export * from './lib/PageLoader'
 export * from './lib/VisuallyHidden/VisuallyHidden'
 export * from './lib/Drawer/Drawer'
+export * from './lib/ProblemTemplate/ProblemTemplate'
+export * from './lib/ProblemTemplate/ProblemTemplate.css'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
 export { ProfileCard } from './lib/ProfileCard/ProfileCard'
-export { ActionCard } from './lib/ActionCard/ActionCard'
+export * from './lib/ActionCard/ActionCard'
 export { TopicCard } from './lib/TopicCard/TopicCard'
 export { CategoryCard } from './lib/CategoryCard/CategoryCard'
 

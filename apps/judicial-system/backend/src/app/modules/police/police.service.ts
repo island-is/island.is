@@ -1,7 +1,7 @@
-import { uuid } from 'uuidv4'
-import { Base64 } from 'js-base64'
 import { Agent } from 'https'
 import fetch from 'isomorphic-fetch'
+import { Base64 } from 'js-base64'
+import { uuid } from 'uuidv4'
 import { z } from 'zod'
 
 import {
@@ -12,27 +12,28 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common'
 
-import type { ConfigType } from '@island.is/nest/config'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   createXRoadAPIPath,
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
   CaseState,
   CaseType,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
 
-import { EventService } from '../event'
 import { AwsS3Service } from '../aws-s3'
+import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
+import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
-import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 
 function getChapter(category?: string): number | undefined {
   if (!category) {
@@ -201,17 +202,24 @@ export class PoliceService {
 
           this.responseStructure.parse(response)
 
-          return (
-            response.skjol?.map((file) => ({
-              id: file.rvMalSkjolMals_ID.toString(),
-              name: file.heitiSkjals.endsWith('.pdf')
-                ? file.heitiSkjals
-                : `${file.heitiSkjals}.pdf`,
-              policeCaseNumber: file.malsnumer,
-              chapter: getChapter(file.domsSkjalsFlokkun),
-              displayDate: file.dagsStofnad,
-            })) ?? []
-          )
+          const files: PoliceCaseFile[] = []
+
+          response.skjol?.forEach((file) => {
+            const id = file.rvMalSkjolMals_ID.toString()
+            if (!files.find((item) => item.id === id)) {
+              files.push({
+                id,
+                name: file.heitiSkjals.endsWith('.pdf')
+                  ? file.heitiSkjals
+                  : `${file.heitiSkjals}.pdf`,
+                policeCaseNumber: file.malsnumer,
+                chapter: getChapter(file.domsSkjalsFlokkun),
+                displayDate: file.dagsStofnad,
+              })
+            }
+          })
+
+          return files
         }
 
         const reason = await res.text()
@@ -259,11 +267,9 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseInfo[]> {
-    const promise = this.fetchPoliceDocumentApi(
+    return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
-
-    return promise
       .then(async (res: Response) => {
         if (res.ok) {
           const response: z.infer<typeof this.responseStructure> =
@@ -375,10 +381,11 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    requestPdf: string,
-    courtRecordPdf: string,
-    rulingPdf: string,
+    requestPdf?: string,
+    courtRecordPdf?: string,
+    rulingPdf?: string,
     custodyNoticePdf?: string,
+    appealRuling?: string[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,
@@ -400,9 +407,15 @@ export class PoliceService {
           expiringDate: validToDate?.toISOString(),
           courtVerdictString: caseConclusion,
           courtDocuments: [
-            { type: 'RVKR', courtDocument: Base64.btoa(requestPdf) },
-            { type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) },
-            { type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) },
+            ...(requestPdf
+              ? [{ type: 'RVKR', courtDocument: Base64.btoa(requestPdf) }]
+              : []),
+            ...(courtRecordPdf
+              ? [{ type: 'RVTB', courtDocument: Base64.btoa(courtRecordPdf) }]
+              : []),
+            ...(rulingPdf
+              ? [{ type: 'RVUR', courtDocument: Base64.btoa(rulingPdf) }]
+              : []),
             ...(custodyNoticePdf
               ? [
                   {
@@ -411,6 +424,10 @@ export class PoliceService {
                   },
                 ]
               : []),
+            ...(appealRuling?.map((ruling) => ({
+              type: 'RVUL',
+              courtDocument: Base64.btoa(ruling),
+            })) ?? []),
           ],
         }),
       } as RequestInit,

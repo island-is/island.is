@@ -1,5 +1,11 @@
 import gql from 'graphql-tag'
-import { slices, nestedFields } from './fragments'
+
+import {
+  htmlFields,
+  nestedFields,
+  processEntryFields,
+  slices,
+} from './fragments'
 
 export const GET_ORGANIZATIONS_QUERY = gql`
   query GetOrganizations($input: GetOrganizationsInput!) {
@@ -63,11 +69,7 @@ export const GET_ORGANIZATION_BY_TITLE_QUERY = gql`
 `
 
 export const GET_ORGANIZATION_QUERY = gql`
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
   query GetOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id
@@ -226,6 +228,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         gradientEndColor
         backgroundColor
         darkText
+        fullWidth
       }
       externalLinks {
         text
@@ -276,9 +279,12 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
     getArticles(input: $input) {
       title
       slug
+      body {
+        ...ProcessEntryFields
+      }
       processEntryButtonText
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       category {
         slug
@@ -290,6 +296,7 @@ export const GET_ORGANIZATION_SERVICES_QUERY = gql`
       }
     }
   }
+  ${processEntryFields}
 `
 
 export const GET_ORGANIZATION_TAGS_QUERY = gql`

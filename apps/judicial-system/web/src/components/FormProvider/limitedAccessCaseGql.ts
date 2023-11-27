@@ -12,9 +12,9 @@ const LimitedAccessCaseQuery = gql`
       policeCaseNumbers
       caseFiles {
         id
+        created
         name
         category
-        created
         key
         policeCaseNumber
       }
@@ -120,6 +120,7 @@ const LimitedAccessCaseQuery = gql`
       appealConclusion
       appealRulingDecision
       appealCaseNumber
+      appealRulingModifiedHistory
       appealAssistant {
         id
         name

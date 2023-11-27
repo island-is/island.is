@@ -259,6 +259,25 @@ export const coreMessages = defineMessages({
   },
 })
 
+export const coreDefaultFieldMessages = defineMessages({
+  defaultFileUploadDescription: {
+    id: 'application.system:core.default.fileUpload.description',
+    defaultMessage:
+      'Samþykktar skráartegundir eru .pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
+    description: 'Default file upload description',
+  },
+  defaultFileUploadHeader: {
+    id: 'application.system:core.default.fileUpload.header',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Default file upload header',
+  },
+  defaultFileUploadButtonLabel: {
+    id: 'application.system:core.default.fileUpload.buttonLabel',
+    defaultMessage: 'Veljið skjöl til að hlaða upp',
+    description: 'Default file upload button label',
+  },
+})
+
 export const coreErrorMessages = defineMessages({
   defaultTemplateApiError: {
     id: 'application.system:core.defaultTemplateApiError',
@@ -430,6 +449,19 @@ export const coreErrorMessages = defineMessages({
       'Uppfletting í gögnum hjá Þjóðskrá Íslands skilaði eingöngu börnum sem eru alfarið í þinni forsjá.\n\nÞessi umsókn er ætluð foreldrum sem fara sameiginlega með forsjá barna sinna.',
     description:
       'Error message summary when a user has no children in joint custody',
+  },
+  nationalRegistryAlreadyIcelandicCitizenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenTitle',
+    defaultMessage: 'Nú þegar með íslenskt ríkisfang',
+    description:
+      'Error message title when a user already has icelandic citizenship',
+  },
+  nationalRegistryAlreadyIcelandicCitizenSummary: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland er innskráður notandi nú þegar með íslenskt ríkisfang.',
+    description:
+      'Error message summary when a user already has icelandic citizenship',
   },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
@@ -630,7 +662,7 @@ export const coreDelegationsMessages = defineMessages({
 export const coreErrorScreenMessages = defineMessages({
   notFoundTitle: {
     id: 'application.system:core.errorScreen.notFoundTitle',
-    defaultMessage: 'Umsókn fannst ekki',
+    defaultMessage: 'Engin umsóknartegund skilgreind',
     description: 'Error screen title',
   },
   notFoundSubTitle: {
@@ -641,7 +673,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notFoundDescription: {
     id: 'application.system:core.errorScreen.notFoundDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Umsóknartegund hefur ekki verið skilgreind\n`,
     description: 'Error screen description',
   },
   forbiddenTitle: {
@@ -673,7 +705,45 @@ export const coreErrorScreenMessages = defineMessages({
   },
   notExistDescription: {
     id: 'application.system:core.errorScreen.notExistDescription#markdown',
-    defaultMessage: `* Þú ert á rangri slóð\n`,
+    defaultMessage: `* Það gæti verið stafsetningarvilla í umsóknarnafni\n* Umsóknin gæti verið óaðgengileg\n* Umsóknartegund gæti hafa verið eytt\n* Umsóknartegund gæti verið ógild`,
+  },
+  applicationIdNotOwnedByUserTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserTitle',
+    defaultMessage: 'Tiltekin umsókn fannst ekki',
+    description:
+      'Error screen title when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserSubTitle: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin fannst ekki',
+    description:
+      'Error screen subtitle when application template exists but the specified application cant be found',
+  },
+  applicationIdNotOwnedByUserDescription: {
+    id: 'application.system:core.errorScreen.applicationIdNotOwnedByUserDescription#markdown',
+    defaultMessage: `* Þú ert ekki með aðgang að umsókninni\n* Umsóknin gæti verið eytt\n* Umsóknin er í eigu annars notanda`,
+    description:
+      'Error screen description when application template exists but the specified application cant be found',
+  },
+  badSubjectTitle: {
+    id: 'application.system:core.errorScreen.badSubjectTitle',
+    defaultMessage: 'Rangt umboð',
+    description:
+      'Error screen title when user has a bad subject error after checking delegations',
+  },
+  badSubjectSubTitle: {
+    id: 'application.system:core.errorScreen.badSubjectSubTitle',
+    defaultMessage:
+      'Eftirfarandi ástæður geta verið fyrir því að umsóknin virkar ekki',
+    description:
+      'Error screen subtitle when user has a bad subject error after checking delegations',
+  },
+  badSubjectDescription: {
+    id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
+    defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
   },
   lostTitle: {
     id: 'application.system:core.errorScreen.lostTitle',

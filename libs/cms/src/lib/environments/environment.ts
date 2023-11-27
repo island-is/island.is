@@ -19,6 +19,9 @@ export default {
     'enhancedAsset',
     'vacancy',
     'serviceWebPage',
+    'event',
+    'manual',
+    'manualChapter',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -81,8 +84,13 @@ export default {
     'sidebarCard',
     'genericTag',
     'latestNewsSlice',
+    'latestEventsSlice',
     'supportCategory',
     'supportSubCategory',
+    'lifeEventPageListSlice',
+    'manualChapter',
+    'chart',
+    'chartComponent',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

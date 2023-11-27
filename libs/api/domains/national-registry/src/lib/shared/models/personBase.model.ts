@@ -13,7 +13,7 @@ export class PersonBase {
 
   @Field(() => String, {
     nullable: true,
-    description: 'Returns a status if the person is deceased',
+    description: 'Deprecated',
   })
   fate?: string | null
 }

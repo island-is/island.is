@@ -1,86 +1,92 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react'
-import { useQuery, gql } from '@apollo/client'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import {
   Box,
   Stack,
-  LoadingDots,
-  Hidden,
   Pagination,
   Text,
+  GridContainer,
+  GridColumn,
+  GridRow,
+  Button,
+  SkeletonLoader,
+  Checkbox,
+  toast,
 } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
-  useScrollToRefOnUpdate,
-  IntroHeader,
-  EmptyState,
+  useListDocuments,
+  useOrganizations,
+} from '@island.is/service-portal/graphql'
+import {
+  GoBack,
   ServicePortalPath,
   formatPlausiblePathToParams,
+  m,
+  useScrollTopOnUpdate,
 } from '@island.is/service-portal/core'
 import {
   DocumentCategory,
   DocumentSender,
   DocumentType,
-  Query,
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { GET_ORGANIZATIONS_QUERY } from '@island.is/service-portal/graphql'
-import { messages } from '../../utils/messages'
-import DocumentLine from '../../components/DocumentLine/DocumentLine'
+import { useLocation } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilter'
 import debounce from 'lodash/debounce'
-import {
-  defaultFilterValues,
-  FilterValuesType,
-  SortType,
-} from '../../utils/types'
-import TableHeading from '../../components/TableHeading/TableHeading'
+import { defaultFilterValues, FilterValuesType } from '../../utils/types'
 import * as styles from './Overview.css'
 import { AuthDelegationType } from '@island.is/shared/types'
+import DocumentLine from '../../components/DocumentLine/DocumentLine'
 import { useUserInfo } from '@island.is/auth/react'
+import { useKeyDown } from '../../hooks/useKeyDown'
+import { usePostBulkMailActionMutation } from './BatchMailAction.generated'
+import { FavAndStash } from '../../components/FavAndStash'
+import { messages } from '../../utils/messages'
+import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplay'
+import { ActiveDocumentType } from '../../lib/types'
+import {
+  useDocumentCategoriesQuery,
+  useDocumentSendersQuery,
+  useDocumentTypesQuery,
+} from './DocumentExtra.generated'
 
-const GET_DOCUMENT_CATEGORIES = gql`
-  query documentCategories {
-    getDocumentCategories {
-      id
-      name
-    }
-  }
-`
-
-const GET_DOCUMENT_TYPES = gql`
-  query documentTypes {
-    getDocumentTypes {
-      id
-      name
-    }
-  }
-`
-
-const GET_DOCUMENT_SENDERS = gql`
-  query documentSenders {
-    getDocumentSenders {
-      id
-      name
-    }
-  }
-`
-
-const pageSize = 15
+const pageSize = 10
 
 export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [isEmpty, setEmpty] = useState(false)
-
+  const [selectedLines, setSelectedLines] = useState<Array<string>>([])
+  const [documentDisplayError, setDocumentDisplayError] = useState<string>()
+  const [docLoading, setDocLoading] = useState(false)
+  const [totalPages, setTotalPages] = useState<number>()
+  const location = useLocation()
+  const [activeDocument, setActiveDocument] =
+    useState<ActiveDocumentType | null>(null)
   const isLegal = userInfo.profile.delegationType?.includes(
     AuthDelegationType.LegalGuardian,
   )
+
+  const [bulkMailAction, { loading: bulkMailActionLoading }] =
+    usePostBulkMailActionMutation({
+      onError: (_) => toast.error(formatMessage(m.errorTitle)),
+      onCompleted: (data) => {
+        if (data.postBulkMailAction?.success) {
+          if (refetch) {
+            refetch({
+              ...fetchObject(),
+            })
+          }
+        } else {
+          toast.error(formatMessage(m.errorTitle))
+        }
+      },
+    })
+
   const dateOfBirth = userInfo?.profile.dateOfBirth
   let isOver15 = false
   if (dateOfBirth) {
@@ -88,40 +94,47 @@ export const ServicePortalDocuments = () => {
   }
   const hideHealthData = isOver15 && isLegal
 
-  const [sortState, setSortState] = useState<SortType>({
+  const sortState = {
     direction: 'Descending',
     key: 'Date',
-  })
+  }
   const [searchInteractionEventSent, setSearchInteractionEventSent] =
     useState(false)
-  const { scrollToRef } = useScrollToRefOnUpdate([page])
+  useScrollTopOnUpdate([page])
 
   const [filterValue, setFilterValue] =
     useState<FilterValuesType>(defaultFilterValues)
-  const { data, totalCount, loading, error } = useListDocuments({
-    senderKennitala: filterValue.activeSenders.join(),
-    dateFrom: filterValue.dateFrom?.toISOString(),
-    dateTo: filterValue.dateTo?.toISOString(),
-    categoryId: filterValue.activeCategories.join(),
-    subjectContains: filterValue.searchQuery,
-    typeId: null,
-    sortBy: sortState.key,
-    order: sortState.direction,
-    opened: filterValue.showUnread ? false : null,
-    page: page,
-    pageSize: pageSize,
-    isLegalGuardian: hideHealthData,
+
+  const fetchObject = () => {
+    return {
+      senderKennitala: filterValue.activeSenders.join(),
+      dateFrom: filterValue.dateFrom?.toISOString(),
+      dateTo: filterValue.dateTo?.toISOString(),
+      categoryId: filterValue.activeCategories.join(),
+      subjectContains: filterValue.searchQuery,
+      typeId: null,
+      sortBy: sortState.key,
+      order: sortState.direction,
+      opened: filterValue.showUnread ? false : null,
+      page: page,
+      pageSize: pageSize,
+      isLegalGuardian: hideHealthData,
+      archived: filterValue.archived,
+      bookmarked: filterValue.bookmarked,
+    }
+  }
+
+  const { data, totalCount, loading, error, refetch } = useListDocuments({
+    ...fetchObject(),
   })
 
-  const { data: categoriesData, loading: categoriesLoading } = useQuery<Query>(
-    GET_DOCUMENT_CATEGORIES,
-  )
+  const { data: categoriesData, loading: categoriesLoading } =
+    useDocumentCategoriesQuery()
 
-  const { data: typesData, loading: typesLoading } =
-    useQuery<Query>(GET_DOCUMENT_TYPES)
+  const { data: typesData, loading: typesLoading } = useDocumentTypesQuery()
 
   const { data: sendersData, loading: sendersLoading } =
-    useQuery<Query>(GET_DOCUMENT_SENDERS)
+    useDocumentSendersQuery()
 
   const [categoriesAvailable, setCategoriesAvailable] = useState<
     DocumentCategory[]
@@ -151,6 +164,12 @@ export const ServicePortalDocuments = () => {
   }, [typesLoading])
 
   useEffect(() => {
+    if (location?.state?.doc) {
+      setActiveDocument(location?.state?.doc)
+    }
+  }, [location?.state?.doc])
+
+  useEffect(() => {
     if (
       !categoriesLoading &&
       categoriesData?.getDocumentCategories &&
@@ -163,19 +182,13 @@ export const ServicePortalDocuments = () => {
   const filteredDocuments = data.documents
 
   useEffect(() => {
-    if (!loading && totalCount === 0 && filterValue === defaultFilterValues) {
-      setEmpty(true)
+    const pageCount = Math.ceil(totalCount / pageSize)
+    if (pageCount !== totalPages && pageCount !== 0) {
+      setTotalPages(pageCount)
     }
-  }, [loading])
+  }, [pageSize, totalCount])
 
-  const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
-    totalPages: Math.ceil(totalCount / pageSize),
-  }
-
-  const { data: orgData } = useQuery(GET_ORGANIZATIONS_QUERY)
-  const organizations = orgData?.getOrganizations?.items || {}
+  const { data: organizations } = useOrganizations()
 
   const handleDateFromInput = useCallback((value: Date | null) => {
     setPage(1)
@@ -236,6 +249,22 @@ export const ServicePortalDocuments = () => {
     }))
   }, [])
 
+  const handleShowArchived = useCallback((showArchived: boolean) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      archived: showArchived,
+    }))
+  }, [])
+
+  const handleShowBookmarked = useCallback((showBookmarked: boolean) => {
+    setPage(1)
+    setFilterValue((prevFilter) => ({
+      ...prevFilter,
+      bookmarked: showBookmarked,
+    }))
+  }, [])
+
   const handleSearchChange = (e: any) => {
     setPage(1)
     if (e) {
@@ -259,132 +288,240 @@ export const ServicePortalDocuments = () => {
       debouncedResults.cancel()
     }
   })
+
+  useKeyDown('Escape', () => setActiveDocument(null))
+
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
   }, [])
 
-  if (isEmpty) {
-    return (
-      <Box marginBottom={[4, 4, 6, 10]}>
-        <IntroHeader title={messages.title} intro={messages.intro} />
-        <EmptyState />
-      </Box>
-    )
-  }
+  const activeArchive = filterValue.archived === true
+
+  const rowDirection = error ? 'column' : 'columnReverse'
   return (
-    <Box marginBottom={[4, 4, 6, 10]}>
-      <IntroHeader title={messages.title} intro={messages.intro} />
-
-      {loading && filterValue === defaultFilterValues ? (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          width="full"
-          className={styles.loading}
+    <GridContainer>
+      <GridRow direction={[rowDirection, rowDirection, rowDirection, 'row']}>
+        <GridColumn
+          hiddenBelow={activeDocument?.document ? 'lg' : undefined}
+          span={['12/12', '12/12', '12/12', '5/12']}
         >
-          <LoadingDots large />
-        </Box>
-      ) : (
-        <Stack space={3}>
-          <Box marginTop={[1, 1, 2, 2, 6]}>
-            <DocumentsFilter
-              filterValue={filterValue}
-              categories={categoriesAvailable}
-              senders={sendersAvailable}
-              debounceChange={debouncedResults}
-              clearCategories={() =>
-                setFilterValue((oldFilter) => ({
-                  ...oldFilter,
-                  activeCategories: [],
-                }))
-              }
-              clearSenders={() =>
-                setFilterValue((oldFilter) => ({
-                  ...oldFilter,
-                  activeSenders: [],
-                }))
-              }
-              handleCategoriesChange={handleCategoriesChange}
-              handleSendersChange={handleSendersChange}
-              handleDateFromChange={handleDateFromInput}
-              handleDateToChange={handleDateToInput}
-              handleShowUnread={handleShowUnread}
-              handleClearFilters={handleClearFilters}
-              documentsLength={totalCount}
-            />
-
-            <Box marginTop={[0, 3]}>
-              <Hidden below="sm">
-                <TableHeading
-                  sortState={sortState}
-                  setSortState={setSortState}
-                />
-              </Hidden>
-              {loading && filterValue !== defaultFilterValues && (
-                <Box display="flex" justifyContent="center" padding={4}>
-                  <LoadingDots large />
-                </Box>
-              )}
-              {!loading && !error && filteredDocuments?.length === 0 && (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  margin={[3, 3, 3, 6]}
-                >
-                  <Text variant="h3" as="h3">
-                    {formatMessage(messages.notFound)}
-                  </Text>
-                </Box>
-              )}
-              {error && (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  margin={[3, 3, 3, 6]}
-                >
-                  <Text variant="h3" as="h3">
-                    {formatMessage(messages.error)}
-                  </Text>
-                </Box>
-              )}
-              <Box marginTop={[2, 0]}>
-                {filteredDocuments.map((doc, index) => (
-                  <Box key={doc.id} ref={index === 0 ? scrollToRef : null}>
-                    <DocumentLine
-                      img={getOrganizationLogoUrl(
-                        doc.senderName,
-                        organizations,
-                      )}
-                      documentLine={doc}
-                      documentCategories={categoriesAvailable}
-                      userInfo={userInfo}
-                    />
-                  </Box>
-                ))}
-              </Box>
+          <Box marginBottom={2} printHidden marginY={3}>
+            <Box
+              className={styles.btn}
+              display={'inlineFlex'}
+              alignItems={'center'}
+            >
+              <GoBack display="inline" noUnderline marginBottom={0} />
+              <Box
+                borderRadius={'circle'}
+                display={'inlineBlock'}
+                marginY={0}
+                marginX={1}
+                className={styles.bullet}
+              ></Box>
+              <Text
+                as="h1"
+                variant="eyebrow"
+                color="blue400"
+                fontWeight="semiBold"
+              >
+                {formatMessage(m.documents)}
+              </Text>
             </Box>
-
-            {filteredDocuments && (
-              <Box marginTop={4}>
-                <Pagination
-                  page={page}
-                  totalPages={pagedDocuments.totalPages}
-                  renderLink={(page, className, children) => (
-                    <button
-                      className={className}
-                      onClick={handlePageChange.bind(null, page)}
-                    >
-                      {children}
-                    </button>
+          </Box>
+          <DocumentsFilter
+            filterValue={filterValue}
+            categories={categoriesAvailable}
+            senders={sendersAvailable}
+            debounceChange={debouncedResults}
+            clearCategories={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeCategories: [],
+              }))
+            }
+            clearSenders={() =>
+              setFilterValue((oldFilter) => ({
+                ...oldFilter,
+                activeSenders: [],
+              }))
+            }
+            handleCategoriesChange={handleCategoriesChange}
+            handleSendersChange={handleSendersChange}
+            handleDateFromChange={handleDateFromInput}
+            handleDateToChange={handleDateToInput}
+            handleShowUnread={handleShowUnread}
+            handleShowArchived={handleShowArchived}
+            handleShowBookmarked={handleShowBookmarked}
+            handleClearFilters={handleClearFilters}
+            documentsLength={totalCount}
+          />
+          <Box marginTop={4}>
+            <Box
+              background="blue100"
+              width="full"
+              borderColor="blue200"
+              borderBottomWidth="standard"
+              display="flex"
+              justifyContent="spaceBetween"
+              padding={2}
+            >
+              <Box display="flex">
+                <Box className={styles.checkboxWrap} marginRight={3}>
+                  {!activeArchive && (
+                    <Checkbox
+                      name="checkbox-select-all"
+                      checked={selectedLines.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const allDocumentIds = filteredDocuments.map(
+                            (item) => item.id,
+                          )
+                          setSelectedLines([...allDocumentIds])
+                        } else {
+                          setSelectedLines([])
+                        }
+                      }}
+                    />
                   )}
+                </Box>
+                {selectedLines.length > 0 ? null : (
+                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                )}
+              </Box>
+
+              {selectedLines.length > 0 && !activeArchive ? (
+                <FavAndStash
+                  loading={bulkMailActionLoading}
+                  onStash={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'archive',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                  onFav={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'bookmark',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+              )}
+            </Box>
+            {loading && (
+              <Box marginTop={2}>
+                <SkeletonLoader
+                  space={2}
+                  repeat={pageSize}
+                  display="block"
+                  width="full"
+                  height={57}
                 />
               </Box>
             )}
+            <Stack space={0}>
+              {filteredDocuments.map((doc) => (
+                <Box key={doc.id}>
+                  <DocumentLine
+                    img={getOrganizationLogoUrl(
+                      doc.senderName,
+                      organizations,
+                      60,
+                      'none',
+                    )}
+                    documentLine={doc}
+                    onClick={setActiveDocument}
+                    onError={(err) => setDocumentDisplayError(err)}
+                    onLoading={(l) => setDocLoading(l)}
+                    active={doc.id === activeDocument?.id}
+                    bookmarked={!!doc.bookmarked}
+                    selected={selectedLines.includes(doc.id)}
+                    archived={activeArchive}
+                    refetchInboxItems={() => {
+                      if (refetch) {
+                        refetch({
+                          ...fetchObject(),
+                        })
+                      }
+                    }}
+                    setSelectLine={(docId) => {
+                      if (selectedLines.includes(doc.id)) {
+                        const filtered = selectedLines.filter(
+                          (item) => item !== doc.id,
+                        )
+                        setSelectedLines([...filtered])
+                      } else {
+                        setSelectedLines([...selectedLines, docId])
+                      }
+                    }}
+                  />
+                </Box>
+              ))}
+              {totalPages && (
+                <Box paddingBottom={4} marginTop={4}>
+                  <Pagination
+                    page={page}
+                    totalPages={totalPages}
+                    renderLink={(page, className, children) => (
+                      <button
+                        className={className}
+                        onClick={handlePageChange.bind(null, page)}
+                      >
+                        {children}
+                      </button>
+                    )}
+                  />
+                </Box>
+              )}
+            </Stack>
           </Box>
-        </Stack>
-      )}
-    </Box>
+        </GridColumn>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '7/12']}
+          position="relative"
+        >
+          <DocumentDisplay
+            activeDocument={activeDocument}
+            activeArchive={activeArchive}
+            activeBookmark={
+              !!filteredDocuments?.filter(
+                (doc) => doc?.id === activeDocument?.id,
+              )?.[0]?.bookmarked
+            }
+            category={categoriesAvailable.find(
+              (i) => i.id === activeDocument?.categoryId,
+            )}
+            onPressBack={() => setActiveDocument(null)}
+            onRefetch={() => {
+              if (refetch) {
+                refetch({
+                  ...fetchObject(),
+                })
+              }
+            }}
+            error={{
+              message: error
+                ? formatMessage(messages.error)
+                : documentDisplayError ?? undefined,
+              code: error ? 'list' : 'single',
+            }}
+            loading={docLoading}
+          />
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

@@ -1,4 +1,3 @@
-import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -17,15 +16,13 @@ import {
   CaseAppealState,
   CaseState,
   completedCaseStates,
-  Feature,
-  isCourtRole,
-  isExtendedCourtRole,
+  isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core, sections } from '@island.is/judicial-system-web/messages'
-import { FeatureContext } from '@island.is/judicial-system-web/src/components/FeatureProvider/FeatureProvider'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
@@ -39,6 +36,7 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { stepValidations, stepValidationsType } from '../../formHelper'
 import { isTrafficViolationCase } from '../../stepHelper'
+import useStringHelpers from '../useStringHelpers/useStringHelpers'
 
 const validateFormStepper = (
   isActiveSubSectionValid: boolean,
@@ -66,7 +64,7 @@ const useSections = (
 ) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const { features } = useContext(FeatureContext)
+  const { getAppealResultText } = useStringHelpers()
 
   const getRestrictionCaseProsecutorSection = (
     workingCase: Case,
@@ -84,7 +82,6 @@ const useSections = (
              */
             (route) => route === router.pathname.slice(0, -5),
           )
-
     return {
       name: formatMessage(sections.restrictionCaseProsecutorSection.caseTitle, {
         caseType: type,
@@ -415,7 +412,8 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentCaseProsecutorSection.title),
       isActive:
-        user?.role === UserRole.PROSECUTOR &&
+        (user?.role === UserRole.PROSECUTOR ||
+          user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) &&
         isIndictmentCase(type) &&
         !completedCaseStates.includes(workingCase.state),
       // Prosecutor can only view the overview when case has been received by court
@@ -597,7 +595,7 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type, parentCase } = workingCase
+    const { id, parentCase } = workingCase
     const routeIndex = courtRestrictionCasesRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -608,8 +606,7 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
-        isRestrictionCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
@@ -739,7 +736,7 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type, parentCase } = workingCase
+    const { id, parentCase } = workingCase
     const routeIndex = courtInvestigationCasesRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -751,8 +748,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
-        isInvestigationCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
@@ -891,7 +887,7 @@ const useSections = (
   }
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
-    const { id, type } = workingCase
+    const { id } = workingCase
     const routeIndex = courtIndictmentRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -903,13 +899,12 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isExtendedCourtRole(user?.role) &&
-        isIndictmentCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
-          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
+          isActive: isDefenceUser(user) ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
@@ -992,7 +987,7 @@ const useSections = (
     }
   }
 
-  const getRestrictionCaseExtenstionSections = (
+  const getRestrictionCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1092,7 +1087,7 @@ const useSections = (
     }
   }
 
-  const getInvestigationCaseExtenstionSections = (
+  const getInvestigationCaseExtensionSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
@@ -1123,7 +1118,7 @@ const useSections = (
                 ),
                 isActive: routeIndex === 0,
                 href:
-                  (section.children.length > 0 && section.children[5].href) ||
+                  (section.children.length > 0 && section.children[0].href) ||
                   undefined,
               },
               {
@@ -1192,7 +1187,7 @@ const useSections = (
   }
 
   const getCourtOfAppealSections = (workingCase: Case, user?: User) => {
-    const { id } = workingCase
+    const { id, appealRulingDecision, appealState } = workingCase
     const routeIndex = courtOfAppealRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -1258,7 +1253,10 @@ const useSections = (
         ],
       },
       {
-        name: formatMessage(sections.caseResults.result),
+        name:
+          appealState === CaseAppealState.COMPLETED
+            ? getAppealResultText(appealRulingDecision)
+            : formatMessage(sections.caseResults.result),
         isActive:
           routeIndex === 3 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
@@ -1271,14 +1269,11 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ) => {
-    const { type } = workingCase
-
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
       isActive:
         !completedCaseStates.includes(workingCase.state) &&
-        isRestrictionCase(type) &&
-        isCourtRole(user?.role),
+        isDistrictCourtUser(user),
     }
   }
 
@@ -1286,14 +1281,11 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ) => {
-    const { type } = workingCase
-
     return {
       ...getInvestigationCaseCourtSections(workingCase, user),
       isActive:
         !completedCaseStates.includes(workingCase.state) &&
-        isInvestigationCase(type) &&
-        isCourtRole(user?.role),
+        isDistrictCourtUser(user),
     }
   }
 
@@ -1328,8 +1320,8 @@ const useSections = (
       ...(workingCase.parentCase
         ? [
             isRestrictionCase(workingCase.type)
-              ? getRestrictionCaseExtenstionSections(workingCase, user)
-              : getInvestigationCaseExtenstionSections(workingCase, user),
+              ? getRestrictionCaseExtensionSections(workingCase, user)
+              : getInvestigationCaseExtensionSections(workingCase, user),
             isRestrictionCase(workingCase.type)
               ? getRestrictionCaseExtensionCourtSections(workingCase, user)
               : getInvestigationCaseExtensionCourtSections(workingCase, user),
@@ -1348,13 +1340,9 @@ const useSections = (
             },
           ]
         : []),
-      ...(!features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS)
+      ...(!workingCase.appealState
         ? []
-        : isRestrictionCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : isInvestigationCase(workingCase.type) && workingCase.appealState
-        ? getCourtOfAppealSections(workingCase, user)
-        : []),
+        : getCourtOfAppealSections(workingCase, user)),
     ]
   }
 

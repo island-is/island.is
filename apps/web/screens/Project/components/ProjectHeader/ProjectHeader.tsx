@@ -1,8 +1,10 @@
 import {
   DefaultProjectHeader,
+  DirectorateOfHealthDashboardHeader,
   EntryProjectHeader,
-  UkraineProjectHeader,
   FiskistofaDashboardHeader,
+  GrindavikProjectHeader,
+  UkraineProjectHeader,
 } from '@island.is/web/components'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
 
@@ -25,6 +27,10 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       )
     case 'gagnasidur-fiskistofu':
       return <FiskistofaDashboardHeader projectPage={projectPage} />
+    case 'directorate-of-health':
+      return <DirectorateOfHealthDashboardHeader projectPage={projectPage} />
+    case 'grindavik':
+      return <GrindavikProjectHeader projectPage={projectPage} />
     default:
       return <DefaultProjectHeader projectPage={projectPage} />
   }

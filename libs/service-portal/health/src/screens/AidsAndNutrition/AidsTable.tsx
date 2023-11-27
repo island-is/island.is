@@ -1,6 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FC } from 'react'
 import {
   ExpandHeader,
   amountFormat,
@@ -17,12 +16,7 @@ interface Props {
   linkText: string
 }
 
-const AidsTable: FC<React.PropsWithChildren<Props>> = ({
-  data,
-  footnote,
-  link,
-  linkText,
-}) => {
+const AidsTable = ({ data, footnote, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -75,7 +69,7 @@ const AidsTable: FC<React.PropsWithChildren<Props>> = ({
           key={idx}
           expiring={rowItem.expiring}
           visibleValues={[
-            rowItem.name,
+            rowItem.name.split('/').join(' / '),
             rowItem.maxUnitRefund ?? '',
             rowItem.refund.type === 'amount'
               ? amountFormat(rowItem.refund.value)

@@ -24,6 +24,7 @@ import {
   MaybeWithApplicationAndField,
   MessageWithLinkButtonField,
   Option,
+  PaymentChargeOverviewField,
   PaymentPendingField,
   PhoneField,
   RadioField,
@@ -36,6 +37,7 @@ import {
 
 import { Colors } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { coreDefaultFieldMessages } from './messages'
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,
@@ -326,10 +328,15 @@ export function buildFileUploadField(
   return {
     ...extractCommonFields(data),
     children: undefined,
-    introduction,
-    uploadHeader,
-    uploadDescription,
-    uploadButtonLabel,
+    introduction: introduction,
+    uploadHeader:
+      uploadHeader || coreDefaultFieldMessages.defaultFileUploadHeader,
+    uploadDescription:
+      uploadDescription ||
+      coreDefaultFieldMessages.defaultFileUploadDescription,
+    uploadButtonLabel:
+      uploadButtonLabel ||
+      coreDefaultFieldMessages.defaultFileUploadButtonLabel,
     uploadMultiple,
     uploadAccept:
       uploadAccept ?? '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
@@ -533,5 +540,22 @@ export function buildLinkField(
     children: undefined,
     type: FieldTypes.LINK,
     component: FieldComponents.LINK,
+  }
+}
+
+export function buildPaymentChargeOverviewField(
+  data: Omit<PaymentChargeOverviewField, 'type' | 'component' | 'children'>,
+): PaymentChargeOverviewField {
+  const { id, title, forPaymentLabel, totalLabel, getSelectedChargeItems } =
+    data
+  return {
+    children: undefined,
+    id,
+    title,
+    forPaymentLabel,
+    totalLabel,
+    getSelectedChargeItems,
+    type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
+    component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
   }
 }

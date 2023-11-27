@@ -3,5 +3,11 @@ mutation CreateExplicitDiscountCode(
 ) {
   createAirDiscountSchemeExplicitDiscountCode(input: $input) {
     discountCode
+    connectionDiscountCodes {
+      code
+      flightId
+      flightDesc
+      validUntil
+    }
   }
 }

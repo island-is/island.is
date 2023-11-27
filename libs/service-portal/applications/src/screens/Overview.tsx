@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import {
+  APPLICATION_SERVICE_PROVIDER_SLUG,
   ActionCardLoader,
   EmptyState,
+  FootNote,
   IntroHeader,
+  m as coreMessage,
 } from '@island.is/service-portal/core'
 import {
   Box,
@@ -18,7 +21,6 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useLocation } from 'react-router-dom'
 import { m } from '../lib/messages'
-import { m as coreMessage } from '@island.is/service-portal/core'
 import {
   getFilteredApplicationsByStatus,
   getInstitutions,
@@ -148,6 +150,7 @@ const Overview = () => {
       <IntroHeader
         title={GetIntroductionHeadingOrIntro(statusToShow, true)}
         intro={GetIntroductionHeadingOrIntro(statusToShow)}
+        serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG}
       />
 
       {(loading || loadingOrg || !orgData) && <ActionCardLoader repeat={3} />}
@@ -239,6 +242,7 @@ const Overview = () => {
       {!error && !loading && noApplications && (
         <EmptyState description={getNoApplicationsError(statusToShow)} />
       )}
+      <FootNote serviceProviderSlug={APPLICATION_SERVICE_PROVIDER_SLUG} />
     </>
   )
 }

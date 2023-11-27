@@ -40,6 +40,7 @@ import {
   mapAlcoholLicence,
   cleanPropertyNumber,
   mapTemporaryEventLicence,
+  mapMasterLicence,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -47,7 +48,6 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
-  TegundAndlags,
   VedbandayfirlitReguverkiSvarSkeyti,
   VedbondTegundAndlags,
 } from '../../gen/fetch'
@@ -70,6 +70,7 @@ export class SyslumennService {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
           ...this.clientConfig.fetch,
         }),
         basePath: this.clientConfig.url,
@@ -104,11 +105,11 @@ export class SyslumennService {
     const { id, api } = await this.createApi()
 
     const homestays = year
-      ? await api.virkarHeimagistingarGet({
+      ? await api.virkarHeimagistingarGet2({
           audkenni: id,
-          ar: year ? JSON.stringify(year) : null,
+          ar: JSON.stringify(year),
         })
-      : await api.virkarHeimagistingarGetAll({
+      : await api.virkarHeimagistingarGet({
           audkenni: id,
         })
 
@@ -473,5 +474,15 @@ export class SyslumennService {
       },
     })
     return res.yfirlit?.map(mapEstateInfo) ?? []
+  }
+
+  async getMasterLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.meistaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapMasterLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
 }

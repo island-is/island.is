@@ -1,26 +1,26 @@
 import { Op, WhereOptions } from 'sequelize'
 
+import { ForbiddenException } from '@nestjs/common'
+
+import type { User } from '@island.is/judicial-system/types'
 import {
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseType,
+  completedCaseStates,
   indictmentCases,
   InstitutionType,
   investigationCases,
+  isCourtOfAppealsUser,
+  isDefenceUser,
+  isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
+  RequestSharedWithDefender,
   restrictionCases,
   UserRole,
-  isProsecutionUser,
-  CaseAppealState,
-  isDistrictCourtUser,
-  isAppealsCourtUser,
-  isPrisonSystemUser,
-  isDefenceUser,
-  completedCaseStates,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
-import type { User } from '@island.is/judicial-system/types'
-
-import { ForbiddenException } from '@nestjs/common'
 
 function getProsecutionUserCasesQueryFilter(user: User): WhereOptions {
   const options: WhereOptions = [
@@ -77,7 +77,7 @@ function getDistrictCourtUserCasesQueryFilter(user: User): WhereOptions {
     },
   ]
 
-  if (user.role === UserRole.ASSISTANT) {
+  if (user.role === UserRole.DISTRICT_COURT_ASSISTANT) {
     options.push(
       { type: indictmentCases },
       {
@@ -236,7 +236,7 @@ export function getCasesQueryFilter(user: User): WhereOptions {
     return getDistrictCourtUserCasesQueryFilter(user)
   }
 
-  if (isAppealsCourtUser(user)) {
+  if (isCourtOfAppealsUser(user)) {
     return getAppealsCourtUserCasesQueryFilter()
   }
 

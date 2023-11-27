@@ -5,7 +5,6 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:occupational-license',
     defaultMessage: 'Starfsleyfi',
   },
-
   myLicenses: {
     id: 'sp.occupational-licenses:my-licenses',
     defaultMessage: 'Mín starfsleyfi',
@@ -27,6 +26,10 @@ export const olMessage = defineMessages({
     defaultMessage:
       'Hér birtast leyfisbréf kennara sem hafa verið útskrifaðir frá 1988. Bréfin eru sótt til Menntamálastofnunar.',
   },
+  theDirectorateOfEducation: {
+    id: 'sp.occupational-licenses:the-directorate-of-education',
+    defaultMessage: 'Menntamálastofnun',
+  },
   theDirectorateOfHealth: {
     id: 'sp.occupational-licenses:the-directorate-of-health',
     defaultMessage: 'Embætti landlæknis',
@@ -35,6 +38,11 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:health-directorate-intro',
     defaultMessage: 'Starfsleyfi útgefið af Landlæknisembættinu.',
   },
+  healthDirectorateTooltip: {
+    id: 'sp.occupational-licenses:health-directorate-tooltip',
+    defaultMessage:
+      'Embætti landlæknis hefur umsjón með gögnum um starfsleyfi heilbrigðisstarfsfólks.',
+  },
   validLicense: {
     id: 'sp.occupational-licenses:valid-license',
     defaultMessage: 'Í gildi',
@@ -42,6 +50,10 @@ export const olMessage = defineMessages({
   invalidLicense: {
     id: 'sp.occupational-licenses:invalid-license',
     defaultMessage: 'Útrunnið',
+  },
+  validWithLimitationsLicense: {
+    id: 'sp.occupational-licenses:valid-with-limitations-license',
+    defaultMessage: 'Í gildi með takmörkunum',
   },
   dayOfPublication: {
     id: 'sp.occupational-licenses:day-of-publication',
@@ -87,5 +99,27 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:fetch-overview-error',
     defaultMessage:
       'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginguna.',
+  },
+  fetchServerErrorTitle: {
+    id: 'sp.occupational-licenses:fetch-server-error-title',
+    defaultMessage: 'Villa kom upp í samskiptum við {institution}',
+  },
+  fetchServerErrorMessage: {
+    id: 'sp.occupational-licenses:fetch-server-error-message',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá {institution}, vinsamlegast reyndu aftur síðar.',
+  },
+  fetchNoDataTitle: {
+    id: 'sp.occupational-licenses:fetch-no-data-title',
+    defaultMessage: 'Engin gögn fundust hjá {institution}',
+  },
+  fetchNoDataMessage: {
+    id: 'sp.occupational-licenses:fetch-no-data-message',
+    defaultMessage:
+      'Engin gögn fundust hjá {institution}, vinsamlegast reyndu aftur síðar.',
+  },
+  noLicenses: {
+    id: 'sp.occupational-licenses:no-licenses',
+    defaultMessage: 'Engin starfsleyfi fundust',
   },
 })

@@ -11,8 +11,8 @@ import {
 
 describe(`${RESTRICTION_CASE_CASE_FILES_ROUTE}/:id`, () => {
   beforeEach(() => {
-    const file1 = makeCaseFile('file1', 'file1')
-    const file2 = makeCaseFile('file2', 'file2')
+    const file1 = makeCaseFile({ name: 'file1' })
+    const file2 = makeCaseFile({ name: 'file2' })
     const caseData = mockCase(CaseType.CUSTODY)
     const caseDataAddition: Case = {
       ...caseData,

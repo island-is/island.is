@@ -9,22 +9,26 @@ import {
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import type { User } from '@island.is/judicial-system/types'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 
 import {
-  judgeRule,
-  prosecutorRule,
-  registrarRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prosecutorRepresentativeRule,
-  assistantRule,
+  prosecutorRule,
 } from '../../guards'
 import {
   Case,
@@ -33,13 +37,16 @@ import {
   CaseWriteGuard,
   CurrentCase,
 } from '../case'
-import {
-  judgeNotificationRule,
-  prosecutorNotificationRule,
-  registrarNotificationRule,
-  assistantNotificationRule,
-} from './guards/rolesRules'
 import { SendNotificationDto } from './dto/sendNotification.dto'
+import {
+  courtOfAppealsAssistantNotificationRule,
+  courtOfAppealsJudgeNotificationRule,
+  courtOfAppealsRegistrarNotificationRule,
+  districtCourtAssistantNotificationRule,
+  districtCourtJudgeNotificationRule,
+  districtCourtRegistrarNotificationRule,
+  prosecutorNotificationRule,
+} from './guards/rolesRules'
 import { Notification } from './models/notification.model'
 import { SendNotificationResponse } from './models/sendNotification.response'
 import { NotificationService } from './notification.service'
@@ -56,9 +63,12 @@ export class NotificationController {
   @UseGuards(CaseWriteGuard)
   @RolesRules(
     prosecutorNotificationRule,
-    judgeNotificationRule,
-    registrarNotificationRule,
-    assistantNotificationRule,
+    districtCourtJudgeNotificationRule,
+    districtCourtRegistrarNotificationRule,
+    districtCourtAssistantNotificationRule,
+    courtOfAppealsJudgeNotificationRule,
+    courtOfAppealsRegistrarNotificationRule,
+    courtOfAppealsAssistantNotificationRule,
   )
   @Post('notification')
   @ApiCreatedResponse({
@@ -86,9 +96,12 @@ export class NotificationController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Get('notifications')
   @ApiOkResponse({

@@ -1,15 +1,11 @@
 import Link from 'next/link'
+
+import { Navigation, NavigationItem, Stack } from '@island.is/island-ui/core'
 import {
   Link as LinkSchema,
   LinkGroup,
   ProjectPage,
 } from '@island.is/web/graphql/schema'
-import {
-  Box,
-  Navigation,
-  NavigationItem,
-  Stack,
-} from '@island.is/island-ui/core'
 import { LayoutProps } from '@island.is/web/layouts/main'
 
 const lightThemes = [
@@ -18,6 +14,7 @@ const lightThemes = [
   'ukraine',
   'default',
   'opinbernyskopun',
+  'grindavik',
 ]
 
 export const getThemeConfig = (
@@ -31,7 +28,7 @@ export const getThemeConfig = (
     (projectPage?.footerItems ?? []).length > 0 ? 'organization' : 'default'
 
   let showHeader = true
-  if (theme === 'gagnasidur-fiskistofu') {
+  if (theme === 'gagnasidur-fiskistofu' || theme === 'directorate-of-health') {
     showHeader = false
   }
 

@@ -24,6 +24,7 @@ interface FooterProps {
   columns: FooterItem[]
   color?: TextProps['color']
   background?: string
+  titleVariant?: TextProps['variant']
 }
 
 export const Footer = ({
@@ -32,6 +33,7 @@ export const Footer = ({
   columns,
   color,
   background,
+  titleVariant = 'h3',
 }: FooterProps) => {
   const { width } = useWindowSize()
 
@@ -39,7 +41,7 @@ export const Footer = ({
 
   return (
     <footer className={styles.footer} style={{ background }}>
-      <Box paddingTop={3} paddingBottom={5}>
+      <Box paddingTop={5} paddingBottom={5}>
         <GridContainer>
           <GridRow className={styles.noWrap}>
             {imageUrl && (
@@ -53,7 +55,7 @@ export const Footer = ({
             >
               <GridRow marginBottom={3} marginTop={2}>
                 <GridColumn>
-                  <Text color={color} variant="h2">
+                  <Text color={color} variant={titleVariant} as="h2">
                     {heading}
                   </Text>
                 </GridColumn>

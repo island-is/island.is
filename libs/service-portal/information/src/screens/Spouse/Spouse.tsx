@@ -12,15 +12,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-import { natRegMaritalStatusMessageDescriptorRecord } from '../../helpers/localizationHelpers'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { spmm } from '../../lib/messages'
 import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
@@ -42,55 +41,25 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const [useNatRegV3, setUseNatRegV3] = useState<boolean>()
   const [spouseValue, setSpouseValue] = useState<string>('')
-
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
-  /* Should use v3? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setUseNatRegV3(ffEnabled as boolean)
-      } else {
-        setUseNatRegV3(false)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   const { data, loading, error } = useNationalRegistrySpouseQuery({
     variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
+      api: 'v3',
     },
   })
 
   useEffect(() => {
-    if (useNatRegV3 !== undefined) {
-      if (useNatRegV3) {
-        const v3Value =
-          data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
-            ? formatMessage(spmm.cohabitationWithSpouse)
-            : data?.nationalRegistryPerson?.spouse?.maritalStatus
-            ? data.nationalRegistryPerson.spouse.maritalStatus
-            : ''
-        setSpouseValue(v3Value)
-      } else {
-        const v1Value = data?.nationalRegistryPerson?.maritalStatus
-          ? formatMessage(
-              natRegMaritalStatusMessageDescriptorRecord[
-                data?.nationalRegistryPerson?.maritalStatus
-              ],
-            )
+    if (data?.nationalRegistryPerson) {
+      const maritalStatus =
+        data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
+          ? formatMessage(spmm.cohabitationWithSpouse)
+          : data?.nationalRegistryPerson?.spouse?.maritalStatus
+          ? data.nationalRegistryPerson.spouse.maritalStatus
           : ''
-        setSpouseValue(v1Value ?? '')
-      }
+      setSpouseValue(maritalStatus)
     }
-  }, [useNatRegV3, data?.nationalRegistryPerson, formatMessage])
+  }, [data?.nationalRegistryPerson, formatMessage])
 
   const { nationalId } = useParams() as UseParams
 
@@ -119,6 +88,8 @@ const FamilyMember = () => {
           title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
           marginBottom={2}
+          serviceProviderSlug={THJODSKRA_SLUG}
+          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
 
@@ -147,6 +118,7 @@ const FamilyMember = () => {
         />
         <Divider />
       </Stack>
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }

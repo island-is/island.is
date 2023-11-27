@@ -67,11 +67,12 @@ export const useDynamicRoutes = () => {
      */
     const licenseBookData = licenseBook?.drivingLicenseBookUserBook
     if (licenseBookData?.book?.id) {
-      dynamicPathArray.push(ServicePortalPath.AssetsVehiclesDrivingLessons)
+      dynamicPathArray.push(ServicePortalPath.EducationDrivingLessons)
     }
 
     // Combine routes, no duplicates.
     setActiveDynamicRoutes(uniq([...activeDynamicRoutes, ...dynamicPathArray]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, licenseBook])
 
   return { activeDynamicRoutes, loading: loading && licenseBookLoading }
@@ -80,5 +81,6 @@ export const useDynamicRoutes = () => {
 export const useDynamicRoutesWithNavigation = (nav: PortalNavigationItem) => {
   const { activeDynamicRoutes } = useDynamicRoutes()
   const navigation = useNavigation(nav, activeDynamicRoutes)
+
   return navigation
 }

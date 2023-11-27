@@ -35,21 +35,20 @@ import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
 import { IcelandicNamesModule } from '@island.is/api/domains/icelandic-names-registry'
 import {
+  FirearmDigitalLicenseClientConfig,
+  DisabilityDigitalLicenseClientConfig,
+  AdrDigitalLicenseClientConfig,
+  MachineDigitalLicenseClientConfig,
+  DrivingDigitalLicenseClientConfig,
+} from '@island.is/clients/license-client'
+import {
   CommunicationsConfig,
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
-import {
-  GenericAdrLicenseConfig,
-  GenericDisabilityLicenseConfig,
-  GenericDrivingLicenseConfig,
-  GenericFirearmLicenseConfig,
-  GenericMachineLicenseConfig,
-  OldGenericDrivingLicenseConfig,
-  LicenseServiceModule,
-} from '@island.is/api/domains/license-service'
+import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -72,6 +71,7 @@ import {
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
+import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -87,6 +87,8 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { FinanceClientConfig } from '@island.is/clients/finance'
+import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
+import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
@@ -138,6 +140,9 @@ import { GraphQLConfig } from './graphql.config'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
+import { PCardClientConfig } from '@island.is/clients/p-card'
+import { StatisticsClientConfig } from '@island.is/clients/statistics'
+import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
 const environment = getConfig
 
@@ -247,6 +252,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    StatisticsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -261,6 +267,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    HmsLoansModule,
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
@@ -286,21 +293,21 @@ const environment = getConfig
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
-        AdrAndMachineLicenseClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
         AssetsClientConfig,
+        PCardClientConfig,
+        AdrAndMachineLicenseClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,
         DisabilityLicenseClientConfig,
-        GenericFirearmLicenseConfig,
-        GenericMachineLicenseConfig,
-        GenericAdrLicenseConfig,
-        GenericDrivingLicenseConfig,
-        OldGenericDrivingLicenseConfig,
-        GenericDisabilityLicenseConfig,
+        AdrDigitalLicenseClientConfig,
+        FirearmDigitalLicenseClientConfig,
+        DisabilityDigitalLicenseClientConfig,
+        MachineDigitalLicenseClientConfig,
+        DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
         RightsPortalClientConfig,
@@ -308,7 +315,9 @@ const environment = getConfig
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
+        HmsLoansClientConfig,
         FinanceClientConfig,
+        FinanceClientV2Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,
@@ -327,7 +336,6 @@ const environment = getConfig
         FileStorageConfig,
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
-        DisabilityLicenseClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,
@@ -346,6 +354,7 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        StatisticsClientConfig,
       ],
     }),
   ],

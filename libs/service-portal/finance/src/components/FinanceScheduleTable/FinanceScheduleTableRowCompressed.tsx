@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { formSubmit, amountFormat } from '@island.is/service-portal/core'
 import { PaymentSchedule } from '@island.is/api/schema'
 import { Box, Table as T, Text, Button } from '@island.is/island-ui/core'
@@ -9,9 +8,7 @@ interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<React.PropsWithChildren<Props>> = ({
-  paymentSchedule,
-}) => {
+const FinanceScheduleTableRow = ({ paymentSchedule }: Props) => {
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 

@@ -8,11 +8,12 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
+  VerifyPaymentApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
@@ -25,6 +26,8 @@ import {
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
 } from '../dataProviders'
+import { buildPaymentState } from '@island.is/application/utils'
+import { getChargeItemCodes } from '../utils'
 
 const CriminalRecordSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -89,57 +92,11 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: m.actionCardPayment,
-              variant: 'red',
-            },
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
-            action: ApiActions.submitApplication,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getChargeItemCodes,
+        submitTarget: States.COMPLETED,
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
@@ -156,9 +113,15 @@ const template: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.getCriminalRecord,
-          }),
+          onEntry: [
+            VerifyPaymentApi.configure({
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiActions.getCriminalRecord,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,

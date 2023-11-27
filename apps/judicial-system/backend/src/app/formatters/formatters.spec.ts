@@ -1,36 +1,37 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
+
 import { caseTypes } from '@island.is/judicial-system/formatters'
 import {
+  CaseCustodyRestrictions,
   CaseLegalProvisions,
-  Gender,
   CaseType,
+  Gender,
+  InstitutionType,
+  RequestSharedWithDefender,
   SessionArrangements,
   User,
   UserRole,
-  InstitutionType,
-  CaseCustodyRestrictions,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 import {
-  formatProsecutorCourtDateEmailNotification,
-  formatLegalProvisions,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
-  formatPrisonCourtDateEmailNotification,
-  stripHtmlTags,
-  formatDefenderCourtDateEmailNotification,
-  formatCourtRevokedSmsNotification,
-  formatPrisonRevokedEmailNotification,
-  formatDefenderRevokedEmailNotification,
-  formatProsecutorReceivedByCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
-  formatProsecutorReadyForCourtEmailNotification,
+  formatCourtRevokedSmsNotification,
   formatCustodyRestrictions,
-  formatPrisonAdministrationRulingNotification,
+  formatDefenderCourtDateEmailNotification,
   formatDefenderCourtDateLinkEmailNotification,
   formatDefenderResubmittedToCourtEmailNotification,
+  formatDefenderRevokedEmailNotification,
+  formatLegalProvisions,
+  formatPrisonAdministrationRulingNotification,
+  formatPrisonCourtDateEmailNotification,
+  formatPrisonRevokedEmailNotification,
+  formatProsecutorCourtDateEmailNotification,
+  formatProsecutorReadyForCourtEmailNotification,
+  formatProsecutorReceivedByCourtSmsNotification,
+  stripHtmlTags,
 } from './formatters'
 
 export const makeProsecutor = (): User => {
@@ -2003,6 +2004,6 @@ describe('formatDefenderResubmittedToCourtEmailNotification', () => {
     expect(result.body).toEqual(
       'Sækjandi í máli R-2022/999 hjá Héraðsdómi Reykjavíkur hefur breytt kröfunni og sent hana aftur á dóminn.<br /><br />Þú getur nálgast gögn málsins á <a href="https://rettarvorslugatt.island.is/overviewUrl">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
-    expect(result.subject).toEqual('Gögn í máli R-2022/999')
+    expect(result.subject).toEqual('Krafa í máli R-2022/999')
   })
 })

@@ -1,7 +1,3 @@
-import React from 'react'
-
-import { gql, useQuery } from '@apollo/client'
-import { PaymentSchedule, Query } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -14,39 +10,18 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  IntroHeader,
   NoDataScreen,
   m as coreMessage,
+  FootNote,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import FinanceScheduleTable from '../../components/FinanceScheduleTable/FinanceScheduleTable'
 import { useUserInfo } from '@island.is/auth/react'
 import { m } from '../../lib/messages'
-
-export const GET_FINANCE_PAYMENT_SCHEDULES = gql`
-  query getPaymentSchedulesQuery {
-    getPaymentSchedule {
-      myPaymentSchedule {
-        nationalId
-        paymentSchedules {
-          approvalDate
-          paymentCount
-          scheduleName
-          scheduleNumber
-          scheduleStatus
-          scheduleType
-          totalAmount
-          unpaidAmount
-          unpaidWithInterest
-          unpaidCount
-          documentID
-          downloadServiceURL
-        }
-      }
-    }
-  }
-`
+import FinanceIntro from '../../components/FinanceIntro'
+import { useGetPaymentScheduleQuery } from './FinanceSchedule.generated'
 
 const FinanceSchedule = () => {
   useNamespaces('sp.finance-schedule')
@@ -58,9 +33,9 @@ const FinanceSchedule = () => {
     data: paymentSchedulesData,
     loading: paymentSchedulesLoading,
     error: paymentSchedulesError,
-  } = useQuery<Query>(GET_FINANCE_PAYMENT_SCHEDULES)
+  } = useGetPaymentScheduleQuery()
 
-  const recordsData: Array<PaymentSchedule> =
+  const recordsData =
     paymentSchedulesData?.getPaymentSchedule?.myPaymentSchedule
       ?.paymentSchedules || []
 
@@ -111,17 +86,13 @@ const FinanceSchedule = () => {
   }
 
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={{
-          id: 'sp.finance-schedule:title',
-          defaultMessage: 'Greiðsluáætlanir',
-        }}
-        intro={{
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro
+        text={formatMessage({
           id: 'sp.finance-schedule:intro-text',
           defaultMessage:
             'Hér getur þú gert greiðsluáætlun ef þú vilt dreifa greiðslum á skuld þinni við ríkissjóð og stofnanir. Hér getur þú einnig séð eldri greiðsluáætlanir. Ef Greiðsluáætlunin er greidd hraðar niður en áætlunin segir til um, munu greiðsluseðlar ekki berast þegar hún er upp greidd og engar eftirstöðvar eftir.',
-        }}
+        })}
       />
       <Stack space={2}>
         {!isDelegation && (
@@ -141,6 +112,8 @@ const FinanceSchedule = () => {
                     size="default"
                     type="button"
                     variant="utility"
+                    as="span"
+                    unfocusable
                   >
                     {applicationButtonText}
                   </Button>
@@ -161,6 +134,7 @@ const FinanceSchedule = () => {
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

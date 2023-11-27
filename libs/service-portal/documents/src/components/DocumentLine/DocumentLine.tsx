@@ -1,309 +1,290 @@
 import cn from 'classnames'
 import format from 'date-fns/format'
-import React, { FC } from 'react'
-import { useWindowSize } from 'react-use'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import {
   Document,
-  DocumentCategory,
   DocumentDetails,
-  Query,
-  QueryGetDocumentArgs,
+  GetDocumentListInput,
 } from '@island.is/api/schema'
-import { User } from '@island.is/shared/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Link,
-  Text,
-  Icon,
-  AlertBanner,
-} from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import {
-  LoadModal,
-  formatPlausiblePathToParams,
-} from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { messages as m } from '../../utils/messages'
-import { servicePortalOutboundLink } from '@island.is/plausible'
+import { messages } from '../../utils/messages'
+import AvatarImage from './AvatarImage'
+import { useNavigate } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
+import { FavAndStash } from '../FavAndStash'
+import { useSubmitMailAction } from '../../utils/useSubmitMailAction'
+import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
+import { ActiveDocumentType } from '../../lib/types'
 
 interface Props {
   documentLine: Document
   img?: string
-  documentCategories?: DocumentCategory[]
-  userInfo?: User
+  onClick?: (doc: ActiveDocumentType) => void
+  onError?: (error?: string) => void
+  onLoading?: (loading: boolean) => void
+  setSelectLine?: (id: string) => void
+  refetchInboxItems?: (input?: GetDocumentListInput) => void
+  active: boolean
+  asFrame?: boolean
+  includeTopBorder?: boolean
+  selected?: boolean
+  bookmarked?: boolean
+  archived?: boolean
 }
 
 const GET_DOCUMENT_BY_ID = gql`
   query getDocumentInboxLineQuery($input: GetDocumentInput!) {
     getDocument(input: $input) {
       html
+      content
       url
     }
   }
 `
-const DocumentLine: FC<React.PropsWithChildren<Props>> = ({
+export const DocumentLine: FC<Props> = ({
   documentLine,
   img,
-  documentCategories,
-  userInfo,
+  onClick,
+  onError,
+  onLoading,
+  setSelectLine,
+  refetchInboxItems,
+  active,
+  asFrame,
+  includeTopBorder,
+  bookmarked,
+  archived,
+  selected,
 }) => {
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.sm
+  const [avatarCheckmark, setAvatarCheckmark] = useState(false)
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
+  const date = format(new Date(documentLine.date), dateFormat.is)
 
-  const [getDocument, { data: getFileByIdData, loading, error }] = useLazyQuery<
-    Query,
-    QueryGetDocumentArgs
-  >(GET_DOCUMENT_BY_ID, {
-    variables: {
-      input: {
+  const {
+    submitMailAction,
+    archiveSuccess,
+    bookmarkSuccess,
+    loading: postLoading,
+  } = useSubmitMailAction({ messageId: documentLine.id })
+
+  const wrapperRef = useRef(null)
+
+  const isFocused = useIsChildFocusedorHovered(wrapperRef)
+
+  useEffect(() => {
+    setAvatarCheckmark(isFocused)
+  }, [isFocused])
+
+  const displayPdf = (docContent?: DocumentDetails) => {
+    if (onClick) {
+      onClick({
+        document:
+          docContent || (getFileByIdData?.getDocument as DocumentDetails),
         id: documentLine.id,
+        sender: documentLine.senderName,
+        subject: documentLine.subject,
+        senderNatReg: documentLine.senderNatReg,
+        downloadUrl: documentLine.url,
+        date: date,
+        img,
+        categoryId: documentLine.categoryId ?? undefined,
+      })
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
+    }
+  }
+
+  const [getDocument, { data: getFileByIdData, loading: fileLoading }] =
+    useLazyQuery(GET_DOCUMENT_BY_ID, {
+      variables: {
+        input: {
+          id: documentLine.id,
+        },
       },
-    },
-    onCompleted: (data: { getDocument?: DocumentDetails | null }) => {
-      if (data?.getDocument) {
-        onClickHandler(data?.getDocument)
-      }
-    },
-  })
-
-  const singleDocument = getFileByIdData?.getDocument || ({} as DocumentDetails)
-
-  const onClickHandler = async (docData?: DocumentDetails) => {
-    const singleDocData = docData || singleDocument
-    let html: string | undefined = undefined
-    if (singleDocData.html) {
-      html = singleDocData.html.length > 0 ? singleDocData.html : undefined
-    }
-    if (singleDocData.url) {
-      window.open(singleDocData.url, '_blank')?.focus()
-      return
-    }
-    if (html) {
-      setTimeout(() => {
-        const win = window.open('', '_blank')
-        win && html && win.document.write(html)
-        win?.focus()
-      }, 250)
-    } else {
-      // Create form elements
-      const form = document.createElement('form')
-      const documentIdInput = document.createElement('input')
-      const tokenInput = document.createElement('input')
-
-      const token = userInfo?.access_token
-
-      if (!token) return
-
-      form.appendChild(documentIdInput)
-      form.appendChild(tokenInput)
-
-      // Form values
-      form.method = 'post'
-      // TODO: Use correct url
-      form.action = documentLine.url
-      form.target = '_blank'
-
-      // Document Id values
-      documentIdInput.type = 'hidden'
-      documentIdInput.name = 'documentId'
-      documentIdInput.value = documentLine.id
-
-      // National Id values
-      tokenInput.type = 'hidden'
-      tokenInput.name = '__accessToken'
-      tokenInput.value = token
-
-      document.body.appendChild(form)
-      form.submit()
-      document.body.removeChild(form)
-    }
-  }
-
-  const date = (variant: 'small' | 'medium') => (
-    <Text variant={variant}>
-      {format(new Date(documentLine.date), dateFormat.is)}
-    </Text>
-  )
-
-  const image = img && <img className={styles.image} src={img} alt="" />
-  const isLink = documentLine.fileType === 'url' && documentLine.url
-
-  const subject = isLink ? (
-    <Link
-      onClick={() =>
-        servicePortalOutboundLink({
-          url: formatPlausiblePathToParams(
-            DocumentsPaths.ElectronicDocumentsRoot,
-          ).url,
-          outboundUrl: documentLine.url,
-        })
-      }
-      href={documentLine.url}
-      newTab
-    >
-      <button className={styles.button}>
-        {documentLine.subject}
-        <Icon type="outline" icon="open" size="small" className={styles.icon} />
-      </button>
-    </Link>
-  ) : (
-    <button
-      className={cn(styles.button, {
-        [styles.unopened]: !documentLine.opened,
-      })}
-      // Check if data is already fetched, if so go straight to download/display
-      onClick={async () => {
-        if (getFileByIdData && !loading) {
-          onClickHandler()
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const docContent = data?.getDocument
+        if (asFrame) {
+          navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+            state: {
+              id: documentLine.id,
+              doc: {
+                document: docContent as DocumentDetails,
+                id: documentLine.id,
+                subject: documentLine.subject,
+                sender: documentLine.senderName,
+                downloadUrl: documentLine.url,
+                date: date,
+                img,
+              },
+            },
+          })
         } else {
-          getDocument({ variables: { input: { id: documentLine.id } } })
+          displayPdf(docContent)
+          if (onError) {
+            onError(undefined)
+          }
         }
-      }}
-    >
-      {documentLine.subject}
-    </button>
-  )
+      },
+      onError: () => {
+        if (onError) {
+          onError(
+            formatMessage(messages.documentFetchError, {
+              senderName: documentLine.senderName,
+            }),
+          )
+        }
+      },
+    })
 
-  const group = (variant: 'eyebrow' | 'medium') => {
-    const categoryGroup = documentCategories?.find(
-      (item) => item.id === documentLine.categoryId,
-    )
-    return (
-      <Text variant={variant} id="groupName">
-        {categoryGroup?.name || ''}
-      </Text>
-    )
+  useEffect(() => {
+    if (onLoading) {
+      onLoading(fileLoading)
+    }
+  }, [fileLoading])
+
+  const onLineClick = async () => {
+    getFileByIdData
+      ? displayPdf()
+      : await getDocument({
+          variables: { input: { id: documentLine.id } },
+        })
   }
 
-  const sender = (variant: 'eyebrow' | 'medium') => (
-    <Text variant={variant} id="senderName">
-      {documentLine.senderName}
-    </Text>
-  )
-
-  const displayError = () => {
-    return (
-      <Box paddingTop={2}>
-        <AlertBanner
-          variant="error"
-          description={formatMessage(m.documentFetchError, {
-            senderName: documentLine.senderName,
-          })}
-        />
-      </Box>
-    )
-  }
+  const unread = !documentLine.opened
+  const isBookmarked = bookmarked || bookmarkSuccess
+  const isArchived = archived || archiveSuccess
 
   return (
-    <>
-      {loading && <LoadModal />}
+    <Box className={styles.wrapper} ref={wrapperRef}>
       <Box
+        display="flex"
         position="relative"
-        className={cn(styles.line, {
-          [styles.unopenedWrapper]: !documentLine.opened && !isLink,
-          [styles.linkWrapper]: isLink,
+        borderColor="blue200"
+        borderBottomWidth="standard"
+        borderTopWidth={includeTopBorder ? 'standard' : undefined}
+        paddingX={2}
+        width="full"
+        className={cn(styles.docline, {
+          [styles.active]: active,
+          [styles.unread]: unread,
         })}
-        paddingY={2}
       >
-        {isMobile ? (
-          <GridRow alignItems="flexStart" align="flexStart">
-            {img && (
-              <GridColumn span="2/12">
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  height="full"
-                  paddingX={[0, 2]}
-                  paddingBottom={[1, 0]}
-                >
-                  {image}
-                </Box>
-              </GridColumn>
+        <AvatarImage
+          img={img}
+          onClick={(e) => {
+            e.stopPropagation()
+            if (documentLine.id && setSelectLine) {
+              setSelectLine(documentLine.id)
+            }
+          }}
+          avatar={
+            (avatarCheckmark || selected) && !asFrame ? (
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                background={selected ? 'blue400' : 'blue300'}
+                borderRadius="circle"
+                className={styles.checkCircle}
+              >
+                <Icon icon="checkmark" color="white" type="filled" />
+              </Box>
+            ) : undefined
+          }
+          background={
+            avatarCheckmark
+              ? asFrame
+                ? 'white'
+                : 'blue200'
+              : documentLine.opened
+              ? 'blue100'
+              : 'white'
+          }
+        />
+        <Box
+          width="full"
+          display="flex"
+          flexDirection="column"
+          paddingLeft={2}
+          minWidth={0}
+        >
+          {active && <div className={styles.fakeBorder} />}
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+            <Text variant="small" truncate>
+              {documentLine.senderName}
+            </Text>
+            <Text variant="small">{date}</Text>
+          </Box>
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+            <button
+              onClick={async () => onLineClick()}
+              aria-label={formatMessage(m.openDocumentAriaLabel, {
+                subject: documentLine.subject,
+              })}
+              type="button"
+              className={styles.docLineButton}
+            >
+              <Text
+                fontWeight={unread ? 'medium' : 'regular'}
+                color="blue400"
+                truncate
+              >
+                {documentLine.subject}
+              </Text>
+            </button>
+            {(avatarCheckmark || isBookmarked || isArchived) &&
+              !postLoading &&
+              !asFrame && (
+                <FavAndStash
+                  bookmarked={isBookmarked}
+                  archived={isArchived}
+                  onFav={
+                    avatarCheckmark || isBookmarked
+                      ? async (e) => {
+                          e.stopPropagation()
+                          await submitMailAction(
+                            isBookmarked ? 'unbookmark' : 'bookmark',
+                          )
+                          if (refetchInboxItems) {
+                            refetchInboxItems()
+                          }
+                        }
+                      : undefined
+                  }
+                  onStash={
+                    avatarCheckmark || isArchived
+                      ? async (e) => {
+                          e.stopPropagation()
+                          await submitMailAction(
+                            isArchived ? 'unarchive' : 'archive',
+                          )
+                          if (refetchInboxItems) {
+                            refetchInboxItems()
+                          }
+                        }
+                      : undefined
+                  }
+                />
+              )}
+            {postLoading && (
+              <Box display="flex" alignItems="center">
+                <LoadingDots single />
+              </Box>
             )}
-            <GridColumn span="7/12">
-              <Box
-                display="flex"
-                alignItems="center"
-                paddingX={[0, 2]}
-                className={styles.sender}
-              >
-                {sender('eyebrow')}
-              </Box>
-              <Box display="flex" alignItems="center" paddingX={[0, 2]}>
-                {subject}
-              </Box>
-            </GridColumn>
-            <GridColumn span="3/12">
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="flexEnd"
-                height="full"
-                paddingX={[0, 2]}
-              >
-                {date('small')}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        ) : (
-          <GridRow>
-            <GridColumn span={['1/1', '2/12']}>
-              <Box
-                display="flex"
-                alignItems="center"
-                height="full"
-                paddingX={[0, 2]}
-              >
-                {date('medium')}
-              </Box>
-            </GridColumn>
-            <GridColumn span={['1/1', '4/12']}>
-              <Box
-                display="flex"
-                alignItems="center"
-                height="full"
-                paddingX={[0, 2]}
-                paddingBottom={[1, 0]}
-              >
-                {img && image}
-                {subject}
-              </Box>
-            </GridColumn>
-            <GridColumn span={['1/1', '3/12']}>
-              <Box
-                display="flex"
-                alignItems="center"
-                height="full"
-                paddingX={[0, 2]}
-                className={styles.sender}
-              >
-                {group('medium')}
-              </Box>
-            </GridColumn>
-            <GridColumn span={['1/1', '3/12']}>
-              <Box
-                display="flex"
-                alignItems="center"
-                height="full"
-                paddingX={[0, 2]}
-                className={styles.sender}
-              >
-                {sender('medium')}
-              </Box>
-            </GridColumn>
-          </GridRow>
-        )}
-        {error && displayError()}
+          </Box>
+        </Box>
       </Box>
-    </>
+    </Box>
   )
 }
 

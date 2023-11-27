@@ -189,11 +189,11 @@ export const UpdateCaseMutation = gql`
         ruling
         caseFiles {
           id
-          name
-          size
           created
+          name
           state
           key
+          size
         }
       }
       childCase {
@@ -208,13 +208,14 @@ export const UpdateCaseMutation = gql`
       }
       caseFiles {
         id
-        name
-        size
         created
         modified
+        name
+        type
+        category
         state
         key
-        category
+        size
         policeCaseNumber
         chapter
         orderWithinChapter
@@ -276,6 +277,7 @@ export const UpdateCaseMutation = gql`
       }
       appealConclusion
       appealRulingDecision
+      appealRulingModifiedHistory
     }
   }
 `
@@ -292,9 +294,9 @@ export const LimitedAccessUpdateCaseMutation = gql`
       policeCaseNumbers
       caseFiles {
         id
+        created
         name
         category
-        created
         key
         policeCaseNumber
       }

@@ -1,8 +1,5 @@
 import faker from 'faker'
-import {
-  INVESTIGATION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
-  SIGNED_VERDICT_OVERVIEW_ROUTE,
-} from '@island.is/judicial-system/consts'
+import { SIGNED_VERDICT_OVERVIEW_ROUTE } from '@island.is/judicial-system/consts'
 import {
   Case,
   CaseState,
@@ -39,7 +36,7 @@ describe('Signed verdict overview - Court - Investigation case', () => {
       judge: makeJudge(),
     }
 
-    cy.login(UserRole.JUDGE)
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${SIGNED_VERDICT_OVERVIEW_ROUTE}/test_id`)

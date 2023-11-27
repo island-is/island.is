@@ -70,6 +70,7 @@ export enum States {
   EMPLOYER_ACTION = 'employerRequiresAction',
 
   VINNUMALASTOFNUN_APPROVAL = 'vinnumalastofnunApproval',
+  VINNUMALASTOFNUN_APPROVAL_ABORT_CHANGE = 'vinnumalastofnunApprovalAbortChange',
   VINNUMALASTOFNUN_ACTION = 'vinnumalastofnunRequiresAction',
 
   ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
@@ -79,13 +80,14 @@ export enum States {
   CLOSED = 'closed',
 
   // Edit Flow
-  EDIT_OR_ADD_PERIODS = 'editOrAddPeriods',
+  EDIT_OR_ADD_EMPLOYERS_AND_PERIODS = 'editOrAddEmployersAndPeriods',
 
   EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS = 'employerWaitingToAssignForEdits',
   EMPLOYER_APPROVE_EDITS = 'employerApproveEdits',
   EMPLOYER_EDITS_ACTION = 'employerRequiresActionOnEdits',
 
   VINNUMALASTOFNUN_APPROVE_EDITS = 'vinnumalastofnunApproveEdits',
+  VINNUMALASTOFNUN_APPROVE_EDITS_ABORT = 'vinnumalastofnunApproveEditsAbort',
   VINNUMALASTOFNUN_EDITS_ACTION = 'vinnumalastofnunRequiresActionOnEdits',
 
   RESIDENCE_GRAND_APPLICATION = 'residenceGrantApplication',
@@ -119,4 +121,6 @@ export enum FileType {
   PERIOD = 'period',
   DOCUMENT = 'document',
   DOCUMENTPERIOD = 'documentPeriod',
+  EMPPER = 'empper',
+  EMPLOYER = 'employer',
 }

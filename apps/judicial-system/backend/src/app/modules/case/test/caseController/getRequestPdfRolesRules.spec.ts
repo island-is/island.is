@@ -1,4 +1,12 @@
-import { judgeRule, prosecutorRule, registrarRule } from '../../../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRule,
+} from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
 describe('CaseController - Get request pdf rules', () => {
@@ -12,10 +20,14 @@ describe('CaseController - Get request pdf rules', () => {
     )
   })
 
-  it('should give permission to three roles', () => {
-    expect(rules).toHaveLength(3)
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(7)
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
+    expect(rules).toContain(districtCourtJudgeRule)
+    expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
+    expect(rules).toContain(courtOfAppealsJudgeRule)
+    expect(rules).toContain(courtOfAppealsRegistrarRule)
+    expect(rules).toContain(courtOfAppealsAssistantRule)
   })
 })

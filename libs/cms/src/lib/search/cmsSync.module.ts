@@ -25,6 +25,9 @@ import { ProjectPageSyncService } from './importers/projectPage.service'
 import { EnhancedAssetSyncService } from './importers/enhancedAsset.service'
 import { VacancySyncService } from './importers/vacancy.service'
 import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
+import { EventSyncService } from './importers/event.service'
+import { ManualSyncService } from './importers/manual.service'
+import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 
 @Module({
   imports: [
@@ -55,6 +58,9 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
     EnhancedAssetSyncService,
     VacancySyncService,
     ServiceWebPageSyncService,
+    EventSyncService,
+    ManualSyncService,
+    ManualChapterItemSyncService,
   ],
   exports: [CmsSyncService],
 })

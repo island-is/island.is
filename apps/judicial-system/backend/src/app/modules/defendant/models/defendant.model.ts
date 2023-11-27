@@ -8,6 +8,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { Gender } from '@island.is/judicial-system/types'
@@ -45,7 +46,7 @@ export class Defendant extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'case_id')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   case?: Case
 
   @Column({

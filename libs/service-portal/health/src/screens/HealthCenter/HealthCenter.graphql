@@ -1,4 +1,4 @@
-query getHealthCenter($input: HealthCenterHistoryInput) {
+query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
   getOrganizations {
     items {
       id
@@ -11,7 +11,7 @@ query getHealthCenter($input: HealthCenterHistoryInput) {
       }
     }
   }
-  rightsPortalUserHealthCenterRegistration(input: $input) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
     current {
       healthCenterName
       doctor
@@ -22,5 +22,6 @@ query getHealthCenter($input: HealthCenterHistoryInput) {
       healthCenterName
       doctor
     }
+    canRegister
   }
 }

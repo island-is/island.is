@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
-  ServicePortalModuleComponent,
   m as coreMessage,
   ActionCard,
   EmptyState,
   CardLoader,
+  FootNote,
+  IntroHeader,
+  VEGAGERDIN_SLUG,
 } from '@island.is/service-portal/core'
 import { gql, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
@@ -24,7 +26,7 @@ import {
 } from '@island.is/island-ui/core'
 import { messages as m } from '../../lib/messages'
 import copyToClipboard from 'copy-to-clipboard'
-import UsageTable from '../../components/UsageTable'
+import UsageTable from '../../components/UsageTable/UsageTable'
 import { formatDateWithTime } from '@island.is/service-portal/core'
 import { AirDiscountSchemeDiscount } from '@island.is/service-portal/graphql'
 
@@ -125,31 +127,39 @@ export const AirDiscountOverview = () => {
   return (
     <>
       <Box marginBottom={[3, 4, 5]}>
-        <GridRow marginBottom={2}>
-          <GridColumn span={['8/8', '5/8']} order={1}>
-            <Text variant="h3" as="h1">
-              {formatMessage(m.introTitle)}
-            </Text>
-
-            <Text variant="default" paddingTop={2}>
-              {formatMessage(m.introLink, {
-                link: (str: any) => (
-                  <a
-                    href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button variant="text">{str}</Button>
-                  </a>
-                ),
-              })}
-            </Text>
-          </GridColumn>
-          <GridColumn span={['12/12', '12/12', '6/8']} order={3} paddingTop={4}>
-            <BulletList>
-              <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
-              <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
-            </BulletList>
+        <GridRow>
+          <GridColumn span={['8/8', '8/8']} order={1}>
+            <IntroHeader
+              title={formatMessage(m.introTitle)}
+              serviceProviderSlug={VEGAGERDIN_SLUG}
+              serviceProviderTooltip={formatMessage(
+                coreMessage.airDiscountTooltip,
+              )}
+            >
+              <Text variant="default" paddingTop={2}>
+                {formatMessage(m.introLink, {
+                  link: (str: any) => (
+                    <a
+                      href="https://island.is/loftbru/notendaskilmalar-vegagerdarinnar-fyrir-loftbru"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <Button variant="text">{str}</Button>
+                    </a>
+                  ),
+                })}
+              </Text>
+              <GridColumn
+                span={['12/12', '12/12', '7/8']}
+                order={3}
+                paddingTop={4}
+              >
+                <BulletList>
+                  <Bullet>{formatMessage(m.discountTextFirst)}</Bullet>
+                  <Bullet>{formatMessage(m.discountTextSecond)}</Bullet>
+                </BulletList>
+              </GridColumn>
+            </IntroHeader>
           </GridColumn>
         </GridRow>
 
@@ -266,6 +276,7 @@ export const AirDiscountOverview = () => {
           <UsageTable data={flightLegs} />
         </Box>
       )}
+      <FootNote serviceProviderSlug={VEGAGERDIN_SLUG} />
     </>
   )
 }

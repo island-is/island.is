@@ -1,14 +1,15 @@
 import {
-  IsNotEmpty,
-  IsString,
-  IsOptional,
-  IsArray,
   ArrayMinSize,
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
 } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { Gender, CaseType } from '@island.is/judicial-system/types'
+import { CaseType, Gender } from '@island.is/judicial-system/types'
 
 export class InternalCreateCaseDto {
   @IsNotEmpty()
@@ -57,4 +58,9 @@ export class InternalCreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly leadInvestigator?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isHeightenedSecurityLevel?: boolean
 }

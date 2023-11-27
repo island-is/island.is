@@ -15,9 +15,13 @@ export class NationalRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  getPerson(nationalId: string, api: 'v1' | 'v3' = 'v1') {
+  getPerson(
+    nationalId: string,
+    api: 'v1' | 'v3' = 'v1',
+    useFakeData?: boolean,
+  ) {
     return api === 'v3'
-      ? this.v3.getPerson(nationalId)
+      ? this.v3.getPerson(nationalId, undefined, useFakeData)
       : this.v1.getPerson(nationalId)
   }
 
@@ -25,6 +29,13 @@ export class NationalRegistryService {
     return data?.api === 'v3'
       ? this.v3.getChildrenCustodyInformation(nationalId, data?.rawData)
       : this.v1.getChildCustody(nationalId, data?.rawData)
+  }
+
+  async getChildDetails(nationalId: string, api: 'v1' | 'v3') {
+    if (api === 'v3') {
+      return this.v3.getChildDetails(nationalId)
+    }
+    return this.v1.getPerson(nationalId)
   }
 
   getCustodians(
@@ -66,18 +77,17 @@ export class NationalRegistryService {
     data?: SharedPerson,
   ): Promise<Housing | null> {
     if (data?.api === 'v1') {
-      if (!data.rawData || !data.rawData.Fjolsknr) {
-        return null
-      }
       const family = await this.v1.getFamily(nationalId)
       return {
-        domicileId: data.rawData.Fjolsknr,
+        domicileId: data?.rawData?.Fjolsknr ?? '',
         address: {
-          code: data.rawData.LoghHusk,
-          lastUpdated: data.rawData.LoghHuskBreytt,
-          streetAddress: data.rawData.Logheimili,
-          city: data.rawData.LogheimiliSveitarfelag,
-          postalCode: data.rawData.Postnr,
+          code: data?.rawData?.LoghHusk,
+          lastUpdated: data?.rawData?.LoghHuskBreytt,
+          streetAddress:
+            data?.rawData?.Logheimili || data?.address?.streetAddress,
+          city:
+            data?.rawData?.LogheimiliSveitarfelag || data?.address?.city || '',
+          postalCode: data?.rawData?.Postnr || data?.address?.postalCode,
         },
         domicileInhabitants: family,
       }

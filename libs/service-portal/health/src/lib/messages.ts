@@ -1,9 +1,200 @@
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
+  fetchDocument: {
+    id: 'sp.health:fetch-document',
+    defaultMessage: 'Sækja skjal',
+  },
+  errorFetchPaymentInfo: {
+    id: 'sp.health:error-fetch-payment-info',
+    defaultMessage: 'Ekki tókst að sækja greiðsluupplýsingar',
+  },
+  from: {
+    id: 'sp.health:from',
+    defaultMessage: 'Frá',
+  },
+  to: {
+    id: 'sp.health:to',
+    defaultMessage: 'Til',
+  },
+  calculate: {
+    id: 'sp.health:calculate',
+    defaultMessage: 'Reikna',
+  },
+  chooseMedicineTabs: {
+    id: 'sp.health:choose-medicine-tabs',
+    defaultMessage: 'Veldu flokk',
+  },
+  typeofService: {
+    id: 'sp.health:typeof-service',
+    defaultMessage: 'Tegund þjónustu',
+  },
+  totalPayment: {
+    id: 'sp.health:total-amount',
+    defaultMessage: 'Heildarupphæð',
+  },
+  credit: {
+    id: 'sp.health:credit',
+    defaultMessage: 'Inneign',
+  },
+  insuranceShare: {
+    id: 'sp.health:insurance-share',
+    defaultMessage: 'Hlutur trygginga',
+  },
+  paymentDocument: {
+    id: 'sp.health:payment-document',
+    defaultMessage: 'Greiðsluskjal',
+  },
+  invoices: {
+    id: 'sp.health:invoices',
+    defaultMessage: 'Reikningar',
+  },
+  debit: {
+    id: 'sp.health:debit',
+    defaultMessage: 'Skuld',
+  },
+  yourPayment: {
+    id: 'sp.health:your-payment',
+    defaultMessage: 'Greiðsla þín',
+  },
+  overpayment: {
+    id: 'sp.health:overpayment',
+    defaultMessage: 'Ofgreiðsla',
+  },
+  repaid: {
+    id: 'sp.health:repaid',
+    defaultMessage: 'Endurgreitt',
+  },
+  monthlyBreakdownOfInvoices: {
+    id: 'sp.health:monthly-breakdown-of-invoices',
+    defaultMessage: 'Sundurliðun reikninga í völdum mánuði',
+  },
+  right: {
+    id: 'sp.health:right',
+    defaultMessage: 'Réttur',
+  },
+  monthlyPaymentShort: {
+    id: 'sp.health:monthly-payment-short',
+    defaultMessage: 'Greitt í mán.',
+  },
+  paymentParticationExplination: {
+    id: 'sp.health:payment-partication-info',
+    defaultMessage:
+      'Við útreikning á greiðsluþátttöku er tekið mið af greiðslum fyrir heilbrigðisþjónustu s.l. fimm mánuði. Eigir þú á rétt á hámarksafslætti vegna fyrri greiðslna verður hámarksgreiðsla þín í mánuði {basePayment} kr. Fjárhæðin miðar við greiðslumark þitt eins og það birtist í Réttindagátt í dag. Birt með þeim fyrirvara að fjárhæðin tekur mið af þeim reikningum sem hafa borist Sjúkratryggingar.',
+  },
+  paymentParticationExplinationFooter: {
+    id: 'sp.health:payment-partication-info-footer',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
+  },
+  paymentParticationFooterExplination: {
+    id: 'sp.health:payment-partication-footer-info',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum. Einnig heilbrigðisþjónusta sem veitt er hjá sjálfstætt starfandi læknum, sjúkraþjálfurum, iðjuþjálfum, talmeinafræðingum og sálfræðingum sem Sjúkratryggingar Íslands hafa samið við. Enn fremur greiðslur fyrir meðferð húðsjúkdóma, sem veitt er af öðrum heilbrigðisstarfsmönnum en læknum, samkvæmt samningum við Sjúkratryggingar Íslands.',
+  },
+  maximumMonthlyPayment: {
+    id: 'sp.health:maximum-monthly-payment',
+    defaultMessage: 'Hámarksgreiðsla þín á mánuði',
+  },
+  payments: {
+    id: 'sp.health:payments',
+    defaultMessage: 'Greiðslur',
+  },
+  paymentsIntro: {
+    id: 'sp.health:payments-intro',
+    defaultMessage:
+      'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
+  },
+  readAboutPaymentParticipationSystems: {
+    id: 'sp.health:read-about-payment-participation-systems',
+    defaultMessage: 'Lesa um greiðsluþátttökukerfi',
+  },
+  readAboutPaymentParticipationSystemsLink: {
+    id: 'sp.health:read-about-payment-participation-systems-link',
+    defaultMessage:
+      'https://island.is/greidsluthatttaka-vegna-heilbrigdisthjonustu',
+  },
+  paymentOverview: {
+    id: 'sp.health:payment-overview',
+    defaultMessage: 'Greiðsluyfirlit',
+  },
+  seeMore: {
+    id: 'sp.health:see-more',
+    defaultMessage: 'Sjá nánar',
+  },
+  seeCertificate: {
+    id: 'sp.health:see-certificate',
+    defaultMessage: 'Sjá vottorð',
+  },
+  statusOfRights: {
+    id: 'sp.health:status-of-rights',
+    defaultMessage: 'Réttindastaða',
+  },
+  paymentParticipation: {
+    id: 'sp.health:payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  healthInternalServiceErrorTitle: {
+    id: 'sp.health:internal-service-error-title',
+    defaultMessage: 'Ekki tókst að sækja gögn frá Sjúkratryggingum',
+  },
+  healthInternalServiceErrorInfo: {
+    id: 'sp.health:internal-service-error-info',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Sjúkratryggingum. Vinsamlegast reyndu aftur síðar.',
+  },
+  overviewIntro: {
+    id: 'sp.health:overview-intro',
+    defaultMessage:
+      'Hér fyrir neðan eru þín gögn sem hafa verið sótt frá þjóðskrá. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
+  },
+  hasHealthInsurance: {
+    id: 'sp.health:has-health-insurance',
+    defaultMessage: 'Sjúkratrygging',
+  },
+  healthInsuranceStart: {
+    id: 'sp.health:health-insurance-start',
+    defaultMessage: 'Sjúkratrygging frá',
+  },
+  healthInsuranceStatus: {
+    id: 'sp.health:health-insurance-status',
+    defaultMessage: 'Staða sjúkratryggingar',
+  },
+  healthInsuranceConfirmation: {
+    id: 'sp.health:health-insurance-confirmation',
+    defaultMessage: 'Staðfesting á sjúkratryggingu',
+  },
+  healthInsuranceConfirmationButton: {
+    id: 'sp.health:health-insurance-confirmation-button',
+    defaultMessage: 'Sækja staðfestingu',
+  },
+  healthInsuranceConfirmationLoading: {
+    id: 'sp.health:health-insurance-confirmation-loading',
+    defaultMessage: 'Sæki skjal',
+  },
+  healthInsuranceConfirmationTransferError: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
+  },
+  noHealthInsurance: {
+    id: 'sp.health:no-health-insurance',
+    defaultMessage: 'Þú ert ekki með sjúkratryggingu',
+  },
+  paymentTarget: {
+    id: 'sp.health:payment-target',
+    defaultMessage: 'Greiðslumark',
+  },
   therapyTitle: {
     id: 'sp.health:therapies-title',
     defaultMessage: 'Þjálfun',
+  },
+  period: {
+    id: 'sp.health:period',
+    defaultMessage: 'Tímabil',
+  },
+  periodStatus: {
+    id: 'sp.health:period-status',
+    defaultMessage: 'Staða tímabils',
   },
   therapyDescription: {
     id: 'sp.health:therapies-intro',
@@ -403,14 +594,6 @@ export const messages = defineMessages({
     id: 'sp.health:alert',
     defaultMessage: 'Athugið',
   },
-  healthCenterRegistrationModalTitleStart: {
-    id: 'sp.health:health-center-registration-modal-title',
-    defaultMessage: 'Vilt þú skrá',
-  },
-  healthCenterRegistrationModalTitleEnd: {
-    id: 'sp.health:health-center-registration-modal-title-end',
-    defaultMessage: 'sem nýja heilsugæslustöð?',
-  },
   healthCenterRegistrationModalTitle: {
     id: 'sp.health:health-center-registration-modal-title',
     defaultMessage: 'Vilt þú skrá {healthCenter} sem nýja heilsugæslustöð?',
@@ -423,6 +606,11 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
       'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+  },
+  healthTooltip: {
+    id: 'service.portal:health-tooltip',
+    defaultMessage:
+      'Sjúkratryggingar Íslands hafa umsjón með gögnum um þína heilsu.',
   },
   healthCenterListSearchPlaceholder: {
     id: 'sp.health:health-center-list-search-placeholder',
@@ -445,6 +633,10 @@ export const messages = defineMessages({
     id: 'sp.health:health-center-registration-transfer-success-info',
     defaultMessage: 'Þú hefur verið skráður á',
   },
+  healthCenterNoDoctor: {
+    id: 'sp.health:health-center-no-doctor',
+    defaultMessage: 'Enginn læknir skráður',
+  },
   healthRegistrationSave: {
     id: 'sp.health:health-registration-save',
     defaultMessage: 'Vista',
@@ -456,5 +648,222 @@ export const messages = defineMessages({
   healthRegisterModalDecline: {
     id: 'sp.health:health-registration-modal-decline',
     defaultMessage: 'Nei, fara til baka',
+  },
+  medicineTitle: {
+    id: 'sp.health:medicine-title',
+    defaultMessage: 'Lyf',
+  },
+  medicineTitleIntro: {
+    id: 'sp.health:medicine-title-intro',
+    defaultMessage:
+      'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
+  },
+  medicinePurchacePeriod: {
+    id: 'sp.health:medicine-purchase-period',
+    defaultMessage: 'Lyfjakaup tímabilsins',
+  },
+  medicinePurchaseTitle: {
+    id: 'sp.health:medicine-purchase-title',
+    defaultMessage: 'Lyfjakaup þrepstaða',
+  },
+  medicinePurchaseIntroTitle: {
+    id: 'sp.health:medicine-purchase-intro-title',
+    defaultMessage: 'Þrepastaða þín',
+  },
+  medicinePurchaseIntroText: {
+    id: 'sp.health:medicine-purchase-intro-text',
+    defaultMessage:
+      'Greiðsluþátttökukerfið vegna lyfjakaupa byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Tólf mánaða greiðslutímabil hefst við fyrstu lyfjakaup eftir að seinna tólf mánaða tímabili lýkur.',
+  },
+  medicineCalculatorTitle: {
+    id: 'sp.health:medicine-calculator-title',
+    defaultMessage: 'Lyfjareiknivél',
+  },
+  medicineCalculatorIntroTitle: {
+    id: 'sp.health:medicine-calculator-intro-title',
+    defaultMessage: 'Reiknaðu út þinn kostnað við lyfjakaup',
+  },
+  medicineCalculatorIntroText: {
+    id: 'sp.health:medicine-calculator-intro-text',
+    defaultMessage:
+      'Með lyfjareiknivélinni getur þú reiknað lyfjakostnað þinn eða barna þinna út frá nýju lyfjagreiðsluþátttökukerfi sem tók gildi 4. maí 2013.',
+  },
+  medicineLicenseTitle: {
+    id: 'sp.health:medicine-license-title',
+    defaultMessage: 'Lyfjaskírteini',
+  },
+  medicineLicenseIntroTitle: {
+    id: 'sp.health:medicine-license-intro-title',
+    defaultMessage: 'Lyfjaskírteinin mín',
+  },
+  medicineLicenseIntroText: {
+    id: 'sp.health:medicine-license-intro-text',
+    defaultMessage:
+      'Læknir sækir um lyfjaskírteini fyrir einstakling sem gefin eru út af Sjúkratryggingum að uppfylltum ákveðnum skilyrðum samkvæmt vinnureglum.',
+  },
+  medicinePaymentPeriod: {
+    id: 'sp.health:medicine-payment-period',
+    defaultMessage: 'Tímabil lyfjakaupa',
+  },
+  medicinePriceList: {
+    id: 'sp.health:medicine-price-list',
+    defaultMessage: 'Lyfjaverðskrá',
+  },
+  medicinePriceListLink: {
+    id: 'sp.health:medicine-price-list-link',
+    defaultMessage: 'https://rg.sjukra.is/lyfjaverdskra',
+  },
+  medicinePaymentStatus: {
+    id: 'sp.health:medicine-payment-status',
+    defaultMessage: 'Greiðslustaða',
+  },
+  medicineStep: {
+    id: 'sp.health:medicine-step',
+    defaultMessage: 'Þrepastaða',
+  },
+  medicineStepStatus: {
+    id: 'sp.health:medicine-step-status',
+    defaultMessage: 'Greiðsluþrep {step}, þú greiðir {ratio}%',
+  },
+  medicineBills: {
+    id: 'sp.health:medicine-bills',
+    defaultMessage: 'Lyfjareikningar',
+  },
+  medicinePaymentParticipationPrice: {
+    id: 'sp.health:medicine-payment-participation-price',
+    defaultMessage: 'Greiðsluþátttökuverð',
+  },
+  medicinePaidByCustomer: {
+    id: 'sp.health:medicine-paid-by-customer',
+    defaultMessage: 'Greitt af einstakling',
+  },
+  medicineBillDate: {
+    id: 'sp.health:medicine-bill-date',
+    defaultMessage: 'Dagsetning reiknings',
+  },
+  medicineQuantity: {
+    id: 'sp.health:medicine-quantity',
+    defaultMessage: 'Magn',
+  },
+  medicineAmount: {
+    id: 'sp.health:medicine-amount',
+    defaultMessage: 'Fjöldi',
+  },
+  medicineDrugName: {
+    id: 'sp.health:medicine-drug-name',
+    defaultMessage: 'Lyfjaheiti',
+  },
+  medicineStrength: {
+    id: 'sp.health:medicine-strength',
+    defaultMessage: 'Styrkur',
+  },
+  medicineSalePrice: {
+    id: 'sp.health:medicine-sale-price',
+    defaultMessage: 'Söluverð',
+  },
+  medicinePaidByInsurance: {
+    id: 'sp.health:medicine-paid-by-insurance',
+    defaultMessage: 'Greitt af sjúkratryggingum',
+  },
+  medicinePaidByInsuranceShort: {
+    id: 'sp.health:medicine-paid-by-insurance-short',
+    defaultMessage: 'Greitt af SÍ',
+  },
+  medicineExcessPrice: {
+    id: 'sp.health:medicine-excess-price',
+    defaultMessage: 'Umframverð',
+  },
+  medicineDrugLines: {
+    id: 'sp.health:medicine-drug-lines',
+    defaultMessage: 'Lyfjalínur',
+  },
+  medicineFindDrug: {
+    id: 'sp.health:medicine-find-drug',
+    defaultMessage: 'Finna lyf',
+  },
+  medicineSearchForDrug: {
+    id: 'sp.health:medicine-search-for-drug',
+    defaultMessage: 'Leita að lyf',
+  },
+  medicineForm: {
+    id: 'sp.health:medicine-form',
+    defaultMessage: 'Form',
+  },
+  medicinePackaging: {
+    id: 'sp.health:medicine-packaging',
+    defaultMessage: 'Pakkning',
+  },
+  medicinePrice: {
+    id: 'sp.health:medicine-price',
+    defaultMessage: 'Verð',
+  },
+  medicinePriceTotal: {
+    id: 'sp.health:medicine-price-total',
+    defaultMessage: 'Verð alls',
+  },
+  medicineResults: {
+    id: 'sp.health:medicine-results',
+    defaultMessage: 'Niðurstöður',
+  },
+  medicineSelect: {
+    id: 'sp.health:medicine-select',
+    defaultMessage: 'Velja',
+  },
+  medicineCalculatorFooter: {
+    id: 'sp.health:medicine-calculator-footer',
+    defaultMessage:
+      'Kerfið byggir á þrepaskiptri greiðsluþátttöku þar sem hver einstaklingur greiðir hlutfallslega minna eftir því sem lyfjakostnaður hans eykst innan tólf mánaða tímabils. Reiknivélin sækir upplýsingar um heildarverð lyfja og hvað einstaklingur/barn einstaklings hefur greitt mikið fyrir lyf fram að deginum í dag. Hún getur því gefið upp mögulegt kaupverð á lyfjum út frá því hversu mikið viðkomandi hefur greitt fyrir lyf á 12 mánaða tímabili.',
+  },
+  medicineCalculatorNoDrugSelected: {
+    id: 'sp.health:medicine-calculator-no-drug-selected',
+    defaultMessage: 'Engin lyf valin',
+  },
+  medicineCalculatorEmptySearch: {
+    id: 'sp.health:medicine-calculator-empty-search',
+    defaultMessage: 'Engin lyf birt, finndu lyf',
+  },
+  medicineNoIssuedCertificates: {
+    id: 'sp.health:medicine-no-issued-certificates',
+    defaultMessage: 'Ekki hefur verið gefið út lyfjaskírteini',
+  },
+  medicineIsValidCertificate: {
+    id: 'sp.health:medicine-is-valid-certificate',
+    defaultMessage: 'Í gildi',
+  },
+  medicineIsRejectedCertificate: {
+    id: 'sp.health:medicine-is-rejected-certificate',
+    defaultMessage: 'Hafnað',
+  },
+  medicineIsExpiredCertificate: {
+    id: 'sp.health:medicine-is-expired-certificate',
+    defaultMessage: 'Útrunnið',
+  },
+  medicineIsProcessedCertificate: {
+    id: 'sp.health:medicine-is-processed-certificate',
+    defaultMessage: 'Í vinnslu',
+  },
+  medicineIsNotValidCertificate: {
+    id: 'sp.health:medicine-is-not-valid-certificate',
+    defaultMessage: 'Ekki í gildi',
+  },
+  medicineAtcCode: {
+    id: 'sp.health:medicine-atc-code',
+    defaultMessage: 'ATC flokkur',
+  },
+  medicineAtcName: {
+    id: 'sp.health:medicine-atc-name',
+    defaultMessage: 'Innihaldsefni',
+  },
+  medicineValidTo: {
+    id: 'sp.health:medicine-valid-to',
+    defaultMessage: 'Gildir til',
+  },
+  medicineValidFrom: {
+    id: 'sp.health:medicine-valid-from',
+    defaultMessage: 'Gildir frá',
+  },
+  medicineNameOfDoctor: {
+    id: 'sp.health:medicine-name-of-doctor',
+    defaultMessage: 'Heiti læknis',
   },
 })

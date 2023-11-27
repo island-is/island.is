@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
   EmptyState,
   UserInfoLine,
+  IntroHeader,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
@@ -18,9 +18,7 @@ import {
   Inline,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
-import { IntroHeader, useQueryParam } from '@island.is/portals/core'
 import { messages } from '../../lib/messages'
 import BillsTable from './BillsTable'
 import add from 'date-fns/add'
@@ -34,26 +32,10 @@ const Dentists = () => {
   // Check if the user was transfered from another health center
   const wasSuccessfulTransfer = location?.state?.transferSuccess
 
-  // Feature flag for transfer option.
-  const [isTransferAvailable, setIsTransferAvailable] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalHealthTransferPageEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setIsTransferAvailable(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
-  const [selectedDateFrom, setSelectedDateFrom] = useState(
+  const [selectedDateFrom, setSelectedDateFrom] = useState<Date>(
     sub(new Date(), { years: 5 }),
   )
-  const [selectedDateTo, setSelectedDateTo] = useState(new Date())
+  const [selectedDateTo, setSelectedDateTo] = useState<Date>(new Date())
 
   const { loading, error, data } = useGetDentistsQuery({
     variables: {
@@ -66,9 +48,10 @@ const Dentists = () => {
   })
 
   const { dentist, history } = data?.rightsPortalUserDentistRegistration ?? {}
+
   const canRegister = dentist?.status?.canRegister ?? false
 
-  if (error && !loading) {
+  if (error) {
     return (
       <ErrorScreen
         figure="./assets/images/hourglass.svg"
@@ -87,6 +70,8 @@ const Dentists = () => {
       <IntroHeader
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
       {!loading && !dentist && (
@@ -116,7 +101,7 @@ const Dentists = () => {
             label={formatMessage(messages.dentist)}
             content={dentist.name}
             editLink={
-              canRegister && isTransferAvailable
+              canRegister
                 ? {
                     url: HealthPaths.HealthDentistRegistration,
                     title: messages.changeRegistration,
@@ -141,7 +126,9 @@ const Dentists = () => {
               placeholderText={undefined}
               selected={selectedDateFrom}
               handleChange={(e) => setSelectedDateFrom(e)}
-              maxDate={sub(selectedDateTo, { days: 1 })}
+              maxDate={sub(selectedDateTo ? selectedDateTo : new Date(), {
+                days: 1,
+              })}
             />
             <DatePicker
               size="sm"
@@ -149,7 +136,9 @@ const Dentists = () => {
               placeholderText={undefined}
               selected={selectedDateTo}
               handleChange={(e) => setSelectedDateTo(e)}
-              minDate={add(selectedDateFrom, { days: 1 })}
+              minDate={add(selectedDateFrom ? selectedDateFrom : new Date(), {
+                days: 1,
+              })}
             />
           </Inline>
         </Stack>
@@ -157,7 +146,7 @@ const Dentists = () => {
 
       {loading && <SkeletonLoader space={1} height={30} repeat={4} />}
 
-      {!loading && !error && history && <BillsTable bills={history} />}
+      {!!history?.length && <BillsTable bills={history} />}
     </Box>
   )
 }

@@ -1,11 +1,14 @@
-import { uuid } from 'uuidv4'
 import { Response } from 'express'
+import { uuid } from 'uuidv4'
+
+import { BadRequestException } from '@nestjs/common/exceptions'
+
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
+
+import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { getCustodyNoticePdfAsBuffer } from '../../../../formatters'
 import { Case } from '../../models/case.model'
-import { createTestingCaseModule } from '../createTestingCaseModule'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
-import { BadRequestException } from '@nestjs/common/exceptions'
 
 jest.mock('../../../../formatters/custodyNoticePdf')
 

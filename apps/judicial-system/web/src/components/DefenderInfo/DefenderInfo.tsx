@@ -1,20 +1,21 @@
 import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, RadioButton, Tooltip } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
 import {
-  isCourtRole,
+  isDistrictCourtUser,
   isInvestigationCase,
+  isProsecutionUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
   RequestSharedWithDefender,
   SessionArrangements,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { useCase } from '../../utils/hooks'
+import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, SectionHeading } from '..'
 import DefenderInput from './DefenderInput'
@@ -36,13 +37,13 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (isProsecutionUser(user)) {
         return defenderInfo.restrictionCases.sections.defender.heading
       } else {
         return defenderInfo.restrictionCases.sections.defender.title
       }
     } else {
-      if (user?.role === UserRole.PROSECUTOR) {
+      if (isProsecutionUser(user)) {
         return defenderInfo.investigationCases.sections.defender.heading
       } else {
         return defenderInfo.investigationCases.sections.defender.title
@@ -51,11 +52,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const renderTooltip = () => {
-    if (
-      isRestrictionCase(workingCase.type) &&
-      user?.role &&
-      isCourtRole(user.role)
-    ) {
+    if (isRestrictionCase(workingCase.type) && isDistrictCourtUser(user)) {
       return (
         <Tooltip
           text={formatMessage(
@@ -66,8 +63,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       )
     } else if (
       isInvestigationCase(workingCase.type) &&
-      user?.role &&
-      isCourtRole(user.role)
+      isDistrictCourtUser(user)
     ) {
       return (
         <Tooltip
@@ -84,7 +80,6 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       return null
     }
   }
-
   return (
     <>
       <SectionHeading
@@ -100,8 +95,18 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
       {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <DefenderInput onDefenderNotFound={setDefenderNotFound} />
-        {user?.role === UserRole.PROSECUTOR && (
-          <Box marginTop={2}>
+        {isProsecutionUser(user) && (
+          <>
+            <Text variant="h4" marginTop={2} marginBottom={2}>
+              {`${formatMessage(
+                isRestrictionCase(workingCase.type)
+                  ? defenderInfo.restrictionCases.sections.defenderRequestAccess
+                      .title
+                  : defenderInfo.investigationCases.sections
+                      .defenderRequestAccess.title,
+              )} `}
+              <RequiredStar />
+            </Text>
             <Box>
               <RadioButton
                 name="defender-access"
@@ -179,7 +184,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     : defenderInfo.investigationCases.sections
                         .defenderRequestAccess.labelNoAccess,
                 )}
-                checked={!workingCase.requestSharedWithDefender}
+                checked={workingCase.requestSharedWithDefender === null}
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
@@ -197,7 +202,7 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 disabled={!workingCase.defenderName}
               />
             </Box>
-          </Box>
+          </>
         )}
       </BlueBox>
     </>

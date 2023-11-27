@@ -11,8 +11,6 @@ import {
 } from '@island.is/service-portal/information'
 import { licenseNavigation } from '@island.is/service-portal/licenses'
 import { occupationalLicensesNavigation } from '@island.is/service-portal/occupational-licenses'
-import { vehiclesNavigation } from '@island.is/service-portal/vehicles'
-import { personalInformationNavigation } from '@island.is/service-portal/settings/personal-information'
 import { airDiscountNavigation } from '@island.is/service-portal/air-discount'
 import { healthNavigation } from '@island.is/service-portal/health'
 import {
@@ -27,7 +25,7 @@ export const rootNavigationItem: PortalNavigationItem = {
   systemRoute: true,
   path: ServicePortalPaths.Root,
   icon: {
-    icon: 'home',
+    icon: 'dots',
   },
 }
 
@@ -36,17 +34,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
   children: [
     documentsNavigation,
     applicationsNavigation,
-    personalInformationNavigation,
-    informationNavigation,
-    companyNavigation,
-    licenseNavigation,
-    occupationalLicensesNavigation,
-    educationNavigation,
-    assetsNavigation,
-    financeNavigation,
-    vehiclesNavigation,
-    airDiscountNavigation,
-    healthNavigation,
     {
       ...delegationsNavigation,
       children: [
@@ -55,5 +42,14 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
         consentNavigation,
       ],
     },
+    companyNavigation,
+    informationNavigation,
+    assetsNavigation,
+    financeNavigation,
+    licenseNavigation,
+    healthNavigation,
+    occupationalLicensesNavigation,
+    airDiscountNavigation,
+    educationNavigation,
   ],
 }

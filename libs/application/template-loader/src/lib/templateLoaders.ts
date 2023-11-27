@@ -15,6 +15,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/driving-assessment-approval'),
   [ApplicationTypes.PASSPORT]: () =>
     import('@island.is/application/templates/passport'),
+  [ApplicationTypes.PASSPORT_ANNULMENT]: () =>
+    import('@island.is/application/templates/passport-annulment'),
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: () =>
     import('@island.is/application/templates/document-provider-onboarding'),
   [ApplicationTypes.HEALTH_INSURANCE]: () =>
@@ -119,6 +121,18 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/european-health-insurance-card'),
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
     import('@island.is/application/templates/household-supplement'),
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-creation'
+    ),
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/signature-list-signing'
+    ),
+  [ApplicationTypes.CITIZENSHIP]: () =>
+    import(
+      '@island.is/application/templates/directorate-of-immigration/citizenship'
+    ),
 }
 
 export default templates

@@ -17,6 +17,7 @@ interface UserOptions {
     nationalId?: string
     scope?: string[]
   }
+  audkenniSimNumber?: string
 }
 
 export const createCurrentUser = (user: UserOptions = {}): User => {
@@ -38,5 +39,6 @@ export const createCurrentUser = (user: UserOptions = {}): User => {
     client: user.client ?? faker.random.word(),
     delegationType,
     actor,
+    audkenniSimNumber: user.audkenniSimNumber,
   }
 }

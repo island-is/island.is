@@ -1,34 +1,35 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
-import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 
-import {
-  CaseAppealDecision,
-  CaseLegalProvisions,
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseState,
-  SessionArrangements,
-  CourtDocument,
-  CaseOrigin,
-  CaseType,
-  CaseAppealState,
-  UserRole,
-  CaseAppealRulingDecision,
-  RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
+
 import type {
   Case as TCase,
-  IndictmentSubtypeMap,
   CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseDecision,
+  CaseLegalProvisions,
+  CaseOrigin,
+  CaseState,
+  CaseType,
+  CourtDocument,
+  RequestSharedWithDefender,
+  SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { CaseFile } from '../../file'
-import { Notification } from './notification.model'
 import { EventLog } from './eventLog.model'
+import { Notification } from './notification.model'
 
 registerEnumType(CaseType, { name: 'CaseType' })
 registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
@@ -363,6 +364,9 @@ export class Case implements TCase {
 
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
+
+  @Field({ nullable: true })
+  readonly appealRulingModifiedHistory?: string
 
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]

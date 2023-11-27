@@ -1,6 +1,7 @@
 export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   PASSPORT = 'Passport',
+  PASSPORT_ANNULMENT = 'PassportAnnulment',
   DRIVING_LEARNERS_PERMIT = 'DrivingLearnersPermit',
   DRIVING_LICENSE = 'DrivingLicense',
   DRIVING_ASSESSMENT_APPROVAL = 'DrivingAssessmentApproval',
@@ -47,6 +48,9 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
+  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  CITIZENSHIP = 'Citizenship',
 }
 
 export const ApplicationConfigurations = {
@@ -57,6 +61,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PASSPORT]: {
     slug: 'vegabref',
     translation: 'pa.application',
+  },
+  [ApplicationTypes.PASSPORT_ANNULMENT]: {
+    slug: 'tilkynna-vegabref',
+    translation: 'paa.application',
   },
   [ApplicationTypes.DRIVING_LEARNERS_PERMIT]: {
     slug: 'aefingaakstur',
@@ -241,5 +249,17 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
     slug: 'heimilisuppbot',
     translation: 'hs.application',
+  },
+  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+    slug: 'medmaelalisti',
+    translation: 'slc.application',
+  },
+  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+    slug: 'maela-med-lista',
+    translation: 'sls.application',
+  },
+  [ApplicationTypes.CITIZENSHIP]: {
+    slug: 'rikisborgararettur',
+    translation: 'doi.cs.application',
   },
 }

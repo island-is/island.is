@@ -1,11 +1,6 @@
-import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import {
   formatNationalId,
   NotFound,
@@ -13,6 +8,8 @@ import {
   m,
   ErrorScreen,
   IntroHeader,
+  THJODSKRA_SLUG,
+  FootNote,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -30,7 +27,6 @@ import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/Tw
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './Child.generated'
-import { NationalRegistryName } from '@island.is/api/schema'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
 
@@ -41,28 +37,13 @@ type UseParams = {
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
   const { nationalId } = useParams() as UseParams
 
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffNatRegV3Enabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      if (ffNatRegV3Enabled) {
-        setUseNatRegV3(ffNatRegV3Enabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
-
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
+      api: 'v3',
+      childNationalId: nationalId,
     },
   })
 
@@ -76,10 +57,7 @@ const Child = () => {
     defaultMessage: 'Breyta hjá Þjóðskrá',
   })
 
-  const child =
-    data?.nationalRegistryPerson?.childCustody?.find(
-      (x) => x.nationalId === nationalId,
-    ) || null
+  const child = data?.nationalRegistryPerson?.childCustody?.[0].details
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined
@@ -138,6 +116,8 @@ const Child = () => {
               defaultMessage:
                 'Hér fyrir neðan eru gögn um fjölskyldumeðlim. Þú hefur kost á að gera breytingar á eftirfarandi upplýsingum ef þú kýst.',
             }}
+            serviceProviderSlug={THJODSKRA_SLUG}
+            serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
           />
         </Box>
       )}
@@ -191,6 +171,7 @@ const Child = () => {
               middleName: formatMessage(spmm.middleName),
               lastName: formatMessage(spmm.lastName),
             })}
+            tooltipFull
             loading={loading}
             editLink={
               !isChild

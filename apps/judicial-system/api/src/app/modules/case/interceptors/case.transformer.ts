@@ -1,4 +1,5 @@
 import { getAppealInfo } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000

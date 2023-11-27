@@ -2,20 +2,14 @@ import React, { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  caseTypes,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
   CaseState,
   completedCaseStates,
-  Feature,
   isInvestigationCase,
   isRestrictionCase,
-  RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -24,25 +18,25 @@ import {
   CaseDates,
   CaseResentExplanation,
   Conclusion,
-  FeatureContext,
   FormContentContainer,
   FormContext,
   InfoCard,
   MarkdownWrapper,
   Modal,
-  OverviewHeader,
   PageHeader,
   PageLayout,
   PdfButton,
-  RestrictionTags,
   SignedDocument,
 } from '@island.is/judicial-system-web/src/components'
 import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import CaseTitleInfoAndTags from '../../components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
+import { api } from '../../services'
 import { conclusion } from '../../components/Conclusion/Conclusion.strings'
 import { strings } from './CaseOverview.strings'
+import * as styles from './CaseOverview.css'
 
 type availableModals =
   | 'NoModal'
@@ -54,12 +48,12 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { features } = useContext(FeatureContext)
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+    )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -70,16 +64,11 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      {features.includes(Feature.APPEAL_TO_COURT_OF_APPEALS) &&
-        shouldDisplayAlertBanner && (
-          <AlertBanner
-            variant="warning"
-            title={title}
-            description={description}
-          >
-            {child}
-          </AlertBanner>
-        )}
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
+        <AlertBanner variant="warning" title={title} description={description}>
+          {child}
+        </AlertBanner>
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -96,31 +85,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Box>
             )}
           <Box marginBottom={5}>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
-              <Box>
-                <OverviewHeader dataTestid="caseTitle" />
-                {completedCaseStates.includes(workingCase.state) && (
-                  <Box>
-                    <Text variant="h5">
-                      {formatMessage(strings.rulingDate, {
-                        rulingDate: `${formatDate(
-                          workingCase.rulingDate,
-                          'PPP',
-                        )} kl. ${formatDate(
-                          workingCase.rulingDate,
-                          constants.TIME_FORMAT,
-                        )}`,
-                      })}
-                    </Text>
-                  </Box>
-                )}
-              </Box>
-              {completedCaseStates.includes(workingCase.state) && (
-                <Box display="flex" flexDirection="column">
-                  <RestrictionTags workingCase={workingCase} />
-                </Box>
-              )}
-            </Box>
+            <CaseTitleInfoAndTags />
             {completedCaseStates.includes(workingCase.state) &&
               isRestrictionCase(workingCase.type) &&
               workingCase.state === CaseState.ACCEPTED && (
@@ -144,6 +109,20 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 />
               </Box>
             )}
+          {workingCase.appealRulingModifiedHistory && (
+            <Box marginBottom={5}>
+              <AlertMessage
+                type="info"
+                title={formatMessage(strings.rulingModifiedTitle)}
+                message={
+                  <MarkdownWrapper
+                    markdown={workingCase.appealRulingModifiedHistory}
+                    textProps={{ variant: 'small' }}
+                  />
+                }
+              />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <InfoCard
               data={[
@@ -155,7 +134,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 },
                 {
                   title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  value:
+                    workingCase.courtCaseNumber ??
+                    formatMessage(strings.noCourtNumber),
                 },
                 {
                   title: formatMessage(core.prosecutor),
@@ -169,10 +150,14 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   title: formatMessage(core.prosecutorPerson),
                   value: workingCase.prosecutor?.name,
                 },
-                {
-                  title: formatMessage(core.judge),
-                  value: workingCase.judge?.name,
-                },
+                ...(workingCase.judge
+                  ? [
+                      {
+                        title: formatMessage(core.judge),
+                        value: workingCase.judge?.name,
+                      },
+                    ]
+                  : []),
                 // Conditionally add this field based on case type
                 ...(isInvestigationCase(workingCase.type)
                   ? [
@@ -273,7 +258,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                   renderAs="row"
                   caseId={workingCase.id}
                   title={formatMessage(core.pdfButtonRequest)}
-                  pdfType={'limitedAccess/request'}
+                  pdfType={'request'}
                 />
 
                 {completedCaseStates.includes(workingCase.state) && (
@@ -282,7 +267,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRulingShortVersion)}
-                      pdfType={'limitedAccess/courtRecord'}
+                      pdfType={'courtRecord'}
                     >
                       {workingCase.courtRecordSignatory ? (
                         <SignedDocument
@@ -295,7 +280,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                       renderAs="row"
                       caseId={workingCase.id}
                       title={formatMessage(core.pdfButtonRuling)}
-                      pdfType={'limitedAccess/ruling'}
+                      pdfType={'ruling'}
                     >
                       {workingCase.rulingSignatureDate ? (
                         <SignedDocument
@@ -306,6 +291,22 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
                         <Text>{formatMessage(strings.unsignedRuling)}</Text>
                       )}
                     </PdfButton>
+                    <Box marginTop={7}>
+                      <a
+                        href={`${api.apiUrl}/api/case/${workingCase.id}/limitedAccess/allFiles`}
+                        download={`mal_${workingCase.courtCaseNumber}`}
+                        className={styles.downloadAllButton}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="small"
+                          icon="download"
+                          iconType="outline"
+                        >
+                          {formatMessage(strings.getAllDocuments)}
+                        </Button>
+                      </a>
+                    </Box>
                   </>
                 )}
               </Box>
@@ -343,7 +344,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               strings.confirmStatementAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.DEFENDER_STATEMENT_ROUTE}/${workingCase.id}`,
+              )
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

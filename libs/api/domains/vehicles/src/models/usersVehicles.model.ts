@@ -132,24 +132,27 @@ export class VehiclesHistory {
 }
 
 @ObjectType()
+export class VehiclePaging {
+  @Field({ nullable: true })
+  pageNumber?: number
+
+  @Field({ nullable: true })
+  pageSize?: number
+
+  @Field({ nullable: true })
+  totalPages?: number
+
+  @Field({ nullable: true })
+  totalRecords?: number
+}
+
+@ObjectType()
 export class VehiclesList {
-  @Field({ nullable: true })
-  persidno?: string
-
-  @Field({ nullable: true })
-  name?: string
-
-  @Field({ nullable: true })
-  address?: string
-
-  @Field({ nullable: true })
-  postStation?: string
-
   @Field(() => [VehiclesVehicle], { nullable: true })
   vehicleList?: VehiclesVehicle[]
 
   @Field({ nullable: true })
-  createdTimestamp?: string
+  paging?: VehiclePaging
 
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string

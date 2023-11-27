@@ -13,31 +13,31 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import type {
+  CrimeSceneMap,
+  IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
 import {
-  CaseState,
-  CaseLegalProvisions,
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
-  CaseAppealRulingDecision,
-  CaseType,
-  SessionArrangements,
-  CourtDocument,
+  CaseLegalProvisions,
   CaseOrigin,
-  CaseAppealState,
+  CaseState,
+  CaseType,
+  CourtDocument,
   RequestSharedWithDefender,
-} from '@island.is/judicial-system/types'
-import type {
-  IndictmentSubtypeMap,
-  CrimeSceneMap,
+  SessionArrangements,
 } from '@island.is/judicial-system/types'
 
+import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
+import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { Defendant } from '../../defendant'
-import { IndictmentCount } from '../../indictment-count'
-import { EventLog } from '../../event-log'
 
 @Table({
   tableName: 'case',
@@ -138,7 +138,7 @@ export class Case extends Model {
    * The case's defendants
    **********/
   @HasMany(() => Defendant, 'caseId')
-  @ApiPropertyOptional({ type: Defendant, isArray: true })
+  @ApiPropertyOptional({ type: () => Defendant, isArray: true })
   defendants?: Defendant[]
 
   /**********
@@ -218,7 +218,7 @@ export class Case extends Model {
    * The court assigned to the case
    **********/
   @BelongsTo(() => Institution, 'courtId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   court?: Institution
 
   /**********
@@ -417,7 +417,7 @@ export class Case extends Model {
    * The prosecutor that created the case
    **********/
   @BelongsTo(() => User, 'creatingProsecutorId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   creatingProsecutor?: User
 
   /**********
@@ -435,7 +435,7 @@ export class Case extends Model {
    * The prosecutor assigned to the case
    **********/
   @BelongsTo(() => User, 'prosecutorId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   prosecutor?: User
 
   /**********
@@ -453,7 +453,7 @@ export class Case extends Model {
    * The prosecutor's office the case has been shared with - optional
    **********/
   @BelongsTo(() => Institution, 'sharedWithProsecutorsOfficeId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   sharedWithProsecutorsOffice?: Institution
 
   /**********
@@ -794,7 +794,7 @@ export class Case extends Model {
    * The registrar assigned to the case
    **********/
   @BelongsTo(() => User, 'registrarId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   registrar?: User
 
   /**********
@@ -812,7 +812,7 @@ export class Case extends Model {
    * The judge assigned to the case
    **********/
   @BelongsTo(() => User, 'judgeId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   judge?: User
 
   /**********
@@ -830,7 +830,7 @@ export class Case extends Model {
    * The user that signed the court record of the case
    **********/
   @BelongsTo(() => User, 'courtRecordSignatoryId')
-  @ApiPropertyOptional({ type: User })
+  @ApiPropertyOptional({ type: () => User })
   courtRecordSignatory?: User
 
   /**********
@@ -858,21 +858,21 @@ export class Case extends Model {
    * The case's parent case - only used if the case is an extension
    **********/
   @BelongsTo(() => Case, 'parentCaseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   parentCase?: Case
 
   /**********
    * The case's child case - only used if the case has been extended
    **********/
   @HasOne(() => Case, 'parentCaseId')
-  @ApiPropertyOptional({ type: Case })
+  @ApiPropertyOptional({ type: () => Case })
   childCase?: Case
 
   /**********
    * The case's files
    **********/
   @HasMany(() => CaseFile, 'caseId')
-  @ApiPropertyOptional({ type: CaseFile, isArray: true })
+  @ApiPropertyOptional({ type: () => CaseFile, isArray: true })
   caseFiles?: CaseFile[]
 
   /**********
@@ -961,7 +961,7 @@ export class Case extends Model {
    * The case's counts - only used if the case is an indictment
    **********/
   @HasMany(() => IndictmentCount, 'caseId')
-  @ApiPropertyOptional({ type: IndictmentCount, isArray: true })
+  @ApiPropertyOptional({ type: () => IndictmentCount, isArray: true })
   indictmentCounts?: IndictmentCount[]
 
   /**********
@@ -1117,6 +1117,16 @@ export class Case extends Model {
   @BelongsTo(() => User, 'appealJudge3Id')
   @ApiPropertyOptional({ type: User })
   appealJudge3?: User
+
+  /**********
+   * The history on when a case's appeal ruling was modified
+   **********/
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  appealRulingModifiedHistory?: string
 
   /**********
    * The case's event logs

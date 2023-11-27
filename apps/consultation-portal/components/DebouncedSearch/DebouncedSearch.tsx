@@ -14,7 +14,7 @@ interface Props {
   localStorageId?: string
   label?: string
   isSubscriptions?: boolean
-  isDisabled?: boolean
+  filtersLoaded?: boolean
 }
 
 const loc = localization.debouncedSearch
@@ -28,11 +28,17 @@ const DebouncedSearch = ({
   localStorageId,
   label = loc.label,
   isSubscriptions,
-  isDisabled,
+  filtersLoaded,
 }: Props) => {
   const [value, setValue] = useState(
     isSubscriptions ? searchValue : filters?.searchQuery,
   )
+
+  useEffect(() => {
+    if (filtersLoaded && !isSubscriptions) {
+      setValue(filters?.searchQuery)
+    }
+  }, [filtersLoaded])
 
   const debouncedHandleSearch = useDebounce(() => {
     if (isSubscriptions) {
@@ -47,14 +53,9 @@ const DebouncedSearch = ({
   }, 500)
 
   const onChange = (e: BaseSyntheticEvent) => {
-    const searchValue = e.target.value
-    setValue(searchValue)
+    setValue(e.target.value)
     debouncedHandleSearch()
   }
-
-  useEffect(() => {
-    setValue(filters?.searchQuery)
-  }, [filters])
 
   return (
     <Input
@@ -66,7 +67,6 @@ const DebouncedSearch = ({
       }
       value={value}
       onChange={onChange}
-      disabled={isDisabled}
     />
   )
 }
