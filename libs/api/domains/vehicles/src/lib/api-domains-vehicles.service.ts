@@ -6,6 +6,7 @@ import {
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
+  PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -40,11 +41,23 @@ export class VehiclesService {
       type: input.type,
       dtFrom: input.dateFrom,
       dtTo: input.dateTo,
-      permno: input.permno
+      permno: input?.permno
         ? input.permno.length < 5
           ? `${input.permno}*`
           : `${input.permno}`
         : undefined,
+    })
+  }
+
+  async getVehiclesForUserOldService(
+    auth: User,
+    showDeregistered: boolean,
+    showHistory: boolean,
+  ): Promise<PersidnoLookupResultDto> {
+    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: showDeregistered,
+      showHistory: showHistory,
     })
   }
 

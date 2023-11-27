@@ -1,4 +1,4 @@
-query GetUsersVehicles($input: GetVehiclesForUserInput!) {
+query GetUsersVehicles($input: GetVehiclesForUserInput) {
   vehiclesList(input: $input) {
     vehicleList {
       isCurrent

@@ -21,7 +21,6 @@ import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 
@@ -44,19 +43,29 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,
-    @Args('input') input: GetVehiclesForUserInput,
+    @Args('input') input?: GetVehiclesForUserInput,
   ) {
-    const res = await this.vehiclesService.getVehiclesForUser(user, input)
-    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-    return {
-      vehicleList: res.data,
-      paging: {
-        pageNumber: res.pageNumber,
-        pageSize: res.pageSize,
-        totalPages: res.totalPages,
-        totalRecords: res.totalRecords,
-      },
-      downloadServiceURL: !input.type ? downloadServiceURL : null,
+    if (input) {
+      const res = await this.vehiclesService.getVehiclesForUser(user, input)
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      return {
+        vehicleList: res.data,
+        paging: {
+          pageNumber: res.pageNumber,
+          pageSize: res.pageSize,
+          totalPages: res.totalPages,
+          totalRecords: res.totalRecords,
+        },
+        downloadServiceURL: !input?.type ? downloadServiceURL : null,
+      }
+    } else {
+      const res = await this.vehiclesService.getVehiclesForUserOldService(
+        user,
+        false,
+        false,
+      )
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      return { ...res?.data, downloadServiceURL }
     }
   }
 

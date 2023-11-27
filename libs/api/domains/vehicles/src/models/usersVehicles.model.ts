@@ -154,6 +154,36 @@ export class VehiclesList {
   @Field({ nullable: true })
   paging?: VehiclePaging
 
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  postStation?: string
+
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  persidno?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  name?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  address?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  createdTimestamp?: string
 }
