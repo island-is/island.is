@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   OldAgePension,
   SendApplicationApi,
