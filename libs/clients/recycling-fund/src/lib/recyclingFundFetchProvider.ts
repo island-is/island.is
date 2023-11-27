@@ -3,10 +3,10 @@ import { Provider } from '@nestjs/common'
 import { RecyclingFundScope } from '@island.is/auth/scopes'
 import {
   createEnhancedFetch,
-  EnhancedFetchAPI,
+  type EnhancedFetchAPI,
 } from '@island.is/clients/middlewares'
 import {
-  ConfigType,
+  type ConfigType,
   IdsClientConfig,
   LazyDuringDevScope,
 } from '@island.is/nest/config'

@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { print } from 'graphql'
 
 import { User } from '@island.is/auth-nest-tools'
-import { EnhancedFetchAPI } from '@island.is/clients/middlewares'
-import { ConfigType } from '@island.is/nest/config'
+import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
+import type { ConfigType } from '@island.is/nest/config'
 
 import {
   CreateRequestDocument,
