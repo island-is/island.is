@@ -3,6 +3,7 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  Divider,
   Pagination,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -199,8 +200,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
         )
       })}
 
-      <hr hidden={selectedVehiclesList.length === 0} />
-      <Box position="relative" marginBottom={3} marginTop={2}>
+      {selectedVehiclesList.length !== 0 && <Divider />}
+      <Box position="relative" marginBottom={3} paddingTop={2}>
         <Label>{formatMessage(carRecyclingMessages.cars.overview)}</Label>
       </Box>
 
