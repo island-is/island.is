@@ -1,5 +1,5 @@
 {
-  "root": "libs/application/templates/household-supplement",
+  "name": "application-templates-household-supplement",
   "sourceRoot": "libs/application/templates/household-supplement/src",
   "projectType": "library",
   "tags": [],
@@ -22,7 +22,7 @@
       }
     },
     "extract-strings": {
-      "executor": "@nx/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/household-supplement/src/lib/messages.ts"
       }
