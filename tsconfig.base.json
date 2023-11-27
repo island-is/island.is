@@ -717,6 +717,7 @@
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
       ],
+      "@island.is/lib-babby": ["libs/lib-babby/src/index.ts"],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
