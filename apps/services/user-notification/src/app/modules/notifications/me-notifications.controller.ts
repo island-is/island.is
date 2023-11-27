@@ -18,9 +18,10 @@ import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
-  ScopesGuard,
-  User,
+  ScopesGuard
 } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
+
 import { PaginationDto } from '@island.is/nest/pagination'
 import {
   UpdateNotificationDto,
