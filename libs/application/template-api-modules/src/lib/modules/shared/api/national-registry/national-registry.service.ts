@@ -6,6 +6,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  NationalRegistryResidenceHistory,
   ChildrenCustodyInformationParameters,
   NationalRegistryParent,
   NationalRegistryMaritalTitle,
@@ -457,12 +458,32 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
   }
 
+  async getResidenceHistory({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+    NationalRegistryResidenceHistory[] | null
+  > {
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
+
+    if (!residenceHistory) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residenceHistory
+  }
+
   async getCohabitants({
     auth,
   }: TemplateApiModuleActionProps): Promise<string[] | null> {
-    const cohabitants:
-      | string[]
-      | null = await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+    const cohabitants: string[] | null =
+      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
 
     if (!cohabitants) {
       throw new TemplateApiError(

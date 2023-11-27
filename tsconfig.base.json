@@ -405,6 +405,12 @@
       "@island.is/application/templates/signature-collection/signature-list-signing": [
         "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration-core/*": [
+        "libs/application/templates/social-insurance-administration/core/src/*"
+      ],
+      "@island.is/application/templates/social-insurance-administration/old-age-pension": [
+        "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -596,6 +602,9 @@
       ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
+      ],
+      "@island.is/clients/social-insurance-administration": [
+        "libs/clients/social-insurance-administration/src/index.ts"
       ],
       "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],

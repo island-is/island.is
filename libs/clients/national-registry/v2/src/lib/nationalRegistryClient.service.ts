@@ -119,11 +119,11 @@ export class NationalRegistryClientService {
     return formatCohabitationDto(response)
   }
 
-  async getCohabitants(nationalId: string): Promise<string[] | null> {
+  async getCohabitants(nationalId: string): Promise<string[]> {
     const cohabitants = await this.handleLegacyMissingData(
       this.individualApi.einstaklingarGetSamibuarRaw({ id: nationalId }),
     )
-    return cohabitants || null
+    return cohabitants || []
   }
 
   async getResidenceHistory(
