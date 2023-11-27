@@ -168,7 +168,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={emailField}
             name={emailField}
-            label={m.email.defaultMessage}
+            label={formatMessage(m.email)}
             defaultValue={field.email || ''}
             backgroundColor="blue"
             error={error?.email}
@@ -179,7 +179,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={phoneField}
             name={phoneField}
-            label={m.phone.defaultMessage}
+            label={formatMessage(m.phone)}
             defaultValue={field.phone || ''}
             backgroundColor="blue"
             format={'###-####'}
