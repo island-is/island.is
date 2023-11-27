@@ -287,6 +287,9 @@ export interface Case {
   appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
+  appealValidToDate?: string
+  isAppealCustodyIsolation?: boolean
+  appealIsolationToDate?: string
 }
 
 export interface CaseListEntry
@@ -319,6 +322,7 @@ export interface CaseListEntry
     | 'appealedDate'
     | 'appealCaseNumber'
     | 'appealRulingDecision'
+    | 'appealValidToDate'
   > {
   parentCaseId?: string
 }
@@ -406,6 +410,9 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -474,7 +481,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_RULING,
 ]
 
-export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
@@ -614,4 +621,18 @@ export function getAppealedDate(
   accusedPostponedAppealDate?: string,
 ): string | undefined {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
+}
+
+export function useAppealValidToDates(
+  decision?: CaseDecision,
+  state?: CaseState,
+  appealRulingDecision?: CaseAppealRulingDecision,
+  appealState?: CaseAppealState,
+) {
+  return (
+    (decision === CaseDecision.ACCEPTING || CaseDecision.ACCEPTING_PARTIALLY) &&
+    state === CaseState.ACCEPTED &&
+    appealRulingDecision === CaseAppealRulingDecision.CHANGED &&
+    appealState === CaseAppealState.COMPLETED
+  )
 }

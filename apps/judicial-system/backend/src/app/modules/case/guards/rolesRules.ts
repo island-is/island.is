@@ -46,6 +46,8 @@ const prosecutorFields: (keyof UpdateCaseDto)[] = [
   'indictmentIntroduction',
   'requestDriversLicenseSuspension',
   'prosecutorStatementDate',
+  'appealValidToDate',
+  'appealIsolationToDate',
 ]
 
 const districtCourtFields: (keyof UpdateCaseDto)[] = [
@@ -85,6 +87,8 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'rulingModifiedHistory',
   'defendantWaivesRightToCounsel',
   'prosecutorId',
+  'appealValidToDate',
+  'appealIsolationToDate',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -96,6 +100,9 @@ const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealRulingModifiedHistory',
+  'appealValidToDate',
+  'isAppealCustodyIsolation',
+  'appealIsolationToDate',
 ]
 
 const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']
