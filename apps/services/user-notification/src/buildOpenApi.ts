@@ -6,6 +6,8 @@ import { openApi } from './openApi'
 import { NotificationsController } from './app/modules/notifications/notifications.controller'
 import { NotificationsService } from './app/modules/notifications/notifications.service'
 import { AppModule } from './app/app.module'
+import { SequelizeModule } from '@nestjs/sequelize'
+import { SequelizeConfigService } from './app/sequelizeConfig.service'
 @Module({
   imports: [
     CacheModule.register({
@@ -18,10 +20,14 @@ import { AppModule } from './app/app.module'
         name: 'notifications',
         queueName: '',
       },
+      
+    }),
+    SequelizeModule.forRootAsync({
+      useClass: SequelizeConfigService,
     }),
   ],
-  controllers: [NotificationsController],
-  providers: [NotificationsService],
+  // controllers: [NotificationsController],
+  // providers: [NotificationsService],
 })
 class BuildModule {}
 

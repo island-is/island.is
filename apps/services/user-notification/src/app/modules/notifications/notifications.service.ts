@@ -20,7 +20,7 @@ import { paginate } from '@island.is/nest/pagination'
 
 import { Op } from 'sequelize'
 import { User } from '@island.is/auth-nest-tools'
-import { PaginatedNotificationDto,ExtendedNotificationDto, UpdateNotificationDto, NotificationStatus, RenderedNotificationDto } from './dto/notification.dto'
+import { PaginatedNotificationDto, UpdateNotificationDto, NotificationStatus, RenderedNotificationDto } from './dto/notification.dto'
 
 
 
