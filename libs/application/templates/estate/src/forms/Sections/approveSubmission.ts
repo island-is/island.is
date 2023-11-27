@@ -30,7 +30,7 @@ export const approvePrivateDivisionSubmission = buildSection({
           options: [
             {
               value: YES,
-              label: m.divisionOfEstateByHeirsSubmissionCheckbox.defaultMessage,
+              label: m.divisionOfEstateByHeirsSubmissionCheckbox,
             },
           ],
         }),
