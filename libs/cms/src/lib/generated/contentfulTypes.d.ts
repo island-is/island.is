@@ -151,8 +151,6 @@ export interface IAnchorPageFields {
   featuredImage?: Asset | undefined
 }
 
-/** !!DO NOT USE YET!! - This content entry will replace the current anchor page (previously life events). The team will be informed when the migration had been completed. */
-
 export interface IAnchorPage extends Entry<IAnchorPageFields> {
   sys: {
     id: string
@@ -177,8 +175,6 @@ export interface IAnchorPageListFields {
   /** Pages */
   pages?: IAnchorPage[] | undefined
 }
-
-/** !!DO NOT USE!! - This is part of the life events data migration */
 
 export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
   sys: {
@@ -1600,6 +1596,7 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 
   /** Open Link in New Tab */
@@ -2092,6 +2089,7 @@ export interface IMenuLinkFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 }
 
@@ -2131,6 +2129,7 @@ export interface IMenuLinkWithChildrenFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 
   /** Child links */
@@ -2597,6 +2596,7 @@ export interface IOrganizationPageFields {
         | ITimeline
         | ITwoColumnText
         | ISectionWithVideo
+        | IAnchorPageList
       )[]
     | undefined
 
@@ -2737,6 +2737,7 @@ export interface IOrganizationSubpageFields {
         | ITeamList
         | ITellUsAStory
         | ITwoColumnText
+        | IAnchorPageList
       )[]
     | undefined
 
