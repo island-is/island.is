@@ -190,9 +190,9 @@ export function setupRoutes() {
           topBar: {
             title: {
               text: passProps.title,
-            }
-          }
-        }
+            },
+          },
+        },
       },
     });
   });

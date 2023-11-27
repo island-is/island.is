@@ -38,9 +38,7 @@ export const lineHeightByFontSize = (fontSize: number) => {
   return Math.ceil(fontSize * 1.25);
 };
 
-export const fontByWeight = (
-  weight: TextStyle['fontWeight'],
-): FontFamily => {
+export const fontByWeight = (weight: TextStyle['fontWeight']): FontFamily => {
   switch (weight) {
     case '900':
     case '800':

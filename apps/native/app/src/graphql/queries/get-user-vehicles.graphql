@@ -2,7 +2,6 @@ query GetUserVehicles($input: GetVehiclesForUserInput!) {
   vehiclesList(input: $input) {
     vehicleList {
       ...VehicleFragment
-
     }
     paging {
       pageNumber

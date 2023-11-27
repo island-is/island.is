@@ -118,7 +118,10 @@ export const useFeatureFlagClient = () => {
 export function useFeatureFlag(key: string, defaultValue: string): string;
 export function useFeatureFlag(key: string, defaultValue: boolean): boolean;
 
-export function useFeatureFlag<T extends string | boolean>(key: string, defaultValue: T) {
+export function useFeatureFlag<T extends string | boolean>(
+  key: string,
+  defaultValue: T,
+) {
   const featureFlagClient = useFeatureFlagClient();
   const [flag, setFlag] = useState<T>(defaultValue);
 

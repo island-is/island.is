@@ -40,7 +40,7 @@ import {TestingLoginScreen} from '../../screens/login/testing-login';
 import {FinanceScreen} from '../../screens/finance/finance';
 import {FinanceStatusDetailScreen} from '../../screens/finance/finance-status-detail';
 import {InboxFilterScreen} from '../../screens/inbox/inbox-filter';
-import { VehicleMileageScreen } from '../../screens/vehicles/vehicle-mileage.screen';
+import {VehicleMileageScreen} from '../../screens/vehicles/vehicle-mileage.screen';
 
 export function registerAllComponents() {
   // dev only

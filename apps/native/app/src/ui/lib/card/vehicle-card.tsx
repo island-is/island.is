@@ -129,12 +129,7 @@ interface VehicleCardProps {
   label?: React.ReactNode;
 }
 
-export function VehicleCard({
-  title,
-  color,
-  number,
-  label,
-}: VehicleCardProps) {
+export function VehicleCard({title, color, number, label}: VehicleCardProps) {
   return (
     <Host>
       <Content>

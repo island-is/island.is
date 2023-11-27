@@ -140,7 +140,7 @@ export function showPicker(
 }
 
 export function showPrompt(options: PromptOptions): Promise<PromptResponse> {
-  const { isDarkMode } = uiStore.getState();
+  const {isDarkMode} = uiStore.getState();
   if (Platform.OS === 'android') {
     return DialogAndroid.prompt(options.title, options.message, {
       keyboardType: options.keyboardType,
@@ -154,7 +154,7 @@ export function showPrompt(options: PromptOptions): Promise<PromptResponse> {
       neutralColor: isDarkMode ? '#ffffff' : '#000000',
       titleColor: isDarkMode ? '#ffffff' : '#000000',
       ...options.android,
-    } as OptionsPrompt).then(({ action, text, ...rest }: any) => {
+    } as OptionsPrompt).then(({action, text, ...rest}: any) => {
       return {
         action: parseAndroidAction(action),
         text,
@@ -163,27 +163,27 @@ export function showPrompt(options: PromptOptions): Promise<PromptResponse> {
     });
   }
 
-  return new Promise((resolve) =>
+  return new Promise(resolve =>
     Alert.prompt(
       options.title,
       options.message,
-      options.buttons?.map((button) => {
+      options.buttons?.map(button => {
         return {
           text: button.text,
-          onPress: (text) => {
+          onPress: text => {
             if (button.style === 'cancel') {
-              resolve({ action: 'dismiss' });
+              resolve({action: 'dismiss'});
             } else if (button.style === 'destructive') {
-              resolve({ action: 'negative', text });
+              resolve({action: 'negative', text});
             } else {
-              resolve({ action: 'neutral', text });
+              resolve({action: 'neutral', text});
             }
           },
         };
       }),
       options.type,
       options.defaultValue,
-      options.keyboardType
-    )
+      options.keyboardType,
+    ),
   );
 }
