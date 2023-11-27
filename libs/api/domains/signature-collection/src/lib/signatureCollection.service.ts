@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-// import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Success } from './models/success.model'
