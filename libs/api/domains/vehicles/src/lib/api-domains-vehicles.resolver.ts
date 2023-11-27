@@ -43,7 +43,7 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,
-    @Args('input') input?: GetVehiclesForUserInput,
+    @Args('input', { nullable: true }) input?: GetVehiclesForUserInput,
   ) {
     if (input) {
       const res = await this.vehiclesService.getVehiclesForUser(user, input)
