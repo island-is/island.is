@@ -34,6 +34,9 @@ export class ManualChapter {
   @Field()
   slug!: string
 
+  @Field({ nullable: true })
+  intro?: string
+
   @CacheField(() => [SliceUnion], { nullable: true })
   description?: Array<typeof SliceUnion>
 
@@ -57,6 +60,7 @@ export const mapManualChapter = ({
     id: sys.id,
     slug: fields.slug,
     title: fields.title,
+    intro: fields.intro ?? '',
     chapterItems: fields.chapterItems
       ? fields.chapterItems.map((item) =>
           mapManualChapterItem({ item, manual, chapter }),
