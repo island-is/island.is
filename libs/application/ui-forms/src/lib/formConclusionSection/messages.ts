@@ -56,19 +56,19 @@ export const conclusion = {
       defaultMessage: 'Hlaða niður skjali',
       description: 'Button label to download file',
     },
-    vertificationDescription: {
-      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationDescription',
+    verificationDescription: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationDescription',
       defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
       description: 'The description about verification',
     },
-    vertificationLinkTitle: {
-      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationLinkTitle',
+    verificationLinkTitle: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationLinkTitle',
       defaultMessage: 'island.is/sannreyna',
       description:
         'The title for the link to further information about the verification',
     },
-    vertificationLinkUrl: {
-      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationLinkUrl',
+    verificationLinkUrl: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.verificationLinkUrl',
       defaultMessage: 'https://island.is/sannreyna',
       description:
         'The url for the link to further information about the verification',

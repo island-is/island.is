@@ -92,12 +92,12 @@ export const buildFormConclusionSection = (props: props) => {
             title: '',
             downloadButtonTitle:
               conclusion.pdfLinkButtonField.downloadButtonTitle,
-            vertificationDescription:
-              conclusion.pdfLinkButtonField.vertificationDescription,
-            vertificationLinkTitle:
-              conclusion.pdfLinkButtonField.vertificationLinkTitle,
-            vertificationLinkUrl:
-              conclusion.pdfLinkButtonField.vertificationLinkUrl,
+            verificationDescription:
+              conclusion.pdfLinkButtonField.verificationDescription,
+            verificationLinkTitle:
+              conclusion.pdfLinkButtonField.verificationLinkTitle,
+            verificationLinkUrl:
+              conclusion.pdfLinkButtonField.verificationLinkUrl,
             getPdfFiles: props.getPdfFiles,
             // isViewingFile,
             // setIsViewingFile,

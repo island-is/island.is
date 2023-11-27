@@ -121,13 +121,13 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
         >
           <Text variant="small">
             {formatText(
-              field.vertificationDescription,
+              field.verificationDescription,
               application,
               formatMessage,
             )}{' '}
             <Link
               href={formatText(
-                field.vertificationLinkUrl,
+                field.verificationLinkUrl,
                 application,
                 formatMessage,
               )}
@@ -136,7 +136,7 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
               underlineVisibility="always"
             >
               {formatText(
-                field.vertificationLinkTitle,
+                field.verificationLinkTitle,
                 application,
                 formatMessage,
               )}

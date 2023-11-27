@@ -567,9 +567,9 @@ export function buildPdfLinkButtonField(
 ): PdfLinkButtonField {
   const {
     downloadButtonTitle,
-    vertificationDescription,
-    vertificationLinkTitle,
-    vertificationLinkUrl,
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
     getPdfFiles,
     // isViewingFile,
     // setIsViewingFile,
@@ -577,9 +577,9 @@ export function buildPdfLinkButtonField(
   return {
     ...extractCommonFields(data),
     downloadButtonTitle,
-    vertificationDescription,
-    vertificationLinkTitle,
-    vertificationLinkUrl,
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
     getPdfFiles,
     // isViewingFile,
     // setIsViewingFile,
