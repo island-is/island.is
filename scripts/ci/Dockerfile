@@ -7,12 +7,12 @@ ARG CONTAINER_NGINX_VERSION=1.21-alpine
 ARG CONTAINER_JQ_VERSION=1.6
 
 # Base layers
-FROM $CONTAINER_IMAGE_REGISTRY/docker/library/node:${CONTAINER_NODE_VERSION} as node-base
-FROM $CONTAINER_IMAGE_REGISTRY/nginx/nginx:${CONTAINER_NGINX_VERSION} as nginx-base
-FROM mcr.microsoft.com/playwright:${CONTAINER_PLAYWRIGHT_VERSION} as playwright-base
+FROM $CONTAINER_IMAGE_REGISTRY/docker/library/node:${CONTAINER_NODE_VERSION} as base-node
+FROM $CONTAINER_IMAGE_REGISTRY/nginx/nginx:${CONTAINER_NGINX_VERSION} as base-nginx
+FROM mcr.microsoft.com/playwright:${CONTAINER_PLAYWRIGHT_VERSION} as base-playwright
 
 
-FROM node-base as deps
+FROM base-node as deps
 
 RUN apk add -U git
 
@@ -43,7 +43,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM node-base as output-base
+FROM base-node as base-output
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -62,7 +62,7 @@ WORKDIR /webapp
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 
-FROM output-base as output-base-with-pg
+FROM base-output as base-output-with-pg
 
 RUN npm install -g \
   sequelize \
@@ -71,14 +71,14 @@ RUN npm install -g \
 
 USER runner
 
-FROM output-base-with-pg as output-express
+FROM base-output-with-pg as output-express
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM output-base-with-pg as output-next
+FROM base-output-with-pg as output-next
 
 ENV PORT=4200
 
@@ -88,7 +88,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM nginx-base as output-static
+FROM base-nginx as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -111,7 +111,7 @@ ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
-FROM output-base as output-jest
+FROM base-output as output-jest
 
 RUN echo 'module.exports = {};' > jest.config.js
 
@@ -127,7 +127,7 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-FROM playwright-base as output-playwright
+FROM base-playwright as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
@@ -153,7 +153,7 @@ COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-FROM playwright-base as output-local
+FROM base-playwright as output-local
 ARG APP_HOME
 
 
@@ -167,5 +167,5 @@ USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
 
-FROM output-base as output-native
+FROM base-output as output-native
 RUN echo "not-implemented"
