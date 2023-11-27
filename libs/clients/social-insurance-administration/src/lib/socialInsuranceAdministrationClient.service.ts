@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   OldAgePension,
   SendApplicationApi,
@@ -31,28 +31,37 @@ export class SocialInsuranceAdministrationClientService {
   private currenciesAPIWithAuth = (user: User) =>
     this.getCurrenciesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async sendApplication(
+  sendApplication(
     user: User,
     oldAgePension: OldAgePension,
     applicationType: string,
   ): Promise<Response> {
-    return await this.sendAPIWithAuth(user).oldAgePensionSendApplication({
+    return this.sendAPIWithAuth(user).oldAgePensionSendApplication({
       oldAgePension,
       applicationType,
     })
   }
 
   async getApplicant(user: User): Promise<Applicant> {
-    return await this.applicantAPIWithAuth(user).applicationGetApplicant()
+    const applicant = await this.applicantAPIWithAuth(
+      user,
+    ).applicationGetApplicant()
+    return applicant
   }
 
   async getIsEligible(user: User, applicationType: string): Promise<Eligible> {
-    return await this.isEligibleAPIWithAuth(user).applicantGetIsEligible({
+    const isEligible = await this.isEligibleAPIWithAuth(
+      user,
+    ).applicantGetIsEligible({
       applicationType,
     })
+    return isEligible
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {
-    return await this.currenciesAPIWithAuth(user).generalGetCurrencies()
+    const currencies = await this.currenciesAPIWithAuth(
+      user,
+    ).generalGetCurrencies()
+    return currencies
   }
 }
