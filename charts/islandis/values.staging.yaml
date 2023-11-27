@@ -1696,10 +1696,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '700m'
-            memory: '3072Mi'
+            memory: '4096Mi'
           requests:
             cpu: '300m'
-            memory: '2048Mi'
+            memory: '3072Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
