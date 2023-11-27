@@ -14,8 +14,8 @@ import { VehicleModel, VehicleConnection } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { SamgongustofaService } from '../samgongustofa'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { CreateVehicleInput } from './dto/createVehicle.input'
 
-//@Authorize()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
 export class VehicleAppSysResolver {
@@ -86,11 +86,11 @@ export class VehicleAppSysResolver {
   @Mutation(() => Boolean)
   async createSkilavottordVehicleAppSys(
     @CurrentUser() user: User,
-    @Args('permno') permno: string,
+    @Args('input') input: CreateVehicleInput,
   ) {
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
-      permno,
+      input.permno,
     )
     if (!vehicle) {
       throw new NotFoundException(`User does not have this vehicle`)

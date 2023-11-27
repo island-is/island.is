@@ -116,8 +116,6 @@ export class RecyclingRequestAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<typeof RecyclingRequestResponse> {
-    console.log('createSkilavottordRecyclingRequestAppSys', input.requestType)
-
     if (
       input.requestType === 'pendingRecycle' ||
       input.requestType === 'cancelled'

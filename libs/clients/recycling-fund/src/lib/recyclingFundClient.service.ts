@@ -79,7 +79,6 @@ export class RecyclingFundClientService {
     })
 
     if (!response.ok) {
-      // ToDo: Decide how to handle errors
       throw new Error(`Failed to creating recycling request from`)
     }
 
@@ -111,25 +110,24 @@ export class RecyclingFundClientService {
   }
 
   async createVehicle(user: User, permno: string) {
-    const response = await this.createRecyclingFundRequest(user, {
-      query: print(SkilavottordVehicleDocument),
-      variables: {
-        permno,
-      } as SkilavottordVehicleMutationVariables,
-    })
+    try {
+      const response = await this.createRecyclingFundRequest(user, {
+        query: print(SkilavottordVehicleDocument),
+        variables: {
+          input: {
+            permno,
+          },
+        } as SkilavottordVehicleMutationVariables,
+      })
 
-    if (!response || !response.ok) {
-      // ToDo: Decide how to handle errors
-      throw new Error(`Failed to creating vehicle ${user.nationalId}`)
+      if (!response || !response.ok) {
+        throw new Error(`Failed to creating vehicle ${permno}`)
+      }
+
+      return await response.json()
+    } catch (e) {
+      throw new Error(`Failed to creating vehicle ${permno}`)
     }
-
-    const data = await response.json()
-
-    if (data.errors) {
-      throw new Error(`Failed to creating vehicle ${permno} - ${data.errors}`)
-    }
-
-    return data.createSkilavottordVehicleAppSys
   }
 
   async recycleVehicle(
@@ -140,13 +138,14 @@ export class RecyclingFundClientService {
     const response = await this.createRecyclingFundRequest(user, {
       query: print(SkilavottordRecyclingRequestDocument),
       variables: {
-        permno,
-        requestType,
+        input: {
+          permno,
+          requestType,
+        },
       } as SkilavottordRecyclingRequestMutationVariables,
     })
 
     if (!response || !response.ok) {
-      // ToDo: Decide how to handle errors
       throw new Error(
         `Failed to recycle vehicle ${permno} - RequestType: ${requestType}`,
       )

@@ -8,18 +8,12 @@ mutation skilavottordVehicleOwner($input: CreateOwnerInput!) {
   createSkilavottordVehicleOwnerAppSys(input: $input)
 }
 
-mutation skilavottordVehicle($permno: String!) {
-  createSkilavottordVehicleAppSys(permno: $permno)
+mutation skilavottordVehicle($input: CreateVehicleInput!) {
+  createSkilavottordVehicleAppSys(input: $input)
 }
 
-mutation skilavottordRecyclingRequest(
-  $permno: String!
-  $requestType: RecyclingRequestTypes!
-) {
-  createSkilavottordRecyclingRequestAppSys(
-    permno: $permno
-    requestType: $requestType
-  ) {
+mutation skilavottordRecyclingRequest($input: CreateRecyclingRequestInput!) {
+  createSkilavottordRecyclingRequestAppSys(input: $input) {
     ... on RequestErrors {
       message
       operation

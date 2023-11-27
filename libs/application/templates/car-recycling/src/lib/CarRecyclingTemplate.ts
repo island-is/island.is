@@ -115,7 +115,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: Actions.CREATE_OWNER,
             shouldPersistToExternalData: false,
-
             throwOnError: true,
           }),
           progress: 0.5,
