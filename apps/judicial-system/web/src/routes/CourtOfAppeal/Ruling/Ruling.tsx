@@ -14,7 +14,6 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseTransition,
-  NotificationType,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'

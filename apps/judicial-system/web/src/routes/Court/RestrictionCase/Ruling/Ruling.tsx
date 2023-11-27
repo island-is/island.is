@@ -7,24 +7,18 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Checkbox,
   Input,
   Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatDate,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   CaseDecision,
   isAcceptingCaseDecision,
 } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   CaseFileList,
   CourtCaseInfo,
   Decision,
@@ -37,8 +31,8 @@ import {
   RulingInput,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { DateTime } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import {
   CaseType,
   Defendant,
@@ -201,9 +195,141 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
     },
     [router, workingCase.id],
   )
+
   const stepIsValid = isRulingValidRC(workingCase)
   const caseFiles =
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
+
+  const handleIsolationChange = useCallback(() => {
+    let conclusion = undefined
+
+    if (
+      workingCase.decision &&
+      workingCase.defendants &&
+      workingCase.defendants.length > 0 &&
+      (isAcceptingCaseDecision(workingCase.decision) ||
+        workingCase.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+    ) {
+      conclusion = getConclusionAutofill(
+        formatMessage,
+        workingCase,
+        workingCase.decision,
+        workingCase.defendants[0],
+        workingCase.validToDate,
+        !workingCase.isCustodyIsolation,
+        workingCase.isolationToDate,
+      )
+    }
+
+    setAndSendCaseToServer(
+      [
+        {
+          isCustodyIsolation: !workingCase.isCustodyIsolation,
+          conclusion,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
+  }, [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase])
+
+  const handleIsolationDateChange = useCallback(
+    (date: Date | undefined, valid: boolean) => {
+      let isolationToDate = date && valid ? formatISO(date) : undefined
+      if (
+        isolationToDate &&
+        workingCase.validToDate &&
+        isolationToDate > workingCase.validToDate
+      ) {
+        // Make sure the time component does not make the isolation to date larger than the valid to date.
+        isolationToDate = workingCase.validToDate
+      }
+      let conclusion = undefined
+
+      if (
+        workingCase.decision &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0 &&
+        date &&
+        valid &&
+        (isAcceptingCaseDecision(workingCase.decision) ||
+          workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+      ) {
+        conclusion = getConclusionAutofill(
+          formatMessage,
+          workingCase,
+          workingCase.decision,
+          workingCase.defendants[0],
+          workingCase.validToDate,
+          workingCase.isCustodyIsolation,
+          formatISO(date),
+        )
+      }
+
+      setAndSendCaseToServer(
+        [
+          {
+            isolationToDate,
+            conclusion,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handleValidToDateChange = useCallback(
+    (date: Date | undefined, valid: boolean) => {
+      const validToDate = date && valid ? formatISO(date) : undefined
+      const isolationToDate =
+        validToDate &&
+        workingCase.isolationToDate &&
+        validToDate < workingCase.isolationToDate
+          ? validToDate
+          : workingCase.isolationToDate
+      let conclusion = undefined
+
+      if (
+        workingCase.decision &&
+        workingCase.defendants &&
+        workingCase.defendants.length > 0 &&
+        date &&
+        valid &&
+        (isAcceptingCaseDecision(workingCase.decision) ||
+          workingCase.decision ===
+            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
+      ) {
+        conclusion = getConclusionAutofill(
+          formatMessage,
+          workingCase,
+          workingCase.decision,
+          workingCase.defendants[0],
+          validToDate,
+          workingCase.isCustodyIsolation,
+          isolationToDate,
+        )
+      }
+
+      setAndSendCaseToServer(
+        [
+          {
+            validToDate,
+            isolationToDate,
+            conclusion,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+    },
+    [formatMessage, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
 
   return (
     <PageLayout
@@ -524,218 +650,14 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
         {workingCase.decision &&
           workingCase.decision !== CaseDecision.REJECTING &&
           workingCase.decision !== CaseDecision.DISMISSING && (
-            <Box
-              component="section"
-              marginBottom={7}
-              data-testid="caseDecisionSection"
-            >
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  {capitalize(
-                    formatMessage(
-                      ruling.restrictionCases.sections.decision.caseType,
-                      {
-                        caseType:
-                          workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                            ? CaseType.TRAVEL_BAN
-                            : workingCase.type,
-                      },
-                    ),
-                  )}
-                </Text>
-              </Box>
-              <DateTime
-                name="validToDate"
-                datepickerLabel={formatMessage(
-                  m.sections.decision.validToDate,
-                  {
-                    caseType: capitalize(
-                      formatMessage(
-                        ruling.restrictionCases.sections.decision.caseType,
-                        {
-                          caseType:
-                            workingCase.decision ===
-                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-                              ? CaseType.TRAVEL_BAN
-                              : workingCase.type,
-                        },
-                      ),
-                    ),
-                  },
-                )}
-                selectedDate={workingCase.validToDate}
-                minDate={new Date()}
-                onChange={(date: Date | undefined, valid: boolean) => {
-                  const validToDate =
-                    date && valid ? formatISO(date) : undefined
-                  const isolationToDate =
-                    validToDate &&
-                    workingCase.isolationToDate &&
-                    validToDate < workingCase.isolationToDate
-                      ? validToDate
-                      : workingCase.isolationToDate
-                  let conclusion = undefined
-
-                  if (
-                    workingCase.decision &&
-                    workingCase.defendants &&
-                    workingCase.defendants.length > 0 &&
-                    date &&
-                    valid &&
-                    (isAcceptingCaseDecision(workingCase.decision) ||
-                      workingCase.decision ===
-                        CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
-                  ) {
-                    conclusion = getConclusionAutofill(
-                      formatMessage,
-                      workingCase,
-                      workingCase.decision,
-                      workingCase.defendants[0],
-                      validToDate,
-                      workingCase.isCustodyIsolation,
-                      isolationToDate,
-                    )
-                  }
-
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        validToDate,
-                        isolationToDate,
-                        conclusion,
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }}
-                required
-              />
-            </Box>
+            <RestrictionLength
+              workingCase={workingCase}
+              handleIsolationChange={handleIsolationChange}
+              handleIsolationDateChange={handleIsolationDateChange}
+              handleValidToDateChange={handleValidToDateChange}
+            />
           )}
-        {(workingCase.type === CaseType.CUSTODY ||
-          workingCase.type === CaseType.ADMISSION_TO_FACILITY) &&
-          isAcceptingCaseDecision(workingCase.decision) && (
-            <Box component="section" marginBottom={5}>
-              <Box marginBottom={2}>
-                <Text as="h3" variant="h3">
-                  {formatMessage(m.sections.custodyRestrictions.title)}
-                </Text>
-              </Box>
-              <BlueBox>
-                <Box marginBottom={3}>
-                  <Checkbox
-                    name="isCustodyIsolation"
-                    label={formatMessage(
-                      m.sections.custodyRestrictions.isolation,
-                    )}
-                    checked={workingCase.isCustodyIsolation}
-                    onChange={() => {
-                      let conclusion = undefined
 
-                      if (
-                        workingCase.decision &&
-                        workingCase.defendants &&
-                        workingCase.defendants.length > 0 &&
-                        (isAcceptingCaseDecision(workingCase.decision) ||
-                          workingCase.decision ===
-                            CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
-                      ) {
-                        conclusion = getConclusionAutofill(
-                          formatMessage,
-                          workingCase,
-                          workingCase.decision,
-                          workingCase.defendants[0],
-                          workingCase.validToDate,
-                          !workingCase.isCustodyIsolation,
-                          workingCase.isolationToDate,
-                        )
-                      }
-
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            isCustodyIsolation: !workingCase.isCustodyIsolation,
-                            conclusion,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
-                    }}
-                    filled
-                    large
-                  />
-                </Box>
-                <DateTime
-                  name="isolationToDate"
-                  datepickerLabel="Einangrun til"
-                  disabled={!workingCase.isCustodyIsolation}
-                  selectedDate={workingCase.isolationToDate}
-                  // Isolation can never be set in the past.
-                  minDate={new Date()}
-                  maxDate={
-                    workingCase.validToDate
-                      ? new Date(workingCase.validToDate)
-                      : undefined
-                  }
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    let isolationToDate =
-                      date && valid ? formatISO(date) : undefined
-                    if (
-                      isolationToDate &&
-                      workingCase.validToDate &&
-                      isolationToDate > workingCase.validToDate
-                    ) {
-                      // Make sure the time component does not make the isolation to date larger than the valid to date.
-                      isolationToDate = workingCase.validToDate
-                    }
-                    let conclusion = undefined
-
-                    if (
-                      workingCase.decision &&
-                      workingCase.defendants &&
-                      workingCase.defendants.length > 0 &&
-                      date &&
-                      valid &&
-                      (isAcceptingCaseDecision(workingCase.decision) ||
-                        workingCase.decision ===
-                          CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN)
-                    ) {
-                      conclusion = getConclusionAutofill(
-                        formatMessage,
-                        workingCase,
-                        workingCase.decision,
-                        workingCase.defendants[0],
-                        workingCase.validToDate,
-                        workingCase.isCustodyIsolation,
-                        formatISO(date),
-                      )
-                    }
-
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          isolationToDate,
-                          conclusion,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  blueBox={false}
-                  backgroundColor={
-                    workingCase.isCustodyIsolation ? 'white' : 'blue'
-                  }
-                />
-              </BlueBox>
-            </Box>
-          )}
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">

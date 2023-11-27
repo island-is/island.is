@@ -103,6 +103,7 @@ export const Checkbox = ({
         onChange={onChangeHandler}
         value={value}
         checked={checked}
+        aria-hidden="true"
         {...(ariaError as AriaError)}
       />
       <label
