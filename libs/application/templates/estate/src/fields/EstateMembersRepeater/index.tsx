@@ -250,6 +250,7 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -264,6 +265,7 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                 </GridRow>
