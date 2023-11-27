@@ -300,7 +300,9 @@ export const PhoneInput = forwardRef(
                 />
                 <NumberFormat
                   className={cn(
-                    styles.input,
+                    styles.input({
+                      xs: size === 'xs',
+                    }),
                     resolveResponsiveProp(
                       backgroundColor,
                       styles.inputBackgroundXs,

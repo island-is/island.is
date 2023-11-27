@@ -30,25 +30,35 @@ export const container = style({
 
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
-export const input = style({
-  ...inputMixins.input,
-  zIndex: 2,
-  marginLeft: '120px',
-  '::placeholder': inputMixins.inputPlaceholder,
-  ':focus': inputMixins.inputFocus,
-  selectors: {
-    [`${noLabel} &::placeholder`]: {
-      color: theme.color.dark400,
+export const input = recipe({
+  base: {
+    ...inputMixins.input,
+    zIndex: 2,
+    marginLeft: '120px',
+    '::placeholder': inputMixins.inputPlaceholder,
+    ':focus': inputMixins.inputFocus,
+    selectors: {
+      [`${noLabel} &::placeholder`]: {
+        color: theme.color.dark400,
+      },
+    },
+    ...themeUtils.responsiveStyle({
+      xl: {
+        marginLeft: '140px',
+      },
+    }),
+  },
+  variants: {
+    xs: {
+      true: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            marginLeft: '120px',
+          },
+        }),
+      },
     },
   },
-  ...themeUtils.responsiveStyle({
-    md: {
-      marginLeft: '120px',
-    },
-    xl: {
-      marginLeft: '140px',
-    },
-  }),
 })
 
 export const inputDisabled = style({
