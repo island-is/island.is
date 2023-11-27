@@ -29,6 +29,7 @@ interface Props {
   required?: boolean
   readOnly?: boolean
   rightAlign?: boolean
+  thousandSeparator?: boolean
   maxLength?: number
   loading?: boolean
   size?: 'xs' | 'sm' | 'md'
@@ -75,6 +76,7 @@ export const InputController = forwardRef(
       size = 'md',
       dataTestId,
       autoComplete,
+      thousandSeparator,
     } = props
     function renderChildInput(c: ChildParams & TestSupport) {
       const { value, onChange, ...props } = c
@@ -150,6 +152,8 @@ export const InputController = forwardRef(
             hasError={error !== undefined}
             errorMessage={error}
             required={required}
+            decimalSeparator={thousandSeparator ? ',' : undefined}
+            thousandSeparator={thousandSeparator ? '.' : undefined}
             getInputRef={ref}
             {...props}
           />
