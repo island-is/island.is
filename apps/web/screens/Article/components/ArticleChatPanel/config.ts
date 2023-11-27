@@ -185,11 +185,6 @@ export const watsonConfig: Record<
           bot_avatar_url:
             'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
         })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'almenntskattar',
-          '98ba51da-1677-4881-a133-7ea019ae7b87',
-        )
       },
     },
     // Child benefit
@@ -206,11 +201,6 @@ export const watsonConfig: Record<
           bot_avatar_url:
             'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
         })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'barnabaetur',
-          '98ba51da-1677-4881-a133-7ea019ae7b87',
-        )
       },
     },
 
@@ -228,11 +218,6 @@ export const watsonConfig: Record<
           bot_avatar_url:
             'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
         })
-        setupOneScreenWatsonChatBot(
-          instance,
-          'virdisaukaskattur',
-          '98ba51da-1677-4881-a133-7ea019ae7b87',
-        )
       },
     },
 
