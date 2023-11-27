@@ -1,10 +1,13 @@
 schema:
   - apps/api/src/api.graphql
+documents:
+  - apps/native/app/src/**/*.graphql
 generates:
-  apps/native/app/src/graphql/types/schema.ts:
+  apps/native/app/src/graphql/types/schema.tsx:
     plugins:
       - typescript
       - typescript-operations
+      - typescript-react-apollo
 hooks:
   afterAllFileWrite:
     - prettier --write

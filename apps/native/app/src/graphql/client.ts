@@ -1,6 +1,7 @@
 import {
   ApolloClient,
   ApolloLink,
+  defaultDataIdFromObject,
   fromPromise,
   HttpLink,
   InMemoryCache,
@@ -130,6 +131,16 @@ export const client = new ApolloClient({
     },
   },
   cache: new InMemoryCache({
+    dataIdFromObject: object => {
+      switch (object.__typename) {
+        case 'VehiclesVehicle':
+          return `VehiclesVehicle:${object.permno}`;
+        case 'VehicleMileageDetail':
+          return `VehicleMileageDetail:${object.internalId}`;
+        default:
+          return defaultDataIdFromObject(object);
+      }
+    },
     typePolicies: {
       Document: {
         fields: {

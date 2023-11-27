@@ -47,7 +47,7 @@ const Value = styled.Text<{size?: 'normal' | 'big'}>`
 
 interface InputProps {
   label: string;
-  value?: string;
+  value?: string | null;
   loading?: boolean;
   error?: boolean;
   valueTestID?: string;

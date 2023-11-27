@@ -123,12 +123,10 @@ const Icon = styled.View`
 `;
 
 interface VehicleCardProps {
-  title: string;
-  color: string;
-  number: string;
+  title?: string | null;
+  color?: string | null;
+  number?: string | null;
   label?: React.ReactNode;
-  date: Date | null;
-  mileageRequired?: boolean;
 }
 
 export function VehicleCard({
@@ -136,8 +134,6 @@ export function VehicleCard({
   color,
   number,
   label,
-  date,
-  mileageRequired,
 }: VehicleCardProps) {
   return (
     <Host>
@@ -147,18 +143,6 @@ export function VehicleCard({
           {color} - {number}
         </Text>
         {label}
-        {/* {mileageRequired ? (
-          <LabelWrap color="warning">
-            <Image source={warning} style={{width: 20, height: 20, marginRight: 8}} />
-            <Label color="warning">Skrá þarf kílómetrastöðu</Label>
-          </LabelWrap>
-        ) : date ? (
-          <LabelWrap color={isInspectionDeadline ? 'primary' : 'danger'}>
-            <Label color={isInspectionDeadline ? 'primary' : 'danger'}>
-              Næsta skoðun <FormattedDate value={date} />
-            </Label>
-          </LabelWrap>
-        ) : null} */}
       </Content>
       <Icon>
         <Image source={chevronForward} style={{width: 24, height: 24}} />

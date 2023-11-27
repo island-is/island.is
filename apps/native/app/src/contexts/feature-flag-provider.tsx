@@ -115,15 +115,18 @@ export const useFeatureFlagClient = () => {
   return useContext(FeatureFlagContext);
 };
 
-export const useFeatureFlag = (key: string, defaultValue: boolean | string) => {
+export function useFeatureFlag(key: string, defaultValue: string): string;
+export function useFeatureFlag(key: string, defaultValue: boolean): boolean;
+
+export function useFeatureFlag<T extends string | boolean>(key: string, defaultValue: T) {
   const featureFlagClient = useFeatureFlagClient();
-  const [flag, setFlag] = useState(defaultValue);
+  const [flag, setFlag] = useState<T>(defaultValue);
 
   useEffect(() => {
     featureFlagClient.getValue(key, defaultValue).then(result => {
-      setFlag(result);
+      setFlag(result as T);
     });
-  }, [featureFlagClient]);
+  }, [defaultValue, featureFlagClient, key]);
 
   return flag;
-};
+}

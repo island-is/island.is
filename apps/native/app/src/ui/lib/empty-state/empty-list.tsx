@@ -34,8 +34,8 @@ const Description = styled.Text`
 `;
 
 interface HeadingProps {
-  title: string;
-  description: string;
+  title: React.ReactNode;
+  description: React.ReactNode;
   image: React.ReactNode;
 }
 

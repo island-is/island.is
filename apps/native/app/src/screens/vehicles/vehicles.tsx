@@ -1,26 +1,20 @@
-import {useQuery} from '@apollo/client';
-import {EmptyList, Label, Skeleton, TopLine, VehicleCard} from '@ui';
-import React, {useCallback, useRef, useState} from 'react';
-import {
-  Animated,
-  FlatList,
-  Image,
-  RefreshControl,
-  SafeAreaView,
-  TouchableHighlight,
-  View,
-} from 'react-native';
+import {EmptyList, Skeleton, TopLine} from '@ui';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {FormattedMessage} from 'react-intl';
+import {Animated, FlatList, Image, RefreshControl, View} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
-import {GET_USERS_VEHICLES} from '../../graphql/queries/get-users-vehicles.query';
-import {client} from '../../graphql/client';
-import {FormattedDate, useIntl} from 'react-intl';
 import {useTheme} from 'styled-components/native';
-import {testIDs} from '../../utils/test-ids';
 import illustrationSrc from '../../assets/illustrations/moving.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {navigateTo} from '../../lib/deep-linking';
-import {translateType} from './vehicles-mapper';
+import {useFeatureFlag} from '../../contexts/feature-flag-provider';
+import {client} from '../../graphql/client';
+import {
+  GetUserVehiclesQuery,
+  useGetUserVehiclesQuery,
+} from '../../graphql/types/schema';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {testIDs} from '../../utils/test-ids';
+import {VehicleItem} from './components/vehicle-item';
 
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks((theme, intl) => ({
@@ -31,84 +25,94 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   }));
 
-function differenceInMonths(a: Date, b: Date) {
-  return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear());
-}
+type VehicleListItem = NonNullable<
+  NonNullable<GetUserVehiclesQuery['vehiclesList']>['vehicleList']
+>[0];
 
-const VehicleItem = React.memo(({item,index}: {item: any;index:number}) => {
+type ListItem =
+  | {
+      id: number;
+      __typename: 'Skeleton';
+    }
+  | VehicleListItem;
+
+const Empty = () => (
+  <View style={{marginTop: 80, paddingHorizontal: 16}}>
+    <EmptyList
+      title={<FormattedMessage id="vehicles.emptyListTitle" />}
+      description={<FormattedMessage id="vehicles.emptyListDescription" />}
+      image={
+        <Image
+          source={illustrationSrc}
+          style={{width: 198, height: 146}}
+          resizeMode="contain"
+        />
+      }
+    />
+  </View>
+);
+
+const SkeletonItem = () => {
   const theme = useTheme();
-  const nextInspection = item?.nextInspection?.nextInspectionDate
-    ? new Date(item?.nextInspection.nextInspectionDate)
-    : null;
-
-  const vehicleCode = item.vehGroup?.split('(')[1]?.split(')')[0] ?? 'AA'; // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
-
-  const isInspectionDeadline =
-    (nextInspection
-      ? differenceInMonths(new Date(nextInspection), new Date())
-      : 0) < 0
-
-  const isMileageRequired = index === 0;
-
   return (
     <View style={{paddingHorizontal: 16}}>
-      <TouchableHighlight
-        underlayColor={
-          theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
-        }
-        style={{marginBottom: 16, borderRadius: 16}}
-        onPress={() => {
-          navigateTo(`/vehicle/`, {
-            id: item.permno,
-            title: item.type,
-          });
-        }}>
-        <SafeAreaView>
-          <VehicleCard
-            title={item.type}
-            color={item.color}
-            date={nextInspection}
-            number={item.regno}
-            label={
-              isInspectionDeadline && nextInspection ? (
-                <Label color="warning" icon>Næsta skoðun <FormattedDate value={nextInspection} /></Label>
-              ) : isMileageRequired ? (
-                <Label color="warning" icon>Skrá þarf kílómetrastöðu</Label>
-              ) : null
-            }
-          />
-        </SafeAreaView>
-      </TouchableHighlight>
+      <Skeleton
+        active
+        backgroundColor={{
+          dark: theme.shades.dark.shade300,
+          light: theme.color.blue100,
+        }}
+        overlayColor={{
+          dark: theme.shades.dark.shade200,
+          light: theme.color.blue200,
+        }}
+        overlayOpacity={1}
+        height={156}
+        style={{
+          borderRadius: 16,
+          marginBottom: 16,
+        }}
+      />
     </View>
   );
-});
+};
 
 export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
   const flatListRef = useRef<FlatList>(null);
   const [loading, setLoading] = useState(false);
-  const intl = useIntl();
-  const theme = useTheme();
   const scrollY = useRef(new Animated.Value(0)).current;
-  const loadingTimeout = useRef<number>();
-  const vehiclesRes = useQuery(GET_USERS_VEHICLES, {
+  const loadingTimeout = useRef<NodeJS.Timeout>();
+  const res = useGetUserVehiclesQuery({
     client,
     fetchPolicy: 'cache-first',
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 10,
+        showDeregeristered: true,
+        showHistory: true,
+      },
+    },
   });
-  const isSkeleton = vehiclesRes?.loading && !vehiclesRes?.data;
 
-  const vehicleList = vehiclesRes?.data?.vehiclesList?.vehicleList || [];
+  // Get feature flag for mileage
+  const isMileageEnabled = useFeatureFlag(
+    'isServicePortalVehicleMileagePageEnabled',
+    false,
+  );
 
+  // What to do when refreshing
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current);
       }
       setLoading(true);
-      vehiclesRes
+      res
         .refetch()
         .then(() => {
-          (loadingTimeout as any).current = setTimeout(() => {
+          loadingTimeout.current = setTimeout(() => {
             setLoading(false);
           }, 1331);
         })
@@ -118,65 +122,40 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
     } catch (err) {
       setLoading(false);
     }
-  }, []);
+  }, [res]);
 
-  const renderItem = ({item, index}: {item: any; index: number}) => {
-    if (item.type === 'skeleton') {
+  // Render item
+  const renderItem = useCallback(
+    ({item, index}: {item: ListItem; index: number}) => {
+      if (item.__typename === 'Skeleton') {
+        return <SkeletonItem />;
+      }
+
       return (
-        <View style={{paddingHorizontal: 16}}>
-          <Skeleton
-            active
-            backgroundColor={{
-              dark: theme.shades.dark.shade300,
-              light: theme.color.blue100,
-            }}
-            overlayColor={{
-              dark: theme.shades.dark.shade200,
-              light: theme.color.blue200,
-            }}
-            overlayOpacity={1}
-            height={156}
-            style={{
-              borderRadius: 16,
-              marginBottom: 16,
-            }}
-          />
-        </View>
+        <VehicleItem mileage={isMileageEnabled} item={item} index={index} />
       );
+    },
+    [isMileageEnabled],
+  );
+
+  // Extract key of data
+  const keyExtractor = useCallback(
+    (item: ListItem, index: number) =>
+      item.__typename === 'Skeleton' ? String(item.id) : `${item.vin}${index}`,
+    [],
+  );
+
+  // Return skeleton items or real data
+  const data = useMemo<ListItem[]>(() => {
+    if (res?.loading && !res?.data) {
+      return Array.from({length: 5}).map((_, id) => ({
+        id,
+        __typename: 'Skeleton',
+      }));
     }
+    return res?.data?.vehiclesList?.vehicleList || [];
+  }, [res.data, res.loading]);
 
-    if (item.type === 'empty') {
-      return (
-        <View style={{marginTop: 80, paddingHorizontal: 16}}>
-          <EmptyList
-            title={intl.formatMessage({id: 'vehicles.emptyListTitle'})}
-            description={intl.formatMessage({
-              id: 'vehicles.emptyListDescription',
-            })}
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{width: 198, height: 146}}
-                resizeMode="contain"
-              />
-            }
-          />
-        </View>
-      );
-    }
-
-    return <VehicleItem item={item} index={index} />;
-  };
-
-  const keyExtractor = useCallback((item: any) => item?.vin ?? item?.id, []);
-
-  const emptyItems = [{id: '0', type: 'empty'}];
-  const skeletonItems = Array.from({length: 5}).map((_, id) => ({
-    id,
-    type: 'skeleton',
-  }));
-
-  const isEmpty = vehicleList.length === 0;
   return (
     <>
       <Animated.FlatList
@@ -195,6 +174,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />
         }
+        ListEmptyComponent={Empty}
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
@@ -203,7 +183,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
             useNativeDriver: true,
           },
         )}
-        data={isSkeleton ? skeletonItems : isEmpty ? emptyItems : vehicleList}
+        data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
       />

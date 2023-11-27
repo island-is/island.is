@@ -1,0 +1,3 @@
+overwrite: true
+schema: ../../api/src/api.graphql
+documents: src/**/*.graphql
