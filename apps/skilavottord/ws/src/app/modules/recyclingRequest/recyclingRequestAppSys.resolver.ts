@@ -32,8 +32,6 @@ export class RecyclingRequestAppSysResolver {
     @CurrentUser() user: User,
     @Args('input') input: CreateRecyclingRequestInput,
   ): Promise<RequestStatus> {
-    console.log('received request to create recycling request', { input, user })
-
     return {
       status: true,
     }
