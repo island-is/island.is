@@ -7,7 +7,7 @@ module.exports = {
     'ts-jest': { tsconfig: `${__dirname}/tsconfig.spec.json` },
   },
   transform: {
-    '^.+\\.[tj]sx?$': 'ts-jest',
+    '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:

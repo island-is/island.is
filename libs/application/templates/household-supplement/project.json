@@ -5,7 +5,7 @@
   "tags": [],
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -14,7 +14,7 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": ["coverage/libs/application/templates/household-supplement"],
       "options": {
         "jestConfig": "libs/application/templates/household-supplement/jest.config.js",
@@ -22,7 +22,7 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "@nx/workspace:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/household-supplement/src/lib/messages.ts"
       }
