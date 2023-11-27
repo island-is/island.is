@@ -28,6 +28,7 @@ export const ComponentRegistry = {
   LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
   VehiclesScreen: `${prefix}.screens.VehiclesScreen`,
   VehicleDetailScreen: `${prefix}.screens.VehicleDetailScreen`,
+  VehicleMileageScreen: `${prefix}.screens.VehicleMileageScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
   MoreScreen: `${prefix}.screens.MoreScreen`,

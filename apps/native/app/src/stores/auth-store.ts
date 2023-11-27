@@ -14,6 +14,8 @@ import {getConfig, bundleId} from '../config';
 import {getAppRoot} from '../utils/lifecycle/get-app-root';
 import {preferencesStore} from './preferences-store';
 import {Platform} from 'react-native';
+import {Alert} from 'react-native';
+import {getIntl} from '../contexts/i18n-provider';
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`;
 
@@ -186,6 +188,7 @@ export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
 }
 
 export async function checkIsAuthenticated() {
+  const intl = getIntl();
   const appAuthConfig = getAppAuthConfig();
   const {authorizeResult, fetchUserInfo, logout} = authStore.getState();
 
@@ -198,12 +201,20 @@ export async function checkIsAuthenticated() {
       authorizeResult.scopes.includes(scope),
     );
     if (!hasRequiredScopes) {
+      Alert.alert(
+        intl.formatMessage({id: 'login.expiredTitle'}),
+        intl.formatMessage({id: 'login.expiredScopesMessage'}),
+      );
       await logout();
       return false;
     }
   }
 
   fetchUserInfo().catch(async err => {
+    Alert.alert(
+      intl.formatMessage({id: 'login.expiredTitle'}),
+      intl.formatMessage({id: 'login.expiredMissingUserMessage'}),
+    );
     await logout();
     await Navigation.dismissAllModals();
     await Navigation.dismissAllOverlays();

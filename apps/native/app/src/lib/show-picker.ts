@@ -138,3 +138,52 @@ export function showPicker(
   }
   return Promise.resolve({action: 'neutral'});
 }
+
+export function showPrompt(options: PromptOptions): Promise<PromptResponse> {
+  const { isDarkMode } = uiStore.getState();
+  if (Platform.OS === 'android') {
+    return DialogAndroid.prompt(options.title, options.message, {
+      keyboardType: options.keyboardType,
+      defaultValue: options.defaultValue,
+      negativeColor: '#f01464',
+      positiveColor: '#003cff',
+      widgetColor: '#003cff',
+      linkColor: '#003cff',
+      contentColor: isDarkMode ? '#ffffff' : '#000000',
+      backgroundColor: isDarkMode ? '#000000' : '#ffffff',
+      neutralColor: isDarkMode ? '#ffffff' : '#000000',
+      titleColor: isDarkMode ? '#ffffff' : '#000000',
+      ...options.android,
+    } as OptionsPrompt).then(({ action, text, ...rest }: any) => {
+      return {
+        action: parseAndroidAction(action),
+        text,
+        ...rest,
+      };
+    });
+  }
+
+  return new Promise((resolve) =>
+    Alert.prompt(
+      options.title,
+      options.message,
+      options.buttons?.map((button) => {
+        return {
+          text: button.text,
+          onPress: (text) => {
+            if (button.style === 'cancel') {
+              resolve({ action: 'dismiss' });
+            } else if (button.style === 'destructive') {
+              resolve({ action: 'negative', text });
+            } else {
+              resolve({ action: 'neutral', text });
+            }
+          },
+        };
+      }),
+      options.type,
+      options.defaultValue,
+      options.keyboardType
+    )
+  );
+}

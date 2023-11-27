@@ -1,5 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {EmptyList, Skeleton, TopLine, VehicleCard} from '@ui';
+import {EmptyList, Label, Skeleton, TopLine, VehicleCard} from '@ui';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   Animated,
@@ -13,7 +13,7 @@ import {
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import {GET_USERS_VEHICLES} from '../../graphql/queries/get-users-vehicles.query';
 import {client} from '../../graphql/client';
-import {useIntl} from 'react-intl';
+import {FormattedDate, useIntl} from 'react-intl';
 import {useTheme} from 'styled-components/native';
 import {testIDs} from '../../utils/test-ids';
 import illustrationSrc from '../../assets/illustrations/moving.png';
@@ -31,12 +31,24 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   }));
 
-const VehicleItem = React.memo(({item}: {item: any}) => {
+function differenceInMonths(a: Date, b: Date) {
+  return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear());
+}
+
+const VehicleItem = React.memo(({item,index}: {item: any;index:number}) => {
   const theme = useTheme();
   const nextInspection = item?.nextInspection?.nextInspectionDate
     ? new Date(item?.nextInspection.nextInspectionDate)
     : null;
+
   const vehicleCode = item.vehGroup?.split('(')[1]?.split(')')[0] ?? 'AA'; // type from vehgroup = "Vörubifreið II (N3)" = N3 otherwise AA is default
+
+  const isInspectionDeadline =
+    (nextInspection
+      ? differenceInMonths(new Date(nextInspection), new Date())
+      : 0) < 0
+
+  const isMileageRequired = index === 0;
 
   return (
     <View style={{paddingHorizontal: 16}}>
@@ -57,7 +69,13 @@ const VehicleItem = React.memo(({item}: {item: any}) => {
             color={item.color}
             date={nextInspection}
             number={item.regno}
-            image={translateType(vehicleCode)}
+            label={
+              isInspectionDeadline && nextInspection ? (
+                <Label color="warning" icon>Næsta skoðun <FormattedDate value={nextInspection} /></Label>
+              ) : isMileageRequired ? (
+                <Label color="warning" icon>Skrá þarf kílómetrastöðu</Label>
+              ) : null
+            }
           />
         </SafeAreaView>
       </TouchableHighlight>
@@ -102,7 +120,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
     }
   }, []);
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({item, index}: {item: any; index: number}) => {
     if (item.type === 'skeleton') {
       return (
         <View style={{paddingHorizontal: 16}}>
@@ -147,7 +165,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
       );
     }
 
-    return <VehicleItem item={item} />;
+    return <VehicleItem item={item} index={index} />;
   };
 
   const keyExtractor = useCallback((item: any) => item?.vin ?? item?.id, []);

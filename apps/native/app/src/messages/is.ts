@@ -13,6 +13,9 @@ export const is = {
   'login.networkErrorTitle': 'Villa kom upp',
   'login.networkErrorMessage':
     '\nEkki náðist samband við innskráningarþjónustu.\n\nVinsamlegast athugið netsamband á tækinu eða reynið aftur síðar.',
+  'login.expiredTitle': 'Innskráning útrunnin',
+  'login.expiredScopesMessage': 'Uppfærð réttindi vantar, vinsamlegast skráðu þig inn aftur.',
+  'login.expiredMissingUserMessage': 'Tókst ekki að sækja notendaupplýsingar, vinsamlegast skráðu þig inn aftur.',
 
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',

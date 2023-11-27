@@ -14,6 +14,9 @@ export const en: TranslatedMessages = {
   'login.networkErrorTitle': 'Network error',
   'login.networkErrorMessage':
     '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
+  'login.expiredTitle': 'Session expired',
+  'login.expiredScopesMessage': 'Updated permissions required, please login again.',
+  'login.expiredMissingUserMessage': 'Could not fetch user information, please login again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',

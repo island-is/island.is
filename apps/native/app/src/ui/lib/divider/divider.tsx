@@ -20,7 +20,7 @@ const Host = styled.View<{spacing: number}>`
 `;
 
 interface DividerProps extends ViewProps {
-  spacing: 0 | 1 | 2 | 3 | 4;
+  spacing?: 0 | 1 | 2 | 3 | 4;
 }
 
 export const Divider = ({spacing = 1, ...rest}: DividerProps) => {

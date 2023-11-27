@@ -49,7 +49,7 @@ type TIProps = Omit<TextInputProps, 'onChange'>;
 interface TextFieldProps extends TIProps {
   label: string;
   value: string;
-  onChange: (e: string) => void;
+  onChange?: (e: string) => void;
 }
 
 export const TextField = ({

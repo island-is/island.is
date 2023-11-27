@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useIntl} from 'react-intl';
 import {ScrollView, View, Text} from 'react-native';
 import {testIDs} from '../../utils/test-ids';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {Input, InputRow, NavigationBarSheet} from '@ui';
+import {Button, Divider, Input, InputRow, NavigationBarSheet} from '@ui';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {GET_USERS_VEHICLE_DETAIL} from '../../graphql/queries/get-users-vehicles-detail';
 import {useQuery} from '@apollo/client';
 import {client} from '../../graphql/client';
+import {navigateTo} from '../../lib/deep-linking';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
     topBar: {
-      visible: false,
+      visible: true,
     },
   }));
 
@@ -51,12 +52,6 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
   return (
     <View style={{flex: 1}} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
-      <NavigationBarSheet
-        componentId={componentId}
-        title={title ? title : `${mainInfo?.model} ${mainInfo?.subModel}`}
-        onClosePress={() => Navigation.dismissModal(componentId)}
-        style={{marginHorizontal: 16}}
-      />
       <ScrollView style={{flex: 1}}>
         <View>
           <InputRow>
@@ -100,6 +95,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               label={intl.formatMessage({
                 id: 'vehicleDetail.nextInspectionDate',
               })}
+              noBorder
               value={
                 inspectionInfo?.nextInspectionDate
                   ? intl.formatDate(
@@ -110,6 +106,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             />
             {inspectionInfo?.odometer && (
               <Input
+                noBorder
                 loading={loading}
                 error={isError}
                 label={intl.formatMessage({id: 'vehicleDetail.odometer'})}
@@ -117,6 +114,17 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               />
             )}
           </InputRow>
+
+          <Button
+            title="Kílómetrastaða"
+            onPress={() => {
+              navigateTo(`/vehicle-mileage/`, {
+                id: 'foo'
+              });
+            }}
+            style={{marginHorizontal: 16}}
+          />
+          <Divider spacing={2} />
 
           <InputRow>
             <Input

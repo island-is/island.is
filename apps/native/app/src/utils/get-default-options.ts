@@ -68,7 +68,7 @@ export function getDefaultOptions(
     bottomTabs: {
       animateTabSelection: false,
       elevation: 0,
-      borderWidth: 0,
+      borderWidth: Platform.OS === 'android' ? 0 : undefined,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
       ...(Platform.OS === 'android'

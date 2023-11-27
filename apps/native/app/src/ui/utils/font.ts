@@ -21,7 +21,7 @@ interface FontSettings {
   lineHeight?: ThemePropsFnType<number>;
 }
 
-const lineHeightByFontSize = (fontSize: number) => {
+export const lineHeightByFontSize = (fontSize: number) => {
   switch (fontSize) {
     case 16:
       return 20;
@@ -38,9 +38,9 @@ const lineHeightByFontSize = (fontSize: number) => {
   return Math.ceil(fontSize * 1.25);
 };
 
-const fontByWeight = (
+export const fontByWeight = (
   weight: TextStyle['fontWeight'],
-): FontFamily | undefined | null => {
+): FontFamily => {
   switch (weight) {
     case '900':
     case '800':
@@ -65,7 +65,7 @@ const fontByWeight = (
   // 'IBMPlexSans-ExtraLight'
   // 'IBMPlexSans-Thin'
 
-  return weight;
+  return 'IBMPlexSans';
 };
 
 const propOrValue = (props: ThemeProps) => (value: any) => {

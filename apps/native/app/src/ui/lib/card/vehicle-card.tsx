@@ -5,6 +5,7 @@ import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
 import chevronForward from '../../assets/icons/chevron-forward.png';
 import {FormattedDate} from 'react-intl';
+import warning from '../../assets/alert/warning.png';
 
 function differenceInMonths(a: Date, b: Date) {
   return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear());
@@ -54,16 +55,27 @@ const Text = styled.Text`
     fontSize: 16,
   })}
 `;
-const LabelWrap = styled.View<{color: 'primary' | 'danger'}>`
+const LabelWrap = styled.View<{color: 'primary' | 'danger' | 'warning'}>`
   padding: ${({theme}) => theme.spacing[1]}px;
+  flex-direction: row;
+  align-items: center;
   border-width: ${({theme}) => theme.border.width.standard}px;
   border-style: solid;
   border-radius: ${({theme}) => theme.border.radius.large};
   border-color: ${dynamicColor(
     ({theme, color}) => ({
-      light: color === 'primary' ? theme.color.blue200 : theme.color.red200,
+      light:
+        color === 'primary'
+          ? theme.color.blue200
+          : color === 'danger'
+          ? theme.color.red200
+          : theme.color.yellow400,
       dark:
-        color === 'primary' ? theme.shades.dark.shade300 : theme.color.red400,
+        color === 'primary'
+          ? theme.shades.dark.shade300
+          : color === 'danger'
+          ? theme.color.red400
+          : theme.color.yellow400,
     }),
     true,
   )};
@@ -72,12 +84,15 @@ const LabelWrap = styled.View<{color: 'primary' | 'danger'}>`
     props.color === 'primary'
       ? 'transparent'
       : dynamicColor({
-          light: props.theme.color.red100,
+          light:
+            props.color === 'danger'
+              ? props.theme.color.red100
+              : props.theme.color.yellow200,
           dark: 'transparent',
         })};
 `;
 
-const Label = styled.Text<{color: 'primary' | 'danger'}>`
+const Label = styled.Text<{color: 'primary' | 'danger' | 'warning'}>`
   ${font({
     fontWeight: '600',
     lineHeight: 16,
@@ -86,9 +101,18 @@ const Label = styled.Text<{color: 'primary' | 'danger'}>`
 
   color: ${dynamicColor(
     ({theme, color}) => ({
-      light: color === 'primary' ? theme.color.blue400 : theme.color.red600,
+      light:
+        color === 'primary'
+          ? theme.color.blue400
+          : color === 'danger'
+          ? theme.color.red600
+          : theme.shade.foreground,
       dark:
-        color === 'primary' ? theme.shades.dark.shade700 : theme.color.red400,
+        color === 'primary'
+          ? theme.shades.dark.shade700
+          : color === 'danger'
+          ? theme.color.red400
+          : theme.shade.foreground,
     }),
     true,
   )};
@@ -102,20 +126,19 @@ interface VehicleCardProps {
   title: string;
   color: string;
   number: string;
-  image?: React.ReactNode;
+  label?: React.ReactNode;
   date: Date | null;
+  mileageRequired?: boolean;
 }
 
 export function VehicleCard({
   title,
   color,
   number,
-  image,
+  label,
   date,
+  mileageRequired,
 }: VehicleCardProps) {
-  const isInspectionDeadline =
-    (date ? differenceInMonths(new Date(date), new Date()) : 0) > 0;
-
   return (
     <Host>
       <Content>
@@ -123,13 +146,19 @@ export function VehicleCard({
         <Text>
           {color} - {number}
         </Text>
-        {date && (
+        {label}
+        {/* {mileageRequired ? (
+          <LabelWrap color="warning">
+            <Image source={warning} style={{width: 20, height: 20, marginRight: 8}} />
+            <Label color="warning">Skrá þarf kílómetrastöðu</Label>
+          </LabelWrap>
+        ) : date ? (
           <LabelWrap color={isInspectionDeadline ? 'primary' : 'danger'}>
             <Label color={isInspectionDeadline ? 'primary' : 'danger'}>
               Næsta skoðun <FormattedDate value={date} />
             </Label>
           </LabelWrap>
-        )}
+        ) : null} */}
       </Content>
       <Icon>
         <Image source={chevronForward} style={{width: 24, height: 24}} />

@@ -1,8 +1,20 @@
 import React from 'react';
-import {IntlProvider} from 'react-intl';
+import {IntlProvider, createIntl} from 'react-intl';
 import {en} from '../messages/en';
 import {is} from '../messages/is';
-import {usePreferencesStore} from '../stores/preferences-store';
+import {preferencesStore, usePreferencesStore} from '../stores/preferences-store';
+
+export const getIntl = () => {
+  const {locale} = preferencesStore.getState();
+  return createIntl({
+    locale,
+    messages: locale === 'is-IS' ? is : en,
+    onError() {
+      // noop
+    },
+    timeZone: 'UTC',
+  });
+}
 
 export const I18nProvider = ({children}: {children: React.ReactNode}) => {
   const {locale} = usePreferencesStore();

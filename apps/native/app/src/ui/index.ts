@@ -52,4 +52,5 @@ export * from './lib/tag/tag';
 export * from './lib/link/link-text';
 export * from './lib/typography/typography';
 export * from './lib/scan-result-card/scan-result-card';
+export * from './lib/label/label';
 export * from './utils/index';

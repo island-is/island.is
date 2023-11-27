@@ -182,12 +182,28 @@ export function setupRoutes() {
   });
 
   addRoute('/vehicle/:id', (passProps: any) => {
+    Navigation.push(ComponentRegistry.MoreScreen, {
+      component: {
+        name: ComponentRegistry.VehicleDetailScreen,
+        passProps,
+        options: {
+          topBar: {
+            title: {
+              text: passProps.title,
+            }
+          }
+        }
+      },
+    });
+  });
+
+  addRoute('/vehicle-mileage/:id', (passProps: any) => {
     Navigation.showModal({
       stack: {
         children: [
           {
             component: {
-              name: ComponentRegistry.VehicleDetailScreen,
+              name: ComponentRegistry.VehicleMileageScreen,
               passProps,
             },
           },
