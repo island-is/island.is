@@ -26,6 +26,7 @@ import {
   Option,
   PaymentChargeOverviewField,
   PaymentPendingField,
+  PdfLinkButtonField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -488,7 +489,7 @@ export function buildMessageWithLinkButtonField(
 export function buildExpandableDescriptionField(
   data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
 ): ExpandableDescriptionField {
-  const { id, title, description, introText, startExpanded } = data
+  const { id, title, description, introText, startExpanded, condition } = data
   return {
     children: undefined,
     id,
@@ -496,6 +497,7 @@ export function buildExpandableDescriptionField(
     description,
     introText,
     startExpanded,
+    condition,
     type: FieldTypes.EXPANDABLE_DESCRIPTION,
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }
@@ -557,5 +559,32 @@ export function buildPaymentChargeOverviewField(
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildPdfLinkButtonField(
+  data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
+): PdfLinkButtonField {
+  const {
+    downloadButtonTitle,
+    vertificationDescription,
+    vertificationLinkTitle,
+    vertificationLinkUrl,
+    getPdfFiles,
+    // isViewingFile,
+    // setIsViewingFile,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    downloadButtonTitle,
+    vertificationDescription,
+    vertificationLinkTitle,
+    vertificationLinkUrl,
+    getPdfFiles,
+    // isViewingFile,
+    // setIsViewingFile,
+    children: undefined,
+    type: FieldTypes.PDF_LINK_BUTTON,
+    component: FieldComponents.PDF_LINK_BUTTON,
   }
 }

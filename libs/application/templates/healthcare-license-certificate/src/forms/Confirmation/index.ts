@@ -9,6 +9,7 @@ import {
 } from '../../lib/messages'
 import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getProfessionName } from '../../utils/getProfessionName'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -39,9 +40,21 @@ export const Confirmation: Form = buildForm({
     buildFormConclusionSection({
       alertTitle: confirmation.general.alertTitle,
       alertMessage: confirmation.general.alertMessage,
-      //TODOx link to pdf
-      //TODOx sannreyna text
-      //TODOx skip what happens next
+      hideExpandableDescription: true,
+      getPdfFiles: (application) => {
+        const data = application.externalData.submitApplication.data as {
+          base64: string
+          professionId: string
+        }[]
+
+        return data.map((x) => ({
+          base64: x.base64,
+          customButtonText: getProfessionName(
+            application.externalData,
+            x.professionId,
+          ),
+        }))
+      },
     }),
   ],
 })

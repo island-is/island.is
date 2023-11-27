@@ -118,6 +118,7 @@ export enum FieldTypes {
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
   PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
+  PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
 }
 
 export enum FieldComponents {
@@ -141,6 +142,7 @@ export enum FieldComponents {
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
   PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
+  PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -355,6 +357,22 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+export interface PdfLinkButtonField extends BaseField {
+  readonly type: FieldTypes.PDF_LINK_BUTTON
+  component: FieldComponents.PDF_LINK_BUTTON
+  downloadButtonTitle: StaticText
+  vertificationDescription: StaticText
+  vertificationLinkTitle: StaticText
+  vertificationLinkUrl: StaticText
+  getPdfFiles?: (application: Application) => {
+    base64: string
+    buttonText?: StaticText
+    customButtonText?: { is: string; en: string }
+  }[]
+  // isViewingFile: boolean
+  // setIsViewingFile: (value: boolean) => void
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -377,3 +395,4 @@ export type Field =
   | AlertMessageField
   | LinkField
   | PaymentChargeOverviewField
+  | PdfLinkButtonField

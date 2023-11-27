@@ -5,6 +5,7 @@ const schema = z.object({
   xRoadServicePath: z.string(),
   fetch: z.object({
     scope: z.array(z.string()),
+    timeout: z.number().int(),
   }),
 })
 
@@ -20,6 +21,7 @@ export const HealthDirectorateClientConfig = defineConfig<
     ),
     fetch: {
       scope: ['@landlaeknir.is/starfsleyfi'],
+      timeout: 60000,
     },
   }),
 })

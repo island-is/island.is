@@ -20,6 +20,7 @@ const configFactory = (
   fetchApi: createEnhancedFetch({
     name: 'clients-health-directorate',
     organizationSlug: 'landlaeknir',
+    timeout: config.fetch.timeout,
     logErrorResponseBody: true,
     autoAuth: idsClientConfig.isConfigured
       ? {

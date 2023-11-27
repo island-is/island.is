@@ -50,4 +50,28 @@ export const conclusion = {
         'The description of the expandable description field in the conclusion section',
     },
   }),
+  pdfLinkButtonField: defineMessages({
+    downloadButtonTitle: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.downloadButtonTitle',
+      defaultMessage: 'Hlaða niður skjali',
+      description: 'Button label to download file',
+    },
+    vertificationDescription: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationDescription',
+      defaultMessage: 'Nánari upplýsingar um sannreyningu má finna á',
+      description: 'The description about verification',
+    },
+    vertificationLinkTitle: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationLinkTitle',
+      defaultMessage: 'island.is/sannreyna',
+      description:
+        'The title for the link to further information about the verification',
+    },
+    vertificationLinkUrl: {
+      id: 'uiForms.application:conclusion.pdfLinkButtonField.vertificationLinkUrl',
+      defaultMessage: 'https://island.is/sannreyna',
+      description:
+        'The url for the link to further information about the verification',
+    },
+  }),
 }

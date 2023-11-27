@@ -23,34 +23,36 @@ export const ExpandableDescriptionFormField: FC<
   const { formatMessage } = useLocale()
 
   return (
-    <Box marginY={2}>
-      <AccordionCard
-        startExpanded={field.startExpanded}
-        id={`BulletPointFormField-${field.id}`}
-        label={formatText(field.title, application, formatMessage)}
-        labelVariant="h3"
-      >
-        {field.introText && (
-          <Box marginBottom={4}>
-            <Markdown>
-              {formatText(field.introText, application, formatMessage)}
-            </Markdown>
-          </Box>
-        )}
-        <BulletList space="gutter" type="ul">
-          <Markdown
-            options={{
-              overrides: {
-                li: {
-                  component: Bullet,
+    field.condition && (
+      <Box marginY={2}>
+        <AccordionCard
+          startExpanded={field.startExpanded}
+          id={`BulletPointFormField-${field.id}`}
+          label={formatText(field.title, application, formatMessage)}
+          labelVariant="h3"
+        >
+          {field.introText && (
+            <Box marginBottom={4}>
+              <Markdown>
+                {formatText(field.introText, application, formatMessage)}
+              </Markdown>
+            </Box>
+          )}
+          <BulletList space="gutter" type="ul">
+            <Markdown
+              options={{
+                overrides: {
+                  li: {
+                    component: Bullet,
+                  },
                 },
-              },
-            }}
-          >
-            {formatText(field.description, application, formatMessage)}
-          </Markdown>
-        </BulletList>
-      </AccordionCard>
-    </Box>
+              }}
+            >
+              {formatText(field.description, application, formatMessage)}
+            </Markdown>
+          </BulletList>
+        </AccordionCard>
+      </Box>
+    )
   )
 }
