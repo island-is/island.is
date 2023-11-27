@@ -57,3 +57,37 @@ export const getAssetDescriptionText = (
     : /* EINKASKIPTI */
       m.propertiesDescriptionDivisionOfEstateByHeirs
 }
+
+export const getWillsAndAgreementsDescriptionText = (
+  application: Application<FormValue>,
+) => {
+  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ? /* EIGNALAUST DÁNARBU */
+      m.willsAndAgreementsDescriptionEstateWithoutAssets
+    : application.answers.selectedEstate === EstateTypes.officialDivision
+    ? /* OPINBER SKIPTI */
+      m.willsAndAgreementsDescriptionOfficialDivision
+    : application.answers.selectedEstate ===
+      EstateTypes.permitForUndividedEstate
+    ? /* SETA Í ÓSKIPTU BÚI */
+      m.willsAndAgreementsDescriptionDescriptionUndividedEstate
+    : /* EINKASKIPTI */
+      m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
+}
+
+export const getEstateMembersDescriptionText = (
+  application: Application<FormValue>,
+) => {
+  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ? /* EIGNALAUST DÁNARBU */
+      m.estateMembersDescriptionEstateWithoutAssets
+    : application.answers.selectedEstate === EstateTypes.officialDivision
+    ? /* OPINBER SKIPTI */
+      m.estateMembersDescriptionOfficialDivision
+    : application.answers.selectedEstate ===
+      EstateTypes.permitForUndividedEstate
+    ? /* SETA Í ÓSKIPTU BÚI */
+      m.estateMembersDescriptionUndividedEstate
+    : /* EINKASKIPTI */
+      m.estateMembersDescriptionDivisionOfEstateByHeirs
+}
