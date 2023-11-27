@@ -27,6 +27,6 @@ class BuildModule {}
 
 buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
-  appModule: AppModule, //BUILD_MODULE, TODO ADD A NOTE ABOUT THIS APPMODULE BUILDMODULE SETUP
+  appModule: BuildModule, //BUILD_MODULE, TODO ADD A NOTE ABOUT THIS APPMODULE BUILDMODULE SETUP
   openApi,
 })
