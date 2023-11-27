@@ -1,7 +1,18 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-ARG PLAYWRIGHT_VERSION
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
+ARG CONTAINER_IMAGE_REGISTRY=public.ecr.aws
+ARG CONTAINER_PLAYWRIGHT_VERSION=v1.31-focal
+ARG CONTAINER_PLAYWRIGHT_BROWSER=chromium
+ARG CONTAINER_NODE_VERSION=18-alpine3.15
+ARG CONTAINER_NGINX_VERSION=1.21-alpine
+ARG CONTAINER_JQ_VERSION=1.6
+
+# Base layers
+FROM $CONTAINER_IMAGE_REGISTRY/docker/library/node:${CONTAINER_NODE_VERSION} as node-base
+FROM $CONTAINER_IMAGE_REGISTRY/nginx/nginx:${CONTAINER_NGINX_VERSION} as nginx-base
+FROM mcr.microsoft.com/playwright:${CONTAINER_PLAYWRIGHT_VERSION} as playwright-base
+
+
+FROM node-base as deps
 
 RUN apk add -U git
 
@@ -16,7 +27,7 @@ RUN CI=true yarn install --immutable
 
 FROM deps as src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-${CONTAINER_JQ_VERSION}/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
@@ -32,7 +43,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
+FROM node-base as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -77,7 +88,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
+FROM nginx-base as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -114,11 +125,6 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
-
-
-
-
 
 
 FROM playwright-base as output-playwright
@@ -140,8 +146,7 @@ RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN yarn playwright install ${CONTAINER_PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
