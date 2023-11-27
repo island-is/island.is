@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class VehicleMileageDetail {
@@ -14,7 +14,7 @@ export class VehicleMileageDetail {
   @Field(() => String, { nullable: true })
   mileage?: string | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => ID, { nullable: true })
   internalId?: number | null
 }
 
@@ -45,7 +45,7 @@ export class VehicleMileagePutModel {
   @Field(() => String, { nullable: true })
   permno?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => ID, { nullable: true })
   internalId?: number
 
   @Field(() => String, { nullable: true })
