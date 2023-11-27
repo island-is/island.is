@@ -288,8 +288,6 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     )
   }
 
-  console.log('tag', tag)
-  console.log('sec', secondaryTag)
   return (
     <Box
       display="flex"
