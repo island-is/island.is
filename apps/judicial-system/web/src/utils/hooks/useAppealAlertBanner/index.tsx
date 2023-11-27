@@ -16,7 +16,10 @@ import {
   isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { appealRuling } from '@island.is/judicial-system-web/messages/Core/appealRuling'
-import { UserContext } from '@island.is/judicial-system-web/src/components'
+import {
+  FormContext,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
@@ -43,7 +46,7 @@ const renderLinkButton = (text: string, href: string) => {
   )
 }
 
-const getAppealDecision = (
+export const getAppealDecision = (
   formatMessage: IntlShape['formatMessage'],
   appealRulingDecision?: CaseAppealRulingDecision,
 ) => {
@@ -73,6 +76,8 @@ const useAppealAlertBanner = (
 ) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
+  const { isLoadingWorkingCase } = useContext(FormContext)
+
   let title = ''
   let description: string | undefined = undefined
   let child: React.ReactElement | null = null
@@ -232,6 +237,7 @@ const useAppealAlertBanner = (
   }
 
   return {
+    isLoadingAppealBanner: isLoadingWorkingCase,
     title,
     description,
     child,

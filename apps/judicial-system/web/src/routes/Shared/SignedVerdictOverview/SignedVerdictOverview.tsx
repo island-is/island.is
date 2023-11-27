@@ -216,12 +216,13 @@ export const SignedVerdictOverview: React.FC = () => {
     isSendingNotification,
     transitionCase,
   } = useCase()
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-    () => handleReceivedTransition(workingCase),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+      () => handleReceivedTransition(workingCase),
+    )
 
   /**
    * If the case is not rejected it must be accepted because
@@ -420,7 +421,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {shouldDisplayAlertBanner && (
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
         <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>

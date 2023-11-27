@@ -51,11 +51,12 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+    )
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -66,7 +67,7 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <>
-      {shouldDisplayAlertBanner && (
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
         <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>
