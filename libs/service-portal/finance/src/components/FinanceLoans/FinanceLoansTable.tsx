@@ -109,33 +109,6 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                       <FinanceLoansTableDetail
                         data={[
                           {
-                            title:
-                              loan.coPayers?.length && loan.coPayers.length > 1
-                                ? 'Meðgreiðendur'
-                                : 'Meðgreiðandi',
-                            value: loan.coPayers?.length
-                              ? loan.coPayers
-                                  .map((c) => c.coPayerName)
-                                  .join(', ')
-                              : '-',
-                          },
-                          {
-                            title: 'Fastanúmer',
-                            value: loan.propertyId || '-',
-                          },
-                          {
-                            title: 'Veðstaður',
-                            value: loan.municipalityNumber || '-',
-                          },
-                          {
-                            title: 'Kröfuhafi',
-                            value: loan.creditor || '-',
-                          },
-                          {
-                            title: 'Hlutdeildarlán',
-                            value: loan.affiliateLoan,
-                          },
-                          {
                             title: 'Fyrsti vaxtadagur',
                             value: formatDate(loan.firstInterestDate) || '-',
                           },
@@ -156,12 +129,6 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             value:
                               formatDate(loan.lastUnpaidInvoiceDate) || '-',
                           },
-                        ]}
-                      />
-                    </GridColumn>
-                    <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
-                      <FinanceLoansTableDetail
-                        data={[
                           {
                             title: 'Fjöldi gjalddaga',
                             value: loan.totalNumberOfPayments || '-',
@@ -173,6 +140,16 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                           {
                             title: 'Fjöldi gjalddaga eftir',
                             value: loan.numberOfPaymentDatesRemaining || '-',
+                          },
+                        ]}
+                      />
+                    </GridColumn>
+                    <GridColumn span={['12/12', '12/12', '4/12', '4/12']}>
+                      <FinanceLoansTableDetail
+                        data={[
+                          {
+                            title: 'Hlutdeildarlán',
+                            value: loan.affiliateLoan,
                           },
                           {
                             title: 'Greiðslujöfnun',
@@ -198,6 +175,21 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Staða á jöfnunarreikning',
                             value:
                               amountFormat(loan.statusSettlementPayment) || '-',
+                          },
+                          {
+                            title: 'Kröfuhafi',
+                            value: loan.creditor || '-',
+                          },
+                          {
+                            title:
+                              loan.coPayers?.length && loan.coPayers.length > 1
+                                ? 'Meðgreiðendur'
+                                : 'Meðgreiðandi',
+                            value: loan.coPayers?.length
+                              ? loan.coPayers
+                                  .map((c) => c.coPayerName)
+                                  .join(', ')
+                              : '-',
                           },
                         ]}
                       />
@@ -241,6 +233,20 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Uppgreiðsluverðmæti',
                             value:
                               amountFormat(loan.loanAmountWithRepayment) || '-',
+                          },
+                          {
+                            title: 'Veðstaður',
+                            value:
+                              loan.properties
+                                ?.map((p) => p.propertyAddress)
+                                .join(', ') || '-',
+                          },
+                          {
+                            title: 'Fastanúmer',
+                            value:
+                              loan.properties
+                                ?.map((p) => p.propertyId)
+                                .join(', ') || '-',
                           },
                         ]}
                       />
