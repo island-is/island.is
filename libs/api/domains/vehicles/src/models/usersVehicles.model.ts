@@ -108,6 +108,15 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true, defaultValue: null })
   nextInspectionDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()

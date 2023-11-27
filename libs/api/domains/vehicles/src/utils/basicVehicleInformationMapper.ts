@@ -58,6 +58,9 @@ export const basicVehicleInformationMapper = (
       cubicCapacity: data.technical?.capacity,
       trailerWithBrakesWeight: data.technical?.tMassoftrbr,
       trailerWithoutBrakesWeight: data.technical?.tMassoftrunbr,
+      nextAvailableMileageReadDate: data.nextAvailableMileageReadDate,
+      requiresMileageRegistration: data.requiresMileageRegistration,
+      canRegisterMileage: data.canRegisterMileage,
     },
     basicInfo: {
       model: data.make,
