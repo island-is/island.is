@@ -124,7 +124,9 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: () =>
-    import('@island.is/application/templates/household-supplement'),
+    import(
+      '@island.is/application/templates/social-insurance-administration/household-supplement'
+    ),
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
     import(
       '@island.is/application/templates/signature-collection/signature-list-creation'

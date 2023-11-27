@@ -342,9 +342,6 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
-      "@island.is/application/templates/household-supplement": [
-        "libs/application/templates/household-supplement/src/index.ts"
-      ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
       ],
@@ -407,6 +404,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
+      ],
+      "@island.is/application/templates/social-insurance-administration/household-supplement": [
+        "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"

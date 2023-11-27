@@ -11,11 +11,11 @@ import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
-import { 
-  AdditionalInformation, 
-  Attachments, 
-  FileType, 
-  FileUpload 
+import {
+  AdditionalInformation,
+  Attachments,
+  FileType,
+  FileUpload,
 } from '../types'
 
 enum AttachmentTypes {
@@ -64,7 +64,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const comment = getValueViaPath(answers, 'comment') as string
   console.log('additionalAttachments: ', additionalAttachments)
   console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
-  
+
   return {
     applicantEmail,
     applicantPhonenumber,
@@ -171,9 +171,8 @@ export function getYesNOOptions() {
 export function isExistsCohabitantOlderThan25(
   externalData: Application['externalData'],
 ) {
-  const { cohabitants, applicantNationalId } = getApplicationExternalData(
-    externalData,
-  )
+  const { cohabitants, applicantNationalId } =
+    getApplicationExternalData(externalData)
 
   let isOlderThan25 = false
   cohabitants.forEach((cohabitant) => {
@@ -201,10 +200,8 @@ export function getAttachments(application: Application) {
   }
 
   const { answers } = application
-  const {
-    householdSupplementChildren,
-    householdSupplementHousing,
-  } = getApplicationAnswers(answers)
+  const { householdSupplementChildren, householdSupplementHousing } =
+    getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const fileUpload = answers.fileUpload as FileUpload
@@ -223,25 +220,25 @@ export function getAttachments(application: Application) {
   }
 
   const additionalInfo =
-  answers.fileUploadAdditionalFiles as AdditionalInformation
+    answers.fileUploadAdditionalFiles as AdditionalInformation
   console.log('additionalInfo: ', additionalInfo)
-const additionalDocuments = [
-  ...(additionalInfo.additionalDocuments &&
-  additionalInfo.additionalDocuments?.length > 0
-    ? additionalInfo.additionalDocuments
-    : []),
-  ...(additionalInfo.additionalDocumentsRequired &&
-  additionalInfo.additionalDocumentsRequired?.length > 0
-    ? additionalInfo.additionalDocumentsRequired
-    : []),
-]
+  const additionalDocuments = [
+    ...(additionalInfo.additionalDocuments &&
+    additionalInfo.additionalDocuments?.length > 0
+      ? additionalInfo.additionalDocuments
+      : []),
+    ...(additionalInfo.additionalDocumentsRequired &&
+    additionalInfo.additionalDocumentsRequired?.length > 0
+      ? additionalInfo.additionalDocumentsRequired
+      : []),
+  ]
 
-if (additionalDocuments.length > 0) {
-  getAttachmentDetails(
-    additionalDocuments,
-    AttachmentTypes.ADDITIONAL_DOCUMENTS,
-  )
-}
+  if (additionalDocuments.length > 0) {
+    getAttachmentDetails(
+      additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }
 
   return attachments
 }
