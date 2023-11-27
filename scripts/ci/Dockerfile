@@ -169,3 +169,7 @@ ENTRYPOINT ["./entrypoint.sh"]
 
 FROM base-output as output-native
 RUN echo "not-implemented"
+
+
+FROM src as output-localdev
+RUN yarn install
