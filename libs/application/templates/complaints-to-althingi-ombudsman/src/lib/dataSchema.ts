@@ -3,11 +3,10 @@ import * as z from 'zod'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  NO,
   OmbudsmanComplaintTypeEnum,
-  YES,
 } from '../shared'
 import { error } from './messages/error'
+import { NO, YES } from '@island.is/application/types'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -17,7 +16,7 @@ const FileSchema = z.object({
 
 export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v, { params: error.required }),
-  applicant: applicantInformationSchema(),
+  applicant: applicantInformationSchema({ phoneRequired: true }),
   complainedFor: z.object({
     decision: z.enum([
       ComplainedForTypes.MYSELF,
@@ -34,16 +33,14 @@ export const ComplaintsToAlthingiOmbudsmanSchema = z.object({
   appeals: z.enum([YES, NO]),
   complainedForInformation: z.object({
     name: z.string().refine((v) => v, { params: error.required }),
-    ssn: z.string().refine((v) => v, { params: error.required }),
+    nationalId: z.string().refine((v) => v, { params: error.required }),
     address: z.string().refine((v) => v, { params: error.required }),
-    postcode: z.string().refine((v) => v, { params: error.required }),
+    postalCode: z.string().refine((v) => v, { params: error.required }),
     city: z.string().refine((v) => v, { params: error.required }),
-    email: z.string().refine((v) => v, { params: error.required }),
-    phone: z.string().refine((v) => v, { params: error.required }),
+    email: z.string().optional(),
+    phoneNumber: z.string().optional(),
     connection: z.string().refine((v) => v, { params: error.required }),
-    powerOfAttorney: z
-      .array(FileSchema)
-      .refine((v) => v && v.length > 0, { params: error.document }),
+    powerOfAttorney: z.array(FileSchema).optional(),
   }),
   complaintDescription: z.object({
     decisionDate: z.string().optional(),

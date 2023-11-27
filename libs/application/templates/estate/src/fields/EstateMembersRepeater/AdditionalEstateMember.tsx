@@ -14,8 +14,8 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { YES } from '../../lib/constants'
-import { GenericFormField } from '@island.is/application/types'
+import { EstateTypes, YES } from '../../lib/constants'
+import { GenericFormField, Application } from '@island.is/application/types'
 import { EstateMember } from '../../types'
 import { hasYes } from '@island.is/application/core'
 import { LookupPerson } from '../LookupPerson'
@@ -27,19 +27,24 @@ export const AdditionalEstateMember = ({
   remove,
   fieldName,
   relationOptions,
+  relationWithApplicantOptions,
   error,
+  application,
 }: {
+  application: Application
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
   fieldName: string
   relationOptions: { value: string; label: string }[]
+  relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
   const relationField = `${fieldIndex}.relation`
+  const relationWithApplicantField = `${fieldIndex}.relationWithApplicant`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
   const initialField = `${fieldIndex}.initial`
@@ -62,7 +67,7 @@ export const AdditionalEstateMember = ({
   }, [foreignCitizenship])
 
   return (
-    <Box position="relative" key={field.id} marginTop={2}>
+    <Box position="relative" key={field.id} marginTop={7}>
       <Controller
         name={initialField}
         control={control}
@@ -123,7 +128,10 @@ export const AdditionalEstateMember = ({
         </GridRow>
       ) : (
         <Box paddingY={2}>
-          <LookupPerson field={{ id: fieldIndex }} error={error} />
+          <LookupPerson
+            field={{ id: fieldIndex, props: { alertWhenUnder18: true } }}
+            error={error}
+          />
         </Box>
       )}
       <GridRow>
@@ -140,6 +148,33 @@ export const AdditionalEstateMember = ({
             required
           />
         </GridColumn>
+        {application.answers.selectedEstate ===
+          EstateTypes.permitForUndividedEstate && (
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+            <SelectController
+              key={relationWithApplicantField}
+              id={relationWithApplicantField}
+              name={relationWithApplicantField}
+              label={formatMessage(m.inheritanceRelationWithApplicantLabel)}
+              defaultValue={field.relationWithApplicant}
+              options={relationWithApplicantOptions}
+              error={error?.relationWithApplicant}
+              backgroundColor="blue"
+              required={!field.initial}
+            />
+          </GridColumn>
+        )}
+        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+          <InputController
+            id={emailField}
+            name={emailField}
+            label={m.email.defaultMessage}
+            defaultValue={field.email || ''}
+            backgroundColor="blue"
+            error={error?.email}
+            required
+          />
+        </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
           <InputController
             id={phoneField}
@@ -149,16 +184,7 @@ export const AdditionalEstateMember = ({
             backgroundColor="blue"
             format={'###-####'}
             error={error?.phone}
-          />
-        </GridColumn>
-        <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-          <InputController
-            id={emailField}
-            name={emailField}
-            label={m.email.defaultMessage}
-            defaultValue={field.email || ''}
-            backgroundColor="blue"
-            error={error?.email}
+            required
           />
         </GridColumn>
         <GridColumn span="1/1" paddingBottom={2}>

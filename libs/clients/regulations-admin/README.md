@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Clients Regulations Admin
 
 This library was generated with [Nx](https://nx.dev).
@@ -10,4 +8,4 @@ Run `nx test clients-regulations-admin` to execute the unit tests via [Jest](htt
 
 ## Generate client
 
-Run `yarn nx run clients-regulations-admin:schemas/external-openapi-generator`
+Run `yarn nx run clients-regulations-admin:codegen/backend-client`

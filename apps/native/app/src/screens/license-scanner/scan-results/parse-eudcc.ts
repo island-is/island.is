@@ -337,9 +337,7 @@ function getAlgo(protectedHeader: any, unprotectedHeader: any): ALGOS | null {
   }
 }
 
-function decodeCbor(
-  qrCbor: any,
-): {
+function decodeCbor(qrCbor: any): {
   kid: string | null;
   country: string | null;
   issuedAt: number;
@@ -400,7 +398,7 @@ export function parseEudcc(data: string | any): DecodedEudcc {
       // verify signature
       if (publicKey) {
         const c = Certificate.fromPEM(
-          (`-----BEGIN CERTIFICATE-----\n${publicKey.rawData}\n-----END CERTIFICATE-----` as unknown) as Buffer,
+          `-----BEGIN CERTIFICATE-----\n${publicKey.rawData}\n-----END CERTIFICATE-----` as unknown as Buffer,
         );
         const x = Buffer.from(c.publicKey.keyRaw.slice(1, 1 + 32));
         const y = Buffer.from(c.publicKey.keyRaw.slice(33, 33 + 32));

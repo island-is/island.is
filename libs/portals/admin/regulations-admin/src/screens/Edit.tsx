@@ -67,7 +67,7 @@ const stepData: Record<
   {
     title: MessageDescriptor
     intro?: MessageDescriptor
-    Component: () => ReturnType<FC>
+    Component: () => ReturnType<FC<React.PropsWithChildren<unknown>>>
   }
 > = {
   basics: {

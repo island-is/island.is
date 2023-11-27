@@ -9,10 +9,10 @@ export const NEI = 'Nei'
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
-export const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  done: 'done',
+export enum States {
+  prerequisites = 'prerequisites',
+  draft = 'draft',
+  done = 'done',
 }
 
 export type EstateEvent =
@@ -36,3 +36,14 @@ export const EstateTypes = {
   permitForUndividedEstate: 'Seta í óskiptu búi',
   divisionOfEstateByHeirs: 'Einkaskipti',
 }
+
+// Relations fixed list used in "Seta í óskiptu búi".
+// The District Commissioner's relation endpoint was not suitable for this list.
+export const relationWithApplicant = [
+  'Barn (sameiginlegt barn hjóna)',
+  'Stjúpbarn (barn látins maka)',
+  'Barnabarn (sameiginlegt barnabarn hjóna)',
+  'Stjúpbarnabarn (barnabarn látins maka)',
+  'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
+  'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
+]

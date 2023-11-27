@@ -1,11 +1,12 @@
 {
-  "root": "apps/services/user-notification",
+  "name": "services-user-notification",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/user-notification/src",
   "projectType": "application",
   "prefix": "services-user-notification",
   "targets": {
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/services/user-notification/src/messages.ts'"
       }
@@ -34,20 +35,20 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-notification:build"
       }
     },
     "worker": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-user-notification:build",
         "args": ["--job", "worker"]
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"
@@ -55,26 +56,26 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/user-notification"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/user-notification"],
       "options": {
-        "jestConfig": "apps/services/user-notification/jest.config.js",
+        "jestConfig": "apps/services/user-notification/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d --build",
         "cwd": "apps/services/user-notification"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/user-notification/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-notification/tsconfig.app.json apps/services/user-notification/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "docker-express": {}
   },

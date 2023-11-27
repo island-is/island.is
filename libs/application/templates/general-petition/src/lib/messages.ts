@@ -245,4 +245,16 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagsetning má ekki vera á undan upphafsdagsetningu',
     description: '',
   },
+
+  // History logs
+  logListInProgress: {
+    id: 'gpl.application:listInProgress',
+    defaultMessage: 'Gerð lista hafin',
+    description: '',
+  },
+  logListCreated: {
+    id: 'gpl.application:listCreated',
+    defaultMessage: 'Listi stofnaður',
+    description: '',
+  },
 })

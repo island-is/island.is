@@ -1,31 +1,35 @@
 {
-  "root": "libs/clients/university-of-iceland",
+  "name": "clients-university-of-iceland",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/university-of-iceland/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/clients/university-of-iceland/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/university-of-iceland"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/university-of-iceland"
+      ],
       "options": {
-        "jestConfig": "libs/clients/university-of-iceland/jest.config.js",
+        "jestConfig": "libs/clients/university-of-iceland/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/university-of-iceland/gen/fetch -i libs/clients/university-of-iceland/src/clientConfig.yaml"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/brautskraning-v1/openapi.yaml > src/clientConfig.yaml",
         "parallel": false,

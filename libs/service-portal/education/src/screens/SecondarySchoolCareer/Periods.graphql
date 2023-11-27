@@ -1,0 +1,26 @@
+query GetInnaPeriods {
+  innaPeriods {
+    items {
+      courses {
+        courseId
+        courseName
+        finalgrade
+        units
+        stage
+        status
+        date
+      }
+      division
+      divisionShort
+      organisation
+      organisationShort
+      periodFrom
+      periodName
+      periodShort
+      periodTo
+      studentId
+      periodId
+      diplomaId
+    }
+  }
+}

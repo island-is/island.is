@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useMutation, gql } from '@apollo/client'
+import { useMutation } from '@apollo/client'
+import omit from 'lodash/omit'
 import {
   Box,
   Input,
-  Text,
   ModalBase,
   Button,
   ToastContainer,
@@ -117,9 +117,10 @@ const Editor = () => {
           variables,
           query: GET_ICELANDIC_NAME_BY_SEARCH,
           data: {
-            getIcelandicNameBySearch: existingNames?.getIcelandicNameBySearch.filter(
-              (x) => x.id !== nameToDelete.id,
-            ),
+            getIcelandicNameBySearch:
+              existingNames?.getIcelandicNameBySearch.filter(
+                (x) => x.id !== nameToDelete.id,
+              ),
           },
         })
       }
@@ -139,7 +140,7 @@ const Editor = () => {
   }, [currentName])
 
   const onSubmit = async (formState: IcelandicNameType) => {
-    const { id, ...rest } = formState
+    const { id, ...rest } = omit(formState, '__typename')
 
     const body: CreateIcelandicNameInput = {
       ...rest,

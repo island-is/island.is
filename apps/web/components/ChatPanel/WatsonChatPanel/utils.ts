@@ -1,25 +1,84 @@
+import { Locale } from 'locale'
+import { uuid } from 'uuidv4'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+
+import { storageFactory } from '@island.is/shared/utils'
 import initApollo from '@island.is/web/graphql/client'
-import { GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
-import { storageFactory, stringHash } from '@island.is/shared/utils'
 import {
   Query,
   QueryWatsonAssistantChatIdentityTokenArgs,
 } from '@island.is/web/graphql/schema'
+import { GET_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN } from '@island.is/web/screens/queries/WatsonAssistantChat'
 
-const emailInputId = 'utlendingastofnun-chat-email'
-const nameInputId = 'utlendingastofnun-chat-name'
-const submitButtonId = 'utlendingastofnun-chat-submit-button'
+const emailInputId = 'watson-assistant-chat-email'
+const nameInputId = 'watson-assistant-chat-name'
+const submitButtonId = 'watson-assistant-chat-submit-button'
 
-const storage = storageFactory(() => sessionStorage)
+const storageForSession = storageFactory(() => sessionStorage)
+const storageForReturningUsers = storageFactory(() => localStorage)
 
-const getUserID = () => {
-  const email = storage.getItem(emailInputId)
-  return String(stringHash(storage.getItem('IBM_WAC_DEVICE_ID') ?? email))
+type TranslationVariant = 'directorateOfImmigration'
+
+const getTranslations = (
+  namespace: Record<string, string>,
+  activeLocale: Locale,
+  variant: TranslationVariant,
+) => {
+  const introText = namespace?.[`${variant}ChatIntroText`]
+  const panelTitle = namespace?.[`${variant}ChatPanelTitle`]
+
+  const missingEmailText =
+    namespace?.chatMissingEmailText ??
+    (activeLocale === 'is' ? 'Netfang vantar' : 'Email missing')
+
+  const missingNameText =
+    namespace?.chatMissingNameText ??
+    (activeLocale === 'is' ? 'Nafn vantar' : 'Name missing')
+
+  const continueText =
+    namespace?.chatContinue ?? (activeLocale === 'is' ? 'Áfram' : 'Continue')
+
+  const nameText =
+    namespace?.chatName ?? (activeLocale === 'is' ? 'Nafn' : 'Name')
+
+  const emailText =
+    namespace?.chatEmail ?? (activeLocale === 'is' ? 'Netfang' : 'Email')
+
+  return {
+    introText,
+    panelTitle,
+    missingEmailText,
+    missingNameText,
+    continueText,
+    nameText,
+    emailText,
+  }
 }
 
-const getUserInformation = async (instance, callback) => {
-  const storedName = storage.getItem(nameInputId)
-  const storedEmail = storage.getItem(emailInputId)
+const getUserID = () => {
+  const storageID = 'watsonChatUserID'
+
+  let userID = storageForReturningUsers.getItem(storageID)
+
+  if (!userID) {
+    userID = uuid()
+    storageForReturningUsers.setItem(storageID, userID)
+  }
+
+  return userID
+}
+
+const getUserInformation = async (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  instance,
+  namespace: Record<string, string>,
+  activeLocale: Locale,
+  translationVariant: TranslationVariant,
+  callback: (userInfo: { name: string; email: string }) => void,
+) => {
+  const storedName = storageForSession.getItem(nameInputId)
+  const storedEmail = storageForSession.getItem(emailInputId)
 
   // If we have stored the user information previously we simply return that
   if (storedName && storedEmail) {
@@ -30,11 +89,24 @@ const getUserInformation = async (instance, callback) => {
   // Otherwise we prompt the user to enter his information
   const customPanel = instance.customPanels.getPanel()
 
+  const translations = getTranslations(
+    namespace,
+    activeLocale,
+    translationVariant,
+  )
+
   customPanel.hostElement.innerHTML = `
           <div style="padding: 16px">
-  
+            ${
+              translations.introText
+                ? `<p style="font-size: 14px">${translations.introText}</p><br /><br />`
+                : ''
+            }
+            
             <div class="bx--form-item">
-              <label for="${emailInputId}" class="bx--label">Netfang/Email <span style="color: red">*</span></label>
+              <label for="${emailInputId}" class="bx--label">${
+    translations.emailText
+  } <span style="color: red">*</span></label>
               <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
               <span id="${emailInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
@@ -42,7 +114,9 @@ const getUserInformation = async (instance, callback) => {
             <br />
   
             <div class="bx--form-item">
-              <label for="${nameInputId}" class="bx--label">Nafn/Name <span style="color: red">*</span></label>
+              <label for="${nameInputId}" class="bx--label">${
+    translations.nameText
+  } <span style="color: red">*</span></label>
               <input id="${nameInputId}" type="text" class="bx--text-input">
               <span id="${nameInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
@@ -50,13 +124,15 @@ const getUserInformation = async (instance, callback) => {
             <br />
             
             <div style="display: flex; justify-content: center">
-              <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: #0061FF; color: white; font-size: 15px; cursor:pointer; border:none">Áfram / Continue</button>
+              <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: #0061FF; color: white; font-size: 15px; cursor:pointer; border:none">${
+    translations.continueText
+  }</button>
             </div>
           </div>
         `
 
   customPanel.open({
-    title: 'Netspjall Útlendingastofnunar',
+    title: translations.panelTitle,
     hideBackButton: true,
   })
 
@@ -69,53 +145,108 @@ const getUserInformation = async (instance, callback) => {
   )
   const nameInputErrorMessage = document.getElementById(`${nameInputId}-error`)
 
-  submitButton.onclick = () => {
-    const email = emailInput?.value ?? ''
-    const name = nameInput?.value ?? ''
+  if (submitButton) {
+    submitButton.onclick = () => {
+      const email = emailInput?.value ?? ''
+      const name = nameInput?.value ?? ''
 
-    emailInputErrorMessage.innerText = !email ? 'Email is missing' : ''
-    nameInputErrorMessage.innerText = !name ? 'Name is missing' : ''
+      if (emailInputErrorMessage) {
+        emailInputErrorMessage.innerText = !email
+          ? translations.missingEmailText
+          : ''
+      }
 
-    if (!email || !name) {
-      return
+      if (nameInputErrorMessage) {
+        nameInputErrorMessage.innerText = !name
+          ? translations.missingNameText
+          : ''
+      }
+
+      if (!email || !name) {
+        return
+      }
+
+      storageForSession.setItem(emailInputId, email)
+      storageForSession.setItem(nameInputId, name)
+
+      callback({ email, name })
+
+      customPanel.close()
     }
-
-    storage.setItem(emailInputId, email)
-    storage.setItem(nameInputId, name)
-
-    callback({ email, name })
-
-    customPanel.close()
   }
 }
 
-export const onDirectorateOfImmigrationChatLoad = (instance) => {
+const fetchIdentityToken = async (
+  apolloClient: ApolloClient<NormalizedCacheObject>,
+  userID: string,
+  name: string,
+  email: string,
+) => {
+  return apolloClient.query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
+    query: GET_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
+    variables: {
+      input: {
+        name,
+        email,
+        userID,
+      },
+    },
+  })
+}
+
+export const onAuthenticatedWatsonAssistantChatLoad = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  instance,
+  namespace: Record<string, string>,
+  activeLocale: Locale,
+  translationVariant: TranslationVariant,
+) => {
   const apolloClient = initApollo({})
 
   instance.on({
     type: 'identityTokenExpired',
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     handler: (event) => {
       return new Promise((resolve, reject) => {
-        getUserInformation(instance, ({ email, name }) => {
-          apolloClient
-            .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-              query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
-              variables: {
-                input: {
-                  name,
-                  email,
-                  userID: getUserID(),
-                },
-              },
-            })
+        // Make sure we are authenticated from the start
+        // Because if not then the connection will timeout in 30 seconds
+        if (
+          !(
+            storageForSession.getItem(nameInputId) &&
+            storageForSession.getItem(emailInputId)
+          )
+        ) {
+          fetchIdentityToken(apolloClient, getUserID(), '', '')
             .then((response) => {
               const token = response.data.watsonAssistantChatIdentityToken.token
               instance.updateIdentityToken(token)
               event.identityToken = token
+
               resolve(token)
             })
             .catch(reject)
-        })
+          return
+        }
+
+        getUserInformation(
+          instance,
+          namespace,
+          activeLocale,
+          translationVariant,
+          ({ email, name }) => {
+            fetchIdentityToken(apolloClient, getUserID(), name, email)
+              .then((response) => {
+                const token =
+                  response.data.watsonAssistantChatIdentityToken.token
+                instance.updateIdentityToken(token)
+                event.identityToken = token
+                resolve(token)
+              })
+              .catch(reject)
+          },
+        )
       })
     },
   })
@@ -123,25 +254,27 @@ export const onDirectorateOfImmigrationChatLoad = (instance) => {
   instance.on({
     type: 'window:open',
     handler: () => {
-      if (storage.getItem(nameInputId) && storage.getItem(emailInputId)) return
+      if (
+        storageForSession.getItem(nameInputId) &&
+        storageForSession.getItem(emailInputId)
+      ) {
+        return
+      }
 
-      getUserInformation(instance, ({ email, name }) => {
-        apolloClient
-          .query<Query, QueryWatsonAssistantChatIdentityTokenArgs>({
-            query: GET_DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_IDENTITY_TOKEN,
-            variables: {
-              input: {
-                name,
-                email,
-                userID: getUserID(),
-              },
+      getUserInformation(
+        instance,
+        namespace,
+        activeLocale,
+        translationVariant,
+        ({ email, name }) => {
+          fetchIdentityToken(apolloClient, getUserID(), name, email).then(
+            (response) => {
+              const token = response.data.watsonAssistantChatIdentityToken.token
+              instance.updateIdentityToken(token)
             },
-          })
-          .then((response) => {
-            const token = response.data.watsonAssistantChatIdentityToken.token
-            instance.updateIdentityToken(token)
-          })
-      })
+          )
+        },
+      )
     },
   })
 }

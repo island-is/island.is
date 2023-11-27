@@ -28,6 +28,12 @@ yarn run android
 yarn start
 ```
 
+### Publishing a Beta
+
+```bash
+yarn run beta
+```
+
 ## NX commands
 
 NX command example to proxy arguments to `package.json` scripts
@@ -37,7 +43,7 @@ nx run native-app:script --name=<some-script-from-package.json>
 ```
 
 ```bash
-nx run native-app:schemas/codegen
+nx run native-app:codegen/frontend-client
 ```
 
 ## NOTES

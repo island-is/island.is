@@ -1,7 +1,7 @@
 import React, { useState, useCallback, FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { ApolloError } from '@apollo/client'
-import AnimateHeight from 'react-animate-height'
+import AnimateHeight, { Height } from 'react-animate-height'
 import {
   Box,
   Text,
@@ -26,10 +26,12 @@ interface Props {
   forceBackgroundColor?: boolean
   extraChildrenPadding?: boolean
   showLine?: boolean
+
+  expandWhenLoadingFinished?: boolean
   onExpandCallback?: () => void
 }
 
-const ExpandableLine: FC<Props> = ({
+const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   data,
   onExpandCallback,
   backgroundColor = 'default',
@@ -39,13 +41,14 @@ const ExpandableLine: FC<Props> = ({
   loading,
   extraChildrenPadding,
   showLine = true,
+  expandWhenLoadingFinished = false,
   error,
 }) => {
   const { formatMessage } = useLocale()
   const [expanded, toggleExpand] = useState<boolean>(false)
   const [closed, setClosed] = useState<boolean>(true)
 
-  const handleAnimationEnd = useCallback((height) => {
+  const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
       setClosed(true)
     } else {
@@ -79,6 +82,10 @@ const ExpandableLine: FC<Props> = ({
       : backgroundColor === 'default'
       ? 'blue100'
       : 'transparent'
+
+  const shouldExpand = expandWhenLoadingFinished
+    ? !loading && children && expanded
+    : children && expanded
 
   return (
     <>
@@ -175,11 +182,9 @@ const ExpandableLine: FC<Props> = ({
           colSpan={data.length + 1}
         >
           <AnimateHeight
-            onAnimationEnd={(props: { newHeight: number }) =>
-              handleAnimationEnd(props.newHeight)
-            }
+            onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
-            height={children && expanded ? 'auto' : 0}
+            height={shouldExpand ? 'auto' : 0}
           >
             {showLine && <div className={styles.line} />}
             {children}

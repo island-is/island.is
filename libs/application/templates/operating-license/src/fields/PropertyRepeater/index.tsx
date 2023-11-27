@@ -24,7 +24,7 @@ import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import { error as errorMsg } from '../../lib/error'
 
-export const PropertyRepeater: FC<FieldBaseProps> = ({
+export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
   errors,
@@ -117,18 +117,16 @@ const PropertyItem = ({
   const { control, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 
-  const [
-    getProperty,
-    { loading: queryLoading, error: _queryError },
-  ] = useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
-    onCompleted: (data) => {
-      setValue(
-        addressField,
-        data.getRealEstateAddress[0]?.name ??
-          formatMessage(m.propertyNameNotFound),
-      )
-    },
-  })
+  const [getProperty, { loading: queryLoading, error: _queryError }] =
+    useLazyQuery<Query, { input: string }>(GET_REAL_ESTATE_ADDRESS, {
+      onCompleted: (data) => {
+        setValue(
+          addressField,
+          data.getRealEstateAddress[0]?.name ??
+            formatMessage(m.propertyNameNotFound),
+        )
+      },
+    })
 
   useEffect(() => {
     // According to Skra.is:

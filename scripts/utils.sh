@@ -18,7 +18,7 @@ function _log() {
   local timestamp=""
   if [[ -n "${SHOW_TIMESTAMP}" ]]; then timestamp="$(date +"%Y-%m-%d %H:%M:%S.%3N %:z") "; fi
   echo "$msg" | while read -r line; do
-    printf "${timestamp}${color}%10s %s${RESET}\n" "[$level]:" "${line}"
+    printf "${timestamp}${color}%10s %s${RESET}\n" "[$level]:" "${line}" >&2
   done
 }
 

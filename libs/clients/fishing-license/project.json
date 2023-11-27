@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/fishing-license",
+  "name": "clients-fishing-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/fishing-license/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/fishing-license/**/*.{ts,tsx,js,jsx}"
@@ -12,15 +13,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/fishing-license"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/fishing-license"],
       "options": {
-        "jestConfig": "libs/clients/fishing-license/jest.config.js",
+        "jestConfig": "libs/clients/fishing-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" https://veidileyfitest.azurewebsites.net/swagger/v1/swagger.json -H 'Accept: application/json' > src/clientConfig.json",
@@ -31,11 +32,12 @@
         "cwd": "libs/clients/fishing-license"
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/fishing-license/src/lib/gen/fetch -i libs/clients/fishing-license/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/src/lib/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

@@ -7,7 +7,11 @@ import {
   GridRow,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { RichText, EmailSignup } from '@island.is/web/components'
+import {
+  RichText,
+  EmailSignup,
+  SectionWithVideo,
+} from '@island.is/web/components'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
@@ -59,6 +63,10 @@ const LatestNewsSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.LatestNewsSlice),
 )
 
+const LatestEventsSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.LatestEventsSlice),
+)
+
 const OverviewLinksSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.OverviewLinksSlice),
 )
@@ -86,13 +94,22 @@ interface SliceMachineProps {
   slug?: string
   marginBottom?: ResponsiveSpace
   params?: Record<string, any>
-  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
   wrapWithGridContainer?: boolean
 }
 
 const fullWidthSlices = ['TimelineSlice', 'LogoListSlice', 'EmailSignup']
 
-const renderSlice = (slice, namespace, slug, params) => {
+const renderSlice = (
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  slice,
+  namespace: Record<string, string>,
+  slug: string,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  params,
+) => {
   switch (slice.__typename) {
     case 'HeadingSlice':
       return <HeadingSlice slice={slice} />
@@ -141,6 +158,17 @@ const renderSlice = (slice, namespace, slug, params) => {
       return <FeaturedSupportQNAs slice={slice} />
     case 'PowerBiSlice':
       return <PowerBiSlice slice={slice} />
+    case 'SectionWithVideo':
+      return <SectionWithVideo slice={slice} />
+    case 'LatestEventsSlice':
+      return (
+        <LatestEventsSlice
+          slice={slice}
+          slug={slug}
+          namespace={namespace}
+          {...params}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -153,24 +181,32 @@ export const SliceMachine = ({
   slug = '',
   marginBottom = 0,
   params,
-  paddingTop = 6,
+  paddingBottom = 6,
   wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
       <GridRow marginBottom={marginBottom}>
         <GridColumn
-          paddingTop={paddingTop}
+          paddingBottom={paddingBottom}
           span={
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename)
               ? '9/9'
               : ['9/9', '9/9', '7/9']
           }
           offset={
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             fullWidthSlices.includes(slice.__typename) ? '0' : ['0', '0', '1/9']
           }
         >
-          {renderSlice(slice, namespace, slug, params)}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridColumn>
       </GridRow>
     </GridContainer>
@@ -178,10 +214,18 @@ export const SliceMachine = ({
     <Box marginBottom={marginBottom}>
       {wrapWithGridContainer && (
         <GridContainer>
-          {renderSlice(slice, namespace, slug, params)}
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            renderSlice(slice, namespace, slug, params)
+          }
         </GridContainer>
       )}
-      {!wrapWithGridContainer && renderSlice(slice, namespace, slug, params)}
+      {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        !wrapWithGridContainer && renderSlice(slice, namespace, slug, params)
+      }
     </Box>
   )
 }

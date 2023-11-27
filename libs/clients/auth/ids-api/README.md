@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "IDS API" -->
-
 # Auth IDS API Client
 
 ## About
@@ -17,5 +15,5 @@ When developing locally you would normally communicate with the IDS endpoints on
 To regenerate the client from the [OpenAPI](./src/clientConfig.yaml) specification, run
 
 ```sh
-yarn nx run clients-auth-ids-api:schemas/external-openapi-generator
+yarn nx run clients-auth-ids-api:codegen/backend-client
 ```

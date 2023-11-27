@@ -10,15 +10,15 @@ import {
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
-import {
-  DistrictCommissionerAgencies,
-  NationalRegistryUser,
-} from '@island.is/api/schema'
+import { NationalRegistryUser } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { allowFakeCondition } from '../../lib/utils'
 import { IGNORE, YES } from '../../lib/constants'
-import { DriversLicense } from '@island.is/clients/driving-license'
+import {
+  DriversLicense,
+  Jurisdiction,
+} from '@island.is/clients/driving-license'
 
 export const sectionOverview = buildSection({
   id: 'overview',
@@ -69,8 +69,9 @@ export const sectionOverview = buildSection({
           },
           {
             cards: ({ externalData }: Application) =>
-              (externalData.currentLicense
-                .data as DriversLicense).categories.map((category) => {
+              (
+                externalData.currentLicense.data as DriversLicense
+              ).categories.map((category) => {
                 const isTemporary = category.validToCode === 8
                 return {
                   title: `${category.nr} - ${
@@ -159,12 +160,15 @@ export const sectionOverview = buildSection({
           value: ({ answers: { district }, externalData }) => {
             const districts = getValueViaPath(
               externalData,
-              'districtCommissioners.data',
-            ) as DistrictCommissionerAgencies[]
-            const selectedDistrict = districts.find((d) => d.id === district)
-            const districtName = selectedDistrict?.name ?? ''
-            const districtPlace = selectedDistrict?.place ?? ''
-            return `${districtName}, ${districtPlace}`
+              'jurisdictions.data',
+            ) as Jurisdiction[]
+            const selectedDistrict = districts.find(
+              (d) => d.id.toString() === district,
+            )
+            const districtPlace = `${
+              selectedDistrict?.zip ? selectedDistrict.zip + ' ' : ''
+            }${selectedDistrict?.name ?? ''}`
+            return districtPlace
           },
         }),
         buildDividerField({}),

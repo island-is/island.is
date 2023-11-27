@@ -3,15 +3,11 @@ import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
@@ -23,31 +19,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
   }
 
-  async createCharge({
-    application: { id, answers },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
-
-    if (!chargeItemCode) {
-      throw new Error('chargeItemCode missing in answers')
-    }
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      InstitutionNationalIds.SYSLUMENN,
-      [chargeItemCode],
-    )
-
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
-  }
-
   async submitApplication({
     application,
     auth,
@@ -56,7 +27,6 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     orderId?: string
   }> {
     const { answers } = application
-    const nationalId = application.applicant
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -68,15 +38,20 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
       }
     }
 
-    // TODO: add reason to duplicate submission?
-    // Currently we are tracking "stolen" vs "lost" in the application
-    // Does this need to be tracked in the license system?
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         districtId: parseInt(answers.district.toString(), 10),
-        ssn: nationalId,
+        token: auth.authorization,
+        // Always true since submission doesn't happen before
+        // user checks the required field which states
+        // that the license is lost or stolen
+        stolenOrLost: true,
       })
-      .catch(() => {
+      .catch((e) => {
+        this.logger.error('Error submitting application', {
+          application: application.id,
+          error: e,
+        })
         throw Error('Error submitting application to Samgöngustofa')
       })
     return {

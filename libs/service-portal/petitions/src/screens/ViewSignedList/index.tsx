@@ -7,7 +7,8 @@ import {
   Button,
   Column,
   Columns,
-  DialogPrompt,
+  GridColumn,
+  GridRow,
   Stack,
   Text,
   toast,
@@ -29,6 +30,7 @@ import {
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { Modal } from '@island.is/service-portal/core'
 
 const ViewSignedList = () => {
   useNamespaces('sp.petitions')
@@ -52,10 +54,10 @@ const ViewSignedList = () => {
 
   const [hasSigned, setHasSigned] = useState(userHasSigned ? true : false)
 
-  const {
-    petitionEndorsements,
-    refetchSinglePetitionEndorsements,
-  } = useGetSinglePetitionEndorsements(listId)
+  const [modalIsOpen, setModalIsOpen] = useState(false)
+
+  const { petitionEndorsements, refetchSinglePetitionEndorsements } =
+    useGetSinglePetitionEndorsements(listId)
 
   useEffect(() => {
     setHasSigned(userHasSigned ? true : false)
@@ -94,17 +96,21 @@ const ViewSignedList = () => {
                   width={'full'}
                 >
                   <Box>
-                    <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
+                    <Text variant="h4" marginTop={[2, 0]}>
+                      {formatMessage(m.listOpenTil)}
+                    </Text>
                     <Text variant="default">
                       {format(new Date(petition?.closedDate), 'dd.MM.yyyy')}
                     </Text>
                   </Box>
                   <Box>
-                    <Text variant="h4">{formatMessage(m.listOwner)}</Text>
+                    <Text variant="h4" marginTop={[2, 0]}>
+                      {formatMessage(m.listOwner)}
+                    </Text>
                     <Text variant="default">{petition?.ownerName}</Text>
                   </Box>
                   <Box>
-                    <Text variant="h4">
+                    <Text variant="h4" marginTop={[2, 0]}>
                       {formatMessage(m.listHowManySigned)}
                     </Text>
                     <Text variant="default">
@@ -119,38 +125,58 @@ const ViewSignedList = () => {
             </Column>
           </Columns>
 
-          <Box marginTop={5} marginBottom={10}>
+          <Box marginTop={5} marginBottom={[5, 10]}>
             {hasSigned && isListOpen && (
-              <Box width="half">
-                <DialogPrompt
-                  baseId="dialog"
-                  title={formatMessage(m.modalUnsign)}
-                  ariaLabel={''}
-                  disclosureElement={
-                    <Button loading={isLoading} variant="ghost">
-                      {formatMessage(m.unsignList)}
-                    </Button>
-                  }
-                  onConfirm={() => onUnsign()}
-                  buttonTextConfirm={formatMessage(m.modalButtonUnsignListYes)}
-                  buttonTextCancel={formatMessage(m.modalButtonNo)}
-                />
-              </Box>
+              <Modal
+                id="setDate"
+                isVisible={modalIsOpen}
+                toggleClose={false}
+                initialVisibility={false}
+                disclosure={
+                  <Button
+                    colorScheme="default"
+                    variant="ghost"
+                    onClick={() => setModalIsOpen(true)}
+                    loading={isLoading}
+                  >
+                    {formatMessage(m.unsignList)}
+                  </Button>
+                }
+              >
+                <Text variant="h1" paddingTop={5}>
+                  {formatMessage(m.modalUnsign)}
+                </Text>
+                <Box
+                  marginTop={10}
+                  display="flex"
+                  justifyContent="spaceBetween"
+                >
+                  <Button variant="ghost" onClick={() => setModalIsOpen(false)}>
+                    {formatMessage(m.modalButtonNo)}
+                  </Button>
+                  <Button onClick={() => onUnsign()}>
+                    {formatMessage(m.modalButtonUnsignListYes)}
+                  </Button>
+                </Box>
+              </Modal>
             )}
             {!hasSigned && isListOpen && (
-              <Box width="half">
-                <Button
-                  variant="ghost"
-                  icon="open"
-                  onClick={() =>
-                    window.open(
-                      `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
-                    )
-                  }
-                >
-                  {formatMessage(m.signList)}
-                </Button>
-              </Box>
+              <GridRow marginTop={5} marginBottom={[5, 10]}>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Button
+                    variant="ghost"
+                    icon="open"
+                    iconType="outline"
+                    onClick={() =>
+                      window.open(
+                        `${document.location.origin}/umsoknir/undirskriftalisti/${petition?.meta.applicationId}`,
+                      )
+                    }
+                  >
+                    {formatMessage(m.signList)}
+                  </Button>
+                </GridColumn>
+              </GridRow>
             )}
           </Box>
 

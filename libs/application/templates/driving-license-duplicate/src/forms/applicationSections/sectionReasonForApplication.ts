@@ -1,10 +1,10 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { ApplicationReasons } from '../../lib/constants'
+import { YES } from '../../lib/constants'
 import { m } from '../../lib/messages'
 
 export const sectionReasonForApplication = buildSection({
@@ -20,21 +20,17 @@ export const sectionReasonForApplication = buildSection({
           title: '',
           description: m.reasonDescription,
         }),
-        buildRadioField({
-          id: 'reason.reasonGiven',
+        buildCheckboxField({
+          id: 'reason.confirmationCheckbox',
           title: '',
-          width: 'half',
-          space: 'smallGutter',
+          defaultValue: [],
           options: [
             {
-              label: m.reasonLostOption,
-              value: ApplicationReasons.LOST,
-            },
-            {
-              label: m.reasonStolenOption,
-              value: ApplicationReasons.STOLEN,
+              value: YES,
+              label: m.confirmReason,
             },
           ],
+          required: true,
         }),
       ],
     }),

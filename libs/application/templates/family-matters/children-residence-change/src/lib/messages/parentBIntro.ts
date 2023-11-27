@@ -26,8 +26,7 @@ export const parentBIntro = {
       description: 'Title for disagreement',
     },
     description: {
-      id:
-        'crc.application:section.parentBIntro.disagreement.description#markdown',
+      id: 'crc.application:section.parentBIntro.disagreement.description#markdown',
       defaultMessage:
         'Ef ágreiningur er á milli foreldra um breytingu á lögheimili barnsins eða barnanna er þetta umsóknarferli, sem lýkur með því að báðir foreldrar undirrita samning, ekki ákjósanlegur farvegur. Foreldri sem óskar eftir því að flytja lögheimili barns til sín án fyrirfram samkomulags við hitt foreldrið getur sent rökstudda beiðni á sýslumann.\\n\\n - [Beiðni um breytingu á lögheimilibarns.](https://island.is/umsoknir/breytt-logheimili-barns) \\n\\n - Nánari upplýsingar á [vefsíðu sýslumanns.](https://www.syslumenn.is/)',
       description: 'Description for disagreement',

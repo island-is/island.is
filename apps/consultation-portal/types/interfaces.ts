@@ -28,6 +28,7 @@ export interface Case {
   documents?: Array<Document>
   additionalDocuments?: Array<Document>
   stakeholders?: Array<Stakeholder>
+  extraStakeholderList?: string
   allowUsersToSendPrivateAdvices?: boolean
   relatedCases?: Array<RelatedCase>
 }
@@ -142,6 +143,8 @@ export interface SEOProps {
   title: string
   url?: string
   image?: string
+  description?: string
+  keywords?: string
 }
 
 export interface FilterGroups {
@@ -240,4 +243,6 @@ export interface CaseExpressions {
   isStatusNameForReview: boolean
   isStakeholdersNotEmpty: boolean
   isRelatedCasesNotEmpty: boolean
+  isStakeholdersBoxVisible: boolean
+  shouldDisplayHidden: boolean
 }

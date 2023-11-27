@@ -1,4 +1,8 @@
-import { Configuration, VehicleSearchApi } from '../../gen/fetch'
+import {
+  Configuration,
+  PublicVehicleSearchApi,
+  VehicleSearchApi,
+} from '../../gen/fetch'
 import { Provider } from '@nestjs/common'
 import {
   ConfigType,
@@ -21,6 +25,7 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
       new Configuration({
         fetchApi: createEnhancedFetch({
           name: 'clients-vehicles',
+          organizationSlug: 'samgongustofa',
           timeout: config.fetch.timeout,
           autoAuth: idsClientConfig.isConfigured
             ? {
@@ -43,4 +48,28 @@ export const VehiclesApiProvider: Provider<VehicleSearchApi> = {
     ),
 
   inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY, IdsClientConfig.KEY],
+}
+
+export const PublicVehiclesApiProvider: Provider<PublicVehicleSearchApi> = {
+  provide: PublicVehicleSearchApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xroadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof VehiclesClientConfig>,
+  ) =>
+    new PublicVehicleSearchApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-vehicles',
+          timeout: config.fetch.timeout,
+        }),
+        basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
+        headers: {
+          'X-Road-Client': xroadConfig.xRoadClient,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      }),
+    ),
+  inject: [XRoadConfig.KEY, VehiclesClientConfig.KEY],
 }

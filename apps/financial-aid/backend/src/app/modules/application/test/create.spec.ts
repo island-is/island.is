@@ -221,7 +221,8 @@ describe('ApplicationController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
-      const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
+      const findByMunicipalityId =
+        mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const mockFindApplication = mockApplicationModel.findOne as jest.Mock
       mockFindApplication.mockReturnValueOnce(null)
@@ -344,7 +345,8 @@ describe('ApplicationController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockApplicationModel.create as jest.Mock
       mockCreate.mockReturnValueOnce(appModel)
-      const findByMunicipalityId = mockMunicipalityService.findByMunicipalityId as jest.Mock
+      const findByMunicipalityId =
+        mockMunicipalityService.findByMunicipalityId as jest.Mock
       findByMunicipalityId.mockReturnValueOnce(Promise.resolve(municipality))
       const mockFindApplication = mockApplicationModel.findOne as jest.Mock
       mockFindApplication.mockReturnValueOnce(null)

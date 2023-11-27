@@ -1,5 +1,5 @@
-import { getPostgresExtensions } from './output-generators/map-to-helm-values'
 import {
+  AccessModes,
   Context,
   EnvironmentVariables,
   ExtraValues,
@@ -15,7 +15,6 @@ import {
   Resources,
   Secrets,
   ServiceDefinition,
-  ValueType,
   XroadConfig,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
@@ -183,6 +182,7 @@ export class ServiceBuilder<ServiceType> {
         'For multiple init containers, you must set a unique name for each container.',
       )
     }
+
     this.serviceDef.initContainers = {
       envs: {},
       secrets: {},

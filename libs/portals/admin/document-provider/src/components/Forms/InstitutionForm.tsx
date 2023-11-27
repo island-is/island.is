@@ -21,7 +21,9 @@ interface Props {
   organisation: Organisation
 }
 
-export const InstitutionForm: FC<Props> = ({ organisation }) => {
+export const InstitutionForm: FC<React.PropsWithChildren<Props>> = ({
+  organisation,
+}) => {
   const {
     handleSubmit,
     control,

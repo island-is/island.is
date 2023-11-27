@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/auth/public-api",
+  "name": "clients-auth-public-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/public-api/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/auth/public-api/**/*.{ts,tsx,js,jsx}"
@@ -12,21 +13,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/auth/public-api"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/public-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/public-api/jest.config.js",
+        "jestConfig": "libs/clients/auth/public-api/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/auth/public-api/gen",
         "command": "yarn openapi-generator -o libs/clients/auth/public-api/gen/fetch -i apps/services/auth/public-api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["services-auth-public-api"]
+  "implicitDependencies": ["services-auth-public-api"],
+  "tags": ["lib:client", "scope:client"]
 }

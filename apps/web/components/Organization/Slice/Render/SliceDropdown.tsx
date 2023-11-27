@@ -1,17 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
-import { SliceMachine } from '@island.is/web/components'
+import { useRouter } from 'next/router'
+import slugify from '@sindresorhus/slugify'
+
 import {
   BoxProps,
   GridColumn,
   GridContainer,
   GridRow,
-  Option,
   Select,
+  Stack,
 } from '@island.is/island-ui/core'
-import { useRouter } from 'next/router'
-import slugify from '@sindresorhus/slugify'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { SliceMachine } from '@island.is/web/components'
+import { Slice } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slices: Slice[]
@@ -22,7 +23,7 @@ interface SliceProps {
   dropdownMarginBottom?: BoxProps['marginBottom']
 }
 
-export const SliceDropdown: React.FC<SliceProps> = ({
+export const SliceDropdown: React.FC<React.PropsWithChildren<SliceProps>> = ({
   slices,
   sliceExtraText,
   gridSpan = ['9/9', '9/9', '7/9', '7/9', '4/9'],
@@ -54,7 +55,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
 
     setSelectedId(
       hashString
-        ? options.find((x) => x.slug === hashString).value
+        ? options.find((x) => x.slug === hashString)?.value ?? ''
         : options[0].value,
     )
   }, [Router, options])
@@ -62,7 +63,7 @@ export const SliceDropdown: React.FC<SliceProps> = ({
   const selectedSlice = slices.find((x) => x.id === selectedId)
 
   return (
-    <>
+    <Stack space={5}>
       <GridContainer>
         <GridRow marginBottom={dropdownMarginBottom}>
           <GridColumn span={gridSpan} offset={gridOffset}>
@@ -75,8 +76,10 @@ export const SliceDropdown: React.FC<SliceProps> = ({
               name="select1"
               options={options}
               value={options.find((x) => x.value === selectedId)}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onChange={({ value }: Option) => {
-                const slug = options.find((x) => x.value === value).slug
+                const slug = options.find((x) => x.value === value)?.slug
                 setSelectedId(String(value))
                 Router.push(
                   {
@@ -95,10 +98,12 @@ export const SliceDropdown: React.FC<SliceProps> = ({
         <SliceMachine
           key={selectedSlice.id}
           slice={selectedSlice}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           namespace={null}
           fullWidth={slicesAreFullWidth}
         />
       )}
-    </>
+    </Stack>
   )
 }

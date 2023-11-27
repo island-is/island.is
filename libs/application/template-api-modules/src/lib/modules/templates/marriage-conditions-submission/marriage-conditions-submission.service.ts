@@ -20,7 +20,10 @@ import {
   MarriageConditionsFakeData,
 } from '@island.is/application/templates/marriage-conditions/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationTypes,
+  InstitutionNationalIds,
+} from '@island.is/application/types'
 import { NationalRegistryXRoadService } from '@island.is/api/domains/national-registry-x-road'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -69,6 +72,10 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
         maritalStatus: this.formatMaritalStatus(maritalStatus),
       })
     } else {
+      this.logger.warn(
+        '[marriage-conditions]: invalid marital status - ',
+        maritalStatus,
+      )
       throw new TemplateApiError(
         {
           title: coreErrorMessages.failedDataProvider,
@@ -77,27 +84,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
         400,
       )
     }
-  }
-
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const SYSLUMADUR_NATIONAL_ID = '6509142520'
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      SYSLUMADUR_NATIONAL_ID,
-      ['AY129'],
-    )
-
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
   }
 
   async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
@@ -190,6 +176,10 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
       })
 
     if (!result.success) {
+      this.logger.error(
+        '[marriage-conditions]: Failed to upload data - ',
+        result.message,
+      )
       throw new Error(`Application submission failed`)
     }
     return { success: result.success, id: result.caseNumber }

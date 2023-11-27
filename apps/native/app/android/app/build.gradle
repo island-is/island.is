@@ -2,7 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 
-// @todo implement CodePush
+// apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 
 import com.android.build.OutputFile
 
@@ -113,8 +113,8 @@ android {
         applicationId "is.island.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 115
+        versionName "1.2.3"
         manifestPlaceholders = [
             appAuthRedirectScheme: "is.island.app" // project.config.get("BUNDLE_ID_ANDROID")
         ]

@@ -1,6 +1,6 @@
 import React from 'react';
 import {FormattedDate} from 'react-intl';
-import {Image, ImageSourcePropType, ViewStyle} from 'react-native';
+import {Image, ImageSourcePropType, ViewStyle, View} from 'react-native';
 import styled from 'styled-components/native';
 import timeOutlineIcon from '../../assets/card/time-outline.png';
 import {dynamicColor} from '../../utils/dynamic-color';
@@ -8,6 +8,7 @@ import {font} from '../../utils/font';
 
 const Host = styled.View`
   width: 100%;
+  min-height: 160px;
   border-radius: ${({theme}) => theme.border.radius.large};
   border-width: ${({theme}) => theme.border.width.standard}px;
   border-color: ${dynamicColor(
@@ -72,6 +73,7 @@ const Description = styled.Text`
 const Content = styled.View`
   padding: ${({theme}) => theme.spacing[2]}px;
   padding-top: 0px;
+  flex: 1;
 `;
 
 const Date = styled.View`
@@ -150,6 +152,7 @@ export function StatusCard({
       <Content>
         <Title>{title}</Title>
         {!!description && <Description>{description}</Description>}
+        <View style={{flex: 1}} />
         <Bar>
           <Progress width={progress} />
         </Bar>

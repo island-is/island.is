@@ -1,13 +1,15 @@
 import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
+
 import { NotificationType, User } from '@island.is/judicial-system/types'
+
+import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
-import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 interface Then {
   result: DeliverResponse
@@ -28,14 +30,11 @@ describe('InternalNotificationController - Send defendants not updated at court 
   }
   const caseId = uuid()
   const courtCaseNumber = uuid()
-  const judgeName = uuid()
-  const judgeEmail = uuid()
   const registrarName = uuid()
   const registrarEmail = uuid()
   const theCase = {
     id: caseId,
     courtCaseNumber,
-    judge: { name: judgeName, email: judgeEmail },
     registrar: { name: registrarName, email: registrarEmail },
   } as Case
 
@@ -44,11 +43,8 @@ describe('InternalNotificationController - Send defendants not updated at court 
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const {
-      emailService,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationModel, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockNotificationModel = notificationModel
@@ -82,13 +78,6 @@ describe('InternalNotificationController - Send defendants not updated at court 
     it('should send email', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
-          to: [{ name: judgeName, address: judgeEmail }],
-          subject: `Skráning varnaraðila/verjenda í máli ${courtCaseNumber}`,
-          html: `Ekki tókst að skrá varnaraðila/verjendur í máli ${courtCaseNumber} í Auði. Yfirfara þarf málið í Auði og skrá rétta aðila áður en því er lokað.`,
-        }),
-      )
-      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
-        expect.objectContaining({
           to: [{ name: registrarName, address: registrarEmail }],
           subject: `Skráning varnaraðila/verjenda í máli ${courtCaseNumber}`,
           html: `Ekki tókst að skrá varnaraðila/verjendur í máli ${courtCaseNumber} í Auði. Yfirfara þarf málið í Auði og skrá rétta aðila áður en því er lokað.`,
@@ -104,7 +93,7 @@ describe('InternalNotificationController - Send defendants not updated at court 
     beforeEach(async () => {
       const mockFindAll = mockNotificationModel.findAll as jest.Mock
       mockFindAll.mockResolvedValueOnce([
-        { recipients: [{ address: judgeEmail, success: true }] },
+        { recipients: [{ address: registrarEmail, success: true }] },
       ])
       then = await givenWhenThen(caseId, theCase, notificationDto)
     })

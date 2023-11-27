@@ -11,10 +11,9 @@ interface Props extends FieldBaseProps {
   field: MessageWithLinkButtonField
 }
 
-export const MessageWithLinkButtonFormField: FC<Props> = ({
-  application,
-  field,
-}) => {
+export const MessageWithLinkButtonFormField: FC<
+  React.PropsWithChildren<Props>
+> = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
   const getUrl = () => {
@@ -29,23 +28,24 @@ export const MessageWithLinkButtonFormField: FC<Props> = ({
       borderRadius="standard"
       padding={4}
       background="blue100"
-      display="flex"
+      display={['block', 'flex']}
       alignItems="center"
       flexDirection={['column', 'column', 'row']}
       marginY={2}
     >
-      <Box paddingRight={[0, 0, 4]}>
+      <Box paddingRight={[0, 0, 4]} style={{ overflowWrap: 'anywhere' }}>
         <Text variant="small">
           {formatText(field.message, application, formatMessage)}
         </Text>
       </Box>
-      <Box marginTop={[2, 2, 0]} marginLeft={[0, 0, 3]}>
+      <Box marginTop={[3, 3, 0]} marginLeft={[0, 0, 3]}>
         <Button
           onClick={() => {
             window.open(`${getUrl()}`, '_blank')
           }}
           size="small"
           icon="arrowForward"
+          nowrap
         >
           {formatText(field.buttonTitle, application, formatMessage)}
         </Button>

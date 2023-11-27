@@ -1,27 +1,29 @@
 {
-  "root": "libs/clients/payment-schedule",
+  "name": "clients-payment-schedule",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/payment-schedule/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/payment-schedule/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.json"
-      }
+      },
+      "outputs": ["{projectRoot}/src/gen/fetch"]
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/payment-schedule"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/payment-schedule"],
       "options": {
-        "jestConfig": "libs/clients/payment-schedule/jest.config.js",
+        "jestConfig": "libs/clients/payment-schedule/jest.config.ts",
         "passWithNoTests": true
       }
     }

@@ -3,36 +3,38 @@ import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
 import {
+  AlertBanner,
   Box,
+  FormStepperV2,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  FormStepperV2,
-  AlertBanner,
-  Section,
   linkStyles,
-  Text,
   LinkV2,
+  Section,
+  Text,
 } from '@island.is/island-ui/core'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import * as constants from '@island.is/judicial-system/consts'
 import {
-  sections as formStepperSections,
+  isDefenceUser,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
+import {
   pageLayout,
+  sections as formStepperSections,
 } from '@island.is/judicial-system-web/messages'
 import {
   InstitutionType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import * as constants from '@island.is/judicial-system/consts'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { UserContext } from '../UserProvider/UserProvider'
+import { stepValidationsType } from '../../utils/formHelper'
+import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
-import useSections from '../../utils/hooks/useSections'
+import { UserContext } from '../UserProvider/UserProvider'
 import * as styles from './PageLayout.css'
-import { stepValidationsType } from '../../utils/formHelper'
 
 export interface RouteSection {
   name: string
@@ -52,9 +54,11 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<{
-  isActive: boolean
-}> = ({ isActive, children }) => (
+const SubsectionChild: React.FC<
+  React.PropsWithChildren<{
+    isActive: boolean
+  }>
+> = ({ isActive, children }) => (
   <Box className={styles.name}>
     <Text as="div" lineHeight="lg" fontWeight={isActive ? 'semiBold' : 'light'}>
       {children}
@@ -62,7 +66,9 @@ const SubsectionChild: React.FC<{
   </Box>
 )
 
-const DisplaySection: React.FC<SectionProps> = (props) => {
+const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
+  props,
+) => {
   const { section, index, activeSection, activeSubSection } = props
 
   return (
@@ -116,7 +122,7 @@ interface SidePanelProps {
   isValid?: boolean
 }
 
-const SidePanel: React.FC<SidePanelProps> = ({
+const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
   user,
   isValid,
   onNavigationTo,
@@ -129,18 +135,19 @@ const SidePanel: React.FC<SidePanelProps> = ({
   const activeSubSection = sections[activeSection]?.children.findIndex(
     (s) => s.isActive,
   )
-
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
       <div className={styles.formStepperContainer}>
         <Box marginLeft={[0, 0, 2]}>
-          <Box marginBottom={7} display={['none', 'none', 'block']}>
-            <Logo defaultInstitution={workingCase.court?.name} />
-          </Box>
+          {!isDefenceUser(user) && (
+            <Box marginBottom={7} display={['none', 'none', 'block']}>
+              <Logo defaultInstitution={workingCase.court?.name} />
+            </Box>
+          )}
           <Box marginBottom={6}>
             <Text variant="h3" as="h3">
               {formatMessage(
-                user?.institution?.type === InstitutionType.HIGH_COURT
+                user?.institution?.type === InstitutionType.COURT_OF_APPEALS
                   ? formStepperSections.appealedCaseTitle
                   : isIndictmentCase(workingCase.type)
                   ? formStepperSections.indictmentTitle
@@ -176,7 +183,7 @@ interface PageProps {
   isValid?: boolean
 }
 
-const PageLayout: React.FC<PageProps> = ({
+const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
   workingCase,
   children,
   isLoading,
@@ -196,18 +203,18 @@ const PageLayout: React.FC<PageProps> = ({
   ) : notFound ? (
     <AlertBanner
       title={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? formatMessage(pageLayout.defenderRole.alertTitle)
           : formatMessage(pageLayout.otherRoles.alertTitle)
       }
       description={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? formatMessage(pageLayout.defenderRole.alertMessage)
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
       link={
-        user?.role === UserRole.DEFENDER
+        isDefenceUser(user)
           ? {
               href: constants.DEFENDER_CASES_ROUTE,
               title: 'Fara á yfirlitssíðu',

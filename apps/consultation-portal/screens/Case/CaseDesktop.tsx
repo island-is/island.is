@@ -5,22 +5,36 @@ import {
   GridRow,
   Stack,
 } from '@island.is/island-ui/core'
-import { AdviceResult, Case, CaseExpressions } from '../../types/interfaces'
+import {
+  AdviceResult,
+  Case,
+  CaseExpressions,
+  Stakeholder,
+} from '../../types/interfaces'
 import {
   BlowoutList,
   CaseDocuments,
-  CaseEmailBox,
   CaseOverview,
   CaseStatusBox,
   CaseTimeline,
   Coordinator,
-  RenderAdvices,
 } from './components'
 import CaseSkeleton from './components/CaseSkeleton/CaseSkeleton'
 import localization from './Case.json'
+import dynamic from 'next/dynamic'
+
+const CaseEmailBox = dynamic(
+  () => import('./components/CaseEmailBox/CaseEmailBox'),
+  { ssr: false },
+)
+const RenderAdvices = dynamic(
+  () => import('./components/RenderAdvices/RenderAdvices'),
+  { ssr: false },
+)
 
 interface Props {
   chosenCase: Case
+  stakeholders: Array<Stakeholder>
   expressions: CaseExpressions
   advices: Array<AdviceResult>
   advicesLoading: boolean
@@ -29,6 +43,7 @@ interface Props {
 
 const CaseDesktop = ({
   chosenCase,
+  stakeholders,
   expressions,
   advices,
   advicesLoading,
@@ -41,10 +56,11 @@ const CaseDesktop = ({
     documents,
     additionalDocuments,
     statusName,
-    stakeholders,
     relatedCases,
     contactEmail,
     contactName,
+    shortDescription,
+    advicePublishTypeId,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -53,9 +69,16 @@ const CaseDesktop = ({
     isStatusNameForReview,
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
+    shouldDisplayHidden,
   } = expressions
+
   return (
-    <CaseSkeleton caseNumber={caseNumber} caseId={id}>
+    <CaseSkeleton
+      caseNumber={caseNumber}
+      caseId={id}
+      caseDescription={shortDescription}
+    >
       <GridContainer>
         <GridRow rowGap={3}>
           <GridColumn span={'3/12'}>
@@ -94,9 +117,17 @@ const CaseDesktop = ({
           </GridColumn>
           <GridColumn span={'3/12'}>
             <Stack space={3}>
-              <CaseStatusBox status={statusName} />
-              {isStakeholdersNotEmpty && (
-                <BlowoutList list={stakeholders} isStakeholder />
+              <CaseStatusBox
+                status={statusName}
+                advicePublishTypeId={advicePublishTypeId}
+                shouldDisplayHidden={shouldDisplayHidden}
+              />
+              {isStakeholdersBoxVisible && (
+                <BlowoutList
+                  list={stakeholders}
+                  isStakeholder
+                  isEmpty={!isStakeholdersNotEmpty}
+                />
               )}
               {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
               <Coordinator

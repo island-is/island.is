@@ -1,24 +1,24 @@
-import React, { FC, useState } from 'react'
+import { useState } from 'react'
 import format from 'date-fns/format'
 import { Table as T, Box, Pagination, Tooltip } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { dateFormat } from '@island.is/shared/constants'
 import { ExpandHeader, dateParse } from '@island.is/service-portal/core'
-import { PaymentSchedule } from '@island.is/api/schema'
 import FinanceScheduleTableRow from './FinanceScheduleTableRow'
 import { m } from '../../lib/messages'
+import { PaymentSchedule } from '@island.is/service-portal/graphql'
 const ITEMS_ON_PAGE = 20
 
 interface Props {
   recordsArray: PaymentSchedule[]
 }
 
-const compare = function (a: any, b: any) {
+const compare = function (a: string, b: string) {
   if (a > b) return +1
   if (a < b) return -1
   return 0
 }
-const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
+const FinanceScheduleTable = ({ recordsArray }: Props) => {
   useNamespaces('sp.finance-schedule')
 
   const [page, setPage] = useState(1)
@@ -77,8 +77,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                   <Tooltip
                     placement="top"
                     text={formatMessage({
-                      id:
-                        'sp.finance-schedule:amount-left-without-interest-info',
+                      id: 'sp.finance-schedule:amount-left-without-interest-info',
                       defaultMessage:
                         'Eftirstöðvar án vaxta innihalda þó vexti fram að þeim degi sem greiðsluáætlunin er gerð ef gjöld bera vexti.',
                     })}
@@ -127,6 +126,7 @@ const FinanceScheduleTable: FC<Props> = ({ recordsArray }) => {
                 cursor="pointer"
                 className={className}
                 onClick={() => setPage(page)}
+                component="button"
               >
                 {children}
               </Box>

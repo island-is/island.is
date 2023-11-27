@@ -22,26 +22,20 @@ interface UseFormProps {
   organisationNationalId: string
 }
 
-export const DocumentProviderAdministrativeContactForm: FC<Props> = ({
-  administrativeContact,
-  organisationId,
-  organisationNationalId,
-}) => {
+export const DocumentProviderAdministrativeContactForm: FC<
+  React.PropsWithChildren<Props>
+> = ({ administrativeContact, organisationId, organisationNationalId }) => {
   const { formatMessage } = useLocale()
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm<UseFormProps>()
-  const {
-    updateAdministrativeContact,
-    loading: loadingUpdate,
-  } = useUpdateAdministrativeContact(organisationId)
+  const { updateAdministrativeContact, loading: loadingUpdate } =
+    useUpdateAdministrativeContact(organisationId)
 
-  const {
-    createAdministrativeContact,
-    loading: loadingCreate,
-  } = useCreateAdministrativeContact(organisationId, organisationNationalId)
+  const { createAdministrativeContact, loading: loadingCreate } =
+    useCreateAdministrativeContact(organisationId, organisationNationalId)
 
   const onSubmit = (data: { administrativeContact: Contact }) => {
     if (data?.administrativeContact && administrativeContact) {

@@ -20,8 +20,9 @@ export const getChildPassport = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  return (externalData.identityDocument
-    ?.data as IdentityDocumentData)?.childPassports.find((child) => {
+  return (
+    externalData.identityDocument?.data as IdentityDocumentData
+  )?.childPassports.find((child) => {
     return (
       child.childNationalId === (answers.passport as Passport)?.childPassport
     )
@@ -35,14 +36,27 @@ export const hasSecondGuardian = (
   return !!child?.secondParent
 }
 
+export const needAssignment = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const userHasPassport = (answers.passport as Passport).userPassport !== ''
+  const thereIsSecondGuardian = hasSecondGuardian(answers, externalData)
+
+  return !userHasPassport && thereIsSecondGuardian
+}
+
 export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
   const isChildPassport = (answers.passport as Passport)?.childPassport !== ''
   const hasDisabilityDiscount =
     (answers.passport as Passport)?.userPassport !== '' &&
-    (answers.personalInfo as PersonalInfo)?.hasDisabilityDiscountChecked
-  const age = (externalData.nationalRegistry?.data as {
-    age?: number
-  })?.age
+    (answers.personalInfo as PersonalInfo)?.disabilityCheckbox?.length &&
+    (answers.personalInfo as PersonalInfo)?.hasDisabilityLicense
+  const age = (
+    externalData.nationalRegistry?.data as {
+      age?: number
+    }
+  )?.age
   const isElder = age ? age >= 67 : false
   return hasDisabilityDiscount || isChildPassport || isElder
 }

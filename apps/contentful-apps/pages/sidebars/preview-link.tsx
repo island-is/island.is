@@ -7,20 +7,32 @@ import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,
   DEFAULT_LOCALE,
+  DEV_WEB_BASE_URL,
 } from '../../constants'
 
 const previewLinkHandler = {
-  article: (entry: EntryProps<KeyValueMap>) => {
-    return `https://beta.dev01.devland.is/${entry.fields.slug[DEFAULT_LOCALE]}`
+  vacancy: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/starfatorg/c-${entry.sys.id}`
   },
-  subArticle: (entry: EntryProps<KeyValueMap>) => {
-    return `https://beta.dev01.devland.is/${entry.fields.url[DEFAULT_LOCALE]}`
+  article: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
+  subArticle: async (entry: EntryProps<KeyValueMap>, cma: CMAClient) => {
+    const parentArticleId = entry.fields.parent?.[DEFAULT_LOCALE]?.sys?.id
+    const parentArticle = await cma.entry.get({
+      entryId: parentArticleId,
+      environmentId: CONTENTFUL_ENVIRONMENT,
+      spaceId: CONTENTFUL_SPACE,
+    })
+    return `${DEV_WEB_BASE_URL}/${
+      parentArticle?.fields?.slug[DEFAULT_LOCALE]
+    }/${entry.fields.url[DEFAULT_LOCALE]?.split('/')?.pop() ?? ''}`
   },
   organizationPage: (entry: EntryProps<KeyValueMap>) => {
-    return `https://beta.dev01.devland.is/s/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/s/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   projectPage: (entry: EntryProps<KeyValueMap>) => {
-    return `https://beta.dev01.devland.is/v/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/v/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   organizationSubpage: async (
     entry: EntryProps<KeyValueMap>,
@@ -33,7 +45,7 @@ const previewLinkHandler = {
       environmentId: CONTENTFUL_ENVIRONMENT,
       spaceId: CONTENTFUL_SPACE,
     })
-    return `https://beta.dev01.devland.is/s/${organizationPage?.fields?.slug?.[DEFAULT_LOCALE]}/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/s/${organizationPage?.fields?.slug?.[DEFAULT_LOCALE]}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
     const middlePart =
@@ -41,10 +53,13 @@ const previewLinkHandler = {
         ? 's/stafraent-island/thjonustur'
         : 'lifsvidburdir'
 
-    return `https://beta.dev01.devland.is/${middlePart}/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/${middlePart}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
   news: (entry: EntryProps<KeyValueMap>) => {
-    return `https://beta.dev01.devland.is/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
+    return `${DEV_WEB_BASE_URL}/frett/${entry.fields.slug[DEFAULT_LOCALE]}`
+  },
+  manual: (entry: EntryProps<KeyValueMap>) => {
+    return `${DEV_WEB_BASE_URL}/handbaekur/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
 }
 

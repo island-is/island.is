@@ -1,10 +1,7 @@
 import subYears from 'date-fns/subYears'
 import flatten from 'lodash/flatten'
-import React from 'react'
 import { defineMessage } from 'react-intl'
 
-import { gql, useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   AlertBanner,
   Box,
@@ -21,8 +18,9 @@ import {
   ErrorScreen,
   ExpandHeader,
   ExpandRow,
+  FJARSYSLAN_SLUG,
+  FootNote,
   formSubmit,
-  IntroHeader,
   m,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
@@ -36,23 +34,11 @@ import {
 } from './FinanceStatusData.types'
 import * as styles from './Table.css'
 import { useUserInfo } from '@island.is/auth/react'
-
-const GetFinanceStatusQuery = gql`
-  query GetFinanceStatusQuery {
-    getFinanceStatus
-  }
-`
-
-const GetDebtStatusQuery = gql`
-  query FinanceStatusGetDebtStatus {
-    getDebtStatus {
-      myDebtStatus {
-        approvedSchedule
-        possibleToSchedule
-      }
-    }
-  }
-`
+import FinanceIntro from '../../components/FinanceIntro'
+import {
+  useGetDebtStatusQuery,
+  useGetFinanceStatusQuery,
+} from './FinanceStatus.generated'
 
 const FinanceStatus = () => {
   useNamespaces('sp.finance-status')
@@ -61,13 +47,10 @@ const FinanceStatus = () => {
 
   const isDelegation = userInfo && checkDelegation(userInfo)
 
-  const { loading, error, ...statusQuery } = useQuery<Query>(
-    GetFinanceStatusQuery,
-  )
+  const { loading, error, ...statusQuery } = useGetFinanceStatusQuery()
 
-  const { data: debtStatusData, loading: debtStatusLoading } = useQuery<Query>(
-    GetDebtStatusQuery,
-  )
+  const { data: debtStatusData, loading: debtStatusLoading } =
+    useGetDebtStatusQuery()
 
   const debtStatus = debtStatusData?.getDebtStatus?.myDebtStatus
   let scheduleButtonVisible = false
@@ -118,17 +101,13 @@ const FinanceStatus = () => {
     )
   }
   return (
-    <Box marginBottom={[6, 6, 10]}>
-      <IntroHeader
-        title={{
-          id: 'sp.finance-status:title',
-          defaultMessage: 'Staða við ríkissjóð og stofnanir',
-        }}
-        intro={{
+    <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
+      <FinanceIntro
+        text={formatMessage({
           id: 'sp.finance-status:intro',
           defaultMessage:
             'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-        }}
+        })}
       />
       <Stack space={2}>
         <GridRow>
@@ -155,6 +134,8 @@ const FinanceStatus = () => {
                         size="default"
                         type="button"
                         variant="utility"
+                        as="span"
+                        unfocusable
                       >
                         {formatMessage({
                           id: 'sp.finance-status:make-payment-schedule',
@@ -272,6 +253,7 @@ const FinanceStatus = () => {
           ) : null}
         </Box>
       </Stack>
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

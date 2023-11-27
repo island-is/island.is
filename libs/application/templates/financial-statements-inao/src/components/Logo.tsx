@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
 
-const Logo: FC = () => {
+const Logo: FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useLocale()
 
   return (

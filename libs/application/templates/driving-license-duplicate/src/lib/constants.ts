@@ -12,11 +12,6 @@ export enum States {
   DECLINED = 'declined',
 }
 
-export enum ApplicationReasons {
-  STOLEN = 'stolen',
-  LOST = 'lost',
-}
-
 export enum Roles {
   APPLICANT = 'applicant',
   ACTOR = 'actor',
@@ -27,11 +22,6 @@ export const NO = 'no'
 export const IGNORE = 'IgnoreQualityPhotoAndSignature'
 
 type YesOrNo = 'yes' | 'no'
-
-export interface PSignFakeData {
-  useFakeData?: YesOrNo
-  qualityPhoto?: YesOrNo
-}
 
 export enum ApiActions {
   submitApplication = 'submitApplication',

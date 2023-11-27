@@ -1,12 +1,12 @@
 {
   "root": true,
   "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "eslint-plugin-local-rules"],
+  "plugins": ["@nx", "eslint-plugin-local-rules"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -217,13 +217,14 @@
             "skipTemplates": true
           }
         ],
+        "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
       }
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "extends": ["plugin:@nrwl/nx/typescript"],
+      "extends": ["plugin:@nx/typescript"],
       "rules": {
         "@typescript-eslint/no-extra-semi": "off",
         "@typescript-eslint/explicit-member-accessibility": "off",
@@ -310,7 +311,7 @@
     },
     {
       "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
+      "extends": ["plugin:@nx/javascript"],
       "rules": {}
     },
     {
@@ -319,5 +320,6 @@
         "@typescript-eslint/no-explicit-any": "off"
       }
     }
-  ]
+  ],
+  "extends": ["plugin:storybook/recommended"]
 }

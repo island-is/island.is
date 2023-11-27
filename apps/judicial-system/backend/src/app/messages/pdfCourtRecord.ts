@@ -69,16 +69,15 @@ export const courtRecord = {
         'Notaður sem heiti á þingmerktri kröfu þar sem {caseType} er tegund máls og er sjálfkrafa bætt við í kóða.',
     },
     announcement: {
-      id:
-        'judicial.system.backend:pdf.court_record.court_documents.announcement',
+      id: 'judicial.system.backend:pdf.court_record.court_documents.announcement',
       defaultMessage: 'Rannsóknargögn málsins liggja frammi.',
       description:
         'Notaður sem tilkynning um að rannsóknargögn málsins liggi frammi.',
     },
     other: {
-      id: 'judicial.system.backend:pdf.court_record.court_documents.other_v1',
+      id: 'judicial.system.backend:pdf.court_record.court_documents.other_v2',
       defaultMessage:
-        '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} other {}}.',
+        '{documentName} þingmerkt nr. {documentNumber}{submittedBy, select, DEFENDER { lagt fram af varnaraðila} PROSECUTOR { lagt fram af sækjanda} DISTRICT_COURT_JUDGE { lagt fram af dómnum} other {}}.',
       description:
         'Notaður sem heiti á öðrum þingmerktum skjölum þar sem {documentName} er nafn skjals og {documentNumber} er númer skjals og er sjálfkrafa bætt við í kóða.',
     },

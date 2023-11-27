@@ -10,6 +10,7 @@ export const up = compose(
       custom: true,
       procuringHolders: true,
     },
+    addToClients: ['@island.is/clients/api', '@island.is/clients/dev'],
     addToResource: '@rsk.is/prokura',
   }),
   createClient({

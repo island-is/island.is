@@ -1,4 +1,5 @@
-import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { Cache as CacheManager } from 'cache-manager'
 import { User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
@@ -38,13 +39,10 @@ export class UserService {
     user: NationalRegistryUser,
     auth?: AuthUser,
   ): Promise<Fund> {
-    const {
-      used,
-      unused,
-      total,
-    } = await this.flightService.countThisYearsFlightLegsByNationalId(
-      user.nationalId,
-    )
+    const { used, unused, total } =
+      await this.flightService.countThisYearsFlightLegsByNationalId(
+        user.nationalId,
+      )
     let meetsADSRequirements = false
 
     if (this.flightService.isADSPostalCode(user.postalcode)) {

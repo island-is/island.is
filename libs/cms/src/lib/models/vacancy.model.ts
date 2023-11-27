@@ -87,4 +87,5 @@ export const mapVacancy = ({ fields, sys }: IVacancy): Vacancy => ({
         `${sys.id}:tasksAndResponsibilities`,
       )) ??
     null,
+  contacts: (fields.contacts as Vacancy['contacts']) ?? [],
 })

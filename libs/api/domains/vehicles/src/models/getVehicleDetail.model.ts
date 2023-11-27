@@ -94,6 +94,9 @@ export class VehiclesBasicInfo {
 
   @Field(() => String, { nullable: true })
   importStatus?: string | null
+
+  @Field(() => String, { nullable: true })
+  vehicleStatus?: string | null
 }
 
 @ObjectType()
@@ -134,8 +137,8 @@ export class VehiclesRegistrationInfo {
   @Field(() => String, { nullable: true })
   useGroup?: string | null
 
-  @Field(() => Boolean, { nullable: true })
-  driversPassengers?: boolean | null
+  @Field(() => Number, { nullable: true })
+  driversPassengers?: number | null
 
   @Field(() => Number, { nullable: true })
   standingPassengers?: number | null
@@ -178,6 +181,9 @@ export class VehiclesInspectionInfo {
 
   @Field(() => String, { nullable: true })
   result?: string | null
+
+  @Field(() => String, { nullable: true })
+  odometer?: string | null
 
   @Field(() => Date, { nullable: true })
   nextInspectionDate?: Date | null
@@ -256,6 +262,9 @@ export class VehiclesOwners {
 
   @Field(() => Date)
   dateOfPurchase?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  current?: boolean
 }
 
 @ObjectType()
@@ -279,6 +288,12 @@ export class VehiclesOperator {
 
   @Field(() => Date, { nullable: true })
   endDate?: Date | null
+
+  @Field(() => Number, { nullable: true })
+  serial?: number | null
+
+  @Field(() => Boolean, { nullable: true })
+  mainoperator?: boolean | null
 }
 
 @ObjectType()
@@ -318,4 +333,16 @@ export class VehiclesDetail {
 
   @Field(() => Boolean, { nullable: true })
   isOutOfCommission?: boolean
+}
+
+@ObjectType()
+export class VehiclesExcel {
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => String, { nullable: true })
+  persidno?: string
+
+  @Field(() => [VehiclesDetail], { nullable: true })
+  vehicles?: VehiclesDetail[]
 }

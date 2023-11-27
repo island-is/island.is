@@ -37,24 +37,18 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
         prod: 'https://innskra.island.is',
       },
       IDENTITY_SERVER_CLIENT_ID: '@vegagerdin.is/clients/air-discount-scheme',
-      NO_UPDATE_NOTIFIER: 'true',
     })
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
       postgres: postgresInfo,
-      envs: {
-        NO_UPDATE_NOTIFIER: 'true',
-      },
     })
     .redis({
       host: {
-        dev:
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+        dev: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
         staging:
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        prod:
-          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+        prod: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
       },
     })
     .ingress({

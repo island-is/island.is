@@ -3,6 +3,28 @@ const kennitala = require('kennitala')
 const fakeNationalIdPrefixes = ['010130', /(\d+)\1{6,}/]
 
 module.exports = {
+  'require-reduce-defaults': {
+    meta: {
+      type: 'problem',
+      docs: {
+        description: 'require a default value when using .reduce()',
+        category: 'Possible Errors',
+        recommended: true,
+      },
+      schema: [],
+    },
+    create: function (context) {
+      return {
+        "CallExpression[arguments.length=1] > MemberExpression.callee > Identifier.property[name='reduce']":
+          (node) => {
+            context.report({
+              node,
+              message: 'Provide initialValue to .reduce().',
+            })
+          },
+      }
+    },
+  },
   'disallow-kennitalas': {
     meta: {
       docs: {
@@ -70,27 +92,25 @@ module.exports = {
         ...nameSymbols.reduce((rules, name) => {
           return {
             ...rules,
-            [`MethodDefinition[static=true][key.name='${name}'][value.async=true]`]: (
-              node,
-            ) => {
-              context.report({
-                node,
-                messageId: 'noAsyncRegister',
-                data: {
-                  name,
-                },
-              })
-            },
+            [`MethodDefinition[static=true][key.name='${name}'][value.async=true]`]:
+              (node) => {
+                context.report({
+                  node,
+                  messageId: 'noAsyncRegister',
+                  data: {
+                    name,
+                  },
+                })
+              },
           }
         }, {}),
-        "MethodDefinition[static=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']": (
-          node,
-        ) => {
-          context.report({
-            node,
-            messageId: 'noReturnPromiseDynamicModule',
-          })
-        },
+        "MethodDefinition[static=true] TSTypeReference[typeName.name='Promise'] TSTypeReference[typeName.name='DynamicModule']":
+          (node) => {
+            context.report({
+              node,
+              messageId: 'noReturnPromiseDynamicModule',
+            })
+          },
         "Property[key.name='useFactory'][value.async=true]": (node) => {
           context.report({
             node,
@@ -149,62 +169,64 @@ module.exports = {
           hasImport = true
           lastImport = node
         },
-        'PropertyDefinition > Decorator > CallExpression[callee.name=Field] > ArrowFunctionExpression.arguments:first-child > .body': (
-          node,
-        ) => {
-          const identifierName =
-            node.type === 'Identifier'
-              ? node.name
-              : node.type === 'ArrayExpression' &&
-                node.elements[0].type === 'Identifier'
-              ? node.elements[0].name
-              : null
+        'PropertyDefinition > Decorator > CallExpression[callee.name=Field] > ArrowFunctionExpression.arguments:first-child > .body':
+          (node) => {
+            const identifierName =
+              node.type === 'Identifier'
+                ? node.name
+                : node.type === 'ArrayExpression' &&
+                  node.elements[0].type === 'Identifier'
+                ? node.elements[0].name
+                : null
 
-          const isScalarType =
-            identifierName === null ||
-            scalarTypes.includes(identifierName) ||
-            identifierName.match(/json/i)
-          const callExpressionNode = node.parent.parent
-          const propertyNode = callExpressionNode.parent.parent
-          const hasCacheControl = propertyNode.decorators.find(
-            (decorator) =>
-              decorator.expression?.callee?.name === 'CacheControl',
-          )
-          if (isScalarType || hasCacheControl) {
-            return
-          }
+            const isScalarType =
+              identifierName === null ||
+              scalarTypes.includes(identifierName) ||
+              identifierName.match(/json/i)
+            const callExpressionNode = node.parent.parent
+            const propertyNode = callExpressionNode.parent.parent
+            const hasCacheControl = propertyNode.decorators.find(
+              (decorator) =>
+                decorator.expression?.callee?.name === 'CacheControl',
+            )
+            if (isScalarType || hasCacheControl) {
+              return
+            }
 
-          context.report({
-            node: callExpressionNode,
-            messageId: 'noCacheControl',
-            suggest: [
-              {
-                desc: 'Use @CacheField() instead.',
-                fix: (fixer) => {
-                  const fixes = [
-                    fixer.replaceText(callExpressionNode.callee, 'CacheField'),
-                  ]
-                  if (!hasImport) {
-                    const newImport =
-                      "import { CacheField } from '@island.is/nest/graphql';"
-                    if (lastImport) {
-                      // insert after the last import decl
-                      fixes.push(
-                        fixer.insertTextAfter(lastImport, `\n${newImport}`),
-                      )
-                    } else {
-                      // insert at the start of the file
-                      fixes.push(
-                        fixer.insertTextAfterRange([0, 0], `${newImport}\n`),
-                      )
+            context.report({
+              node: callExpressionNode,
+              messageId: 'noCacheControl',
+              suggest: [
+                {
+                  desc: 'Use @CacheField() instead.',
+                  fix: (fixer) => {
+                    const fixes = [
+                      fixer.replaceText(
+                        callExpressionNode.callee,
+                        'CacheField',
+                      ),
+                    ]
+                    if (!hasImport) {
+                      const newImport =
+                        "import { CacheField } from '@island.is/nest/graphql';"
+                      if (lastImport) {
+                        // insert after the last import decl
+                        fixes.push(
+                          fixer.insertTextAfter(lastImport, `\n${newImport}`),
+                        )
+                      } else {
+                        // insert at the start of the file
+                        fixes.push(
+                          fixer.insertTextAfterRange([0, 0], `${newImport}\n`),
+                        )
+                      }
                     }
-                  }
-                  return fixes
+                    return fixes
+                  },
                 },
-              },
-            ],
-          })
-        },
+              ],
+            })
+          },
       }
     },
   },

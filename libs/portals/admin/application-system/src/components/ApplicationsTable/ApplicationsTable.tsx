@@ -52,7 +52,7 @@ export const ApplicationsTable = ({
   }
 
   const copyApplicationLink = (application: AdminApplication) => {
-    const typeId = (application.typeId as unknown) as ApplicationTypes
+    const typeId = application.typeId as unknown as ApplicationTypes
     const baseUrl = getBaseUrlForm()
     const slug = getSlugFromType(typeId)
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)

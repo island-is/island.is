@@ -163,11 +163,8 @@ export class DelegationsIncomingCustomService {
     })
 
     // Check live status, i.e. dead or alive for delegations
-    const {
-      aliveDelegations,
-      deceasedDelegations,
-      fromNameInfo,
-    } = await this.getLiveStatusFromDelegations(delegations)
+    const { aliveDelegations, deceasedDelegations, fromNameInfo } =
+      await this.getLiveStatusFromDelegations(delegations)
 
     if (deceasedDelegations.length > 0) {
       // Delete all deceased delegations by deleting them and their scopes.

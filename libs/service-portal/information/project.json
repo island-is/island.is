@@ -1,10 +1,11 @@
 {
-  "root": "libs/service-portal/information",
+  "name": "service-portal-information",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/information/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
@@ -12,17 +13,24 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/service-portal/information"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/service-portal/information"],
       "options": {
-        "jestConfig": "libs/service-portal/information/jest.config.js",
+        "jestConfig": "libs/service-portal/information/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/information/src/{lib,screens,components}/**/*.{js,ts,tsx}'"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/information/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/information/codegen.yml"
       }
     }
   },

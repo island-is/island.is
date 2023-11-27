@@ -3,50 +3,53 @@ import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
 import {
-  BlueBox,
-  CourtCaseInfo,
-  DateTime,
-  FormContentContainer,
-  FormFooter,
-  HideableText,
-  PageLayout,
-  PdfButton,
-  CourtDocuments,
-  FormContext,
-} from '@island.is/judicial-system-web/src/components'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import {
-  useCase,
-  useDeb,
-  useOnceOn,
-} from '@island.is/judicial-system-web/src/utils/hooks'
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   closedCourt,
   core,
   icCourtRecord as m,
   titles,
 } from '@island.is/judicial-system-web/messages'
+import {
+  BlueBox,
+  CourtCaseInfo,
+  CourtDocuments,
+  DateTime,
+  FormContentContainer,
+  FormContext,
+  FormFooter,
+  HideableText,
+  PageLayout,
+  PdfButton,
+} from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import {
-  GridRow,
-  GridColumn,
-  GridContainer,
-  Box,
-  Text,
-  Input,
-  Tooltip,
-} from '@island.is/island-ui/core'
-import {
-  removeTabsValidateAndSet,
-  validateAndSendToServer,
-} from '@island.is/judicial-system-web/src/utils/formHelper'
-import { isCourtRecordStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 import {
   CaseType,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import {
+  removeTabsValidateAndSet,
+  validateAndSendToServer,
+} from '@island.is/judicial-system-web/src/utils/formHelper'
+import {
+  useCase,
+  useDeb,
+  useOnceOn,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
-import * as constants from '@island.is/judicial-system/consts'
+import {
+  isCourtRecordStepValidIC,
+  Validation,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import AppealSections from '../../components/AppealSections/AppealSections'
 
@@ -98,10 +101,8 @@ const CourtRecord = () => {
   } = useContext(FormContext)
 
   const [courtLocationEM, setCourtLocationEM] = useState<string>('')
-  const [
-    sessionBookingsErrorMessage,
-    setSessionBookingsMessage,
-  ] = useState<string>('')
+  const [sessionBookingsErrorMessage, setSessionBookingsMessage] =
+    useState<string>('')
 
   useDeb(workingCase, [
     'courtAttendees',
@@ -110,6 +111,7 @@ const CourtRecord = () => {
     'prosecutorAppealAnnouncement',
     'endOfSessionBookings',
   ])
+
   const initialize = useCallback(() => {
     const autofillAttendees = []
 
@@ -155,7 +157,6 @@ const CourtRecord = () => {
         }
       }
     }
-
     setAndSendCaseToServer(
       [
         {
@@ -193,6 +194,9 @@ const CourtRecord = () => {
               : workingCase.sessionArrangements ===
                 SessionArrangements.PROSECUTOR_PRESENT
               ? formatMessage(m.sections.sessionBookings.autofillProsecutor)
+              : workingCase.sessionArrangements ===
+                SessionArrangements.NONE_PRESENT
+              ? formatMessage(m.sections.sessionBookings.autofillNonePresent)
               : undefined,
         },
       ],
@@ -204,6 +208,10 @@ const CourtRecord = () => {
   useOnceOn(isCaseUpToDate, initialize)
 
   const stepIsValid = isCourtRecordStepValidIC(workingCase)
+  const sessionBookingValidation: Validation[] =
+    workingCase.sessionArrangements === SessionArrangements.NONE_PRESENT
+      ? []
+      : ['empty']
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
     [workingCase.id],
@@ -362,7 +370,7 @@ const CourtRecord = () => {
                 removeTabsValidateAndSet(
                   'sessionBookings',
                   event.target.value,
-                  ['empty'],
+                  sessionBookingValidation,
                   workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
@@ -373,7 +381,7 @@ const CourtRecord = () => {
                 validateAndSendToServer(
                   'sessionBookings',
                   event.target.value,
-                  ['empty'],
+                  sessionBookingValidation,
                   workingCase,
                   updateCase,
                   setSessionBookingsMessage,
@@ -384,7 +392,7 @@ const CourtRecord = () => {
               textarea
               rows={16}
               autoExpand={{ on: true, maxHeight: 600 }}
-              required
+              required={sessionBookingValidation.length > 0}
             />
           </Box>
         </Box>

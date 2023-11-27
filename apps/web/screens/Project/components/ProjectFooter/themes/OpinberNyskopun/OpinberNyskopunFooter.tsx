@@ -1,24 +1,30 @@
 import { BLOCKS } from '@contentful/rich-text-types'
+import { ReactNode } from 'react'
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
+  Hidden,
   Hyphen,
+  Inline,
   Text,
 } from '@island.is/island-ui/core'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
+import { useNamespace } from '@island.is/web/hooks'
 import * as styles from './OpinberNyskopunFooter.css'
 
 interface OpinberNyskopunFooterProps {
   footerItems: FooterItem[]
+  namespace: Record<string, string>
 }
 
-export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
-  footerItems,
-}) => {
+export const OpinberNyskopunFooter: React.FC<
+  React.PropsWithChildren<OpinberNyskopunFooterProps>
+> = ({ footerItems, namespace }) => {
+  const n = useNamespace(namespace)
   return (
     <footer className={styles.container}>
       <GridContainer>
@@ -49,7 +55,10 @@ export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
                   </Text>
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text color="white" variant="medium" marginBottom={2}>
                           {children}
                         </Text>
@@ -58,9 +67,58 @@ export const OpinberNyskopunFooter: React.FC<OpinberNyskopunFooterProps> = ({
                   })}
                 </Box>
               ))}
+              <Box marginLeft="auto" marginTop="auto">
+                <Hidden below="lg">
+                  <Inline space={8} alignY="center">
+                    <img
+                      width={280}
+                      src={n(
+                        'opinbernyskopun-logo1',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/4WxSQeuQVmVwbnTGhb6pYX/287fd34f88ba41eac7b8424de183849f/StjornarradIslands_fjs.svg',
+                      )}
+                      alt=""
+                    />
+                    <img
+                      width={320}
+                      src={n(
+                        'opinbernyskopun-logo2',
+                        'https://images.ctfassets.net/8k0h54kbe6bj/5p96a8GGHgJrS5udRjT044/cf40d9d800374f64ad307c6b96e45f19/Hvin_stjornmalaraduneytid.svg',
+                      )}
+                      alt=""
+                    />
+                  </Inline>
+                </Hidden>
+              </Box>
             </Box>
           </GridColumn>
         </GridRow>
+
+        <Hidden above="md">
+          <Box marginTop={3}>
+            <Inline
+              space={[3, 3, 5]}
+              alignY="center"
+              align={['left', 'left', 'right']}
+            >
+              <img
+                width={280}
+                src={n(
+                  'opinbernyskopun-logo1',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/4WxSQeuQVmVwbnTGhb6pYX/287fd34f88ba41eac7b8424de183849f/StjornarradIslands_fjs.svg',
+                )}
+                alt=""
+              />
+              <img
+                width={320}
+                src={n(
+                  'opinbernyskopun-logo2',
+                  'https://images.ctfassets.net/8k0h54kbe6bj/5p96a8GGHgJrS5udRjT044/cf40d9d800374f64ad307c6b96e45f19/Hvin_stjornmalaraduneytid.svg',
+                )}
+                alt=""
+              />
+            </Inline>
+          </Box>
+        </Hidden>
       </GridContainer>
     </footer>
   )

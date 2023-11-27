@@ -10,7 +10,8 @@ import { createTerms } from './utils'
 
 @Injectable()
 export class ArticleCategorySyncService
-  implements CmsSyncProvider<IArticleCategory> {
+  implements CmsSyncProvider<IArticleCategory>
+{
   processSyncData(entries: processSyncDataInput<IArticleCategory>) {
     logger.info('Processing sync data for article category')
 
@@ -32,7 +33,7 @@ export class ArticleCategorySyncService
           const mapped = mapArticleCategory(entry)
           const content = mapped.description ?? ''
           return {
-            _id: mapped.slug,
+            _id: mapped.id,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,

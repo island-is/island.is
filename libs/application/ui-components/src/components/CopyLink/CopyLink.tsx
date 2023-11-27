@@ -9,7 +9,7 @@ interface CopyLinkProps {
   buttonTitle?: string
 }
 
-const CopyLink: FC<CopyLinkProps> = ({
+const CopyLink: FC<React.PropsWithChildren<CopyLinkProps>> = ({
   linkUrl,
   buttonTitle = 'Afrita tengil',
 }) => {
@@ -17,7 +17,7 @@ const CopyLink: FC<CopyLinkProps> = ({
   return (
     <Box
       background="blue100"
-      display="flex"
+      display={['block', 'flex']}
       alignItems="center"
       justifyContent="spaceBetween"
       padding={3}
@@ -26,7 +26,7 @@ const CopyLink: FC<CopyLinkProps> = ({
       <Box style={{ overflowWrap: 'anywhere' }} paddingRight={4}>
         <Text color="blue400">{linkUrl}</Text>
       </Box>
-      <Box>
+      <Box marginTop={[3, 0]}>
         <Button
           onClick={() => {
             copyToClipboard(linkUrl)

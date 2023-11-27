@@ -102,6 +102,10 @@ export type ModalBaseProps = {
    * When enabled, user can't scroll on body when the dialog is visible. This option doesn't work if the dialog isn't modal.
    */
   preventBodyScroll?: boolean
+
+  children?:
+    | React.ReactNode
+    | ((props: { closeModal: () => void }) => React.ReactNode)
 }
 
 export const ModalBase: FC<ModalBaseProps> = ({

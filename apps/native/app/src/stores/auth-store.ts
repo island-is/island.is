@@ -1,5 +1,4 @@
 import {
-  AuthConfiguration,
   authorize,
   AuthorizeResult,
   refresh,
@@ -11,13 +10,12 @@ import {Navigation} from 'react-native-navigation';
 import createUse from 'zustand';
 import create, {State} from 'zustand/vanilla';
 import {client} from '../graphql/client';
-import {config} from '../config';
+import {getConfig, bundleId} from '../config';
 import {getAppRoot} from '../utils/lifecycle/get-app-root';
-import {inboxStore} from './inbox-store';
-// import { notificationsStore } from './notifications-store'
 import {preferencesStore} from './preferences-store';
+import {Platform} from 'react-native';
 
-const KEYCHAIN_AUTH_KEY = `@islandis_${config.bundleId}`;
+const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`;
 
 interface UserInfo {
   sub: string;
@@ -41,11 +39,16 @@ interface AuthStore extends State {
   logout(): Promise<boolean>;
 }
 
-const appAuthConfig: AuthConfiguration = {
-  issuer: config.idsIssuer,
-  clientId: config.idsClientId,
-  redirectUrl: `${config.bundleId}://oauth`,
-  scopes: config.idsScopes,
+const getAppAuthConfig = () => {
+  const config = getConfig();
+  const android =
+    Platform.OS === 'android' && !config.isTestingApp ? '.auth' : '';
+  return {
+    issuer: config.idsIssuer,
+    clientId: config.idsClientId,
+    redirectUrl: `${config.bundleId}${android}://oauth`,
+    scopes: config.idsScopes,
+  };
 };
 
 export const authStore = create<AuthStore>((set, get) => ({
@@ -59,6 +62,12 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoAuthUrl: undefined,
   cookies: '',
   async fetchUserInfo(_refresh = false) {
+    const appAuthConfig = getAppAuthConfig();
+    // Detect expired token
+    const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0;
+    if (new Date(expiresAt) < new Date()) {
+      await get().refresh();
+    }
     return fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
@@ -67,7 +76,6 @@ export const authStore = create<AuthStore>((set, get) => ({
         },
       },
     ).then(async res => {
-      console.log('STATUS', res.status);
       if (res.status === 401) {
         // Attempt to refresh the access token
         if (!_refresh && (await get().refresh())) {
@@ -84,6 +92,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     });
   },
   async refresh() {
+    const appAuthConfig = getAppAuthConfig();
     const authorizeResult = {
       ...get().authorizeResult,
       ...(await refresh(appAuthConfig, {
@@ -103,6 +112,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false;
   },
   async login() {
+    const appAuthConfig = getAppAuthConfig();
     const authorizeResult = await authorize({
       ...appAuthConfig,
       additionalParameters: {
@@ -124,6 +134,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     return false;
   },
   async logout() {
+    const appAuthConfig = getAppAuthConfig();
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenToRevoke = get().authorizeResult!.accessToken!;
     try {
@@ -148,14 +159,6 @@ export const authStore = create<AuthStore>((set, get) => ({
     return true;
   },
 }));
-
-authStore.subscribe(
-  (userInfo: UserInfo | undefined) => {
-    inboxStore.getState().actions.setNationalId(userInfo?.nationalId ?? null);
-    // notificationsStore.getState().actions.setNationalId(userInfo?.nationalId);
-  },
-  s => s.userInfo,
-);
 
 export const useAuthStore = createUse(authStore);
 
@@ -183,6 +186,7 @@ export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
 }
 
 export async function checkIsAuthenticated() {
+  const appAuthConfig = getAppAuthConfig();
   const {authorizeResult, fetchUserInfo, logout} = authStore.getState();
 
   if (!authorizeResult) {

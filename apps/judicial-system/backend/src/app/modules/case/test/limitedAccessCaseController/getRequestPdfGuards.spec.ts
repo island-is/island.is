@@ -1,5 +1,3 @@
-import { CanActivate } from '@nestjs/common'
-
 import { JwtAuthGuard, RolesGuard } from '@island.is/judicial-system/auth'
 import {
   investigationCases,
@@ -7,8 +5,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
-import { LimitedAccessCaseReceivedGuard } from '../../guards/limitedAccessCaseReceived.guard'
-import { CaseDefenderGuard } from '../../guards/caseDefender.guard'
+import { CaseReadGuard } from '../../guards/caseRead.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { RequestSharedWithDefenderGuard } from '../../guards/requestSharedWithDefender.guard'
 import { LimitedAccessCaseController } from '../../limitedAccessCase.controller'
@@ -24,94 +21,16 @@ describe('LimitedAccessCaseController - Get request pdf guards', () => {
     )
   })
 
-  it('should have seven guards', () => {
-    expect(guards).toHaveLength(7)
-  })
-
-  describe('JwtAuthGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(6)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
+    expect(new guards[2]()).toBeInstanceOf(CaseExistsGuard)
+    expect(guards[3]).toBeInstanceOf(CaseTypeGuard)
+    expect(guards[3]).toEqual({
+      allowedCaseTypes: [...restrictionCases, ...investigationCases],
     })
-
-    it('should have JwtAuthGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthGuard)
-    })
-  })
-
-  describe('RolesGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[1]()
-    })
-
-    it('should have RolesGuard as guard 2', () => {
-      expect(guard).toBeInstanceOf(RolesGuard)
-    })
-  })
-
-  describe('CaseExistsGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[2]()
-    })
-
-    it('should have CaseExistsGuard as guard 3', () => {
-      expect(guard).toBeInstanceOf(CaseExistsGuard)
-    })
-  })
-
-  describe('CaseTypeGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = guards[3]
-    })
-
-    it('should have CaseTypeGuard as guard 4', () => {
-      expect(guard).toBeInstanceOf(CaseTypeGuard)
-      expect(guard).toEqual({
-        allowedCaseTypes: [...restrictionCases, ...investigationCases],
-      })
-    })
-  })
-
-  describe('LimitedAccessCaseReceivedGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[4]()
-    })
-
-    it('should have LimitedAccessCaseReceivedGuard as guard 5', () => {
-      expect(guard).toBeInstanceOf(LimitedAccessCaseReceivedGuard)
-    })
-  })
-
-  describe('RequestSharedWithDefenderGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[5]()
-    })
-
-    it('should have RequestSharedWithDefenderGuard as guard 6', () => {
-      expect(guard).toBeInstanceOf(RequestSharedWithDefenderGuard)
-    })
-  })
-
-  describe('CaseDefenderGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[6]()
-    })
-
-    it('should have CaseDefenderGuard as guard 7', () => {
-      expect(guard).toBeInstanceOf(CaseDefenderGuard)
-    })
+    expect(new guards[4]()).toBeInstanceOf(CaseReadGuard)
+    expect(new guards[5]()).toBeInstanceOf(RequestSharedWithDefenderGuard)
   })
 })

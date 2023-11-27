@@ -1,5 +1,17 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+
+import { htmlFields, slices } from './fragments'
+
+export const GET_SERVICE_WEB_PAGE_QUERY = gql`
+  query GetServiceWebPage($input: GetServiceWebPageInput!) {
+    getServiceWebPage(input: $input) {
+      slices {
+        ...AllSlices
+      }
+    }
+  }
+  ${slices}
+`
 
 export const GET_SUPPORT_QNAS = gql`
   query GetSupportQNAs($input: GetSupportQNAsInput!) {
@@ -172,11 +184,7 @@ export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
 `
 
 export const GET_SERVICE_WEB_ORGANIZATION = gql`
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
   query GetServiceWebOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id
@@ -190,6 +198,7 @@ export const GET_SERVICE_WEB_ORGANIZATION = gql`
         width
         height
       }
+      footerConfig
       footerItems {
         title
         content {

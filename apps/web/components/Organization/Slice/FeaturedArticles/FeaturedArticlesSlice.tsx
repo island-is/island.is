@@ -1,5 +1,5 @@
 import React from 'react'
-import { FeaturedArticles } from '@island.is/web/graphql/schema'
+
 import {
   Box,
   BoxProps,
@@ -10,33 +10,39 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+
+import { FeaturedArticles, Article } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 interface SliceProps {
   slice: FeaturedArticles
   namespace?: Record<string, string>
 }
 
-export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
-  slice,
-  namespace,
-}) => {
+export const FeaturedArticlesSlice: React.FC<
+  React.PropsWithChildren<SliceProps>
+> = ({ slice, namespace }) => {
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
   const labelId = 'sliceTitle-' + slice.id
 
   const sortedArticles =
     slice.sortBy === 'importance'
-      ? slice.resolvedArticles
-          .slice()
-          .sort((a, b) =>
-            a.importance > b.importance
-              ? -1
-              : a.importance === b.importance
-              ? a.title.localeCompare(b.title)
-              : 1,
-          )
+      ? slice.resolvedArticles.slice().sort((a, b) => {
+          if (
+            typeof a.importance !== 'number' ||
+            typeof b.importance !== 'number'
+          ) {
+            return a.title.localeCompare(b.title)
+          }
+          return a.importance > b.importance
+            ? -1
+            : a.importance === b.importance
+            ? a.title.localeCompare(b.title)
+            : 1
+        })
       : slice.resolvedArticles
 
   const borderProps: BoxProps = slice.hasBorderAbove
@@ -52,35 +58,38 @@ export const FeaturedArticlesSlice: React.FC<SliceProps> = ({
     (!!slice.articles.length || !!slice.resolvedArticles.length) && (
       <section key={slice.id} id={slice.id} aria-labelledby={labelId}>
         <Box {...borderProps}>
-          <Text as="h2" variant="h3" paddingBottom={6} id={labelId}>
+          <Text as="h2" variant="h3" paddingBottom={3} id={labelId}>
             {slice.title}
           </Text>
           <Stack space={2}>
             {(slice.automaticallyFetchArticles
               ? sortedArticles
               : slice.articles
-            ).map(
-              ({
-                title,
-                slug,
-                processEntry = null,
-                processEntryButtonText = null,
-              }) => {
-                const url = linkResolver('Article' as LinkType, [slug])
-                return (
-                  <FocusableBox key={slug} borderRadius="large" href={url.href}>
-                    <TopicCard
-                      tag={
-                        (!!processEntry || processEntryButtonText) &&
-                        n(processEntryButtonText || 'application', 'Umsókn')
-                      }
-                    >
-                      {title}
-                    </TopicCard>
-                  </FocusableBox>
-                )
-              },
-            )}
+            ).map((article) => {
+              const url = linkResolver('Article' as LinkType, [article.slug])
+
+              return (
+                <FocusableBox
+                  key={article.slug}
+                  borderRadius="large"
+                  href={url.href}
+                >
+                  <TopicCard
+                    {...(hasProcessEntries(article as Article) ||
+                    article.processEntryButtonText
+                      ? {
+                          tag: n(
+                            article.processEntryButtonText || 'application',
+                            'Umsókn',
+                          ),
+                        }
+                      : {})}
+                  >
+                    {article.title}
+                  </TopicCard>
+                </FocusableBox>
+              )
+            })}
           </Stack>
           {!!slice.link && (
             <Box display="flex" justifyContent="flexEnd" paddingTop={6}>

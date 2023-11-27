@@ -36,6 +36,27 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
           }
 
           const content = extractStringsFromObject(mapped.content)
+
+          const tags = [
+            {
+              key: mapped.slug,
+              type: 'slug',
+            },
+            ...mapped.genericTags.map((tag) => ({
+              // add all tags as meta data to this document so we can query by it later
+              key: tag.slug,
+              type: 'genericTag',
+              value: tag.title,
+            })),
+          ]
+
+          if (mapped.organization?.slug) {
+            tags.push({
+              key: mapped.organization.slug,
+              type: 'organization',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -44,21 +65,10 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
             type: 'webNews',
             termPool: createTerms([mapped.title, mapped.intro]),
             response: JSON.stringify({ ...mapped, typename: 'News' }),
-            tags: [
-              {
-                key: mapped.slug,
-                type: 'slug',
-              },
-              ...mapped.genericTags.map((tag) => ({
-                // add all tags as meta data to this document so we can query by it later
-                key: tag.slug,
-                type: 'genericTag',
-                value: tag.title,
-              })),
-            ],
+            tags,
             dateCreated: mapped.date,
             dateUpdated: new Date().getTime().toString(),
-            releaseDate: mapped.initialPublishDate,
+            releaseDate: mapped.initialPublishDate || null,
           }
         } catch (error) {
           logger.warn('Failed to import news', {

@@ -5,7 +5,9 @@ import { Text, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../forms/messages'
 
-const AgentComment: FC<FieldBaseProps> = ({ application }) => {
+const AgentComment: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const agentComments = getValueViaPath(
     application.answers,
     'agentComments',

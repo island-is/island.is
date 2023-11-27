@@ -16,7 +16,7 @@ type Props = {
   onEdit: (id: string) => void
 }
 
-export const ComplaintInformation: FC<Props> = ({
+export const ComplaintInformation: FC<React.PropsWithChildren<Props>> = ({
   type,
   name,
   description,

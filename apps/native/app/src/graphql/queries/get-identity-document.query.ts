@@ -6,6 +6,13 @@ export const GET_IDENTITY_DOCUMENT_QUERY = gql`
     getIdentityDocument {
       ...identityDocumentFragment
     }
+    getIdentityDocumentChildren {
+      childNationalId
+      childName
+      passports {
+        ...identityDocumentFragment
+      }
+    }
   }
   ${PassportFragment}
 `;

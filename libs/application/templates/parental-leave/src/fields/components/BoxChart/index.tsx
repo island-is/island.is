@@ -67,7 +67,9 @@ const BoxChart = ({
     <Box>
       {titleLabel && (
         <Text variant="h4" as="p">
-          {titleLabel}
+          {typeof titleLabel === 'function'
+            ? formatMessage(titleLabel(application) ?? '')
+            : formatMessage(titleLabel)}
         </Text>
       )}
       <Box

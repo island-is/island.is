@@ -1,9 +1,9 @@
 import {
-  assistantRule,
-  judgeRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
-  representativeRule,
 } from '../../../../guards'
 import { DefendantController } from '../../defendant.controller'
 
@@ -18,15 +18,12 @@ describe('DefendantController - Update rules', () => {
     )
   })
 
-  it('should give permission to five roles', () => {
+  it('should give permission to roles', () => {
     expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
     expect(rules).toContain(prosecutorRule)
-    expect(rules).toContain(representativeRule)
-    expect(rules).toContain(judgeRule)
-    expect(rules).toContain(registrarRule)
-    expect(rules).toContain(assistantRule)
+    expect(rules).toContain(prosecutorRepresentativeRule)
+    expect(rules).toContain(districtCourtJudgeRule)
+    expect(rules).toContain(districtCourtRegistrarRule)
+    expect(rules).toContain(districtCourtAssistantRule)
   })
 })

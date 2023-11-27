@@ -1,9 +1,7 @@
-import React from 'react'
 import { defineMessage } from 'react-intl'
 import { useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
-import { useQuery } from '@apollo/client'
-import { Query } from '@island.is/api/schema'
 import {
   Box,
   Divider,
@@ -14,14 +12,16 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  FootNote,
   formatNationalId,
   IntroHeader,
   m,
   NotFound,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
-
-import { NATIONAL_REGISTRY_USER } from '../../lib/queries/getNationalRegistryUser'
+import { spmm } from '../../lib/messages'
+import { useNationalRegistrySpouseQuery } from './Spouse.generated'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -41,17 +41,29 @@ const FamilyMember = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useQuery<Query>(NATIONAL_REGISTRY_USER)
-  const { nationalRegistryUser } = data || {}
+  const [spouseValue, setSpouseValue] = useState<string>('')
+
+  const { data, loading, error } = useNationalRegistrySpouseQuery({
+    variables: {
+      api: 'v3',
+    },
+  })
+
+  useEffect(() => {
+    if (data?.nationalRegistryPerson) {
+      const maritalStatus =
+        data?.nationalRegistryPerson?.spouse?.cohabitationWithSpouse === true
+          ? formatMessage(spmm.cohabitationWithSpouse)
+          : data?.nationalRegistryPerson?.spouse?.maritalStatus
+          ? data.nationalRegistryPerson.spouse.maritalStatus
+          : ''
+      setSpouseValue(maritalStatus)
+    }
+  }, [data?.nationalRegistryPerson, formatMessage])
 
   const { nationalId } = useParams() as UseParams
 
-  const person =
-    nationalRegistryUser?.spouse?.nationalId === nationalId
-      ? nationalRegistryUser
-      : null
-
-  if (!nationalId || error || (!loading && !person))
+  if (!nationalId || error || (!loading && !data?.nationalRegistryPerson))
     return (
       <NotFound
         title={defineMessage({
@@ -73,8 +85,11 @@ const FamilyMember = () => {
         </Box>
       ) : (
         <IntroHeader
-          title={person?.spouse?.name || ''}
+          title={data?.nationalRegistryPerson?.spouse?.fullName || ''}
           intro={dataInfoSpouse}
+          marginBottom={2}
+          serviceProviderSlug={THJODSKRA_SLUG}
+          serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
         />
       )}
 
@@ -82,7 +97,7 @@ const FamilyMember = () => {
         <UserInfoLine
           title={formatMessage(m.myRegistration)}
           label={defineMessage(m.fullName)}
-          content={person?.spouse?.name || '...'}
+          content={data?.nationalRegistryPerson?.spouse?.fullName || '...'}
           loading={loading}
           translate="no"
         />
@@ -98,15 +113,12 @@ const FamilyMember = () => {
             id: 'sp.family:spouseCohab',
             defaultMessage: 'Tengsl',
           })}
-          content={
-            error
-              ? formatMessage(dataNotFoundMessage)
-              : person?.spouse?.cohabitant || ''
-          }
+          content={error ? formatMessage(dataNotFoundMessage) : spouseValue}
           loading={loading}
         />
         <Divider />
       </Stack>
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }

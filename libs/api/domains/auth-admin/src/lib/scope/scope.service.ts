@@ -172,12 +172,12 @@ export class ScopeService extends MultiEnvironmentService {
 
     const groupedScopes = groupBy(scopeEnvironments, 'name')
 
-    const scopeModels: Scope[] = Object.entries(groupedScopes).map(
-      ([scopeName, scopes]) => ({
+    const scopeModels: Scope[] = Object.entries(groupedScopes)
+      .map(([scopeName, scopes]) => ({
         scopeName,
         environments: scopes,
-      }),
-    )
+      }))
+      .sort((a, b) => a.scopeName.localeCompare(b.scopeName))
 
     return {
       data: scopeModels,

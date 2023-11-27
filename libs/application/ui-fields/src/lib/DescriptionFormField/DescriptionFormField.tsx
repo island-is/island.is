@@ -6,12 +6,14 @@ import { Text, Tooltip, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 
-export const DescriptionFormField: FC<{
-  application: Application
-  field: DescriptionField
+export const DescriptionFormField: FC<
+  React.PropsWithChildren<{
+    application: Application
+    field: DescriptionField
 
-  showFieldName: boolean
-}> = ({ application, field, showFieldName }) => {
+    showFieldName: boolean
+  }>
+> = ({ application, field, showFieldName }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -21,7 +23,6 @@ export const DescriptionFormField: FC<{
           {formatText(field.title, application, formatMessage)}
           {field.titleTooltip && (
             <>
-              {' '}
               <Tooltip
                 placement="top"
                 text={formatText(
@@ -43,7 +44,6 @@ export const DescriptionFormField: FC<{
           )}
           {field.tooltip && (
             <>
-              {' '}
               <Tooltip
                 placement="top"
                 text={formatText(field.tooltip, application, formatMessage)}

@@ -3,8 +3,8 @@ import createUse from 'zustand';
 import create, {State} from 'zustand/vanilla';
 import {notificationsStore} from '../stores/notifications-store';
 import {ComponentRegistry, MainBottomTabs} from '../utils/component-registry';
-import {config} from '../utils/config';
 import {openBrowser} from './rn-island';
+import {bundleId} from '../config';
 
 export type RouteCallbackArgs =
   | boolean
@@ -171,7 +171,7 @@ export function navigateTo(url: string, extraProps: any = {}) {
   navigateTimeMap.set(url, now);
 
   // setup linking url
-  const linkingUrl = `${config.bundleId}://${String(url).replace(/^\//, '')}`;
+  const linkingUrl = `${bundleId}://${String(url).replace(/^\//, '')}`;
 
   // evalute and route
   return evaluateUrl(linkingUrl, extraProps);

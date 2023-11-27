@@ -45,9 +45,8 @@ export class CommunicationsResolver {
   async serviceWebForms(
     @Args('input') input: ServiceWebFormsInput,
   ): Promise<CommunicationResponse> {
-    const inputWithInstitutionEmail = await this.communicationsService.getInputWithInstitutionEmail(
-      input,
-    )
+    const inputWithInstitutionEmail =
+      await this.communicationsService.getInputWithInstitutionEmail(input)
     await this.communicationsService.sendEmail(inputWithInstitutionEmail)
     return {
       sent: true,

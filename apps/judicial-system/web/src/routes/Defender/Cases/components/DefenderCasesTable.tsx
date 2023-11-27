@@ -1,33 +1,34 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import router from 'next/router'
 import format from 'date-fns/format'
-import parseISO from 'date-fns/parseISO'
 import localeIS from 'date-fns/locale/is'
+import parseISO from 'date-fns/parseISO'
+import router from 'next/router'
 
-import { Box, Icon, Text } from '@island.is/island-ui/core'
-
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
-
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { core, tables } from '@island.is/judicial-system-web/messages'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
+import { Box, Text } from '@island.is/island-ui/core'
 import {
   DEFENDER_INDICTMENT_ROUTE,
   DEFENDER_ROUTE,
 } from '@island.is/judicial-system/consts'
+import { capitalize } from '@island.is/judicial-system/formatters'
+import { CaseType, isIndictmentCase } from '@island.is/judicial-system/types'
+import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
-  TagCaseState,
   TagAppealState,
+  TagCaseState,
 } from '@island.is/judicial-system-web/src/components'
-import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 import {
-  TableSkeleton,
+  ColumnCaseType,
   CourtCaseNumber,
+  CreatedDate,
   DefendantInfo,
+  getDurationDate,
+  SortButton,
+  TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
+import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
 
@@ -37,14 +38,13 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<Props> = (props) => {
+export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
   const { formatMessage } = useIntl()
   const { cases, showingCompletedCases, loading } = props
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
-    'descending',
-    cases,
-  )
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
 
   const handleRowClick = (id: string, type: CaseType) => {
     isIndictmentCase(type)
@@ -65,66 +65,35 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   {formatMessage(tables.caseNumber)}
                 </Text>
               </th>
-              <th className={styles.th}>
-                <Box
-                  component="button"
-                  display="flex"
-                  alignItems="center"
-                  className={styles.thButton}
-                  onClick={() => requestSort('createdAt')}
-                >
-                  <Text fontWeight="regular">
-                    {formatMessage(tables.created)}
-                  </Text>
-                  <Box
-                    className={cn(styles.sortIcon, {
-                      [styles.sortCreatedAsc]:
-                        getClassNamesFor('createdAt') === 'ascending',
-                      [styles.sortCreatedDes]:
-                        getClassNamesFor('createdAt') === 'descending',
-                    })}
-                    marginLeft={1}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Icon icon="caretUp" size="small" />
-                  </Box>
-                </Box>
+              <th className={cn(styles.th, styles.largeColumn)}>
+                <SortButton
+                  title={capitalize(
+                    formatMessage(core.defendant, { suffix: 'i' }),
+                  )}
+                  onClick={() => requestSort('defendant')}
+                  sortAsc={getClassNamesFor('defendant') === 'ascending'}
+                  sortDes={getClassNamesFor('defendant') === 'descending'}
+                  isActive={isActiveColumn('defendant')}
+                  dataTestid="accusedNameSortButton"
+                />
               </th>
               <th className={styles.th}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.type)}
                 </Text>
               </th>
-              <th className={cn(styles.th, styles.largeColumn)}>
-                <Box
-                  component="button"
-                  display="flex"
-                  alignItems="center"
-                  className={styles.thButton}
-                  onClick={() => requestSort('defendant')}
-                  data-testid="accusedNameSortButton"
-                >
-                  <Text fontWeight="regular">
-                    {capitalize(formatMessage(core.defendant, { suffix: 'i' }))}
-                  </Text>
-                  <Box
-                    className={cn(styles.sortIcon, {
-                      [styles.sortAccusedNameAsc]:
-                        getClassNamesFor('defendant') === 'ascending',
-                      [styles.sortAccusedNameDes]:
-                        getClassNamesFor('defendant') === 'descending',
-                    })}
-                    marginLeft={1}
-                    component="span"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    <Icon icon="caretDown" size="small" />
-                  </Box>
-                </Box>
+              <th className={styles.th}>
+                <SortButton
+                  title={capitalize(
+                    formatMessage(tables.created, { suffix: 'i' }),
+                  )}
+                  onClick={() => requestSort('createdAt')}
+                  sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+                  sortDes={getClassNamesFor('createdAt') === 'descending'}
+                  isActive={isActiveColumn('createdAt')}
+                />
               </th>
+
               <th className={cn(styles.th, styles.largeColumn)}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.state)}
@@ -161,19 +130,17 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <Text as="span">
-                    {format(parseISO(c.created), 'd.M.y', {
-                      locale: localeIS,
-                    })}
-                  </Text>
+                  <DefendantInfo defendants={c.defendants} />
                 </td>
                 <td className={styles.td}>
-                  <Text as="span">
-                    {displayCaseType(formatMessage, c.type, c.decision)}
-                  </Text>
+                  <ColumnCaseType
+                    type={c.type}
+                    decision={c.decision}
+                    parentCaseId={c.parentCaseId}
+                  />
                 </td>
                 <td className={cn(styles.td)}>
-                  <DefendantInfo defendants={c.defendants} />
+                  <CreatedDate created={c.created} />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
                   <Box marginRight={1} marginBottom={1}>
@@ -194,12 +161,12 @@ export const DefenderCasesTable: React.FC<Props> = (props) => {
                 {showingCompletedCases ? (
                   <td className={styles.td}>
                     <Text>
-                      {c.validToDate &&
-                        c.courtEndTime &&
-                        `${formatDate(c.courtEndTime, 'd.M.y')} - ${formatDate(
-                          c.validToDate,
-                          'd.M.y',
-                        )}`}
+                      {getDurationDate(
+                        c.state,
+                        c.validToDate,
+                        c.initialRulingDate,
+                        c.rulingDate,
+                      )}
                     </Text>
                   </td>
                 ) : (

@@ -1,5 +1,6 @@
 {
-  "root": "apps/icelandic-names-registry/backend",
+  "name": "icelandic-names-registry-backend",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/icelandic-names-registry/backend/src",
   "projectType": "application",
   "prefix": "icelandic-names-registry-backend",
@@ -49,13 +50,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "icelandic-names-registry-backend:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/icelandic-names-registry/backend/**/*.{ts,tsx,js,jsx}"
@@ -63,43 +64,45 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/icelandic-names-registry/backend"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/apps/icelandic-names-registry/backend"
+      ],
       "options": {
-        "jestConfig": "apps/icelandic-names-registry/backend/jest.config.js",
+        "jestConfig": "apps/icelandic-names-registry/backend/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/icelandic-names-registry/backend/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/icelandic-names-registry/backend/tsconfig.app.json apps/icelandic-names-registry/backend/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:seed:all",
         "cwd": "apps/icelandic-names-registry/backend"

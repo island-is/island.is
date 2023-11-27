@@ -10,7 +10,6 @@ const KW_TO_METRIC_HP = 1.359622
 
 export const basicVehicleInformationMapper = (
   data: BasicVehicleInformationDto,
-  nationalId: string,
 ): VehiclesDetail => {
   const newestInspection = data.inspections?.sort((a, b) => {
     if (a && b && a.date && b.date)
@@ -18,7 +17,6 @@ export const basicVehicleInformationMapper = (
     else return 0
   })[0]
   let axleMaxWeight = 0
-
   const numberOfAxles = data.technical?.axle?.axleno ?? 0
 
   const axles: VehiclesAxle[] = []
@@ -30,9 +28,10 @@ export const basicVehicleInformationMapper = (
           data.technical.mass[
             `massmaxle${i}` as keyof BasicVehicleInformationTechnicalMassDto
           ],
-        wheelAxle: data.technical.axle[
-          `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxleDto
-        ]?.toString(),
+        wheelAxle:
+          data.technical.axle[
+            `wheelaxle${i}` as keyof BasicVehicleInformationTechnicalAxleDto
+          ]?.toString(),
       })
       axleMaxWeight +=
         data.technical.mass[
@@ -71,6 +70,7 @@ export const basicVehicleInformationMapper = (
       preregDateYear: data.productyear?.toString(),
       formerCountry: data.formercountry,
       importStatus: data._import,
+      vehicleStatus: data.vehiclestatus,
     },
     registrationInfo: {
       firstRegistrationDate: data.firstregdate,
@@ -102,6 +102,7 @@ export const basicVehicleInformationMapper = (
       type: newestInspection?.type,
       date: newestInspection?.date,
       result: newestInspection?.result,
+      odometer: newestInspection?.odometer,
       nextInspectionDate: data.nextinspectiondate,
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
       insuranceStatus: data.insurancestatus,
@@ -167,6 +168,8 @@ export const basicVehicleInformationMapper = (
           city: operator.city,
           startDate: operator.startdate,
           endDate: operator.enddate,
+          mainOperator: operator.mainoperator,
+          serial: operator.serial,
         }
       }) || undefined,
     isOutOfCommission: data.vehiclestatus === 'Úr umferð',

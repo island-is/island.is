@@ -144,15 +144,13 @@ yargs(process.argv.slice(2))
     () => {},
     async (argv: Arguments) => {
       const { habitat, affectedServices, env } = parseArguments(argv)
-      const {
-        included: featureYaml,
-        excluded,
-      } = await getFeatureAffectedServices(
-        habitat,
-        affectedServices.slice(),
-        ExcludedFeatureDeploymentServices,
-        env,
-      )
+      const { included: featureYaml, excluded } =
+        await getFeatureAffectedServices(
+          habitat,
+          affectedServices.slice(),
+          ExcludedFeatureDeploymentServices,
+          env,
+        )
       const ingressComment = buildComment(
         (await renderHelmServices(env, habitat, featureYaml, 'no-mocks'))
           .services,

@@ -14,7 +14,10 @@ import { EventObject } from 'xstate'
 import templateLoaders from './lib/templateLoaders'
 import { FC } from 'react'
 
-type UIFields = Record<string, FC<FieldBaseProps | RepeaterProps>>
+type UIFields = Record<
+  string,
+  FC<React.PropsWithChildren<FieldBaseProps | RepeaterProps>>
+>
 type TemplateLibraryModule = {
   default: unknown
   getDataProviders?: () => Promise<Record<string, new () => BasicDataProvider>>
@@ -53,7 +56,7 @@ async function loadTemplateLib(
 export async function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,
-  TEvents extends EventObject
+  TEvents extends EventObject,
 >(
   templateId: ApplicationTypes,
 ): Promise<ApplicationTemplate<TContext, TStateSchema, TEvents>> {

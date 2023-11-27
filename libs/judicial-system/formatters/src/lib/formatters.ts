@@ -1,4 +1,4 @@
-import { format, parseISO, isValid } from 'date-fns' // eslint-disable-line no-restricted-imports
+import { format, isValid, parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 // Importing 'is' directly from date-fns/locale/is has caused unexpected problems
 import { is } from 'date-fns/locale' // eslint-disable-line no-restricted-imports
 import _uniq from 'lodash/uniq'
@@ -6,11 +6,11 @@ import _uniq from 'lodash/uniq'
 import {
   CaseAppealDecision,
   CaseCustodyRestrictions,
-  Gender,
   CaseType,
-  isRestrictionCase,
+  Gender,
   IndictmentSubtype,
   IndictmentSubtypeMap,
+  isRestrictionCase,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -76,10 +76,8 @@ export const formatPhoneNumber = (phoneNumber?: string) => {
 
   const value = phoneNumber.replace('-', '')
 
-  const splitAt = (index: number) => (x: string) => [
-    x.slice(0, index),
-    x.slice(index),
-  ]
+  const splitAt = (index: number) => (x: string) =>
+    [x.slice(0, index), x.slice(index)]
   if (value.length > 3) return splitAt(3)(value).join('-')
   return value
 }
@@ -106,6 +104,7 @@ export const caseTypes: CaseTypes = {
   SEARCH_WARRANT: 'húsleit',
   BANKING_SECRECY_WAIVER: 'rof bankaleyndar',
   PHONE_TAPPING: 'símhlustun',
+  PAROLE_REVOCATION: 'rof á reynslulausn',
   TELECOMMUNICATIONS: 'upplýsingar um fjarskiptasamskipti',
   TRACKING_EQUIPMENT: 'eftirfararbúnaður',
   PSYCHIATRIC_EXAMINATION: 'geðrannsókn',
@@ -335,4 +334,8 @@ export const readableIndictmentSubtypes = (
   }
 
   return _uniq(returnValue)
+}
+
+export const sanitize = (str: string) => {
+  return str.replace('"', '')
 }

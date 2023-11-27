@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { SharedTemplateApiService } from '../../shared'
-import { GeneralFishingLicenseAnswers } from '@island.is/application/templates/general-fishing-license'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   FishingLicenseService,
@@ -25,40 +24,6 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
     private readonly umsoknirApi: UmsoknirApi,
   ) {
     super(ApplicationTypes.GENERAL_FISHING_LICENSE)
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    const FISKISTOFA_NATIONAL_ID = '6608922069'
-
-    const answers = application.answers as GeneralFishingLicenseAnswers
-    const chargeItemCode = getValueViaPath(
-      answers,
-      'fishingLicense.chargeType',
-    ) as string
-
-    if (!chargeItemCode) {
-      this.logger.error('Charge item code missing in General Fishing License.')
-      throw new Error('Vörunúmer fyrir FJS vantar.')
-    }
-
-    // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
-    const strandveidileyfi = chargeItemCode === 'L5108' ? 'L5112' : false
-
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      application.id,
-      FISKISTOFA_NATIONAL_ID,
-      strandveidileyfi ? [chargeItemCode, strandveidileyfi] : [chargeItemCode],
-    )
-
-    if (!response?.paymentUrl) {
-      this.logger.error(
-        'paymentUrl missing in response in General Fishing License.',
-      )
-      throw new Error('Ekki hefur tekist að búa til slóð fyrir greiðslugátt.')
-    }
-
-    return response
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -124,10 +89,11 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
       ) as Array<{ key: string; name: string }>
       const attachments = await Promise.all(
         attachmentsRaw?.map(async (a) => {
-          const vidhengiBase64 = await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-            application,
-            a.key,
-          )
+          const vidhengiBase64 =
+            await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+              application,
+              a.key,
+            )
           return {
             vidhengiBase64,
             vidhengiNafn: a.name,

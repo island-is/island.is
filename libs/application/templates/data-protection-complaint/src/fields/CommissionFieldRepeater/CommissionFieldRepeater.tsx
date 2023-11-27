@@ -19,11 +19,9 @@ type PersonField = {
   nationalId: string
 }
 
-export const CommissionFieldRepeater: FC<FieldBaseProps> = ({
-  application,
-  errors,
-  field,
-}) => {
+export const CommissionFieldRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps>
+> = ({ application, errors, field }) => {
   const { id, title } = field
   const { formatMessage } = useLocale()
   const { fields, append, remove } = useFieldArray({ name: id })

@@ -22,20 +22,28 @@ import {
   isLastReviewer,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { useMutation } from '@apollo/client'
+import {
+  APPLICATION_APPLICATION,
+  SUBMIT_APPLICATION,
+} from '@island.is/application/graphql'
+import { useLazyQuery, useMutation } from '@apollo/client'
 
-export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
-  setStep,
-  reviewerNationalId = '',
-  ...props
-}) => {
+export const Overview: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ setStep, reviewerNationalId = '', ...props }) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
+
+  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
+    onError: (e) => {
+      console.error(e, e.message)
+      return
+    },
+  })
+
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -44,6 +52,76 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   })
 
   const [loading, setLoading] = useState<boolean>(false)
+
+  const doApproveAndSubmit = async () => {
+    // Need to get updated application answers, in case any other reviewer has approved
+    const applicationInfo = await getApplicationInfo({
+      variables: {
+        input: {
+          id: application.id,
+        },
+        locale: 'is',
+      },
+      fetchPolicy: 'no-cache',
+    })
+    const updatedApplication = applicationInfo?.data?.applicationApplication
+
+    if (updatedApplication) {
+      const currentAnswers = updatedApplication.answers
+
+      const approveAnswers = getApproveAnswers(
+        reviewerNationalId,
+        currentAnswers,
+      )
+
+      // First approve application only (event=APPROVE)
+      const resApprove = await submitApplication({
+        variables: {
+          input: {
+            id: application.id,
+            event: DefaultEvents.APPROVE,
+            answers: approveAnswers,
+          },
+        },
+      })
+
+      const updatedApplication2 = resApprove?.data?.submitApplication
+
+      if (updatedApplication2) {
+        const isLast = isLastReviewer(
+          reviewerNationalId,
+          updatedApplication2.answers,
+        )
+
+        // Then check if user is the last approver (using newer updated application answers), if so we
+        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
+        if (isLast) {
+          const approveAnswers2 = getApproveAnswers(
+            reviewerNationalId,
+            updatedApplication2.answers,
+          )
+
+          const resSubmit = await submitApplication({
+            variables: {
+              input: {
+                id: application.id,
+                event: DefaultEvents.SUBMIT,
+                answers: approveAnswers2,
+              },
+            },
+          })
+
+          if (resSubmit?.data) {
+            setLoading(false)
+            setStep && setStep('conclusion')
+          }
+        } else {
+          setLoading(false)
+          setStep && setStep('conclusion')
+        }
+      }
+    }
+  }
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -55,21 +133,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
 
   const onApproveButtonClick = async () => {
     setLoading(true)
-    const res = await submitApplication({
-      variables: {
-        input: {
-          id: application.id,
-          event: isLastReviewer(reviewerNationalId, application.answers)
-            ? DefaultEvents.SUBMIT
-            : DefaultEvents.APPROVE,
-          answers: getApproveAnswers(reviewerNationalId, application.answers),
-        },
-      },
-    })
-    setLoading(false)
-    if (res?.data) {
-      setStep && setStep('conclusion')
-    }
+    await doApproveAndSubmit()
   }
 
   return (

@@ -7,7 +7,7 @@ import { useCallback } from 'react'
 
 export const useAsyncLazyQuery = <
   TData,
-  TVariables extends OperationVariables = OperationVariables
+  TVariables extends OperationVariables = OperationVariables,
 >(
   query: DocumentNode,
 ) => {

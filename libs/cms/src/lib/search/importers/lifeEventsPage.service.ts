@@ -10,7 +10,8 @@ import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService
-  implements CmsSyncProvider<ILifeEventPage> {
+  implements CmsSyncProvider<ILifeEventPage>
+{
   processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
     logger.info('Processing sync data for life event pages')
 
@@ -30,16 +31,23 @@ export class LifeEventsPageSyncService
         try {
           const mapped = mapLifeEventPage(entry)
           const content = extractStringsFromObject(mapped.content)
+
+          let type = 'webLifeEventPage'
+
+          if (entry.fields?.pageType === 'Digital Iceland Service') {
+            type = 'webDigitalIcelandService'
+          } else if (
+            entry.fields?.pageType === 'Digital Iceland Community Page'
+          ) {
+            type = 'webDigitalIcelandCommunityPage'
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            type:
-              // We are reusing the life event page look for Digital Iceland Services so we want to distinguish them in the search by having two different types here
-              entry.fields?.pageType === 'Digital Iceland Service'
-                ? 'webDigitalIcelandService'
-                : 'webLifeEventPage',
+            type,
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),
             tags: [],

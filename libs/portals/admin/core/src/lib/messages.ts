@@ -34,4 +34,8 @@ export const m = defineMessages({
     defaultMessage: 'Mynd af byggingu sem táknar stjórnborð',
     id: 'admin-portal:dashboard-img-alt',
   },
+  back: {
+    id: 'admin-portal:back',
+    defaultMessage: 'Til baka',
+  },
 })

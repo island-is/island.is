@@ -8,11 +8,11 @@ import {
   Application,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
   coreHistoryMessages,
-  corePendingActionMessages,
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -26,6 +26,11 @@ import {
   CurrentVehiclesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
+import { buildPaymentState } from '@island.is/application/utils'
+import { ChargeItemCode } from '@island.is/shared/constants'
+import { getExtraData } from '../utils'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const plate = getValueViaPath(
@@ -55,7 +60,12 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
+    },
   ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -109,57 +119,20 @@ const template: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Greiðsla',
-          status: 'inprogress',
-          actionCard: {
-            tag: {
-              label: applicationMessage.actionCardPayment,
-              variant: 'red',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-          },
-          progress: 0.8,
-          lifecycle: pruneAfterDays(1 / 24),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          onExit: defineTemplateApi({
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SAMGONGUSTOFA,
+        chargeItemCodes: [
+          ChargeItemCode.TRANSPORT_AUTHORITY_ORDER_VEHICLE_REGISTRATION_CERTIFICATE,
+        ],
+        submitTarget: States.COMPLETED,
+        extraData: getExtraData,
+        onExit: [
+          defineTemplateApi({
             action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
           }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) => val.Payment),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Áfram', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+        ],
+      }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',

@@ -28,6 +28,12 @@ interface ValueLineProps {
   title?: string
 }
 
+export type ApplicationCardHistoryItem = {
+  date?: string
+  title: string
+  content?: React.ReactNode
+}
+
 const ValueLine = ({ title, children }: PropsWithChildren<ValueLineProps>) => {
   return (
     <>
@@ -51,15 +57,20 @@ const buildHistoryItems = (
   const displayStatus = application.actionCard?.pendingAction
     ?.displayStatus as AlertMessageType
 
-  let history: {
-    title: string
-    date?: string
-    content?: ReactNode
-  }[] = []
+  let historyItems: ApplicationCardHistoryItem[] = []
+
+  const actionCardHistory = application.actionCard?.history
+  const lastHistoryItem = actionCardHistory
+    ? actionCardHistory[actionCardHistory.length - 1]
+    : undefined
+  const lastHistoryDate = lastHistoryItem?.date
 
   if (application.actionCard?.pendingAction?.title) {
-    history.push({
-      date: format(new Date(), 'dd.MM.yyyy'),
+    historyItems.push({
+      date: format(
+        lastHistoryDate ? new Date(lastHistoryDate) : new Date(),
+        'dd.MM.yyyy',
+      ),
       title: formatMessage(application.actionCard.pendingAction.title ?? ''),
       content: application.actionCard.pendingAction.content ? (
         <AlertMessage
@@ -73,7 +84,7 @@ const buildHistoryItems = (
   }
 
   if (application.actionCard?.history) {
-    history = history.concat(
+    historyItems = historyItems.concat(
       application.actionCard?.history.map((x) => ({
         date: format(new Date(x.date), 'dd.MM.yyyy'),
         title: x.log ? formatMessage(x.log) : '',
@@ -81,7 +92,7 @@ const buildHistoryItems = (
     )
   }
 
-  return history
+  return historyItems
 }
 
 interface Props {
@@ -181,8 +192,8 @@ export const ApplicationDetails = ({
           application={{
             id: application.id,
             modified: new Date(application.modified),
-            status: (application.status as unknown) as ApplicationStatus,
-            typeId: (application.typeId as unknown) as ApplicationTypes,
+            status: application.status as unknown as ApplicationStatus,
+            typeId: application.typeId as unknown as ApplicationTypes,
             name: application.name,
             progress: application.progress,
             actionCard: application.actionCard as ActionCardMetaData,

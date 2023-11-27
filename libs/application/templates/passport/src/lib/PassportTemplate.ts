@@ -1,4 +1,7 @@
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   ApplicationContext,
@@ -8,6 +11,9 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  DistrictsApi,
+  InstitutionNationalIds,
+  PassportsApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -17,6 +23,7 @@ import {
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 import { m } from '../lib/messages'
 import {
@@ -29,14 +36,30 @@ import {
   twoDays,
 } from './constants'
 import { dataSchema } from './dataSchema'
+import { buildPaymentState } from '@island.is/application/utils'
+import { needAssignment } from './utils'
 
 const pruneAfter = (time: number) => {
   return {
     shouldBeListed: true,
     shouldBePruned: true,
     whenToPrune: time,
-    shouldDeleteChargeIfPaymentFulfilled: true,
   }
+}
+const getCode = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in request')
+  }
+  return [chargeItemCode]
+}
+
+export const hasReviewer = (context: ApplicationContext) => {
+  const { answers, externalData } = context.application
+  return needAssignment(answers, externalData)
 }
 
 const PassportTemplate: ApplicationTemplate<
@@ -55,7 +78,6 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: m.formName.defaultMessage,
           status: 'draft',
-          progress: 0.33,
           lifecycle: pruneAfter(twoDays),
           onExit: defineTemplateApi({
             action: ApiActions.checkForDiscount,
@@ -85,57 +107,49 @@ const PassportTemplate: ApplicationTemplate<
                 NationalRegistryUser,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DRAFT },
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            description: m.payment,
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCode,
+        submitTarget: [
+          {
+            target: States.PARENT_B_CONFIRM,
+            cond: hasReviewer,
           },
-          progress: 0.7,
-          lifecycle: pruneAfter(sixtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.ASSIGN, name: '', type: 'primary' },
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.ASSIGN]: { target: States.PARENT_B_CONFIRM },
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+          {
+            target: States.DONE,
+          },
+        ],
+      }),
       [States.PARENT_B_CONFIRM]: {
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
           status: 'inprogress',
-          progress: 0.9,
-          lifecycle: pruneAfter(sevenDays),
+          lifecycle: {
+            ...pruneAfter(sevenDays),
+            shouldDeleteChargeIfPaymentFulfilled: true,
+          },
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
           }),
@@ -162,14 +176,29 @@ const PassportTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUser,
+                NationalRegistryUserParentB,
                 UserInfoApi,
                 SyslumadurPaymentCatalogApi,
+                PassportsApi,
+                DistrictsApi,
                 IdentityDocumentApi,
                 DeliveryAddressApi,
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: m.confirmedByParentB,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+            pendingAction: {
+              title: m.waitingForConfirmationFromParentBTitle,
+              content: m.waitingForConfirmationFromParentBDescription,
+              displayStatus: 'warning',
+            },
+          },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.DONE },
@@ -179,13 +208,7 @@ const PassportTemplate: ApplicationTemplate<
         meta: {
           name: 'Done',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfter(sixtyDays),
-          actionCard: {
-            tag: {
-              label: m.actionCardDoneTag,
-            },
-          },
           onEntry: defineTemplateApi({
             action: ApiActions.submitPassportApplication,
           }),
@@ -218,6 +241,13 @@ const PassportTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

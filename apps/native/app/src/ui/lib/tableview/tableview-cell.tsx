@@ -50,10 +50,6 @@ const Cell = styled.View<{border: boolean; disabled: boolean}>`
     true,
   )};
 
-  // dynamicColor(({ theme }) => ({
-  //   dark: theme.shades.dark.shade200,
-  //   light: theme.color.blue100,
-  // }))};
   opacity: ${props => (props.disabled ? 0.5 : 1)};
 `;
 
@@ -88,8 +84,8 @@ const Title = styled.View``;
 
 const TitleText = styled.Text`
   ${font({
-    fontSize: 16,
-    fontWeight: '300',
+    fontSize: 15,
+    fontWeight: '400',
   })}
 `;
 
@@ -100,7 +96,7 @@ const Subtitle = styled.View`
 const SubtitleText = styled.Text`
   ${font({
     fontSize: 15,
-    color: props => props.theme.color.dark300,
+    color: props => props.theme.color.dark400,
     fontWeight: '300',
   })}
 `;
@@ -132,8 +128,7 @@ export const TableViewCell = React.memo((props: TableViewCellProps) => {
       <Cell
         border={border}
         disabled={disabled}
-        pointerEvents={disabled ? 'none' : undefined}
-      >
+        pointerEvents={disabled ? 'none' : undefined}>
         {image && <Left>{image}</Left>}
         <Center accessory={!!accessory}>
           {children !== undefined ? (

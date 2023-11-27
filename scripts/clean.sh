@@ -64,18 +64,19 @@ cli() {
 }
 
 clean_generated() {
-  find . -type f \( -name "openapi.yaml" \
+  find . -not -path "./.cache/*" -type f \( -name "openapi.yaml" \
     -o -name "api.graphql" \
     -o -name "schema.d.ts" \
     -o -name "schema.tsx" \
     -o -name "schema.ts" \
     -o -path "*/gen/graphql.ts" \
+    -o -path "*/*.generated.ts" \
     -o -name "possibleTypes.json" \
     -o -name "fragmentTypes.json" \
     \) "$(dry && echo -print || echo -delete)"
 
-  find . -type d \( -path "*/gen/fetch" \
-    \) -exec "$(dry && echo 'echo')" rm -rf '{}' +
+  # shellcheck disable=SC2046
+  find . -not -path "./.cache/*" -type d \( -path '*/gen/fetch' \) -exec $(dry && echo 'echo') rm -rf '{}' +
 }
 
 clean_caches() {
@@ -101,7 +102,7 @@ clean_yarn() {
 
 clean_all() {
   for job in generated caches yarn; do
-    job_uppercase="${job^^}"
+    job_uppercase=$(echo $job | tr '[:lower:]' '[:upper:]')
     job_variable="CLEAN_${job_uppercase}"
 
     # Run only if corresponding job variable is true

@@ -71,11 +71,9 @@ interface FormOverviewProps {
   }
 }
 
-export const FormOverview: FC<FieldBaseProps & FormOverviewProps> = ({
-  application,
-  goToScreen,
-  field,
-}) => {
+export const FormOverview: FC<
+  React.PropsWithChildren<FieldBaseProps & FormOverviewProps>
+> = ({ application, goToScreen, field }) => {
   const isAssignee = field?.props?.isAssignee || false
   const answers = application.answers as AccidentNotification
   const { formatMessage } = useLocale()

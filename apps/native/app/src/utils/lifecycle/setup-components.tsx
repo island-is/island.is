@@ -1,6 +1,5 @@
 // import { Platform } from 'react-native'
 import {Navigation} from 'react-native-navigation';
-import {AndroidSearchBar} from '../../components/android-search-bar/android-search-bar';
 import {AppLockScreen} from '../../screens/app-lock/app-lock';
 // import { CognitoAuthScreen } from '../../screens/devtools/cognito-auth'
 // import { StorybookScreen } from '../../screens/devtools/storybook'
@@ -22,20 +21,25 @@ import {WebViewScreen} from '../../screens/webview/webview';
 import {ComponentRegistry as CR} from '../component-registry';
 import {registerComponent} from '../register-component';
 import {VehiclesScreen} from '../../screens/vehicles/vehicles';
-import {ProfileScreen} from '../../screens/profile/profile';
+import {MoreScreen} from '../../screens/more/more';
 import {VehicleDetailScreen} from '../../screens/vehicles/vehicles-detail';
-import {PersonalInfoScreen} from '../../screens/profile/personal-info';
-import {SettingsScreen} from '../../screens/profile/settings';
+import {PersonalInfoScreen} from '../../screens/more/personal-info';
+import {SettingsScreen} from '../../screens/settings/settings';
 import {AssetsOverviewScreen} from '../../screens/assets/assets-overview';
 import {AssetsDetailScreen} from '../../screens/assets/assets-detail';
 import {FamilyOverviewScreen} from '../../screens/family/family-overview';
 import {FamilyDetailScreen} from '../../screens/family/family-details';
-import {EditEmailScreen} from '../../screens/profile/edit-email';
-import {EditPhoneScreen} from '../../screens/profile/edit-phone';
-import {EditBankInfoScreen} from '../../screens/profile/edit-bank-info';
-import {EditConfirmScreen} from '../../screens/profile/edit-confirm';
+import {EditEmailScreen} from '../../screens/settings/edit-email';
+import {EditPhoneScreen} from '../../screens/settings/edit-phone';
+import {EditBankInfoScreen} from '../../screens/settings/edit-bank-info';
+import {EditConfirmScreen} from '../../screens/settings/edit-confirm';
 import {WalletPassportScreen} from '../../screens/wallet-passport/wallet-passport';
 import {CognitoAuthScreen} from '../../screens/cognito-auth/cognito-auth';
+import {isTestingApp} from '../../config';
+import {TestingLoginScreen} from '../../screens/login/testing-login';
+import {FinanceScreen} from '../../screens/finance/finance';
+import {FinanceStatusDetailScreen} from '../../screens/finance/finance-status-detail';
+import {InboxFilterScreen} from '../../screens/inbox/inbox-filter';
 
 export function registerAllComponents() {
   // dev only
@@ -45,7 +49,10 @@ export function registerAllComponents() {
   }
 
   // screens
-  registerComponent(CR.LoginScreen, LoginScreen);
+  registerComponent(
+    CR.LoginScreen,
+    isTestingApp ? TestingLoginScreen : LoginScreen,
+  );
   registerComponent(CR.OnboardingPinCodeScreen, OnboardingPinCodeScreen);
   registerComponent(CR.OnboardingBiometricsScreen, OnboardingBiometricsScreen);
   registerComponent(
@@ -69,7 +76,7 @@ export function registerAllComponents() {
   registerComponent(CR.VehicleDetailScreen, VehicleDetailScreen);
   registerComponent(CR.FamilyScreen, FamilyOverviewScreen);
   registerComponent(CR.FamilyDetailScreen, FamilyDetailScreen);
-  registerComponent(CR.ProfileScreen, ProfileScreen);
+  registerComponent(CR.MoreScreen, MoreScreen);
   registerComponent(CR.PersonalInfoScreen, PersonalInfoScreen);
   registerComponent(CR.AssetsOverviewScreen, AssetsOverviewScreen);
   registerComponent(CR.AssetsDetailScreen, AssetsDetailScreen);
@@ -79,9 +86,7 @@ export function registerAllComponents() {
   registerComponent(CR.EditBankInfoScreen, EditBankInfoScreen);
   registerComponent(CR.EditConfirmScreen, EditConfirmScreen);
   registerComponent(CR.CognitoAuthScreen, CognitoAuthScreen);
-
-  // ui components
-  // if (Platform.OS === 'android') {
-  Navigation.registerComponent(CR.AndroidSearchBar, () => AndroidSearchBar);
-  // }
+  registerComponent(CR.FinanceScreen, FinanceScreen);
+  registerComponent(CR.FinanceStatusDetailScreen, FinanceStatusDetailScreen);
+  registerComponent(CR.InboxFilterScreen, InboxFilterScreen);
 }

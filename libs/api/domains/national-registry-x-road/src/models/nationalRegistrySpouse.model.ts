@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-@ObjectType()
+@ObjectType('NationalRegistryXRoadSpouse')
 export class NationalRegistrySpouse {
   @Field(() => ID, { nullable: true })
   nationalId?: string | null

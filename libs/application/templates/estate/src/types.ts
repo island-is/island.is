@@ -1,4 +1,4 @@
-import { FormValue, GenericFormField } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 import { EstateAsset } from '@island.is/clients/syslumenn'
 
 export enum RoleConfirmationEnum {
@@ -57,19 +57,11 @@ export type Answers = {
   }
 } & FormValue
 
-export interface ElectPersonType {
-  roleConfirmation: RoleConfirmationEnum
-  electedPersonName?: string
-  electedPersonNationalId?: string
-  lookupError?: boolean
-}
-
-export type EstateMemberField = GenericFormField<EstateMember>
-
 export interface EstateMember {
   name: string
   nationalId: string
-  relation: RelationEnum | string
+  relation: string
+  relationWithApplicant?: string
   initial?: boolean
   dateOfBirth?: string
   custodian?: string
@@ -77,29 +69,4 @@ export interface EstateMember {
   enabled?: boolean
   phone?: string
   email?: string
-}
-
-export interface Property {
-  propertyNumber: string
-  address?: string
-  initial?: boolean
-}
-
-export interface Vehicle {
-  plateNumber: string
-  numberOfWheels: number
-  weight: number
-  year: number
-  initial?: boolean
-}
-
-export interface Will {
-  nationalId: string
-  hasWill: boolean
-}
-
-export interface Prenup {
-  hasPrenup: boolean
-  nationalId: string
-  partnerNationalId?: string
 }

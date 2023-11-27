@@ -65,6 +65,14 @@ export class Domain extends Model {
   })
   organisationLogoKey!: string
 
+  @Column({
+    type: DataType.STRING,
+  })
+  @ApiProperty({
+    example: 'island@example.is',
+  })
+  contactEmail?: string
+
   @CreatedAt
   @ApiProperty()
   readonly created!: Date

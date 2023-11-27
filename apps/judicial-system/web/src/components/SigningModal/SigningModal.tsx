@@ -1,36 +1,40 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import {
   ApolloError,
   FetchResult,
   MutationFunctionOptions,
 } from '@apollo/client'
-import { useIntl } from 'react-intl'
 
+import { Box, Text, toast } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
+import {
+  core,
+  errors as errorMessages,
+} from '@island.is/judicial-system-web/messages'
 import {
   CaseType,
   Exact,
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { Box, Text, toast } from '@island.is/island-ui/core'
-import {
-  core,
-  errors as errorMessages,
-} from '@island.is/judicial-system-web/messages'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import * as constants from '@island.is/judicial-system/consts'
 
-import { Modal } from '..'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
+import { Modal } from '..'
+import {
+  GetRulingSignatureConfirmationQuery,
+  useGetRulingSignatureConfirmationQuery,
+} from './getRulingSignatureConfirmation.generated'
 import {
   RequestRulingSignatureMutation,
   useRequestRulingSignatureMutation,
-  useRulingSignatureConfirmationQuery,
-  RulingSignatureConfirmationQuery,
-} from './RulingSignature.generated'
+} from './requestRulingSignature.generated'
 import { signingModal as m } from './SigningModal.strings'
 
-const ControlCode: React.FC<{ controlCode?: string }> = ({ controlCode }) => {
+const ControlCode: React.FC<
+  React.PropsWithChildren<{ controlCode?: string }>
+> = ({ controlCode }) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -98,7 +102,7 @@ type signingProgress = 'inProgress' | 'success' | 'error' | 'canceled'
 
 export const getSigningProgress = (
   rulingSignatureConfirmation:
-    | RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+    | GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
     | undefined,
   error: ApolloError | undefined,
 ): signingProgress => {
@@ -111,7 +115,9 @@ export const getSigningProgress = (
   return 'error'
 }
 
-export const SigningModal: React.FC<SigningModalProps> = ({
+export const SigningModal: React.FC<
+  React.PropsWithChildren<SigningModalProps>
+> = ({
   workingCase,
   requestRulingSignature,
   requestRulingSignatureResponse,
@@ -121,15 +127,16 @@ export const SigningModal: React.FC<SigningModalProps> = ({
   const router = useRouter()
   const { formatMessage } = useIntl()
 
-  const { data, error } = useRulingSignatureConfirmationQuery({
+  const { data, error } = useGetRulingSignatureConfirmationQuery({
     variables: {
       input: {
         documentToken: requestRulingSignatureResponse?.documentToken || '',
         caseId: workingCase.id,
       },
     },
-    fetchPolicy: 'no-cache',
     skip: !requestRulingSignatureResponse,
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
   })
 
   const signingProgress = getSigningProgress(

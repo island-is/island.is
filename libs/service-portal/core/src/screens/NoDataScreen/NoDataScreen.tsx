@@ -31,7 +31,7 @@ interface Props {
   figure?: string
 }
 
-export const NoDataScreen: FC<Props> = ({
+export const NoDataScreen: FC<React.PropsWithChildren<Props>> = ({
   title,
   children,
   button,
@@ -46,6 +46,8 @@ export const NoDataScreen: FC<Props> = ({
         {button.type === 'internal' && button.link && (
           <Link to={button.link}>
             <Button
+              as="span"
+              unfocusable
               variant={button.variant}
               size="small"
               icon={button.icon ? button.icon.icon : undefined}
@@ -58,6 +60,8 @@ export const NoDataScreen: FC<Props> = ({
         {button.type === 'external' && button.link && (
           <a href={button.link}>
             <Button
+              as="span"
+              unfocusable
               variant={button.variant}
               size="small"
               icon={button.icon ? button.icon.icon : undefined}

@@ -41,9 +41,10 @@ interface WrapperProps {
   showLogoTitle?: boolean
   pageDescription?: string
   indexableBySearchEngine?: boolean
+  showLogoOnMobileDisplays?: boolean
 }
 
-export const Wrapper: FC<WrapperProps> = ({
+export const Wrapper: FC<React.PropsWithChildren<WrapperProps>> = ({
   pageTitle,
   headerTitle,
   institutionSlug,
@@ -56,6 +57,7 @@ export const Wrapper: FC<WrapperProps> = ({
   showLogoTitle,
   pageDescription,
   indexableBySearchEngine = false,
+  showLogoOnMobileDisplays,
   children,
 }) => {
   const { activeLocale } = useI18n()
@@ -64,7 +66,8 @@ export const Wrapper: FC<WrapperProps> = ({
   })
   const [textMode, setTextMode] = useState<TextModes>('light')
   const showSearchSection = searchTitle && organizationTitle
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   usePlausiblePageview(organization?.trackingDomain)
 
   useEffect(() => {
@@ -123,6 +126,7 @@ export const Wrapper: FC<WrapperProps> = ({
               textMode={textMode}
               searchPlaceholder={searchPlaceholder}
               namespace={namespace}
+              showLogoOnMobileDisplays={showLogoOnMobileDisplays}
             />
           </Box>
         )}

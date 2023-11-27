@@ -1,6 +1,7 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
 import { m } from '@island.is/service-portal/core'
 import { PetitionPaths } from '@island.is/service-portal/petitions'
+import { SignatureCollectionPaths } from '@island.is/service-portal/signature-collection'
 import { InformationPaths } from './paths'
 
 export const informationNavigation: PortalNavigationItem = {
@@ -10,6 +11,14 @@ export const informationNavigation: PortalNavigationItem = {
     icon: 'person',
   },
   children: [
+    {
+      name: m.myInfo,
+      path: InformationPaths.MyInfoRootOverview,
+    },
+    {
+      name: m.mySettings,
+      path: InformationPaths.Settings,
+    },
     {
       name: m.detailInfo,
       navHide: true,
@@ -38,6 +47,17 @@ export const informationNavigation: PortalNavigationItem = {
           name: m.viewPetition,
           navHide: true,
           path: PetitionPaths.PetitionListOwned,
+        },
+      ],
+    },
+    {
+      name: m.signatureCollectionLists,
+      path: SignatureCollectionPaths.Lists,
+      children: [
+        {
+          name: m.viewSignatureList,
+          navHide: true,
+          path: SignatureCollectionPaths.ViewList,
         },
       ],
     },

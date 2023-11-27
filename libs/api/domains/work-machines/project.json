@@ -1,0 +1,23 @@
+{
+  "name": "api-domains-work-machines",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/work-machines/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["libs/api/domains/work-machines/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/work-machines"],
+      "options": {
+        "jestConfig": "libs/api/domains/work-machines/jest.config.ts",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["lib:api", "scope:api"]
+}

@@ -26,8 +26,12 @@ import {
 } from '../../utils/licenses'
 import { MessageDescriptor } from '@formatjs/intl'
 import { Colors } from '@island.is/island-ui/theme'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
-export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
+export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+  goToScreen,
+}) => {
   const answers = application.answers as GeneralFishingLicense
   const [fishingLicensePrice, setFishingLicensePrice] = useState<number>(0)
 
@@ -65,11 +69,14 @@ export const Overview: FC<FieldBaseProps> = ({ application, goToScreen }) => {
       if (item.chargeItemCode === chargeItemCode) {
         let price = item.priceAmount
         // chargeItemCode for "Leyfi til strandveiða"
-        if (chargeItemCode === 'L5108') {
+        if (chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL) {
           price +=
             // chargeItemCode for "Sérstakt gjald vegna strandleyfa"
-            catalogItems.find((item) => item.chargeItemCode === 'L5112')
-              ?.priceAmount || 0
+            catalogItems.find(
+              (item) =>
+                item.chargeItemCode ===
+                ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL,
+            )?.priceAmount || 0
         }
         setFishingLicensePrice(price)
       }

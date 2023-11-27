@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # judicial-system-consts
 
 This library was generated with [Nx](https://nx.dev).

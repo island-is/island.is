@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/documents",
+  "name": "services-documents",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/documents/src",
   "projectType": "application",
   "prefix": "services-documents",
@@ -41,48 +42,48 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-documents:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/services/documents/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/documents/jest.config.js",
+        "jestConfig": "apps/services/documents/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/services/documents"]
+      "outputs": ["{workspaceRoot}/coverage/apps/services/documents"]
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d",
         "cwd": "apps/services/documents"
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "apps/services/documents/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/documents/tsconfig.app.json apps/services/documents/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/services/documents"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/documents"

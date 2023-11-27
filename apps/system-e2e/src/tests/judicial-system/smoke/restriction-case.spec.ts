@@ -19,6 +19,6 @@ test.describe('Restriction case', () => {
   test('should have a table visible on the screen', async () => {
     const page = await context.newPage()
     page.goto('/krofur')
-    await expect(page.getByRole('table')).toBeVisible()
+    await expect(page.getByRole('table')).toHaveCount(2)
   })
 })

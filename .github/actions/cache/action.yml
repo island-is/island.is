@@ -78,16 +78,16 @@ runs:
            [[ "${{ steps.cache_try_number_two.outputs.success }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_three.outputs.success }}" == "true" ]]
         then
-          echo "::set-output name=success::true"
+          echo "success=true" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=success::false"
+          echo "success=false" >> $GITHUB_OUTPUT
         fi
 
         if [[ "${{ steps.cache_try_number_one.outputs.cache-hit }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_two.outputs.cache-hit }}" == "true" ]] || \
            [[ "${{ steps.cache_try_number_three.outputs.cache-hit }}" == "true" ]]
         then
-          echo "::set-output name=cache-hit::true"
+          echo "cache-hit=true" >> $GITHUB_OUTPUT
         else
-          echo "::set-output name=cache-hit::false"
+          echo "cache-hit=false" >> $GITHUB_OUTPUT
         fi

@@ -6,6 +6,7 @@ import {
   FieldGroup,
   FieldLabel,
   FieldRow,
+  Alert as InfoAlert,
   LicenceCard,
   LicenseCardType,
 } from '@ui';
@@ -17,6 +18,7 @@ import {
   View,
   ActivityIndicator,
   NativeModules,
+  Linking,
   Alert,
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
@@ -25,7 +27,6 @@ import * as FileSystem from 'expo-file-system';
 import styled, {useTheme} from 'styled-components/native';
 import {client} from '../../graphql/client';
 import {
-  GenericUserLicenseStatus,
   IGenericLicenseDataField,
   GenericUserLicensePkPassStatus,
   IGenericUserLicense,
@@ -40,6 +41,7 @@ import {
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus} from '../../types/license-type';
 import {useState} from 'react';
+import {useIntl} from 'react-intl';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -74,28 +76,26 @@ const Spacer = styled.View`
   height: 150px;
 `;
 
-const {
-  useNavigationOptions,
-  getNavigationOptions,
-} = createNavigationOptionHooks(
-  (theme, intl) => ({
-    topBar: {
-      title: {
-        text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+const {useNavigationOptions, getNavigationOptions} =
+  createNavigationOptionHooks(
+    (theme, intl) => ({
+      topBar: {
+        title: {
+          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+        },
+        noBorder: true,
       },
-      noBorder: true,
+    }),
+    {
+      topBar: {
+        rightButtons: [],
+      },
+      bottomTabs: {
+        visible: false,
+        drawBehind: true,
+      },
     },
-  }),
-  {
-    topBar: {
-      rightButtons: [],
-    },
-    bottomTabs: {
-      visible: false,
-      drawBehind: true,
-    },
-  },
-);
+  );
 
 const FieldRender = ({data, level = 1, licenseType}: any) => {
   return (
@@ -157,8 +157,7 @@ const FieldRender = ({data, level = 1, licenseType}: any) => {
                   code={name}
                   title={label}
                   type={licenseType}
-                  hasFields={!!fields}
-                >
+                  hasFields={!!fields}>
                   <FieldRow>
                     {FieldRender({
                       data: fields,
@@ -185,6 +184,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
 }> = ({id, item, componentId, cardHeight = 140}) => {
   useNavigationOptions(componentId);
   const theme = useTheme();
+  const intl = useIntl();
   const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
     GET_GENERIC_LICENSE_QUERY,
     {
@@ -280,7 +280,34 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
           );
         } else {
-          Alert.alert('Failed to fetch or add pass');
+          Alert.alert(
+            intl.formatMessage({
+              id: 'walletPass.errorTitle',
+            }),
+            item?.license?.type === 'DriversLicense'
+              ? intl.formatMessage({
+                  id: 'walletPass.errorNotPossibleToAddDriverLicense',
+                })
+              : 'Failed to fetch or add pass',
+            item?.license?.type === 'DriversLicense'
+              ? [
+                  {
+                    text: intl.formatMessage({
+                      id: 'walletPass.moreInfo',
+                    }),
+                    onPress: () =>
+                      Linking.openURL('https://island.is/okuskirteini'),
+                  },
+
+                  {
+                    text: intl.formatMessage({
+                      id: 'walletPass.alertClose',
+                    }),
+                    style: 'cancel',
+                  },
+                ]
+              : [],
+          );
         }
         setAddingToWallet(false);
         console.error(err);
@@ -302,6 +329,21 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       <View style={{height: cardHeight}} />
       <Information contentInset={{bottom: 162}}>
         <SafeAreaView style={{marginHorizontal: 16}}>
+          {/* Show info alert if PCard */}
+          {data?.license?.type === GenericLicenseType.PCard && (
+            <View style={{paddingTop: 24}}>
+              <InfoAlert
+                title={intl.formatMessage({
+                  id: 'licenseDetail.pcard.alert.title',
+                })}
+                message={intl.formatMessage({
+                  id: 'licenseDetail.pcard.alert.description',
+                })}
+                type="info"
+                hasBorder
+              />
+            </View>
+          )}
           {!data?.payload?.data && licenseRes.loading ? (
             <ActivityIndicator
               size="large"
@@ -323,8 +365,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}
-      >
+        }}>
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
           type={data?.license?.type as LicenseCardType}
@@ -345,8 +386,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             right: 0,
             marginHorizontal: 16,
             zIndex: 100,
-          }}
-        >
+          }}>
           {Platform.OS === 'ios' ? (
             <AddPassButton
               style={{height: 52}}

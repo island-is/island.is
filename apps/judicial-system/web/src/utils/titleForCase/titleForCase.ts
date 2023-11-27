@@ -1,4 +1,4 @@
-import { FormattedMessage, IntlShape } from 'react-intl'
+import { IntlShape } from 'react-intl'
 
 import {
   CaseDecision,
@@ -6,8 +6,8 @@ import {
   CaseType,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
 import { strings } from './titleForCase.strings'
 
 export const titleForCase = (

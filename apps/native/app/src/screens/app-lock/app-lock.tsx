@@ -201,8 +201,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
             paddingBottom: 20,
             maxHeight: 200,
             flex: 1,
-          }}
-        >
+          }}>
           <Image
             source={logo}
             resizeMode="contain"

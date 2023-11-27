@@ -65,8 +65,8 @@ export const theDeceased: Field[] = [
     }) =>
       format(
         new Date(
-          ((data as { estate: EstateRegistrant }).estate
-            .dateOfDeath as unknown) as string,
+          (data as { estate: EstateRegistrant }).estate
+            .dateOfDeath as unknown as string,
         ),
         'dd.MM.yy',
       ) || '',
@@ -223,12 +223,14 @@ export const inheritance: Field[] = [
     },
     {
       cards: (application: Application) =>
-        ((application?.answers?.estateMembers as any).members as {
-          name: string
-          nationalId: string
-          relation: string
-          dummy?: boolean
-        }[])
+        (
+          (application?.answers?.estateMembers as any).members as {
+            name: string
+            nationalId: string
+            relation: string
+            dummy?: boolean
+          }[]
+        )
           .filter((member) => !member?.dummy)
           .map((member) => ({
             title: member.name,

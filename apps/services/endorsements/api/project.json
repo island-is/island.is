@@ -1,5 +1,6 @@
 {
-  "root": "apps/services/endorsements/api",
+  "name": "services-endorsements-api",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/endorsements/api/src",
   "projectType": "application",
   "prefix": "services-endorsements-api",
@@ -43,13 +44,13 @@
       }
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "services-endorsements-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/services/endorsements/api/**/*.{ts,tsx,js,jsx}"
@@ -57,23 +58,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/apps/services/endorsements/api"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/apps/services/endorsements/api"],
       "options": {
-        "jestConfig": "apps/services/endorsements/api/jest.config.js",
+        "jestConfig": "apps/services/endorsements/api/jest.config.ts",
         "runInBand": true,
         "passWithNoTests": true
       }
     },
     "dev-services": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "docker-compose up -d --build",
         "cwd": "apps/services/endorsements/api"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets services-endorsements-api",
@@ -85,7 +86,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "./scripts/run-xroad-proxy.sh",
@@ -95,42 +96,36 @@
         "parallel": true
       }
     },
-    "schemas/build-openapi": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
-        "command": "yarn nx run services-endorsements-api:schemas/build-openapi-internal $NX_OPTIONS"
-      }
-    },
-    "schemas/build-openapi-internal": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "outputPath": "apps/services/endorsements/api/src/openapi.yaml",
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/endorsements/api/tsconfig.app.json apps/services/endorsements/api/src/buildOpenApi.ts"
-      }
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../../node_modules/.bin/sequelize-cli db:migrate",
         "cwd": "apps/services/endorsements/api"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../../node_modules/.bin/sequelize-cli db:seed",
         "cwd": "apps/services/endorsements/api"
       }
     },
     "seed/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../../node_modules/.bin/sequelize-cli db:seed:undo",
         "cwd": "apps/services/endorsements/api"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "../../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/services/endorsements/api"

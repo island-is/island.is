@@ -1,37 +1,35 @@
 import React, { useContext, useMemo } from 'react'
-import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
-import { Box, Text } from '@island.is/island-ui/core'
-
 import { useIntl } from 'react-intl'
+import cn from 'classnames'
+
+import { Box, Text } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { tables, core } from '@island.is/judicial-system-web/messages'
 import {
   CaseListEntry,
-  isExtendedCourtRole,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
-
+import { core, tables } from '@island.is/judicial-system-web/messages'
+import {
+  TagAppealState,
+  TagCaseState,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import {
+  ColumnCaseType,
+  CourtCaseNumber,
+  CreatedDate,
+  DefendantInfo,
+  DurationDate,
+  getDurationDate,
+  SortButton,
+  TableContainer,
+  TableHeaderText,
+} from '@island.is/judicial-system-web/src/components/Table'
 import {
   useSortCases,
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-
-import {
-  UserContext,
-  TagAppealState,
-  TagCaseState,
-} from '@island.is/judicial-system-web/src/components'
-
-import {
-  ColumnCaseType,
-  CourtCaseNumber,
-  DefendantInfo,
-  SortButton,
-  TableContainer,
-  TableHeaderText,
-  DurationDate,
-  getDurationDate,
-} from '@island.is/judicial-system-web/src/components/Table'
 
 import MobilePastCase from './MobilePastCase'
 import * as styles from '../Table.css'
@@ -43,20 +41,18 @@ interface Props {
   testid?: string
 }
 
-const PastCasesTable: React.FC<Props> = (props) => {
+const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, onRowClick, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
-  const { sortedData, requestSort, getClassNamesFor } = useSortCases(
-    'createdAt',
-    'descending',
-    cases,
-  )
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortCases('createdAt', 'descending', cases)
+
   const pastCasesData = useMemo(
     () =>
       cases.sort((a: CaseListEntry, b: CaseListEntry) =>
-        a['created'].localeCompare(b['created']),
+        b['created'].localeCompare(a['created']),
       ),
     [cases],
   )
@@ -78,7 +74,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                 theCase.state,
                 theCase.validToDate,
                 theCase.initialRulingDate,
-                theCase.courtEndTime,
+                theCase.rulingDate,
               )}
             />
           </MobilePastCase>
@@ -98,9 +94,19 @@ const PastCasesTable: React.FC<Props> = (props) => {
               onClick={() => requestSort('defendant')}
               sortAsc={getClassNamesFor('defendant') === 'ascending'}
               sortDes={getClassNamesFor('defendant') === 'descending'}
+              isActive={isActiveColumn('defendant')}
             />
           </th>
           <TableHeaderText title={formatMessage(tables.type)} />
+          <th className={cn(styles.th, styles.largeColumn)}>
+            <SortButton
+              title={capitalize(formatMessage(tables.created, { suffix: 'i' }))}
+              onClick={() => requestSort('createdAt')}
+              sortAsc={getClassNamesFor('createdAt') === 'ascending'}
+              sortDes={getClassNamesFor('createdAt') === 'descending'}
+              isActive={isActiveColumn('createdAt')}
+            />
+          </th>
           <TableHeaderText title={formatMessage(tables.state)} />
           <TableHeaderText title={formatMessage(tables.duration)} />
         </>
@@ -131,18 +137,22 @@ const PastCasesTable: React.FC<Props> = (props) => {
               />
             </td>
             <td>
+              <CreatedDate created={column.created} />
+            </td>
+            <td>
               <Box marginRight={1} marginBottom={1}>
                 <TagCaseState
                   caseState={column.state}
                   caseType={column.type}
-                  isCourtRole={
-                    user?.role ? isExtendedCourtRole(user.role) : false
-                  }
+                  isCourtRole={isDistrictCourtUser(user)}
                   isValidToDateInThePast={column.isValidToDateInThePast}
                 />
               </Box>
               {column.appealState && (
-                <TagAppealState appealState={column.appealState} />
+                <TagAppealState
+                  appealState={column.appealState}
+                  appealRulingDecision={column.appealRulingDecision}
+                />
               )}
             </td>
             <td>
@@ -151,7 +161,7 @@ const PastCasesTable: React.FC<Props> = (props) => {
                   column.state,
                   column.validToDate,
                   column.initialRulingDate,
-                  column.courtEndTime,
+                  column.rulingDate,
                 )}
               </Text>
             </td>

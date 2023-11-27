@@ -8,11 +8,14 @@ import {
   Option,
   Box,
   Link,
+  Inline,
+  Tag,
+  LinkV2,
 } from '@island.is/island-ui/core'
 import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import { NewsCard, Webreader } from '@island.is/web/components'
 import { useRouter } from 'next/router'
-import { GetNewsQuery } from '@island.is/web/graphql/schema'
+import { GenericTag, GetNewsQuery } from '@island.is/web/graphql/schema'
 import { makeHref } from './utils'
 
 interface NewsListProps {
@@ -23,13 +26,14 @@ interface NewsListProps {
   selectedYear: number
   selectedMonth: number
   selectedPage: number
-  selectedTag: string
+  selectedTag: string | string[]
   newsOverviewUrl: string
   newsItemLinkType: LinkType
   parentPageSlug: string
   yearOptions: { label: any; value: any }[]
   monthOptions: { label: any; value: any }[]
   newsPerPage?: number
+  newsTags?: GenericTag[]
 }
 
 export const NewsList = ({
@@ -47,6 +51,7 @@ export const NewsList = ({
   yearOptions,
   newsPerPage = 10,
   monthOptions,
+  newsTags,
 }: NewsListProps) => {
   const router = useRouter()
   const n = useNamespace(namespace)
@@ -57,18 +62,58 @@ export const NewsList = ({
   const yearString = n('year', 'Ár')
   const monthString = n('month', 'Mánuður')
 
+  const filteredNewsTags = newsTags?.filter(
+    (tag) => !!tag?.title && !!tag?.slug,
+  )
+
   return (
     <Stack space={[3, 3, 4]}>
       <Text variant="h1" as="h1" marginBottom={0}>
-        {title}
+        {filteredNewsTags?.find((tag) => tag.slug === router?.query?.tag)
+          ?.title || title}
       </Text>
 
       <Webreader
         marginTop={0}
         marginBottom={0}
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         readId={null}
         readClass="rs_read"
       />
+
+      {filteredNewsTags && filteredNewsTags?.length > 0 && (
+        <Inline space={1}>
+          <LinkV2
+            href={
+              linkResolver('organizationnewsoverview', [parentPageSlug]).href
+            }
+          >
+            <Tag variant="blue" active={!router?.query?.tag}>
+              {n('showAllResults', 'Sýna allt')}
+            </Tag>
+          </LinkV2>
+          {filteredNewsTags?.map((tag, index) => (
+            <LinkV2
+              key={index}
+              href={
+                linkResolver('organizationnewsoverview', [parentPageSlug])
+                  .href +
+                '?tag=' +
+                tag.slug
+              }
+            >
+              <Tag
+                key={index}
+                variant="blue"
+                active={router?.query?.tag === tag.slug}
+              >
+                {tag.title}
+              </Tag>
+            </LinkV2>
+          ))}
+        </Inline>
+      )}
 
       {selectedYear && (
         <Hidden below="lg">
@@ -88,11 +133,15 @@ export const NewsList = ({
               (selectedYear ? selectedYear.toString() : allYearsString),
           )}
           options={yearOptions}
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onChange={({ value }: Option) => {
             router.push(
               makeHref(
                 selectedTag,
                 newsOverviewUrl,
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 value === allYearsString ? null : value,
               ),
             )
@@ -107,6 +156,8 @@ export const NewsList = ({
             placeholder={monthString}
             value={monthOptions.find((o) => o.value === selectedMonth)}
             options={monthOptions}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             onChange={({ value }: Option) =>
               router.push(
                 makeHref(selectedTag, newsOverviewUrl, selectedYear, value),
@@ -127,7 +178,11 @@ export const NewsList = ({
             <NewsCard
               key={index}
               title={newsItem.title}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               introduction={newsItem.intro}
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               image={newsItem.image}
               titleAs="h2"
               href={

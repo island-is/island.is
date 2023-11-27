@@ -63,9 +63,8 @@ export class UserIdentitiesController {
     }
 
     // Find by subjectId
-    const userIdentitiesBySubject = await this.userIdentityService.findBySubjectId(
-      id,
-    )
+    const userIdentitiesBySubject =
+      await this.userIdentityService.findBySubjectId(id)
 
     if (!userIdentitiesBySubject) {
       throw new NotFoundException("This user identity doesn't exist")

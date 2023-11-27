@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # api-domains-municipalities-financial-aid
 
 This library was generated with [Nx](https://nx.dev).

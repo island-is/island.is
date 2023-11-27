@@ -1,6 +1,6 @@
 const path = require('path')
 const { IgnorePlugin } = require('webpack')
-const withNx = require('@nrwl/next/plugins/with-nx')
+const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
 const withVanillaExtract = createVanillaExtractPlugin()
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
@@ -18,102 +18,153 @@ const {
   CONFIGCAT_SDK_KEY,
 } = process.env
 
-module.exports = withNx(
-  withVanillaExtract({
-    async rewrites() {
-      return [
-        {
-          source: '/umsoknir/:slug',
-          destination: 'https://island.is/umsoknir/:slug',
-        },
-        {
-          source: '/rss.xml',
-          destination: '/api/rss',
-        },
-        {
-          source: '/opinbernyskopun/rss.xml',
-          destination: '/api/rss/opinbernyskopun',
-        },
-      ]
-    },
-    webpack: (config, { isServer }) => {
-      if (process.env.ANALYZE === 'true' && !isServer) {
-        config.plugins.push(
-          new DuplicatesPlugin({
-            emitErrors: false,
-            verbose: true,
-          }),
-        )
+/**
+ * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ **/
+const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/umsoknir/:slug',
+        destination: 'https://island.is/umsoknir/:slug',
+      },
+      {
+        source: '/rss.xml',
+        destination: '/api/rss',
+      },
+      {
+        source: '/opinbernyskopun/rss.xml',
+        destination: '/api/rss/opinbernyskopun',
+      },
+    ]
+  },
+  async redirects() {
+    return [
+      {
+        source: '/en/organizations',
+        destination: '/en/o',
+        permanent: true,
+      },
+      {
+        source: '/en/organizations/:slug',
+        destination: '/en/o/:slug',
+        permanent: true,
+      },
+      {
+        source: '/en/organizations/:slug/:subSlug',
+        destination: '/en/o/:slug/:subSlug',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir',
+        destination: '/s',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir/:slug',
+        destination: '/s/:slug',
+        permanent: true,
+      },
+      {
+        source: '/stofnanir/:slug/:subSlug',
+        destination: '/s/:slug/:subSlug',
+        permanent: true,
+      },
+      {
+        source: '/handbaekur',
+        destination: '/leit?q=*&type=webManual',
+        permanent: true,
+      },
+      {
+        source: '/en/manuals',
+        destination: '/en/search?q=*&type=webManual',
+        permanent: true,
+      },
+    ]
+  },
+  webpack: (config, { isServer }) => {
+    if (process.env.ANALYZE === 'true' && !isServer) {
+      config.plugins.push(
+        new DuplicatesPlugin({
+          emitErrors: false,
+          verbose: true,
+        }),
+      )
 
-        config.plugins.push(
-          new StatoscopeWebpackPlugin({
-            saveTo: 'dist/apps/web/statoscope.html',
-            saveStatsTo: 'dist/apps/web/stats.json',
-            statsOptions: { all: true, source: false },
-          }),
-        )
+      config.plugins.push(
+        new StatoscopeWebpackPlugin({
+          saveTo: 'dist/apps/web/statoscope.html',
+          saveStatsTo: 'dist/apps/web/stats.json',
+          statsOptions: { all: true, source: false },
+        }),
+      )
 
-        config.plugins.push(
-          new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            reportFilename: isServer
-              ? '../analyze/server.html'
-              : './analyze/client.html',
-          }),
-        )
-      }
+      config.plugins.push(
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'static',
+          reportFilename: isServer
+            ? '../analyze/server.html'
+            : './analyze/client.html',
+        }),
+      )
+    }
 
-      if (!isServer) {
-        config.plugins.push(
-          new IgnorePlugin({
-            resourceRegExp: /^@island.is\/clients\/middlewares$/,
-          }),
-        )
-      }
+    if (!isServer) {
+      config.plugins.push(
+        new IgnorePlugin({
+          resourceRegExp: /^@island.is\/clients\/middlewares$/,
+        }),
+      )
+    }
 
-      const modules = path.resolve(__dirname, '../..', 'node_modules')
+    const modules = path.resolve(__dirname, '../..', 'node_modules')
 
-      config.resolve.alias = {
-        ...(config.resolve.alias || {}),
-        '@babel/runtime': path.resolve(modules, '@babel/runtime'),
-        'bn.js': path.resolve(modules, 'bn.js'),
-        'date-fns': path.resolve(modules, 'date-fns'),
-        'es-abstract': path.resolve(modules, 'es-abstract'),
-        'escape-string-regexp': path.resolve(modules, 'escape-string-regexp'),
-        'readable-stream': path.resolve(modules, 'readable-stream'),
-        'react-popper': path.resolve(modules, 'react-popper'),
-        inherits: path.resolve(modules, 'inherits'),
-        'graphql-tag': path.resolve(modules, 'graphql-tag'),
-        'safe-buffer': path.resolve(modules, 'safe-buffer'),
-        scheduler: path.resolve(modules, 'scheduler'),
-      }
+    config.resolve.alias = {
+      ...(config.resolve.alias || {}),
+      '@babel/runtime': path.resolve(modules, '@babel/runtime'),
+      'bn.js': path.resolve(modules, 'bn.js'),
+      'date-fns': path.resolve(modules, 'date-fns'),
+      'es-abstract': path.resolve(modules, 'es-abstract'),
+      'escape-string-regexp': path.resolve(modules, 'escape-string-regexp'),
+      'readable-stream': path.resolve(modules, 'readable-stream'),
+      'react-popper': path.resolve(modules, 'react-popper'),
+      inherits: path.resolve(modules, 'inherits'),
+      'graphql-tag': path.resolve(modules, 'graphql-tag'),
+      'safe-buffer': path.resolve(modules, 'safe-buffer'),
+      scheduler: path.resolve(modules, 'scheduler'),
+    }
 
-      return config
-    },
+    return config
+  },
 
-    cssModules: false,
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    // Requests made by the server are internal request made directly to the api hostname
+    graphqlUrl: API_URL,
+    graphqlEndpoint: graphqlPath,
+  },
 
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      // Requests made by the server are internal request made directly to the api hostname
-      graphqlUrl: API_URL,
-      graphqlEndpoint: graphqlPath,
-    },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    graphqlUrl: '',
+    graphqlEndpoint: graphqlPath,
+    disableApiCatalog: DISABLE_API_CATALOGUE,
+    ddRumApplicationId: DD_RUM_APPLICATION_ID,
+    ddRumClientToken: DD_RUM_CLIENT_TOKEN,
+    appVersion: APP_VERSION,
+    environment: ENVIRONMENT,
+    configCatSdkKey: CONFIGCAT_SDK_KEY,
+  },
 
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      graphqlUrl: '',
-      graphqlEndpoint: graphqlPath,
-      disableApiCatalog: DISABLE_API_CATALOGUE,
-      ddRumApplicationId: DD_RUM_APPLICATION_ID,
-      ddRumClientToken: DD_RUM_CLIENT_TOKEN,
-      appVersion: APP_VERSION,
-      environment: ENVIRONMENT,
-      configCatSdkKey: CONFIGCAT_SDK_KEY,
-    },
+  env: {
+    API_MOCKS: process.env.API_MOCKS || '',
+  },
+}
 
-    env: {
-      API_MOCKS: process.env.API_MOCKS || '',
-    },
-  }),
-)
+const plugins = [
+  // Add more Next.js plugins to this list if needed.
+  withNx,
+  withVanillaExtract,
+]
+
+module.exports = composePlugins(...plugins)(nextConfig)

@@ -138,7 +138,6 @@ export const overview = buildSection({
           title: '',
           space: 'containerGutter',
         }),
-
         buildCheckboxField({
           id: 'confirmAction',
           title: '',
@@ -148,7 +147,7 @@ export const overview = buildSection({
           options: [
             {
               value: YES,
-              label: m.divisionOfEstateConfirmActionCheckbox.defaultMessage,
+              label: m.divisionOfEstateConfirmActionCheckbox,
             },
           ],
         }),

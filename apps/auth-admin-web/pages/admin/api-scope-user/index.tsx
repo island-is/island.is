@@ -7,7 +7,7 @@ import LocalizationUtils from '../../../utils/localization.utils'
 import { ApiScopeUserDTO } from './../../../entities/dtos/api-scope-user.dto'
 import { ApiScopeUser } from './../../../entities/models/api-scope-user.model'
 
-const Index: React.FC = () => {
+const Index: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const handleCancel = () => {
     router.back()

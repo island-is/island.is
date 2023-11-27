@@ -8,7 +8,7 @@ interface Props {
   title?: string | MessageDescriptor
 }
 
-export const NotFound: FC<Props> = ({ title }) => {
+export const NotFound: FC<React.PropsWithChildren<Props>> = ({ title }) => {
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
 

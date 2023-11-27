@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # Service Portal Applications
 
 ## Usage

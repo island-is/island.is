@@ -246,9 +246,10 @@ export class SamgongustofaService {
         const vehicle = vehicleInformationList[i]
         try {
           if (vehicle.isRecyclable) {
-            const resRequestType = await this.recyclingRequestService.findAllWithPermno(
-              vehicle['permno'],
-            )
+            const resRequestType =
+              await this.recyclingRequestService.findAllWithPermno(
+                vehicle['permno'],
+              )
             if (resRequestType.length > 0) {
               const requestType = resRequestType[0]['dataValues']['requestType']
               vehicleInformationList[i]['status'] = requestType

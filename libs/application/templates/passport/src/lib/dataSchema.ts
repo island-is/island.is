@@ -4,7 +4,8 @@ import { error } from './error'
 import { Services } from './constants'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
-const emailRegex = /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
+const emailRegex =
+  /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
 const isValidEmail = (value: string) => emailRegex.test(value)
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -47,8 +48,8 @@ export const dataSchema = z.object({
     phoneNumber: z
       .string()
       .refine((v) => isValidPhoneNumber(v), { params: error.invalidValue }),
-    hasDisabilityDiscount: z.array(z.string()).optional(),
-    hasDisabilityDiscountChecked: z.boolean().optional(),
+    disabilityCheckbox: z.array(z.string()).optional(),
+    hasDisabilityLicense: z.boolean().optional(),
   }),
   childsPersonalInfo: z.object({
     name: z.string().min(1),

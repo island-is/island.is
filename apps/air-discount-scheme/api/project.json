@@ -1,5 +1,6 @@
 {
-  "root": "apps/air-discount-scheme/api",
+  "name": "air-discount-scheme-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/air-discount-scheme/api/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-api",
@@ -24,13 +25,13 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "air-discount-scheme-api:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "apps/air-discount-scheme/api/**/*.{ts,tsx,js,jsx}"
@@ -38,24 +39,19 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/api/jest.config.js",
+        "jestConfig": "apps/air-discount-scheme/api/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/air-discount-scheme/api"]
+      "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/api"]
     },
-    "schemas/build-graphql-schema": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P apps/air-discount-scheme/api/tsconfig.json scripts/build-graphql-schema.ts apps/air-discount-scheme/api/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "docker-express": {}
   },

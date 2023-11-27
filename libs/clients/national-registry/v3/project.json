@@ -1,0 +1,50 @@
+{
+  "name": "clients-national-registry-v3",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/national-registry/v3/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/national-registry/v3/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/national-registry/v3"],
+      "options": {
+        "jestConfig": "libs/clients/national-registry/v3/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/national-registry/v3"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/sessions/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/sessions/codegen.yml"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/national-registry/v3/gen/fetch -i libs/clients/national-registry/v3/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

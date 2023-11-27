@@ -17,7 +17,9 @@ import {
   ReviewFieldProps,
 } from '../../types'
 
-const ContactInfo: FC<ReviewFieldProps> = ({ application }) => {
+const ContactInfo: FC<React.PropsWithChildren<ReviewFieldProps>> = ({
+  application,
+}) => {
   const { register } = useFormContext()
   const { formatMessage } = useLocale()
 

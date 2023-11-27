@@ -40,8 +40,8 @@ export class OrganizationPage {
   @CacheField(() => [SliceUnion])
   bottomSlices!: Array<typeof SliceUnion | null>
 
-  @CacheField(() => GenericTag, { nullable: true })
-  newsTag!: GenericTag | null
+  @CacheField(() => [GenericTag], { nullable: true })
+  secondaryNewsTags?: GenericTag[] | null
 
   @CacheField(() => [LinkGroup])
   menuLinks!: Array<LinkGroup>
@@ -82,7 +82,7 @@ export const mapOrganizationPage = ({
   bottomSlices: (fields.bottomSlices ?? [])
     .map(safelyMapSliceUnion)
     .filter(Boolean),
-  newsTag: fields.newsTag ? mapGenericTag(fields.newsTag) : null,
+  secondaryNewsTags: (fields.secondaryNewsTags ?? []).map(mapGenericTag),
   menuLinks: (fields.menuLinks ?? []).map(mapLinkGroup),
   secondaryMenu: fields.secondaryMenu
     ? mapLinkGroup(fields.secondaryMenu)

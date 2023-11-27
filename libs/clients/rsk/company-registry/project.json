@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/rsk/company-registry",
+  "name": "clients-rsk-company-registry",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/rsk/company-registry/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/rsk/company-registry/**/*.{ts,tsx,js,jsx}"
@@ -12,15 +13,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/rsk/company-registry"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/company-registry"],
       "options": {
-        "jestConfig": "libs/clients/rsk/company-registry/jest.config.js",
+        "jestConfig": "libs/clients/rsk/company-registry/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl 'http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/ft-v1/openapi.json' --header 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' > src/clientConfig.json",
@@ -31,11 +32,12 @@
         "cwd": "libs/clients/rsk/company-registry"
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/rsk/company-registry/src/lib/gen/fetch -i libs/clients/rsk/company-registry/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/src/lib/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

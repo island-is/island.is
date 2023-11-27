@@ -6,7 +6,7 @@ import { setupWithAuth } from '../../../../test/setup'
 import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { DelegationDTO } from '@island.is/auth-api-lib'
-import { RskProcuringClient } from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { user } from './delegations-filters-types'
 import { Sequelize } from 'sequelize-typescript'
 import { getConnectionToken } from '@nestjs/sequelize'
@@ -19,7 +19,7 @@ describe('DelegationsController', () => {
   let server: request.SuperTest<request.Test>
   let factory: FixtureFactory
   let nationalRegistryApi: NationalRegistryClientService
-  let rskApi: RskProcuringClient
+  let rskApi: RskRelationshipsClient
 
   beforeAll(async () => {
     app = await setupWithAuth({
@@ -39,7 +39,7 @@ describe('DelegationsController', () => {
         }),
       )
 
-    rskApi = app.get(RskProcuringClient)
+    rskApi = app.get(RskRelationshipsClient)
 
     factory = new FixtureFactory(app)
   })
@@ -89,7 +89,7 @@ describe('DelegationsController', () => {
           .mockImplementation(async () => testCase.fromChildren)
 
         jest
-          .spyOn(rskApi, 'getSimple')
+          .spyOn(rskApi, 'getIndividualRelationships')
           .mockImplementation(async () => testCase.procuration)
       })
 

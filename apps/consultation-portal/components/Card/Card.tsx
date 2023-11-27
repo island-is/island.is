@@ -25,6 +25,7 @@ type CardInfo = {
   processBegins?: string
   processEnds?: string
   eyebrows: Array<string>
+  caseNumber: string
 }
 type CardProps = {
   card: CardInfo
@@ -47,7 +48,7 @@ const Card = ({
 
   const child = (
     <>
-      <Box>
+      <Box dataTestId="front-page-card">
         <Box
           display="flex"
           flexDirection="row"
@@ -57,7 +58,7 @@ const Card = ({
         >
           <Tag variant={getTagVariants(card.tag)}>{card.tag}</Tag>
           <Text as="p" variant="eyebrow" color="purple400">
-            {`${loc.tagText} S-${card.id}`}
+            {`${loc.tagText} S-${card.caseNumber}`}
           </Text>
         </Box>
         <Eyebrows
@@ -92,11 +93,14 @@ const Card = ({
       </Box>
       <Inline space={1} justifyContent="spaceBetween" alignY="center">
         {showAttachment && <Box>{dropdown}</Box>}
-        <Box>
+        {frontPage ? (
+          <ArrowLink as="span">{loc.arrowLink.text}</ArrowLink>
+        ) : (
           <ArrowLink href={`${loc.arrowLink.href}/${card.id}`}>
             {loc.arrowLink.text}
           </ArrowLink>
-        </Box>
+        )}
+
         {showPublished && (
           <Text variant="eyebrow" color="purple400">{`${
             loc.publishedText

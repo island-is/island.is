@@ -13,6 +13,7 @@ const QUERY = gql`
       requirements {
         key
         requirementMet
+        daysOfResidency
       }
     }
   }
@@ -36,7 +37,11 @@ export const useEligibility = (
       B_FULL,
     ) ?? B_FULL
 
-  const { data = {}, error, loading } = useQuery(QUERY, {
+  const {
+    data = {},
+    error,
+    loading,
+  } = useQuery(QUERY, {
     skip: usingFakeData,
     variables: {
       input: {
@@ -48,7 +53,10 @@ export const useEligibility = (
   if (usingFakeData) {
     return {
       loading: false,
-      eligibility: fakeEligibility(applicationFor),
+      eligibility: fakeEligibility(
+        applicationFor,
+        parseInt(fakeData?.howManyDaysHaveYouLivedInIceland.toString(), 10),
+      ),
     }
   }
 

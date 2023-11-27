@@ -1,3 +1,4 @@
+import max from 'lodash/max'
 import type {
   CreationOptional,
   InferAttributes,
@@ -78,17 +79,12 @@ export class Delegation extends Model<
     }
 
     // 2. Find items with value in the array
-    const arrDates = this.delegationScopes
+    const dates = (this.delegationScopes
       ?.filter((x) => x.validTo !== null && x.validTo !== undefined)
-      .map((x) => x.validTo) as Array<Date>
-    if (arrDates && arrDates.length > 0) {
-      // Return the max value
-      return arrDates.reduce((a, b) => {
-        return a > b ? a : b
-      })
-    }
+      .map((x) => x.validTo) || []) as Array<Date>
 
-    return undefined
+    // Return the max value
+    return max(dates)
   }
 
   @CreatedAt
@@ -125,6 +121,9 @@ export class Delegation extends Model<
       toName: this.toName,
       validTo: this.validTo,
       types: [DelegationType.Custom],
+      scopes: this.delegationScopes
+        ? this.delegationScopes.map((scope) => scope.toDTO())
+        : [],
     }
   }
 }

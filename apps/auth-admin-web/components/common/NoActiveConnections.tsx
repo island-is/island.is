@@ -6,7 +6,7 @@ interface Props {
   helpText: string
 }
 
-const NoActiveConnections: React.FC<Props> = ({
+const NoActiveConnections: React.FC<React.PropsWithChildren<Props>> = ({
   show,
   title,
   helpText,

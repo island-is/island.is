@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { Table as T } from '@island.is/island-ui/core'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -18,13 +17,7 @@ interface Props {
   data: Array<DetailedSchedule>
 }
 
-type DetailData = Array<
-  DetailedSchedule & {
-    paid: boolean
-  }
->
-
-const FinanceScheduleDetailTable: FC<Props> = ({ data }) => {
+const FinanceScheduleDetailTable = ({ data }: Props) => {
   const { formatMessage } = useLocale()
   useNamespaces('sp.finance-schedule')
 

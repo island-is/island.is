@@ -16,15 +16,13 @@ import { EstateAsset } from '@island.is/clients/syslumenn'
 import { AdditionalRealEstate } from './AdditionalRealEstate'
 import { InputController } from '@island.is/shared/form-fields'
 
-export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const RealEstateRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
 
@@ -36,7 +34,7 @@ export const RealEstateRepeater: FC<FieldBaseProps<Answers>> = ({
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.assets) {
-      append(externalData.estate.assets)
+      replace(externalData.estate.assets)
     }
   }, [])
 

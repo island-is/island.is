@@ -1,0 +1,621 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Landlæknir API",
+    "description": "Vefþjónustur á vegum Landlæknis.",
+    "contact": {
+      "name": "Hólmfríður Pálsdóttir",
+      "email": "holmfridur.palsdottir@landlaeknir.is"
+    },
+    "license": { "name": "Landlæknir", "url": "https://www.landlaeknir.is/" },
+    "version": "1.0.1",
+    "x-links": {
+      "documentation": "https://www.landlaeknir.is/",
+      "responsibleParty": "https://www.landlaeknir.is/",
+      "bugReport": "https://www.landlaeknir.is/um-embaettid/abendingar/",
+      "featureRequest": "https://www.landlaeknir.is/"
+    }
+  },
+  "paths": {
+    "/StarfsleyfiAMinumSidum": {
+      "get": {
+        "tags": ["StarfsleyfiAMinumSidum"],
+        "summary": "Sækja mín starfsleyfi",
+        "responses": {
+          "200": {
+            "description": "Skilar mínum starfsleyfum",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MinarSidur" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MinarSidur" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MinarSidur" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Kennitala er á röngu formi" },
+          "404": { "description": "Starfsmaður fannst ekki" }
+        }
+      }
+    },
+    "/StodskrarFraEmbaettiLandlaeknis/SaekjaAllaRekstraradilar": {
+      "get": {
+        "tags": ["StodskrarFraEmbaettiLandlaeknis"],
+        "summary": "Allir virkir rekstraraðilar í gagnagrunni embætti landlæknis",
+        "responses": {
+          "200": {
+            "description": "Skilar öllum Rekstraraðilum",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Rekstraradilar" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Rekstraradilar" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Rekstraradilar" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Villa kom upp" }
+        }
+      }
+    },
+    "/StodskrarFraEmbaettiLandlaeknis/SaekjaAllaHeilbrigdisstarfsmenn": {
+      "get": {
+        "tags": ["StodskrarFraEmbaettiLandlaeknis"],
+        "summary": "Listi yfir lækna, hjúkrunarfræðingar, ljósmæður, tannlæknar...",
+        "responses": {
+          "200": {
+            "description": "Skilar öllum heilbrigðisstarfsmönnum",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Heilbrigdisstarfsmenn"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Heilbrigdisstarfsmenn"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Heilbrigdisstarfsmenn"
+                  }
+                }
+              }
+            }
+          },
+          "400": { "description": "Villa kom upp" }
+        }
+      }
+    },
+    "/Vottord": {
+      "get": {
+        "tags": ["Vottord"],
+        "summary": "Sækja upplýsingar um vottorð",
+        "responses": {
+          "200": {
+            "description": "Skilar vottorðum",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Vottord" }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Vottord" }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Vottord" }
+                }
+              }
+            }
+          },
+          "400": { "description": "Kennitala er á röngu formi" },
+          "404": { "description": "Starfsmaður fannst ekki" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MinarSidur": {
+        "type": "object",
+        "properties": {
+          "logadili_ID": {
+            "type": "string",
+            "description": "ID á Lögaðila",
+            "nullable": true,
+            "example": "123456"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Kennitala á Viðkomandi",
+            "nullable": true,
+            "example": "123456-1234"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Nafn á viðkomandi",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "starfsstett": {
+            "type": "string",
+            "description": "Starfsstétt",
+            "nullable": true,
+            "example": "Sjúkraflutningamaður"
+          },
+          "leyfi": {
+            "type": "string",
+            "description": "Leyfi",
+            "nullable": true,
+            "example": "Starfsleyfi"
+          },
+          "leyfisnumer": {
+            "type": "string",
+            "description": "Leyfisnúmer",
+            "nullable": true,
+            "example": "123"
+          },
+          "gildir_Fra": {
+            "type": "string",
+            "description": "Gildir frá dagsetning",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00.0000000"
+          },
+          "gildir_TIl": {
+            "type": "string",
+            "description": "Gildir Til dagsetning",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2009-11-03T00:00:00.0000000"
+          },
+          "id": {
+            "type": "integer",
+            "description": "Einkvæmt númer færslu",
+            "format": "int32",
+            "example": 99999
+          },
+          "stada": {
+            "type": "string",
+            "description": "Staða starfsleyfis",
+            "nullable": true,
+            "example": "Í gildi"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir skil á upplýsingum fyrir viðkomandi starfsmann"
+      },
+      "Rekstraradilar": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int32",
+            "example": 12345
+          },
+          "skraningarnumer": {
+            "type": "string",
+            "description": "Skráningarnúmer",
+            "nullable": true,
+            "example": "RA07-2034"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Kennitala",
+            "nullable": true,
+            "example": "123"
+          },
+          "rekstraradili": {
+            "type": "string",
+            "description": "Rekstraraðili",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "adsetur": {
+            "type": "string",
+            "description": "Aðsetur",
+            "nullable": true,
+            "example": "Sálfræðihúsið,"
+          },
+          "postfang": {
+            "type": "string",
+            "description": "Póstfang",
+            "nullable": true,
+            "example": "Hverfisgata 1"
+          },
+          "heilbrigdisumdaemi": {
+            "type": "string",
+            "description": "Heilbrigðisumdæmi",
+            "nullable": true,
+            "example": "Höfuðborgarsvæðið"
+          },
+          "sottvarnarumdaemi": {
+            "type": "string",
+            "description": "Sóttvarnarumdæmi",
+            "nullable": true,
+            "example": "Höfuðborgarsvæðið"
+          },
+          "postnr": {
+            "type": "string",
+            "description": "Póstnúmer",
+            "nullable": true,
+            "example": "Höfuðborgarsvæðið"
+          },
+          "kt_Abyrgdarmanns": {
+            "type": "string",
+            "description": "Kennitala ábyrgðarmanns",
+            "nullable": true,
+            "example": "0101012229"
+          },
+          "nafn_AB_Adila": {
+            "type": "string",
+            "description": "Nafn AB Aðila",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "tilheyrir": {
+            "type": "string",
+            "description": "Tilheyrir",
+            "nullable": true,
+            "example": "RA18-4534"
+          },
+          "rekstrarform": {
+            "type": "string",
+            "description": "Rekstrarform",
+            "nullable": true,
+            "example": "E"
+          },
+          "teg_Rekstrarform": {
+            "type": "string",
+            "description": "Tegund Rekstrarforms",
+            "nullable": true,
+            "example": "null"
+          },
+          "svidsnumer": {
+            "type": "string",
+            "description": "Sviðsnúmer",
+            "nullable": true,
+            "example": "01"
+          },
+          "teG_REKSTRAR": {
+            "type": "string",
+            "description": "Tegund Rekstrar",
+            "nullable": true,
+            "example": "80"
+          },
+          "teG_REKSTRAR_HEITI": {
+            "type": "string",
+            "description": "Tegund Rekstrar Heiti",
+            "nullable": true,
+            "example": "Starfsstofa"
+          },
+          "teG_STARFSSVIDS": {
+            "type": "string",
+            "description": "Tegund Starfssvið",
+            "nullable": true,
+            "example": "SA"
+          },
+          "starfssvid": {
+            "type": "string",
+            "description": "Starfsvið",
+            "nullable": true,
+            "example": "Sálfræðingur"
+          },
+          "stada": {
+            "type": "string",
+            "description": "Staða",
+            "nullable": true,
+            "example": "Virkt"
+          },
+          "tilkynnt": {
+            "type": "string",
+            "description": "Tilkynnt",
+            "nullable": true,
+            "example": "09/01/2007 00:00:00"
+          },
+          "aR_TILKYNNT": {
+            "type": "string",
+            "description": "Ár Tilkynnt",
+            "nullable": true,
+            "example": "2000"
+          },
+          "maN_TILKYNNT": {
+            "type": "string",
+            "description": "Mánuður Tilkynnt",
+            "nullable": true,
+            "example": "01"
+          },
+          "daG_TILKYNNT": {
+            "type": "string",
+            "description": "Dagsetning Tilkynnt",
+            "nullable": true,
+            "example": "02"
+          },
+          "skrad": {
+            "type": "string",
+            "description": "Skráð",
+            "nullable": true,
+            "example": "09/01/2007 00:00:00"
+          },
+          "stadfest": {
+            "type": "string",
+            "description": "Staðfest",
+            "nullable": true,
+            "example": "09/01/2007 00:00:00"
+          },
+          "aR_STADFEST": {
+            "type": "string",
+            "description": "Ár staðfest",
+            "nullable": true,
+            "example": "2000"
+          },
+          "maN_STADFEST": {
+            "type": "string",
+            "description": "Mánuður staðfest",
+            "nullable": true,
+            "example": "02"
+          },
+          "daG_STADFESTT": {
+            "type": "string",
+            "description": "Dags. staðfest",
+            "nullable": true,
+            "example": "01"
+          },
+          "breytt": {
+            "type": "string",
+            "description": "Breytt",
+            "nullable": true,
+            "example": "09/01/2007 00:00:00"
+          },
+          "malsnumer": {
+            "type": "string",
+            "description": "Málsnúmer",
+            "nullable": true,
+            "example": "1231212"
+          },
+          "tolvupostur": {
+            "type": "string",
+            "description": "Tölvupóstur",
+            "nullable": true,
+            "example": "jon@jonsson.is"
+          },
+          "undirskR_ADILI": {
+            "type": "string",
+            "description": "Undirskrift Aðila",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "sergrein": {
+            "type": "string",
+            "description": "Sérgrein",
+            "nullable": true,
+            "example": "SA"
+          },
+          "thjonustuflokkur": {
+            "type": "string",
+            "description": "Þjónustuflokkur",
+            "nullable": true,
+            "example": "700"
+          },
+          "laT_WGS84": {
+            "type": "string",
+            "description": "LAT WGS84",
+            "nullable": true,
+            "example": "65,681422560691"
+          },
+          "lonG_WGS84": {
+            "type": "string",
+            "description": "Long WGS84",
+            "nullable": true,
+            "example": "-18,0906092729421"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir skil á upplýsingum fyrir Rekstraraðila"
+      },
+      "Heilbrigdisstarfsmenn": {
+        "type": "object",
+        "properties": {
+          "logadili_ID": {
+            "type": "integer",
+            "description": "ID á Lögaðila",
+            "format": "int32",
+            "example": 12
+          },
+          "numer": {
+            "type": "string",
+            "description": "Númer",
+            "nullable": true,
+            "example": "1234"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "Kennitala",
+            "nullable": true,
+            "example": "0101012229"
+          },
+          "nafn": {
+            "type": "string",
+            "description": "Nafn",
+            "nullable": true,
+            "example": "Jón Jónsson"
+          },
+          "kyn": {
+            "type": "integer",
+            "description": "Kyn",
+            "format": "int32",
+            "example": 2
+          },
+          "menntun": {
+            "type": "string",
+            "description": "Menntun",
+            "nullable": true,
+            "example": "Læknir"
+          },
+          "kandidats_ar": {
+            "type": "string",
+            "description": "Kandidats ár",
+            "nullable": true,
+            "example": "2000"
+          },
+          "leyfisstada": {
+            "type": "string",
+            "description": "Leyfisstaða",
+            "nullable": true,
+            "example": "Almennt lækingaleyfi"
+          },
+          "dags_Laekn_Leyfis": {
+            "type": "string",
+            "description": "Dagsetning Leyfis",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_1": {
+            "type": "string",
+            "description": "Dags Sérgrein 1",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "sergr_1": {
+            "type": "string",
+            "description": "Sérgrein 1",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_2": {
+            "type": "string",
+            "description": "Dags Sérgrein 2",
+            "nullable": true,
+            "example": "Almennar lyflækningar"
+          },
+          "sergr_2": {
+            "type": "string",
+            "description": "Sérgrein 2",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "dags_Sergr_3": {
+            "type": "string",
+            "description": "Dags Sérgrein 3",
+            "nullable": true,
+            "example": "Líknarlækningar"
+          },
+          "sergr_3": {
+            "type": "string",
+            "description": "Sérgrein 3",
+            "nullable": true,
+            "example": "01-01-2000"
+          },
+          "dags_Sergr_4": {
+            "type": "string",
+            "description": "Dags Sérgrein 4",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "sergr_4": {
+            "type": "string",
+            "description": "Sérgrein 4",
+            "nullable": true,
+            "example": "Almennar lyflækningar"
+          },
+          "sidast_Breytt": {
+            "type": "string",
+            "description": "Síðast breytt",
+            "nullable": true,
+            "example": "04/22/2005 00:00:00"
+          },
+          "ny_Leyfisstada": {
+            "type": "string",
+            "description": "Ný Leyfisstaða",
+            "nullable": true,
+            "example": ""
+          },
+          "ny_Dags_Leyfisstodu": {
+            "type": "string",
+            "description": "Ný Dagsetning leyfisstöðu",
+            "nullable": true,
+            "example": "01-01-2000"
+          },
+          "audkenni": {
+            "type": "string",
+            "description": "Auðkenni",
+            "nullable": true,
+            "example": "HJ"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi fyrir skil á upplýsingum Heilbrigðisstarfsmenn"
+      },
+      "Vottord": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "heiti": {
+            "type": "string",
+            "description": "Heiti Vottorðs",
+            "nullable": true,
+            "example": "Vottorð um starfsleyfi"
+          },
+          "verd": {
+            "type": "integer",
+            "description": "Verð Vottorðs í krónum",
+            "format": "int32",
+            "example": 2700
+          }
+        },
+        "additionalProperties": false,
+        "description": "Gagnaklasi af starfsleyfi fyrir Mínar síður"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Enter 'Bearer' [space] and then your valid token in the text input below.\r\n\r\nExample: \"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

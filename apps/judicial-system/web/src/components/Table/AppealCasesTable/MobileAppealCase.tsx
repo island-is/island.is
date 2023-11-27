@@ -2,18 +2,17 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-
 import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
 import { CategoryCard } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
+  children: React.ReactNode
   theCase: CaseListEntry
   onClick: () => void
 }
@@ -33,6 +32,7 @@ const MobileAppealCase: React.FC<Props> = ({ theCase, onClick, children }) => {
         <TagAppealState
           appealState={theCase.appealState}
           appealRulingDecision={theCase.appealRulingDecision}
+          appealCaseNumber={theCase.appealCaseNumber}
         />,
       ]}
     >

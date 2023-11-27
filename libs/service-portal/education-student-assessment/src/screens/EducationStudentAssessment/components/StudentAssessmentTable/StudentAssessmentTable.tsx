@@ -10,7 +10,12 @@ import {
   Text,
   TextProps,
 } from '@island.is/island-ui/core'
-import { EmptyState, IntroHeader, m } from '@island.is/service-portal/core'
+import {
+  EmptyState,
+  IntroHeader,
+  MENNTAMALASTOFNUN_SLUG,
+  m,
+} from '@island.is/service-portal/core'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -98,11 +103,11 @@ const StudentAssessmentTable = () => {
         <IntroHeader
           title={data?.educationExamResult.fullName}
           intro={{
-            id:
-              'sp.education-student-assessment:education-student-assessment-intro',
+            id: 'sp.education-student-assessment:education-student-assessment-intro',
             defaultMessage:
               'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           }}
+          serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
         />
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
@@ -226,7 +231,7 @@ const StudentAssessmentTable = () => {
       ))}
 
       {data?.educationExamResult.grades.length === 0 && (
-        <Box marginTop={8}>
+        <Box marginTop={[0, 8]}>
           <EmptyState title={m.noDataFound} />
         </Box>
       )}

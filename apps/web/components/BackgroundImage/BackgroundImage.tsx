@@ -7,7 +7,7 @@ import { theme, Colors } from '@island.is/island-ui/theme'
 import * as styles from './BackgroundImage.css'
 
 type BaseProps = {
-  image: { url: string; title: string }
+  image?: { url?: string; title?: string }
   ratio?: string
   width?: number
   height?: number
@@ -17,6 +17,7 @@ type BaseProps = {
   backgroundSize?: 'cover' | 'contain'
   intersectionOptions?: IntersectionObserverInit
   quality?: number
+  format?: 'jpg' | 'png' | 'webp' | 'gif' | 'avif'
 }
 
 type UseThumbnailProps = {
@@ -69,15 +70,16 @@ export const BackgroundImage = ({
     display: 'inlineFlex',
     overflow: 'hidden',
   },
+  format,
 }: BaseProps & ExtraProps) => {
   const intersectionRef = useRef(null)
   const intersection = useIntersection(intersectionRef, intersectionOptions)
   const [shouldLoad, setShouldLoad] = useState<boolean>(false)
   const q = quality >= 0 && quality <= 100 ? quality : 80
-  const src = `${image.url}?w=${width}&q=${q}`
+  const src = `${image?.url}?w=${width}&q=${q}${format ? `&fm=${format}` : ''}`
   const backgroundImageRef = useRef<HTMLDivElement | null>(null)
-  const thumbnail = image.url + '?w=50&q=20'
-  const alt = image.title ?? ''
+  const thumbnail = image?.url + '?w=50&q=20'
+  const alt = image?.title ?? ''
   const imageProps = alt
     ? {
         role: 'img',

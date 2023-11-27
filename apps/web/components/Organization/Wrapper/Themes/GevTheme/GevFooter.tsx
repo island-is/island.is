@@ -14,6 +14,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { webRichText } from '@island.is/web/utils/richText'
 import * as styles from './GevFooter.css'
+import { ReactNode } from 'react'
 
 interface GevFooterProps {
   title: string
@@ -64,7 +65,7 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
                 )}
                 {webRichText(item.content as SliceType[], {
                   renderNode: {
-                    [BLOCKS.PARAGRAPH]: (_node, children) => (
+                    [BLOCKS.PARAGRAPH]: (_node: never, children: ReactNode) => (
                       <Text color="dark400" marginY={1}>
                         {children}
                       </Text>
@@ -99,7 +100,10 @@ const GevFooter = ({ title, namespace, footerItems }: GevFooterProps) => {
                   )}
                   {webRichText(item.content as SliceType[], {
                     renderNode: {
-                      [BLOCKS.PARAGRAPH]: (_node, children) => (
+                      [BLOCKS.PARAGRAPH]: (
+                        _node: never,
+                        children: ReactNode,
+                      ) => (
                         <Text color="dark400" marginY={1}>
                           {children}
                         </Text>

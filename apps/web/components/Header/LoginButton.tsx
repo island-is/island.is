@@ -57,6 +57,7 @@ export function LoginButton(props: {
     <>
       <Hidden above={'md'}>
         <DropdownMenu
+          fixed
           disclosure={
             <Button
               colorScheme={props.colorScheme}
@@ -65,11 +66,14 @@ export function LoginButton(props: {
               title={t.login}
             />
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           items={items}
         />
       </Hidden>
       <Hidden below={'lg'}>
         <DropdownMenu
+          fixed
           disclosure={
             <Button
               colorScheme={props.colorScheme}
@@ -79,6 +83,8 @@ export function LoginButton(props: {
               {t.login}
             </Button>
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           items={items}
           openOnHover
         />

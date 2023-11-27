@@ -20,7 +20,7 @@ type Props = {
   onEdit: (id: string) => void
 }
 
-export const ComplainedFor: FC<Props> = ({
+export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
   complainedFor,
   connection,
   complainedForType,
@@ -89,8 +89,8 @@ export const ComplainedFor: FC<Props> = ({
             </GridColumn>
             <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
               <ValueLine
-                value={complainedFor.ssn}
-                label={complainedForMessages.labels.ssn}
+                value={complainedFor.nationalId}
+                label={complainedForMessages.labels.nationalId}
               />
             </GridColumn>
           </GridRow>
@@ -111,25 +111,29 @@ export const ComplainedFor: FC<Props> = ({
           <GridRow>
             <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
               <ValueLine
-                value={complainedFor.postcode}
-                label={complainedForMessages.labels.postcode}
+                value={complainedFor.postalCode}
+                label={complainedForMessages.labels.postalCode}
               />
             </GridColumn>
-            <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
-              <ValueLine
-                value={complainedFor.phone}
-                label={complainedForMessages.labels.phone}
-              />
-            </GridColumn>
+            {complainedFor.phoneNumber && (
+              <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
+                <ValueLine
+                  value={complainedFor.phoneNumber}
+                  label={complainedForMessages.labels.phoneNumber}
+                />
+              </GridColumn>
+            )}
           </GridRow>
-          <GridRow>
-            <GridColumn span="9/12">
-              <ValueLine
-                value={complainedFor.email}
-                label={complainedForMessages.labels.email}
-              />
-            </GridColumn>
-          </GridRow>
+          {complainedFor.email && (
+            <GridRow>
+              <GridColumn span="9/12">
+                <ValueLine
+                  value={complainedFor.email}
+                  label={complainedForMessages.labels.email}
+                />
+              </GridColumn>
+            </GridRow>
+          )}
         </ReviewGroup>
       )}
     </>

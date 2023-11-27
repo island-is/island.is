@@ -1,6 +1,7 @@
 import * as React from 'react'
 import cn from 'classnames'
 import { Box } from '../Box/Box'
+import { Text } from '../Text/Text'
 import * as styles from './ProgressMeter.css'
 
 export type ProgressMeterVariant = 'blue' | 'red' | 'rose' | 'mint'
@@ -12,6 +13,9 @@ type ProgressMeterProps = {
   progress: number
   variant?: ProgressMeterVariant
   className?: string
+  withLabel?: boolean
+  labelMin?: number
+  labelMax?: number
 }
 
 const colorSchemes = {
@@ -33,34 +37,51 @@ const colorSchemes = {
   },
 } as const
 
-export const ProgressMeter: React.FC<ProgressMeterProps> = ({
+export const ProgressMeter: React.FC<
+  React.PropsWithChildren<ProgressMeterProps>
+> = ({
   progress,
   variant = 'blue',
   className,
+  withLabel,
+  labelMin,
+  labelMax,
 }) => {
   return (
     <Box
-      className={cn(styles.outer, className)}
-      position="relative"
-      background={colorSchemes[variant].outer}
-      borderRadius="large"
-      width="full"
+      display={withLabel ? 'flex' : 'block'}
+      justifyContent={withLabel ? 'spaceBetween' : 'flexStart'}
     >
       <Box
+        className={cn(styles.outer, className)}
         position="relative"
-        overflow="hidden"
+        background={colorSchemes[variant].outer}
         borderRadius="large"
-        height="full"
         width="full"
       >
         <Box
-          className={styles.inner}
-          background={colorSchemes[variant].inner}
+          position="relative"
+          overflow="hidden"
           borderRadius="large"
-          position="absolute"
-          style={{ transform: `translateX(${(progress - 1) * 100}%)` }}
-        />
+          height="full"
+          width="full"
+        >
+          <Box
+            className={styles.inner}
+            background={colorSchemes[variant].inner}
+            borderRadius="large"
+            position="absolute"
+            style={{ transform: `translateX(${(progress - 1) * 100}%)` }}
+          />
+        </Box>
       </Box>
+      {withLabel && (
+        <Box marginLeft={3}>
+          <Text fontWeight="semiBold" color="blue400" variant="small">
+            {labelMin + '/' + labelMax}
+          </Text>
+        </Box>
+      )}
     </Box>
   )
 }

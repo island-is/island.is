@@ -1,6 +1,6 @@
 import { lazy } from 'react'
 
-import { PortalModule } from '@island.is/portals/core'
+import { ModuleErrorScreen, PortalModule } from '@island.is/portals/core'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
 import { IDSAdminPaths } from './lib/paths'
@@ -27,6 +27,9 @@ const ClientsScreen = lazy(() => import('./screens/Clients/Clients'))
 const ClientScreen = lazy(() => import('./screens/Client/Client'))
 const CreateClient = lazy(() =>
   import('./screens/Client/CreateClient/CreateClient'),
+)
+const PublishClient = lazy(() =>
+  import('./screens/Client/PublishClient/PublishClient'),
 )
 
 // Permissions
@@ -102,6 +105,15 @@ export const idsAdminModule: PortalModule = {
                 element: <ClientScreen />,
                 loader: clientLoader(props),
                 action: editClientAction(props),
+                errorElement: (
+                  <ModuleErrorScreen
+                    skipPadding
+                    title={props.formatMessage(m.typeNotFound, {
+                      type: props.formatMessage(m.client),
+                    })}
+                    message={props.formatMessage(m.typeNotFoundMessage)}
+                  />
+                ),
                 handle: {
                   backPath: IDSAdminPaths.IDSAdminClients,
                 },

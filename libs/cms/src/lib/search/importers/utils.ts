@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten'
+import type { CONTENT_TYPE } from '../../generated/contentfulTypes'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -58,7 +59,7 @@ const getProcessEntries = (contentList: object[]) =>
 
 export const numberOfLinks = (contentList: object[]) => {
   const processLinks = getProcessEntries(contentList).map(
-    (entry) => new URL(entry.processLink),
+    (entry) => new URL(entry.processLink, 'https://island.is'),
   )
   const fillAndSignProcessLinks = processLinks.filter((url) =>
     url.hostname.includes('dropandsign.is'),
@@ -76,10 +77,14 @@ export const numberOfLinks = (contentList: object[]) => {
     return !url.hostname.includes('island.is')
   }).length
 
-  const pdfAssets = getAssetsByContentType(contentList, 'application/pdf')
-    .length
-  const wordAssets = getAssetsByContentType(contentList, 'application/msword')
-    .length
+  const pdfAssets = getAssetsByContentType(
+    contentList,
+    'application/pdf',
+  ).length
+  const wordAssets = getAssetsByContentType(
+    contentList,
+    'application/msword',
+  ).length
 
   return {
     fillAndSignLinks: fillAndSignProcessLinks,
@@ -96,25 +101,76 @@ export const numberOfLinks = (contentList: object[]) => {
 export const numberOfProcessEntries = (contentList: any[]) =>
   getProcessEntries(contentList).length
 
-const pruneEntryHyperlink = (node: any) => {
-  if (node?.data?.target?.fields) {
-    for (const field of Object.keys(node.data.target.fields)) {
-      if (field === 'organizationPage') {
-        // Just in case there's an entry-hyperlink that needs an organization page in order to make the url
-        node.data.target.fields[field] = {
-          fields: {
-            slug: node.data.target.fields[field]?.fields?.slug,
-          },
-        }
-      } else if (field !== 'slug' && field !== 'url') {
-        delete node.data.target.fields[field]
-      }
+const extractPrimitiveFields = (node: Record<string, unknown>) => {
+  if (typeof node !== 'object') return node
+
+  const map = new Map<string, unknown>()
+
+  for (const key of Object.keys(node)) {
+    if (typeof node[key] !== 'object') {
+      map.set(key, node[key])
+    }
+  }
+
+  return Object.fromEntries(map)
+}
+
+export const pruneEntryHyperlink = (node: any) => {
+  const target = node?.data?.target
+  const contentTypeId: CONTENT_TYPE = target?.sys?.contentType?.sys?.id
+
+  // Keep specific non primitive fields since we'll need them when creating the urls
+  if (contentTypeId === 'subArticle' && target.fields?.parent?.fields) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.parent,
+          fields: extractPrimitiveFields(target.fields.parent.fields),
+        },
+      },
+    }
+  } else if (
+    contentTypeId === 'organizationSubpage' &&
+    target.fields?.organizationPage?.fields
+  ) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        organizationPage: {
+          ...target.fields.organizationPage,
+          fields: extractPrimitiveFields(target.fields.organizationPage.fields),
+        },
+      },
+    }
+  } else if (contentTypeId === 'price' && target.fields?.organization?.fields) {
+    node.data.target = {
+      ...target,
+      fields: {
+        ...extractPrimitiveFields(target.fields),
+        parent: {
+          ...target.fields.organization,
+          fields: extractPrimitiveFields(target.fields.organization.fields),
+        },
+      },
+    }
+  }
+  // In case there is no need to preserve non primitive fields we just remove them to prevent potential circularity
+  else if (target?.fields) {
+    node.data.target = {
+      ...target,
+      fields: extractPrimitiveFields(target.fields),
     }
   }
 }
 
 export const removeEntryHyperlinkFields = (node: any) => {
-  if (node?.nodeType === 'entry-hyperlink') {
+  if (
+    node?.nodeType === 'entry-hyperlink' ||
+    node?.nodeType === 'embedded-entry-inline'
+  ) {
     pruneEntryHyperlink(node)
   } else if (node?.content && node.content.length > 0) {
     for (const contentNode of node.content) {

@@ -456,13 +456,11 @@ export class ApplicationService {
       update.navSuccess = null
     }
 
-    const [
-      numberOfAffectedRows,
-      [updatedApplication],
-    ] = await this.applicationModel.update(update, {
-      where: { id },
-      returning: true,
-    })
+    const [numberOfAffectedRows, [updatedApplication]] =
+      await this.applicationModel.update(update, {
+        where: { id },
+        returning: true,
+      })
 
     if (numberOfAffectedRows === 0) {
       throw new NotFoundException(`Application ${id} does not exist`)
@@ -526,9 +524,10 @@ export class ApplicationService {
   async sendToNav(applicationId: string, amount: CreateAmountDto) {
     try {
       const application = await this.findById(applicationId, true)
-      const municipality = await this.municipalityService.findByMunicipalityIdWithNav(
-        application.municipalityCode,
-      )
+      const municipality =
+        await this.municipalityService.findByMunicipalityIdWithNav(
+          application.municipalityCode,
+        )
 
       if (!municipality.usingNav) {
         return null
@@ -665,9 +664,10 @@ export class ApplicationService {
       update.event === ApplicationEventType.APPROVED
     ) {
       try {
-        const municipality = await this.municipalityService.findByMunicipalityId(
-          updatedApplication.municipalityCode,
-        )
+        const municipality =
+          await this.municipalityService.findByMunicipalityId(
+            updatedApplication.municipalityCode,
+          )
         const isApplicationSystem =
           updatedApplication.applicationSystemId != null
 

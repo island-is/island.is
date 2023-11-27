@@ -4,20 +4,18 @@ import {
   wildcard,
 } from '../../../../support/wire-mocks'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { EinstaklingsupplysingarToJSON } from '../../../../../../../libs/clients/national-registry/v2/gen/fetch'
+import { EinstaklingsupplysingarToJSON } from '@island.is/clients/national-registry-v2'
 import {
   Base,
   Labor,
   NationalRegistry,
 } from '../../../../../../../infra/src/dsl/xroad'
-import { PostParentalLeaveResponseToJSON } from '../../../../../../../libs/clients/vmst/gen/fetch'
+import { PostParentalLeaveResponseToJSON } from '@island.is/clients/vmst'
 import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import { getEnvVariables } from '../../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { env } from '../../../../support/urls'
-import { serializeValueSource } from '../../../../../../../infra/src/dsl/output-generators/serialization-helpers'
-import { Kubernetes } from '../../../../../../../infra/src/dsl/kubernetes-runtime'
 import { EnvironmentConfig } from '../../../../../../../infra/src/dsl/types/charts'
 
 export async function setupXroadMocks() {

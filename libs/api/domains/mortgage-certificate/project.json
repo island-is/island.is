@@ -1,10 +1,11 @@
 {
-  "root": "libs/api/domains/mortgage-certificate",
+  "name": "api-domains-mortgage-certificate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/mortgage-certificate/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/api/domains/mortgage-certificate/**/*.{ts,tsx,js,jsx}"
@@ -12,10 +13,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/api/domains/mortgage-certificate"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/mortgage-certificate"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.js",
+        "jestConfig": "libs/api/domains/mortgage-certificate/jest.config.ts",
         "passWithNoTests": true
       }
     }

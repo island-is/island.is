@@ -7,6 +7,8 @@ import {
   Input,
   toast,
   Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -18,11 +20,11 @@ import format from 'date-fns/format'
 import { EndorsementList } from '../../types/schema'
 import Skeleton from './Skeleton'
 import Illustration from '../../assets/Illustration'
-import { useNavigate } from 'react-router-dom'
 
-const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
+const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { formatMessage } = useLocale()
-  const navigate = useNavigate()
 
   const listId = (application.externalData?.createEndorsementList.data as any)
     .id
@@ -67,7 +69,8 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
             {formatMessage(m.petitionSigned)}
           </Text>
           <Box
-            paddingY={10}
+            paddingTop={[5, 10]}
+            paddingBottom={10}
             display="flex"
             justifyContent="center"
             height="full"
@@ -96,7 +99,7 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                 <Text>{petitionList?.description}</Text>
               </Box>
 
-              <Box display={'flex'}>
+              <Box display={['block', 'flex']}>
                 <Box width="half">
                   <Text variant="h4">{formatMessage(m.listOpenTil)}</Text>
                   {petitionList && petitionList.closedDate && (
@@ -105,36 +108,42 @@ const SignPetitionView: FC<FieldBaseProps> = ({ application }) => {
                     </Text>
                   )}
                 </Box>
-                <Box width="half">
+                <Box width="half" marginTop={[2, 0]}>
                   <Text variant="h4">{formatMessage(m.listOwner)}</Text>
                   <Text>{petitionList.ownerName}</Text>
                 </Box>
               </Box>
 
-              <Box marginTop={4}>
-                <Box width="half" marginBottom={2}>
-                  <Input
-                    label={formatMessage(m.name)}
-                    name={formatMessage(m.name)}
-                    value={userData?.nationalRegistryUser?.fullName}
-                    readOnly
-                  />
-                </Box>
-                <Box marginTop={6} width="half">
-                  <CheckboxController
-                    id="showName"
-                    large={false}
-                    onSelect={() => setShowName(!showName)}
-                    options={[
-                      {
-                        value: YES,
-                        label: formatMessage(m.hideNameLabel),
-                      },
-                    ]}
-                  />
-                  <Text variant="eyebrow">{formatMessage(m.hideNameText)}</Text>
-                </Box>
-              </Box>
+              <GridRow>
+                <GridColumn span={['12/12', '6/12']}>
+                  <Box marginTop={[0, 4]}>
+                    <Box marginBottom={2}>
+                      <Input
+                        label={formatMessage(m.name)}
+                        name={formatMessage(m.name)}
+                        value={userData?.nationalRegistryUser?.fullName}
+                        readOnly
+                      />
+                    </Box>
+                    <Box marginTop={[0, 6]}>
+                      <CheckboxController
+                        id="showName"
+                        large={false}
+                        onSelect={() => setShowName(!showName)}
+                        options={[
+                          {
+                            value: YES,
+                            label: formatMessage(m.hideNameLabel),
+                          },
+                        ]}
+                      />
+                      <Text variant="eyebrow">
+                        {formatMessage(m.hideNameText)}
+                      </Text>
+                    </Box>
+                  </Box>
+                </GridColumn>
+              </GridRow>
 
               <Box marginTop={5}>
                 <CheckboxController

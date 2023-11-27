@@ -1,34 +1,42 @@
-import { Module } from '@nestjs/common'
-import { GraphQLModule } from '@nestjs/graphql'
 import { ApolloDriver } from '@nestjs/apollo'
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { GraphQLModule } from '@nestjs/graphql'
 
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { ProblemModule } from '@island.is/nest/problem'
+
+import {
+  AuditTrailModule,
+  auditTrailModuleConfig,
+} from '@island.is/judicial-system/audit-trail'
 import { SharedAuthModule } from '@island.is/judicial-system/auth'
-import { AuditTrailModule } from '@island.is/judicial-system/audit-trail'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
+import { CaseListModule } from './modules/caseList/caseList.module'
+import { defenderModuleConfig } from './modules/defender/defender.config'
 import {
   AuthModule,
-  UserModule,
+  authModuleConfig,
   CaseModule,
-  FileModule,
-  InstitutionModule,
-  FeatureModule,
-  PoliceModule,
   DefendantModule,
-  IndictmentCountModule,
+  DefenderModule,
+  FeatureModule,
+  featureModuleConfig,
+  FileModule,
   fileModuleConfig,
+  IndictmentCountModule,
+  InstitutionModule,
+  PoliceModule,
+  UserModule,
 } from './modules'
-import { ConfigModule } from '@nestjs/config'
-import { CaseListModule } from './modules/caseList/caseList.module'
 
 const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/judicial-system/api.graphql'
+  : 'apps/judicial-system/api/src/api.graphql'
 
 @Module({
   imports: [
@@ -46,12 +54,13 @@ const autoSchemaFile = environment.production
       jwtSecret: environment.auth.jwtSecret,
       secretToken: environment.auth.secretToken,
     }),
-    AuditTrailModule.register(environment.auditTrail),
+    AuditTrailModule,
     AuthModule,
     UserModule,
     CaseModule,
     CaseListModule,
     DefendantModule,
+    DefenderModule,
     IndictmentCountModule,
     FileModule,
     InstitutionModule,
@@ -59,7 +68,16 @@ const autoSchemaFile = environment.production
     CmsTranslationsModule,
     PoliceModule,
     ProblemModule.forRoot({ logAllErrors: true }),
-    ConfigModule.forRoot({ isGlobal: true, load: [fileModuleConfig] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        fileModuleConfig,
+        auditTrailModuleConfig,
+        featureModuleConfig,
+        authModuleConfig,
+        defenderModuleConfig,
+      ],
+    }),
   ],
 })
 export class AppModule {}

@@ -1,10 +1,12 @@
-import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import React, { useRef } from 'react'
 import { useIntersection } from 'react-use'
+
+import { Box, ResponsiveProp, Space } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
+
 import * as styles from './StickyLayout.css'
 
-interface Props {
+interface StickyLayoutProps {
   children: React.ReactNode
   header: React.ReactNode | ((isIntersecting?: boolean) => React.ReactNode)
   headerMarginBottom?: ResponsiveProp<Space | 'auto'>
@@ -14,7 +16,7 @@ export const StickyLayout = ({
   children,
   header,
   headerMarginBottom = 4,
-}: Props) => {
+}: StickyLayoutProps) => {
   const mainElmRef = useRef<HTMLDivElement>(null)
   const isIntersecting =
     (

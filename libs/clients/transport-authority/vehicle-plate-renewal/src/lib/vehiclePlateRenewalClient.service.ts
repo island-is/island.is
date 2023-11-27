@@ -5,6 +5,7 @@ import {
   PlateOwnership,
   PlateOwnershipValidation,
 } from './vehiclePlateRenewalClient.types'
+import { PlateOwnershipApiWithoutIdsAuth } from './apiConfiguration'
 
 interface ReturnTypeMessage {
   warnSever?: string | null
@@ -14,7 +15,10 @@ interface ReturnTypeMessage {
 
 @Injectable()
 export class VehiclePlateRenewalClient {
-  constructor(private readonly plateOwnershipApi: PlateOwnershipApi) {}
+  constructor(
+    private readonly plateOwnershipApi: PlateOwnershipApi,
+    private readonly plateOwnershipApiWithoutIdsAuth: PlateOwnershipApiWithoutIdsAuth,
+  ) {}
 
   private plateOwnershipApiWithAuth(auth: Auth) {
     return this.plateOwnershipApi.withMiddleware(new AuthMiddleware(auth))
@@ -96,6 +100,12 @@ export class VehiclePlateRenewalClient {
         persidno: auth.nationalId,
         check: false,
       },
+    })
+  }
+
+  public async getPlateAvailability(regno: string) {
+    return this.plateOwnershipApiWithoutIdsAuth.plateavailableGet({
+      regno,
     })
   }
 }

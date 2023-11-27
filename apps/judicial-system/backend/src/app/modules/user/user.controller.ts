@@ -4,15 +4,17 @@ import {
   Get,
   Inject,
   Param,
-  Post,
   Patch,
+  Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
-import { ApiTags, ApiOkResponse, ApiCreatedResponse } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CurrentHttpUser,
   JwtAuthGuard,
@@ -24,6 +26,7 @@ import {
 import { adminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { UserInterceptor } from './interceptors/user.interceptor'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -65,6 +68,7 @@ export class UserController {
     isArray: true,
     description: 'Gets all existing users',
   })
+  @UseInterceptors(UserInterceptor)
   getAll(@CurrentHttpUser() user: User): Promise<User[]> {
     this.logger.debug('Getting all users')
 
@@ -77,7 +81,7 @@ export class UserController {
     type: User,
     description: 'Gets an existing user',
   })
-  async getById(@Param('userId') userId: string): Promise<User> {
+  getById(@Param('userId') userId: string): Promise<User> {
     this.logger.debug(`Finding user ${userId}`)
 
     return this.userService.findById(userId)

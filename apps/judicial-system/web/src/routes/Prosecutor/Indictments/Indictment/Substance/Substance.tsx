@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
-
 import { Substance as SubstanceEnum } from '@island.is/judicial-system/types'
 import {
   removeErrorMessageIfValid,
@@ -18,7 +17,7 @@ interface Props {
   onDelete: (sub: SubstanceEnum) => void
 }
 
-export const Substance: React.FC<Props> = (props) => {
+export const Substance: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { substance, onUpdateAmount, onDelete, amount } = props
   const { formatMessage } = useIntl()
 

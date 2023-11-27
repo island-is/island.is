@@ -23,13 +23,11 @@ interface FormOutput {
   apiScope: ApiScopeDTO
 }
 
-const ApiScopeCreateForm: React.FC<Props> = (props) => {
-  const {
-    register,
-    handleSubmit,
-    formState,
-    resetField,
-  } = useForm<FormOutput>()
+const ApiScopeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
+  props,
+) => {
+  const { register, handleSubmit, formState, resetField } =
+    useForm<FormOutput>()
   const { isSubmitting, errors } = formState
   const [isEditing, setIsEditing] = useState<boolean>(false)
   const [available, setAvailable] = useState<boolean>(false)
@@ -37,10 +35,8 @@ const ApiScopeCreateForm: React.FC<Props> = (props) => {
   const [nameLength, setNameLength] = useState(0)
   const [domains, setDomains] = useState<Domain[]>([])
   //#region hint-box
-  const [
-    apiScopeNameHintVisible,
-    setApiScopeNameHintVisible,
-  ] = useState<boolean>(false)
+  const [apiScopeNameHintVisible, setApiScopeNameHintVisible] =
+    useState<boolean>(false)
   const [apiScopeHintMessage, setApiScopeHintMessage] = useState<string>('')
   const [apiScopeNameIsValid, setApiScopeNameIsValid] = useState<
     boolean | null

@@ -1,0 +1,5 @@
+mutation CreateFile($input: CreateFileInput!) {
+  createFile(input: $input) {
+    id
+  }
+}

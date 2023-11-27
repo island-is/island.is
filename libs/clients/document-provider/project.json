@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/document-provider",
+  "name": "clients-document-provider",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/document-provider/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/document-provider/**/*.{ts,tsx,js,jsx}"
@@ -12,19 +13,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/document-provider"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/document-provider"],
       "options": {
-        "jestConfig": "libs/clients/document-provider/jest.config.js",
+        "jestConfig": "libs/clients/document-provider/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i libs/clients/document-provider/src/clientConfig.yaml"
-      }
+        "command": "yarn openapi-generator -o libs/clients/document-provider/gen/fetch -i apps/services/documents/src/openapi.yaml"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["services-documents"],
   "tags": ["lib:client", "scope:client"]
 }

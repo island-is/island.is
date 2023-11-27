@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Config" -->
-
 # Nest Config
 
 Wraps Nest's [Configuration](https://docs.nestjs.com/techniques/configuration) functionality with the following functionality:

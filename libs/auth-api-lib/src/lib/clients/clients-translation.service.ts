@@ -11,6 +11,7 @@ export class ClientsTranslationService {
     const translationMap = await this.translationService.findTranslationMap(
       'client',
       clients.map((client) => client.clientId),
+      false,
       lang,
     )
 

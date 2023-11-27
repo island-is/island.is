@@ -11,9 +11,10 @@ describe.each(Object.keys(filterNavigationTreeTestCases))(
       routes,
       currentLocationPath,
       dynamicRouteArray,
-    } = filterNavigationTreeTestCases[
-      caseName as keyof typeof filterNavigationTreeTestCases
-    ]
+    } =
+      filterNavigationTreeTestCases[
+        caseName as keyof typeof filterNavigationTreeTestCases
+      ]
 
     it('Returns filtered navigation tree', () => {
       // Arrange && Act

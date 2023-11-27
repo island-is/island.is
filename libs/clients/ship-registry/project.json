@@ -1,0 +1,43 @@
+{
+  "name": "ship-registry",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/ship-registry/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/ship-registry/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/ship-registry/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=skipaskra-V1 > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/ship-registry"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/ship-registry/gen/fetch -i libs/clients/ship-registry/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client"]
+}

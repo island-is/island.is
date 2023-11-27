@@ -1,41 +1,23 @@
-import React, { FC } from 'react'
-import { gql, useLazyQuery } from '@apollo/client'
 import {
   ExpandRow,
   formSubmit,
   amountFormat,
 } from '@island.is/service-portal/core'
 import FinanceScheduleDetailTable from '../FinanceScheduleDetailTable/FinanceScheduleDetailTable'
-import { DetailedSchedule, PaymentSchedule } from '@island.is/api/schema'
+import { DetailedSchedule } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
 import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-
-const GET_FINANCE_PAYMENT_SCHEDULE_BY_ID = gql`
-  query getPaymentScheduleByIdQuery($input: GetFinancePaymentScheduleInput!) {
-    getPaymentScheduleById(input: $input) {
-      myDetailedSchedules {
-        myDetailedSchedule {
-          paidDate
-          paidAmount
-          paymentNumber
-          unpaidAmount
-          payExplanation
-        }
-      }
-    }
-  }
-`
+import { useGetPaymentScheduleByIdLazyQuery } from './FinanceScheduleTable.generated'
+import { PaymentSchedule } from '@island.is/service-portal/graphql'
 
 interface Props {
   paymentSchedule: PaymentSchedule
 }
 
-const FinanceScheduleTableRow: FC<Props> = ({ paymentSchedule }) => {
-  const [
-    getPaymentScheduleById,
-    { loading, error, ...detailsQuery },
-  ] = useLazyQuery(GET_FINANCE_PAYMENT_SCHEDULE_BY_ID)
+const FinanceScheduleTableRow = ({ paymentSchedule }: Props) => {
+  const [getPaymentScheduleById, { loading, error, ...detailsQuery }] =
+    useGetPaymentScheduleByIdLazyQuery()
   useNamespaces('sp.finance-schedule')
   const { formatMessage } = useLocale()
 

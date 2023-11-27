@@ -160,12 +160,9 @@ const CareTakerRepeaterItem = ({
   )
 }
 
-export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
-  application,
-  field,
-  errors,
-  setBeforeSubmitCallback,
-}) => {
+export const CemetryCaretaker: FC<
+  React.PropsWithChildren<FieldBaseProps<FinancialStatementsInao>>
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { formatMessage } = useLocale()
   const { id } = field
 
@@ -195,9 +192,8 @@ export const CemetryCaretaker: FC<FieldBaseProps<FinancialStatementsInao>> = ({
       const actors = application.applicantActors
       const currentActor: string = actors[actors.length - 1]
       const allMembers = values.cemetryCaretaker
-      const { careTakers, boardMembers } = getBoardmembersAndCaretakers(
-        allMembers,
-      )
+      const { careTakers, boardMembers } =
+        getBoardmembersAndCaretakers(allMembers)
       const caretakersIncludeActor =
         careTakers.filter((careTaker) => careTaker === currentActor).length > 0
 

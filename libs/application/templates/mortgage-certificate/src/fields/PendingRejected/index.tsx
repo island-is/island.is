@@ -14,7 +14,9 @@ import { PropertyDetail } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 
-export const PendingRejected: FC<FieldBaseProps> = ({ application }) => {
+export const PendingRejected: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+  application,
+}) => {
   const { externalData } = application
   const { formatMessage } = useLocale()
 

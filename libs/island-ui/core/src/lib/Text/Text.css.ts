@@ -143,6 +143,18 @@ export const whiteSpace = {
   ),
 }
 
+export const textAlign = {
+  ...styleVariants(
+    {
+      left: { textAlign: 'left' },
+      right: { textAlign: 'right' },
+      center: { textAlign: 'center' },
+      justify: { textAlign: 'justify' },
+    },
+    'textAlign',
+  ),
+}
+
 export const variants: Variants = {
   default: {
     fontSize: availableFontSizes.sm,
@@ -200,13 +212,4 @@ globalStyle(`${base} mark`, {
   backgroundColor: theme.color.mint400,
   color: theme.color.dark400,
   fontWeight: theme.typography.regular,
-})
-
-globalStyle(`${base} a svg path`, {
-  transition: 'fill .2s, box-shadow .2s',
-  fill: theme.color.blue400,
-})
-
-globalStyle(`${base} a:hover svg path`, {
-  fill: theme.color.blueberry400,
 })

@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  getChargeItemCodes,
-  OrderVehicleRegistrationCertificateAnswers,
-} from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
+import { ApplicationTypes } from '@island.is/application/types'
+import { OrderVehicleRegistrationCertificateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-registration-certificate'
 import { VehiclePrintingClient } from '@island.is/clients/transport-authority/vehicle-printing'
 
 @Injectable()
@@ -19,25 +13,6 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
     private readonly vehiclePrintingClient: VehiclePrintingClient,
   ) {
     super(ApplicationTypes.ORDER_VEHICLE_REGISTRATION_CERTIFICATE)
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
-
-      const chargeItemCodes = getChargeItemCodes()
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async submitApplication({
@@ -53,12 +28,8 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       )
     }
 
-    const isPayment:
-      | { fulfilled: boolean }
-      | undefined = await this.sharedTemplateAPIService.getPaymentStatus(
-      auth,
-      application.id,
-    )
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
     if (!isPayment?.fulfilled) {
       throw new Error(
@@ -66,7 +37,8 @@ export class OrderVehicleRegistrationCertificateService extends BaseTemplateApiS
       )
     }
 
-    const answers = application.answers as OrderVehicleRegistrationCertificateAnswers
+    const answers =
+      application.answers as OrderVehicleRegistrationCertificateAnswers
     const permno = answers?.pickVehicle?.plate
 
     // Submit the application

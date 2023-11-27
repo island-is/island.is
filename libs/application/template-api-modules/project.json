@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/template-api-modules",
+  "name": "application-template-api-modules",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/template-api-modules/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/template-api-modules/**/*.{ts,tsx,js,jsx}"
@@ -13,13 +14,27 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/template-api-modules/jest.config.js",
+        "jestConfig": "libs/application/template-api-modules/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/template-api-modules"]
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/template-api-modules"
+      ]
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/application/template-api-modules/src/lib/modules/templates/general-petition/gen/fetch -i apps/services/endorsements/api/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        ]
+      },
+      "outputs": [
+        "{projectRoot}/src/lib/modules/templates/general-petition/gen/fetch"
+      ]
     }
   },
+  "implicitDependencies": ["services-endorsements-api"],
   "tags": ["lib:application-system-api", "scope:application-system-api"]
 }

@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "ORDS generated API for API Namsferlaveita",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api-test.inna.is/namsferlaveita/",
+      "description": "Þjónustur fyrir Stafrænt Ísland"
+    }
+  ],
+  "paths": {
+    "/diploma/{ssn}/{diploma_id}": {
+      "get": {
+        "description": "Þjónusta sem sækir pdf af skírteini nemanda. EKKI VIRKT EINS OG ER",
+        "security": [
+          { "BasicAuth": [] },
+          { "BearerAuth": [] },
+          { "OAuth2": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "The queried record.",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": {} }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "diploma_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[^/]+$" },
+            "description": "implicit"
+          },
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[^/]+$" },
+            "description": "implicit"
+          }
+        ]
+      }
+    },
+    "/diplomainfolist/{ssn}": {
+      "get": {
+        "description": "Retrieve records from API Namsferlaveita",
+        "security": [
+          { "BasicAuth": [] },
+          { "BearerAuth": [] },
+          { "OAuth2": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "The queried record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "diploma_date": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "diploma_name": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_long_name": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_code": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "diploma_credits_total": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "diploma_credits": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "organisation": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "organisation_short": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "organisation_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[^/]+$" },
+            "description": "implicit"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "schema": { "type": "string" },
+            "required": true
+          }
+        ]
+      }
+    },
+    "/periods/{ssn}": {
+      "get": {
+        "description": "Retrieve records from API Namsferlaveita",
+        "security": [
+          { "BasicAuth": [] },
+          { "BearerAuth": [] },
+          { "OAuth2": [] }
+        ],
+        "responses": {
+          "200": {
+            "description": "The queried record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "courses": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/CoursesDto"
+                            }
+                          },
+                          "division": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "division_short": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "organisation": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "organisation_short": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "period_from": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "period_name": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "period_short": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "period_to": {
+                            "$ref": "#/components/schemas/VARCHAR2"
+                          },
+                          "student_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "period_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          },
+                          "diploma_id": {
+                            "$ref": "#/components/schemas/NUMBER"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ssn",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "pattern": "^[^/]+$" },
+            "description": "implicit"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "schema": { "type": "string" },
+            "required": true
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BasicAuth": { "type": "http", "scheme": "basic" },
+      "BearerAuth": { "type": "http", "scheme": "bearer" },
+      "OAuth2": {
+        "type": "oauth2",
+        "flows": {
+          "implicit": {
+            "authorizationUrl": "http://apex-test.inna.is/ords/inna/oauth/auth",
+            "scopes": {}
+          },
+          "authorizationCode": {
+            "authorizationUrl": "http://apex-test.inna.is/ords/inna/oauth/auth",
+            "tokenUrl": "http://apex-test.inna.is/ords/inna/oauth/token",
+            "scopes": {}
+          },
+          "clientCredentials": {
+            "tokenUrl": "http://apex-test.inna.is/ords/inna/oauth/token",
+            "scopes": {}
+          }
+        }
+      }
+    },
+    "schemas": {
+      "NUMBER": { "type": "number" },
+      "OTHER": { "type": "string" },
+      "VARCHAR2": { "type": "string" },
+      "CoursesDto": {
+        "type": "object",
+        "properties": {
+          "course_name": {
+            "type": "string"
+          },
+          "course_id": {
+            "type": "string"
+          },
+          "finalgrade": {
+            "type": "string"
+          },
+          "units": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stage": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "status": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

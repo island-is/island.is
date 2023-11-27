@@ -30,7 +30,12 @@ const CustomTooltip = (props: CustomTooltipProps) => {
       <div className={cn(styles.tooltip)}>
         <p>
           {payload[0].name} (
-          {((payload[0].payload[datakey] / sum) * 100).toFixed(0)}%)
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            ((payload[0].payload[datakey] / sum) * 100).toFixed(0)
+          }
+          %)
         </p>
       </div>
     )
@@ -63,7 +68,10 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
 
   const { width } = useWindowSize()
 
-  const sum = parsedData.reduce((sum, item) => sum + item[datakey], 0)
+  const sum = parsedData.reduce(
+    (sum: number, item: number[]) => sum + item[datakey],
+    0,
+  )
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart width={10} height={10}>
@@ -80,7 +88,7 @@ export const SimplePieChart = ({ graphData }: GraphProps) => {
           startAngle={90}
           endAngle={-270}
         >
-          {parsedData.map((entry, index) => (
+          {parsedData.map((entry: { color: string }, index: number) => (
             <Cell
               key={index}
               fill={entry.color ? entry.color : COLORS[index % COLORS.length]}

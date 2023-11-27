@@ -30,7 +30,7 @@ export const TabContent = ({
   isMySubscriptions,
 }: Props) => {
   return (
-    <Box paddingTop={[3, 3, 3, 5, 5]}>
+    <Box paddingTop={[3, 3, 3, 5, 5]} dataTestId="tab-content">
       <SearchAndSort
         subscriptionArray={subscriptionArray}
         setSubscriptionArray={setSubscriptionArray}

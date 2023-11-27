@@ -1,22 +1,23 @@
 {
-  "root": "libs/next-ids-auth",
+  "name": "next-ids-auth",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/next-ids-auth/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/next-ids-auth/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/next-ids-auth/jest.config.js",
+        "jestConfig": "libs/next-ids-auth/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/next-ids-auth"]
+      "outputs": ["{workspaceRoot}/coverage/libs/next-ids-auth"]
     }
   },
   "tags": ["lib:react-next", "scope:react-next"]

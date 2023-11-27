@@ -17,10 +17,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import {
-  ResponseSimple,
-  RskProcuringClient,
-} from '@island.is/clients/rsk/procuring'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   createCurrentUser,
   createNationalId,
@@ -132,7 +129,7 @@ const mockDelegations = {
 }
 
 beforeAll(() => {
-  jest.useFakeTimers().setSystemTime(today.getTime())
+  jest.useFakeTimers({ now: today })
 })
 
 describe('ActorDelegationsController', () => {
@@ -304,6 +301,48 @@ describe('ActorDelegationsController', () => {
             nationalRegistryUsers,
           ),
         )
+      })
+
+      it('should return only delegations related to the provided otherUser national id', async () => {
+        // Arrange
+        await createDelegationModels(delegationModel, [
+          mockDelegations.incoming,
+        ])
+        const expectedModel = await findExpectedMergedDelegationModels(
+          delegationModel,
+          mockDelegations.incoming.id,
+          [Scopes[0].name],
+        )
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(1)
+        expectMatchingMergedDelegations(
+          res.body[0],
+          updateDelegationFromNameToPersonName(
+            expectedModel,
+            nationalRegistryUsers,
+          ),
+        )
+      })
+
+      it('should return empty array when provided otherUser national id is not related to any delegation', async () => {
+        // Arrange
+        const unrelatedNationalId = createNationalId('person')
+
+        // Act
+        const res = await server.get(
+          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${unrelatedNationalId}`,
+        )
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body).toHaveLength(0)
       })
 
       it('should return custom delegations and not deceased delegations, when the delegationTypes filter is custom type', async () => {
@@ -609,21 +648,25 @@ describe('ActorDelegationsController', () => {
       })
 
       describe('with procuring delegations', () => {
-        let getSimple: jest.SpyInstance
+        let getIndividualRelationships: jest.SpyInstance
         beforeAll(() => {
-          const client = app.get(RskProcuringClient)
-          getSimple = jest.spyOn(client, 'getSimple').mockResolvedValue({
-            companies: [
-              {
-                nationalId: nationalRegistryUser.nationalId,
-                name: nationalRegistryUser.name,
-              },
-            ],
-          } as ResponseSimple)
+          const client = app.get(RskRelationshipsClient)
+          getIndividualRelationships = jest
+            .spyOn(client, 'getIndividualRelationships')
+            .mockResolvedValue({
+              name: nationalRegistryUser.name,
+              nationalId: nationalRegistryUser.nationalId,
+              relationships: [
+                {
+                  nationalId: nationalRegistryUser.nationalId,
+                  name: nationalRegistryUser.name,
+                },
+              ],
+            })
         })
 
         afterAll(() => {
-          getSimple.mockRestore()
+          getIndividualRelationships.mockRestore()
         })
 
         it('should return delegations', async () => {

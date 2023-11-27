@@ -1,6 +1,7 @@
 export interface DocumentInfoDTO {
   id: string
   documentDate: string
+  publicationDate?: string
   senderKennitala: string
   senderName?: string
   subject: string
@@ -9,4 +10,5 @@ export interface DocumentInfoDTO {
   withdrawn?: boolean
   withdrawnReason?: string
   minumumAuthenticationType?: string
+  bookmarked?: boolean
 }

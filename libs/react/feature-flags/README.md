@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "Feature Flags" -->
-
 # React Feature Flagging Library
 
 This is a high-level feature flagging library for our React apps.

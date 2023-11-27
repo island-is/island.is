@@ -1,18 +1,19 @@
-import { uuid } from 'uuidv4'
 import { Transaction } from 'sequelize/types'
+import { uuid } from 'uuidv4'
 
 import {
-  Gender,
-  CaseType,
-  UserRole,
   CaseOrigin,
+  CaseType,
+  Gender,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
-import { User, UserService } from '../../../user'
-import { Institution } from '../../../institution'
+
 import { DefendantService } from '../../../defendant/defendant.service'
 import { Defendant } from '../../../defendant/models/defendant.model'
+import { Institution } from '../../../institution'
+import { User, UserService } from '../../../user'
 import { InternalCreateCaseDto } from '../../dto/internalCreateCase.dto'
 import { Case } from '../../models/case.model'
 
@@ -44,7 +45,8 @@ describe('InternalCaseController - Create', () => {
     mockDefendantService = defendantService
     mockCaseModel = caseModel
 
-    const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
+    const mockDefendantCreate =
+      mockDefendantService.createForNewCase as jest.Mock
     mockDefendantCreate.mockResolvedValue({ caseId } as Defendant)
 
     const mockTransaction = sequelize.transaction as jest.Mock
@@ -146,6 +148,49 @@ describe('InternalCaseController - Create', () => {
     })
 
     it('should create a case', () => {
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        {
+          ...caseToCreate,
+          origin: CaseOrigin.LOKE,
+          creatingProsecutorId: userId,
+          prosecutorId: userId,
+          courtId,
+        },
+        {
+          transaction,
+        },
+      )
+    })
+  })
+
+  describe('case created with heightened security', () => {
+    const prosecutorNationalId = '1234567890'
+    const caseToCreate = {
+      type: CaseType.TRAVEL_BAN,
+      policeCaseNumbers: ['007-2021-777'],
+      prosecutorNationalId,
+      accusedNationalId: '1234567890',
+      accusedName: 'John Doe',
+      accusedAddress: 'Some Street',
+      accusedGender: Gender.MALE,
+      leadInvestigator: 'The Boss',
+    }
+    const userId = uuid()
+    const courtId = uuid()
+    const user = {
+      id: userId,
+      role: UserRole.PROSECUTOR,
+      institution: { defaultCourtId: courtId },
+    } as User
+
+    beforeEach(async () => {
+      const mockFindByNationalId = mockUserService.findByNationalId as jest.Mock
+      mockFindByNationalId.mockResolvedValueOnce(user)
+
+      await givenWhenThen(caseToCreate)
+    })
+
+    it('should create a case with heightened security', () => {
       expect(mockCaseModel.create).toHaveBeenCalledWith(
         {
           ...caseToCreate,
@@ -319,7 +364,8 @@ describe('InternalCaseController - Create', () => {
     beforeEach(async () => {
       const mockCreate = mockCaseModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce(createdCase)
-      const mockDefendantCreate = mockDefendantService.createForNewCase as jest.Mock
+      const mockDefendantCreate =
+        mockDefendantService.createForNewCase as jest.Mock
       mockDefendantCreate.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseToCreate)

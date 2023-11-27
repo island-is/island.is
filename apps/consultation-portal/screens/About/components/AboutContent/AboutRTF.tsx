@@ -17,7 +17,7 @@ export const RichTextAbout = `
 </br>
 
 <h4 id="3">Ritun umsagna</h3>
-<p>Til að senda inn umsögn eða ábendingu þarf að skrá sig inn í Samráðsgáttina með Íslykli eða rafrænni auðkenningu, enda birtast umsagnir að meginreglu jafnóðum. Ef umsögn er veitt fyrir hönd lögaðila, t.d. samtaka, fyrirtækis eða stofnunar, þarf að vera fyrir hendi umboð,&nbsp;<a href="https://samradsgatt.island.is/library/Files/Umbo%C3%B0%20-%20lei%C3%B0beiningar%20fyrir%20samr%C3%A1%C3%B0sg%C3%A1tt%20r%C3%A1%C3%B0uneyta.pdf">sjá nánar hér (PDF)</a>. Ef viðkomandi hefur ekki möguleika á innskráningu er hægt að taka þátt með því að senda tölvupóst á hlutaðeigandi stjórnvald. Umsögn skal vera skýr og skipulega upp sett til að auðvelda yfirferð og mat á efni hennar. Eftirfarandi atriði skal hafa að leiðarljósi:</p>
+<p>Til að senda inn umsögn eða ábendingu þarf að skrá sig inn í Samráðsgáttina með Íslykli eða rafrænni auðkenningu, enda birtast umsagnir að meginreglu jafnóðum. Ef umsögn er veitt fyrir hönd lögaðila, t.d. samtaka, fyrirtækis eða stofnunar, þarf að vera fyrir hendi umboð,&nbsp;<a target="_blank" href="https://island.is/minar-sidur-adgangsstyring">sjá nánar hér</a>. Ef viðkomandi hefur ekki möguleika á innskráningu er hægt að taka þátt með því að senda tölvupóst á hlutaðeigandi stjórnvald. Umsögn skal vera skýr og skipulega upp sett til að auðvelda yfirferð og mat á efni hennar. Eftirfarandi atriði skal hafa að leiðarljósi:</p>
 <ul>
 <li>Best er að fylgja efnisröðun skjalsins, þó þannig að fyrst komi almennt álit um málið sé þess talin þörf. Ef t.d. er um frumvarp að ræða skal einfaldlega fylgja uppsetningu þess þannig að athugasemdir og hugleiðingar um efni einstakra greina komi fram undir númeri greinar. Óþarfi er að fjalla um aðrar greinar frumvarpsins en þær sem umsagnaraðili gerir athugasemdir við.</li>
 <li>Mikilvægt er að tillögur um breytt orðalag, viðbætur, brottfellingar og þess háttar komi skýrt fram.</li>
@@ -63,13 +63,13 @@ Niðurstöður samráðs skulu birtar eins fljótt og unnt er, að jafnaði inna
 <h4 id="6">Eftirfylgni</h3>
 <p>Undir flipanum „Tölfræði“ er hægt að kynna sér yfirlit yfir nýtingu á gáttinni, allt frá opnun.</p>
 <p>Skrifstofa löggjafarmála í dómsmálaráðuneyti birtir einnig árlega umfjöllun um framkvæmd opins samráðs á netinu af hálfu ráðuneyta.</p>
-<p>Sjá nánar:&nbsp;<a href="https://www.stjornarradid.is/verkefni/log-og-rettur/lagasetning/">Vönduð lagasetning</a>
+<p>Sjá nánar:&nbsp;<a target="_blank" href="https://www.stjornarradid.is/verkefni/log-og-rettur/lagasetning/">Vönduð lagasetning</a>
 </p>
 
 </br>
 
 <h4 id="7">Forsaga</h3>
 <p>Samráðsgáttin var opnuð 5. febrúar 2018 og undirbúin í samstarfi samgöngu- og sveitarstjórnarráðuneytis, forsætisráðuneytis og dómsmálaráðuneytis.</p>
-<p>Sjá nánar:&nbsp;<a href="https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2015/06/16/Vinnuhopur-umsamradsferla-a-netinu-skilar-stodumati-og-tillogum/">Vinnuhópur um samráðsferla á netinu skilar stöðumati og tillögum</a>
+<p>Sjá nánar:&nbsp;<a target="_blank" href="https://www.stjornarradid.is/efst-a-baugi/frettir/stok-frett/2015/06/16/Vinnuhopur-umsamradsferla-a-netinu-skilar-stodumati-og-tillogum/">Vinnuhópur um samráðsferla á netinu skilar stöðumati og tillögum</a>
 </p>
 `

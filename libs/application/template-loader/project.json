@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/template-loader",
+  "name": "application-template-loader",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/template-loader/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/template-loader/**/*.{ts,tsx,js,jsx}"
@@ -13,12 +14,12 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/template-loader/jest.config.js",
+        "jestConfig": "libs/application/template-loader/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/template-loader"]
+      "outputs": ["{workspaceRoot}/coverage/libs/application/template-loader"]
     }
   },
   "tags": ["scope:application-system", "lib:application-system"]

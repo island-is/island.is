@@ -15,10 +15,8 @@ export const requestRightsValidationSection = (
 ) => {
   const requestRightsObj = newAnswer as RequestRightsObj
 
-  const {
-    multipleBirthsRequestDays,
-    hasMultipleBirths,
-  } = getApplicationAnswers(application.answers)
+  const { multipleBirthsRequestDays, hasMultipleBirths } =
+    getApplicationAnswers(application.answers)
   const selectedChild = getSelectedChild(
     application.answers,
     application.externalData,

@@ -12,18 +12,24 @@ import {
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
-  DistrictsApi,
+  JurisdictionApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   DrivingLicenseDuplicateFeatureFlags,
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -35,6 +41,17 @@ const pruneAfter = (time: number) => {
     whenToPrune: time,
   }
 }
+const getCodes = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in answers')
+  }
+  return [chargeItemCode]
+}
 
 const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -44,7 +61,6 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
   dataSchema: dataSchema,
-  featureFlag: Features.drivingLicenseDuplicate,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -52,11 +68,20 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
         meta: {
           name: 'Draft',
           status: 'draft',
-          actionCard: {
-            title: m.applicationTitle,
-          },
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+              {
+                onEvent: DefaultEvents.REJECT,
+                logMessage: coreHistoryMessages.applicationRejected,
+              },
+            ],
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -85,7 +110,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
               ],
               api: [
                 CurrentLicenseApi,
-                DistrictsApi,
+                JurisdictionApi,
                 NationalRegistryUserApi,
                 SyslumadurPaymentCatalogApi,
                 QualitySignatureApi,
@@ -102,40 +127,20 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            description: m.payment,
-          },
-          progress: 0.9,
-          lifecycle: pruneAfter(thirtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
           status: 'completed',
+          actionCard: {
+            pendingAction: {
+              title: m.pendingActionApplicationCompletedTitle,
+              displayStatus: 'success',
+            },
+          },
           progress: 1,
           lifecycle: pruneAfter(thirtyDays),
           onEntry: defineTemplateApi({

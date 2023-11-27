@@ -1,19 +1,20 @@
 {
-  "root": "libs/nest/problem",
+  "name": "nest-problem",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/problem/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/nest/problem/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/nest/problem"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/nest/problem"],
       "options": {
-        "jestConfig": "libs/nest/problem/jest.config.js",
+        "jestConfig": "libs/nest/problem/jest.config.ts",
         "passWithNoTests": true
       }
     }

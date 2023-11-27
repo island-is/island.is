@@ -10,7 +10,6 @@ import {
   VedbandayfirlitReguverkiSvarSkeyti,
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
-  AdiliDanarbus,
   DanarbuUppl,
   EignirDanarbus,
   Fasteignasalar,
@@ -18,6 +17,9 @@ import {
   Afengisleyfi,
   Taekifaerisleyfi,
   Verdbrefamidlari,
+  Erfingar,
+  Malsvari,
+  Meistaraleyfi,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -44,11 +46,14 @@ import {
   OperatingLicensesCSV,
   TemporaryEventLicence,
   Broker,
+  Advocate,
+  MasterLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
 export const cleanPropertyNumber = (propertyNumber: string): string => {
-  return propertyNumber[0] == 'F'
+  const firstChar = propertyNumber.charAt(0).toUpperCase()
+  return firstChar === 'F' || firstChar === 'L'
     ? propertyNumber.substring(1, propertyNumber.length)
     : propertyNumber
 }
@@ -271,6 +276,16 @@ export function constructUploadDataObject(
   }
 }
 
+function mapAdvocate(advocateRaw: Malsvari): Advocate {
+  return {
+    address: advocateRaw.heimilisfang ?? '',
+    email: advocateRaw.netfang ?? '',
+    name: advocateRaw.nafn ?? '',
+    nationalId: advocateRaw.kennitala ?? '',
+    phone: advocateRaw.simi ?? '',
+  }
+}
+
 function mapPersonEnum(e: PersonType) {
   switch (e) {
     case PersonType.Plaintiff:
@@ -294,11 +309,12 @@ export const mapAssetName = (
   return { name: response.heiti ?? '' }
 }
 
-export const estateMemberMapper = (estateRaw: AdiliDanarbus): EstateMember => {
+export const estateMemberMapper = (estateRaw: Erfingar): EstateMember => {
   return {
     name: estateRaw.nafn ?? '',
     nationalId: estateRaw.kennitala ?? '',
-    relation: estateRaw.tegundTengsla ?? 'Annað',
+    relation: estateRaw.tengsl ?? 'Annað',
+    advocate: estateRaw.malsvari ? mapAdvocate(estateRaw.malsvari) : undefined,
   }
 }
 
@@ -306,7 +322,10 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   return {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
-    share: assetRaw.eignarhlutfall ?? 1,
+    share:
+      assetRaw.eignarhlutfall !== undefined
+        ? assetRaw.eignarhlutfall / 100.0
+        : 1,
   }
 }
 
@@ -324,7 +343,7 @@ export const mapEstateRegistrant = (
             (a) =>
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
               a?.fastanumer &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer),
           )
           .map(assetMapper)
       : [],
@@ -348,8 +367,11 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_4)
           .map(assetMapper)
       : [],
-    // TODO: update once implemented in District Commissioner's backend
-    guns: [],
+    guns: syslaData.eignir
+      ? syslaData.eignir
+          .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
+          .map(assetMapper)
+      : [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
@@ -374,9 +396,9 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
       ? syslaData.eignir
           .filter(
             (a) =>
+              a?.tegundAngalgs !== undefined &&
               a.tegundAngalgs === TegundAndlags.NUMBER_0 &&
-              a?.tegundAngalgs &&
-              /^[fF]{0,1}\d{7}$/.test(a.fastanumer ?? ''),
+              /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/.test(a.fastanumer ?? ''),
           )
           .map(assetMapper)
       : [],
@@ -415,5 +437,13 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+  }
+}
+export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+    office: licence.embaetti,
   }
 }

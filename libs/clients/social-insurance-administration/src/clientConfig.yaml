@@ -1,0 +1,329 @@
+openapi: 3.0.0
+info:
+  title: Social Insurance Administration API
+  version: 1.0.7
+  contact:
+    name: Social Insurance Administration (Tryggingastofnun)
+servers:
+  - url: https://xroad-dev.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/
+    description: Optional server description, XROAD-DEV
+  - url: https://xroad.tr.is/r1/IS-DEV/GOV/10008/TR-Protected/
+    description: Optional server description, XROAD-PROD
+paths:
+  /Application/{applicationType}:
+    post:
+      tags:
+        - Send application
+      operationId: OldAgePension_SendApplication
+      parameters:
+        - name: applicationType
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
+      requestBody:
+        x-name: oldAgePension
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OldAgePension'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+  /Applicant:
+    get:
+      tags:
+        - Get applicant info
+      operationId: Application_GetApplicant
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Applicant'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /Applicant/{applicationType}/eligible:
+    get:
+      tags:
+        - Get is applicant eligible
+      operationId: Applicant_GetIsEligible
+      parameters:
+        - name: applicationType
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Eligible'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
+  /General/currencies:
+    get:
+      tags:
+        - Get currencies
+      operationId: General_GetCurrencies
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Currencies'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: string
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                type: string
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Application:
+      type: object
+      description: Application
+      properties:
+        applicationType:
+          type: string
+        applicationSubType:
+          type: string
+        applicationStatus:
+          type: string
+        applicationCreateDate:
+          format: date-time
+          type: string
+    OldAgePension:
+      properties:
+        period:
+          $ref: '#/components/schemas/Period'
+        comment:
+          type: string
+        applicationId:
+          type: string
+        domesticBankInfo:
+          $ref: '#/components/schemas/DomesticBankInfo'
+        foreignBankInfo:
+          $ref: '#/components/schemas/ForeignBankInfo'
+        taxInfo:
+          $ref: '#/components/schemas/TaxInfo'
+        applicantInfo:
+          $ref: '#/components/schemas/ApplicantInfo'
+        hasAbroadResidence:
+          type: boolean
+        hasOneTimePayment:
+          type: boolean
+        isSailorPension:
+          type: boolean
+        uploads:
+          $ref: '#/components/schemas/Uploads'
+    Period:
+      type: object
+      additionalProperties: false
+      required:
+        - year
+        - month
+      properties:
+        year:
+          type: integer
+          format: int32e
+        month:
+          type: integer
+          format: int32e
+    ApplicantInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - email
+        - phonenumber
+      properties:
+        email:
+          type: string
+        phonenumber:
+          type: string
+    Uploads:
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
+    Attachment:
+      type: object
+      additionalProperties: false
+      required:
+        - name
+        - type
+        - file
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - pension
+            - other
+            - retirement
+            - sailor
+            - selfEmployed
+        file:
+          type: string
+    Response:
+      type: object
+      properties:
+        applicationLineId:
+          type: number
+    ResponseError:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetails'
+    ErrorDetails:
+      type: object
+      properties:
+        code:
+          type: number
+        message:
+          type: string
+        help:
+          type: string
+        trackingId:
+          type: string
+        param:
+          type: string
+    Applicant:
+      type: object
+      description: Return email, phone number and bank account from TR if applicant has them registered there
+      properties:
+        emailAddress:
+          type: string
+        phoneNumber:
+          type: string
+        bankAccount:
+          $ref: '#/components/schemas/BankInfo'
+    BankInfo:
+      type: object
+      description: Returns bank information from TR if applicant has one registered there
+      properties:
+        bank:
+          type: string
+        ledger:
+          type: string
+        accountNumber:
+          type: string
+        iban:
+          type: string
+        swift:
+          type: string
+        foreignBankName:
+          type: string
+        foreignBankAddress:
+          type: string
+        currency:
+          type: string
+    Eligible:
+      type: object
+      description: Returns true if applicant is eligible
+      properties:
+        isEligible:
+          type: boolean
+    DomesticBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - bank
+      properties:
+        bank:
+          type: string
+    ForeignBankInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - iban
+        - swift
+        - foreignBankName
+        - foreignBankAddress
+        - foreignCurrency
+      properties:
+        iban:
+          type: string
+        swift:
+          type: string
+        foreignBankName:
+          type: string
+        foreignBankAddress:
+          type: string
+        foreignCurrency:
+          type: string
+    TaxInfo:
+      type: object
+      additionalProperties: false
+      required:
+        - personalAllowance
+        - taxLevel
+      properties:
+        personalAllowance:
+          type: boolean
+        personalAllowanceUsage:
+          type: number
+          format: float
+        taxLevel:
+          type: number
+    Currencies:
+      type: array
+      items:
+        type: string
+security:
+  - bearerAuth: []

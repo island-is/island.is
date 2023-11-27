@@ -60,7 +60,7 @@ interface FieldProps {
   symbolOnRight?: boolean
 }
 
-const Field: FC<FieldProps> = ({
+const Field: FC<React.PropsWithChildren<FieldProps>> = ({
   name,
   value,
   symbol,
@@ -180,7 +180,9 @@ interface StepperHelperProps {
   optionsFromNamespace: { slug: string; data: Record<string, any>[] }[]
 }
 
-export const StepperHelper: React.FC<StepperHelperProps> = ({
+export const StepperHelper: React.FC<
+  React.PropsWithChildren<StepperHelperProps>
+> = ({
   stepper,
   currentState,
   stepperMachine,
@@ -198,12 +200,18 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
 
   const { activeLocale } = useI18n()
   const currentStepOptions = getStepOptions(
-    currentStep,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
+    currentStep, // TODO: currentStep might be undefined: Stefna
     activeLocale,
     optionsFromNamespace,
   )
-  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug
-  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const currentStateStepSlug = getStateMeta(currentState)?.stepSlug // TODO: currentState might be undefined: Stefna
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
+  const allStateStepSlugs = getAllStateStepSlugs(stepperMachine) // TODO: stepperMachine might be undefined: Stefna
 
   const currentStateStepSlugSymbol = getStepBySlug(
     stepper,
@@ -266,7 +274,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
             <ArrowLink href={getContentfulLink(stepper)}>Contentful</ArrowLink>
             <Field
               name="Current state name"
-              value={currentState.value as string}
+              value={currentState?.value as string}
             />
             <Field
               name="Current state stepSlug"
@@ -276,7 +284,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
             />
             <Field name="Current state transitions" />
             <Box marginLeft={4} marginTop={1}>
-              {currentState.nextEvents.map((nextEvent, i) => {
+              {currentState?.nextEvents.map((nextEvent, i) => {
                 const transitionIsUsedSomewhere = currentStepOptions.some(
                   (o) => o.transition === nextEvent,
                 )
@@ -333,7 +341,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                 <Field name="Step options" />
               </Box>
               {currentStepOptions.map((o) => {
-                const optionTransitionIsValid = currentState.nextEvents.some(
+                const optionTransitionIsValid = currentState?.nextEvents.some(
                   (t) => t === o.transition,
                 )
                 const transitionSymbol = optionTransitionIsValid
@@ -367,9 +375,9 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
           <Box id={headings[2].headingId}>
             <Text variant="h4">{headings[2].headingTitle}</Text>
             <Box className={styles.border}>
-              {Object.keys(stepperMachine.states).map((stateName, i) => {
-                const state = stepperMachine.states[stateName]
-                const stepSlug = state.meta?.stepSlug ?? ''
+              {Object.keys(stepperMachine?.states ?? {}).map((stateName, i) => {
+                const state = stepperMachine?.states[stateName]
+                const stepSlug = state?.meta?.stepSlug ?? ''
                 const step = getStepBySlug(stepper, stepSlug)
 
                 const id = `${headings[2].headingId}-${i}-slug`
@@ -420,16 +428,18 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                     />
                     <Field name="State transitions" />
                     <Box marginLeft={4} marginTop={1}>
-                      {Object.keys(state.config?.on ?? {}).map(
+                      {Object.keys(state?.config?.on ?? {}).map(
                         (nextEvent, j) => {
-                          const stepWithSameSlug = stepper.steps.find(
+                          const stepWithSameSlug = stepper.steps?.find(
                             (s) => s.slug === stepSlug,
                           )
-                          const transitionExists = getStepOptions(
-                            stepWithSameSlug,
-                            activeLocale,
-                            optionsFromNamespace,
-                          ).some((o) => o.transition === nextEvent)
+                          const transitionExists =
+                            stepWithSameSlug &&
+                            getStepOptions(
+                              stepWithSameSlug,
+                              activeLocale,
+                              optionsFromNamespace,
+                            ).some((o) => o.transition === nextEvent)
 
                           const symbolHoverText = stepWithSameSlug
                             ? transitionExists
@@ -496,7 +506,7 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
           <Box id={headings[3].headingId}>
             <Text variant="h4">{headings[3].headingTitle}</Text>
             <Box className={styles.border}>
-              {stepper.steps.map((step, i) => {
+              {(stepper.steps ?? []).map((step, i) => {
                 const hasSlugError = !allStateStepSlugs.includes(step.slug)
                 const id = `${headings[3].headingId}-${i}-slug`
 
@@ -551,14 +561,14 @@ export const StepperHelper: React.FC<StepperHelperProps> = ({
                       optionsFromNamespace,
                     ).map((o, j) => {
                       const nameOfStateWithSameSlug = Object.keys(
-                        stepperMachine.states,
+                        stepperMachine?.states ?? {},
                       ).find((stateName) => {
-                        const state = stepperMachine.states[stateName]
-                        return (state.meta?.stepSlug ?? '') === step.slug
+                        const state = stepperMachine?.states[stateName]
+                        return (state?.meta?.stepSlug ?? '') === step.slug
                       })
 
                       const stateWithSameSlug = nameOfStateWithSameSlug
-                        ? stepperMachine.states[nameOfStateWithSameSlug]
+                        ? stepperMachine?.states[nameOfStateWithSameSlug]
                         : null
 
                       const optionTransitionIsValid = Object.keys(

@@ -8,11 +8,12 @@ import {
   ApplicationRole,
   defineTemplateApi,
   UserProfileApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
 import { m } from './messages'
-import { FeatureFlagClient, Features } from '@island.is/feature-flags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
   getApplicationFeatureFlags,
   OperatingLicenseFeatureFlags,
@@ -24,6 +25,11 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -36,6 +42,18 @@ const pruneAfter = (time: number) => {
   }
 }
 
+const getCodes = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in request')
+  }
+
+  return [chargeItemCode]
+}
+
 const OperatingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -43,7 +61,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
 > = {
   type: ApplicationTypes.OPERATING_LCENSE,
   name: m.formName.defaultMessage,
-  featureFlag: Features.operatingLicense,
+  institution: m.institution,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
   stateMachineConfig: {
@@ -51,7 +69,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
     states: {
       [States.DRAFT]: {
         meta: {
-          name: m.formName.defaultMessage,
+          name: '',
           status: 'draft',
           progress: 0.33,
           lifecycle: pruneAfter(oneDay),
@@ -71,7 +89,6 @@ const OperatingLicenseTemplate: ApplicationTemplate<
                   ),
                 )
               },
-
               actions: [
                 {
                   event: DefaultEvents.PAYMENT,
@@ -90,42 +107,23 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               ],
             },
           ],
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.applicationStarted,
+                onEvent: DefaultEvents.PAYMENT,
+              },
+            ],
+          },
         },
         on: {
           [DefaultEvents.PAYMENT]: { target: States.PAYMENT },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            description: m.payment,
-          },
-          progress: 0.9,
-          lifecycle: { shouldBeListed: true, shouldBePruned: false },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',
@@ -147,6 +145,13 @@ const OperatingLicenseTemplate: ApplicationTemplate<
               },
             },
           ],
+          actionCard: {
+            pendingAction: {
+              title: coreHistoryMessages.applicationReceived,
+              content: '',
+              displayStatus: 'success',
+            },
+          },
         },
       },
     },

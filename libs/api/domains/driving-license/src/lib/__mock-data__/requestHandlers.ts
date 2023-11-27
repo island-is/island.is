@@ -2,25 +2,32 @@ import { rest } from 'msw'
 import ValidLicense from './validLicense.json'
 import ExpiredLicense from './expiredLicense.json'
 import LicenseWithDisqualification from './licenseWithDisqualification.json'
-import Juristictions from './juristictions.json'
 import DrivingAssessment from './drivingAssessment'
-import FinishedSchool from './finishedSchool.json'
-import NotFinishedSchool from './notFinishedSchool.json'
-import CanApplyWithResultSuccess from './canApplyWithResultSuccess.json'
-import CanApplyWithResultFail from './canApplyWithResultFail.json'
 import Teachers from './teachers.json'
-import ResidenceHistory from './residenceHistory.json'
 import type { User } from '@island.is/auth-nest-tools'
 
 export const MOCK_NATIONAL_ID = '0'
 export const MOCK_NATIONAL_ID_EXPIRED = '1'
 export const MOCK_NATIONAL_ID_TEACHER = '2'
 export const MOCK_NATIONAL_ID_NO_ASSESSMENT = '9'
+
+export const MOCK_TOKEN = '0'
+export const MOCK_TOKEN_EXPIRED = '1'
+export const MOCK_TOKEN_TEACHER = '2'
+export const MOCK_TOKEN_NO_ASSESSMENT = '9'
+
 export const DISQUALIFIED_NATIONAL_IDS = [
   '0101302399',
   '0101302719',
   '0101305069',
   '0101303019',
+]
+
+export const DISQUALIFIED_TOKENS = [
+  'auth-token-disqualified-01',
+  'auth-token-disqualified-02',
+  'auth-token-disqualified-03',
+  'auth-token-disqualified-04',
 ]
 
 type MockLicenseRaw =
@@ -30,10 +37,10 @@ type MockLicenseRaw =
 
 type MockLicense =
   | MockLicenseRaw
-  | (Omit<MockLicenseRaw, 'svipting'> & {
-      svipting: {
-        dagsFra: Date | null
-        dagsTil: Date | null
+  | (Omit<MockLicenseRaw, 'deprivation'> & {
+      deprivation: {
+        dateTo: Date | null
+        dateFrom: Date | null
       }
     })
 
@@ -51,241 +58,174 @@ export const MOCK_USER = {
     nationalId: '1',
     scope: ['test-scope-2'],
   },
-  authorization: '',
+  authorization: MOCK_TOKEN,
   client: '',
   ip: '',
   userAgent: '',
 } as User
 
-export const XROAD_BASE_PATH = 'http://localhost:8081'
-export const XROAD_DRIVING_LICENSE_PATH =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v1'
-export const XROAD_DRIVING_LICENSE_V2_PATH =
-  'r1/IS-DEV/GOV/10005/Logreglan-Protected/RafraentOkuskirteini-v2'
-
-// At the time of implementation, the v5 path is case sensitive depending on the environment
-// and as such Okuskirteini and okuskirteini are considered paths
-export const XROAD_DRIVING_LICENSE_V5_PATH = /\/r1\/IS-DEV\/GOV\/10005\/Logreglan-Protected\/[Oo]kuskirteini-v5/
-
-const url = (path: string) => {
-  return new URL(path, XROAD_BASE_PATH).toString()
-}
-
 export const requestHandlers = [
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/embaetti`),
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(Juristictions))
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v4\/\d+$/, (req, res, ctx) => {
+    // Possibly questionable given weak matching, should not be a problem in practice
+    const nationalId = req.url.pathname.split('/').pop() ?? ''
 
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/okukennarar`),
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(Teachers))
-    },
-  ),
+    const isExpired = nationalId === MOCK_NATIONAL_ID_EXPIRED
+    const isDisqualified = DISQUALIFIED_NATIONAL_IDS.includes(nationalId)
+    return res(
+      ctx.status(isExpired || isDisqualified ? 400 : 200),
+      ctx.json(
+        isExpired
+          ? { message: 'Ökuskírteini er ekki í gildi' }
+          : isDisqualified
+          ? { detail: 'Einstaklingur er sviptur ökuréttindum' }
+          : ValidLicense,
+      ),
+    )
+  }),
 
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/all`),
-    (req, res, ctx) => {
-      let response: [MockLicense] =
-        req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-          ? [ExpiredLicense]
-          : [ValidLicense]
+  rest.get(/api\/drivinglicense\/v4\/\d+\/all$/, (req, res, ctx) => {
+    // Possibly questionable given weak matching, should not be a problem in practice
+    const nationalId = req.url.pathname.split('/').reverse()?.[1] ?? ''
 
-      if (DISQUALIFIED_NATIONAL_IDS.includes(req.params.nationalId)) {
-        response = [LicenseWithDisqualification]
-        switch (DISQUALIFIED_NATIONAL_IDS.indexOf(req.params.nationalId)) {
-          // Currently active
-          case 0:
-            response[0].svipting.dagsFra = nowDeltaMonths(-6)
-            response[0].svipting.dagsTil = nowDeltaMonths(6)
-            break
-          // Disqualification expired but still less than 12 months since expiry
-          case 1:
-            response[0].svipting.dagsFra = nowDeltaMonths(-13)
-            response[0].svipting.dagsTil = nowDeltaMonths(-7)
-            break
-          // Disqualification expired more than 12 months ago
-          case 2:
-            response[0].svipting.dagsFra = nowDeltaMonths(-20)
-            response[0].svipting.dagsTil = nowDeltaMonths(-13)
-            break
-          // Disqualification has unspecified end date
-          default:
-            response[0].svipting.dagsFra = nowDeltaMonths(-2)
-            response[0].svipting.dagsTil = null
-        }
+    let response: [MockLicense] =
+      nationalId === MOCK_NATIONAL_ID_EXPIRED
+        ? [ExpiredLicense]
+        : [ValidLicense]
+
+    if (DISQUALIFIED_NATIONAL_IDS.includes(nationalId)) {
+      response = [LicenseWithDisqualification]
+      switch (DISQUALIFIED_NATIONAL_IDS.indexOf(nationalId)) {
+        // Currently active
+        case 0:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-6)
+          response[0].deprivation.dateTo = nowDeltaMonths(6)
+          break
+        // Disqualification expired but still less than 12 months since expiry
+        case 1:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-13)
+          response[0].deprivation.dateTo = nowDeltaMonths(-7)
+          break
+        // Disqualification expired more than 12 months ago
+        case 2:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-20)
+          response[0].deprivation.dateTo = nowDeltaMonths(-13)
+          break
+        // Disqualification has unspecified end date
+        default:
+          response[0].deprivation.dateFrom = nowDeltaMonths(-2)
+          response[0].deprivation.dateTo = null
       }
-      return res(ctx.status(200), ctx.json(response))
-    },
-  ),
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/hasteachingrights/:nationalId`,
-    ),
-    (req, res, ctx) => {
-      const hasTeachingRights =
-        req.params.nationalId === MOCK_NATIONAL_ID_TEACHER
+    }
+    return res(ctx.status(200), ctx.json(response))
+  }),
 
-      return res(ctx.status(200), ctx.json(hasTeachingRights ? 1 : 0))
-    },
-  ),
+  rest.post(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+    const isTeacher =
+      (req.body as { instructorSSN: string }).instructorSSN ===
+      MOCK_NATIONAL_ID_TEACHER
+    return res(ctx.status(isTeacher ? 200 : 400))
+  }),
 
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/saekjaakstursmat/:nationalId`,
-    ),
-    (req, res, ctx) => {
-      const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_NO_ASSESSMENT
-      if (isFound) {
-        return res(ctx.status(200), ctx.json(DrivingAssessment))
-      } else {
-        return res(ctx.status(404), ctx.text('error message from service'))
-      }
-    },
-  ),
+  rest.get(/api\/drivinglicense\/v5\/drivingassessment/, (req, res, ctx) => {
+    const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_NO_ASSESSMENT
+    if (isFound) {
+      return res(ctx.status(200), ctx.json(DrivingAssessment))
+    } else {
+      return res(ctx.status(404), ctx.text('error message from service'))
+    }
+  }),
 
   rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/finishedokugerdi`,
-    ),
+    /api\/drivinglicense\/v5\/hasfinisheddrivingschool3/,
     (req, res, ctx) => {
-      const isFound = req.params.nationalId !== MOCK_NATIONAL_ID_EXPIRED
-
+      const isFound = req.headers.get('jwttoken') !== MOCK_TOKEN_EXPIRED
       return res(
         ctx.status(200),
-        ctx.json(isFound ? FinishedSchool : NotFinishedSchool),
+        ctx.json({ hasFinishedDrivingSchool3: isFound }),
       )
     },
   ),
 
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/:nationalId/canapplyfor/B/full`,
-    ),
-    (req, res, ctx) => {
-      const canApply = req.params.nationalId === MOCK_NATIONAL_ID
+  rest.get(/api\/drivinglicense\/v5\/canapplyfor\/B\/full/, (req, res, ctx) => {
+    const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
+    return res(
+      ctx.status(200),
+      ctx.json({ result: canApply, errorCode: canApply ? '' : 'SOME REASON' }),
+    )
+  }),
 
+  // Ignore calls to this endpoint and mock response in get All Driving Licenses
+  rest.get(/\/api\/drivinglicense\/v5\/deprivation/, (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        dateFrom: null,
+        dateTo: null,
+      }),
+    )
+  }),
+
+  rest.get(
+    /api\/drivinglicense\/v5\/canapplyfor\/temporary/,
+    (req, res, ctx) => {
+      const canApply = req.headers.get('jwttoken') === MOCK_TOKEN
       return res(
         ctx.status(200),
-        ctx.json(canApply ? CanApplyWithResultSuccess : CanApplyWithResultFail),
+        ctx.json({
+          result: canApply,
+          errorCode: canApply ? '' : 'SOME REASON',
+        }),
       )
     },
   ),
 
-  rest.get(
-    url(
-      `${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/:nationalId/canapplyfor/temporary`,
-    ),
-    (req, res, ctx) => {
-      const canApply = req.params.nationalId === MOCK_NATIONAL_ID
+  rest.get(/api\/drivinglicense\/v5\/hasteachingrights/, (req, res, ctx) => {
+    let teachingRights = 0
 
+    const token = req.headers.get('jwttoken')
+    if (token === MOCK_TOKEN_TEACHER) {
+      teachingRights = 1
+    }
+
+    return res(ctx.status(200), ctx.json(teachingRights))
+  }),
+
+  rest.get(/api\/drivinglicense\/v4\/drivinginstructors/, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(Teachers))
+  }),
+
+  rest.post(
+    /api\/drivinglicense\/v5\/applications\/new\/B/,
+    (req, res, ctx) => {
+      const hasAssessment =
+        (req.body as { personIdNumber: string }).personIdNumber !==
+        MOCK_NATIONAL_ID_NO_ASSESSMENT
+      const newLicenseNumber = 1
       return res(
-        ctx.status(200),
-        ctx.json(canApply ? CanApplyWithResultSuccess : CanApplyWithResultFail),
+        ctx.status(hasAssessment ? 200 : 400),
+        ctx.json(newLicenseNumber),
       )
     },
   ),
 
   rest.post(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/api/okuskirteini/new/drivingassesment`),
+    /api\/drivinglicense\/v5\/applications\/new\/temporary/,
     (req, res, ctx) => {
-      const body = req.body as any
-      const isSubmittedByTeacher =
-        body?.kennitalaOkukennara === MOCK_NATIONAL_ID_TEACHER
-
-      if (isSubmittedByTeacher) {
-        return res(ctx.status(200), ctx.text(''))
-      } else {
-        return res(ctx.status(400), ctx.text('error message'))
-      }
-    },
-  ),
-
-  rest.post(
-    url(`${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/applications/new/B`),
-    (req, res, ctx) => {
-      const body = req.body as any
-      const canApply = body.personIdNumber !== MOCK_NATIONAL_ID_NO_ASSESSMENT
-
-      if (canApply) {
-        return res(ctx.status(200), ctx.text(''))
-      } else {
-        return res(ctx.status(400), ctx.text('error message'))
-      }
-    },
-  ),
-
-  rest.post(
-    url(
-      `${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/applications/new/temporary`,
-    ),
-    (req, res, ctx) => {
-      const body = req.body as any
-      const canApply = body.kennitala !== MOCK_NATIONAL_ID_NO_ASSESSMENT
+      const token = req.headers.get('jwttoken')
+      const canApply = token !== MOCK_TOKEN_NO_ASSESSMENT
 
       if (canApply) {
         return res(
           ctx.status(200),
           ctx.json({
             result: true,
-            okuskirteiniId: 1,
+            driverLicenseId: 1,
             errorCode: null,
           }),
         )
       } else {
         return res(ctx.status(400), ctx.text('error message'))
       }
-    },
-  ),
-
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_V2_PATH}/api/okuskirteini/:nationalId`),
-    (req, res, ctx) => {
-      const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-      const isDisqualified = DISQUALIFIED_NATIONAL_IDS.includes(
-        req.params.nationalId,
-      )
-      return res(
-        ctx.status(isExpired || isDisqualified ? 400 : 200),
-        ctx.json(
-          isExpired
-            ? { message: 'Ökuskírteini er ekki í gildi' }
-            : isDisqualified
-            ? { detail: 'Einstaklingur er sviptur ökuréttindum' }
-            : ValidLicense,
-        ),
-      )
-    },
-  ),
-
-  // Ignore calls to this endpoint and mock response in get All Driving Licenses
-  rest.get(
-    new RegExp(
-      XROAD_DRIVING_LICENSE_V5_PATH.source +
-        /\/api\/drivinglicense\/v5\/deprivation/.source,
-    ),
-    (req, res, ctx) => {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          dateFrom: null,
-          dateTo: null,
-        }),
-      )
-    },
-  ),
-
-  rest.get(
-    url(`${XROAD_DRIVING_LICENSE_PATH}/einstaklingar/:nationalId/buseta`),
-    (req, res, ctx) => {
-      const isExpired = req.params.nationalId === MOCK_NATIONAL_ID_EXPIRED
-      return res(
-        ctx.status(isExpired ? 400 : 200),
-        ctx.json(isExpired ? undefined : ResidenceHistory),
-      )
     },
   ),
 ]

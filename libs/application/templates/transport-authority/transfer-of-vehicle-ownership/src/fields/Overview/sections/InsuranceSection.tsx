@@ -16,7 +16,7 @@ interface Props {
 }
 
 export const InsuranceSection: FC<
-  FieldBaseProps & ReviewScreenProps & Props
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps & Props>
 > = ({
   setStep,
   insurance = undefined,

@@ -1,12 +1,14 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@apollo/client'
-import { useMemo, useEffect, useRef, useState } from 'react'
-import { ChatBubble } from '../ChatBubble'
+
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+import { useNamespaceStrict } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { useFeatureFlag, useNamespaceStrict } from '@island.is/web/hooks'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
+
+import { ChatBubble } from '../ChatBubble'
 import { WatsonChatPanelProps } from '../types'
-import { onDirectorateOfImmigrationChatLoad } from './utils'
+import { onAuthenticatedWatsonAssistantChatLoad } from './utils'
 
 const URL = 'https://web-chat.global.assistant.watson.appdomain.cloud'
 const FILENAME = 'WatsonAssistantChatEntry.js'
@@ -35,11 +37,6 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     },
   })
 
-  const {
-    loading,
-    value: utlendingastofnunWatsonChatUsesIdentityToken,
-  } = useFeatureFlag('utlendingastofnunWatsonChatUsesIdentityToken', false)
-
   const namespace = useMemo(
     () => JSON.parse(data?.getNamespace?.fields ?? '{}'),
     [data?.getNamespace?.fields],
@@ -51,12 +48,15 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
   const [isButtonVisible, setIsButtonVisible] = useState(false)
 
   useEffect(() => {
-    if (Object.keys(namespace).length === 0 || loading) {
+    if (Object.keys(namespace).length === 0) {
       return () => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         watsonInstance?.current?.destroy()
       }
     }
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const namespaceValue = namespace?.[namespaceKey] ?? {}
     const { cssVariables, ...languagePack } = namespaceValue
 
@@ -79,6 +79,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
         skipConnectAgentCard: true,
       },
       ...props,
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       onLoad: (instance) => {
         watsonInstance.current = instance
         if (cssVariables) {
@@ -88,10 +90,16 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
           instance.updateLanguagePack(languagePack)
         }
         if (
-          props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54' &&
-          utlendingastofnunWatsonChatUsesIdentityToken
+          // Askur - Útlendingastofnun
+          props.integrationID === '89a03e83-5c73-4642-b5ba-cd3771ceca54' ||
+          props.integrationID === '53c6e788-8178-448d-94c3-f5d71ec3b80e'
         ) {
-          onDirectorateOfImmigrationChatLoad(instance)
+          onAuthenticatedWatsonAssistantChatLoad(
+            instance,
+            namespace,
+            activeLocale,
+            'directorateOfImmigration',
+          )
         }
 
         if (onLoad) {
@@ -108,10 +116,12 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
 
     return () => {
       scriptElement?.remove()
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       watsonInstance?.current?.destroy()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [namespace, loading])
+  }, [namespace])
 
   if (showLauncher) return null
 
@@ -119,6 +129,8 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
     <ChatBubble
       text={n('chatBubbleText', 'Hæ, get ég aðstoðað?')}
       isVisible={isButtonVisible}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       onClick={watsonInstance.current?.openWindow}
       pushUp={pushUp}
     />

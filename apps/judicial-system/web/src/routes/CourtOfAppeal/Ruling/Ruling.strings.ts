@@ -32,6 +32,11 @@ export const courtOfAppealRuling = defineMessages({
     defaultMessage: 'Úrskurður Landsréttar',
     description: 'Notaður sem fyrirsögn á úrskurður Landsréttar.',
   },
+  conclusionPlaceholder: {
+    id: 'judicial.system.core:court_of_appeal_ruling.conclusionPlaceholder',
+    defaultMessage: 'Hver eru úrskurðarorð Landsréttar?',
+    description: 'Notaður sem skýritexti í úrskurðarorð textaboxi.',
+  },
   nextButtonFooter: {
     id: 'judicial.system.core:court_of_appeal_ruling.nextButtonFooter',
     defaultMessage: 'Ljúka máli',
@@ -51,15 +56,13 @@ export const courtOfAppealRuling = defineMessages({
       'Notaður sem titill á hlaða upp takka á skrefi úrskurður Landsréttar.',
   },
   uploadCompletedModalTitle: {
-    id:
-      'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_title',
+    id: 'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_title',
     defaultMessage: 'Máli hefur verið lokið',
     description:
       'Notaður sem titill á loka máli modal á skrefi úrskurður Landsréttar.',
   },
   uploadCompletedModalText: {
-    id:
-      'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_text',
+    id: 'judicial.system.core:court_of_appeal_ruling.upload_completed_modal_text',
     defaultMessage:
       'Tilkynning um úrskurð Landsréttar hefur verið send á aðila máls, héraðsdóm og fangelsi ef við á',
     description:

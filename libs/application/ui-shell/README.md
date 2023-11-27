@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "UI Shell" -->
-
 # Application UI Shell
 
 This library contains the UI for rendering application forms. It has built in support for a multi-step form experience, progress indicators, field rendering, custom field rendering, storing answers, and more.

@@ -1,3 +1,5 @@
+import { useContext, useState } from 'react'
+import { PresignedPost } from '@island.is/api/schema'
 import { Case } from '../../../../types/interfaces'
 import {
   getDateBeginDateEnd,
@@ -17,11 +19,7 @@ import {
   Checkbox,
   Stack,
 } from '@island.is/island-ui/core'
-
-import Link from 'next/link'
-import { useContext, useState } from 'react'
 import { useIsMobile, useLogIn, usePostAdvice } from '../../../../hooks'
-import { PresignedPost } from '@island.is/api/schema'
 import {
   REVIEW_FILENAME_MAXIMUM_LENGTH,
   REVIEW_MAXIMUM_LENGTH,
@@ -33,6 +31,7 @@ import { advicePublishTypeKeyHelper } from '../../../../types/enums'
 import localization from '../../Case.json'
 import sharedLocalization from '../../../../lib/shared.json'
 import { UserContext } from '../../../../context'
+import { CaseStatusText } from '../../components'
 
 interface Props {
   case: Case
@@ -195,6 +194,10 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
     const newFileList = fileList.filter((file) => file.key !== fileToRemove.key)
     setFileList(newFileList)
   }
+  const shouldDisplayHidden =
+    _case.allowUsersToSendPrivateAdvices &&
+    advicePublishTypeKeyHelper[_case.advicePublishTypeId] !== 'publishNever'
+
   return isAuthenticated ? (
     <Box
       paddingY={3}
@@ -235,16 +238,18 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
       </Text>
 
       <Text marginBottom={2}>
-        {loc.card.description.textBefore}
-        {` ${
-          sloc[advicePublishTypeKeyHelper[_case.advicePublishTypeId]].present
-        } 
-        ${sloc.publishLaw.text} 
-        `}
-
-        <Link href={sloc.publishLaw.link.href}>
-          {sloc.publishLaw.link.label}
-        </Link>
+        <CaseStatusText
+          isAdviceForm
+          sloc={sloc}
+          status={_case.statusName}
+          shouldDisplayHidden={shouldDisplayHidden}
+          advicePublishTypeId={_case.advicePublishTypeId}
+          linkProps={{
+            href: sloc.publishLaw.link.href,
+            label: sloc.publishLaw.link.label,
+          }}
+          textBefore={loc.card.description.textBefore}
+        />
       </Text>
 
       <Text marginBottom={2}>

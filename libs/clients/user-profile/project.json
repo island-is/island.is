@@ -1,34 +1,31 @@
 {
-  "root": "libs/clients/user-profile",
+  "name": "clients-user-profile",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/user-profile/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/user-profile/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/user-profile"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/user-profile"],
       "options": {
-        "jestConfig": "libs/clients/user-profile/jest.config.js",
+        "jestConfig": "libs/clients/user-profile/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "libs/clients/user-profile/gen",
-        "commands": [
-          "nx run services-user-profile:schemas/build-openapi-internal $NX_OPTIONS",
-          "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
-        ],
-        "parallel": false
-      }
+        "command": "yarn openapi-generator -o libs/clients/user-profile/gen/fetch -i apps/services/user-profile/src/openapi.yaml"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
-  "tags": ["lib:client", "scope:client"],
-  "implicitDependencies": ["services-user-profile"]
+  "implicitDependencies": ["services-user-profile"],
+  "tags": ["lib:client", "scope:client"]
 }

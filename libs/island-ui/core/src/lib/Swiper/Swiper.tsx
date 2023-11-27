@@ -1,12 +1,11 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
 
 import * as styles from './Swiper.css'
 
 const FALLBACK_WIDTH = 316
 
-export const Swiper: FC = ({ children }) => {
+export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -34,7 +33,8 @@ export const Swiper: FC = ({ children }) => {
               key={i}
               className={styles.slide}
               style={{
-                width: i === arr.length - 1 ? theme.spacing[3] + width : width,
+                width,
+                aspectRatio: '1/1',
               }}
             >
               {child}

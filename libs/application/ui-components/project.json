@@ -1,11 +1,12 @@
 {
-  "root": "libs/application/ui-components",
+  "name": "application-ui-components",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-components/src",
   "projectType": "library",
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/application/ui-components/**/*.{ts,tsx,js,jsx}"
@@ -13,15 +14,15 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/ui-components/jest.config.js",
+        "jestConfig": "libs/application/ui-components/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/libs/application/ui-components"]
+      "outputs": ["{workspaceRoot}/coverage/libs/application/ui-components"]
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config libs/application/ui-components/codegen.yml"

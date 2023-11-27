@@ -1,11 +1,14 @@
-import {
-  assistantTransitionRule,
-  judgeTransitionRule,
-  prosecutorTransitionRule,
-  registrarTransitionRule,
-  representativeTransitionRule,
-} from '../../guards/rolesRules'
 import { CaseController } from '../../case.controller'
+import {
+  courtOfAppealsAssistantTransitionRule,
+  courtOfAppealsJudgeTransitionRule,
+  courtOfAppealsRegistrarTransitionRule,
+  districtCourtAssistantTransitionRule,
+  districtCourtJudgeTransitionRule,
+  districtCourtRegistrarTransitionRule,
+  prosecutorRepresentativeTransitionRule,
+  prosecutorTransitionRule,
+} from '../../guards/rolesRules'
 
 describe('CaseController - Transition rules', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,15 +21,15 @@ describe('CaseController - Transition rules', () => {
     )
   })
 
-  it('should give permission to five roles', () => {
-    expect(rules).toHaveLength(5)
-  })
-
-  it('should give permission to prosecutors, representatives, judges, registrars and assistants', () => {
+  it('should give permission to roles', () => {
+    expect(rules).toHaveLength(8)
     expect(rules).toContain(prosecutorTransitionRule)
-    expect(rules).toContain(representativeTransitionRule)
-    expect(rules).toContain(judgeTransitionRule)
-    expect(rules).toContain(registrarTransitionRule)
-    expect(rules).toContain(assistantTransitionRule)
+    expect(rules).toContain(prosecutorRepresentativeTransitionRule)
+    expect(rules).toContain(districtCourtJudgeTransitionRule)
+    expect(rules).toContain(districtCourtRegistrarTransitionRule)
+    expect(rules).toContain(districtCourtAssistantTransitionRule)
+    expect(rules).toContain(courtOfAppealsJudgeTransitionRule)
+    expect(rules).toContain(courtOfAppealsRegistrarTransitionRule)
+    expect(rules).toContain(courtOfAppealsAssistantTransitionRule)
   })
 })

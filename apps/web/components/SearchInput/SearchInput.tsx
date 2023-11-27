@@ -37,6 +37,7 @@ import {
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { trackSearchQuery } from '@island.is/plausible'
+import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
 import * as styles from './SearchInput.css'
 
@@ -61,7 +62,7 @@ const initialSearchState: Readonly<SearchState> = {
   isLoading: false,
 }
 
-const searchReducer = (state, action): SearchState => {
+const searchReducer = (state: any, action: any): SearchState => {
   switch (action.type) {
     case 'startLoading': {
       return { ...state, isLoading: true }
@@ -78,7 +79,10 @@ const searchReducer = (state, action): SearchState => {
     case 'reset': {
       return initialSearchState
     }
+    default:
+      return initialSearchState
   }
+  return initialSearchState
 }
 
 const useSearch = (
@@ -105,46 +109,52 @@ const useSearch = (
     }
 
     dispatch({ type: 'startLoading' })
-    const thisTimerId = (timer.current = setTimeout(async () => {
-      client
-        .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
-          query: GET_SEARCH_RESULTS_QUERY,
-          variables: {
-            query: {
-              queryString: term.trim(),
-              language: locale as ContentLanguage,
-              types: [
-                // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
-                SearchableContentTypes['WebArticle'],
-                SearchableContentTypes['WebSubArticle'],
-                SearchableContentTypes['WebProjectPage'],
-                SearchableContentTypes['WebOrganizationPage'],
-                SearchableContentTypes['WebOrganizationSubpage'],
-                SearchableContentTypes['WebDigitalIcelandService'],
-              ],
-              highlightResults: true,
-              useQuery: 'suggestions',
+    const thisTimerId =
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      (timer.current = setTimeout(async () => {
+        client
+          .query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+            query: GET_SEARCH_RESULTS_QUERY,
+            variables: {
+              query: {
+                queryString: term?.trim() ?? '',
+                language: locale as ContentLanguage,
+                types: [
+                  // RÁ suggestions has only been searching particular types for some time - SYNC SUGGESTIONS SCOPE WITH DEFAULT - keep it in sync
+                  SearchableContentTypes['WebArticle'],
+                  SearchableContentTypes['WebSubArticle'],
+                  SearchableContentTypes['WebProjectPage'],
+                  SearchableContentTypes['WebOrganizationPage'],
+                  SearchableContentTypes['WebOrganizationSubpage'],
+                  SearchableContentTypes['WebDigitalIcelandService'],
+                  SearchableContentTypes['WebDigitalIcelandCommunityPage'],
+                  SearchableContentTypes['WebManual'],
+                ],
+                highlightResults: true,
+                useQuery: 'suggestions',
+              },
             },
-          },
-        })
-        .then(({ data: { searchResults: results } }) => {
-          dispatch({
-            type: 'searchResults',
-            results,
           })
-        })
+          .then(({ data: { searchResults: results } }) => {
+            dispatch({
+              type: 'searchResults',
+              results,
+            })
+          })
 
-      // the api only completes single terms get only single terms
-      const indexOfLastSpace = term.lastIndexOf(' ')
-      const hasSpace = indexOfLastSpace !== -1
-      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
-      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
-      dispatch({
-        type: 'searchString',
-        term,
-        prefix,
-      })
-    }, DEBOUNCE_TIMER))
+        // the api only completes single terms get only single terms
+        if (term) {
+          const indexOfLastSpace = term.lastIndexOf(' ')
+          const hasSpace = indexOfLastSpace !== -1
+          const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+          dispatch({
+            type: 'searchString',
+            term,
+            prefix,
+          })
+        }
+      }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,10 +174,18 @@ const useSubmit = (locale: Locale, onRouting?: () => void) => {
 
   return useCallback(
     (item: SubmitType) => {
+      const query: Record<string, string | string[]> = {
+        q: item.string,
+      }
+
+      if (Router.query.referencedBy) {
+        query.referencedBy = Router.query.referencedBy
+      }
+
       Router.push({
         ...(item.type === 'query' && {
           pathname: linkResolver('search').href,
-          query: { q: item.string },
+          query,
         }),
         ...(item.type === 'link' && {
           pathname: item.string,
@@ -236,7 +254,8 @@ export const SearchInput = forwardRef<
     return (
       <Downshift<SubmitType>
         id={id}
-        initialInputValue={initialInputValue}
+        // Since the search supports '*' we don't want to display it in the UI
+        initialInputValue={initialInputValue === '*' ? '' : initialInputValue}
         onChange={(item) => {
           if (!item?.string) {
             return false
@@ -349,6 +368,8 @@ export const SearchInput = forwardRef<
               <Results
                 quickContentLabel={quickContentLabel}
                 search={search}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 highlightedIndex={highlightedIndex}
                 getItemProps={getItemProps}
                 autosuggest={autosuggest}
@@ -423,6 +444,8 @@ const Results = ({
             </Text>
             {search.results.items
               .slice(0, 5)
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
                 const typename = item.__typename?.toLowerCase() as LinkType
                 let variables = item.slug?.split('/')
@@ -437,17 +460,22 @@ const Results = ({
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string: linkResolver(typename, variables)?.href,
+                    string: linkResolver(
+                      typename === 'lifeeventpage'
+                        ? extractAnchorPageLinkType(item as LifeEventPage)
+                        : typename,
+                      variables,
+                    )?.href,
                   },
                 })
                 return (
                   <Link
                     key={item.id}
                     {...itemProps}
-                    onClick={(e) => {
+                    onClick={(e: any) => {
                       trackSearchQuery(search.term, 'Web Suggestion')
                       onClick(e)
-                      onRouting()
+                      onRouting?.()
                     }}
                     color="blue400"
                     underline="normal"

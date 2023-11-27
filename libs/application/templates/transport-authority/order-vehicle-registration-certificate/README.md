@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # application-templates-transport-authority-order-vehicle-registration-certificate
 
 This library was generated with [Nx](https://nx.dev).

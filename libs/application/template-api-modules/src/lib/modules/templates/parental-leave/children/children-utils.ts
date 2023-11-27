@@ -201,20 +201,32 @@ export const getChildrenAndExistingApplications = (
 
   for (const child of childrenWhereOtherParent) {
     const isAlreadyInList =
-      children.some(
-        ({ expectedDateOfBirth }) =>
-          expectedDateOfBirth === child.expectedDateOfBirth,
-      ) ||
-      children.some(({ adoptionDate }) => adoptionDate === child.adoptionDate)
+      children.some(({ expectedDateOfBirth }) => {
+        if (expectedDateOfBirth) {
+          return expectedDateOfBirth === child.expectedDateOfBirth
+        }
+        return false
+      }) ||
+      children.some(({ adoptionDate }) => {
+        if (adoptionDate) {
+          return adoptionDate === child.adoptionDate
+        }
+        return false
+      })
 
     const hasAlreadyAppliedForChild =
-      existingApplications.some(
-        ({ expectedDateOfBirth }) =>
-          expectedDateOfBirth === child.expectedDateOfBirth,
-      ) ||
-      existingApplications.some(
-        ({ adoptionDate }) => adoptionDate === child.adoptionDate,
-      )
+      existingApplications.some(({ expectedDateOfBirth }) => {
+        if (expectedDateOfBirth) {
+          return expectedDateOfBirth === child.expectedDateOfBirth
+        }
+        return false
+      }) ||
+      existingApplications.some(({ adoptionDate }) => {
+        if (adoptionDate) {
+          return adoptionDate === child.adoptionDate
+        }
+        return false
+      })
 
     // This supports to cover otherParent multipleBirths case
     if (!isAlreadyInList && !hasAlreadyAppliedForChild) {
@@ -237,6 +249,20 @@ export const getChildrenAndExistingApplications = (
         expectedDateOfBirth: pregnancyStatus.expectedDateOfBirth,
         parentalRelation: ParentalRelations.primary,
       })
+    }
+  }
+
+  // Parent could create new application when they have another child
+  if (children.length > 0) {
+    const filteredApps = existingApplications.filter((child) => {
+      if (children[0].adoptionDate && child.adoptionDate) {
+        return children[0].adoptionDate === child.adoptionDate
+      }
+      return children[0].expectedDateOfBirth === child.expectedDateOfBirth
+    })
+    return {
+      children,
+      existingApplications: filteredApps,
     }
   }
 

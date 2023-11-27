@@ -10,6 +10,7 @@
     "**/*.test.ts",
     "**/*.d.ts",
     "test/**.ts",
-    "**/e2e/**.ts"
+    "**/e2e/**.ts",
+    "jest.config.ts"
   ]
 }

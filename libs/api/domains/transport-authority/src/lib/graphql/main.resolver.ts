@@ -2,6 +2,7 @@ import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import {
+  BypassAuth,
   CurrentUser,
   IdsUserGuard,
   Scopes,
@@ -13,6 +14,7 @@ import {
   OwnerChangeAnswers,
   CheckTachoNetInput,
   OperatorChangeAnswers,
+  PlateAvailabilityInput,
 } from './dto'
 import {
   CheckTachoNetExists,
@@ -22,6 +24,7 @@ import {
   VehicleOwnerchangeChecksByPermno,
   VehiclePlateOrderChecksByPermno,
   MyPlateOwnershipChecksByRegno,
+  PlateAvailability,
 } from './models'
 import { CoOwnerChangeAnswers } from './dto/coOwnerChangeAnswers.input'
 
@@ -39,7 +42,11 @@ export class MainResolver {
     return this.transportAuthorityApi.checkTachoNet(user, input)
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehicleOwnerchangeChecksByPermno, {
     name: 'vehicleOwnerchangeChecksByPermno',
     nullable: true,
@@ -54,7 +61,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OwnerChangeValidation, { nullable: true })
   vehicleOwnerChangeValidation(
     @CurrentUser() user: User,
@@ -66,7 +77,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OwnerChangeValidation, { nullable: true })
   vehicleCoOwnerChangeValidation(
     @CurrentUser() user: User,
@@ -78,7 +93,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehicleOperatorChangeChecksByPermno, {
     name: 'vehicleOperatorChangeChecksByPermno',
     nullable: true,
@@ -93,7 +112,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => OperatorChangeValidation, { nullable: true })
   vehicleOperatorChangeValidation(
     @CurrentUser() user: User,
@@ -105,7 +128,11 @@ export class MainResolver {
     )
   }
 
-  @Scopes(ApiScope.internal, ApiScope.internalProcuring)
+  @Scopes(
+    ApiScope.internal,
+    ApiScope.internalProcuring,
+    ApiScope.samgongustofaVehicles,
+  )
   @Query(() => VehiclePlateOrderChecksByPermno, {
     name: 'vehiclePlateOrderChecksByPermno',
     nullable: true,
@@ -133,5 +160,11 @@ export class MainResolver {
       user,
       regno,
     )
+  }
+
+  @BypassAuth()
+  @Query(() => PlateAvailability)
+  async plateAvailable(@Args('input') input: PlateAvailabilityInput) {
+    return this.transportAuthorityApi.getPlateAvailability(input.regno)
   }
 }

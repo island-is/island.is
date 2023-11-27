@@ -44,6 +44,7 @@ export function setupEventHandlers() {
         idToken: params.id_token,
         accessToken: params.access_token,
         expiresIn: Number(params.expires_in),
+        expiresAt: Number(params.expires_in) + Date.now() / 1000,
         tokenType: params.token_type,
       });
       Navigation.dismissAllModals();

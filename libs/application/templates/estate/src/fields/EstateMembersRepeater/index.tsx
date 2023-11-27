@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { useFieldArray } from 'react-hook-form'
+import { useFieldArray, useFormContext } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps, GenericFormField } from '@island.is/application/types'
 import {
@@ -10,28 +10,38 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import { EstateRegistrant } from '@island.is/clients/syslumenn'
-import { Answers, EstateMember } from '../../types'
+import { EstateRegistrant, EstateMember } from '@island.is/clients/syslumenn'
+import { Answers } from '../../types'
 import { AdditionalEstateMember } from './AdditionalEstateMember'
 import { getValueViaPath } from '@island.is/application/core'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  SelectController,
+} from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
+import { EstateTypes, relationWithApplicant } from '../../lib/constants'
 
-export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
-  application,
-  field,
-  errors,
-}) => {
+export const EstateMembersRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers>>
+> = ({ application, field, errors }) => {
   const { id } = field
   const { formatMessage } = useLocale()
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove, update, replace } = useFieldArray({
     name: id,
   })
+
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
     estate: EstateRegistrant
   }
+
+  const relationsWithApplicant = relationWithApplicant.map((relation) => ({
+    value: relation,
+    label: relation,
+  }))
+
   const relations =
     externalData.relationOptions?.map((relation) => ({
       value: relation,
@@ -49,7 +59,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
 
   useEffect(() => {
     if (fields.length === 0 && externalData.estate.estateMembers) {
-      append(externalData.estate.estateMembers)
+      // ran into a problem with "append", as it appeared to be getting called multiple times
+      // despite checking on the length of the fields
+      // so now using "replace" instead, for the initial setup
+      replace(externalData.estate.estateMembers)
     }
   }, [])
 
@@ -70,11 +83,9 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
         }
         return [
           ...acc,
-          <Box marginTop={index > 0 ? 3 : 0} key={index}>
-            <Box display="flex" justifyContent="spaceBetween">
-              <Text variant="h4" paddingBottom={2}>
-                {formatMessage(m.estateMember)}
-              </Text>
+          <Box marginTop={index > 0 ? 7 : 0} key={index}>
+            <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+              <Text variant="h4">{formatMessage(m.estateMember)}</Text>
               <Box>
                 <Button
                   variant="text"
@@ -86,6 +97,10 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                       enabled: !member.enabled,
                     }
                     update(index, updatedMember)
+                    clearErrors(`${id}[${index}].phone`)
+                    clearErrors(`${id}[${index}].email`)
+                    clearErrors(`${id}[${index}].advocate.phone`)
+                    clearErrors(`${id}[${index}].advocate.email`)
                   }}
                 >
                   {member.enabled
@@ -94,7 +109,6 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                 </Button>
               </Box>
             </Box>
-
             <GridRow>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                 <InputController
@@ -106,6 +120,7 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   backgroundColor="white"
                   disabled={!member.enabled}
                   format={'######-####'}
+                  error={error && error[index] && error[index].nationalId}
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -125,50 +140,154 @@ export const EstateMembersRepeater: FC<FieldBaseProps<Answers>> = ({
                   name={`${id}[${index}].relation`}
                   label={formatMessage(m.inheritanceRelationLabel)}
                   readOnly
-                  defaultValue={member.relation || ''}
+                  defaultValue={member.relation}
                   backgroundColor="white"
                   disabled={!member.enabled}
                 />
               </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].phone`}
-                  name={`${id}[${index}].phone`}
-                  label={m.phone.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  format="###-####"
-                  defaultValue={member.phone || ''}
-                  error={error && error[index] && error[index].phone}
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
-                />
-              </GridColumn>
+              {application.answers.selectedEstate ===
+                EstateTypes.permitForUndividedEstate &&
+                member.relation !== 'Maki' && (
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <SelectController
+                      id={`${id}[${index}].relationWithApplicant`}
+                      name={`${id}[${index}].relationWithApplicant`}
+                      label={formatMessage(
+                        m.inheritanceRelationWithApplicantLabel,
+                      )}
+                      defaultValue={member.relationWithApplicant}
+                      options={relationsWithApplicant}
+                      error={error?.relationWithApplicant}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      required
+                    />
+                  </GridColumn>
+                )}
+              {!member.advocate && (
+                <>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].email`}
+                      name={`${id}[${index}].email`}
+                      label={m.email.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.email || ''}
+                      error={error && error[index] && error[index].email}
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].phone`}
+                      name={`${id}[${index}].phone`}
+                      label={m.phone.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.phone || ''}
+                      error={error && error[index] && error[index].phone}
+                      required
+                    />
+                  </GridColumn>
+                </>
+              )}
             </GridRow>
+
+            {/* ADVOCATE */}
+            {member.advocate && (
+              <Box
+                marginTop={2}
+                paddingY={5}
+                paddingX={7}
+                borderRadius="large"
+                border="standard"
+              >
+                <GridRow>
+                  <GridColumn span={['1/1']} paddingBottom={2}>
+                    <Text variant="h4">
+                      {formatMessage(m.inheritanceAdvocateLabel)}
+                    </Text>
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.nationalId`}
+                      name={`${id}[${index}].advocate.nationalId`}
+                      label={formatMessage(m.inheritanceKtLabel)}
+                      readOnly
+                      defaultValue={formatNationalId(
+                        member.advocate?.nationalId || '',
+                      )}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      format={'######-####'}
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.name`}
+                      name={`${id}[${index}].advocate.name`}
+                      label={formatMessage(m.inheritanceNameLabel)}
+                      readOnly
+                      defaultValue={member.advocate?.name || ''}
+                      backgroundColor="white"
+                      disabled={!member.enabled}
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.phone`}
+                      name={`${id}[${index}].advocate.phone`}
+                      label={m.phone.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.advocate?.phone || ''}
+                      error={
+                        error && error[index] && error[index].advocate?.phone
+                      }
+                      size="sm"
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].advocate.email`}
+                      name={`${id}[${index}].advocate.email`}
+                      label={m.email.defaultMessage}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.advocate?.email || ''}
+                      error={
+                        error && error[index] && error[index].advocate?.email
+                      }
+                      size="sm"
+                    />
+                  </GridColumn>
+                </GridRow>
+              </Box>
+            )}
           </Box>,
         ]
       }, [] as JSX.Element[])}
-      {fields.map((member: GenericFormField<EstateMember>, index) => (
-        <Box key={member.id} hidden={member.initial}>
-          <AdditionalEstateMember
-            field={member}
-            fieldName={id}
-            index={index}
-            relationOptions={relations}
-            remove={remove}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((member: GenericFormField<EstateMember>, index) => {
+        return (
+          <Box key={member.id} hidden={member.initial}>
+            <AdditionalEstateMember
+              application={application}
+              field={member}
+              fieldName={id}
+              index={index}
+              relationOptions={relations}
+              relationWithApplicantOptions={relationsWithApplicant}
+              remove={remove}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
       <Box marginTop={3}>
         <Button
           variant="text"

@@ -13,6 +13,8 @@ test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Service portal, in session history', () => {
   let context: BrowserContext
+  const testCompanyName =
+    env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
 
   test.beforeAll(async ({ browser }) => {
     context = await session({
@@ -64,8 +66,6 @@ test.describe('Service portal, in session history', () => {
 
   test('can view list of sessions as company', async () => {
     // Arrange
-    const testCompanyName =
-      env === 'staging' ? 'Prófunarfélag GG og HEB' : 'ARTIC ehf.'
     const page = await context.newPage()
     await page.goto(icelandicAndNoPopupUrl(homeUrl))
     await page

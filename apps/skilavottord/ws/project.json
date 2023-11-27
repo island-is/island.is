@@ -1,5 +1,6 @@
 {
-  "root": "apps/skilavottord/ws",
+  "name": "skilavottord-ws",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/skilavottord/ws/src",
   "projectType": "application",
   "prefix": "skilavottord-ws",
@@ -47,67 +48,62 @@
       "outputs": ["{options.outputPath}"]
     },
     "serve": {
-      "executor": "@nrwl/node:node",
+      "executor": "@nx/js:node",
       "options": {
         "buildTarget": "skilavottord-ws:build"
       }
     },
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["apps/skilavottord/ws/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/skilavottord/ws/jest.config.js",
+        "jestConfig": "apps/skilavottord/ws/jest.config.ts",
         "passWithNoTests": true
       },
-      "outputs": ["coverage/apps/skilavottord/ws"]
+      "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/ws"]
     },
-    "schemas/build-graphql-schema": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/skilavottord/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "migrate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
         "cwd": "apps/skilavottord/ws"
       }
     },
     "migrate/undo": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate:undo",
         "cwd": "apps/skilavottord/ws"
       }
     },
     "migrate/generate": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli migration:generate --name $(whoami)",
         "cwd": "apps/skilavottord/ws"
       }
     },
     "seed": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:seed:all",
         "cwd": "apps/skilavottord/ws"
       }
     },
     "dev-init": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn get-secrets skilavottord skilavottord-ws",
@@ -120,7 +116,7 @@
       }
     },
     "dev": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": ["yarn start skilavottord-ws"],
         "parallel": true

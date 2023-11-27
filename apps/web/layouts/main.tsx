@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import getConfig from 'next/config'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+
 import {
-  Page,
-  Box,
-  FooterLinkProps,
-  Footer,
   AlertBanner,
   AlertBannerVariants,
-  Hidden,
+  Box,
   ButtonTypes,
   ColorSchemeContext,
   ColorSchemes,
+  Footer,
+  FooterLinkProps,
+  Hidden,
+  Page,
 } from '@island.is/island-ui/core'
-import getConfig from 'next/config'
-import { NextComponentType, NextPageContext } from 'next'
-import { Screen, GetInitialPropsContext } from '../types'
-import Cookies from 'js-cookie'
 import { CACHE_CONTROL_HEADER } from '@island.is/shared/constants'
+import { Locale } from '@island.is/shared/types'
+import { stringHash } from '@island.is/shared/utils'
 import { userMonitoring } from '@island.is/user-monitoring'
-import { useRouter } from 'next/router'
 import {
   Header,
   Main,
@@ -26,40 +27,40 @@ import {
   PageLoader,
   SkipToMainContent,
 } from '@island.is/web/components'
-import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
-import {
-  GetGroupedMenuQuery,
-  GetNamespaceQuery,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  GetAlertBannerQuery,
-  QueryGetAlertBannerArgs,
-  GetArticleCategoriesQuery,
-  QueryGetArticleCategoriesArgs,
-  QueryGetGroupedMenuArgs,
-  Menu,
-  GetOrganizationPageQuery,
-  GetSingleArticleQuery,
-} from '../graphql/schema'
+
+import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import { GlobalContextProvider } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import { useI18n } from '../i18n'
-import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import {
+  ContentLanguage,
+  GetAlertBannerQuery,
+  GetArticleCategoriesQuery,
+  GetGroupedMenuQuery,
+  GetNamespaceQuery,
+  GetOrganizationPageQuery,
+  GetSingleArticleQuery,
+  Menu,
+  QueryGetAlertBannerArgs,
+  QueryGetArticleCategoriesArgs,
+  QueryGetGroupedMenuArgs,
+  QueryGetNamespaceArgs,
+} from '../graphql/schema'
 import { useNamespace } from '../hooks'
+import {
+  linkResolver as LinkResolver,
+  LinkType,
+  pathIsRoute,
+  useLinkResolver,
+} from '../hooks/useLinkResolver'
+import { getLocaleFromPath, useI18n } from '../i18n'
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
+import { Screen } from '../types'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
 } from '../utils/processMenuData'
-import { stringHash } from '@island.is/shared/utils'
-import { Locale } from '@island.is/shared/types'
-import {
-  LinkType,
-  useLinkResolver,
-  linkResolver as LinkResolver,
-  pathIsRoute,
-} from '../hooks/useLinkResolver'
-import { OrganizationIslandFooter } from '../components/Organization/OrganizationIslandFooter'
 import Illustration from './Illustration'
 import * as styles from './main.css'
 
@@ -67,7 +68,8 @@ const { publicRuntimeConfig = {} } = getConfig() ?? {}
 
 const IS_MOCK =
   process.env.NODE_ENV !== 'production' && process.env.API_MOCKS === 'true'
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const absoluteUrl = (req, setLocalhost) => {
   let protocol = 'https:'
   let host = req
@@ -103,10 +105,16 @@ export interface LayoutProps {
   alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   organizationAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   articleAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+  customAlertBannerContent?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: Record<Locale, Record<string, string>>
   footerVersion?: 'default' | 'organization'
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   respOrigin
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   megaMenuData
+  children?: React.ReactNode
 }
 
 if (
@@ -122,12 +130,9 @@ if (
     version: publicRuntimeConfig.appVersion || 'local',
   })
 }
-
-const Layout: NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  LayoutProps,
-  LayoutProps
-> = ({
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+const Layout: Screen<LayoutProps> = ({
   showSearchInHeader = true,
   wrapContent = true,
   showHeader = true,
@@ -145,6 +150,7 @@ const Layout: NextComponentType<
   alertBannerContent,
   organizationAlertBannerContent,
   articleAlertBannerContent,
+  customAlertBannerContent,
   languageToggleQueryParams,
   footerVersion = 'default',
   respOrigin,
@@ -154,8 +160,8 @@ const Layout: NextComponentType<
   const { activeLocale, t } = useI18n()
   const { linkResolver } = useLinkResolver()
   const n = useNamespace(namespace)
-  const { asPath } = useRouter()
-  const fullUrl = `${respOrigin}${asPath}`
+  const router = useRouter()
+  const fullUrl = `${respOrigin}${router.asPath}`
 
   const menuTabs = [
     {
@@ -180,6 +186,8 @@ const Layout: NextComponentType<
 
   useEffect(() => {
     setAlertBanners(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
       [
         {
           bannerId: `alert-${stringHash(
@@ -199,6 +207,12 @@ const Layout: NextComponentType<
           )}`,
           ...articleAlertBannerContent,
         },
+        {
+          bannerId: `custom-alert-${stringHash(
+            JSON.stringify(customAlertBannerContent ?? {}),
+          )}`,
+          ...customAlertBannerContent,
+        },
       ].filter(
         (banner) => !Cookies.get(banner.bannerId) && banner?.showAlertBanner,
       ),
@@ -207,7 +221,20 @@ const Layout: NextComponentType<
     alertBannerContent,
     articleAlertBannerContent,
     organizationAlertBannerContent,
+    customAlertBannerContent,
   ])
+
+  // Update html lang in case a route change leads us to a new locale
+  useEffect(() => {
+    const handleRouteChange = () => {
+      const language = getLocaleFromPath(router.asPath)
+      document.documentElement.lang = language
+    }
+    router.events.on('routeChangeComplete', handleRouteChange)
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange)
+    }
+  }, [router.asPath, router.events])
 
   const preloadedFonts = [
     '/fonts/ibm-plex-sans-v7-latin-300.woff2',
@@ -217,7 +244,7 @@ const Layout: NextComponentType<
     '/fonts/ibm-plex-sans-v7-latin-600.woff2',
   ]
 
-  const isServiceWeb = pathIsRoute(asPath, 'serviceweb', activeLocale)
+  const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
@@ -304,23 +331,51 @@ const Layout: NextComponentType<
         />
         {alertBanners.map((banner) => (
           <AlertBanner
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             key={banner.bannerId}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             title={banner.title}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             description={banner.description}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             link={{
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               ...(!!banner.link &&
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 !!banner.linkTitle && {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   href: linkResolver(banner.link.type as LinkType, [
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
                     banner.link.slug,
                   ]).href,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   title: banner.linkTitle,
                 }),
             }}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             variant={banner.bannerVariant as AlertBannerVariants}
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
             dismissable={banner.isDismissable}
             onDismiss={() => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               if (banner.dismissedForDays !== 0) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
                 Cookies.set(banner.bannerId, 'hide', {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                  // @ts-ignore make web strict
                   expires: banner.dismissedForDays,
                 })
               }
@@ -338,6 +393,8 @@ const Layout: NextComponentType<
         >
           {showHeader && (
             <ColorSchemeContext.Provider
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               value={{ colorScheme: headerColorScheme }}
             >
               <Header
@@ -439,76 +496,80 @@ const Layout: NextComponentType<
     </GlobalContextProvider>
   )
 }
-
-Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
+Layout.getProps = async ({ apolloClient, locale, req }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const { origin } = absoluteUrl(req, 'localhost:4200')
   const respOrigin = `${origin}`
-  const [
-    categories,
-    alertBanner,
-    namespace,
-    megaMenuData,
-    footerMenuData,
-  ] = await Promise.all([
-    apolloClient
-      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
-        variables: {
-          input: {
-            lang: locale as ContentLanguage,
+  const [categories, alertBanner, namespace, megaMenuData, footerMenuData] =
+    await Promise.all([
+      apolloClient
+        .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
+          query: GET_CATEGORIES_QUERY,
+          variables: {
+            input: {
+              lang: locale as ContentLanguage,
+            },
           },
-        },
-      })
-      .then((res) => res.data.getArticleCategories),
-    apolloClient
-      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
-        query: GET_ALERT_BANNER_QUERY,
-        variables: {
-          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
-        },
-      })
-      .then((res) => res.data.getAlertBanner),
-    apolloClient
-      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
-        query: GET_NAMESPACE_QUERY,
-        variables: {
-          input: {
-            namespace: 'Global',
-            lang,
+        })
+        .then((res) => res.data.getArticleCategories),
+      apolloClient
+        .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+          query: GET_ALERT_BANNER_QUERY,
+          variables: {
+            input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
           },
-        },
-      })
-      .then((res) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(res.data.getNamespace.fields)
-      }),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-    apolloClient
-      .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
-        query: GET_GROUPED_MENU_QUERY,
-        variables: {
-          input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
-        },
-      })
-      .then((res) => res.data.getGroupedMenu),
-  ])
+        })
+        .then((res) => res.data.getAlertBanner),
+      apolloClient
+        .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
+          query: GET_NAMESPACE_QUERY,
+          variables: {
+            input: {
+              namespace: 'Global',
+              lang,
+            },
+          },
+        })
+        .then((res) => {
+          // map data here to reduce data processing in component
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          return JSON.parse(res.data.getNamespace.fields)
+        }),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '5prHB8HLyh4Y35LI4bnhh2', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+      apolloClient
+        .query<GetGroupedMenuQuery, QueryGetGroupedMenuArgs>({
+          query: GET_GROUPED_MENU_QUERY,
+          variables: {
+            input: { id: '7MeplCDXx2n01BoxRrekCi', lang },
+          },
+        })
+        .then((res) => res.data.getGroupedMenu),
+    ])
 
   const alertBannerId = `alert-${stringHash(JSON.stringify(alertBanner))}`
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const [asideTopLinksData, asideBottomLinksData] = megaMenuData.menus
 
   const mapLinks = (item: Menu) =>
     item.menuLinks.map((x) => {
       const href = LinkResolver(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         x.link.type as LinkType,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         [x.link.slug],
         lang as Locale,
       ).href.trim()
@@ -528,11 +589,14 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     footerTagsMenu: [],
     footerMiddleMenu: [],
   }
-
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore make web strict
   const footerMenu = footerMenuData.menus.reduce((menus, menu, idx) => {
     if (IS_MOCK) {
       const key = Object.keys(menus)[idx]
       if (key) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus[key] = mapLinks(menu as Menu)
       }
       return menus
@@ -541,22 +605,32 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     switch (menu.id) {
       // Footer lower
       case '6vTuiadpCKOBhAlSjYY8td':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerLowerMenu = mapLinks(menu as Menu)
         break
       // Footer middle
       case '7hSbSQm5F5EBc0KxPTFVAS':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerMiddleMenu = mapLinks(menu as Menu)
         break
       // Footer tags
       case '6oGQDyWos4xcKX9BdMHd5R':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerTagsMenu = mapLinks(menu as Menu)
         break
       // Footer upper
       case '62Zh6hUc3bi0JwNRnqV8Nm':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerUpperInfo = mapLinks(menu as Menu)
         break
       // Footer upper contact
       case '5yUCZ4U6aZ8rZ9Jigme7GI':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         menus.footerUpperContact = mapLinks(menu as Menu)
         break
       default:
@@ -571,6 +645,8 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
     alertBannerContent: {
       ...alertBanner,
       showAlertBanner:
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
         alertBanner.showAlertBanner &&
         (!req?.headers.cookie ||
           req.headers.cookie?.indexOf(alertBannerId) === -1),
@@ -593,16 +669,13 @@ Layout.getInitialProps = async ({ apolloClient, locale, req }) => {
   }
 }
 
-type LayoutWrapper<T> = NextComponentType<
-  GetInitialPropsContext<NextPageContext>,
-  { layoutProps: LayoutProps; componentProps: T },
-  { layoutProps: LayoutProps; componentProps: T }
->
+type LayoutWrapper<T> = Screen<{ layoutProps: LayoutProps; componentProps: T }>
 
 interface LayoutComponentProps {
   themeConfig?: Partial<LayoutProps>
   organizationPage?: GetOrganizationPageQuery['getOrganizationPage']
   article?: GetSingleArticleQuery['getSingleArticle']
+  customAlertBanner?: GetAlertBannerQuery['getAlertBanner']
   languageToggleQueryParams?: LayoutProps['languageToggleQueryParams']
 }
 
@@ -616,25 +689,28 @@ export const withMainLayout = <T,>(
   }) => {
     return (
       <Layout {...layoutProps}>
+        {/** 
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+         // @ts-ignore make web strict */}
         <Component {...componentProps} />
       </Layout>
     )
   }
 
-  WithMainLayout.getInitialProps = async (ctx) => {
+  WithMainLayout.getProps = async (ctx) => {
     // Configure default full-page caching.
     if (ctx.res) {
       ctx.res.setHeader('Cache-Control', CACHE_CONTROL_HEADER)
     }
 
-    const getLayoutInitialProps = Layout.getInitialProps as Exclude<
-      typeof Layout.getInitialProps,
+    const getLayoutProps = Layout.getProps as Exclude<
+      typeof Layout.getProps,
       undefined
     >
 
     const [layoutProps, componentProps] = await Promise.all([
-      getLayoutInitialProps(ctx),
-      Component.getInitialProps ? Component.getInitialProps(ctx) : ({} as T),
+      getLayoutProps(ctx),
+      Component.getProps ? Component.getProps(ctx) : ({} as T),
     ])
     const layoutComponentProps = componentProps as LayoutComponentProps
 
@@ -642,6 +718,7 @@ export const withMainLayout = <T,>(
     const organizationAlertBannerContent =
       layoutComponentProps.organizationPage?.alertBanner
     const articleAlertBannerContent = layoutComponentProps.article?.alertBanner
+    const customAlertBannerContent = layoutComponentProps.customAlertBanner
     const languageToggleQueryParams =
       layoutComponentProps.languageToggleQueryParams
 
@@ -652,6 +729,7 @@ export const withMainLayout = <T,>(
         ...themeConfig,
         organizationAlertBannerContent,
         articleAlertBannerContent,
+        customAlertBannerContent,
         languageToggleQueryParams,
       },
       componentProps,

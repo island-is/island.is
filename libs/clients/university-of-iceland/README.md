@@ -1,5 +1,3 @@
-<!-- gitbook-navigation: "University of Iceland" -->
-
 # Clients University of Iceland
 
 This library was generated with [Nx](https://nx.dev).
@@ -17,5 +15,5 @@ Run `nx lint clients-university-of-iceland` to execute the lint via [ESLint](htt
 ## Regenerating the client:
 
 ```sh
-yarn nx run clients-university-of-iceland:schemas/external-openapi-generator
+yarn nx run clients-university-of-iceland:codegen/backend-client
 ```

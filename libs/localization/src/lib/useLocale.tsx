@@ -5,11 +5,7 @@ import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
 import { LocaleContext } from './LocaleContext'
-import {
-  FormatMessage,
-  FormatMessageValues,
-  FormatMessageValuesWReact,
-} from './types'
+import { FormatMessage } from './types'
 
 export function useLocale() {
   const intl = useIntl()
@@ -17,10 +13,10 @@ export function useLocale() {
 
   const formatMessage = ((
     descriptor: MessageDescriptor | string | undefined,
-    values?: FormatMessageValues | FormatMessageValuesWReact,
+    values?: any, // FormatMessageValues | FormatMessageValuesWReact,
   ): string | ReactNode | undefined => {
     if (!descriptor || typeof descriptor === 'string') {
-      return descriptor
+      return descriptor as string
     }
     return intl.formatMessage(descriptor, values)
   }) as FormatMessage

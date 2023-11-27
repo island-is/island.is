@@ -48,8 +48,9 @@ parse_build_args() {
       exit 0
       ;;
     *)
-      error "Unknown option: $1"
-      exit 1
+      warning "Unknown $0 build option: $1"
+      info "Ending argument parsing for $0"
+      break
       ;;
     esac
   done
@@ -58,13 +59,17 @@ parse_build_args() {
 }
 
 print_run_usage() {
-  echo "Usage: run-container.sh [OPTIONS] <yarn run arguments>"
+  echo "Usage: run-container.sh [OPTIONS] [--] <yarn run arguments>"
   echo "Options:"
-  # echo "  -v, --volume <directory>   Mount the specified directory as a volume for caching"
-  # echo "  -c, --cache                Use yarn cache in current directory"
-  echo "  -i, --image <name>         Specify the name of the container image (default: output-playwright)"
-  echo "  -t, --tag <tag>            Specify the tag of the container image (default: latest)"
-  echo "  -h, --help                 Show this help message"
+  echo "  -h, --help                       Show this help message"
+  echo "  -i, --image                      Specify the name of the container image (localhost/IMAGE:tag)"
+  echo "  -v, --volume                     Mount the specified directory as a volume for caching"
+  echo "  -t, --tag TAG                    Specify the tag of the container image (localhost/image:TAG)"
+  echo "  --ci                             Run in CI mode"
+  echo "  -e, --env A=B                    Specify environment variables to pass to the container"
+  echo "  --secrets-file, --env-file FILE  Specify secrets files to pass to the container"
+  echo "  --secrets-out-file FILE          Specify output file for secrets"
+  echo "  -n, --dry                        Dry run"
 }
 
 parse_run_args() {
@@ -73,10 +78,11 @@ parse_run_args() {
   local run_args=""
   local tag="latest"
   local env=()
-  local secrets_files=(".env.secret" "$HOME/.env.secret")
+  local secrets_files=(".env.secret")
   local dryrun=false
   local secrets_out_file=".env.local-e2e"
   local volumes=()
+  local playwright_output=true
 
   while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -88,6 +94,10 @@ parse_run_args() {
     -h | --help)
       print_run_usage
       exit 0
+      ;;
+    --no-playwright-output)
+      playwright_output=false
+      shift
       ;;
     -i | --image)
       image="$2"
@@ -109,7 +119,7 @@ parse_run_args() {
       env+=("$2")
       shift 2
       ;;
-    --secrets-file)
+    --secrets-file | --env-file)
       secrets_files+=("$2")
       shift 2
       ;;
@@ -121,25 +131,25 @@ parse_run_args() {
       dryrun=true
       shift
       ;;
-    -*)
-      error "Unknown option: $1"
-      exit 1
-      ;;
     run | yarn)
       shift
       ;;
     *)
+      warning "Unknown $0 run option: $1"
+      info "Ending argument parsing for $0"
       yarn_args="$*"
       break
       ;;
     esac
   done
 
+  debug "Set yarn_args: $yarn_args"
+
   local container_name=${image##*/}
 
   local run_cmd=""
   if command -v podman &>/dev/null; then
-    run_cmd="podman run"
+    run_cmd="podman run --userns=keep-id"
   elif command -v docker &>/dev/null; then
     run_cmd="docker run"
   else
@@ -156,7 +166,10 @@ parse_run_args() {
   # If volumes array is not empty
   if [[ "${#volumes[@]}" -gt 0 ]]; then
     for volume in "${volumes[@]}"; do
-      run_cmd+=" --volume $volume:/data:z"
+      if ! [[ "$volume" =~ : ]]; then
+        volume+=":/data/${volume}:z"
+      fi
+      run_cmd+=" --volume $volume"
     done
   fi
 
@@ -165,30 +178,54 @@ parse_run_args() {
   done
 
   debug "Loading secrets from secrets files"
+  echo 'LOCAL_E2E=true' >"$secrets_out_file"
   for secrets_file in "${secrets_files[@]}"; do
     # local secrets_out_file_looped="$secrets_out_file-$(sha1sum "$secrets_out_file" | head -c 8)"
     if ! [[ -f "$secrets_file" ]]; then continue; fi
     info "Loading secrets from $secrets_file"
     # Parse secrets
     while read -r secret; do
+      if [[ -z "$secret" ]]; then continue; fi
+      if ! [[ "$secret" =~ = ]] || ! [[ "$secret" =~ ^\s*[a-zA-Z] ]]; then
+        debug "Skipping invalid secret: $secret"
+        continue
+      fi
       secret="${secret#export }"
-      # Only accept key-value pairs
-      if [[ -z "$secret" ]] || [[ "$secret" != *=* ]] || [[ "$secret" == \#* ]]; then continue; fi
       local key="${secret%%=*}"
       local value="${secret#*=}"
-      export "${key}"="${value}" || error "Failed setting secret $secret"
-      debug "Loaded secret $key=${value//?/*}"
-      echo "${secret%=*}=${secret##*=}" >>"$secrets_out_file"
+      case "$key" in
+      '#'* | '') continue ;;
+      esac
+      local evalue
+      if ! evalue="$(
+        eval "$secret"
+        debug "Key: '$key'"
+        debug "Value: '$value'"
+        debug "indirect value: $key=${!key}"
+        echo "${!key}"
+      )" >/dev/null; then
+        debug "Failed setting secret: $secret"
+        continue
+      fi
+      debug "Evalued value: $evalue"
+      echo "${key}=${evalue}" >>"$secrets_out_file"
     done <"$secrets_file"
   done
   run_cmd+=" --env-file $secrets_out_file"
+
+  if [[ "$playwright_output" == true ]]; then
+    local playwright_report="$PWD/dist/playwright-report"
+    mkdir -p "$playwright_report"
+    run_cmd+=" --volume $playwright_report:/dist/apps/system-e2e/playwright-report:z"
+  fi
 
   # Image to use
   run_cmd+=" $image:$tag"
 
   # Image/program arguments
   if [[ -n "$yarn_args" ]]; then
-    run_cmd+=" yarn $yarn_args"
+    # yarn_args=" yarn $yarn_args"
+    run_cmd+=" $yarn_args"
   fi
 
   if [[ -n "$run_args" ]]; then

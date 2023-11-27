@@ -4,11 +4,18 @@ import { Breadcrumbs, Layout } from '../../components'
 import { AboutContent, TableOfContents } from './components'
 import localization from './About.json'
 
-const AboutScreen: React.FC = () => {
+const AboutScreen: React.FC<React.PropsWithChildren<unknown>> = () => {
   const loc = localization['about']
 
   return (
-    <Layout seo={{ title: loc.seo.title, url: loc.seo.url }}>
+    <Layout
+      seo={{
+        title: loc.seo.title,
+        url: loc.seo.url,
+        description: loc.seo.description,
+        keywords: loc.seo.keywords,
+      }}
+    >
       <Breadcrumbs
         items={[
           { title: loc.breadcrumbs[0].title, href: loc.breadcrumbs[0].href },
@@ -18,15 +25,15 @@ const AboutScreen: React.FC = () => {
       <GridContainer>
         <GridRow>
           <GridColumn
-            span={['12/12', '12/12', '9/12', '9/12', '8/12']}
-            offset={['0', '0', '0', '0', '1/12']}
+            span={['12/12', '12/12', '9/12', '9/12', '9/12']}
             order={[1, 1, 0]}
           >
             <AboutContent />
           </GridColumn>
           <GridColumn
-            span={['12/12', '12/12', '3/12', '3/12', '3/12']}
+            span={['12/12', '12/12', '3/12', '2/12', '2/12']}
             order={[0, 0, 1]}
+            offset={['0', '0', '0', '1/12', '1/12']}
           >
             <TableOfContents />
           </GridColumn>

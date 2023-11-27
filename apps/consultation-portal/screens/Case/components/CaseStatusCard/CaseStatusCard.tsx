@@ -1,7 +1,7 @@
 import { Case } from '../../../../types/interfaces'
 import { CardSkeleton } from '../../../../components'
 import StackedTitleAndDescription from '../Stacked/Stacked'
-import { Box, LinkV2 } from '@island.is/island-ui/core'
+import { Box, LinkV2, Text } from '@island.is/island-ui/core'
 import env from '../../../../lib/environment'
 import localization from '../../Case.json'
 
@@ -15,16 +15,16 @@ export const CaseStatusCard = ({
   return (
     <CardSkeleton borderColor="blue600" borderWidth="large">
       <StackedTitleAndDescription headingColor="blue400" title={loc.title}>
-        {summaryText}
+        <Text>{summaryText}</Text>
       </StackedTitleAndDescription>
-      {summaryLink && (
-        <LinkCard link={summaryLink} text={loc.summaryLinkText} />
-      )}
       {summaryDocumentId && (
         <LinkCard
           link={`${env.backendDownloadUrl}${summaryDocumentId}`}
           text={loc.summaryDocumentIdText}
         />
+      )}
+      {summaryLink && (
+        <LinkCard link={summaryLink} text={loc.summaryLinkText} />
       )}
     </CardSkeleton>
   )

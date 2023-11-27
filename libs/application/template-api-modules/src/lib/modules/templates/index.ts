@@ -58,6 +58,9 @@ import { InheritanceReportService } from './inheritance-report/inheritance-repor
 import { InheritanceReportModule } from './inheritance-report/inheritance-report.module'
 import { EstateTemplateModule } from './estate/estate.module'
 import { EstateTemplateService } from './estate/estate.service'
+import { PassportAnnulmentModule } from './passport-annulment/passport-annulment.module'
+import { PassportAnnulmentService } from './passport-annulment/passport-annulment.service'
+
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -86,9 +89,13 @@ import { DrivingLicenseBookUpdateInstructorModule } from './driving-license-book
 import { DrivingLicenseBookUpdateInstructorService } from './driving-license-book-update-instructor/driving-license-book-update-instructor.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
+import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
+import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -133,10 +140,14 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
+  EstateTemplateModule,
+  PassportAnnulmentModule,
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
+  SocialInsuranceAdministrationModule,
+  CitizenshipModule,
 ]
 
 export const services = [
@@ -182,8 +193,12 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
+  EstateTemplateService,
+  PassportAnnulmentService,
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
+  SocialInsuranceAdministrationService,
+  CitizenshipService,
 ]

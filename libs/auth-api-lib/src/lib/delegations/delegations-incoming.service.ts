@@ -39,6 +39,7 @@ interface FindAvailableInput {
   user: User
   delegationTypes?: DelegationType[]
   requestedScopes?: string[]
+  otherUser?: string
 }
 
 /**
@@ -108,6 +109,7 @@ export class DelegationsIncomingService {
     user,
     delegationTypes,
     requestedScopes,
+    otherUser,
   }: FindAvailableInput): Promise<MergedDelegationDTO[]> {
     const client = await this.getClientDelegationInfo(user)
 
@@ -187,9 +189,13 @@ export class DelegationsIncomingService {
 
     const delegationSets = await Promise.all(delegationPromises)
 
-    const delegations = ([] as MergedDelegationDTO[])
+    let delegations = ([] as MergedDelegationDTO[])
       .concat(...delegationSets)
       .filter((delegation) => delegation.fromNationalId !== user.nationalId)
+
+    if (otherUser) {
+      delegations = delegations.filter((d) => d.fromNationalId === otherUser)
+    }
 
     const mergedDelegationMap = delegations.reduce(
       (

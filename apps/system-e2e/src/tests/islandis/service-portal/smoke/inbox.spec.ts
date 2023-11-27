@@ -35,12 +35,6 @@ test.describe('MS - Pósthólf overview', () => {
       // Arrange
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/postholf'))
 
-      // Act
-      await expect(
-        page.getByRole('button', {
-          name: label(m.date),
-        }),
-      ).toBeVisible()
       const inputField = page.getByRole('textbox', {
         name: label(m.searchLabel),
       })
@@ -89,14 +83,4 @@ test.describe('MS - Pósthólf overview', () => {
       ).toBeVisible()
     })
   })
-})
-
-test.describe.skip('Pósthólf', () => {
-  for (const { testCase, home } of [
-    { testCase: 'Pósthólf skjal opnast', home: '/en' },
-  ]) {
-    test(testCase, () => {
-      return
-    })
-  }
 })

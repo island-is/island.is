@@ -1,10 +1,11 @@
 {
-  "root": "libs/portals/shared-modules/delegations",
+  "name": "portals-shared-modules-delegations",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/shared-modules/delegations/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,21 +14,23 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/portals/shared-modules/delegations"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/shared-modules/delegations"
+      ],
       "options": {
-        "jestConfig": "libs/portals/shared-modules/delegations/jest.config.js",
+        "jestConfig": "libs/portals/shared-modules/delegations/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/shared-modules/delegations/src/**/*.{ts,tsx}'"
       }
     },
-    "schemas/codegen": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "output": "libs/portals/shared-modules/delegations/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/portals/shared-modules/delegations/codegen.yml"

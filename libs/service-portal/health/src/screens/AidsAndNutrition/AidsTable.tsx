@@ -1,6 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FC } from 'react'
 import {
   ExpandHeader,
   amountFormat,
@@ -17,9 +16,35 @@ interface Props {
   linkText: string
 }
 
-const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
+const AidsTable = ({ data, footnote, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+
+  const generateFoldedValues = (rowItem: RightsPortalAidOrNutrition) => {
+    const foldedValues = []
+
+    foldedValues.push({
+      title: formatMessage(messages.location),
+      value: rowItem.location ? rowItem.location : '',
+    })
+
+    foldedValues.push({
+      title: formatMessage(messages.availableTo),
+      value: rowItem.validUntil ? formatDate(rowItem.validUntil) : '',
+    })
+
+    foldedValues.push({
+      title: formatMessage(messages.availableEvery12Months),
+      value: rowItem.allowed12MonthPeriod ? rowItem.allowed12MonthPeriod : '',
+    })
+
+    foldedValues.push({
+      title: formatMessage(messages.extraDetail),
+      value: rowItem.explanation ? rowItem.explanation : '',
+    })
+
+    return foldedValues
+  }
 
   return (
     <ExpiringTable
@@ -44,7 +69,7 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
           key={idx}
           expiring={rowItem.expiring}
           visibleValues={[
-            rowItem.name,
+            rowItem.name.split('/').join(' / '),
             rowItem.maxUnitRefund ?? '',
             rowItem.refund.type === 'amount'
               ? amountFormat(rowItem.refund.value)
@@ -53,24 +78,7 @@ const AidsTable: FC<Props> = ({ data, footnote, link, linkText }) => {
             rowItem.available ?? '',
             rowItem.nextAllowedMonth ?? '',
           ]}
-          foldedValues={[
-            {
-              title: formatMessage(messages.location),
-              value: rowItem.location ?? '',
-            },
-            {
-              title: formatMessage(messages.availableTo),
-              value: formatDate(rowItem.validUntil),
-            },
-            {
-              title: formatMessage(messages.availableEvery12Months),
-              value: rowItem.allowed12MonthPeriod ?? '',
-            },
-            {
-              title: formatMessage(messages.extraDetail),
-              value: rowItem.explanation ?? '',
-            },
-          ]}
+          foldedValues={generateFoldedValues(rowItem)}
         />
       ))}
     </ExpiringTable>

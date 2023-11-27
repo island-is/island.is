@@ -38,7 +38,7 @@ export const commonOverviewFields = [
     {
       cards: ({ answers }: Application) =>
         (
-          ((answers.estate as unknown) as EstateInfo).estateMembers?.filter(
+          (answers.estate as unknown as EstateInfo).estateMembers?.filter(
             (member) => member.enabled,
           ) ?? []
         ).map((member) => ({
@@ -48,8 +48,20 @@ export const commonOverviewFields = [
               ? formatNationalId(member.nationalId)
               : member.dateOfBirth,
             member.relation,
+            member.relationWithApplicant,
             formatPhoneNumber(member.phone || ''),
             member.email,
+
+            /* Advocate */
+            member.advocate
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate?.name,
+                  ],
+                ]
+              : '',
           ],
         })),
     },

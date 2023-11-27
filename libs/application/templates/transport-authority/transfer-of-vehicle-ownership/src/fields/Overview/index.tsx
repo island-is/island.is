@@ -31,7 +31,10 @@ import {
   isLastReviewer,
 } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import {
+  APPLICATION_APPLICATION,
+  SUBMIT_APPLICATION,
+} from '@island.is/application/graphql'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
 import {
@@ -41,7 +44,9 @@ import {
 import { VALIDATE_VEHICLE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfVehicleOwnershipAnswers } from '../..'
 
-export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
+export const Overview: FC<
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({
   setStep,
   reviewerNationalId = '',
   coOwnersAndOperators = [],
@@ -52,10 +57,16 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
   const answers = application.answers as TransferOfVehicleOwnershipAnswers
   const { formatMessage } = useLocale()
 
-  const [rejectModalVisibility, setRejectModalVisibility] = useState<boolean>(
-    false,
-  )
+  const [rejectModalVisibility, setRejectModalVisibility] =
+    useState<boolean>(false)
   const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
+
+  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
+    onError: (e) => {
+      console.error(e, e.message)
+      return
+    },
+  })
 
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
@@ -64,33 +75,85 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     },
   })
 
+  const [loading, setLoading] = useState(false)
+
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
 
-  const doSubmitApplication = async () => {
-    const res = await submitApplication({
+  const doApproveAndSubmit = async () => {
+    // Need to get updated application answers, in case buyer has changed co-owner
+    // or any other reviewer has approved
+    const applicationInfo = await getApplicationInfo({
       variables: {
         input: {
           id: application.id,
-          event: isLastReviewer(
-            reviewerNationalId,
-            application.answers,
-            coOwnersAndOperators,
-          )
-            ? DefaultEvents.SUBMIT
-            : DefaultEvents.APPROVE,
-          answers: getApproveAnswers(reviewerNationalId, application.answers),
         },
+        locale: 'is',
       },
+      fetchPolicy: 'no-cache',
     })
+    const updatedApplication = applicationInfo?.data?.applicationApplication
 
-    if (res?.data) {
-      setStep && setStep('conclusion')
+    if (updatedApplication) {
+      const currentAnswers = updatedApplication.answers
+
+      const approveAnswers = getApproveAnswers(
+        reviewerNationalId,
+        currentAnswers,
+      )
+
+      // First approve application only (event=APPROVE)
+      const resApprove = await submitApplication({
+        variables: {
+          input: {
+            id: application.id,
+            event: DefaultEvents.APPROVE,
+            answers: approveAnswers,
+          },
+        },
+      })
+
+      const updatedApplication2 = resApprove?.data?.submitApplication
+
+      if (updatedApplication2) {
+        const isLast = isLastReviewer(
+          reviewerNationalId,
+          updatedApplication2.answers,
+          coOwnersAndOperators,
+        )
+
+        // Then check if user is the last approver (using newer updated application answers), if so we
+        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
+        if (isLast) {
+          const approveAnswers2 = getApproveAnswers(
+            reviewerNationalId,
+            updatedApplication2.answers,
+          )
+
+          const resSubmit = await submitApplication({
+            variables: {
+              input: {
+                id: application.id,
+                event: DefaultEvents.SUBMIT,
+                answers: approveAnswers2,
+              },
+            },
+          })
+
+          if (resSubmit?.data) {
+            setLoading(false)
+            setStep && setStep('conclusion')
+          }
+        } else {
+          setLoading(false)
+          setStep && setStep('conclusion')
+        }
+      }
     }
   }
 
-  const [validateVehicleThenSubmit, { data, loading }] = useLazyQuery<
+  const [validateVehicleThenApproveAndSubmit, { data }] = useLazyQuery<
     any,
     { answers: OwnerChangeAnswers }
   >(
@@ -100,7 +163,7 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
     {
       onCompleted: async (data) => {
         if (!data?.vehicleOwnerChangeValidation?.hasError) {
-          await doSubmitApplication()
+          await doApproveAndSubmit()
         }
       },
     },
@@ -119,44 +182,62 @@ export const Overview: FC<FieldBaseProps & ReviewScreenProps> = ({
       setNoInsuranceError(true)
     } else {
       setNoInsuranceError(false)
+      setLoading(true)
+
       if (isBuyer) {
-        validateVehicleThenSubmit({
+        // Need to get updated application, in case buyer has changed co-owner
+        const applicationInfo = await getApplicationInfo({
           variables: {
-            answers: {
-              pickVehicle: {
-                plate: answers?.pickVehicle?.plate,
-              },
-              vehicle: {
-                date: answers?.vehicle?.date,
-                salePrice: answers?.vehicle?.salePrice,
-              },
-              seller: {
-                email: answers?.seller?.email,
-                nationalId: answers?.seller?.nationalId,
-              },
-              buyer: {
-                email: answers?.buyer?.email,
-                nationalId: answers?.buyer?.nationalId,
-              },
-              buyerCoOwnerAndOperator: answers?.buyerCoOwnerAndOperator?.map(
-                (x) => ({
-                  nationalId: x.nationalId!,
-                  email: x.email!,
-                  type: x.type,
-                  wasRemoved: x.wasRemoved,
-                }),
-              ),
-              buyerMainOperator: answers?.buyerMainOperator
-                ? {
-                    nationalId: answers.buyerMainOperator.nationalId,
-                  }
-                : null,
-              insurance: insurance ? { value: insurance } : null,
+            input: {
+              id: application.id,
             },
+            locale: 'is',
           },
+          fetchPolicy: 'no-cache',
         })
+        const updatedApplication = applicationInfo?.data?.applicationApplication
+
+        if (updatedApplication) {
+          const currentAnswers: OwnerChangeAnswers = updatedApplication.answers
+
+          validateVehicleThenApproveAndSubmit({
+            variables: {
+              answers: {
+                pickVehicle: {
+                  plate: currentAnswers?.pickVehicle?.plate,
+                },
+                vehicle: {
+                  date: currentAnswers?.vehicle?.date,
+                  salePrice: currentAnswers?.vehicle?.salePrice,
+                  mileage: currentAnswers?.vehicle?.mileage,
+                },
+                seller: {
+                  email: currentAnswers?.seller?.email,
+                  nationalId: currentAnswers?.seller?.nationalId,
+                },
+                buyer: {
+                  email: currentAnswers?.buyer?.email,
+                  nationalId: currentAnswers?.buyer?.nationalId,
+                },
+                buyerCoOwnerAndOperator:
+                  currentAnswers?.buyerCoOwnerAndOperator?.map((x) => ({
+                    nationalId: x.nationalId!,
+                    email: x.email!,
+                    type: x.type,
+                    wasRemoved: x.wasRemoved,
+                  })),
+                buyerMainOperator: currentAnswers?.buyerMainOperator
+                  ? {
+                      nationalId: currentAnswers.buyerMainOperator.nationalId,
+                    }
+                  : null,
+                insurance: insurance ? { value: insurance } : null,
+              },
+            },
+          })
+        }
       } else {
-        await doSubmitApplication()
+        await doApproveAndSubmit()
       }
     }
   }

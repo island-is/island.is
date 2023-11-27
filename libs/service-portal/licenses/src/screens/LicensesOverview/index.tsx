@@ -1,28 +1,29 @@
-import React, { useEffect, useState } from 'react'
 import { defineMessage } from 'react-intl'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ErrorScreen,
   IntroHeader,
+  FootNote,
   m as coreMessage,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseType,
   GenericUserLicenseFetchStatus,
   useChildrenPassport,
   useUserProfile,
+  GenericLicenseType,
 } from '@island.is/service-portal/graphql'
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
-
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
-import { FeatureFlagClient } from '@island.is/feature-flags'
 import { usePassport } from '@island.is/service-portal/graphql'
 import UserLicenses from './UserLicenses'
 import ChildrenLicenses from './ChildrenLicenses'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useState, useEffect } from 'react'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -85,47 +86,53 @@ export const LicensesOverview = () => {
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
-  /**
-   * Get all licenses is feature flagged
-   * If off, all licenses fetched, if on only driver's license is fetched
-   * Please remove all code when fully released.
-   */
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const [licenseTypes, setLicenseTypes] = useState<Array<GenericLicenseType>>([
+
+  const featureFlagClient = useFeatureFlagClient()
+
+  const [includedTypes, setIncludedTypes] = useState([
     GenericLicenseType.DriversLicense,
     GenericLicenseType.AdrLicense,
     GenericLicenseType.MachineLicense,
     GenericLicenseType.FirearmLicense,
+    GenericLicenseType.DisabilityLicense,
   ])
 
-  /* Flag to hide disability license */
   useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalDisabilityLicenseEnabled`,
+    const checkIncluded = async () => {
+      const ehicEnabled = await featureFlagClient.getValue(
+        'isEHICCardEnabled',
         false,
       )
-      if (ffEnabled) {
-        setLicenseTypes([
-          GenericLicenseType.DriversLicense,
-          GenericLicenseType.AdrLicense,
-          GenericLicenseType.MachineLicense,
-          GenericLicenseType.FirearmLicense,
-          GenericLicenseType.DisabilityLicense,
-        ])
+      const pcardEnabled = await featureFlagClient.getValue(
+        'isPcardEnabled',
+        false,
+      )
+
+      let included = includedTypes
+      if (ehicEnabled) {
+        included = [...included, GenericLicenseType.Ehic]
       }
+
+      if (pcardEnabled) {
+        included = [...included, GenericLicenseType.PCard]
+      }
+
+      setIncludedTypes(included)
     }
-    isFlagEnabled()
+
+    checkIncluded()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const { data, loading, error } = useQuery<Query>(GenericLicensesQuery, {
     variables: {
       locale,
       input: {
-        includedTypes: licenseTypes,
+        includedTypes,
       },
     },
   })
+
   const { genericLicenses = [] } = data ?? {}
   const {
     data: passportData,
@@ -167,7 +174,9 @@ export const LicensesOverview = () => {
       <IntroHeader
         title={defineMessage(m.title)}
         intro={defineMessage(m.intro)}
-        marginBottom={1}
+        marginBottom={4}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+        serviceProviderTooltip={formatMessage(coreMessage.licensesTooltip)}
       />
       {hasChildren ? (
         <Box>
@@ -210,6 +219,9 @@ export const LicensesOverview = () => {
           genericLicenses={genericLicenses}
         />
       )}
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </>
   )
 }

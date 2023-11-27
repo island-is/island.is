@@ -1,19 +1,22 @@
-import parseISO from 'date-fns/parseISO'
 import addDays from 'date-fns/addDays'
+import parseISO from 'date-fns/parseISO'
 import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseCustodyRestrictions,
   CaseFileCategory,
-  Gender,
   IndictmentSubtype,
   Notification,
   NotificationType,
 } from '@island.is/judicial-system/types'
+import {
+  CaseAppealState,
+  CaseCustodyRestrictions,
+  CaseType,
+  Gender,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 export const getShortGender = (gender?: Gender): string => {
   switch (gender) {
@@ -59,13 +62,12 @@ export const kb = (bytes?: number) => {
   return bytes ? Math.ceil(bytes / 1024) : ''
 }
 
-export const getAppealEndDate = (courtEndTime: string) => {
-  const courtEndTimeToDate = parseISO(courtEndTime)
-  const appealEndDate = addDays(courtEndTimeToDate, 3)
+export const getAppealEndDate = (rulingDate: string) => {
+  const appealEndDate = addDays(parseISO(rulingDate), 3)
   return formatDate(appealEndDate, 'PPPp')
 }
 
-export const isBusiness = (nationalId?: string) => {
+export const isBusiness = (nationalId?: string | null) => {
   if (!nationalId) {
     return false
   }
@@ -130,5 +132,15 @@ export const hasSentNotification = (
 
   return notificationsOfType[0].recipients.some(
     (recipient) => recipient.success,
+  )
+}
+
+export const isReopenedCOACase = (
+  appealState?: CaseAppealState,
+  notifications?: Notification[],
+): boolean => {
+  return (
+    appealState !== CaseAppealState.COMPLETED &&
+    hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
   )
 }

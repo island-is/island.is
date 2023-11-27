@@ -1,24 +1,25 @@
 {
-  "root": "libs/clients/vehicles",
+  "name": "clients-vehicles",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/vehicles/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": ["libs/clients/vehicles/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/vehicles"],
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/vehicles"],
       "options": {
-        "jestConfig": "libs/clients/vehicles/jest.config.js",
+        "jestConfig": "libs/clients/vehicles/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10017/Samgongustofa-Protected/getOpenAPI?serviceCode=Mitt-Svaedi-V1 > src/clientConfig.json",
@@ -31,13 +32,14 @@
         "cwd": "libs/clients/vehicles"
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "yarn openapi-generator -o libs/clients/vehicles/gen/fetch -i libs/clients/vehicles/src/clientConfig.json"
         ]
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

@@ -27,7 +27,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function mocked<T extends (...args: any) => any>(value: T) {
-  return (value as unknown) as jest.Mock<ReturnType<T>, Parameters<T>>
+  return value as unknown as jest.Mock<ReturnType<T>, Parameters<T>>
 }
 
 const mockNationalRegistry = (
@@ -101,11 +101,12 @@ describe('UserProfileController', () => {
     let server: request.SuperTest<request.Test>
 
     beforeAll(async () => {
-      const user = createCurrentUser({
-        nationalIdType: 'person',
-        scope: ['@identityserver.api/authentication'],
+      app = await setupWithAuth({
+        user: createCurrentUser({
+          nationalIdType: 'person',
+          scope: ['@identityserver.api/authentication'],
+        }),
       })
-      app = await setupWithAuth({ user })
       server = request(app.getHttpServer())
     })
 

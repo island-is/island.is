@@ -1,4 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Inject } from '@nestjs/common'
 import {
   DefaultApi,
   VacanciesGetAcceptEnum,
@@ -7,7 +8,7 @@ import {
 } from '@island.is/clients/icelandic-government-institution-vacancies'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
-import { CmsElasticsearchService } from '@island.is/cms'
+import { CmsContentfulService, CmsElasticsearchService } from '@island.is/cms'
 import { IcelandicGovernmentInstitutionVacanciesInput } from './dto/icelandicGovernmentInstitutionVacancies.input'
 import { IcelandicGovernmentInstitutionVacanciesResponse } from './dto/icelandicGovernmentInstitutionVacanciesResponse'
 import { IcelandicGovernmentInstitutionVacancyByIdInput } from './dto/icelandicGovernmentInstitutionVacancyById.input'
@@ -24,58 +25,147 @@ import {
   sortVacancyList,
 } from './utils'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+import { FetchError } from '@island.is/clients/middlewares'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
+const defaultLang = 'is'
 
 @Resolver()
 export class IcelandicGovernmentInstitutionVacanciesResolver {
   constructor(
     private readonly api: DefaultApi,
     private readonly cmsElasticService: CmsElasticsearchService,
+    private readonly cmsContentfulService: CmsContentfulService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  @CacheControl(defaultCache)
+  private async getVacanciesFromExternalSystem(
+    input: IcelandicGovernmentInstitutionVacanciesInput,
+  ) {
+    let vacancies: DefaultApiVacanciesListItem[] = []
+
+    try {
+      vacancies = (await this.api.vacanciesGet({
+        accept: VacanciesGetAcceptEnum.Json,
+        language: input.language,
+        stofnun: input.institution,
+      })) as DefaultApiVacanciesListItem[]
+    } catch (error) {
+      if (error instanceof FetchError) {
+        this.logger.error(
+          'Fetch error occurred when getting vacancies from xroad',
+          {
+            message: error.message,
+            statusCode: error.status,
+          },
+        )
+      } else {
+        this.logger.error(
+          'Error occurred when getting vacancies from xroad',
+          error,
+        )
+      }
+    }
+
+    const mappedVacancies =
+      await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
+        vacancies,
+      )
+
+    // Extract institution/organization reference identifiers from the vacancies
+    const referenceIdentifierSet = new Set<string>()
+    for (const vacancy of mappedVacancies) {
+      if (vacancy.institutionReferenceIdentifier) {
+        referenceIdentifierSet.add(vacancy.institutionReferenceIdentifier)
+      } else {
+        // In case there is no institutionReferenceIdentifier we don't indicate what institution is behind this vacancy
+        vacancy.logoUrl = undefined
+        vacancy.institutionName = undefined
+      }
+    }
+
+    // Fetch organizations from cms that have the given reference identifiers so we can use their title and logo
+    const organizationsResponse =
+      await this.cmsContentfulService.getOrganizations({
+        lang: defaultLang,
+        referenceIdentifiers: Array.from(referenceIdentifierSet),
+      })
+
+    // Create a mapping for reference identifier -> organization data
+    const organizationMap = new Map<
+      string,
+      { logoUrl: string | undefined; title: string }
+    >()
+
+    for (const organization of organizationsResponse?.items ?? []) {
+      if (organization?.referenceIdentifier) {
+        organizationMap.set(organization.referenceIdentifier, {
+          logoUrl: organization.logo?.url,
+          title: organization.shortTitle || organization.title,
+        })
+      }
+    }
+
+    // Override the logo and title for vacancy institutions/organizations
+    for (const vacancy of mappedVacancies) {
+      if (
+        vacancy.institutionReferenceIdentifier &&
+        organizationMap.has(vacancy.institutionReferenceIdentifier)
+      ) {
+        const organization = organizationMap.get(
+          vacancy.institutionReferenceIdentifier,
+        )
+        if (organization) {
+          vacancy.logoUrl = organization.logoUrl
+          vacancy.institutionName = organization.title
+        }
+      } else {
+        // In case the institution/organization does not exist in the cms we don't use the logo or the name from the external service
+        vacancy.logoUrl = undefined
+        vacancy.institutionName = undefined
+      }
+    }
+
+    return mappedVacancies
+  }
+
+  private async getVacanciesFromCms() {
+    const vacanciesFromCms = await this.cmsElasticService.getVacancies(
+      getElasticsearchIndex(defaultLang),
+    )
+    return vacanciesFromCms.map(mapVacancyListItemFromCms)
+  }
+
+  @CacheControl({ maxAge: 600 })
   @Query(() => IcelandicGovernmentInstitutionVacanciesResponse)
   async icelandicGovernmentInstitutionVacancies(
     @Args('input') input: IcelandicGovernmentInstitutionVacanciesInput,
   ): Promise<IcelandicGovernmentInstitutionVacanciesResponse> {
-    const vacanciesFromExternalSystem = (await this.api.vacanciesGet({
-      accept: VacanciesGetAcceptEnum.Json,
-      language: input.language,
-      stofnun: input.institution,
-    })) as DefaultApiVacanciesListItem[]
+    const vacanciesFromExternalSystem =
+      await this.getVacanciesFromExternalSystem(input)
+    const vacanciesFromCms = await this.getVacanciesFromCms()
 
-    const mappedVacanciesFromExternalSystem = await mapIcelandicGovernmentInstitutionVacanciesFromExternalSystem(
-      vacanciesFromExternalSystem,
-    )
-
-    const vacanciesFromCms = await this.cmsElasticService.getVacancies(
-      getElasticsearchIndex('is'),
-    )
-
-    const vacancies = mappedVacanciesFromExternalSystem.concat(
-      vacanciesFromCms.map(mapVacancyListItemFromCms),
-    )
-
-    sortVacancyList(vacancies)
+    const allVacancies = vacanciesFromExternalSystem.concat(vacanciesFromCms)
+    sortVacancyList(allVacancies)
 
     return {
-      vacancies,
+      vacancies: allVacancies,
     }
   }
 
   private async getVacancyFromCms(id: string) {
     const item = await this.cmsElasticService.getSingleVacancy(
-      getElasticsearchIndex('is'),
+      getElasticsearchIndex(defaultLang),
       id,
     )
     if (!item) {
       return { vacancy: null }
     }
     return {
-      vacancy: mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(
-        item,
-      ),
+      vacancy:
+        mapIcelandicGovernmentInstitutionVacancyByIdResponseFromCms(item),
     }
   }
 
@@ -91,10 +181,37 @@ export class IcelandicGovernmentInstitutionVacanciesResolver {
     if (!item?.starfsauglysing) {
       return { vacancy: null }
     }
-    return {
-      vacancy: await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
+
+    const vacancy =
+      await mapIcelandicGovernmentInstitutionVacancyByIdResponseFromExternalSystem(
         item,
-      ),
+      )
+
+    // If we have a reference identifier we use that to get the institution/organization title and logo from cms
+    if (vacancy?.institutionReferenceIdentifier) {
+      const organizationResponse =
+        await this.cmsContentfulService.getOrganizations({
+          lang: defaultLang,
+          referenceIdentifiers: [vacancy.institutionReferenceIdentifier],
+        })
+
+      const organization = organizationResponse?.items?.[0]
+
+      if (organization?.logo?.url) {
+        vacancy.logoUrl = organization.logo.url
+      } else {
+        vacancy.logoUrl = undefined
+      }
+      if (organization?.title) {
+        vacancy.institutionName = organization.shortTitle || organization.title
+      }
+    } else {
+      // In case the institution/organization does not exist in the cms we don't use the logo from the external service
+      if (vacancy?.logoUrl) vacancy.logoUrl = undefined
+    }
+
+    return {
+      vacancy,
     }
   }
 

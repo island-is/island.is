@@ -1,0 +1,23 @@
+query getHealthCenter {
+  rightsPortalPaginatedHealthCenters {
+    data {
+      id
+      name
+      region
+      address {
+        postalCode
+        municipality
+        streetAddress
+      }
+    }
+    totalCount
+  }
+}
+
+mutation rightsPortalTransferHealthCenter(
+  $input: RightsPortalHealthCenterRegisterInput!
+) {
+  rightsPortalRegisterHealthCenter(input: $input) {
+    success
+  }
+}

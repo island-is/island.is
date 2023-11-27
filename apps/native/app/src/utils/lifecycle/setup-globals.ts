@@ -11,7 +11,7 @@ import KeyboardManager from 'react-native-keyboard-manager';
 import messaging from '@react-native-firebase/messaging';
 import perf from '@react-native-firebase/perf';
 import {performanceMetrics} from '../performance-metrics';
-import {config} from '../config';
+import DeviceInfo from 'react-native-device-info';
 
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
@@ -45,9 +45,9 @@ import {
   DdSdkReactNative,
   DdSdkReactNativeConfiguration,
   DdRum,
-  DdLogs,
 } from '@datadog/mobile-react-native';
 import {StyleSheet} from 'react-native';
+import {getConfig} from '../../config';
 
 type PatchedStyleSheet = typeof StyleSheet & {
   _create: typeof StyleSheet.create;
@@ -98,7 +98,7 @@ if (__DEV__) {
 } else {
   // datadog rum config
   const ddconfig = new DdSdkReactNativeConfiguration(
-    config.datadogClientToken,
+    getConfig().datadog ?? '',
     'production',
     '2736367a-a841-492d-adef-6f5a509d6ec2',
     true, // track User interactions (e.g.: Tap on buttons. You can use 'accessibilityLabel' element property to give tap action the name, otherwise element type will be reported)
@@ -140,6 +140,7 @@ LogBox.ignoreLogs([
   /toggling bottomTabs visibility is deprecated on iOS/,
   /Require cycle:/,
   /new NativeEventEmitter/,
+  /ConfigCat/,
 ]);
 
 // set default timezone
@@ -169,8 +170,8 @@ export function setupGlobals() {
   // set NSUserDefaults
   if (Platform.OS === 'ios') {
     Settings.set({
-      version_preference: config.constants.nativeAppVersion,
-      build_preference: config.constants.nativeBuildVersion,
+      version_preference: DeviceInfo.getVersion(),
+      build_preference: DeviceInfo.getBuildNumber(),
     });
   }
 }

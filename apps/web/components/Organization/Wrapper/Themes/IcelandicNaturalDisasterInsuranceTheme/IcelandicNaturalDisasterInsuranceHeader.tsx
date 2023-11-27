@@ -1,6 +1,7 @@
-import { OrganizationPage } from '@island.is/web/graphql/schema'
+import type { CSSProperties } from '@vanilla-extract/css'
 import React, { useMemo } from 'react'
-import { Box, Hidden, Hyphen, Link, Text } from '@island.is/island-ui/core'
+import { OrganizationPage } from '@island.is/web/graphql/schema'
+import { Box, Hidden, Link, Text } from '@island.is/island-ui/core'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useNamespace } from '@island.is/web/hooks'
@@ -12,14 +13,23 @@ import * as styles from './IcelandicNaturalDisasterInsuranceHeader.css'
 const treeImageUrl =
   'https://images.ctfassets.net/8k0h54kbe6bj/52r9AXIIGj5d3VxfQA2yQL/ff654c88c6309ad799ccc5668754371d/nti-trees.svg'
 const townImageUrl =
-  'https://images.ctfassets.net/8k0h54kbe6bj/7ryH2zTpjxid0iakBnSgKV/37daf02f0c0051b9ddb1327b0a83ec59/nti-town.svg'
+  'https://images.ctfassets.net/8k0h54kbe6bj/eXqcbclteE88H5iQ6J3lo/bbc1d0c9d3abee93d34ec0aa718c833b/Group__1_.svg'
 
-const getDefaultStyle = (width: number) => {
+const getDefaultStyle = (width: number): CSSProperties => {
+  if (width > theme.breakpoints.xl && width < 1650) {
+    return {
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'auto 280px, auto 280px, cover',
+      backgroundPosition: '10% bottom, 130% bottom, center',
+      backgroundImage: `url('${treeImageUrl}'), url('${townImageUrl}'), linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)`,
+    }
+  }
+
   if (width > theme.breakpoints.xl) {
     return {
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'auto 280px, auto 280px, cover',
-      backgroundPosition: '10% bottom, bottom right, center',
+      backgroundPosition: '10% bottom, 115% bottom, center',
       backgroundImage: `url('${treeImageUrl}'), url('${townImageUrl}'), linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)`,
     }
   }
@@ -27,7 +37,7 @@ const getDefaultStyle = (width: number) => {
     return {
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'auto 280px, auto 280px, cover',
-      backgroundPosition: '5% bottom, 240% bottom, center',
+      backgroundPosition: '5% bottom, 820px bottom, center',
       backgroundImage: `url('${treeImageUrl}'), url('${townImageUrl}'), linear-gradient(0deg, #FFFFFF -40.18%, #FAFDFD -23.09%, #ECF8F9 -4.3%, #D6F0F1 16.21%, #B7E5E7 36.72%, #8ED6DA 57.23%, #5DC4CA 77.74%, #23AFB8 100.93%, #00A3AD 113.54%)`,
     }
   }
@@ -56,8 +66,8 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
 }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization.namespace?.fields ?? '{}'),
-    [organizationPage.organization.namespace?.fields],
+    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
@@ -72,7 +82,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
       <div className={styles.headerWrapper}>
         <SidebarLayout
           sidebarContent={
-            !!organizationPage.organization.logo && (
+            !!organizationPage.organization?.logo && (
               <Link
                 href={
                   linkResolver('organizationpage', [organizationPage.slug]).href
@@ -88,7 +98,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
             )
           }
         >
-          {!!organizationPage.organization.logo && (
+          {!!organizationPage.organization?.logo && (
             <Hidden above="sm">
               <Link
                 href={
@@ -120,7 +130,7 @@ const IcelandicNaturalDisasterInsuranceHeader: React.FC<HeaderProps> = ({
                 color="blueberry600"
                 fontWeight="semiBold"
               >
-                <Hyphen>{organizationPage.title}</Hyphen>
+                {organizationPage.title}
               </Text>
             </Link>
           </Box>

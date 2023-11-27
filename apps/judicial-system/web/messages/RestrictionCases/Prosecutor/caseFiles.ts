@@ -17,8 +17,7 @@ export const rcCaseFiles = {
           'Notaður sem titill fyrir "meðferð gagna" hlutann á rannsóknargagna skrefi í gæsluvarðhalds- og farbannsmálum.',
       },
       list: {
-        id:
-          'judicial.system.restriction_cases:case_files.description.list#markdown',
+        id: 'judicial.system.restriction_cases:case_files.description.list#markdown',
         defaultMessage:
           '- Hér er hægt að hlaða upp rannsóknargögnum til að sýna dómara.\\n\\n- Gögnin eru eingöngu aðgengileg dómara í málinu og aðgengi að þeim lokast þegar dómari hefur úrskurðað.\\n\\n- Gögnin verða ekki lögð fyrir eða flutt í málakerfi dómstóls nema annar hvor aðilinn kæri úrskurðinn.',
         description:

@@ -18,7 +18,7 @@ import { useLocale } from '@island.is/localization'
 
 type Props = FieldBaseProps & { field: { props: { isEditable: boolean } } }
 
-export const ComplaintOverview: FC<Props> = ({
+export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   application,
   goToScreen,
   field,
@@ -78,7 +78,7 @@ export const ComplaintOverview: FC<Props> = ({
           <GridColumn span={['9/12', '9/12', '9/12', '5/12']}>
             <ValueLine
               value={phoneNumber ?? ''}
-              label={information.aboutTheComplainer.phone}
+              label={information.aboutTheComplainer.phoneNumber}
             />
           </GridColumn>
           <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>

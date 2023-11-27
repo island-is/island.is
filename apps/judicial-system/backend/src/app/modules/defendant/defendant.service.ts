@@ -1,5 +1,6 @@
-import { Op, literal } from 'sequelize'
+import { literal, Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+
 import {
   Inject,
   Injectable,
@@ -7,22 +8,23 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import {
   CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
 import type { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
-import { CourtService } from '../court'
 import { Case } from '../case/models/case.model'
+import { CourtService } from '../court'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
-import { DeliverResponse } from './models/deliver.response'
 import { Defendant } from './models/defendant.model'
+import { DeliverResponse } from './models/deliver.response'
 
 @Injectable()
 export class DefendantService {
@@ -277,7 +279,8 @@ export class DefendantService {
     if (
       defendant.noNationalId ||
       !defendant.nationalId ||
-      defendant.nationalId.replace('-', '').length !== 10
+      defendant.nationalId.replace('-', '').length !== 10 ||
+      defendant.nationalId.endsWith('5') // Temporary national id from the police system
     ) {
       await this.messageService.sendMessagesToQueue([
         this.getMessageForSendDefendantsNotUpdatedAtCourtNotification(

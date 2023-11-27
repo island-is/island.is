@@ -1,5 +1,10 @@
 import { GridContainer, Stack } from '@island.is/island-ui/core'
-import { AdviceResult, Case, CaseExpressions } from '../../types/interfaces'
+import {
+  AdviceResult,
+  Case,
+  CaseExpressions,
+  Stakeholder,
+} from '../../types/interfaces'
 import localization from './Case.json'
 import {
   BlowoutList,
@@ -15,6 +20,7 @@ import CaseSkeleton from './components/CaseSkeleton/CaseSkeleton'
 
 interface Props {
   chosenCase: Case
+  stakeholders: Array<Stakeholder>
   expressions: CaseExpressions
   advices: Array<AdviceResult>
   advicesLoading: boolean
@@ -39,6 +45,8 @@ const CaseMobile = ({
     relatedCases,
     contactEmail,
     contactName,
+    shortDescription,
+    advicePublishTypeId,
   } = chosenCase
   const {
     isDocumentsNotEmpty,
@@ -47,9 +55,16 @@ const CaseMobile = ({
     isStatusNameForReview,
     isStakeholdersNotEmpty,
     isRelatedCasesNotEmpty,
+    isStakeholdersBoxVisible,
+    shouldDisplayHidden,
   } = expressions
+
   return (
-    <CaseSkeleton caseNumber={caseNumber} caseId={id}>
+    <CaseSkeleton
+      caseNumber={caseNumber}
+      caseId={id}
+      caseDescription={shortDescription}
+    >
       <GridContainer>
         <Stack space={3}>
           <CaseTimeline chosenCase={chosenCase} />
@@ -67,9 +82,17 @@ const CaseMobile = ({
             />
           )}
 
-          <CaseStatusBox status={statusName} />
-          {isStakeholdersNotEmpty && (
-            <BlowoutList list={stakeholders} isStakeholder />
+          <CaseStatusBox
+            status={statusName}
+            advicePublishTypeId={advicePublishTypeId}
+            shouldDisplayHidden={shouldDisplayHidden}
+          />
+          {isStakeholdersBoxVisible && (
+            <BlowoutList
+              list={stakeholders}
+              isStakeholder
+              isEmpty={!isStakeholdersNotEmpty}
+            />
           )}
           {isRelatedCasesNotEmpty && <BlowoutList list={relatedCases} />}
           <Coordinator contactEmail={contactEmail} contactName={contactName} />

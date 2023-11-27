@@ -18,6 +18,7 @@ import FaqList, { FaqListProps } from './FaqList/FaqList'
 import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
 import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
+import { LinkCard, LinkCardProps } from './LinkCard/LinkCard'
 import {
   Text,
   TextProps,
@@ -40,6 +41,10 @@ import { TeamList, TeamListProps } from './TeamList/TeamList'
 import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
 import { Location, LocationProps } from './Location/Location'
 import { TellUsAStoryFormProps } from './TellUsAStoryForm/TellUsAStoryForm'
+import {
+  SectionWithVideo,
+  SectionWithVideoProps,
+} from './SectionWithVideo/SectionWithVideo'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
@@ -59,6 +64,7 @@ type ImageSlice = { __typename: 'Image'; id: string } & Omit<
   'thumbnail'
 >
 type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type LinkCardSlice = { __typename: 'LinkCard'; id: string } & LinkCardProps
 type ProcessEntrySlice = {
   __typename: 'ProcessEntry'
   id: string
@@ -81,6 +87,10 @@ type SectionWithImageSlice = {
   __typename: 'SectionWithImage'
   id: string
 } & SectionWithImageProps
+type SectionWithVideoSlice = {
+  __typename: 'SectionWithVideo'
+  id: string
+} & SectionWithVideoProps
 
 export type Slice =
   | HtmlSlice
@@ -89,6 +99,7 @@ export type Slice =
   | StatisticsSlice
   | ImageSlice
   | AssetSlice
+  | LinkCardSlice
   | ProcessEntrySlice
   | EmbeddedVideoSlice
   | TeamListSlice
@@ -96,13 +107,14 @@ export type Slice =
   | LocationSlice
   | TellUsAStorySlice
   | SectionWithImageSlice
+  | SectionWithVideoSlice
   | {
       // TODO: these are used on the about page - we need to move their rendering
       // to here to make them re-usable by other page types
       __typename:
         | 'TimelineSlice'
         | 'HeadingSlice'
-        | 'LinkCardSlice'
+        | 'LinkCardSection'
         | 'EmailSignup'
         | 'StorySlice'
         | 'LatestNewsSlice'
@@ -137,7 +149,8 @@ export interface RenderConfig {
   padding: Readonly<Array<PaddingConfig>>
   skipGrid?: boolean
 }
-
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore make web strict
 const renderConnectedComponent = (slice) => {
   const data = slice.json
 
@@ -188,6 +201,9 @@ export const defaultRenderComponent = (
     case 'Asset':
       return <AssetLink {...slice} />
 
+    case 'LinkCard':
+      return <LinkCard {...slice} />
+
     case 'ProcessEntry':
       return (
         <Hidden print={true}>
@@ -204,6 +220,9 @@ export const defaultRenderComponent = (
 
     case 'SectionWithImage':
       return <SectionWithImage {...slice} />
+
+    case 'SectionWithVideo':
+      return <SectionWithVideo {...slice} />
 
     case 'TeamList':
       return <TeamList {...slice} />
@@ -229,19 +248,18 @@ export const defaultRenderComponent = (
   }
 }
 
-const typography = (
-  variant: TextProps['variant'],
-  as: TextProps['as'],
-  withId = false,
-) => (_: Block | Inline, children: ReactNode) => (
-  <Text
-    id={withId ? slugify(String(children)) : undefined}
-    variant={variant}
-    as={as}
-  >
-    {children}
-  </Text>
-)
+const typography =
+  (variant: TextProps['variant'], as: TextProps['as'], withId = false) =>
+  (_: Block | Inline, children: ReactNode) =>
+    (
+      <Text
+        id={withId ? slugify(String(children)) : undefined}
+        variant={variant}
+        as={as}
+      >
+        {children}
+      </Text>
+    )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
   [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
@@ -261,7 +279,7 @@ export const defaultRenderNode: Readonly<RenderNode> = {
     node: Block | Inline,
     children: ReactNode,
   ): ReactNode => {
-    const asset = (node.data.target as unknown) as Asset
+    const asset = node.data.target as unknown as Asset
     return asset.fields.file?.url ? (
       <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
     ) : null
@@ -345,6 +363,8 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     const comp = config.renderComponent(slice, locale, config)
     if (!comp) {
       return null

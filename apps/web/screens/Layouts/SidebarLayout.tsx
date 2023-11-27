@@ -1,12 +1,14 @@
 import React, { FC, ReactNode } from 'react'
+import cn from 'classnames'
+
 import {
   Box,
+  BoxProps,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import cn from 'classnames'
 
 import * as styles from './SidebarLayout.css'
 
@@ -18,9 +20,10 @@ interface SidebarLayoutProps {
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
   contentId?: string
+  flexDirection?: BoxProps['flexDirection']
 }
 
-export const SidebarLayout: FC<SidebarLayoutProps> = ({
+export const SidebarLayout: FC<React.PropsWithChildren<SidebarLayoutProps>> = ({
   sidebarContent,
   isSticky = true,
   hiddenOnTablet = false,
@@ -28,6 +31,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
   paddingTop = [0, 0, 8],
   paddingBottom = 6,
   contentId,
+  flexDirection = 'row',
   children,
 }) => {
   return (
@@ -36,7 +40,7 @@ export const SidebarLayout: FC<SidebarLayoutProps> = ({
         <Box
           {...(contentId && { id: contentId })}
           display="flex"
-          flexDirection="row"
+          flexDirection={flexDirection}
           height="full"
           paddingBottom={paddingBottom}
           position={isSticky ? 'relative' : undefined}

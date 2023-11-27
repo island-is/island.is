@@ -8,7 +8,11 @@ interface Props {
   onCloseMenu: () => void
 }
 
-export const Menu: FC<Props> = ({ isOpen, children, onCloseMenu }) => {
+export const Menu: FC<React.PropsWithChildren<Props>> = ({
+  isOpen,
+  children,
+  onCloseMenu,
+}) => {
   return (
     <>
       <Box

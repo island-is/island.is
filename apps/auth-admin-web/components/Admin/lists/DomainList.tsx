@@ -9,7 +9,7 @@ import { ResourcesService } from './../../../services/ResourcesService'
 import { Domain } from './../../../entities/models/domain.model'
 import { PagedRowsDTO } from './../../../entities/models/paged-rows.dto'
 
-const DomainList: React.FC = () => {
+const DomainList: React.FC<React.PropsWithChildren<unknown>> = () => {
   const [page, setPage] = useState(1)
   const [modalIsOpen, setIsOpen] = React.useState(false)
   const [count, setCount] = useState(0)
@@ -89,14 +89,13 @@ const DomainList: React.FC = () => {
             <h1>{localization.title}</h1>
             <div className="domain-list__container__options">
               <div className="domain-list__container__options__button">
-                <Link href={'/admin/domain'}>
-                  <a
-                    className="domain-list__button__new"
-                    title={localization.buttons['new'].helpText}
-                  >
-                    <i className="icon__new"></i>
-                    {localization.buttons['new'].text}
-                  </a>
+                <Link
+                  href={'/admin/domain'}
+                  className="domain-list__button__new"
+                  title={localization.buttons['new'].helpText}
+                >
+                  <i className="icon__new"></i>
+                  {localization.buttons['new'].text}
                 </Link>
               </div>
               <form onSubmit={search}>
@@ -143,6 +142,7 @@ const DomainList: React.FC = () => {
                               href={`/admin/domain/${encodeURIComponent(
                                 domain.name,
                               )}`}
+                              legacyBehavior
                             >
                               <button
                                 type="button"

@@ -135,7 +135,7 @@ export const is = {
   // home
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
-  'home.allApplications': 'Allar stafrænar umsóknir',
+  'home.allApplications': 'Stafrænar umsóknir',
   'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
   'home.onboardingModule.card1':
@@ -150,7 +150,7 @@ export const is = {
   // inbox
   'inbox.screenTitle': 'Pósthólf',
   'inbox.bottomTabText': 'Pósthólf',
-  'inbox.searchPlaceholder': 'Sláðu inn leitarorð...',
+  'inbox.searchPlaceholder': 'Leita...',
   'inbox.loadingText': 'Leita í pósthólfi...',
   'inbox.resultText': 'niðurstöður fundust',
   'inbox.singleResultText': 'niðurstaða fannst',
@@ -158,19 +158,29 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
+  'inbox.filterButtonTitle': 'Opna síu',
+  'inbox.filterOpenedTagTitle': 'Ólesið',
+  'inbox.filterArchivedTagTitle': 'Geymsla',
+  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+
+  // inbox filters
+  'inboxFilters.screenTitle': 'Sía skjöl',
+  'inboxFilters.unreadOnly': 'Sýna einungis ólesið',
+  'inboxFilters.starred': 'Stjörnumerkt',
+  'inboxFilters.archived': 'Geymsla',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
 
   // profile
-  'profile.screenTitle': 'Mínar upplýsingar',
-  'profile.bottomTabText': 'Ég',
+  'profile.screenTitle': 'Meira',
+  'profile.bottomTabText': 'Meira',
   'profile.seeInfo': 'Nánar',
-  'profile.infoHeading': 'Eignir og fjölskylda',
   'profile.family': 'Fjölskylda',
   'profile.vehicles': 'Ökutæki',
   'profile.assets': 'Fasteignir',
+  'profile.finance': 'Fjármál',
 
   // vehicles
   'vehicles.screenTitle': 'Ökutæki',
@@ -181,7 +191,7 @@ export const is = {
   // vehicles detail
   'vehicleDetail.regno': 'Skráningarnúmer',
   'vehicleDetail.permno': 'Fastanúmer',
-  'vehicleDetail.firstReg': 'Árgerð',
+  'vehicleDetail.firstReg': 'Fyrsti skráningardagur',
   'vehicleDetail.nextInspectionDate': 'Næsti skoðunardagur',
   'vehicleDetail.color': 'Litur',
   'vehicleDetail.insured': 'Tryggt',
@@ -197,6 +207,9 @@ export const is = {
   'vehicleDetail.trailerWithoutBrakes': 'Óhemlaður eftirvagn',
   'vehicleDetail.nedc': 'Útblástursgildi (NEDC)',
   'vehicleDetail.vehicleWeight': 'Eigin þyngd',
+  'vehicleDetail.totalWeight': 'Heildarþyngd',
+  'vehicleDetail.capacityWeight': 'Þyngd vagnlestar',
+  'vehicleDetail.odometer': 'Kílómetrastaða',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Fasteignir',
@@ -214,6 +227,34 @@ export const is = {
   'assetsDetail.municipality': 'Sveitarfélag',
   'assetsDetail.postNumber': 'Póstnúmer',
   'assetsDetail.buildYearDisplay': 'Byggingarár',
+
+  // finance
+  'finance.screenTitle': 'Fjármál',
+  'finance.statusCard.status': 'Staða',
+  'finance.statusCard.paymentBase': 'Gjaldgrunnur',
+  'finance.statusCard.deadline': 'Eindagi',
+  'finance.statusCard.amount': 'Upphæð',
+  'finance.statusCard.total': 'Samtals',
+  'finance.statusCard.organization': 'Þjónustuaðili',
+  'finance.statusCard.organizationWebsite': 'Vefur',
+  'finance.statusCard.organizationEmail': 'Netfang',
+  'finance.statusCard.organizationPhone': 'Sími',
+  'finance.statusCard.schedulePaymentPlan': 'Gera greiðsluáætlun',
+  'finance.heading.title': 'Staða við ríkissjóð og stofnanir',
+  'finance.heading.subtitle':
+    'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
+
+  // finance detail
+  'financeDetail.title': 'Ítarupplýsingar',
+  'financeDetail.paymentBase': 'Gjaldgrunnur',
+  'financeDetail.yearAndPeriod': `Ár og tímabil`,
+  'financeDetail.dueDate': 'Gjalddagi',
+  'financeDetail.finalDueDate': 'Eindagi',
+  'financeDetail.principal': 'Höfuðstóll',
+  'financeDetail.interest': 'Vextir',
+  'financeDetail.costs': 'Kostnaður',
+  'financeDetail.payments': 'Greiðslur',
+  'financeDetail.status': 'Staða',
 
   // family
   'family.screenTitle': 'Fjölskylda',
@@ -252,9 +293,14 @@ export const is = {
   'walletPass.screenTitle': 'Skírteini',
   'walletPass.lastUpdate': 'Síðast uppfært',
   'walletPass.expirationDate': 'Gildir til',
+  'walletPass.errorTitle': 'Villa',
+  'walletPass.errorNotPossibleToAddDriverLicense':
+    'Í augnablikinu er ekki hægt að senda ökuskírteini í síma.',
+  'walletPass.moreInfo': 'Nánari upplýsingar',
+  'walletPass.alertClose': 'Loka',
 
   // wallet passport
-  'walletPassport.screenTitle': 'Vefabréf',
+  'walletPassport.screenTitle': 'Vegabréf',
   'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
   'walletPassport.infoDescription':
     'Þetta yfirlit gildir ekki sem ferðaskilríki.',
@@ -262,10 +308,13 @@ export const is = {
   'walletPassport.warningDescription':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
   'walletPassport.displayName': 'Nafn einstaklings',
-  'walletPassport.number': 'Númer vefabréfs',
+  'walletPassport.number': 'Númer vegabréfs',
   'walletPassport.issuingDate': 'Útgáfudagur',
   'walletPassport.expirationDate': 'Lokadagur',
   'walletPassport.mrzName': 'Nafn á tölvulesanlegu formi',
+  'walletPassport.children': 'Vegabréf barna',
+  'walletPassport.noPassport': 'Ekki til útgefið vegabréf.',
+  'walletPassport.noPassportLink': 'Nánar á island.is/vegabref',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',
@@ -310,6 +359,11 @@ export const is = {
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
 
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+
   // notifications
   'notifications.screenTitle': 'Tilkynningar',
 
@@ -347,12 +401,18 @@ export const is = {
   'edit.phone.description': 'Hér getur þú breytt símanúmeri',
   'edit.phone.inputlabel': 'Símanúmer',
   'edit.phone.button': 'Vista',
+  'edit.phone.button.empty': 'Vista tómt',
+  'edit.phone.button.error': 'Villa',
+  'edit.phone.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit email
   'edit.email.screenTitle': 'Breyta Netfangi',
   'edit.email.description': 'Hér getur þú breytt netfangi',
   'edit.email.inputlabel': 'Netfang',
   'edit.email.button': 'Vista',
+  'edit.email.button.empty': 'Vista tómt',
+  'edit.email.button.error': 'Villa',
+  'edit.email.button.errorMessage': 'Gat ekki sent staðfestingarkóða',
 
   // edit bank info
   'edit.bankinfo.screenTitle': 'Breyta banka upplýsingum',

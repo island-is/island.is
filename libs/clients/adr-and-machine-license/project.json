@@ -1,10 +1,11 @@
 {
-  "root": "libs/clients/adr-and-machine-license",
+  "name": "clients-adr-and-machine-license",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/adr-and-machine-license/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
           "libs/clients/adr-and-machine-license/**/*.{ts,tsx,js,jsx}"
@@ -12,7 +13,7 @@
       }
     },
     "update-openapi-document": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10013/Vinnueftirlitid-Protected/getOpenAPI?serviceCode=rettindi-token-v1 > src/clientConfig.json",
@@ -24,18 +25,21 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/clients/adr-and-machine-license"],
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/adr-and-machine-license"
+      ],
       "options": {
-        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.js",
+        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.ts",
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
-      "executor": "@nrwl/workspace:run-commands",
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/adr-and-machine-license/gen/fetch -i libs/clients/adr-and-machine-license/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client", "scope:client"]

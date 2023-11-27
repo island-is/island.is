@@ -1,5 +1,3 @@
-<!-- gitbook-ignore -->
-
 # API Domains Vehicles
 
 This service utilises the VehicleSearchApi

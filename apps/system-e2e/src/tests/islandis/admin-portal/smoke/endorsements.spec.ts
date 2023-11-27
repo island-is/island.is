@@ -14,7 +14,6 @@ test.describe('Admin portal (Endorsements)', () => {
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
       phoneNumber: '0102399',
-      delegation: '65° ARTIC ehf.',
     })
   })
 

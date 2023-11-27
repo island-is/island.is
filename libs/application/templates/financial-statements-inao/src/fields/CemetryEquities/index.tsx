@@ -25,7 +25,7 @@ import { useTotals } from '../../hooks'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { getTotal } from '../../lib/utils/helpers'
 
-export const CemetryEquities: FC<FieldBaseProps> = ({
+export const CemetryEquities: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   setBeforeSubmitCallback,
 }): JSX.Element => {

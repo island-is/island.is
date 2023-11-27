@@ -9,12 +9,13 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
 import { m } from '../../lib/messages'
-import DropdownExport, { getCSV } from './ExportPetition'
+import DropdownExport from './ExportPetition'
 import {
   Endorsement,
   EndorsementList,
   PaginatedEndorsementResponse,
 } from '@island.is/api/schema'
+import { getCSV } from './ExportPetition/downloadCSV'
 
 const PetitionsTable = (data: {
   canEdit: boolean
@@ -45,14 +46,16 @@ const PetitionsTable = (data: {
     <Box>
       <Box display="flex" justifyContent="spaceBetween" marginBottom={2}>
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
-        {data.canEdit && (
-          <DropdownExport
-            petition={data.petition}
-            petitionSigners={data.petitionSigners}
-            petitionId={data.listId}
-            onGetCSV={() => getCSV(petitionSigners, 'Undirskriftalisti')}
-          />
-        )}
+        <Box>
+          {data.canEdit && (
+            <DropdownExport
+              petition={data.petition}
+              petitionSigners={data.petitionSigners}
+              petitionId={data.listId}
+              onGetCSV={() => getCSV(data.petitionSigners, 'Undirskriftalisti')}
+            />
+          )}
+        </Box>
       </Box>
       <Stack space={3}>
         <T.Table>
@@ -78,8 +81,8 @@ const PetitionsTable = (data: {
                       : formatMessage(m.noName)}
                   </T.Data>
                   {data.canEdit && (
-                    <T.Data>
-                      {petition.meta.fullName ? petition.meta.locality : ''}
+                    <T.Data text={{ variant: 'medium' }}>
+                      {petition.meta.locality ? petition.meta.locality : ''}
                     </T.Data>
                   )}
                 </T.Row>

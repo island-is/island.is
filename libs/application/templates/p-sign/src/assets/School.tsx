@@ -1,6 +1,6 @@
 import React from 'react'
 
-const School: React.FC = () => (
+const School: React.FC<React.PropsWithChildren<unknown>> = () => (
   <svg
     width="100%"
     viewBox="0 0 789 327"

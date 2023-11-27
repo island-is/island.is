@@ -26,9 +26,7 @@ ADD . .
 FROM src as builder
 ARG APP
 ARG APP_DIST_HOME
-ARG GEOIP_LICENSE_KEY
 ENV APP=${APP}
-ENV GEOIP_LICENSE_KEY=${GEOIP_LICENSE_KEY}
 ENV NODE_ENV=production
 ENV NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -125,7 +123,7 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -137,7 +135,9 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-RUN yarn set version berry
+ADD .yarnrc.yml ./
+RUN mkdir ./.yarn
+COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
 ENV PLAYWRIGHT_BROWSER=chromium

@@ -1,26 +1,25 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client'
-import { Box } from '@island.is/island-ui/core'
 
-import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
+import { Box } from '@island.is/island-ui/core'
+import { tables, titles } from '@island.is/judicial-system-web/messages'
 import {
+  AppealCasesTable,
   Logo,
   PageHeader,
   SectionHeading,
-  AppealCasesTable,
 } from '@island.is/judicial-system-web/src/components'
-import { titles, tables } from '@island.is/judicial-system-web/messages'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import SharedPageLayout from '@island.is/judicial-system-web/src/components/SharedPageLayout/SharedPageLayout'
 import {
   CaseAppealState,
   CaseListEntry,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { AppealedCasesQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
-import { logoContainer } from '../../Shared/Cases/Cases.css'
 import { courtOfAppealCases as strings } from './Cases.strings'
+import { logoContainer } from '../../Shared/Cases/Cases.css'
 
 const CourtOfAppealCases = () => {
   const { formatMessage } = useIntl()
@@ -30,7 +29,11 @@ const CourtOfAppealCases = () => {
 
   const { data: appealedCases, loading } = useQuery<{
     cases: CaseListEntry[]
-  }>(AppealedCasesQuery, { variables: { input }, fetchPolicy: 'no-cache' })
+  }>(AppealedCasesQuery, {
+    variables: { input },
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
   const appealedCasesData = appealedCases?.cases || []
 
@@ -45,9 +48,7 @@ const CourtOfAppealCases = () => {
         <AppealCasesTable
           loading={loading}
           onRowClick={(id) => {
-            getCaseToOpen({
-              variables: { input: { id } },
-            })
+            getCaseToOpen(id)
           }}
           cases={
             appealedCasesData?.filter(
@@ -60,9 +61,7 @@ const CourtOfAppealCases = () => {
       <AppealCasesTable
         loading={loading}
         onRowClick={(id) => {
-          getCaseToOpen({
-            variables: { input: { id } },
-          })
+          getCaseToOpen(id)
         }}
         cases={
           appealedCasesData?.filter(
