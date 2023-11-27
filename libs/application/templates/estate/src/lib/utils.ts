@@ -74,3 +74,20 @@ export const getWillsAndAgreementsDescriptionText = (
     : /* EINKASKIPTI */
       m.willsAndAgreementsDescriptionDivisionOfEstateByHeirs
 }
+
+export const getEstateMembersDescriptionText = (
+  application: Application<FormValue>,
+) => {
+  return application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+    ? /* EIGNALAUST DÁNARBU */
+      m.estateMembersDescriptionEstateWithoutAssets
+    : application.answers.selectedEstate === EstateTypes.officialDivision
+    ? /* OPINBER SKIPTI */
+      m.estateMembersDescriptionOfficialDivision
+    : application.answers.selectedEstate ===
+      EstateTypes.permitForUndividedEstate
+    ? /* SETA Í ÓSKIPTU BÚI */
+      m.estateMembersDescriptionUndividedEstate
+    : /* EINKASKIPTI */
+      m.estateMembersDescriptionDivisionOfEstateByHeirs
+}
