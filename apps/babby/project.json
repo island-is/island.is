@@ -62,6 +62,20 @@
       "options": {
         "lintFilePatterns": ["apps/babby/**/*.{ts,tsx,js,jsx}"]
       }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn get-secrets babby"],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["./scripts/run-proxies.sh", "yarn start babby"],
+        "parallel": true
+      }
     }
   },
   "tags": []
