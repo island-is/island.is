@@ -66,6 +66,7 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Query() query: PaginationDto,
   ): Promise<PaginatedNotificationDto> {
+    console.log("User: ", user)
     return this.notificationService.findMany(user, query)
   }
 

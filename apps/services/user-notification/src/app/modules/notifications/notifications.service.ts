@@ -16,7 +16,6 @@ import { InjectModel } from '@nestjs/sequelize'
 
 import { paginate } from '@island.is/nest/pagination'
 
-import { Op } from 'sequelize'
 import { User } from '@island.is/auth-nest-tools'
 import {
   PaginatedNotificationDto,
@@ -172,7 +171,7 @@ export class NotificationsService {
     id: number,
     locale: string,
   ): Promise<RenderedNotificationDto> {
-    let notification = await this.notificationModel.findOne({
+    const notification = await this.notificationModel.findOne({
       where: {
         id: id,
         recipient: user.nationalId,
@@ -311,7 +310,7 @@ export class NotificationsService {
 
   // Just a test function for easy creating WHILE DEVELOPING
   async create(user: User): Promise<any> {
-    let exampleNotificationData = {
+    const exampleNotificationData = {
       recipient: user.nationalId,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
       args: [
