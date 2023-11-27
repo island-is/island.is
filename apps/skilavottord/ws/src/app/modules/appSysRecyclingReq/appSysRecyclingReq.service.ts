@@ -7,15 +7,7 @@ import { AppSysVehicleInformation } from './appSysRecyclingReq.model'
 export class AppSysRecyclingReqService {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
-  // TODO test
   async getUserVehiclesInformation(): Promise<AppSysVehicleInformation[]> {
-    return [
-      {
-        permno: 'SR845',
-      },
-      {
-        permno: 'PS888',
-      },
-    ]
+    return []
   }
 }

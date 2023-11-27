@@ -15,7 +15,6 @@ import {
   VehicleOwnerModule,
   SamgongustofaModule,
   FjarsyslaModule,
-  //AppSysRecyclingReqModule,
 } from './modules'
 import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -52,7 +51,6 @@ const autoSchemaFile = environment.production
     RecyclingPartnerModule,
     VehicleModule,
     VehicleOwnerModule,
-    //AppSysRecyclingReqModule,
   ],
 })
 export class AppModule {}

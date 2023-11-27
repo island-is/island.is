@@ -88,8 +88,6 @@ export class VehicleAppSysResolver {
     @CurrentUser() user: User,
     @Args('permno') permno: string,
   ) {
-    console.log('createSkilavottordVehicleAppSys')
-
     const vehicle = await this.samgongustofaService.getUserVehicle(
       user.nationalId,
       permno,
