@@ -43,26 +43,26 @@ export const estateDebts = buildSection({
           {
             fields: [
               {
-                title: m.debtsCreditorName.defaultMessage,
+                title: m.debtsCreditorName,
                 id: 'creditorName',
               },
               {
-                title: m.debtsNationalId.defaultMessage,
+                title: m.debtsNationalId,
                 id: 'nationalId',
                 format: '######-####',
               },
               {
-                title: m.debtsLoanIdentity.defaultMessage,
+                title: m.debtsLoanIdentity,
                 id: 'loanIdentity',
               },
               {
-                title: m.debtsBalance.defaultMessage,
+                title: m.debtsBalance,
                 id: 'balance',
                 currency: true,
               },
             ],
-            repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-            repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
+            repeaterButtonText: m.debtsRepeaterButton,
+            repeaterHeaderText: m.debtsCreditorHeader,
           },
         ),
       ],
