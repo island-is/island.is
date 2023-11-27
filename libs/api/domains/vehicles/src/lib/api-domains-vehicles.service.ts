@@ -6,6 +6,7 @@ import {
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
+  PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
 import {
   CanregistermileagePermnoGetRequest,
@@ -74,6 +75,18 @@ export class VehiclesService {
           ? `${input.permno}*`
           : `${input.permno}`
         : undefined,
+    })
+  }
+
+  async getVehiclesForUserOldService(
+    auth: User,
+    showDeregistered: boolean,
+    showHistory: boolean,
+  ): Promise<PersidnoLookupResultDto> {
+    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: showDeregistered,
+      showHistory: showHistory,
     })
   }
 
