@@ -1,3 +1,4 @@
+import React, { ReactNode, useEffect, useState } from 'react'
 import {
   GridColumn,
   GridRow,
@@ -20,6 +21,8 @@ interface Props {
   narrow?: boolean
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
+  introComponent?: ReactNode
+  tooltipVariant?: 'light' | 'dark' | 'white'
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -48,6 +51,11 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             {formatMessage(props.intro)}
           </Text>
         )}
+        {props.introComponent && (
+          <Text variant="default" paddingTop={1}>
+            {props.introComponent}
+          </Text>
+        )}
         {props.children}
       </GridColumn>
       {!isMobile && organization && (
@@ -59,6 +67,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
+            tooltipVariant={props.tooltipVariant ?? 'light'}
           />
         </GridColumn>
       )}

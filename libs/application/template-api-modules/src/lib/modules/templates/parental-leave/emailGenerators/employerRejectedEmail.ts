@@ -23,7 +23,7 @@ export const generateEmployerRejected: EmployerRejectedEmail = (props) => {
   const to =
     get(application.answers, 'applicant.email') ||
     get(application.externalData, 'userProfile.data.email')
-  const subject = 'Beiðni þín um samþykki fæðingarorlofs hafnað'
+  const subject = 'Beiðni þín um staðfestingu tímabils var ekki samþykkt'
 
   return {
     from: {
@@ -59,13 +59,13 @@ export const generateEmployerRejected: EmployerRejectedEmail = (props) => {
         {
           component: 'Copy',
           context: {
-            copy: 'Vinnuveitandi hefur hafnað beiðni þinni um samþykki fæðingarorlofs. Þú þarft því að breyta umsókn þinni.',
+            copy: 'Vinnuveitandi þinn samþykkti ekki valið tímabil en óskar eftir nýju og breyttu tímabili. Þú getur gert breytingar á umsókn þinni og sent aftur til skoðunar.',
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: 'Your employer has denied your request. You therefore need to modify your application.',
+            copy: 'Your employer did not approve the selected period and requests that you resubmit an alternative period. You can make edits to your application and re-submit for consideration.',
           },
         },
         {

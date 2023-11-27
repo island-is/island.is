@@ -11,7 +11,25 @@ export const processEntryFields = gql`
   }
 `
 
-export const slices = gql`
+export const htmlFields = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+`
+
+export const assetFields = gql`
+  fragment AssetFields on Asset {
+    __typename
+    id
+    title
+    url
+    contentType
+  }
+`
+
+export const imageFields = gql`
   fragment ImageFields on Image {
     __typename
     id
@@ -21,14 +39,11 @@ export const slices = gql`
     width
     height
   }
+`
 
-  fragment AssetFields on Asset {
-    __typename
-    id
-    title
-    url
-    contentType
-  }
+export const slices = gql`
+  ${imageFields}
+  ${assetFields}
 
   fragment TimelineFields on TimelineSlice {
     __typename
@@ -195,11 +210,7 @@ export const slices = gql`
     }
   }
 
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
 
   fragment EmbeddedVideoFields on EmbeddedVideo {
     __typename
@@ -747,6 +758,47 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
+  fragment ChartFields on Chart {
+    __typename
+    id
+    title
+    chartDescription
+    alternativeDescription
+    displayAsCard
+    startExpanded
+    dateFrom
+    dateTo
+    numberOfDataPoints
+    components {
+      __typename
+      label
+      type
+      sourceDataKey
+      interval
+      stackId
+    }
+    sourceData
+    xAxisKey
+    xAxisValueType
+  }
+
+  fragment ChartNumberBoxFields on ChartNumberBox {
+    __typename
+    title
+    numberBoxDescription
+    sourceDataKey
+    valueType
+    displayChangeMonthOverMonth
+    displayChangeYearOverYear
+    numberBoxDate
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -788,6 +840,8 @@ export const slices = gql`
     ...SliceDropdownFields
     ...EmbedFields
     ...LatestEventsSliceFields
+    ...ChartFields
+    ...ChartNumberBoxFields
   }
 
   fragment AllSlices on Slice {

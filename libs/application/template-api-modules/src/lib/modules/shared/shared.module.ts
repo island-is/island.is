@@ -10,6 +10,7 @@ import {
 import { SharedTemplateApiService } from './shared.service'
 import { SmsModule } from '@island.is/nova-sms'
 import { PaymentModule } from '@island.is/application/api/payment'
+import { AttachmentS3Service } from './services'
 
 export class SharedTemplateAPIModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -33,8 +34,9 @@ export class SharedTemplateAPIModule {
           provide: BaseTemplateApiApplicationService,
           useClass: config.applicationService,
         },
+        AttachmentS3Service,
       ],
-      exports: [SharedTemplateApiService],
+      exports: [SharedTemplateApiService, AttachmentS3Service],
     }
   }
 }
