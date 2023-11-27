@@ -44,13 +44,8 @@ export const AdditionalRealEstate = ({
   const shareField = `${fieldIndex}.share`
   const shareTempField = `${fieldIndex}.shareTemp`
   const marketValueField = `${fieldIndex}.marketValue`
-  
-  const {
-    control,
-    setValue,
-    clearErrors,
-    getValues,
-  } = useFormContext()
+
+  const { control, setValue, clearErrors, getValues } = useFormContext()
   const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(

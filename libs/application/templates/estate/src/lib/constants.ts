@@ -48,5 +48,5 @@ export const relationWithApplicant = [
   'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
 ]
 
-export const PERCENTAGE_REGEX = /%/g;
-export const COMMA_REGEX = /,/g;
+export const PERCENTAGE_REGEX = /%/g
+export const COMMA_REGEX = /,/g

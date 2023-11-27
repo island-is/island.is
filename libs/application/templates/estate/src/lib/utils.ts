@@ -92,6 +92,6 @@ export const getEstateMembersDescriptionText = (
       m.estateMembersDescriptionDivisionOfEstateByHeirs
 }
 export const convertToShare = (numericValueStr: string) => {
-  const convertedValue = parseFloat(numericValueStr).toFixed(2);
-  return Number(convertedValue) / 100;
-};
+  const convertedValue = parseFloat(numericValueStr).toFixed(2)
+  return Number(convertedValue) / 100
+}

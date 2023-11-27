@@ -46,7 +46,9 @@ const asset = z
   )
   .refine(
     ({ enabled, shareTemp }) => {
-      return enabled && shareTemp && shareTemp !== '' ? isNumericalString(shareTemp) : true
+      return enabled && shareTemp && shareTemp !== ''
+        ? isNumericalString(shareTemp)
+        : true
     },
     {
       path: ['shareTemp'],
