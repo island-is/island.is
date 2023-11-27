@@ -20,6 +20,7 @@ projects_uncollectible_coverage=(
   "api-domains-email-signup"
   "skilavottord-web"
   "shared-babel"
+  "service-portal-core"
 )
 # shellcheck disable=SC2076
 if [[ ! " ${projects_uncollectible_coverage[*]} " =~ " ${APP} " ]]; then

@@ -34,7 +34,10 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
-import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
+import {
+  hasSentNotification,
+  isReopenedCOACase,
+} from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { appealCase as strings } from './AppealCase.strings'
@@ -110,7 +113,8 @@ const AppealCase = () => {
       hasSentNotification(
         NotificationType.APPEAL_JUDGES_ASSIGNED,
         workingCase.notifications,
-      )
+      ) ||
+      isReopenedCOACase(workingCase.appealState, workingCase.notifications)
     ) {
       router.push(`${destination}/${id}`)
     } else {

@@ -42,6 +42,9 @@ import {
   ISectionWithVideo,
   IEmbed,
   ILatestEventsSlice,
+  IChart,
+  IChartComponent,
+  IChartNumberBox,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -121,6 +124,15 @@ import {
   LatestEventsSlice,
   mapLatestEventsSlice,
 } from '../models/latestEventsSlice.model'
+import { Chart, mapChart } from '../models/chart.model'
+import {
+  ChartComponent,
+  mapChartComponent,
+} from '../models/chartComponent.model'
+import {
+  ChartNumberBox,
+  mapChartNumberBox,
+} from '../models/chartNumberBox.model'
 
 type SliceTypes =
   | ITimeline
@@ -162,6 +174,9 @@ type SliceTypes =
   | ISliceDropdown
   | IEmbed
   | ILatestEventsSlice
+  | IChart
+  | IChartComponent
+  | IChartNumberBox
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -208,6 +223,9 @@ export const SliceUnion = createUnionType({
     SliceDropdown,
     Embed,
     LatestEventsSlice,
+    Chart,
+    ChartComponent,
+    ChartNumberBox,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -293,6 +311,12 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapEmbed(slice as IEmbed)
     case 'latestEventsSlice':
       return mapLatestEventsSlice(slice as ILatestEventsSlice)
+    case 'chart':
+      return mapChart(slice as IChart)
+    case 'chartComponent':
+      return mapChartComponent(slice as IChartComponent)
+    case 'chartNumberBox':
+      return mapChartNumberBox(slice as IChartNumberBox)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }
