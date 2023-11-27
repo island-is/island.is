@@ -64,6 +64,7 @@ export const estateSchema = z.object({
     }),
     email: customZodError(z.string().email(), m.errorEmail),
     address: z.string(),
+    relationToDeceased: z.string().optional(),
   }),
 
   selectedEstate: z.enum([

@@ -1,0 +1,53 @@
+// vi: filetype=jsonc
+{
+  "name": "NX Monorepo",
+  "dockerFile": "${localWorkspaceFolder}/scripts/ci/Dockerfile",
+
+  "customizations": {
+    "vscode": {
+      // Terminal settings
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      // Recommended VS Code extensions
+      "extensions": [
+        "ms-vscode.vscode-typescript-next", // For TypeScript support
+        "vscode-react-native", // For React support
+        "GraphQL.vscode-graphql", // For GraphQL functionality
+        "dbaeumer.vscode-eslint", // ESLint for code linting
+        "esbenp.prettier-vscode", // Prettier for code formatting
+        "ms-azuretools.vscode-docker", // Docker support for container management
+        "gamunu.vscode-yarn", // Enhanced Yarn support
+        "Orta.vscode-jest", // Jest for testing
+        "apollographql.vscode-apollo" // Apollo GraphQL tooling
+        // Add any additional extensions here
+      ]
+    }
+  },
+
+  // Forward a range of ports for various services
+  "forwardPorts": [
+    4200,
+    4300,
+    4400 // ... list all ports you need
+  ],
+
+  // Configure the user inside the container
+  "remoteUser": "node",
+
+  // Mounts for hot-reloading and workspace synchronization
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+
+  // Command to run after creating the container
+  "postCreateCommand": "yarn install",
+
+  // Docker build arguments from your Dockerfile
+  "build": {
+    "args": {
+      "CONTAINER_NODE_VERSION": "18-alpine3.15"
+      // Add other ARGs from your Dockerfile as needed
+    }
+  }
+}

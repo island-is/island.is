@@ -1,7 +1,18 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
-ARG PLAYWRIGHT_VERSION
-ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as deps
+ARG CONTAINER_IMAGE_REGISTRY=public.ecr.aws
+ARG CONTAINER_PLAYWRIGHT_VERSION=v1.31-focal
+ARG CONTAINER_PLAYWRIGHT_BROWSER=chromium
+ARG CONTAINER_NODE_VERSION=18-alpine3.15
+ARG CONTAINER_NGINX_VERSION=1.21-alpine
+ARG CONTAINER_JQ_VERSION=1.6
+
+# Base layers
+FROM $CONTAINER_IMAGE_REGISTRY/docker/library/node:${CONTAINER_NODE_VERSION} as base-node
+FROM $CONTAINER_IMAGE_REGISTRY/nginx/nginx:${CONTAINER_NGINX_VERSION} as base-nginx
+FROM mcr.microsoft.com/playwright:${CONTAINER_PLAYWRIGHT_VERSION} as base-playwright
+
+
+FROM base-node as deps
 
 RUN apk add -U git
 
@@ -16,7 +27,7 @@ RUN CI=true yarn install --immutable
 
 FROM deps as src
 
-RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && \
+RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-${CONTAINER_JQ_VERSION}/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
 
@@ -32,7 +43,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM $DOCKER_IMAGE_REGISTRY/docker/library/node:18-alpine3.15 as output-base
+FROM base-node as base-output
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -51,7 +62,7 @@ WORKDIR /webapp
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 
-FROM output-base as output-base-with-pg
+FROM base-output as base-output-with-pg
 
 RUN npm install -g \
   sequelize \
@@ -60,14 +71,14 @@ RUN npm install -g \
 
 USER runner
 
-FROM output-base-with-pg as output-express
+FROM base-output-with-pg as output-express
 
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
 CMD [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM output-base-with-pg as output-next
+FROM base-output-with-pg as output-next
 
 ENV PORT=4200
 
@@ -77,7 +88,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
 
-FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
+FROM base-nginx as output-static
 
 ARG APP
 ARG APP_DIST_HOME
@@ -100,7 +111,7 @@ ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
 ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
-FROM output-base as output-jest
+FROM base-output as output-jest
 
 RUN echo 'module.exports = {};' > jest.config.js
 
@@ -114,14 +125,9 @@ CMD [ "jest", "main.spec.js" ]
 
 
 
-FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-base
 
 
-
-
-
-
-FROM playwright-base as output-playwright
+FROM base-playwright as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
 RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
 
@@ -140,15 +146,14 @@ RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
-ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN yarn playwright install ${CONTAINER_PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
 
 ENTRYPOINT ["./entrypoint.sh"]
 
 
-FROM playwright-base as output-local
+FROM base-playwright as output-local
 ARG APP_HOME
 
 
@@ -162,5 +167,9 @@ USER pwuser
 
 ENTRYPOINT ["./entrypoint.sh"]
 
-FROM output-base as output-native
+FROM base-output as output-native
 RUN echo "not-implemented"
+
+
+FROM src as output-localdev
+RUN yarn install
