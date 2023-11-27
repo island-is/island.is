@@ -18,7 +18,7 @@ import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
-  ScopesGuard
+  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
