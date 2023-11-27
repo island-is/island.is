@@ -16,7 +16,7 @@ import { SamgongustofaService } from '../samgongustofa'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 
 //@Authorize()
-//@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
 export class VehicleAppSysResolver {
   constructor(
