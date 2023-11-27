@@ -1,7 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { Success } from './models/success.model'
 import { SignatureCollectionService } from './signatureCollection.service'
-import type { User as AuthUser, User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsAuthGuard,
   IdsUserGuard,

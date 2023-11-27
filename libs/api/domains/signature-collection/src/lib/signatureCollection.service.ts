@@ -54,7 +54,6 @@ export class SignatureCollectionService {
 
   //   CanSign
   async canSign(nationalId: string): Promise<Success> {
-    console.log(nationalId)
     // TODO: return list person is signed on
     // TODO: take in list user is trying to sign
     return new Promise((resolve) => {
@@ -122,7 +121,6 @@ export class SignatureCollectionService {
 
   //   SignedList
   async signedList(nationalId: string): Promise<SignatureList | null> {
-    console.log(nationalId)
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(Lists[0])
