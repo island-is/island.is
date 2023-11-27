@@ -1,5 +1,3 @@
-
-
 // import { Test, TestingModule } from '@nestjs/testing'
 // import { MessageProcessorService } from './messageProcessor.service'
 // import { LoggingModule } from '@island.is/logging'
