@@ -16,7 +16,7 @@ import { NotificationsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import { CurrentUser, IdsUserGuard, Scopes, ScopesGuard, User } from '@island.is/auth-nest-tools'
 import { PaginationDto } from '@island.is/nest/pagination'
-import { ExtendedNotificationDto, UpdateNotificationDto, PaginatedNotificationDto, RenderedNotificationDto } from './dto/notification.dto'
+import { UpdateNotificationDto, PaginatedNotificationDto, RenderedNotificationDto } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
 
@@ -34,6 +34,9 @@ export class MeNotificationsController {
   
   /// REMOVE ME BEFORE MERGING
   @Post()/// TEMPORARY FOR EASY CREATING NOTIFICATIONS
+  @Documentation({
+    summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
+  })
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -44,8 +47,12 @@ export class MeNotificationsController {
     return this.notificationService.create(user);
   } /// REMOVE ME BEFORE MERGING
 
- 
+  
   @Get()
+  @Documentation({
+    summary: 'Returns a paginated list of user notifications',
+    response: { status: 200, type: PaginatedNotificationDto },
+  })
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -58,6 +65,10 @@ export class MeNotificationsController {
 
 
   @Get(':id')
+  @Documentation({
+    summary: 'Returns a specific user notification',
+    response: { status: 200, type: RenderedNotificationDto },
+  })
   @Scopes(NotificationsScope.read)
   @ApiTags("user-notification")
   @ApiSecurity('oauth2', [NotificationsScope.read])
@@ -69,6 +80,10 @@ export class MeNotificationsController {
     return this.notificationService.findOne(user,id,locale);
   }
 
+  @Documentation({
+    summary: 'Updates a specific user notification',
+    response: { status: 200, type: RenderedNotificationDto },
+  })
   @Patch(':id')
   @Scopes(NotificationsScope.write)
   @ApiTags("user-notification")
