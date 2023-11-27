@@ -890,7 +890,7 @@ export const m = defineMessages({
     defaultMessage: 'Eingöngu tölustafir leyfðir',
     description: 'Letter entered in number field',
   },
-  
+
   // Inheritance step
   inheritanceAddMember: {
     id: 'es.application:inheritanceAddMember',
