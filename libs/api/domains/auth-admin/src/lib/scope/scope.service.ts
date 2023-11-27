@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import groupBy from 'lodash/groupBy'
+import pick from 'lodash/pick'
 
 import { User } from '@island.is/auth-nest-tools'
 
@@ -13,6 +14,8 @@ import { ScopeEnvironment } from './models/scope-environment.model'
 import { environments } from '../shared/constants/environments'
 import { AdminPatchScopeInput } from './dto/patch-scope.input'
 import { PublishScopeInput } from './dto/publish-scope.input'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { CustomDelegationOnlyForDelegationType } from '@island.is/clients/auth/admin-api'
 
 @Injectable()
 export class ScopeService extends MultiEnvironmentService {
@@ -72,6 +75,14 @@ export class ScopeService extends MultiEnvironmentService {
       throw new Error('Nothing provided to update')
     }
 
+    const custom = this.translateCustomDelegationGrant({
+      ...pick(adminPatchScopeDto, [
+        'onlyForCompanies',
+        'onlyForProcurationHolder',
+        'allowExplicitDelegationGrant',
+      ]),
+    })
+
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
         return this.adminApiByEnvironmentWithAuth(
@@ -80,7 +91,11 @@ export class ScopeService extends MultiEnvironmentService {
         )?.meScopesControllerUpdate({
           tenantId,
           scopeName,
-          adminPatchScopeDto,
+          adminPatchScopeDto: {
+            ...adminPatchScopeDto,
+            // Translate the customDelegationOnlyFor field to the correct format
+            customDelegationOnlyFor: custom,
+          },
         })
       }),
     )
@@ -90,6 +105,10 @@ export class ScopeService extends MultiEnvironmentService {
         ...scope,
         scopeName: scope.name,
         environment: environments[index],
+        ...this.resolveCustomDelegationGrant(
+          scope.allowExplicitDelegationGrant,
+          scope.customDelegationOnlyFor ?? [],
+        ),
       }),
       prefixErrorMessage: `Failed to update scope ${scopeName}`,
     })
@@ -214,7 +233,73 @@ export class ScopeService extends MultiEnvironmentService {
 
     return {
       scopeName: input.scopeName,
-      environments: environmentsScopes,
+      environments: environmentsScopes.map((scope) => ({
+        ...scope,
+        environment: scope.environment,
+        ...this.resolveCustomDelegationGrant(
+          scope.allowExplicitDelegationGrant,
+          scope.customDelegationOnlyFor ?? [],
+        ),
+      })),
+    }
+  }
+
+  private resolveCustomDelegationGrant(
+    allowExplicitDelegationGrant: boolean,
+    customDelegationGrant: CustomDelegationOnlyForDelegationType[],
+  ) {
+    const tempCustomDelegationGrant = {
+      onlyForCompanies: false,
+      onlyForProcurationHolder: false,
+    }
+    if (customDelegationGrant.length === 0 || !allowExplicitDelegationGrant) {
+      return tempCustomDelegationGrant
+    }
+
+    if (
+      customDelegationGrant.length === 1 &&
+      customDelegationGrant.includes(
+        CustomDelegationOnlyForDelegationType.ProcurationHolder,
+      )
+    ) {
+      tempCustomDelegationGrant.onlyForProcurationHolder = true
+      tempCustomDelegationGrant.onlyForCompanies = true
+    } else if (
+      customDelegationGrant.length === 2 &&
+      customDelegationGrant.includes(
+        CustomDelegationOnlyForDelegationType.Custom,
+      ) &&
+      customDelegationGrant.includes(
+        CustomDelegationOnlyForDelegationType.ProcurationHolder,
+      )
+    ) {
+      tempCustomDelegationGrant.onlyForCompanies = true
+    }
+
+    return tempCustomDelegationGrant
+  }
+
+  private translateCustomDelegationGrant({
+    onlyForCompanies,
+    onlyForProcurationHolder,
+    allowExplicitDelegationGrant,
+  }: {
+    onlyForCompanies?: boolean | undefined
+    onlyForProcurationHolder?: boolean | undefined
+    allowExplicitDelegationGrant?: boolean | undefined
+  }): CustomDelegationOnlyForDelegationType[] {
+    // If allowExplicitDelegationGrant is false, then we don't need to translate the customDelegationOnlyFor field
+    if (!allowExplicitDelegationGrant) {
+      return []
+    } else if (onlyForCompanies && onlyForProcurationHolder) {
+      return [CustomDelegationOnlyForDelegationType.ProcurationHolder]
+    } else if (onlyForCompanies) {
+      return [
+        CustomDelegationOnlyForDelegationType.Custom,
+        CustomDelegationOnlyForDelegationType.ProcurationHolder,
+      ]
+    } else {
+      return []
     }
   }
 }

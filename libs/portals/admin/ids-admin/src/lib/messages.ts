@@ -853,8 +853,13 @@ export const m = defineMessages({
     id: 'ap.ids-admin:type-not-found-message',
     defaultMessage: 'It may have been removed or moved',
   },
-  includeAccessControlUsers: {
-    id: 'ap.ids-admin:include-access-control-users',
-    defaultMessage: 'Include access control users',
+  onlyForProcuringHolders: {
+    id: 'ap.ids-admin:only-for-procuring-holders',
+    defaultMessage: 'Only for procuration holders',
+  },
+  onlyForProcuringHoldersDescription: {
+    id: 'ap.ids-admin:only-for-procuring-holders-description',
+    defaultMessage:
+      'Excludes access control users from being able to grant delegations for this permission on behalf of companies.',
   },
 })

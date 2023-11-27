@@ -90,7 +90,7 @@ export class AdminPatchScopeDto {
     example: [CustomDelegationOnlyForDelegationType.ProcurationHolder],
     default: undefined,
   })
-  customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType
+  customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType[]
 
   @IsBoolean()
   @IsOptional()

@@ -21,6 +21,10 @@ fragment AuthAdminScopeEnvironmentFragment on AuthAdminScopeEnvironment {
   allowExplicitDelegationGrant
   # Personal representatives
   grantToPersonalRepresentatives
+  # Only for companies
+  onlyForCompanies
+  # Only for procuration holder
+  onlyForProcurationHolder
 }
 
 query AuthAdminScope($input: ScopeInput!) {

@@ -1,7 +1,13 @@
 import React from 'react'
 
 import { useLocale } from '@island.is/localization'
-import { Box, Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  CheckboxProps,
+  Stack,
+  Tooltip,
+} from '@island.is/island-ui/core'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -27,6 +33,8 @@ export const PermissionAccessControl = () => {
     grantToLegalGuardians,
     allowExplicitDelegationGrant,
     grantToPersonalRepresentatives,
+    onlyForCompanies,
+    onlyForProcurationHolder,
   } = selectedPermission
 
   const [inputValues, setInputValues] = useEnvironmentState({
@@ -36,6 +44,8 @@ export const PermissionAccessControl = () => {
     grantToLegalGuardians,
     allowExplicitDelegationGrant,
     grantToPersonalRepresentatives,
+    onlyForCompanies,
+    onlyForProcurationHolder,
   })
 
   return (
@@ -116,27 +126,65 @@ export const PermissionAccessControl = () => {
             setInputValues({
               ...inputValues,
               allowExplicitDelegationGrant: e.target.checked,
+              // Reset onlyForCompanies and onlyForProcurationHolder
+              onlyForCompanies: false,
+              onlyForProcurationHolder: false,
             })
           }}
           {...commonProps}
           children={
-            <Box marginX={3} marginBottom={2}>
-              <Checkbox
-                label={formatMessage(m.onlyForCompanies)}
-                subLabel={formatMessage(m.onlyForCompaniesDescription)}
-                name="onlyFoCompanies"
-                checked={false}
-                {...commonProps}
-                children={
-                  <Box marginX={8} marginTop={0} marginBottom={3}>
-                    <Checkbox
-                      checked={false}
-                      label={formatMessage(m.includeAccessControlUsers)}
-                    ></Checkbox>
-                  </Box>
-                }
-              />
-            </Box>
+            inputValues.allowExplicitDelegationGrant && (
+              <Box marginX={3} marginBottom={2}>
+                <Checkbox
+                  label={formatMessage(m.onlyForCompanies)}
+                  subLabel={formatMessage(m.onlyForCompaniesDescription)}
+                  name="onlyForCompanies"
+                  onChange={(e) => {
+                    setInputValues({
+                      ...inputValues,
+                      onlyForCompanies: e.target.checked,
+                      // Reset onlyForProcurationHolder
+                      onlyForProcurationHolder: false,
+                    })
+                  }}
+                  checked={inputValues.onlyForCompanies}
+                  {...commonProps}
+                  children={
+                    <Box
+                      marginX={8}
+                      marginBottom={3}
+                      display="flex"
+                      alignItems="center"
+                      columnGap={inputValues.onlyForProcurationHolder ? 1 : 0}
+                    >
+                      <Checkbox
+                        labelVariant="small"
+                        checked={
+                          inputValues.onlyForProcurationHolder &&
+                          inputValues.onlyForCompanies
+                        }
+                        value={inputValues.onlyForProcurationHolder.toString()}
+                        name="onlyForProcurationHolder"
+                        disabled={!inputValues.onlyForCompanies}
+                        onChange={(e) => {
+                          setInputValues({
+                            ...inputValues,
+                            onlyForProcurationHolder: e.target.checked,
+                          })
+                        }}
+                        label={formatMessage(m.onlyForProcuringHolders)}
+                      />
+                      <Tooltip
+                        placement="right"
+                        text={formatMessage(
+                          m.onlyForProcuringHoldersDescription,
+                        )}
+                      />
+                    </Box>
+                  }
+                />
+              </Box>
+            )
           }
         />
         <Checkbox

@@ -3,8 +3,6 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { Environment } from '@island.is/shared/types'
 
 import { TranslatedValue } from '../../models/translated-value.model'
-import { GraphQLCustomDelegationGrantType } from './custom-delegation-grant.model'
-import type { CustomDelegationGrantType } from './custom-delegation-grant.model'
 
 @ObjectType('AuthAdminScopeEnvironment')
 export class ScopeEnvironment {
@@ -53,9 +51,6 @@ export class ScopeEnvironment {
   @Field(() => Boolean)
   allowExplicitDelegationGrant!: boolean
 
-  // @Field(() => GraphQLCustomDelegationGrantType)
-  // customDelegationGrant!: CustomDelegationGrantType
-
   @Field(() => Boolean)
   automaticDelegationGrant!: boolean
 
@@ -64,4 +59,10 @@ export class ScopeEnvironment {
 
   @Field(() => Boolean)
   isAccessControlled!: boolean
+
+  @Field(() => Boolean)
+  onlyForCompanies?: boolean
+
+  @Field(() => Boolean)
+  onlyForProcurationHolder?: boolean
 }

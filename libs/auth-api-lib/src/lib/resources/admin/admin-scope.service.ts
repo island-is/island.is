@@ -1,31 +1,24 @@
-import { Sequelize } from 'sequelize-typescript'
-import {
-  BadRequestException,
-  ForbiddenException,
-  Injectable,
-} from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { Transaction } from 'sequelize'
+import {Sequelize} from 'sequelize-typescript'
+import {BadRequestException, ForbiddenException, Injectable,} from '@nestjs/common'
+import {InjectModel} from '@nestjs/sequelize'
+import {Transaction} from 'sequelize'
 import omit from 'lodash/omit'
 
-import { validatePermissionId } from '@island.is/auth/shared'
-import { isDefined } from '@island.is/shared/utils'
+import {validatePermissionId} from '@island.is/auth/shared'
+import {isDefined} from '@island.is/shared/utils'
 
-import { ApiScope } from '../models/api-scope.model'
-import { Client } from '../../clients/models/client.model'
-import { AdminCreateScopeDto } from './dto/admin-create-scope.dto'
-import { ApiScopeUserClaim } from '../models/api-scope-user-claim.model'
-import { AdminScopeDTO } from './dto/admin-scope.dto'
-import { AdminTranslationService } from './services/admin-translation.service'
-import { NoContentException } from '@island.is/nest/problem'
-import {
-  AdminPatchScopeDto,
-  superUserScopeFields,
-} from './dto/admin-patch-scope.dto'
-import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
-import { TranslationService } from '../../translation/translation.service'
-import { User } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
+import {ApiScope} from '../models/api-scope.model'
+import {Client} from '../../clients/models/client.model'
+import {AdminCreateScopeDto} from './dto/admin-create-scope.dto'
+import {ApiScopeUserClaim} from '../models/api-scope-user-claim.model'
+import {AdminScopeDTO} from './dto/admin-scope.dto'
+import {AdminTranslationService} from './services/admin-translation.service'
+import {NoContentException} from '@island.is/nest/problem'
+import {AdminPatchScopeDto, superUserScopeFields,} from './dto/admin-patch-scope.dto'
+import {TranslatedValueDto} from '../../translation/dto/translated-value.dto'
+import {TranslationService} from '../../translation/translation.service'
+import {User} from '@island.is/auth-nest-tools'
+import {AdminPortalScope} from '@island.is/auth/scopes'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -304,9 +297,7 @@ export class AdminScopeService {
           ...omit(input, ['displayName', 'description']),
           ...(displayName && { displayName }),
           ...(description && { description }),
-          customDelegationOnlyFor: this.sequelize.literal(
-            `ARRAY['ProcurationHolder'::enum_api_scope_custom_delegation_only_for]`,
-          ),
+          customDelegationOnlyFor: input.customDelegationOnlyFor,
         },
         {
           where: {
