@@ -118,6 +118,8 @@ export const AdditionalEstateMember = ({
               name={dateOfBirthField}
               locale="is"
               maxDate={new Date()}
+              minYear={1900}
+              maxYear={new Date().getFullYear()}
               backgroundColor="blue"
               onChange={(d) => {
                 setValue(dateOfBirthField, d)
