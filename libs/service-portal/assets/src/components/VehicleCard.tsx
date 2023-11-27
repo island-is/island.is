@@ -1,11 +1,12 @@
 import { VehiclesVehicle } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { formatDate } from '@island.is/service-portal/core'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import { messages, vehicleMessage } from '../lib/messages'
 import { ActionCard } from '@island.is/service-portal/core'
 import { AssetsPaths } from '../lib/paths'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 interface Props {
   vehicle: VehiclesVehicle
@@ -15,6 +16,24 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
   vehicle,
 }) => {
   const { formatMessage } = useLocale()
+
+  // Remove flag functionality once feature goes live.
+  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehicleMileagePageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnabledMileageFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   if (!vehicle) {
     return null
   }
@@ -41,6 +60,15 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
                 ) > 0
                   ? 'blue'
                   : 'red',
+              outlined: false,
+            }
+          : undefined
+      }
+      secondaryTag={
+        vehicle.requiresMileageRegistration && enabledMileageFlag
+          ? {
+              label: formatMessage(vehicleMessage.mileageTagText),
+              variant: 'warn',
               outlined: false,
             }
           : undefined

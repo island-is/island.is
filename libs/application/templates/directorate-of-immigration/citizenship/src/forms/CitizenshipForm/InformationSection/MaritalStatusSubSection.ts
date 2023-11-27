@@ -128,6 +128,8 @@ export const MaritalStatusSubSection = buildSubSection({
             ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.birthplace?.location
+              ? spouseDetails?.birthplace?.location
+              : ''
           },
         }),
         buildTextField({
@@ -144,6 +146,8 @@ export const MaritalStatusSubSection = buildSubSection({
             ) as NationalRegistrySpouse | undefined
 
             return spouseDetails?.citizenship?.name
+              ? spouseDetails?.citizenship?.name
+              : ''
           },
         }),
         buildTextField({
