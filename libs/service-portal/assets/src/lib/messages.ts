@@ -177,6 +177,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
+  vehicleMileageIntro: {
+    id: 'sp.vehicles:vehicle-mileage-intro',
+    defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil, <href>sjá nánar um það hér.</href>`,
+  },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
@@ -197,6 +201,10 @@ export const vehicleMessage = defineMessages({
   category: {
     id: 'sp.vehicles:category',
     defaultMessage: 'flokkur',
+  },
+  postSuccess: {
+    id: 'sp.vehicles:post-mileage-success',
+    defaultMessage: 'Skráning tókst!',
   },
   type: {
     id: 'sp.vehicles:type',
@@ -793,9 +801,54 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
   },
+  lastKnownOdometerStatus: {
+    id: 'sp.vehicles:last-known-odometer-status',
+    defaultMessage: 'Síðasta kílómetrastaða',
+  },
+  vehicleMileageInputLabel: {
+    id: 'sp.vehicles:mileage-input-label',
+    defaultMessage: 'Kílómetrastaða',
+  },
+  vehicleMileageInputPlaceholder: {
+    id: 'sp.vehicles:mileage-input-placeholder',
+    defaultMessage: '20.000',
+  },
+  vehicleMileageInputTitle: {
+    id: 'sp.vehicles:mileage-input-title',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  vehicleMileageRegistration: {
+    id: 'sp.vehicles:mileage-registration',
+    defaultMessage: 'Skráning',
+  },
   searchForPlate: {
     id: 'sp.vehicles:search-for-plate',
     defaultMessage: 'Leita eftir bílnúmeri',
+  },
+  mileageInputTooLow: {
+    id: 'sp.vehicles:mileage-errors-input-too-low',
+    defaultMessage: 'Verður að vera hærri en hæsta staðfesta skráning',
+  },
+  mileageInputMinLength: {
+    id: 'sp.vehicles:mileage-errors-min-length',
+    defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
+  },
+  mileageSuccessFormTitle: {
+    id: 'sp.vehicles:mileage-success-form-title',
+    defaultMessage: 'Kílómetrastaða skráð',
+  },
+  mileageSuccessFormText: {
+    id: 'sp.vehicles:mileage-success-form-text',
+    defaultMessage:
+      'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}',
+  },
+  mileageTagText: {
+    id: 'sp.vehicles:mileage-tag-text',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  mileageAlreadyRegistered: {
+    id: 'sp.vehicles:mileage-already-registered',
+    defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð. ',
   },
 })
 
