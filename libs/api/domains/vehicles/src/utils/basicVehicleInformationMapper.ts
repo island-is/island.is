@@ -20,7 +20,6 @@ export const basicVehicleInformationMapper = (
   const numberOfAxles = data.technical?.axle?.axleno ?? 0
 
   const axles: VehiclesAxle[] = []
-  console.log(data.technical)
   if (data && data.technical && data.technical.axle && data.technical.mass) {
     for (let i = 1; i <= numberOfAxles; i++) {
       axles.push({

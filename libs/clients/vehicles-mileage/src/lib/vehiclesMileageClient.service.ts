@@ -20,7 +20,7 @@ export const VehiclesMileageApiProvider: Provider<MileageReadingApi> = {
     new MileageReadingApi(
       new Configuration({
         fetchApi: createEnhancedFetch({
-          name: 'clients-mileage-vehicles',
+          name: 'clients-vehicles-mileage',
           organizationSlug: 'samgongustofa',
           autoAuth: idsClientConfig.isConfigured
             ? {

@@ -159,6 +159,7 @@ export class VehiclesService {
 
     return {
       data: res,
+      permno: input.permno,
       editing: isReadDateToday(latestDate ?? undefined),
     }
   }

@@ -30,11 +30,14 @@ export class VehicleMileageOverview {
   })
   editing?: boolean | null
 
+  @Field(() => String, { nullable: true })
+  permno?: string
+
   @Field(() => Boolean, { nullable: true })
   canRegisterMileage?: boolean | null
 
   @Field(() => Boolean, { nullable: true })
-  requiresRegistrationOfMileage?: boolean | null
+  requiresMileageRegistration?: boolean | null
 }
 
 @ObjectType()
