@@ -194,59 +194,59 @@ export class DirectorateOfImmigrationClient {
     applicationId = applicationId.replace(/["]/g, '')
 
     // applicant: submit travel document and other supporting attachment
-    const attachmentList: {
-      attachmentType: AttachmentType
-      fileList: { filename: string; base64: string; countryId?: string }[]
-    }[] = [
-      {
-        attachmentType: AttachmentType.Passport,
-        fileList: application.passport.file || [],
-      },
-      {
-        attachmentType: AttachmentType.BirtCertificate,
-        fileList: application.supportingDocuments.birthCertificate || [],
-      },
-      {
-        attachmentType: AttachmentType.ProofOfFinancialCapabilityApplicant,
-        fileList: application.supportingDocuments.subsistenceCertificate || [],
-      },
-      {
-        attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
-        fileList:
-          application.supportingDocuments.subsistenceCertificateForTown || [],
-      },
-      {
-        attachmentType: AttachmentType.DomicileHistory,
-        fileList:
-          application.supportingDocuments.certificateOfLegalResidenceHistory ||
-          [],
-      },
-      {
-        attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
-        fileList:
-          application.supportingDocuments.icelandicTestCertificate || [],
-      },
-      {
-        attachmentType: AttachmentType.CriminalRecord,
-        fileList: application.supportingDocuments.criminalRecordList || [],
-      },
-    ]
-    for (let j = 0; j < attachmentList.length; j++) {
-      const file = attachmentList[j]
-      for (let k = 0; k < file.fileList.length; k++) {
-        await this.applicationAttachmentApiWithAuth(
-          auth,
-        ).apiApplicationAttachmentApplicationIdPost({
-          applicationId,
-          applicationAttachmentNewModel: {
-            attachmentType: file.attachmentType,
-            fileName: file.fileList[k].filename,
-            base64Contents: file.fileList[k].base64,
-            countryCode: file.fileList[k].countryId,
-          },
-        })
-      }
-    }
+    // const attachmentList: {
+    //   attachmentType: AttachmentType
+    //   fileList: { filename: string; fileUrl: string; countryId?: string }[]
+    // }[] = [
+    //   {
+    //     attachmentType: AttachmentType.Passport,
+    //     fileList: application.passport.file || [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.BirtCertificate,
+    //     fileList: application.supportingDocuments.birthCertificate || [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.ProofOfFinancialCapabilityApplicant,
+    //     fileList: application.supportingDocuments.subsistenceCertificate || [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.ProofOfFinancialCapabilityMunicipality,
+    //     fileList:
+    //       application.supportingDocuments.subsistenceCertificateForTown || [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.DomicileHistory,
+    //     fileList:
+    //       application.supportingDocuments.certificateOfLegalResidenceHistory ||
+    //       [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.ConfirmationIcelandicLanguage,
+    //     fileList:
+    //       application.supportingDocuments.icelandicTestCertificate || [],
+    //   },
+    //   {
+    //     attachmentType: AttachmentType.CriminalRecord,
+    //     fileList: application.supportingDocuments.criminalRecordList || [],
+    //   },
+    // ]
+    // for (let j = 0; j < attachmentList.length; j++) {
+    //   const file = attachmentList[j]
+    //   for (let k = 0; k < file.fileList.length; k++) {
+    //     await this.applicationAttachmentApiWithAuth(
+    //       auth,
+    //     ).apiApplicationAttachmentApplicationIdPost({
+    //       applicationId,
+    //       applicationAttachmentNewModel: {
+    //         attachmentType: file.attachmentType,
+    //         fileName: file.fileList[k].filename,
+    //         base64Contents: file.fileList[k].fileUrl,
+    //         countryCode: file.fileList[k].countryId,
+    //       },
+    //     })
+    //   }
+    // }
 
     // selected children: create application and submit information
     for (let i = 0; i < application.selectedChildren.length; i++) {
@@ -302,53 +302,53 @@ export class DirectorateOfImmigrationClient {
       childApplicationId = childApplicationId.replace(/["]/g, '')
 
       // child: submit travel document and other supporting attachment
-      const childSupportingDocuments =
-        application.childrenSupportingDocuments.find(
-          (c) => c.nationalId === childNationalId,
-        )
-      const childAttachmentList: {
-        attachmentType: AttachmentType
-        fileList: { filename: string; base64: string }[]
-      }[] = [
-        {
-          attachmentType: AttachmentType.Passport,
-          fileList: childPassportInfo?.file || [],
-        },
-        {
-          attachmentType: AttachmentType.BirtCertificate,
-          fileList: childSupportingDocuments?.birthCertificate || [],
-        },
-        {
-          attachmentType: AttachmentType.WrittenConfirmationChild,
-          fileList: childSupportingDocuments?.writtenConsentFromChild || [],
-        },
-        {
-          attachmentType: AttachmentType.ConfirmationOtherParent,
-          fileList:
-            childSupportingDocuments?.writtenConsentFromOtherParent || [],
-        },
-        {
-          attachmentType: AttachmentType.CustodyDocuments,
-          fileList: childSupportingDocuments?.custodyDocuments || [],
-        },
-      ]
-      for (let j = 0; j < childAttachmentList.length; j++) {
-        const file = childAttachmentList[j]
-        for (let k = 0; k < file.fileList.length; k++) {
-          await this.applicationAttachmentApiWithAuth(
-            auth,
-          ).apiApplicationAttachmentApplicationIdPost({
-            applicationId: childApplicationId,
-            applicationAttachmentNewModel: {
-              attachmentType: file.attachmentType,
-              fileName: file.fileList[k].filename,
-              base64Contents: file.fileList[k].base64,
-            },
-          })
-        }
-      }
+      //   const childSupportingDocuments =
+      //     application.childrenSupportingDocuments.find(
+      //       (c) => c.nationalId === childNationalId,
+      //     )
+      //   const childAttachmentList: {
+      //     attachmentType: AttachmentType
+      //     fileList: { filename: string; fileUrl: string }[]
+      //   }[] = [
+      //     {
+      //       attachmentType: AttachmentType.Passport,
+      //       fileList: childPassportInfo?.file || [],
+      //     },
+      //     {
+      //       attachmentType: AttachmentType.BirtCertificate,
+      //       fileList: childSupportingDocuments?.birthCertificate || [],
+      //     },
+      //     {
+      //       attachmentType: AttachmentType.WrittenConfirmationChild,
+      //       fileList: childSupportingDocuments?.writtenConsentFromChild || [],
+      //     },
+      //     {
+      //       attachmentType: AttachmentType.ConfirmationOtherParent,
+      //       fileList:
+      //         childSupportingDocuments?.writtenConsentFromOtherParent || [],
+      //     },
+      //     {
+      //       attachmentType: AttachmentType.CustodyDocuments,
+      //       fileList: childSupportingDocuments?.custodyDocuments || [],
+      //     },
+      //   ]
+      //   for (let j = 0; j < childAttachmentList.length; j++) {
+      //     const file = childAttachmentList[j]
+      //     for (let k = 0; k < file.fileList.length; k++) {
+      //       await this.applicationAttachmentApiWithAuth(
+      //         auth,
+      //       ).apiApplicationAttachmentApplicationIdPost({
+      //         applicationId: childApplicationId,
+      //         applicationAttachmentNewModel: {
+      //           attachmentType: file.attachmentType,
+      //           fileName: file.fileList[k].filename,
+      //           base64Contents: file.fileList[k].fileUrl,
+      //         },
+      //       })
+      //     }
+      //   }
 
-      applicationIdList.push(childApplicationId)
+      //   applicationIdList.push(childApplicationId)
     }
 
     // make sure applicant application id is the last item to be confirmed

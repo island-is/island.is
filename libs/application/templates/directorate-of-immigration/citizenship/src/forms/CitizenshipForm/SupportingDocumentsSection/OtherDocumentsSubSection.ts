@@ -11,6 +11,7 @@ import { supportingDocuments } from '../../../lib/messages'
 import {
   Answer,
   Application,
+  FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
@@ -25,6 +26,10 @@ export const OtherDocumentsSubSection = buildSubSection({
     buildMultiField({
       id: Routes.SUPPORTINGDOCUMENTS,
       title: supportingDocuments.labels.otherDocuments.pageTitle,
+      condition: (application: FormValue, _) => {
+        console.log('application', application)
+        return true
+      },
       description: (application: Application) => {
         const applicant = getValueViaPath(
           application.externalData,
