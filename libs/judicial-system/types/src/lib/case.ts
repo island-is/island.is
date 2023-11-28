@@ -177,6 +177,7 @@ export enum SessionArrangements {
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
+  NOT_SHARED = 'NOT_SHARED',
 }
 
 export interface Case {
@@ -410,6 +411,7 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'requestSharedWithDefender'
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
@@ -425,7 +427,6 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
-  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TransitionCase {
@@ -533,13 +534,14 @@ const RequestSharedWithDefenderAllowedStates: {
     CaseState.RECEIVED,
     ...completedCaseStates,
   ],
+  [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
 }
 
 export function canDefenderViewRequest(theCase: Case) {
   const { requestSharedWithDefender, state, courtDate } = theCase
 
   if (!requestSharedWithDefender) {
-    return completedCaseStates.includes(state)
+    return false
   }
 
   const allowedStates =
