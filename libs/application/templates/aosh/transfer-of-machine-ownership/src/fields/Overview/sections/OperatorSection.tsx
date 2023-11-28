@@ -13,32 +13,33 @@ export const OperatorSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({ buyerOperators = [], reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
-  const operators = buyerOperators
 
-  return operators.length > 0 ? (
+  return buyerOperators.length > 0 ? (
     <ReviewGroup isLast>
       <GridRow>
-        {operators?.map(({ name, nationalId, email, phone }, index: number) => {
-          if (!name || name.length === 0) return null
-          const isOperator = nationalId === reviewerNationalId
-          return (
-            <GridColumn
-              span={['12/12', '12/12', '12/12', '6/12']}
-              key={`operator-${index}`}
-            >
-              <Box marginBottom={operators.length === index + 1 ? 0 : 2}>
-                <Text variant="h4">
-                  {formatMessage(information.labels.operator.title)}
-                  {isOperator && `(${formatMessage(review.status.youLabel)})`}
-                </Text>
-                <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId || '', '-')}</Text>
-                <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone || '')}</Text>
-              </Box>
-            </GridColumn>
-          )
-        })}
+        {buyerOperators?.map(
+          ({ name, nationalId, email, phone }, index: number) => {
+            if (!name || name.length === 0) return null
+            const isOperator = nationalId === reviewerNationalId
+            return (
+              <GridColumn
+                span={['12/12', '12/12', '12/12', '6/12']}
+                key={`operator-${index}`}
+              >
+                <Box marginBottom={buyerOperators.length === index + 1 ? 0 : 2}>
+                  <Text variant="h4">
+                    {formatMessage(information.labels.operator.title)}
+                    {isOperator && `(${formatMessage(review.status.youLabel)})`}
+                  </Text>
+                  <Text>{name}</Text>
+                  <Text>{kennitala.format(nationalId || '', '-')}</Text>
+                  <Text>{email}</Text>
+                  <Text>{formatPhoneNumber(phone || '')}</Text>
+                </Box>
+              </GridColumn>
+            )
+          },
+        )}
       </GridRow>
     </ReviewGroup>
   ) : null

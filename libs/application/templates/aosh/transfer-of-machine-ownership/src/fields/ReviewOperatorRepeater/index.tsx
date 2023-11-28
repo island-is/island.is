@@ -38,17 +38,14 @@ export const ReviewOperatorRepeater: FC<
   const [tempBuyerOperators, setTempBuyerOperators] =
     useState<Operator[]>(buyerOperators)
 
-  const filteredBuyerOperators = tempBuyerOperators.filter(
+  const allOperators = tempBuyerOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
-  const allOperators = filteredBuyerOperators
 
   const checkDuplicate = () => {
-    const existingBuyerOperators = filteredBuyerOperators.map(
-      ({ nationalId }) => {
-        return nationalId
-      },
-    )
+    const existingBuyerOperators = allOperators.map(({ nationalId }) => {
+      return nationalId
+    })
 
     const buyerNationalId = getValueViaPath(
       application.answers,
@@ -100,7 +97,7 @@ export const ReviewOperatorRepeater: FC<
     if (!checkDuplicate()) {
       setIdenticalError(false)
       if (tempBuyerOperators && setBuyerOperators) {
-        const notValid = filteredBuyerOperators.find((field) => {
+        const notValid = allOperators.find((field) => {
           if (
             !(field.email && field.email.length > 0) ||
             !(field.name && field.name.length > 0) ||
@@ -151,13 +148,11 @@ export const ReviewOperatorRepeater: FC<
       </Text>
       <Box>
         {tempBuyerOperators?.map((field, index) => {
-          const rowLocation = allOperators.indexOf(field)
           return (
             <ReviewOperatorRepeaterItem
               id="buyerOperator"
               repeaterField={field}
               index={index}
-              rowLocation={rowLocation + 1}
               key={`${index}-buyerOperator`}
               handleRemove={handleRemove}
               setBuyerOperators={setTempBuyerOperators}

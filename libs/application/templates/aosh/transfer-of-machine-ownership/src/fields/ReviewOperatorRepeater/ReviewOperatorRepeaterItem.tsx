@@ -20,7 +20,6 @@ const DEBOUNCE_INTERVAL = 300
 interface Props {
   id: string
   index: number
-  rowLocation: number
   repeaterField: GenericFormField<Operator>
   handleRemove: (index: number) => void
   setBuyerOperators?: (s: Operator[]) => void
@@ -33,7 +32,6 @@ export const ReviewOperatorRepeaterItem: FC<
 > = ({
   id,
   index,
-  rowLocation,
   handleRemove,
   repeaterField,
   setBuyerOperators,
