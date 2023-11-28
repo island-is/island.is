@@ -15,8 +15,8 @@ export const buyerSubSection = buildSubSection({
       description: information.labels.buyer.description,
       children: [
         buildCustomField({
-          id: 'buyerCoOwnerAndOperator',
-          component: 'CoOwnerAndOperatorRepeater',
+          id: 'buyerCustomField',
+          component: 'BuyerField',
           title: '',
         }),
       ],
