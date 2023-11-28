@@ -131,7 +131,7 @@ export const AdditionalRealEstate = ({
             defaultValue={String(field.share)}
             onChange={(e) => setValue(shareField, Number(e.target.value))}
             error={error?.share}
-            type="text"
+            type="number"
             required
           />
         </GridColumn>
