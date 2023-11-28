@@ -38,8 +38,8 @@ type props = {
  * @param  buttonText The text of the button that links to a url
  * @param  secitonTitle The title for the section
  */
-export const buildFormConclusionSection = (props: props) => {
-  return buildSection({
+export const buildFormConclusionSection = (props: props) =>
+  buildSection({
     id: 'uiForms.conclusionSection',
     title: props.sectionTitle
       ? props.sectionTitle
@@ -88,4 +88,3 @@ export const buildFormConclusionSection = (props: props) => {
       }),
     ],
   })
-}

@@ -7,7 +7,6 @@ export const getDataProviders = () => import('./dataProviders/')
 export type HealthcareLicenseCertificateAnswers = HealthcareLicenseCertificate
 
 export * from './utils'
-// export * from './shared/types'
 
 export * from './lib/messages/externalData'
 export * from './lib/messages/error'

@@ -32,7 +32,7 @@ export class HealthcareLicenseCertificateService extends BaseTemplateApiService 
     const result =
       await this.healthDirectorateClientService.getMyHealthcareLicenses(auth)
 
-    // Validate that user has at least 1 vehicle
+    // Validate that user has at least 1 license
     if (!result || !result.length) {
       throw new TemplateApiError(
         {

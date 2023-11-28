@@ -10,6 +10,7 @@ import {
   HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
 } from './healthDirectorateClient.types'
+import format from 'date-fns/format'
 
 @Injectable()
 export class HealthDirectorateClientService {
@@ -43,6 +44,7 @@ export class HealthDirectorateClientService {
 
     const result: HealthcareLicense[] = []
 
+    // loop through items to group together specialities per profession
     for (let i = 0; i < items.length; i++) {
       const item = items[i]
       const professionId = item.idProfession
@@ -85,20 +87,10 @@ export class HealthDirectorateClientService {
     const result: HealthcareLicenseCertificate[] = []
 
     for (let i = 0; i < request.professionIdList.length; i++) {
-      const isoStr = new Date(request.dateOfBirth)
-        .toISOString()
-        .substring(0, 10)
-
       const item = await this.vottordApiWithAuth(auth).vottordUtbuaSkjalPost({
         utbuaSkjalRequest: {
           name: request.fullName,
-          //TODOx wait untill API fixes type/format
-          dateOfBirth:
-            isoStr.substring(8, 10) +
-            '.' +
-            isoStr.substring(5, 7) +
-            '.' +
-            isoStr.substring(0, 4),
+          dateOfBirth: format(new Date(request.dateOfBirth), 'dd.MM.yyyy'),
           email: request.email,
           phoneNo: request.phone,
           idProfession: request.professionIdList[i],

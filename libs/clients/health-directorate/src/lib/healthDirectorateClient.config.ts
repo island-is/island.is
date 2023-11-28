@@ -21,7 +21,7 @@ export const HealthDirectorateClientConfig = defineConfig<
     ),
     fetch: {
       scope: ['@landlaeknir.is/starfsleyfi'],
-      timeout: 60000,
+      timeout: 30000,
     },
   }),
 })

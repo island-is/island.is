@@ -489,7 +489,7 @@ export function buildMessageWithLinkButtonField(
 export function buildExpandableDescriptionField(
   data: Omit<ExpandableDescriptionField, 'type' | 'component' | 'children'>,
 ): ExpandableDescriptionField {
-  const { id, title, description, introText, startExpanded, condition } = data
+  const { id, title, description, introText, startExpanded } = data
   return {
     children: undefined,
     id,
@@ -497,7 +497,6 @@ export function buildExpandableDescriptionField(
     description,
     introText,
     startExpanded,
-    condition,
     type: FieldTypes.EXPANDABLE_DESCRIPTION,
     component: FieldComponents.EXPANDABLE_DESCRIPTION,
   }

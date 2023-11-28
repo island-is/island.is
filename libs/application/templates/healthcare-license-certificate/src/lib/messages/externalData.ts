@@ -22,11 +22,6 @@ export const externalData = {
       defaultMessage: 'Ég skil að ofangreindra upplýsinga verður aflað',
       description: 'External data checkbox label',
     },
-    // submitButton: {
-    //   id: 'hlc.application:externalData.dataProvider.submitButton',
-    //   defaultMessage: 'Hefja umsókn',
-    //   description: 'External data submit button',
-    // },
   }),
   nationalRegistry: defineMessages({
     title: {
