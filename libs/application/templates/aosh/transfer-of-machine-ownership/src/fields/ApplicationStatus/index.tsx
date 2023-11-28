@@ -21,11 +21,11 @@ export const ApplicationStatus: FC<
     application,
     setStep,
     reviewerNationalId = '',
-    coOwnersAndOperators,
+    buyerOperators,
   } = props
   const { formatMessage } = useLocale()
 
-  const steps = getReviewSteps(application, coOwnersAndOperators || [])
+  const steps = getReviewSteps(application, buyerOperators || [])
 
   const showReviewButton = !hasReviewerApproved(
     reviewerNationalId,

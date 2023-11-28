@@ -6,7 +6,7 @@ import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { Location } from '../Location'
 import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
-import { CoOwnerAndOperator, MachineLocation, ReviewState } from '../../shared'
+import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
 import { ReviewMainOperator } from '../ReviewMainOperator'
@@ -20,14 +20,8 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     getValueViaPath(application.answers, 'location') as MachineLocation,
   )
 
-  const [coOwnersAndOperators, setCoOwnersAndOperators] = useState<
-    CoOwnerAndOperator[]
-  >(
-    getValueViaPath(
-      application.answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[],
+  const [buyerOperators, setBuyerOperators] = useState<Operator[]>(
+    getValueViaPath(application.answers, 'buyerOperator', []) as Operator[],
   )
   const [mainOperator, setMainOperator] = useState<string>(
     getValueViaPath(
@@ -38,7 +32,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   )
   const reviewerNationalId = userInfo?.profile.nationalId || null
 
-  const filteredCoOwnersAndOperators = coOwnersAndOperators.filter(
+  const filteredBuyerOperators = buyerOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
 
@@ -52,7 +46,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ApplicationStatus
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            coOwnersAndOperators={filteredCoOwnersAndOperators}
+            buyerOperators={filteredBuyerOperators}
             {...props}
           />
         )
@@ -62,7 +56,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             location={location}
-            coOwnersAndOperators={filteredCoOwnersAndOperators}
+            buyerOperators={filteredBuyerOperators}
             mainOperator={mainOperator}
             {...props}
           />
@@ -72,7 +66,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ReviewConclusion
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            coOwnersAndOperators={filteredCoOwnersAndOperators}
+            buyerOperators={filteredBuyerOperators}
             {...props}
           />
         )
@@ -81,8 +75,8 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ReviewOperatorRepeater
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            setCoOwnersAndOperators={setCoOwnersAndOperators}
-            coOwnersAndOperators={coOwnersAndOperators}
+            setBuyerOperators={setBuyerOperators}
+            buyerOperators={buyerOperators}
             {...props}
           />
         )
@@ -90,7 +84,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         return (
           <ReviewMainOperator
             setStep={setStep}
-            coOwnersAndOperators={coOwnersAndOperators}
+            buyerOperators={buyerOperators}
             setMainOperator={setMainOperator}
             mainOperator={mainOperator}
             {...props}

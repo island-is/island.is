@@ -1,8 +1,4 @@
-import {
-  CoOwnerAndOperator,
-  ReviewSectionProps,
-  UserInformation,
-} from '../shared'
+import { Operator, ReviewSectionProps, UserInformation } from '../shared'
 import { Application } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'
@@ -10,19 +6,13 @@ import { States } from '../lib/constants'
 
 export const getReviewSteps = (
   application: Application,
-  coOwnersAndOperators: CoOwnerAndOperator[],
+  buyerOperators: Operator[],
 ) => {
   const vehiclePlate = getValueViaPath(
     application.answers,
     'pickVehicle.plate',
     '',
   ) as string
-
-  const sellerCoOwner = getValueViaPath(
-    application.answers,
-    'sellerCoOwner',
-    [],
-  ) as UserInformation[]
 
   const buyer = getValueViaPath(application.answers, 'buyer') as UserInformation
 
@@ -32,20 +22,7 @@ export const getReviewSteps = (
     false,
   ) as boolean
 
-  const buyerCoOwner = coOwnersAndOperators.filter(
-    (reviewer) => reviewer.type === 'coOwner',
-  )
-  const buyerOperator = coOwnersAndOperators.filter(
-    (reviewer) => reviewer.type === 'operator',
-  )
-
-  const sellerCoOwnerNotApproved = sellerCoOwner.find(
-    (coOwner) => !coOwner.approved,
-  )
-  const buyerCoOwnerNotApproved = buyerCoOwner.find(
-    (coOwner) => !coOwner.approved,
-  )
-  const buyerOperatorNotApproved = buyerOperator.find(
+  const buyerOperatorNotApproved = buyerOperators.find(
     (operator) => !operator.approved,
   )
 
@@ -67,24 +44,6 @@ export const getReviewSteps = (
       title: review.step.title.payment,
       description: review.step.description.payment,
     },
-    // Sellers coowner
-    {
-      tagText:
-        !sellerCoOwnerNotApproved || isComplete
-          ? review.step.tagText.received
-          : review.step.tagText.pendingApproval,
-      tagVariant: !sellerCoOwnerNotApproved || isComplete ? 'mint' : 'purple',
-      title: review.step.title.sellerCoOwner,
-      description: review.step.description.sellerCoOwner,
-      visible: sellerCoOwner.length > 0,
-      reviewer: sellerCoOwner.map((reviewer) => {
-        return {
-          nationalId: reviewer.nationalId,
-          name: reviewer.name,
-          approved: reviewer.approved || false,
-        }
-      }),
-    },
     // Buyer
     {
       tagText:
@@ -102,24 +61,6 @@ export const getReviewSteps = (
         },
       ],
     },
-    // Buyers coowner
-    {
-      tagText:
-        !buyerCoOwnerNotApproved || isComplete
-          ? review.step.tagText.received
-          : review.step.tagText.pendingApproval,
-      tagVariant: !buyerCoOwnerNotApproved || isComplete ? 'mint' : 'purple',
-      title: review.step.title.buyerCoOwner,
-      description: review.step.description.buyerCoOwner,
-      visible: buyerCoOwner.length > 0,
-      reviewer: buyerCoOwner.map((reviewer) => {
-        return {
-          nationalId: reviewer.nationalId,
-          name: reviewer.name,
-          approved: reviewer.approved || false,
-        }
-      }),
-    },
     // Buyers operators
     {
       tagText:
@@ -129,8 +70,8 @@ export const getReviewSteps = (
       tagVariant: !buyerOperatorNotApproved || isComplete ? 'mint' : 'purple',
       title: review.step.title.buyerOperator,
       description: review.step.description.buyerOperator,
-      visible: buyerOperator.length > 0,
-      reviewer: buyerOperator.map((reviewer) => {
+      visible: buyerOperators.length > 0,
+      reviewer: buyerOperators.map((reviewer) => {
         return {
           nationalId: reviewer.nationalId,
           name: reviewer.name,

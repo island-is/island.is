@@ -11,13 +11,9 @@ import { formatPhoneNumber } from '../../../utils'
 
 export const OperatorSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({
-  coOwnersAndOperators = [],
-  reviewerNationalId = '',
-  mainOperator = '',
-}) => {
+> = ({ buyerOperators = [], reviewerNationalId = '' }) => {
   const { formatMessage } = useLocale()
-  const operators = coOwnersAndOperators.filter((x) => x.type === 'operator')
+  const operators = buyerOperators
 
   return operators.length > 0 ? (
     <ReviewGroup isLast>
@@ -36,9 +32,9 @@ export const OperatorSection: FC<
                   {isOperator && `(${formatMessage(review.status.youLabel)})`}
                 </Text>
                 <Text>{name}</Text>
-                <Text>{kennitala.format(nationalId!, '-')}</Text>
+                <Text>{kennitala.format(nationalId || '', '-')}</Text>
                 <Text>{email}</Text>
-                <Text>{formatPhoneNumber(phone!)}</Text>
+                <Text>{formatPhoneNumber(phone || '')}</Text>
               </Box>
             </GridColumn>
           )

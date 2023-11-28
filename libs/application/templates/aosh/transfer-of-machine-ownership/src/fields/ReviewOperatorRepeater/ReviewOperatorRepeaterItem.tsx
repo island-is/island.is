@@ -13,7 +13,7 @@ import { useFormContext } from 'react-hook-form'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
 import debounce from 'lodash/debounce'
-import { CoOwnerAndOperator } from '../../shared'
+import { Operator } from '../../shared'
 
 const DEBOUNCE_INTERVAL = 300
 
@@ -21,10 +21,10 @@ interface Props {
   id: string
   index: number
   rowLocation: number
-  repeaterField: GenericFormField<CoOwnerAndOperator>
+  repeaterField: GenericFormField<Operator>
   handleRemove: (index: number) => void
-  setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
-  coOwnersAndOperators?: CoOwnerAndOperator[]
+  setBuyerOperators?: (s: Operator[]) => void
+  buyerOperators?: Operator[]
   errorMessage?: string
 }
 
@@ -36,8 +36,8 @@ export const ReviewOperatorRepeaterItem: FC<
   rowLocation,
   handleRemove,
   repeaterField,
-  setCoOwnersAndOperators,
-  coOwnersAndOperators,
+  setBuyerOperators,
+  buyerOperators,
   errorMessage,
   ...props
 }) => {
@@ -51,35 +51,31 @@ export const ReviewOperatorRepeaterItem: FC<
   const { setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const fieldIndex = `${id}[${index}]`
-  const userMessageId = repeaterField.type ?? 'coOwner'
   const emailField = `${fieldIndex}.email`
   const phoneField = `${fieldIndex}.phone`
   const nationalIdField = `${fieldIndex}.nationalId`
   const nameField = `${fieldIndex}.name`
-  const typeField = `${fieldIndex}.type`
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   useEffect(() => {
-    if (setCoOwnersAndOperators && coOwnersAndOperators && index > -1) {
-      const temp = [...coOwnersAndOperators]
+    if (setBuyerOperators && buyerOperators && index > -1) {
+      const temp = [...buyerOperators]
       const itemValue = {
         email,
         phone,
         nationalId,
         name,
-        type: userMessageId as 'operator' | 'coOwner',
         wasRemoved: repeaterField.wasRemoved,
       }
       temp[index] = itemValue
-      setCoOwnersAndOperators(temp)
+      setBuyerOperators(temp)
       setValue(nationalIdField, nationalId)
       setValue(nameField, name)
       setValue(emailField, email)
       setValue(phoneField, phone)
       setValue(wasRemovedField, repeaterField.wasRemoved)
-      setValue(typeField, userMessageId)
     }
-  }, [email, phone, nationalId, name, userMessageId])
+  }, [email, phone, nationalId, name])
 
   return (
     <Box

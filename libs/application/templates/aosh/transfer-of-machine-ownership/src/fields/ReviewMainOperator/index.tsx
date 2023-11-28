@@ -13,7 +13,7 @@ export const ReviewMainOperator: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({
   setStep,
-  coOwnersAndOperators = [],
+  buyerOperators = [],
   setMainOperator,
   mainOperator = '',
   ...props
@@ -29,12 +29,10 @@ export const ReviewMainOperator: FC<
   >(undefined)
   const [tempMainOperator, setTempMainOperator] = useState<string>(mainOperator)
 
-  const filteredCoOwnersAndOperators = coOwnersAndOperators.filter(
+  const filteredBuyerOperators = buyerOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
-  const allOperators = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'operator',
-  )
+  const allOperators = filteredBuyerOperators
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -88,9 +86,9 @@ export const ReviewMainOperator: FC<
           onSelect={(value) => setTempMainOperator(value)}
           options={allOperators.map((operator) => {
             return {
-              value: operator.nationalId!,
+              value: operator.nationalId || '',
               label: `${operator.name} - ${kennitala.format(
-                operator.nationalId!,
+                operator.nationalId || '',
                 '-',
               )}`,
             }
@@ -114,9 +112,7 @@ export const ReviewMainOperator: FC<
             {formatMessage(review.buttons.back)}
           </Button>
           <Button icon="arrowForward" onClick={onForwardButtonClick}>
-            {formatMessage(
-              information.labels.coOwnersAndOperators.approveButton,
-            )}
+            {formatMessage(information.labels.buyerOperators.approveButton)}
           </Button>
         </Box>
       </Box>

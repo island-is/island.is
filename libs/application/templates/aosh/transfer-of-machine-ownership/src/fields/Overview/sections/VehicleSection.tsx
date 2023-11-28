@@ -8,12 +8,7 @@ import parseISO from 'date-fns/parseISO'
 import { useLocale } from '@island.is/localization'
 import { information, overview } from '../../../lib/messages'
 import { ReviewGroup } from '../../ReviewGroup'
-import {
-  CoOwnerAndOperator,
-  ReviewScreenProps,
-  UserInformation,
-} from '../../../shared'
-import { formatIsk } from '../../../utils'
+import { Operator, ReviewScreenProps } from '../../../shared'
 
 export const MachineSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -34,29 +29,17 @@ export const MachineSection: FC<
   const type = getValueViaPath(answers, 'machine.type', '') as string
   const subType = getValueViaPath(answers, 'machine.subType', '') as string
   const category = getValueViaPath(answers, 'machine.category', '') as string
-  const buyerCoOwnerAndOperator = getValueViaPath(
+  const buyerOperator = getValueViaPath(
     answers,
-    'buyerCoOwnerAndOperator',
+    'buyerOperator',
     [],
-  ) as CoOwnerAndOperator[]
-  const sellerCoOwner = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as UserInformation[]
+  ) as Operator[]
   const isSeller =
     (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
     reviewerNationalId
-  const isSellerCoOwner = sellerCoOwner.find(
-    (reviewerItems) => reviewerItems.nationalId === reviewerNationalId,
-  )
-  const isOperator = buyerCoOwnerAndOperator
+  const isOperator = buyerOperator
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find(
-      (reviewerItems) =>
-        reviewerItems.nationalId === reviewerNationalId &&
-        reviewerItems.type === 'operator',
-    )
+    .find((reviewerItems) => reviewerItems.nationalId === reviewerNationalId)
 
   return (
     <ReviewGroup isLast>
@@ -75,8 +58,9 @@ export const MachineSection: FC<
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {(!isOperator || isSeller || isSellerCoOwner) &&
-            category.length > 0 && <Text>{category}</Text>}
+          {(!isOperator || isSeller) && category.length > 0 && (
+            <Text>{category}</Text>
+          )}
           <Text>{`${formatMessage(
             overview.labels.agreementDate,
           )} ${dateOfContract}`}</Text>

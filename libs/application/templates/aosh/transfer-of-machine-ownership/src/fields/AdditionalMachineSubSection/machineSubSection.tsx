@@ -42,7 +42,7 @@ export const AdditionalMachineSubSection: FC<
 
   useEffect(() => {
     setFieldLoadingState?.(loading || !!error)
-  }, [loading, error])
+  }, [loading, error, setFieldLoadingState])
 
   return !loading && !error ? (
     data?.aoshMachineDetails.id ? (

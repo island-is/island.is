@@ -28,13 +28,13 @@ export const ReviewConclusion: FC<
     refetch,
     reviewerNationalId = '',
     application,
-    coOwnersAndOperators = [],
+    buyerOperators = [],
   } = props
   const { formatMessage } = useLocale()
   const isLast = isLastReviewer(
     reviewerNationalId,
     application.answers,
-    coOwnersAndOperators,
+    buyerOperators,
   )
 
   const onForwardButtonClick = () => {

@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator } from '../shared'
+import { Operator } from '../shared'
 
 export type ApproveAnswersProps = {
   buyer: {
@@ -10,21 +10,12 @@ export type ApproveAnswersProps = {
     phone: string
     approved: boolean
   }
-  buyerCoOwnerAndOperator: {
+  buyerOperator: {
     nationalId: string
     name: string
     email: string
     phone: string
-    type: string
     wasRemoved: string
-    approved: boolean
-  }[]
-  sellerCoOwner: {
-    nationalId: string
-    name: string
-    email: string
-    phone: string
-    type: string
     approved: boolean
   }[]
 }
@@ -60,68 +51,31 @@ export const getApproveAnswers = (
     })
   }
 
-  // If reviewer is buyers coowner or operator
-  const buyerCoOwnersAndOperators = getValueViaPath(
+  // If reviewer is buyers operator
+  const buyerOperators = getValueViaPath(
     answers,
-    'buyerCoOwnerAndOperator',
+    'buyerOperator',
     [],
-  ) as CoOwnerAndOperator[]
-  const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+  ) as Operator[]
+  const buyerOperator = buyerOperators
     .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find(
-      (coOwnerOrOperator) =>
-        coOwnerOrOperator.nationalId === reviewerNationalId,
-    )
+    .find((operator) => operator.nationalId === reviewerNationalId)
   if (
-    buyerCoOwnerAndOperator &&
-    (buyerCoOwnerAndOperator.approved === undefined ||
-      buyerCoOwnerAndOperator.approved === false)
+    buyerOperator &&
+    (buyerOperator.approved === undefined || buyerOperator.approved === false)
   ) {
     Object.assign(returnAnswers, {
-      buyerCoOwnerAndOperator: buyerCoOwnersAndOperators.map(
-        (coOwnerOrOperator) => {
-          return {
-            nationalId: coOwnerOrOperator.nationalId,
-            name: coOwnerOrOperator.name,
-            email: coOwnerOrOperator.email,
-            phone: coOwnerOrOperator.phone,
-            type: coOwnerOrOperator.type,
-            wasRemoved: coOwnerOrOperator.wasRemoved,
-            approved:
-              coOwnerOrOperator.nationalId === reviewerNationalId
-                ? true
-                : coOwnerOrOperator.approved || false,
-          }
-        },
-      ),
-    })
-  }
-
-  // If reviewer is sellers coowner
-  const sellerCoOwners = getValueViaPath(
-    answers,
-    'sellerCoOwner',
-    [],
-  ) as CoOwnerAndOperator[]
-  const sellerCoOwner = sellerCoOwners.find(
-    (coOwner) => coOwner.nationalId === reviewerNationalId,
-  )
-  if (
-    sellerCoOwner &&
-    (sellerCoOwner.approved === undefined || sellerCoOwner.approved === false)
-  ) {
-    Object.assign(returnAnswers, {
-      sellerCoOwner: sellerCoOwners.map((coOwner) => {
+      buyerOperator: buyerOperators.map((operator) => {
         return {
-          nationalId: coOwner.nationalId,
-          name: coOwner.name,
-          email: coOwner.email,
-          phone: coOwner.phone,
-          type: coOwner.type,
+          nationalId: operator.nationalId,
+          name: operator.name,
+          email: operator.email,
+          phone: operator.phone,
+          wasRemoved: operator.wasRemoved,
           approved:
-            coOwner.nationalId === reviewerNationalId
+            operator.nationalId === reviewerNationalId
               ? true
-              : coOwner.approved || false,
+              : operator.approved || false,
         }
       }),
     })

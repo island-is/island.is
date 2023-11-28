@@ -15,20 +15,10 @@ export const overview = {
     },
   }),
   labels: defineMessages({
-    sellersCoOwner: {
-      id: 'aosh.application:overview.labels.sellersCoOwner',
-      defaultMessage: 'Meðeigandi seljanda',
-      description: 'Sellers co owner label',
-    },
-    buyersCoOwner: {
-      id: 'aosh.application:overview.labels.buyersCoOwner',
-      defaultMessage: 'Meðeigandi kaupanda',
-      description: 'Buyers co owner label',
-    },
-    addCoOwnerAndOperatorButton: {
-      id: 'aosh.application:overview.labels.addCoOwnerAndOperatorButton',
+    addBuyerOperatorButton: {
+      id: 'aosh.application:overview.labels.addBuyerOperatorButton',
       defaultMessage: 'Bæta við umráðamanni',
-      description: 'Add co owner and operator button',
+      description: 'Add operator button',
     },
     locationTitle: {
       id: 'aosh.application:overview.labels.locationTitle',

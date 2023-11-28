@@ -23,7 +23,7 @@ import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { CoOwnerAndOperator, UserInformation } from '../shared'
+import { Operator } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -197,13 +197,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [
-                  'sellerCoOwner',
-                  'buyer',
-                  'buyerCoOwnerAndOperator',
-                  'location',
-                  'rejecter',
-                ],
+                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
               delete: true,
@@ -216,9 +210,8 @@ const template: ApplicationTemplate<
                 ),
               write: {
                 answers: [
-                  'sellerCoOwner',
                   'buyer',
-                  'buyerCoOwnerAndOperator',
+                  'buyerOperator',
                   'buyerMainOperator',
                   'location',
                   'rejecter',
@@ -233,11 +226,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: [
-                  'sellerCoOwner',
-                  'buyerCoOwnerAndOperator',
-                  'rejecter',
-                ],
+                answers: ['buyerOperator', 'rejecter'],
               },
               read: 'all',
             },
@@ -364,24 +353,15 @@ const template: ApplicationTemplate<
       '',
     ) as string
     const reviewerNationalIdList = [] as string[]
-    const sellerCoOwner = getValueViaPath(
+    const buyerOperator = getValueViaPath(
       application.answers,
-      'sellerCoOwner',
+      'buyerOperator',
       [],
-    ) as UserInformation[]
-    const buyerCoOwnerAndOperator = getValueViaPath(
-      application.answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-    sellerCoOwner?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
-    buyerCoOwnerAndOperator
+    ) as Operator[]
+    buyerOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId!)
+        reviewerNationalIdList.push(nationalId || '')
         return nationalId
       })
     if (id === application.applicant) {
@@ -411,24 +391,15 @@ const getNationalIdListOfReviewers = (application: Application) => {
       '',
     ) as string
     reviewerNationalIdList.push(buyerNationalId)
-    const sellerCoOwner = getValueViaPath(
+    const buyerOperator = getValueViaPath(
       application.answers,
-      'sellerCoOwner',
+      'buyerOperator',
       [],
-    ) as UserInformation[]
-    const buyerCoOwnerAndOperator = getValueViaPath(
-      application.answers,
-      'buyerCoOwnerAndOperator',
-      [],
-    ) as CoOwnerAndOperator[]
-    sellerCoOwner?.map(({ nationalId }) => {
-      reviewerNationalIdList.push(nationalId)
-      return nationalId
-    })
-    buyerCoOwnerAndOperator
+    ) as Operator[]
+    buyerOperator
       ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
       .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId!)
+        reviewerNationalIdList.push(nationalId || '')
         return nationalId
       })
     return reviewerNationalIdList

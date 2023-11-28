@@ -45,7 +45,7 @@ export const Overview: FC<
 > = ({
   setStep,
   reviewerNationalId = '',
-  coOwnersAndOperators = [],
+  buyerOperators = [],
   mainOperator = '',
   ...props
 }) => {
@@ -109,7 +109,7 @@ export const Overview: FC<
         const isLast = isLastReviewer(
           reviewerNationalId,
           updatedApplication2.answers,
-          coOwnersAndOperators,
+          buyerOperators,
         )
         // Then check if user is the last approver (using newer updated application answers), if so we
         // need to submit the application (event=SUBMIT) to change the state to COMPLETED
@@ -217,7 +217,7 @@ export const Overview: FC<
         />
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
-          coOwnersAndOperators={coOwnersAndOperators}
+          buyerOperators={buyerOperators}
           mainOperator={mainOperator}
           {...props}
         />

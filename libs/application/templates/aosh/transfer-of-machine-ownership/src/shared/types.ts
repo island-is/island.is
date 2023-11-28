@@ -1,6 +1,6 @@
 import {
   UserInformationSchema,
-  CoOwnerAndOperatorSchema,
+  OperatorSchema,
   RejecterSchema,
 } from '../lib/dataSchema'
 import { TagVariant } from '@island.is/island-ui/core'
@@ -12,8 +12,8 @@ export interface ReviewScreenProps {
   setLocation?: (location: MachineLocation) => void
   location?: MachineLocation
   reviewerNationalId?: string
-  setCoOwnersAndOperators?: (s: CoOwnerAndOperator[]) => void
-  coOwnersAndOperators?: CoOwnerAndOperator[]
+  setBuyerOperators?: (s: Operator[]) => void
+  buyerOperators?: Operator[]
   setMainOperator?: (s: string) => void
   mainOperator?: string
 }
@@ -27,7 +27,7 @@ export type ReviewState =
   | 'location'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
-export type CoOwnerAndOperator = z.TypeOf<typeof CoOwnerAndOperatorSchema>
+export type Operator = z.TypeOf<typeof OperatorSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>
 
 // Review

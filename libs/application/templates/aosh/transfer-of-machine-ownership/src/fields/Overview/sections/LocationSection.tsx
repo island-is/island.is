@@ -1,5 +1,4 @@
 // Insurance company with button - only visible to buyer
-// Buyer and buyers coowener + button for buyer to add more coowners or operators
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useState, useEffect } from 'react'
 import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'

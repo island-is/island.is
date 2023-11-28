@@ -5,22 +5,20 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { CoOwnerAndOperator } from '../../../shared'
+import { Operator } from '../../../shared'
 import kennitala from 'kennitala'
 
 export const mainOperatorSubSection = buildSubSection({
   id: 'buyerMainOperator',
   title: information.labels.mainOperator.sectionTitle,
   condition: (formValue) => {
-    const coOwnerAndOperator = getValueViaPath(
+    const buyerOperator = getValueViaPath(
       formValue,
-      'buyerCoOwnerAndOperator',
+      'buyerOperator',
       [],
-    ) as CoOwnerAndOperator[]
+    ) as Operator[]
     return (
-      coOwnerAndOperator
-        .filter(({ wasRemoved }) => wasRemoved !== 'true')
-        .filter((field) => field.type === 'operator').length > 1
+      buyerOperator.filter(({ wasRemoved }) => wasRemoved !== 'true').length > 1
     )
   },
   children: [
@@ -33,19 +31,19 @@ export const mainOperatorSubSection = buildSubSection({
           id: 'buyerMainOperator.nationalId',
           title: information.labels.mainOperator.radioFieldLabel,
           options: (application) => {
-            const coOwnerAndOperator = getValueViaPath(
+            const buyerOperator = getValueViaPath(
               application.answers,
-              'buyerCoOwnerAndOperator',
+              'buyerOperator',
               [],
-            ) as CoOwnerAndOperator[]
-            const operators = coOwnerAndOperator
-              .filter(({ wasRemoved }) => wasRemoved !== 'true')
-              .filter((field) => field.type === 'operator')
+            ) as Operator[]
+            const operators = buyerOperator.filter(
+              ({ wasRemoved }) => wasRemoved !== 'true',
+            )
             return operators.map((operator) => {
               return {
-                value: operator.nationalId!,
+                value: operator.nationalId || '',
                 label: `${operator.name} - ${kennitala.format(
-                  operator.nationalId!,
+                  operator.nationalId || '',
                   '-',
                 )}`,
               }

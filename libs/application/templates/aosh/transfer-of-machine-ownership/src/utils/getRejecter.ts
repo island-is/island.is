@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { CoOwnerAndOperator, Rejecter, UserInformation } from '../shared'
+import { Operator, Rejecter, UserInformation } from '../shared'
 
 export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
   try {
@@ -16,23 +16,19 @@ export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
       } as Rejecter
     }
 
-    const buyerCoOwnersAndOperators = getValueViaPath(
+    const buyerOperators = getValueViaPath(
       answers,
-      'buyerCoOwnerAndOperator',
+      'buyerOperator',
       [],
-    ) as CoOwnerAndOperator[]
-    const buyerCoOwnerAndOperator = buyerCoOwnersAndOperators
+    ) as Operator[]
+    const buyerOperator = buyerOperators
       .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .find(
-        (coOwnerOrOperator) =>
-          coOwnerOrOperator.nationalId === reviewerNationalId,
-      )
-    if (buyerCoOwnerAndOperator) {
+      .find((operator) => operator.nationalId === reviewerNationalId)
+    if (buyerOperator) {
       return {
         regNumber: id,
-        name: buyerCoOwnerAndOperator.name,
-        nationalId: buyerCoOwnerAndOperator.nationalId,
-        type: buyerCoOwnerAndOperator.type,
+        name: buyerOperator.name,
+        nationalId: buyerOperator.nationalId,
       } as Rejecter
     }
   } catch (error) {

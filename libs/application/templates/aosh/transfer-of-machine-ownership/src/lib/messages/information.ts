@@ -165,51 +165,10 @@ export const information = {
       },
     }),
     machineSubSection: defineMessages({
-      title: {
-        id: 'aosh.application:information.labels.machineSubSection.title',
-        defaultMessage: 'Meðeigandi',
-        description: 'Co-owner title',
-      },
-      description: {
-        id: 'aosh.application:information.labels.machineSubSection.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar.',
-        description: 'CoOwner description',
-      },
-      nationalId: {
-        id: 'aosh.application:information.labels.machineSubSection.nationalId',
-        defaultMessage: 'Kennitala meðeiganda',
-        description: 'Co-owner national ID label',
-      },
-      name: {
-        id: 'aosh.application:information.labels.machineSubSection.name',
-        defaultMessage: 'Nafn meðeiganda',
-        description: 'Co-owner name label',
-      },
-      email: {
-        id: 'aosh.application:information.labels.machineSubSection.email',
-        defaultMessage: 'Netfang',
-        description: 'Co-owner email label',
-      },
-      phone: {
-        id: 'aosh.application:information.labels.machineSubSection.phone',
-        defaultMessage: 'Gsm númer',
-        description: 'Co-owner phone number label',
-      },
-      remove: {
-        id: 'aosh.application:information.labels.machineSubSection.remove',
-        defaultMessage: 'Fjarlægja meðeiganda',
-        description: 'Co-owner remove label',
-      },
-      add: {
-        id: 'aosh.application:information.labels.machineSubSection.add',
-        defaultMessage: 'Bæta við meðeiganda',
-        description: 'Co-owner add label',
-      },
       error: {
         id: 'aosh.application:information.labels.machineSubSection.error',
         defaultMessage: 'Það kom upp villa við að sækja upplýsingar um tæki',
-        description: 'Co-owner error message',
+        description: 'Machine error message',
       },
     }),
     operator: defineMessages({
@@ -303,22 +262,22 @@ export const information = {
         description: 'Buyer phone number label',
       },
     }),
-    coOwnersAndOperators: defineMessages({
+    buyerOperators: defineMessages({
       title: {
-        id: 'aosh.application:information.labels.coOwnersAndOperators.title',
+        id: 'aosh.application:information.labels.buyerOperators.title',
         defaultMessage: 'Umráðamaður',
-        description: 'Coowners and operators title',
+        description: 'Operators title',
       },
       description: {
-        id: 'aosh.application:information.labels.coOwnersAndOperators.description',
+        id: 'aosh.application:information.labels.buyerOperators.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
-        description: 'Coowners and operators description',
+        description: 'Operators description',
       },
       approveButton: {
-        id: 'aosh.application:information.labels.coOwnersAndOperators.approveButton',
+        id: 'aosh.application:information.labels.buyerOperators.approveButton',
         defaultMessage: 'Staðfesta',
-        description: 'Approve button for coOwners and operators',
+        description: 'Approve button for operators',
       },
     }),
     mainOperator: defineMessages({

@@ -64,11 +64,10 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-export const CoOwnerAndOperatorSchema = z.intersection(
+export const OperatorSchema = z.intersection(
   RemovableUserSchemaBase,
   z.object({
     approved: z.boolean().optional(),
-    type: z.enum(['operator', 'coOwner']),
   }),
 )
 
@@ -101,7 +100,7 @@ export const MachineAnswersSchema = z.object({
     postCode: z.number(),
     moreInfo: z.string(),
   }),
-  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
+  buyerOperator: z.array(OperatorSchema),
   approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })

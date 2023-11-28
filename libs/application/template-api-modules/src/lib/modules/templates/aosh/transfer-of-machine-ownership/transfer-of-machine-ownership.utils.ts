@@ -51,14 +51,9 @@ export const getRecipients = (
     })
   }
 
-  const filteredBuyerCoOwnerAndOperator =
-    answers?.buyerCoOwnerAndOperator?.filter(
-      ({ wasRemoved }) => wasRemoved !== 'true',
-    )
-
   // Buyer's operators
-  const buyerOperators = filteredBuyerCoOwnerAndOperator?.filter(
-    (x) => x.type === 'operator',
+  const buyerOperators = answers?.buyerOperator?.filter(
+    ({ wasRemoved }) => wasRemoved !== 'true',
   )
   if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
     for (let i = 0; i < buyerOperators.length; i++) {

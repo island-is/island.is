@@ -77,22 +77,10 @@ export const review = {
         defaultMessage: 'Greiðsla móttekin',
         description: 'Payment title in status step part of review process',
       },
-      sellerCoOwner: {
-        id: 'aosh.application:review.step.title.sellerCoOwner',
-        defaultMessage: 'Samþykki meðeiganda seljanda',
-        description:
-          'Seller coowner title in status step part of review process',
-      },
       buyer: {
         id: 'aosh.application:review.step.title.buyer',
         defaultMessage: 'Samþykki kaupanda',
         description: 'Buyer title in status step part of review process',
-      },
-      buyerCoOwner: {
-        id: 'aosh.application:review.step.title.buyerCoOwner',
-        defaultMessage: 'Samþykki meðeiganda kaupanda',
-        description:
-          'Buyer coowner title in status step part of review process',
       },
       buyerOperator: {
         id: 'aosh.application:review.step.title.buyerOperator',
@@ -115,25 +103,11 @@ export const review = {
         description:
           'Payment description in status step part of review process',
       },
-      sellerCoOwner: {
-        id: 'aosh.application:review.step.description.sellerCoOwner',
-        defaultMessage:
-          'Beðið er eftir að meðeigandi/ur seljanda staðfesti eigendaskiptin',
-        description:
-          'Seller coowner description in status step part of review process',
-      },
       buyer: {
         id: 'aosh.application:review.step.description.buyer',
         defaultMessage:
           'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin',
         description: 'Buyer description in status step part of review process',
-      },
-      buyerCoOwner: {
-        id: 'aosh.application:review.step.description.buyerCoOwner',
-        defaultMessage:
-          'Beðið er eftir að meðeigandi/ur kaupanda staðfesti eigendaskiptin',
-        description:
-          'Buyer coowner description in status step part of review process',
       },
       buyerOperator: {
         id: 'aosh.application:review.step.description.buyerOperator',

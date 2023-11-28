@@ -9,7 +9,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
-import { CoOwnerAndOperator, ReviewScreenProps } from '../../shared'
+import { Operator, ReviewScreenProps } from '../../shared'
 import { ReviewOperatorRepeaterItem } from './ReviewOperatorRepeaterItem'
 import { repeaterButtons } from './ReviewOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
@@ -18,37 +18,33 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const ReviewOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({
-  setStep,
-  setCoOwnersAndOperators,
-  coOwnersAndOperators = [],
-  ...props
-}) => {
+> = ({ setStep, setBuyerOperators, buyerOperators = [], ...props }) => {
   const { application } = props
+
   const { locale, formatMessage } = useLocale()
+
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   )
+
   const [genericErrorMessage, setGenericErrorMessage] = useState<
     string | undefined
   >(undefined)
-  const [identicalError, setIdenticalError] = useState<boolean>(false)
-  const [tempCoOwnersAndOperators, setTempCoOwnersAndOperators] =
-    useState<CoOwnerAndOperator[]>(coOwnersAndOperators)
 
-  const filteredCoOwnersAndOperators = tempCoOwnersAndOperators.filter(
+  const [identicalError, setIdenticalError] = useState<boolean>(false)
+
+  const [tempBuyerOperators, setTempBuyerOperators] =
+    useState<Operator[]>(buyerOperators)
+
+  const filteredBuyerOperators = tempBuyerOperators.filter(
     ({ wasRemoved }) => wasRemoved !== 'true',
   )
-  const allOperators = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'operator',
-  )
-  const allCoOwners = filteredCoOwnersAndOperators.filter(
-    (field) => field.type === 'coOwner',
-  )
+  const allOperators = filteredBuyerOperators
 
   const checkDuplicate = () => {
-    const existingCoOwnersAndOperators = filteredCoOwnersAndOperators.map(
+    const existingBuyerOperators = filteredBuyerOperators.map(
       ({ nationalId }) => {
         return nationalId
       },
@@ -59,7 +55,7 @@ export const ReviewOperatorRepeater: FC<
       'buyer.nationalId',
     ) as string
 
-    const jointOperators = [...existingCoOwnersAndOperators, buyerNationalId]
+    const jointOperators = [...existingBuyerOperators, buyerNationalId]
     return !!jointOperators.some((nationalId, index) => {
       return (
         nationalId &&
@@ -69,26 +65,25 @@ export const ReviewOperatorRepeater: FC<
     })
   }
 
-  const handleAdd = (type: 'operator' | 'coOwner') =>
-    setTempCoOwnersAndOperators([
-      ...tempCoOwnersAndOperators,
+  const handleAdd = () =>
+    setTempBuyerOperators([
+      ...tempBuyerOperators,
       {
         name: '',
         nationalId: '',
         email: '',
         phone: '',
-        type,
       },
     ])
 
   const handleRemove = (position: number) => {
     if (position > -1) {
-      setTempCoOwnersAndOperators(
-        tempCoOwnersAndOperators.map((coOwnerAndOperator, index) => {
+      setTempBuyerOperators(
+        tempBuyerOperators.map((buyerOperator, index) => {
           if (index === position) {
-            return { ...coOwnerAndOperator, wasRemoved: 'true' }
+            return { ...buyerOperator, wasRemoved: 'true' }
           }
-          return coOwnerAndOperator
+          return buyerOperator
         }),
       )
     }
@@ -101,11 +96,9 @@ export const ReviewOperatorRepeater: FC<
   }
 
   const shouldUpdateMainOperator = () => {
-    const availableOperators = tempCoOwnersAndOperators.filter(
-      ({ type, wasRemoved }) => {
-        return type === 'operator' && wasRemoved !== 'true'
-      },
-    )
+    const availableOperators = tempBuyerOperators.filter(({ wasRemoved }) => {
+      return wasRemoved !== 'true'
+    })
     return availableOperators.length > 1
   }
 
@@ -113,8 +106,8 @@ export const ReviewOperatorRepeater: FC<
     setIdenticalError(checkDuplicate())
     if (!checkDuplicate()) {
       setIdenticalError(false)
-      if (tempCoOwnersAndOperators && setCoOwnersAndOperators) {
-        const notValid = filteredCoOwnersAndOperators.find((field) => {
+      if (tempBuyerOperators && setBuyerOperators) {
+        const notValid = filteredBuyerOperators.find((field) => {
           if (
             !(field.email && field.email.length > 0) ||
             !(field.name && field.name.length > 0) ||
@@ -134,7 +127,7 @@ export const ReviewOperatorRepeater: FC<
               input: {
                 id: application.id,
                 answers: {
-                  buyerCoOwnerAndOperator: tempCoOwnersAndOperators,
+                  buyerOperator: tempBuyerOperators,
                 },
               },
               locale,
@@ -145,7 +138,7 @@ export const ReviewOperatorRepeater: FC<
               formatMessage(error.couldNotUpdateApplication),
             )
           } else {
-            setCoOwnersAndOperators(tempCoOwnersAndOperators)
+            setBuyerOperators(tempBuyerOperators)
             setGenericErrorMessage(undefined)
             setErrorMessage(undefined)
             setStep &&
@@ -159,33 +152,30 @@ export const ReviewOperatorRepeater: FC<
   return (
     <Box>
       <Text variant="h2" marginBottom={1}>
-        {formatMessage(information.labels.coOwnersAndOperators.title)}
+        {formatMessage(information.labels.buyerOperators.title)}
       </Text>
       <Text marginBottom={5}>
-        {formatMessage(information.labels.coOwnersAndOperators.description)}
+        {formatMessage(information.labels.buyerOperators.description)}
       </Text>
       <Box>
-        {tempCoOwnersAndOperators?.map((field, index) => {
-          const rowLocation =
-            field.type === 'operator'
-              ? allOperators.indexOf(field)
-              : allCoOwners.indexOf(field)
+        {tempBuyerOperators?.map((field, index) => {
+          const rowLocation = allOperators.indexOf(field)
           return (
             <ReviewOperatorRepeaterItem
-              id="buyerCoOwnerAndOperator"
+              id="buyerOperator"
               repeaterField={field}
               index={index}
               rowLocation={rowLocation + 1}
-              key={`${index}-buyerCoOwnerAndOperator`}
+              key={`${index}-buyerOperator`}
               handleRemove={handleRemove}
-              setCoOwnersAndOperators={setTempCoOwnersAndOperators}
-              coOwnersAndOperators={tempCoOwnersAndOperators}
+              setBuyerOperators={setTempBuyerOperators}
+              buyerOperators={tempBuyerOperators}
               errorMessage={errorMessage}
               {...props}
             />
           )
         })}
-        {tempCoOwnersAndOperators.length === 0 || allOperators.length === 0 ? (
+        {tempBuyerOperators.length === 0 || allOperators.length === 0 ? (
           <Box
             display="flex"
             alignItems="stretch"
@@ -197,7 +187,7 @@ export const ReviewOperatorRepeater: FC<
               variant="ghost"
               icon="add"
               iconType="outline"
-              onClick={handleAdd.bind(null, 'operator')}
+              onClick={handleAdd}
             >
               {formatMessage(information.labels.operator.add)}
             </Button>
@@ -224,9 +214,7 @@ export const ReviewOperatorRepeater: FC<
             {formatMessage(review.buttons.back)}
           </Button>
           <Button icon="arrowForward" onClick={onForwardButtonClick}>
-            {formatMessage(
-              information.labels.coOwnersAndOperators.approveButton,
-            )}
+            {formatMessage(information.labels.buyerOperators.approveButton)}
           </Button>
         </Box>
       </Box>
