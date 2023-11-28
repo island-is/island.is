@@ -234,8 +234,8 @@ export const estateAssets = buildSection({
                   {
                     title: m.nationalId,
                     id: 'nationalId',
-                    format: "######-####"
-                  }
+                    format: '######-####',
+                  },
                 ],
                 repeaterButtonText: m.claimsRepeaterButton,
                 repeaterHeaderText: m.claimsTitle,
