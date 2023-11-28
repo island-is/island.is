@@ -8,10 +8,7 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import {
-  getAppealedDate,
-  useAppealValidToDates,
-} from '@island.is/judicial-system/types'
+import { getAppealedDate } from '@island.is/judicial-system/types'
 
 import { CaseListEntry } from '../models/caseList.model'
 
@@ -26,17 +23,9 @@ export class CaseListInterceptor implements NestInterceptor {
         return cases.map((theCase) => {
           return {
             ...theCase,
-            isValidToDateInThePast:
-              useAppealValidToDates(
-                theCase.decision,
-                theCase.state,
-                theCase.appealRulingDecision,
-                theCase.appealState,
-              ) && theCase.appealValidToDate
-                ? Date.now() > new Date(theCase.appealValidToDate).getTime()
-                : theCase.validToDate
-                ? Date.now() > new Date(theCase.validToDate).getTime()
-                : theCase.isValidToDateInThePast,
+            isValidToDateInThePast: theCase.validToDate
+              ? Date.now() > new Date(theCase.validToDate).getTime()
+              : theCase.isValidToDateInThePast,
             appealedDate: getAppealedDate(
               theCase.prosecutorPostponedAppealDate,
               theCase.accusedPostponedAppealDate,

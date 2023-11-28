@@ -1,7 +1,4 @@
-import {
-  getAppealInfo,
-  useAppealValidToDates,
-} from '@island.is/judicial-system/types'
+import { getAppealInfo } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 
@@ -15,17 +12,9 @@ export function transformCase(theCase: Case): Case {
     requestProsecutorOnlySession: theCase.requestProsecutorOnlySession ?? false,
     isClosedCourtHidden: theCase.isClosedCourtHidden ?? false,
     isHeightenedSecurityLevel: theCase.isHeightenedSecurityLevel ?? false,
-    isValidToDateInThePast:
-      useAppealValidToDates(
-        theCase.decision,
-        theCase.state,
-        theCase.appealRulingDecision,
-        theCase.appealState,
-      ) && theCase.appealValidToDate
-        ? Date.now() > new Date(theCase.appealValidToDate).getTime()
-        : theCase.validToDate
-        ? Date.now() > new Date(theCase.validToDate).getTime()
-        : theCase.isValidToDateInThePast,
+    isValidToDateInThePast: theCase.validToDate
+      ? Date.now() > new Date(theCase.validToDate).getTime()
+      : theCase.isValidToDateInThePast,
 
     // TODO: Move remaining appeal fields to appealInfo
     isAppealDeadlineExpired: appealInfo.appealDeadline

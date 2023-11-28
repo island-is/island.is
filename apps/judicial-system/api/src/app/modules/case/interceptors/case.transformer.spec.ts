@@ -1,11 +1,6 @@
 import each from 'jest-each'
 
-import {
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseDecision,
-  CaseState,
-} from '@island.is/judicial-system/types'
+import { CaseAppealState } from '@island.is/judicial-system/types'
 
 import { Case } from '../models/case.model'
 import { transformCase } from './case.transformer'
@@ -70,14 +65,7 @@ describe('transformCase', () => {
       // Arrange
       const validToDate = new Date()
       validToDate.setSeconds(validToDate.getSeconds() + 1)
-      const appealValidToDate = new Date()
-      appealValidToDate.setSeconds(appealValidToDate.getSeconds() + 1)
-      const theCase = {
-        validToDate: validToDate.toISOString(),
-        decision: CaseDecision.ACCEPTING,
-        state: CaseState.ACCEPTED,
-        appealValidToDate: appealValidToDate.toISOString(),
-      } as Case
+      const theCase = { validToDate: validToDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
@@ -90,57 +78,8 @@ describe('transformCase', () => {
       // Arrange
       const validToDate = new Date()
       validToDate.setSeconds(validToDate.getSeconds() - 1)
-      const appealValidToDate = new Date()
-      appealValidToDate.setSeconds(appealValidToDate.getSeconds() - 1)
       const theCase = {
         validToDate: validToDate.toISOString(),
-        decision: CaseDecision.ACCEPTING,
-        state: CaseState.ACCEPTED,
-        appealValidToDate: appealValidToDate.toISOString(),
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isValidToDateInThePast).toBe(true)
-    })
-
-    it('should set custody end date in the past to false if custody end date in the future', () => {
-      // Arrange
-      const validToDate = new Date()
-      validToDate.setSeconds(validToDate.getSeconds() - 1)
-      const appealValidToDate = new Date()
-      appealValidToDate.setSeconds(appealValidToDate.getSeconds() + 1)
-      const theCase = {
-        validToDate: validToDate.toISOString(),
-        decision: CaseDecision.ACCEPTING,
-        state: CaseState.ACCEPTED,
-        appealValidToDate: appealValidToDate.toISOString(),
-        appealRulingDecision: CaseAppealRulingDecision.CHANGED,
-        appealState: CaseAppealState.COMPLETED,
-      } as Case
-
-      // Act
-      const res = transformCase(theCase)
-
-      // Assert
-      expect(res.isValidToDateInThePast).toBe(false)
-    })
-
-    it('should set custody end date in the past to true if custody end date in the past', () => {
-      // Arrange
-      const validToDate = new Date()
-      validToDate.setSeconds(validToDate.getSeconds() + 1)
-      const appealValidToDate = new Date()
-      appealValidToDate.setSeconds(appealValidToDate.getSeconds() - 1)
-      const theCase = {
-        validToDate: validToDate.toISOString(),
-        decision: CaseDecision.ACCEPTING,
-        state: CaseState.ACCEPTED,
-        appealValidToDate: appealValidToDate.toISOString(),
-        appealRulingDecision: CaseAppealRulingDecision.CHANGED,
-        appealState: CaseAppealState.COMPLETED,
       } as Case
 
       // Act
