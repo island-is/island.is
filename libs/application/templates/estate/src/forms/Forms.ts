@@ -30,9 +30,9 @@ export const privateDivisionForm: Form = buildForm({
     estateAssets,
     estateDebts,
     attachments,
+    overview,
     representative,
     approvePrivateDivisionSubmission,
-    overview,
   ],
 })
 

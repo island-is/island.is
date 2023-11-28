@@ -49,6 +49,45 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateAssetsTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers.estate as unknown as EstateInfo).assets
+        ?.filter((asset) => asset.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const sum = (answers.estate as unknown as EstateInfo).assets
+        ?.filter((asset) => asset.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewInventoryHeader',
@@ -122,6 +161,45 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateVehicleTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers.estate as unknown as EstateInfo).vehicles
+        ?.filter((vehicle) => vehicle.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const sum = (answers.estate as unknown as EstateInfo).vehicles
+        ?.filter((vehicle) => vehicle.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewGuns',
@@ -154,6 +232,45 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateGunsTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers.estate as unknown as EstateInfo).guns
+        ?.filter((gun) => gun.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const sum = (answers.estate as unknown as EstateInfo).guns
+        ?.filter((gun) => gun.enabled)
+        .reduce((acc, cur) => {
+          const marketValue = Number(cur.marketValue) ?? 0
+
+          if (marketValue) {
+            return acc + marketValue
+          }
+
+          return acc
+        }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewEstateBankInfoTitle',
@@ -183,6 +300,50 @@ export const overviewAssetsAndDebts = [
         ),
     },
   ),
+  buildDescriptionField({
+    id: 'bankAccountsTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers as unknown as EstateSchema).bankAccounts?.reduce(
+        (acc, cur) => {
+          const balance = Number(cur.balance) ?? 0
+
+          if (balance) {
+            return acc + balance
+          }
+
+          return acc
+        },
+        0,
+      )
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const bankAccounts = answers?.bankAccounts
+        ? (answers as unknown as EstateSchema).bankAccounts
+        : null
+
+      if (!bankAccounts) return false
+
+      const sum = bankAccounts.reduce((acc, cur) => {
+        const balance = Number(cur.balance) ?? 0
+
+        if (balance) {
+          return acc + balance
+        }
+
+        return acc
+      }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
@@ -226,6 +387,50 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'claimsTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers as unknown as EstateSchema).claims?.reduce(
+        (acc, cur) => {
+          const value = Number(cur.value) ?? 0
+
+          if (value) {
+            return acc + value
+          }
+
+          return acc
+        },
+        0,
+      )
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const claims = answers?.claims
+        ? (answers as unknown as EstateSchema).claims
+        : null
+
+      if (!claims) return false
+
+      const sum = claims.reduce((acc, cur) => {
+        const value = Number(cur.value) ?? 0
+
+        if (value) {
+          return acc + value
+        }
+
+        return acc
+      }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
@@ -271,6 +476,50 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'stocksTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers as unknown as EstateSchema).stocks?.reduce(
+        (acc, cur) => {
+          const value = Number(cur.value) ?? 0
+
+          if (value) {
+            return acc + value
+          }
+
+          return acc
+        },
+        0,
+      )
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const stocks = answers?.stocks
+        ? (answers as unknown as EstateSchema).stocks
+        : null
+
+      if (!stocks) return false
+
+      const sum = stocks.reduce((acc, cur) => {
+        const value = Number(cur.value) ?? 0
+
+        if (value) {
+          return acc + value
+        }
+
+        return acc
+      }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewOtherAssetsHeader',
@@ -382,5 +631,49 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'debtsTotal',
+    title: m.total,
+    description: ({ answers }: Application) => {
+      const sum = (answers as unknown as EstateSchema).debts?.reduce(
+        (acc, cur) => {
+          const balance = Number(cur.balance) ?? 0
+
+          if (balance) {
+            return acc + balance
+          }
+
+          return acc
+        },
+        0,
+      )
+
+      if (sum && sum > 0) {
+        return formatCurrency(String(sum))
+      }
+
+      return null
+    },
+    condition: (answers) => {
+      const debts = answers?.debts
+        ? (answers as unknown as EstateSchema).debts
+        : null
+
+      if (!debts) return false
+
+      const sum = debts.reduce((acc, cur) => {
+        const balance = Number(cur.balance) ?? 0
+
+        if (balance) {
+          return acc + balance
+        }
+
+        return acc
+      }, 0)
+
+      return sum > 0
+    },
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
 ]
