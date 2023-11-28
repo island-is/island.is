@@ -231,6 +231,11 @@ export const estateAssets = buildSection({
                     id: 'value',
                     currency: true,
                   },
+                  {
+                    title: m.nationalId,
+                    id: 'nationalId',
+                    format: "######-####"
+                  }
                 ],
                 repeaterButtonText: m.claimsRepeaterButton,
                 repeaterHeaderText: m.claimsTitle,

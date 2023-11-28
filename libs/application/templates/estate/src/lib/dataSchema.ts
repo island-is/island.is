@@ -252,6 +252,7 @@ export const estateSchema = z.object({
     .object({
       publisher: z.string(),
       value: z.string(),
+      nationalId: z.string()
     })
     .refine(
       ({ publisher, value }) => {

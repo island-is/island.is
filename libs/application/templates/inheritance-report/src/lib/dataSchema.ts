@@ -79,6 +79,7 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             issuer: z.string(),
+            nationalId: z.string(),
             value: z.string().refine((v) => v),
           })
           .array()
