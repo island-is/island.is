@@ -41,6 +41,28 @@ describe('COA - Ruling', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.getByText('caseDecisionSection')).toBeInTheDocument()
+    expect(screen.getByTestId('caseDecisionSection')).toBeInTheDocument()
+  })
+
+  it('should not render fields to change validToDate and isolation if the case appeal ruling decision is not CHANGED', () => {
+    render(
+      <IntlProviderWrapper>
+        <ApolloProvider
+          client={new ApolloClient({ cache: new InMemoryCache() })}
+        >
+          <FormContextWrapper
+            theCase={{
+              ...mockCase(CaseType.CUSTODY),
+              appealRulingDecision:
+                CaseAppealRulingDecision.DISMISSED_FROM_COURT,
+            }}
+          >
+            <Ruling />
+          </FormContextWrapper>
+        </ApolloProvider>
+      </IntlProviderWrapper>,
+    )
+
+    expect(screen.queryByTestId('caseDecisionSection')).not.toBeInTheDocument()
   })
 })
