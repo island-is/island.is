@@ -3,10 +3,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import {
-  AuthConfig,
-  AuthModule,
-} from '@island.is/auth-nest-tools'
+import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 
 @Module({
   imports: [
