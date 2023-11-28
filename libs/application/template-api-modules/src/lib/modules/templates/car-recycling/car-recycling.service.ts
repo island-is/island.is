@@ -64,7 +64,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
     }
   }
 
-  private async createVehicle(auth: User, vehicle: VehicleMiniDto) {
+  async createVehicle(auth: User, vehicle: VehicleMiniDto) {
     if (vehicle && vehicle.permno) {
       const response = await this.recyclingFundService.createVehicle(
         auth,
@@ -84,7 +84,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
     }
   }
 
-  private async recycleVehicles(
+  async recycleVehicles(
     auth: User,
     vehicle: VehicleMiniDto,
     recyclingRequestType: RecyclingRequestTypes,
