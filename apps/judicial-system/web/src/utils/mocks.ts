@@ -1,4 +1,8 @@
-import { CaseState } from '@island.is/judicial-system/types'
+import {
+  CaseAppealState,
+  CaseState,
+  CaseTransition,
+} from '@island.is/judicial-system/types'
 import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
 import {
   CaseOrigin,
@@ -9,6 +13,8 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+
+import { TransitionCaseMutation } from './hooks/useCase/mutations'
 
 export const mockCourt = {
   id: 'court_id',
@@ -110,6 +116,30 @@ export const mockProsecutorQuery = [
     result: {
       data: {
         currentUser: mockProsecutor,
+      },
+    },
+  },
+]
+
+export const mockTransitonCaseMutation = (caseId: string) => [
+  {
+    request: {
+      query: TransitionCaseMutation,
+      variables: {
+        input: {
+          id: caseId,
+          transition: CaseTransition.COMPLETE_APPEAL,
+        },
+      },
+    },
+    result: {
+      data: {
+        transitionCase: {
+          state: CaseState.ACCEPTED,
+          appealState: CaseAppealState.COMPLETED,
+          statementDeadline: '2021-09-09T12:00:00.000Z',
+          appealReceivedByCourtDate: '2021-09-09T12:00:00.000Z',
+        },
       },
     },
   },

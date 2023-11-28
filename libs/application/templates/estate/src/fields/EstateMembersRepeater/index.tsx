@@ -170,7 +170,7 @@ export const EstateMembersRepeater: FC<
                     <InputController
                       id={`${id}[${index}].email`}
                       name={`${id}[${index}].email`}
-                      label={m.email.defaultMessage}
+                      label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       defaultValue={member.email || ''}
@@ -182,7 +182,7 @@ export const EstateMembersRepeater: FC<
                     <InputController
                       id={`${id}[${index}].phone`}
                       name={`${id}[${index}].phone`}
-                      label={m.phone.defaultMessage}
+                      label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
@@ -241,7 +241,7 @@ export const EstateMembersRepeater: FC<
                     <InputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
-                      label={m.phone.defaultMessage}
+                      label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
@@ -250,13 +250,14 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={`${id}[${index}].advocate.email`}
                       name={`${id}[${index}].advocate.email`}
-                      label={m.email.defaultMessage}
+                      label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       defaultValue={member.advocate?.email || ''}
@@ -264,6 +265,7 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                 </GridRow>

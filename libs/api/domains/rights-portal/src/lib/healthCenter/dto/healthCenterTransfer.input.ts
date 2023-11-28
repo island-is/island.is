@@ -4,4 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 export class HealthCenterRegisterInput {
   @Field(() => String)
   id!: string
+
+  @Field(() => Number, { nullable: true })
+  doctorId?: number
 }
