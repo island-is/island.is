@@ -10,26 +10,26 @@ import { useLocale } from '@island.is/localization'
 import { m, amountFormat, formatDate } from '@island.is/service-portal/core'
 import * as styles from './FinanceLoans.css'
 import { m as messages } from '../../lib/messages'
-import { useGetHmsLoansPaymenthistoryLazyQuery } from '../../screens/FinanceLoans/FinanceLoans.generated'
+import { useGetHmsLoansPaymentHistoryLazyQuery } from '../../screens/FinanceLoans/FinanceLoans.generated'
 import { useEffect, useState } from 'react'
 
 interface Props {
   loanId: number
 }
 
-export const FinanceLoansPaymenthistory = ({ loanId }: Props) => {
+export const FinanceLoansPaymentHistory = ({ loanId }: Props) => {
   const { formatMessage } = useLocale()
   const [historyOpen, setHistoryOpen] = useState(false)
 
   const [
-    getHmsLoansPaymenthistory,
+    getHmsLoansPaymentHistory,
     {
       data: loanPaymentsData,
       loading: loanPaymentsLoading,
       error: loanPaymentsError,
       called: loanPaymentsCalled,
     },
-  ] = useGetHmsLoansPaymenthistoryLazyQuery({
+  ] = useGetHmsLoansPaymentHistoryLazyQuery({
     variables: {
       input: {
         loanId,
@@ -39,7 +39,7 @@ export const FinanceLoansPaymenthistory = ({ loanId }: Props) => {
 
   useEffect(() => {
     if (historyOpen && !loanPaymentsCalled) {
-      getHmsLoansPaymenthistory()
+      getHmsLoansPaymentHistory()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [historyOpen, loanPaymentsCalled])
@@ -123,7 +123,7 @@ export const FinanceLoansPaymenthistory = ({ loanId }: Props) => {
               </T.Row>
             </T.Head>
             <T.Body>
-              {loanPaymentsData?.hmsLoansPaymenthistory?.map((payment) => (
+              {loanPaymentsData?.hmsLoansPaymentHistory?.map((payment) => (
                 <T.Row key={payment.paymentDate}>
                   <T.Data>{formatDate(payment.paymentDate)}</T.Data>
                   <T.Data>{formatDate(payment.transactionDate)}</T.Data>

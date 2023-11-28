@@ -12,10 +12,10 @@ import {
 import { HmsLoansClientService } from '@island.is/clients/hms-loans'
 import { Audit } from '@island.is/nest/audit'
 
-import { Loanhistory } from './models/loanHistory.model'
-import { Paymenthistory } from './models/paymenthistory.model'
-import { GetHmsLoansPaymenthistoryInput } from './dto/getHmsLoansPaymenthistory.input'
-import { LoanhistoryPdf } from './models/loanHistoryPdf.model'
+import { LoanHistory } from './models/loanHistory.model'
+import { PaymentHistory } from './models/paymenthistory.model'
+import { GetHmsLoansPaymentHistoryInput } from './dto/getHmsLoansPaymenthistory.input'
+import { LoanHistoryPdf } from './models/loanHistoryPdf.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.financeLoans)
@@ -24,30 +24,30 @@ import { LoanhistoryPdf } from './models/loanHistoryPdf.model'
 export class HmsLoansResolver {
   constructor(private hmsLoansService: HmsLoansClientService) {}
 
-  @Query(() => [Loanhistory], { name: 'hmsLoansLoanhistory', nullable: true })
+  @Query(() => [LoanHistory], { name: 'hmsLoansLoanHistory', nullable: true })
   @Audit()
-  async getHmsLoansLoanhistory(@CurrentUser() user: User) {
-    return await this.hmsLoansService.getHmsLoansLoanhistory(user)
+  async getHmsLoansLoanHistory(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansLoanHistory(user)
   }
 
-  @Query(() => LoanhistoryPdf, {
-    name: 'hmsLoansLoanhistoryPdf',
+  @Query(() => LoanHistoryPdf, {
+    name: 'hmsLoansLoanHistoryPdf',
     nullable: true,
   })
   @Audit()
-  async getHmsLoansLoanhistoryPdf(@CurrentUser() user: User) {
-    return await this.hmsLoansService.getHmsLoansLoanhistoryPdf(user)
+  async getHmsLoansLoanHistoryPdf(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansLoanHistoryPdf(user)
   }
 
-  @Query(() => [Paymenthistory], {
-    name: 'hmsLoansPaymenthistory',
+  @Query(() => [PaymentHistory], {
+    name: 'hmsLoansPaymentHistory',
     nullable: true,
   })
   @Audit()
-  async getHmsLoansPaymenthistory(
+  async getHmsLoansPaymentHistory(
     @CurrentUser() user: User,
-    @Args('input') input: GetHmsLoansPaymenthistoryInput,
+    @Args('input') input: GetHmsLoansPaymentHistoryInput,
   ) {
-    return this.hmsLoansService.getHmsLoansPaymenthistory(user, input.loanId)
+    return this.hmsLoansService.getHmsLoansPaymentHistory(user, input.loanId)
   }
 }

@@ -11,17 +11,17 @@ import { useLocale } from '@island.is/localization'
 import { amountFormat, formatDate, m } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
 import {
-  GetHmsLoansLoanhistoryQuery,
-  useGetHmsLoansLoanhistoryPdfLazyQuery,
+  GetHmsLoansLoanHistoryQuery,
+  useGetHmsLoansLoanHistoryPdfLazyQuery,
 } from '../../screens/FinanceLoans/FinanceLoans.generated'
 import { m as messages } from '../../lib/messages'
 import { FinanceLoansTableDetail } from './FinanceLoansTableDetail'
-import { FinanceLoansPaymenthistory } from './FinanceLoansPaymenthistory'
+import { FinanceLoansPaymentHistory } from './FinanceLoansPaymenthistory'
 import * as styles from './FinanceLoans.css'
 
 interface Props {
   loanOverview: Exclude<
-    GetHmsLoansLoanhistoryQuery['hmsLoansLoanhistory'],
+    GetHmsLoansLoanHistoryQuery['hmsLoansLoanHistory'],
     null | undefined
   >
 }
@@ -30,17 +30,17 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
   const { formatMessage } = useLocale()
 
   const [
-    getHmsLoansLoanhistoryPdf,
+    getHmsLoansLoanHistoryPdf,
     { loading: loanhistoryPdfLoading, error: loanhistoryPdfError },
-  ] = useGetHmsLoansLoanhistoryPdfLazyQuery({
+  ] = useGetHmsLoansLoanHistoryPdfLazyQuery({
     onCompleted: (data) => {
-      if (data.hmsLoansLoanhistoryPdf?.data) {
+      if (data.hmsLoansLoanHistoryPdf?.data) {
         const downloadLink = document.createElement('a')
         downloadLink.href = `data:${
-          data.hmsLoansLoanhistoryPdf.mime ?? 'application/pdf'
-        };base64,${data.hmsLoansLoanhistoryPdf.data}`
+          data.hmsLoansLoanHistoryPdf.mime ?? 'application/pdf'
+        };base64,${data.hmsLoansLoanHistoryPdf.data}`
         downloadLink.download =
-          data.hmsLoansLoanhistoryPdf.name ?? 'lanayfirlit.pdf'
+          data.hmsLoansLoanHistoryPdf.name ?? 'lanayfirlit.pdf'
         downloadLink.click()
       }
     },
@@ -58,7 +58,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
           variant="utility"
           disabled={loanhistoryPdfLoading}
           onClick={() => {
-            getHmsLoansLoanhistoryPdf()
+            getHmsLoansLoanHistoryPdf()
           }}
         >
           {loanhistoryPdfError
@@ -258,7 +258,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                   </GridRow>
                 </GridContainer>
                 {loan.loanId && (
-                  <FinanceLoansPaymenthistory loanId={loan.loanId} />
+                  <FinanceLoansPaymentHistory loanId={loan.loanId} />
                 )}
               </Box>
             </ExpandRow>
