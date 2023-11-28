@@ -66,7 +66,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
-          progress: 0.25,
           actionCard: {
             pendingAction: {
               title: '',
@@ -112,7 +111,10 @@ const CarRecyclingTemplate: ApplicationTemplate<
             shouldPersistToExternalData: false,
             throwOnError: true,
           }),
-          progress: 0.5,
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            throwOnError: true,
+          }),
           actionCard: {
             pendingAction: {
               title: 'corePendingActionMessages.applicationReceivedTitle',
@@ -145,12 +147,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
       [States.SUBMITTED]: {
         meta: {
           name: States.SUBMITTED,
-          progress: 1,
           status: 'completed',
-          onEntry: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),
           actionCard: {
             pendingAction: {
               title: statesMessages.applicationSent,

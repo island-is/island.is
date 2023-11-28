@@ -15,9 +15,9 @@ import {
 } from '@island.is/application/templates/car-recycling'
 import { User } from '@island.is/auth-nest-tools'
 import { VehicleMiniDto } from '@island.is/clients/vehicles'
+import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
@@ -26,21 +26,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
     private recyclingFundService: RecyclingFundClientService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
-  }
-
-  async getVehicles({ auth }: TemplateApiModuleActionProps) {
-    try {
-      const response = await this.recyclingFundService.createRecyclingRequest(
-        auth,
-      )
-
-      /* if (!response) {
-        throw new Error(`Failed to get vehicles from: ${response}`)
-      }
-      return response*/
-    } catch (e) {
-      this.logger.error('Failed to vehicles', e)
-    }
   }
 
   async createOwner({ application, auth }: TemplateApiModuleActionProps) {
@@ -66,21 +51,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async createVehicle(auth: User, vehicle: VehicleMiniDto) {
     if (vehicle && vehicle.permno) {
-      const response = await this.recyclingFundService.createVehicle(
-        auth,
-        vehicle.permno,
-      )
-
-      if (response.errors) {
-        throw new TemplateApiError(
-          {
-            title: errorMessages.errorTitle,
-            summary:
-              errorMessages.createVehicleDescription + ' ' + vehicle.permno,
-          },
-          500,
-        )
-      }
+      return await this.recyclingFundService.createVehicle(auth, vehicle.permno)
     }
   }
 
@@ -90,14 +61,11 @@ export class CarRecyclingService extends BaseTemplateApiService {
     recyclingRequestType: RecyclingRequestTypes,
   ) {
     if (vehicle && vehicle.permno) {
-      const response = await this.recyclingFundService.recycleVehicle(
+      return await this.recyclingFundService.recycleVehicle(
         auth,
         vehicle.permno,
         recyclingRequestType,
       )
-      if (response.errors) {
-        throw new Error(vehicle.permno)
-      }
     }
   }
 
@@ -105,36 +73,57 @@ export class CarRecyclingService extends BaseTemplateApiService {
     const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
       application.answers,
     )
+
+    let isError = false
     try {
       selectedVehicles.forEach(async (vehicle) => {
-        this.createVehicle(auth, vehicle)
-        this.recycleVehicles(
-          auth,
-          vehicle,
-          RecyclingRequestTypes.pendingRecycle,
-        )
+        if (!isError) {
+          // Create vehicle
+          const vechicleResponse = await this.createVehicle(auth, vehicle)
+
+          if (vechicleResponse && vechicleResponse.errors) {
+            isError = true
+            this.logger.error(vechicleResponse.errors)
+          }
+
+          if (!isError) {
+            // Recycle vehicle
+            const response = await this.recycleVehicles(
+              auth,
+              vehicle,
+              RecyclingRequestTypes.pendingRecycle,
+            )
+
+            if (response && response.errors) {
+              isError = true
+              this.logger.error(response.errors)
+            }
+          }
+        }
       })
     } catch (error) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.errorTitle,
-          summary: errorMessages.recycleVehicleDescription + ' ' + error,
-        },
-        500,
-      )
+      isError = true
+      this.logger.error(error)
     }
     try {
       canceledVehicles.forEach(async (vehicle) => {
+        // Cancel recycling
         this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
       })
     } catch (error) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.errorTitle,
-          summary: errorMessages.cancelRecycleVehicleDescription + ' ' + error,
-        },
-        500,
-      )
+      isError = true
+      this.logger.error(error)
     }
+
+    return new Promise((resolve, reject) => {
+      // Simulate an asynchronous operation (e.g., fetching data)
+      setTimeout(() => {
+        if (isError) {
+          reject(new Error('Error occurred when recycling the vehicle'))
+        } else {
+          resolve(true)
+        }
+      }, 1000)
+    })
   }
 }

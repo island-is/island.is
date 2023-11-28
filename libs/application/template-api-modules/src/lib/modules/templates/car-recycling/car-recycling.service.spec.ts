@@ -60,6 +60,6 @@ describe('CarRecyclingService', () => {
       currentUserLocale: 'is',
     })
 
-    expect(result).toBeUndefined()
+    expect(result).toBeTruthy()
   })
 })
