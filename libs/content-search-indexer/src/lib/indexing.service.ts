@@ -6,6 +6,7 @@ import { CmsSyncService } from '@island.is/cms'
 import {
   ContentSearchImporter,
   SyncOptions,
+  SyncResponse,
 } from '@island.is/content-search-indexer/types'
 import {
   ElasticsearchIndexLocale,
@@ -56,15 +57,33 @@ export class IndexingService {
         importer: importer.constructor.name,
         index: elasticIndex,
       })
-      // importers can skip import by returning null
-      const importerResponse = await importer.doSync(options)
-      if (!importerResponse) {
-        didImportAll = false
-        return true
-      }
 
-      const { postSyncOptions, ...elasticData } = importerResponse
-      await this.elasticService.bulk(elasticIndex, elasticData)
+      let nextPageToken: string | undefined = undefined
+      let initialFetch = true
+      let postSyncOptions: SyncResponse['postSyncOptions']
+
+      while (initialFetch || nextPageToken) {
+        // importers can skip import by returning null
+        const importerResponse = await importer.doSync({
+          ...options,
+          nextPageToken,
+        })
+        if (!importerResponse) {
+          didImportAll = false
+          return true
+        }
+
+        const {
+          postSyncOptions: importerResponsePostSyncOptions,
+          nextPageToken: importerResponseNextPageToken,
+          ...elasticData
+        } = importerResponse
+        await this.elasticService.bulk(elasticIndex, elasticData)
+
+        nextPageToken = importerResponseNextPageToken
+        postSyncOptions = importerResponsePostSyncOptions
+        initialFetch = false
+      }
 
       if (importer.postSync) {
         logger.info('Importer started post sync', {
