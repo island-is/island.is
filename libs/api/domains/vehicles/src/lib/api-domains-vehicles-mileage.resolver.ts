@@ -32,69 +32,67 @@ import {
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleMileageOverview)
 @Audit({ namespace: '@island.is/api/vehicles' })
+@Scopes(ApiScope.vehicles)
 export class VehiclesMileageResolver {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
-  @Scopes(ApiScope.vehicles)
   @Query(() => VehicleMileageOverview, {
     name: 'vehicleMileageDetails',
     nullable: true,
   })
   @Audit()
-  async getVehicleMileage(
+  getVehicleMileage(
     @Args('input') input: GetVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.getVehicleMileage(user, input)
+    return this.vehiclesService.getVehicleMileage(user, input)
   }
 
-  @Scopes(ApiScope.vehicles)
   @Mutation(() => VehicleMileageDetail, {
     name: 'vehicleMileagePost',
     nullable: true,
   })
   @Audit()
-  async postVehicleMileageReading(
+  postVehicleMileageReading(
     @Args('input') input: PostVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.postMileageReading(user, input)
+    return this.vehiclesService.postMileageReading(user, input)
   }
 
-  @Scopes(ApiScope.vehicles)
   @Mutation(() => VehicleMileagePutModel, {
     name: 'vehicleMileagePut',
     nullable: true,
   })
   @Audit()
-  async putVehicleMileageReading(
+  putVehicleMileageReading(
     @Args('input') input: PutVehicleMileageInput,
     @CurrentUser() user: User,
   ) {
-    return await this.vehiclesService.putMileageReading(user, input)
+    return this.vehiclesService.putMileageReading(user, input)
   }
 
   @ResolveField('canRegisterMileage', () => Boolean, {
     nullable: true,
   })
-  async resolveCanRegisterMileage(
+  resolveCanRegisterMileage(
     @Context('req') { user }: { user: User },
     @Parent() overview: VehicleMileageOverview,
   ): Promise<boolean> {
-    return await this.vehiclesService.canRegisterMileage(user, {
-      permno: overview?.data?.[0]?.permno ?? '',
+    return this.vehiclesService.canRegisterMileage(user, {
+      permno: overview.permno ?? '',
     })
   }
 
   @ResolveField('requiresMileageRegistration', () => Boolean, {
     nullable: true,
   })
-  async resolveRequiresMileageRegistration(
+  resolveRequiresMileageRegistration(
     @Context('req') { user }: { user: User },
     @Parent() overview: VehicleMileageOverview,
   ): Promise<boolean> {
-    return await this.vehiclesService.requiresMileageRegistration(user, {
-      permno: overview?.data?.[0]?.permno ?? '',
+    return this.vehiclesService.requiresMileageRegistration(user, {
+      permno: overview?.permno ?? '',
     })
   }
 }
