@@ -300,6 +300,16 @@ export const Disability = new XroadConf({
   },
 })
 
+export const InsurancePayments = new XroadConf({
+  env: {
+    XROAD_INSURANCE_PAYMENTS_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/',
+      staging: 'IS-DEV/GOV/10008/TR-Protected/external-v1/',
+      prod: 'IS-DEV/GOV/10008/TR-Protected/external-v1/',
+    },
+  },
+})
+
 export const EHIC = new XroadConf({
   env: {
     EHIC_XROAD_PROVIDER_ID: {

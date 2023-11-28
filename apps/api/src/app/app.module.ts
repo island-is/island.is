@@ -119,6 +119,7 @@ import {
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { InsurancePaymentsClientConfig } from '@island.is/clients/insurance-payments'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -300,6 +301,7 @@ const environment = getConfig
         AssetsClientConfig,
         PCardClientConfig,
         AdrAndMachineLicenseClientConfig,
+        InsurancePaymentsClientConfig,
         NationalRegistrySoffiaClientConfig,
         NationalRegistryV3ClientConfig,
         FirearmLicenseClientConfig,

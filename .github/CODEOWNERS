@@ -142,6 +142,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                             @island-is/hugsmidjan
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
+/libs/clients/insurance-payments/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                            @island-is/hugsmidjan
