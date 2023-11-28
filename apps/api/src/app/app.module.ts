@@ -141,6 +141,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
@@ -310,6 +311,7 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
+        VehiclesMileageClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
