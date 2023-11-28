@@ -44,7 +44,6 @@ describe.each(Object.keys(accessOutgoingTestCases))(
       // Arrange
       app = await setupWithAuth({
         user: testCase.user,
-        customScopeRules: testCase.customScopeRules,
       })
       server = request(app.getHttpServer())
       const namesService = app.get(NamesService)

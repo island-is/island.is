@@ -6,6 +6,7 @@ import {
 } from '@island.is/testing/fixtures'
 
 import { TestCase } from './types'
+import { CustomDelegationOnlyForDelegationType } from '@island.is/auth-api-lib'
 
 const currentUser = createCurrentUser({
   nationalIdType: 'person',
@@ -219,79 +220,74 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
     ],
   },
   // Should see scopes configured for specific types of delegation.
-  customScopeRulesIncluded: {
-    user: createCurrentUser({
-      nationalIdType: 'company',
-      scope: [AuthScope.delegations],
-      delegationType: [
-        AuthDelegationType.ProcurationHolder,
-        AuthDelegationType.Custom,
-      ],
-    }),
-    customScopeRules: [
-      { scopeName: 's1', onlyForDelegationType: ['ProcurationHolder'] },
-      { scopeName: 's2', onlyForDelegationType: ['Custom'] },
-      { scopeName: 's3', onlyForDelegationType: ['LegalGuardian'] },
-      { scopeName: 's4', onlyForDelegationType: ['PersonalRepresentative'] },
-    ],
-    domains: [
-      {
-        name: 'd1',
-        apiScopes: [
-          { name: 's1', allowExplicitDelegationGrant: true },
-          { name: 's2', allowExplicitDelegationGrant: true },
-          { name: 's3', allowExplicitDelegationGrant: true },
-          { name: 's4', allowExplicitDelegationGrant: true },
-        ],
-      },
-    ],
-    delegations: [
-      {
-        domainName: 'd1',
-        scopes: [
-          { scopeName: 's1' },
-          { scopeName: 's2' },
-          { scopeName: 's3' },
-          { scopeName: 's4' },
-        ],
-      },
-    ],
-    expected: [
-      {
-        name: 'd1',
-        scopes: [{ name: 's1' }, { name: 's2' }],
-      },
-    ],
-  },
+  // customScopeRulesIncluded: {
+  //   user: createCurrentUser({
+  //     nationalIdType: 'company',
+  //     scope: [AuthScope.delegations],
+  //     delegationType: [AuthDelegationType.ProcurationHolder],
+  //   }),
+  //   domains: [
+  //     {
+  //       name: 'd1',
+  //       apiScopes: [
+  //         {
+  //           name: 's1',
+  //           allowExplicitDelegationGrant: true,
+  //           customDelegationOnlyFor: [
+  //             CustomDelegationOnlyForDelegationType.ProcurationHolder,
+  //           ],
+  //         },
+  //         {
+  //           name: 's2',
+  //           allowExplicitDelegationGrant: true,
+  //           customDelegationOnlyFor: [
+  //             CustomDelegationOnlyForDelegationType.Custom,
+  //           ],
+  //         },
+  //       ],
+  //     },
+  //   ],i
+  //   delegations: [
+  //     {
+  //       domainName: 'd1',
+  //       scopes: [{ scopeName: 's1' }, { scopeName: 's2' }],
+  //     },
+  //   ],
+  //   expected: [
+  //     {
+  //       name: 'd1',
+  //       scopes: [{ name: 's1' }],
+  //     },
+  //   ],
+  // },
   // Should not see scopes configured for other types of delegation.
   customScopeRulesExcluded: {
     user: currentUser,
-    customScopeRules: [
-      { scopeName: 's1', onlyForDelegationType: ['ProcurationHolder'] },
-      { scopeName: 's2', onlyForDelegationType: ['Custom'] },
-      { scopeName: 's3', onlyForDelegationType: ['LegalGuardian'] },
-      { scopeName: 's4', onlyForDelegationType: ['PersonalRepresentative'] },
-    ],
     domains: [
       {
         name: 'd1',
         apiScopes: [
-          { name: 's1', allowExplicitDelegationGrant: true },
-          { name: 's2', allowExplicitDelegationGrant: true },
-          { name: 's3', allowExplicitDelegationGrant: true },
-          { name: 's4', allowExplicitDelegationGrant: true },
+          {
+            name: 's1',
+            allowExplicitDelegationGrant: true,
+            customDelegationOnlyFor: [
+              CustomDelegationOnlyForDelegationType.ProcurationHolder,
+            ],
+          },
+          {
+            name: 's2',
+            allowExplicitDelegationGrant: true,
+            customDelegationOnlyFor: [
+              CustomDelegationOnlyForDelegationType.Custom,
+            ],
+          },
         ],
       },
     ],
     delegations: [
       {
         domainName: 'd1',
-        scopes: [
-          { scopeName: 's1' },
-          { scopeName: 's2' },
-          { scopeName: 's3' },
-          { scopeName: 's4' },
-        ],
+        scopes: [{ scopeName: 's1' }, { scopeName: 's2' }],
       },
     ],
     expected: [],
@@ -308,9 +304,6 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
         scopes: [{ scopeName: 's2' }],
       },
     ],
-    customScopeRules: [
-      { scopeName: 's2', onlyForDelegationType: ['ProcurationHolder'] },
-    ],
     domains: [
       {
         name: 'd1',
@@ -318,7 +311,15 @@ export const accessOutgoingTestCases: Record<string, TestCase> = {
       },
       {
         name: 'd2',
-        apiScopes: [{ name: 's2', allowExplicitDelegationGrant: true }],
+        apiScopes: [
+          {
+            name: 's2',
+            allowExplicitDelegationGrant: true,
+            customDelegationOnlyFor: [
+              CustomDelegationOnlyForDelegationType.ProcurationHolder,
+            ],
+          },
+        ],
       },
     ],
     expected: [

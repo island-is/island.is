@@ -1,6 +1,4 @@
-import { DelegationConfig } from '@island.is/auth-api-lib'
 import { User } from '@island.is/auth-nest-tools'
-import { ConfigType } from '@island.is/nest/config'
 import {
   CreateCustomDelegation,
   CreateDomain,
@@ -13,7 +11,6 @@ export interface DomainAssertion {
 
 export interface TestCase {
   user: User
-  customScopeRules?: ConfigType<typeof DelegationConfig>['customScopeRules']
   delegations?: CreateCustomDelegation[]
   accessTo?: string[]
   domains: CreateDomain[]
