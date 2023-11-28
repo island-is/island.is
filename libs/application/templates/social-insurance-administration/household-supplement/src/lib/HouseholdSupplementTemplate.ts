@@ -8,7 +8,6 @@ import {
   ApplicationRole,
   DefaultEvents,
   NationalRegistryUserApi,
-  UserProfileApi,
   NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 import {
@@ -20,7 +19,10 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
-import { NationalRegistryCohabitantsApi } from '../dataProviders'
+import {
+  NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationApplicantApi,
+} from '../dataProviders'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
@@ -65,9 +67,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                UserProfileApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryCohabitantsApi,
+                SocialInsuranceAdministrationApplicantApi,
               ],
               delete: true,
             },
@@ -286,11 +288,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         const { answers } = application
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
-        console.log('additionalAttachments: ', additionalAttachments)
-        console.log(
-          'additionalAttachmentsRequired: ',
-          additionalAttachmentsRequired,
-        )
+
         const mergedAdditionalDocumentRequired = [
           ...additionalAttachments,
           ...additionalAttachmentsRequired,

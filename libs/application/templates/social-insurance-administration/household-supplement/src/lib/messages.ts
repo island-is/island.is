@@ -6,7 +6,7 @@ export const householdSupplementFormMessage: MessageDir = {
     institution: {
       id: 'hs.application:institution.name',
       defaultMessage: 'Tryggingastofnun',
-      description: 'Tryggingastofnun',
+      description: 'Social Insurance Administration',
     },
     applicationTitle: {
       id: 'hs.application:application.title',
@@ -44,36 +44,41 @@ export const householdSupplementFormMessage: MessageDir = {
     externalDataSection: {
       id: 'hs.application:external.data.section',
       defaultMessage: 'Gagnaöflun',
-      description: 'External Data',
+      description: 'Data collection',
+    },
+    externalDataDescription: {
+      id: 'hs.application:externalData.description',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      description: 'The following information will be retrieved electronically',
     },
     checkboxProvider: {
       id: 'hs.application:checkbox.provider',
       defaultMessage:
-        'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu',
-      description: 'Checbox to confirm data provider',
-    },
-    userProfileInformationTitle: {
-      id: 'hs.application:userprofile.title',
-      defaultMessage: 'Upplýsingar af mínum síðum Ísland.is',
-      description: 'Information from your account on Ísland.is',
-    },
-    userProfileInformationSubTitle: {
-      id: 'hs.application:userprofile.subtitle',
-      defaultMessage:
-        'Sækir upplýsingar um netfang, símanúmer og bankareikning frá mínum síðum Ísland.is.',
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
       description:
-        'Information about email adress, phone number and bank account will be retrieved from your account at Ísland.is.',
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'hs.application:skra.info.title',
-      defaultMessage: 'Upplýsingar frá þjóðskrá',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
       description: 'Information from Registers Iceland',
     },
     skraInformationSubTitle: {
       id: 'hs.application:skra.info.subtitle',
-      defaultMessage: 'Sækir upplýsingar um þig, maka og börn frá Þjóðskrá.',
+      defaultMessage: 'Sækir upplýsingar um þig, maka og börn.',
+      description: 'Information about you, spouse and children.',
+    },
+    socialInsuranceAdministrationInformationTitle: {
+      id: 'hs.application:prerequisites.socialInsuranceAdministration.title',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Information regarding income and circumstances',
+    },
+    socialInsuranceAdministrationInformationDescription: {
+      id: 'hs.application:prerequisites.socialInsuranceAdministration.description#markdown',
+      defaultMessage:
+        'Upplýsingar um netfang, símanúmer og bankareikning eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðslu mála. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd).',
       description:
-        'Information about you, spouse and children will be retrieved from Registers Iceland.',
+        'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd).',
     },
     startApplication: {
       id: 'hs.application:start.application',
@@ -96,7 +101,7 @@ export const householdSupplementFormMessage: MessageDir = {
     subSectionDescription: {
       id: 'hs.application:info.sub.section.description',
       defaultMessage:
-        'Netfang og símanúmer er sótt á mínar síður á Ísland.is. Ef upplýsingarnar eru ekki réttar eða vantar setur þú þær inn hér.',
+        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
       description: 'translation',
     },
     applicantEmail: {
@@ -122,9 +127,9 @@ export const householdSupplementFormMessage: MessageDir = {
     paymentAlertMessage: {
       id: 'hs.application:info.payment.alert.message',
       defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reiking.',
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
       description:
-        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the Social Insurance Administration will be paid into that account.',
     },
     paymentBank: {
       id: 'hs.application:info.payment.bank',

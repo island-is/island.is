@@ -90,14 +90,20 @@ export const BaseInformation = ({
       triggerValidation
     >
       {applicantName !== '' && (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(householdSupplementFormMessage.confirm.name)}
               value={applicantName}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(
                 householdSupplementFormMessage.confirm.nationalId,
@@ -109,7 +115,10 @@ export const BaseInformation = ({
       )}
 
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={[3, 3, 3, 0]}
+        >
           <DataValue
             label={formatMessage(householdSupplementFormMessage.confirm.email)}
             value={applicantEmail}
