@@ -56,10 +56,8 @@ describe('MessageProcessorService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [
-        CacheModule.register({}),
-        LoggingModule      ],
-        
+      imports: [CacheModule.register({}), LoggingModule],
+
       providers: [
         MessageProcessorService,
         NotificationsService,
