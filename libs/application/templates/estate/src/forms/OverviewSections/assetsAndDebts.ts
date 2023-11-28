@@ -56,13 +56,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).assets
         ?.filter((asset) => asset.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       if (sum && sum > 0) {
@@ -75,13 +70,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).assets
         ?.filter((asset) => asset.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       return sum > 0
@@ -168,13 +158,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).vehicles
         ?.filter((vehicle) => vehicle.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       if (sum && sum > 0) {
@@ -187,13 +172,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).vehicles
         ?.filter((vehicle) => vehicle.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       return sum > 0
@@ -239,13 +219,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).guns
         ?.filter((gun) => gun.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       if (sum && sum > 0) {
@@ -258,13 +233,8 @@ export const overviewAssetsAndDebts = [
       const sum = (answers.estate as unknown as EstateInfo).guns
         ?.filter((gun) => gun.enabled)
         .reduce((acc, cur) => {
-          const marketValue = Number(cur.marketValue) ?? 0
-
-          if (marketValue) {
-            return acc + marketValue
-          }
-
-          return acc
+          const val = Number(cur.marketValue) ?? 0
+          return acc + val
         }, 0)
 
       return sum > 0
@@ -306,13 +276,8 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }: Application) => {
       const sum = (answers as unknown as EstateSchema).bankAccounts?.reduce(
         (acc, cur) => {
-          const balance = Number(cur.balance) ?? 0
-
-          if (balance) {
-            return acc + balance
-          }
-
-          return acc
+          const val = Number(cur.balance) ?? 0
+          return acc + val
         },
         0,
       )
@@ -331,13 +296,8 @@ export const overviewAssetsAndDebts = [
       if (!bankAccounts) return false
 
       const sum = bankAccounts.reduce((acc, cur) => {
-        const balance = Number(cur.balance) ?? 0
-
-        if (balance) {
-          return acc + balance
-        }
-
-        return acc
+        const val = Number(cur.balance) ?? 0
+        return acc + val
       }, 0)
 
       return sum > 0
@@ -393,13 +353,8 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }: Application) => {
       const sum = (answers as unknown as EstateSchema).claims?.reduce(
         (acc, cur) => {
-          const value = Number(cur.value) ?? 0
-
-          if (value) {
-            return acc + value
-          }
-
-          return acc
+          const val = Number(cur.value) ?? 0
+          return acc + val
         },
         0,
       )
@@ -418,13 +373,8 @@ export const overviewAssetsAndDebts = [
       if (!claims) return false
 
       const sum = claims.reduce((acc, cur) => {
-        const value = Number(cur.value) ?? 0
-
-        if (value) {
-          return acc + value
-        }
-
-        return acc
+        const val = Number(cur.value) ?? 0
+        return acc + val
       }, 0)
 
       return sum > 0
@@ -482,13 +432,8 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }: Application) => {
       const sum = (answers as unknown as EstateSchema).stocks?.reduce(
         (acc, cur) => {
-          const value = Number(cur.value) ?? 0
-
-          if (value) {
-            return acc + value
-          }
-
-          return acc
+          const val = Number(cur.value) ?? 0
+          return acc + val
         },
         0,
       )
@@ -507,13 +452,8 @@ export const overviewAssetsAndDebts = [
       if (!stocks) return false
 
       const sum = stocks.reduce((acc, cur) => {
-        const value = Number(cur.value) ?? 0
-
-        if (value) {
-          return acc + value
-        }
-
-        return acc
+        const val = Number(cur.value) ?? 0
+        return acc + val
       }, 0)
 
       return sum > 0
@@ -637,13 +577,8 @@ export const overviewAssetsAndDebts = [
     description: ({ answers }: Application) => {
       const sum = (answers as unknown as EstateSchema).debts?.reduce(
         (acc, cur) => {
-          const balance = Number(cur.balance) ?? 0
-
-          if (balance) {
-            return acc + balance
-          }
-
-          return acc
+          const val = Number(cur.balance) ?? 0
+          return acc + val
         },
         0,
       )
@@ -662,13 +597,8 @@ export const overviewAssetsAndDebts = [
       if (!debts) return false
 
       const sum = debts.reduce((acc, cur) => {
-        const balance = Number(cur.balance) ?? 0
-
-        if (balance) {
-          return acc + balance
-        }
-
-        return acc
+        const val = Number(cur.balance) ?? 0
+        return acc + val
       }, 0)
 
       return sum > 0
