@@ -224,6 +224,39 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     elasticIndex: string,
     document: Pick<Entry<unknown>, 'sys'>,
   ) {
+    // If we're gonna delete a 'manual' or 'manualChapter' from ElasticSearch then we need to also delete all manualChapterItems that it references
+    if (
+      document.sys.contentType.sys.id === 'manual' ||
+      document.sys.contentType.sys.id === 'manualChapter'
+    ) {
+      const manualChapterItemIds: string[] = []
+      let shouldContinueFetching = true
+      let page = 1
+
+      while (shouldContinueFetching) {
+        const response = await this.elasticService.search(elasticIndex, {
+          queryString: '*',
+          types: ['webManualChapterItem'],
+          tags: [{ key: document.sys.id, type: 'referencedBy' }],
+          page,
+        })
+
+        const responseItems = response?.body?.hits?.hits ?? []
+
+        for (const item of responseItems) {
+          manualChapterItemIds.push(item._id)
+        }
+
+        shouldContinueFetching = responseItems.length > 0
+        page += 1
+      }
+
+      return this.elasticService.deleteByIds(
+        elasticIndex,
+        [document.sys.id].concat(manualChapterItemIds),
+      )
+    }
+
     // If we're gonna delete an 'article' from ElasticSearch then we need to also delete all subArticles that are have a parent field that points to this article
     if (document.sys.contentType.sys.id === 'article') {
       const subArticles = await this.contentfulService.getContentfulData(100, {
