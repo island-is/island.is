@@ -146,48 +146,53 @@ export const EstateMembersRepeater: FC<
                 />
               </GridColumn>
               {application.answers.selectedEstate ===
-                EstateTypes.permitForUndividedEstate && (
-                <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                  <SelectController
-                    id={`${id}[${index}].relationWithApplicant`}
-                    name={`${id}[${index}].relationWithApplicant`}
-                    label={formatMessage(
-                      m.inheritanceRelationWithApplicantLabel,
-                    )}
-                    defaultValue={member.relationWithApplicant}
-                    options={relationsWithApplicant}
-                    error={error?.relationWithApplicant}
-                    backgroundColor="blue"
-                    disabled={!member.enabled}
-                    required
-                  />
-                </GridColumn>
+                EstateTypes.permitForUndividedEstate &&
+                member.relation !== 'Maki' && (
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <SelectController
+                      id={`${id}[${index}].relationWithApplicant`}
+                      name={`${id}[${index}].relationWithApplicant`}
+                      label={formatMessage(
+                        m.inheritanceRelationWithApplicantLabel,
+                      )}
+                      defaultValue={member.relationWithApplicant}
+                      options={relationsWithApplicant}
+                      error={error?.relationWithApplicant}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      required
+                    />
+                  </GridColumn>
+                )}
+              {!member.advocate && (
+                <>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].email`}
+                      name={`${id}[${index}].email`}
+                      label={formatMessage(m.email)}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      defaultValue={member.email || ''}
+                      error={error && error[index] && error[index].email}
+                      required
+                    />
+                  </GridColumn>
+                  <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                    <InputController
+                      id={`${id}[${index}].phone`}
+                      name={`${id}[${index}].phone`}
+                      label={formatMessage(m.phone)}
+                      backgroundColor="blue"
+                      disabled={!member.enabled}
+                      format="###-####"
+                      defaultValue={member.phone || ''}
+                      error={error && error[index] && error[index].phone}
+                      required
+                    />
+                  </GridColumn>
+                </>
               )}
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].email`}
-                  name={`${id}[${index}].email`}
-                  label={m.email.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  defaultValue={member.email || ''}
-                  error={error && error[index] && error[index].email}
-                  required
-                />
-              </GridColumn>
-              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
-                  id={`${id}[${index}].phone`}
-                  name={`${id}[${index}].phone`}
-                  label={m.phone.defaultMessage}
-                  backgroundColor="blue"
-                  disabled={!member.enabled}
-                  format="###-####"
-                  defaultValue={member.phone || ''}
-                  error={error && error[index] && error[index].phone}
-                  required
-                />
-              </GridColumn>
             </GridRow>
 
             {/* ADVOCATE */}
@@ -236,7 +241,7 @@ export const EstateMembersRepeater: FC<
                     <InputController
                       id={`${id}[${index}].advocate.phone`}
                       name={`${id}[${index}].advocate.phone`}
-                      label={m.phone.defaultMessage}
+                      label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       format="###-####"
@@ -245,13 +250,14 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.phone
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
                     <InputController
                       id={`${id}[${index}].advocate.email`}
                       name={`${id}[${index}].advocate.email`}
-                      label={m.email.defaultMessage}
+                      label={formatMessage(m.email)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
                       defaultValue={member.advocate?.email || ''}
@@ -259,6 +265,7 @@ export const EstateMembersRepeater: FC<
                         error && error[index] && error[index].advocate?.email
                       }
                       size="sm"
+                      required
                     />
                   </GridColumn>
                 </GridRow>
