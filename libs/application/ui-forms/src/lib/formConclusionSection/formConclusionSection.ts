@@ -6,9 +6,8 @@ import {
   buildMessageWithLinkButtonField,
   buildLinkField,
   coreMessages,
-  buildPdfLinkButtonField,
 } from '@island.is/application/core'
-import { Application, FormText } from '@island.is/application/types'
+import { FormText } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { StaticText } from 'static-text'
 import { conclusion } from './messages'
@@ -16,7 +15,6 @@ import { conclusion } from './messages'
 type props = {
   alertTitle?: MessageDescriptor
   alertMessage?: MessageDescriptor
-  hideExpandableDescription?: boolean
   expandableHeader?: MessageDescriptor
   expandableIntro?: StaticText
   expandableDescription?: StaticText
@@ -24,12 +22,6 @@ type props = {
   link?: string
   buttonText?: MessageDescriptor
   sectionTitle?: MessageDescriptor
-  getPdfFiles?: (application: Application) => {
-    base64: string
-    buttonText?: StaticText
-    customButtonText?: { is: string; en: string }
-    filename: string
-  }[]
 }
 
 /**
@@ -38,7 +30,6 @@ type props = {
  *
  * @param  alertTitle  Title of the green alert message.
  * @param  alertMessage The message inside the green alert box.
- * @param  hideExpandableDescription Whether expandable description field should be hidden. It is displayed by default
  * @param  expandableHeader Header of the expandable description section.
  * @param  expandableIntro Intro text of the expandable description section.
  * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
@@ -46,7 +37,6 @@ type props = {
  * @param  link Link that user can click on.
  * @param  buttonText The text of the button that links to a url
  * @param  secitonTitle The title for the section
- * @param  getPdfFiles Function that returns an array of PDF files that should be displayed as PDF link buttons. Verification button is included if at least one file is returned
  */
 export const buildFormConclusionSection = (props: props) => {
   return buildSection({
@@ -86,23 +76,6 @@ export const buildFormConclusionSection = (props: props) => {
               props.expandableDescription ??
               conclusion.expandableDescriptionField.description,
             startExpanded: true,
-            condition: () => !props.hideExpandableDescription,
-          }),
-          buildPdfLinkButtonField({
-            id: 'uiForms.conclusionPdfLinkButton',
-            title: '',
-            downloadButtonTitle:
-              conclusion.pdfLinkButtonField.downloadButtonTitle,
-            verificationDescription:
-              conclusion.pdfLinkButtonField.verificationDescription,
-            verificationLinkTitle:
-              conclusion.pdfLinkButtonField.verificationLinkTitle,
-            verificationLinkUrl:
-              conclusion.pdfLinkButtonField.verificationLinkUrl,
-            getPdfFiles: props.getPdfFiles,
-            // isViewingFile,
-            // setIsViewingFile,
-            condition: () => !!props.getPdfFiles,
           }),
           buildMessageWithLinkButtonField({
             id: 'uiForms.conclusionGoToServicePortal',

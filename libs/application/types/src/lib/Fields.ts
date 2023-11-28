@@ -360,7 +360,6 @@ export interface PaymentChargeOverviewField extends BaseField {
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
-  downloadButtonTitle: StaticText
   verificationDescription: StaticText
   verificationLinkTitle: StaticText
   verificationLinkUrl: StaticText
@@ -370,8 +369,7 @@ export interface PdfLinkButtonField extends BaseField {
     customButtonText?: { is: string; en: string }
     filename: string
   }[]
-  // isViewingFile: boolean
-  // setIsViewingFile: (value: boolean) => void
+  setViewPdfFile?: (file: { base64: string; filename: string }) => void
 }
 
 export type Field =

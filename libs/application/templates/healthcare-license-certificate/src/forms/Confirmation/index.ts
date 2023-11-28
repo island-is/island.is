@@ -1,15 +1,16 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import {
+  buildCustomField,
+  buildForm,
+  buildSection,
+} from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import {
   information,
   externalData,
   payment,
-  confirmation,
   personal,
 } from '../../lib/messages'
 import { Logo } from '../../assets/Logo'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { getProfessionName } from '../../utils/getProfessionName'
 
 export const Confirmation: Form = buildForm({
   id: 'ConfirmationForm',
@@ -37,25 +38,11 @@ export const Confirmation: Form = buildForm({
       title: payment.general.sectionTitle,
       children: [],
     }),
-    buildFormConclusionSection({
-      alertTitle: confirmation.general.alertTitle,
-      alertMessage: confirmation.general.alertMessage,
-      hideExpandableDescription: true,
-      getPdfFiles: (application) => {
-        const data = application.externalData.submitApplication.data as {
-          base64: string
-          professionId: string
-        }[]
-
-        return data.map((x) => ({
-          base64: x.base64,
-          customButtonText: getProfessionName(
-            application.externalData,
-            x.professionId,
-          ),
-          filename: 'vottord_vegna_starfsleyfis_' + x.professionId + '.pdf',
-        }))
-      },
+    buildCustomField({
+      component: 'CustomFormConclusionSectionField',
+      id: 'custom.conclusionSection',
+      title: '',
+      description: '',
     }),
   ],
 })

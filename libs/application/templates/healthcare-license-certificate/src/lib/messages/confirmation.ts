@@ -7,6 +7,11 @@ export const confirmation = {
       defaultMessage: 'Staðfesting',
       description: 'Confirmation section title',
     },
+    pageTitle: {
+      id: 'hlc.application:confirmation.general.pageTitle',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation page title',
+    },
     alertTitle: {
       id: 'hlc.application:confirmation.general.alertTitle',
       defaultMessage: 'Vottorð vegna starfsleyfis hefur verið útbúið / sent',

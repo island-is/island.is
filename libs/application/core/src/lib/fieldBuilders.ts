@@ -566,23 +566,19 @@ export function buildPdfLinkButtonField(
   data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
 ): PdfLinkButtonField {
   const {
-    downloadButtonTitle,
     verificationDescription,
     verificationLinkTitle,
     verificationLinkUrl,
     getPdfFiles,
-    // isViewingFile,
-    // setIsViewingFile,
+    setViewPdfFile,
   } = data
   return {
     ...extractCommonFields(data),
-    downloadButtonTitle,
     verificationDescription,
     verificationLinkTitle,
     verificationLinkUrl,
     getPdfFiles,
-    // isViewingFile,
-    // setIsViewingFile,
+    setViewPdfFile,
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,

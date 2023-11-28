@@ -2,20 +2,16 @@ import { formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
   PdfLinkButtonField,
-  StaticText,
 } from '@island.is/application/types'
 import {
   Box,
-  Button,
   Link,
   LinkContext,
-  PdfViewer,
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
-import * as styles from './PdfLinkButtonFormField.css'
+import { FC } from 'react'
 
 interface Props extends FieldBaseProps {
   field: PdfLinkButtonField
@@ -26,58 +22,10 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
   field,
 }) => {
   const { lang, formatMessage } = useLocale()
-  const [fileToView, setFileToView] = useState<
-    | {
-        base64: string
-        buttonText?: StaticText
-        customButtonText?: { is: string; en: string }
-        filename: string
-      }
-    | undefined
-  >(undefined)
 
   const files = field.getPdfFiles && field.getPdfFiles(application)
 
-  if (!field.condition || !files || files.length === 0) return undefined
-
-  if (fileToView) {
-    return (
-      <>
-        <Box
-          display="flex"
-          marginBottom={2}
-          justifyContent="spaceBetween"
-          alignItems="center"
-        >
-          <Button
-            circle
-            icon="arrowBack"
-            onClick={() => {
-              // field.setIsViewingFile(false)
-              setFileToView(undefined)
-            }}
-            colorScheme="light"
-            title="Go back"
-          />
-          <a
-            href={`data:application/pdf;base64,${fileToView.base64}`}
-            download={fileToView.filename}
-            className={styles.linkWithoutDecorations}
-          >
-            <Button icon="download" iconType="outline" variant="text">
-              {formatText(
-                field.downloadButtonTitle,
-                application,
-                formatMessage,
-              )}
-            </Button>
-          </a>
-        </Box>
-
-        <PdfViewer file={`data:application/pdf;base64,${fileToView.base64}`} />
-      </>
-    )
-  }
+  if (!files || files.length === 0) return undefined
 
   return (
     <>
@@ -85,8 +33,11 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
         <Box marginBottom={2}>
           <TopicCard
             onClick={() => {
-              // field.setIsViewingFile(true)
-              setFileToView(file)
+              field.setViewPdfFile &&
+                field.setViewPdfFile({
+                  base64: file.base64,
+                  filename: file.filename,
+                })
             }}
             tag="Pdf"
             colorScheme="blue"
