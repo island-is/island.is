@@ -10,6 +10,7 @@ import {
   UserInfoLine,
   amountFormat,
   m,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import {
@@ -93,7 +94,8 @@ export const HealthOverview = () => {
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SYSLUMENN_SLUG}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
       </Box>
       {loading ? (
