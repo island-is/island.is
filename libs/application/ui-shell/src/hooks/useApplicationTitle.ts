@@ -22,6 +22,7 @@ export const getApplicationTitle = (
       activeSection,
       state.application.answers,
       state.application.externalData,
+      state.user,
     )[activeScreen.subSectionIndex]
   }
 
