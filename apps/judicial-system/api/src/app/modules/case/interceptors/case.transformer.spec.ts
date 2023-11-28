@@ -78,9 +78,7 @@ describe('transformCase', () => {
       // Arrange
       const validToDate = new Date()
       validToDate.setSeconds(validToDate.getSeconds() - 1)
-      const theCase = {
-        validToDate: validToDate.toISOString(),
-      } as Case
+      const theCase = { validToDate: validToDate.toISOString() } as Case
 
       // Act
       const res = transformCase(theCase)
