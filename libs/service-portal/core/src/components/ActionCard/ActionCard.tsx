@@ -208,7 +208,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
   }
 
   const renderTag = (actionTag: ActionCardProps['tag']) => {
-    if (!actionTag || actionTag?.label === undefined) {
+    if (!actionTag?.label) {
       return null
     }
 
@@ -287,6 +287,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
       </Box>
     )
   }
+
   return (
     <Box
       display="flex"
