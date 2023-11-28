@@ -89,7 +89,7 @@ export const HealthOverview = () => {
   }
 
   return (
-    <Box paddingY={4}>
+    <Box>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(user.profile.name)}
