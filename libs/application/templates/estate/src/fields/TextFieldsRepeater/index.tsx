@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -13,10 +13,12 @@ import {
 import { Answers } from '../../types'
 
 import * as styles from '../styles.css'
+import { MessageDescriptor } from 'react-intl'
+import { useLocale } from '@island.is/localization'
 
 type Field = {
   id: string
-  title: string
+  title: MessageDescriptor | string
   placeholder?: string
   format?: string
   backgroundColor?: InputBackgroundColor
@@ -45,6 +47,7 @@ export const TextFieldsRepeater: FC<
     name: id,
   })
   const { setValue, getValues, clearErrors } = useFormContext()
+  const { formatMessage } = useLocale()
 
   const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
@@ -110,7 +113,7 @@ export const TextFieldsRepeater: FC<
             {index > 0 && (
               <>
                 <Text variant="h4" marginBottom={2}>
-                  {props.repeaterHeaderText}
+                  {formatMessage(props.repeaterHeaderText)}
                 </Text>
                 <Box position="absolute" className={styles.removeFieldButton}>
                   <Button
@@ -137,7 +140,7 @@ export const TextFieldsRepeater: FC<
                       name={`${fieldIndex}.${field.id}`}
                       defaultValue={repeaterField[field.id] || ''}
                       format={field.format}
-                      label={field.title}
+                      label={formatMessage(field.title)}
                       placeholder={field.placeholder}
                       backgroundColor={
                         field.backgroundColor ? field.backgroundColor : 'blue'
@@ -171,7 +174,7 @@ export const TextFieldsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
     </Box>
