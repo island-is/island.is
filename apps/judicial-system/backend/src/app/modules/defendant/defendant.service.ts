@@ -305,17 +305,7 @@ export class DefendantService {
         return { delivered: true }
       })
       .catch((reason) => {
-        const sanitizedReason = JSON.stringify(reason)
-          .replace(
-            /Participant with id: \d{10}/g,
-            'Participant with id: **********',
-          )
-          .replace(/\) gegn(.*?)'/g, ') gegn **********')
-
-        this.logger.error(
-          'Failed to update case with defendant',
-          JSON.parse(sanitizedReason),
-        )
+        this.logger.error('Failed to update case with defendant', { reason })
 
         return { delivered: false }
       })
