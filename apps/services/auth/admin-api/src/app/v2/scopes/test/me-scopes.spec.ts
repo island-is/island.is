@@ -69,8 +69,6 @@ const createMockedApiScopes = (
           },
         ],
         domainName: TENANT_ID,
-        // customDelegationOnlyFor:
-        //   i === 0 ? [AuthDelegationType.ProcurationHolder] : undefined,
         ...scope,
       } as AdminScopeDTO),
   )
@@ -295,7 +293,6 @@ const createTestCases: Record<string, CreateTestCase> = {
           ...expectedCreateOutput,
           grantToAuthenticatedUser: true,
           grantToLegalGuardians: true,
-          // customDelegationOnlyFor: [AuthDelegationType.ProcurationHolder],
         },
       },
     },
