@@ -376,7 +376,7 @@ describe('sanitize', () => {
     expect(r).toBe('blabla.pdf')
   })
 
-  test('should work with nultiple instances of "', () => {
+  test('should work with multiple instances of "', () => {
     // Arrange
     const text = `bla"bl"a.pdf`
 
