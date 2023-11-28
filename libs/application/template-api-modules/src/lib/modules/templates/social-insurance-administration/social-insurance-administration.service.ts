@@ -161,52 +161,40 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string, fileUpload: string) {
-    try {
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key: key })
-        .promise()
-      const fileContent = file.Body as Buffer
+    const file = await this.s3
+      .getObject({ Bucket: this.attachmentBucket, Key: key })
+      .promise()
+    const fileContent = file.Body as Buffer
 
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
-
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
-      throw new Error('Failed to get the ' + fileUpload + ' attachment')
+    if (!fileContent) {
+      throw new Error('File content was undefined')
     }
+
+    return fileContent.toString('base64')
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
-        const attachments = await this.getAttachments(application)
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      const attachments = await this.getAttachments(application)
 
-        const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
-          application,
-          attachments,
-        )
+      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+        application,
+        attachments,
+      )
 
-        const applicationType = getApplicationType(application).toLowerCase()
+      const applicationType = getApplicationType(application).toLowerCase()
 
-        const response = await this.siaClientService.sendApplication(
-          auth,
-          oldAgePensionDTO,
-          applicationType,
-        )
-        return response
-      }
-    } catch (e) {
-      this.logger.error('Failed to send the old age pension application', e)
-      throw this.parseErrors(e)
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        oldAgePensionDTO,
+        applicationType,
+      )
+      return response
     }
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {
-    const res = await this.siaClientService.getApplicant(auth).catch(() => {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    })
+    const res = await this.siaClientService.getApplicant(auth)
 
     // mock data since gervimenn don't have bank account registered at TR,
     // and might also not have phone number and email address registered
@@ -215,12 +203,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         res.bankAccount.bank = '2222'
         res.bankAccount.ledger = '00'
         res.bankAccount.accountNumber = '123456'
-
-        // ;(res.bankAccount.iban = 'RU02 0445 2560 0407 0281 0412 3456 7890 1'),
-        //   (res.bankAccount.swift = 'BARC GB 22 XXX'),
-        //   (res.bankAccount.foreignBankAddress = 'mosagata'),
-        //   (res.bankAccount.foreignBankName = 'banki'),
-        //   (res.bankAccount.currency = 'AUD')
       }
 
       if (!res.emailAddress) {
@@ -246,22 +228,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      if (isRunningOnEnvironment('local')) {
-        return { isEligible: true }
-      }
-      const applicationType = getApplicationType(application).toLowerCase()
-      return await this.siaClientService.getIsEligible(auth, applicationType)
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
+    if (isRunningOnEnvironment('local')) {
+      return { isEligible: true }
     }
+    const applicationType = getApplicationType(application).toLowerCase()
+    return await this.siaClientService.getIsEligible(auth, applicationType)
   }
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
-    try {
-      return await this.siaClientService.getCurrencies(auth)
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    }
+    return await this.siaClientService.getCurrencies(auth)
   }
 }
