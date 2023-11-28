@@ -1,10 +1,11 @@
 import { Args, Resolver, Mutation } from '@nestjs/graphql'
 
-import { CurrentUser, User } from '../auth'
+import { Authorize, CurrentUser, User } from '../auth'
 
 import { VehicleOwnerModel } from './vehicleOwner.model'
 import { VehicleOwnerService } from './vehicleOwner.service'
 
+@Authorize()
 @Resolver(() => VehicleOwnerModel)
 export class VehicleOwnerResolver {
   constructor(private vehicleOwnerService: VehicleOwnerService) {}
