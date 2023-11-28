@@ -126,12 +126,14 @@ export const AdditionalRealEstate = ({
         <GridColumn span={['1/1', '1/2']}>
           <InputController
             id={shareField}
-            name={shareField}
-            label={formatMessage(m.additionalPropertyShare)}
+            label={formatMessage(m.propertyShare)}
             defaultValue={String(field.share)}
-            onChange={(e) => setValue(shareField, Number(e.target.value))}
+            onChange={(e) => {
+              setValue(shareField, Number(e.target.value.replace('%', '')))
+            }}
             error={error?.share}
             type="number"
+            suffix="%"
             required
           />
         </GridColumn>

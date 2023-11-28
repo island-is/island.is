@@ -1015,11 +1015,6 @@ export const m = defineMessages({
     defaultMessage: 'Eignarhluti',
     description: 'Property share label',
   },
-  additionalPropertyShare: {
-    id: 'es.application:additionalPropertyShare',
-    defaultMessage: 'Eignarhluti (%)',
-    description: 'Property share label',
-  },
   addProperty: {
     id: 'es.application:addProperty',
     defaultMessage: 'Bæta við fasteign',
