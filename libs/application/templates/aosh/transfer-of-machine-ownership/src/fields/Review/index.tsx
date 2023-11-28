@@ -5,7 +5,7 @@ import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
 import { ReviewConclusion } from '../ReviewConclusion'
 import { Location } from '../Location'
-import { ReviewCoOwnerAndOperatorRepeater } from '../ReviewCoOwnerAndOperatorRepeater'
+import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 import { CoOwnerAndOperator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
@@ -78,7 +78,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         )
       case 'addPeople':
         return (
-          <ReviewCoOwnerAndOperatorRepeater
+          <ReviewOperatorRepeater
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             setCoOwnersAndOperators={setCoOwnersAndOperators}

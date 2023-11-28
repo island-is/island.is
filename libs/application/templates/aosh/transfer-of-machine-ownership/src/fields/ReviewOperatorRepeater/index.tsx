@@ -10,13 +10,13 @@ import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
 import { error, information, review } from '../../lib/messages'
 import { CoOwnerAndOperator, ReviewScreenProps } from '../../shared'
-import { ReviewCoOwnerAndOperatorRepeaterItem } from './ReviewCoOwnerAndOperatorRepeaterItem'
-import { repeaterButtons } from './ReviewCoOwnerAndOperatorRepeater.css'
+import { ReviewOperatorRepeaterItem } from './ReviewOperatorRepeaterItem'
+import { repeaterButtons } from './ReviewOperatorRepeater.css'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { getValueViaPath } from '@island.is/application/core'
 
-export const ReviewCoOwnerAndOperatorRepeater: FC<
+export const ReviewOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({
   setStep,
@@ -171,7 +171,7 @@ export const ReviewCoOwnerAndOperatorRepeater: FC<
               ? allOperators.indexOf(field)
               : allCoOwners.indexOf(field)
           return (
-            <ReviewCoOwnerAndOperatorRepeaterItem
+            <ReviewOperatorRepeaterItem
               id="buyerCoOwnerAndOperator"
               repeaterField={field}
               index={index}
