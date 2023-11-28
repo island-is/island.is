@@ -107,7 +107,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        entry: ['clearCanceldVehicles'],
+        entry: ['clearCanceledVehicles'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
