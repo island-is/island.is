@@ -30,7 +30,6 @@ import { HnippTemplate } from './dto/hnippTemplate.response'
 
 import { NotificationsService } from './notifications.service'
 
-
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
 @UseInterceptors(CacheInterceptor)
