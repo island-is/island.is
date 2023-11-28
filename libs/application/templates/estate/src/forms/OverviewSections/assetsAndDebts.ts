@@ -226,11 +226,22 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
-  buildDividerField({}),
+  buildDividerField({
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
+  }),
   buildDescriptionField({
     id: 'overviewStocksTitle',
     title: m.stocksTitle,
     description: m.stocksDescription,
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+        ? false
+        : true,
     titleVariant: 'h3',
     space: 'gutter',
   }),
@@ -249,7 +260,9 @@ export const overviewAssetsAndDebts = [
             `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
               stock.nationalId ?? '',
             )}`,
-            `${m.stocksFaceValue.defaultMessage}: ${stock.faceValue}`,
+            `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
+              stock.faceValue ?? 0,
+            )}`,
             `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
             `${m.stocksValue.defaultMessage}: ${formatCurrency(
               stock.value ?? '0',
