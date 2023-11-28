@@ -3,12 +3,9 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { APP_GUARD } from '@nestjs/core'
 import {
   AuthConfig,
   AuthModule,
-  IdsUserGuard,
-  ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
 @Module({

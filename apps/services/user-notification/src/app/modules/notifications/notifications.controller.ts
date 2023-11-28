@@ -9,7 +9,6 @@ import {
   BadRequestException,
   Version,
   VERSION_NEUTRAL,
-  UseGuards,
 } from '@nestjs/common'
 import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
@@ -18,7 +17,6 @@ import {
   ApiExtraModels,
   getSchemaPath,
   ApiOperation,
-  ApiSecurity,
 } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -31,8 +29,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 
 import { NotificationsService } from './notifications.service'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { NotificationsScope } from '@island.is/auth/scopes'
+
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)

@@ -1,6 +1,6 @@
 import { PageInfoDto } from '@island.is/nest/pagination'
 
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsEnum,
   IsString,
@@ -15,6 +15,19 @@ import { Type } from 'class-transformer'
 export enum NotificationStatus {
   READ = 'read',
   UNREAD = 'unread',
+}
+
+export class ExtendedPaginationDto extends PageInfoDto {
+  
+
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      'locale',
+    type: 'string',
+  })
+  @IsString()
+  locale?: string
 }
 
 export class ArgItem {

@@ -22,11 +22,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 
-import { PaginationDto } from '@island.is/nest/pagination'
 import {
   UpdateNotificationDto,
   PaginatedNotificationDto,
   RenderedNotificationDto,
+  ExtendedPaginationDto,
 } from './dto/notification.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
@@ -64,7 +64,7 @@ export class MeNotificationsController {
   @ApiSecurity('oauth2', [NotificationsScope.read])
   findMany(
     @CurrentUser() user: User,
-    @Query() query: PaginationDto,
+    @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
     console.log('User: ', user)
     return this.notificationService.findMany(user, query)

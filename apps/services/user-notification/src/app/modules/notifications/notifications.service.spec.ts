@@ -5,7 +5,6 @@ import { logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
-import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from './notification.model'
 

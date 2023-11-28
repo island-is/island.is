@@ -278,15 +278,15 @@ export class NotificationsService {
       const res = await notification.save()
       const template = await this.getTemplate(notification.templateId)
       const formattedTemplate = this.formatArguments(notification, template)
-      const response = {
-        ...res.toJSON(), // Convert Sequelize model instance to a plain object
-        message: {
-          title: formattedTemplate.notificationTitle,
-          body: formattedTemplate.notificationBody,
-          dataCopy: formattedTemplate.notificationDataCopy,
-          clickAction: formattedTemplate.clickAction,
-        },
-      }
+      // const response = {
+      //   ...res.toJSON(), // Convert Sequelize model instance to a plain object
+      //   message: {
+      //     title: formattedTemplate.notificationTitle,
+      //     body: formattedTemplate.notificationBody,
+      //     dataCopy: formattedTemplate.notificationDataCopy,
+      //     clickAction: formattedTemplate.clickAction,
+      //   },
+      // }
 
       // return response;
       return {

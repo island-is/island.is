@@ -28,13 +28,4 @@ export class PaginationDto {
   })
   @IsString()
   after?: string
-
-  @IsOptional()
-  @ApiPropertyOptional({
-    description:
-      'The value of `endCursor` from the response to query the next page of `limit` number of data items.',
-    type: 'string',
-  })
-  @IsString()
-  locale?: string
 }
