@@ -144,6 +144,8 @@ describe('Old Age Pension Template', () => {
           answers: {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
               additionalDocumentsRequired: [],
             },
           },
@@ -167,6 +169,8 @@ describe('Old Age Pension Template', () => {
           answers: {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
               additionalDocumentsRequired: [],
             },
           },

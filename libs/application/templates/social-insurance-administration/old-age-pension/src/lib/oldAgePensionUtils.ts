@@ -31,7 +31,6 @@ import {
   IncompleteEmployer,
   FileType,
   SelfEmployed,
-  AdditionalInformation,
   FileUpload,
   Attachments,
 } from '../types'
@@ -116,7 +115,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
-    'fileUploadAdditionalFiles.additionalDocumentsRequired',
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
   const pensionAttachments = getValueViaPath(
@@ -470,7 +469,12 @@ export function getAttachments(application: Application) {
   }
 
   const { answers, externalData } = application
-  const { applicationType, employmentStatus } = getApplicationAnswers(answers)
+  const {
+    applicationType,
+    employmentStatus,
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
 
@@ -497,17 +501,13 @@ export function getAttachments(application: Application) {
     )
   }
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
-
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 

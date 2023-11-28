@@ -7,7 +7,7 @@ import {
   YES,
   TaxLevelOptions,
 } from './constants'
-import { errorMessages } from './messages'
+import { errorMessages, validatorErrorMessages } from './messages'
 import {
   formatBankInfo,
   validIBAN,
@@ -22,6 +22,12 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 const validateOptionalPhoneNumber = (value: string) => {
   return isValidPhoneNumber(value) || value === ''
 }
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -122,6 +128,13 @@ export const dataSchema = z.object({
       TaxLevelOptions.SECOND_LEVEL,
       TaxLevelOptions.THIRD_LEVEL,
     ]),
+  }),
+  fileUploadAdditionalFilesRequired: z.object({
+    additionalDocumentsRequired: z
+      .array(FileSchema)
+      .refine((a) => a.length !== 0, {
+        params: validatorErrorMessages.requireAttachment,
+      }),
   }),
 })
 

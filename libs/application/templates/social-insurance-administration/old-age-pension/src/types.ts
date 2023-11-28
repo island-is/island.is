@@ -67,8 +67,3 @@ export interface FileUpload {
 export interface SelfEmployed {
   SelfEmployedAttachment?: FileType[]
 }
-
-export interface AdditionalInformation {
-  additionalDocuments?: FileType[]
-  additionalDocumentsRequired?: FileType[]
-}

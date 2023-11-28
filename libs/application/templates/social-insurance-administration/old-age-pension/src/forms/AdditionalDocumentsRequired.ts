@@ -1,5 +1,5 @@
 import {
-  buildCustomField,
+  buildFileUploadField,
   buildForm,
   buildMultiField,
   buildSection,
@@ -8,6 +8,7 @@ import {
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { inReviewFormMessages, oldAgePensionFormMessage } from '../lib/messages'
+import { FILE_SIZE_LIMIT } from '../lib/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'OldAgePensionInReviewUpload',
@@ -30,10 +31,20 @@ export const AdditionalDocumentsRequired: Form = buildForm({
             oldAgePensionFormMessage.fileUpload
               .additionalDocumentRequiredDescription,
           children: [
-            buildCustomField({
-              id: 'fileUploadAdditionalFiles.additionalDocumentsRequired',
+            buildFileUploadField({
+              id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
               title: '',
-              component: 'UploadAdditionalDocuments',
+              maxSize: FILE_SIZE_LIMIT,
+              maxSizeErrorText:
+                oldAgePensionFormMessage.fileUpload.attachmentMaxSizeError,
+              uploadAccept: '.pdf',
+              uploadHeader:
+                oldAgePensionFormMessage.fileUpload.attachmentHeader,
+              uploadDescription:
+                oldAgePensionFormMessage.fileUpload.attachmentDescription,
+              uploadButtonLabel:
+                oldAgePensionFormMessage.fileUpload.attachmentButton,
+              uploadMultiple: true,
             }),
             buildSubmitField({
               id: 'submit',
