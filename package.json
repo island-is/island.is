@@ -53,7 +53,7 @@
     "help": "nx help",
     "ts-node": "cross-env ts-node -r tsconfig-paths/register -O '{\\\"module\\\":\\\"commonjs\\\",\\\"esModuleInterop\\\":true}'",
     "ts": "node -r ./scripts/ts-node.js",
-    "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true",
+    "openapi-generator": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true,withInterfaces=true,stringEnums=true",
     "schemas": "node ./scripts/schemas.js",
     "postinstall": "node -e 'process.exit(process.env.CI || process.env.SKIP_POSTINSTALL ? 0 : 1);' || node ./scripts/postinstall.js",
     "check-tags": "yarn ts scripts/check-tags.ts",

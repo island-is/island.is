@@ -9,7 +9,6 @@ import { Field, RecordObject, SubmitField } from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { TemplateApi } from './template-api'
 
 export type BeforeSubmitCallback = () => Promise<[true, null] | [false, string]>
 
@@ -148,12 +147,6 @@ export interface DataProviderBuilderItem {
   source?: string
   provider?: Provider
 }
-
-export interface TemplateApiProviderBuilderItem
-  extends DataProviderBuilderItem {
-  provider: TemplateApi
-}
-
 export interface Provider {
   externalDataId?: string
   actionId: string

@@ -2,11 +2,10 @@ import {
   InstitutionNationalIds,
   NationalRegistryUserApi,
   PaymentCatalogApi,
-  TemplateApiProviderBuilderItem,
   UserProfileApi,
 } from '@island.is/application/types'
 
-const dataProviders: TemplateApiProviderBuilderItem[] = [
+const dataProviders = [
   {
     provider: NationalRegistryUserApi,
     title: 'Persónuupplýsingar úr Þjóðskrá',

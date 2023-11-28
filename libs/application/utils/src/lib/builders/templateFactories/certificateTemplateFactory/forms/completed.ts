@@ -1,4 +1,7 @@
-export const generateCompleted = (title: string): string => {
+import { Form } from '@island.is/application/types'
+import { startForm } from '../../../form/formBuilder'
+
+export const generateCompleted = (title: string): Form => {
   const completed = {
     id: 'SampleFormId',
     title: title,
@@ -42,5 +45,5 @@ export const generateCompleted = (title: string): string => {
       },
     ],
   }
-  return JSON.stringify(completed)
+  return startForm('Completed').endForm()
 }

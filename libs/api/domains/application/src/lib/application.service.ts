@@ -63,15 +63,13 @@ export class ApplicationService {
     locale: Locale,
     input?: ApplicationApplicationsInput,
   ) {
-    return await this.applicationApiWithAuth(user).applicationControllerFindAll(
-      {
-        nationalId: user.nationalId,
-        locale,
-        typeId: input?.typeId?.join(','),
-        status: input?.status?.join(','),
-        scopeCheck: input?.scopeCheck,
-      },
-    )
+    return this.applicationApiWithAuth(user).applicationControllerFindAll({
+      nationalId: user.nationalId,
+      locale,
+      typeId: input?.typeId?.join(','),
+      status: input?.status?.join(','),
+      scopeCheck: input?.scopeCheck,
+    })
   }
 
   async findAllAdmin(

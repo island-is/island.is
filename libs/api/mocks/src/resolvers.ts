@@ -3,7 +3,7 @@ import { createResolvers } from '@island.is/shared/mocking'
 import { Resolvers } from './types'
 import { resolvers as cmsResolvers } from './domains/cms'
 import { resolvers as searchResolvers } from './domains/search'
-import { resolvers as applicationsResolvers } from './domains/applications'
+//import { resolvers as applicationsResolvers } from './domains/applications'
 import { resolvers as assetResolvers } from './domains/assets'
 import { resolvers as authResolvers } from './domains/auth/resolvers'
 import { resolvers as identityResolvers } from './domains/identity/resolvers'
@@ -19,7 +19,7 @@ export const resolvers = createResolvers<Resolvers>(
     authResolvers,
     identityResolvers,
     searchResolvers,
-    applicationsResolvers,
+    //  applicationsResolvers,
     assetResolvers,
     licenseServiceResolvers,
     financeResolvers,

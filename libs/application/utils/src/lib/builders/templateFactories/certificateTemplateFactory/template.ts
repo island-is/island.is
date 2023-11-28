@@ -4,7 +4,7 @@ import {
   InstitutionNationalIds,
   PaymentCatalogApi,
   TemplateApi,
-  TemplateApiProviderBuilderItem,
+  DataProviderBuilderItem,
 } from '@island.is/application/types'
 import { applicationBuilder, state } from '../../template/applicationBuilder'
 
@@ -17,7 +17,7 @@ import { prerequisitesState } from '../../state/prerequisites'
 
 export function buildCertificateTemplate(data: {
   name: string
-  additionalProvider: TemplateApiProviderBuilderItem
+  additionalProvider: DataProviderBuilderItem
   getPdfApi: TemplateApi<unknown>
   templateId: ApplicationTypes
   title: string
@@ -87,7 +87,7 @@ export function buildCertificateTemplate(data: {
     },
   ]
 
-  const application = applicationBuilder(name, templateId)
+  const application = applicationBuilder(name, templateId, 'draft')
     .addState(
       prerequisitesState({
         name,
@@ -97,7 +97,7 @@ export function buildCertificateTemplate(data: {
     )
     .addState(
       draft
-        .setForm(JSON.stringify(draftForm))
+        .setForm(draftForm)
         .addTransition(DefaultEvents.SUBMIT, payment.name),
     )
     .addState(payment)

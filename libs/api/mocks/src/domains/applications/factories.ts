@@ -4,8 +4,8 @@ import {
   DataProviderResult,
 } from '@island.is/application/types'
 
-import { Application } from '../../types'
-
+import { Application, ApplicationForm } from '../../types'
+/*
 export const application = factory<Application>({
   id: () => faker.datatype.uuid(),
   created: () => faker.date.past().toISOString(),
@@ -18,8 +18,9 @@ export const application = factory<Application>({
   answers: [],
   externalData: {},
   status: ApplicationStatus.IN_PROGRESS,
+  form: new ApplicationForm(),
 })
-
+*/
 export const externalData = factory<DataProviderResult>({
   status: 'success',
   data: undefined,

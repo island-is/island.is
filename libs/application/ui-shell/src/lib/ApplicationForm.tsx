@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
+import { Application as ApplicationResponse } from '@island.is/api/schema'
 import {
   ApplicationTemplateHelper,
   coreMessages,
@@ -136,18 +137,15 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
 
   useEffect(() => {
     async function populateForm() {
-      console.log('populateForm')
       if (dataSchema === undefined && form === undefined) {
         if (config.formType === ApplicationFormTypes.DYNAMIC) {
-          console.log('Formtype DYnamic')
           const formFromJSON = JSON.parse(
-            application.form as string,
+            JSON.stringify(application.form as string),
           ) as unknown as Form
           const dataSchemaFromJSON = generateZodSchema(formFromJSON)
           setForm(formFromJSON)
           setDataSchema(dataSchemaFromJSON)
         } else {
-          console.log('Formtype Static')
           const template = await getApplicationTemplateByTypeId(
             application.typeId,
           )

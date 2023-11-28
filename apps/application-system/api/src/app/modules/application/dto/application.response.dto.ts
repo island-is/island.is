@@ -1,3 +1,4 @@
+import { FormDto } from '@island.is/application/api/form'
 import {
   ApplicationStatus,
   ApplicationTypes,
@@ -13,7 +14,6 @@ import {
   IsArray,
   IsBoolean,
 } from 'class-validator'
-import { FormResponseDto } from '../../../../../../../../libs/application/api/form/src/lib/dto/form.dto'
 
 class ActionCardTag {
   @ApiPropertyOptional()
@@ -183,7 +183,7 @@ export class BaseApplicationResponseDto {
   @ApiProperty()
   @Expose()
   @IsObject()
-  form?: FormResponseDto
+  form?: FormDto
 
   constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)

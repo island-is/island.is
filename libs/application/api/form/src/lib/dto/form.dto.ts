@@ -11,7 +11,12 @@ import {
   MaybeWithApplicationAndField,
   Option,
 } from '@island.is/application/types'
-import { ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  ApiExtraModels,
+  ApiProperty,
+  ApiPropertyOptional,
+  getSchemaPath,
+} from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import {
   IsArray,
@@ -22,21 +27,177 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { FormatMessage } from '@island.is/cms-translations'
 
-export class FormDto {
+type FieldValue = string | number | boolean | Date
+
+export class FieldDto {
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  id!: string
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  title!: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  description?: string
+
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @Expose()
+  isPartOfRepeater?: boolean
+
+  @ApiProperty({ enum: FieldTypes })
+  @IsEnum(FieldTypes)
+  @Expose()
+  type!: FieldTypes
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  @IsEnum(FieldComponents)
+  component!: FieldComponents
+
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @Expose()
+  disabled?: boolean
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  width?: string
+
+  @ApiPropertyOptional()
+  @IsObject()
+  @Expose()
+  colSpan?: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  defaultValue?: string
+
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @Expose()
+  doesNotRequireAnswer?: boolean
+
+  @ApiPropertyOptional()
+  @IsObject()
+  @Expose()
+  specifics?: Record<string, FieldValue>
+}
+
+export class DataProviderItemDto {
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  id!: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  action?: string
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Expose()
+  order?: number
+
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  title!: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  subTitle?: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  pageTitle?: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  source?: string
+}
+
+export class FormItemDto {
+  @IsObject()
+  @ApiPropertyOptional()
+  condition?: Condition | undefined
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  title!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  id!: string
+
+  @ApiProperty({ enum: FormItemTypes })
+  @Expose()
+  @IsEnum(FormItemTypes)
+  type!: FormItemTypes
+
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @Expose()
+  isPartOfRepeater?: boolean
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  description?: string
+
+  @ApiPropertyOptional()
+  @IsString()
+  @Expose()
+  space?: string
+
+  @ApiProperty()
   @IsArray()
   @Expose()
-  @Type(() => Object)
-  @ApiPropertyOptional({ type: [Object], default: [] })
-  children!: object[]
+  @ApiProperty({ type: [FormItemDto], default: [] })
+  children!: FormItemDto[]
+
+  @ApiPropertyOptional()
+  @IsArray()
+  @Expose()
+  @ApiPropertyOptional({ type: [FieldDto], default: [] })
+  fields?: FieldDto[]
+
+  @ApiPropertyOptional()
+  @IsNumber()
+  @Expose()
+  draftPageNumber?: number
+
+  @ApiPropertyOptional({ type: [DataProviderItemDto], default: [] })
+  @IsArray()
+  @Expose()
+  dataProviders?: DataProviderItemDto[]
+}
+
+export class FormDto {
+  @ApiProperty({ type: [FormItemDto], default: [] })
+  children!: FormItemDto[]
 
   @ApiPropertyOptional()
   @Expose()
   @IsString()
   icon?: string
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @Expose()
   @IsString()
   id!: string
@@ -61,206 +222,109 @@ export class FormDto {
   @IsBoolean()
   renderLastScreenButton?: boolean
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @Expose()
   @IsString()
   title!: string
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   @Expose()
   @IsString()
-  type!: string
+  type!: FormItemTypes.FORM
 }
 
-export function formToDto(form: Form, formatMessage: FormatMessage): object {
-  const dto = new FormDto()
-  dto.children = form.children
-  dto.icon = form.icon
-  dto.id = form.id
-  dto.logo = form.logo as unknown as string
-  dto.mode = form.mode
-  dto.renderLastScreenBackButton = form.renderLastScreenBackButton
-  dto.renderLastScreenButton = form.renderLastScreenButton
-  dto.title = formatMessage(form.title)
-  dto.type = form.type
-  return dto
-}
-
-export class FormItem {
-  @IsObject()
-  @ApiPropertyOptional()
-  condition?: Condition | undefined
-
-  @Expose()
-  @IsString()
-  title!: FormText
-
-  @IsString()
-  id!: string
-}
-
-export class Section extends FormItem {
-  @IsArray()
-  @Expose()
-  @ValidateNested({ each: true })
-  children!: Array<SubSection | MultiField>
-
-  @Expose()
-  @IsEnum(FormItemTypes)
-  type!: FormItemTypes.SECTION
-
-  @IsNumber()
-  @Expose()
-  draftPageNumber?: number
-}
-
-export class SubSection extends FormItem {
-  @IsArray()
-  @Expose()
-  @ValidateNested({ each: true })
-  children!: Array<FormItem>
-
-  @Expose()
-  @IsEnum(FormItemTypes)
-  type!: FormItemTypes.SUB_SECTION
-}
-
-export class MultiField extends FormItem {
-  @IsArray()
-  @Expose()
-  @ValidateNested({ each: true })
-  children!: Array<BaseField>
-
-  @Expose()
-  @IsEnum(FormItemTypes)
-  type!: FormItemTypes.MULTI_FIELD
-
-  @IsBoolean()
-  @Expose()
-  isPartOfRepeater?: boolean
-
-  @IsString()
-  @Expose()
-  description?: string
-
-  @IsString()
-  @Expose()
-  space?: string
-}
-
-export class BaseField extends FormItem {
-  @IsString()
-  @Expose()
-  override id!: string
-
-  @IsString()
-  @Expose()
-  component!: string
-
-  @IsString()
-  @Expose()
-  override title!: string
-
-  @IsString()
-  @Expose()
-  description?: string
-
-  children: undefined
-
-  @IsBoolean()
-  @Expose()
-  disabled?: boolean
-
-  @IsString()
-  @Expose()
-  width?: string
-
-  @IsObject()
-  @Expose()
-  colSpan?: string
-
-  @IsBoolean()
-  @Expose()
-  isPartOfRepeater?: boolean
-
-  @IsString()
-  @Expose()
-  defaultValue?: string
-
-  @IsBoolean()
-  @Expose()
-  doesNotRequireAnswer?: boolean
-}
-
+/*
 export class TextField extends BaseField {
+  @ApiProperty()
+  @IsString()
+  @Expose()
+  type!: FieldTypes.TEXT
+
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   variant?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   backgroundColor?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   format?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   suffix?: string
 
+  @ApiPropertyOptional()
   @IsNumber()
   @Expose()
   rows?: number
 
+  @ApiPropertyOptional()
   @IsBoolean()
   @Expose()
   required?: boolean
 }
 
 export class SubmitField extends BaseField {
+  @ApiProperty()
   @IsString()
   @Expose()
   type!: FieldTypes.SUBMIT
 
+  @ApiProperty()
   @IsString()
   @Expose()
   override component!: FieldComponents.SUBMIT
 
+  @ApiProperty()
   @IsArray()
   @Expose()
   actions!: CallToAction[]
 
+  @ApiProperty()
   @IsString()
   @Expose()
   placement!: 'footer' | 'screen'
 
+  @ApiPropertyOptional()
   @IsBoolean()
   @Expose()
   refetchApplicationAfterSubmit?: boolean
 }
 
 export class ExternalDataProvider extends FormItem {
+  @ApiProperty()
   @IsArray()
   @Expose()
   dataProviders!: DataProviderItem[]
 
+  @ApiPropertyOptional()
   @IsArray()
   @Expose()
   otherPermissions?: DataProviderPermissionItem[]
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   checkboxLabel?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   subTitle?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   description?: string
 
+  @ApiPropertyOptional()
   @ValidateNested()
   @Type(() => SubmitField)
   @Expose()
@@ -268,61 +332,76 @@ export class ExternalDataProvider extends FormItem {
 }
 
 export class RadioField extends BaseField {
+  @ApiProperty()
   @IsString()
   @Expose()
   type!: FieldTypes.RADIO
 
+  @ApiProperty()
   @IsArray()
   @Expose()
   options!: MaybeWithApplicationAndField<Option[]>
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   backgroundColor?: string
 
+  @ApiPropertyOptional()
   @IsBoolean()
   @Expose()
   largeButtons?: boolean
 
+  @ApiPropertyOptional()
   @IsBoolean()
   @Expose()
   required?: boolean
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   space?: string
 
+  @ApiProperty()
   @IsString()
   @Expose()
   override component!: FieldComponents.RADIO
 }
 
 export class DescriptionField extends BaseField {
+  @ApiProperty()
   @IsString()
   @Expose()
   type!: FieldTypes.DESCRIPTION
 
+  @ApiProperty()
   @IsString()
   @Expose()
   override component!: FieldComponents.DESCRIPTION
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   toolTip?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   titleToolTip?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   titleVariant?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   marginBottom?: string
 
+  @ApiPropertyOptional()
   @IsString()
   @Expose()
   space?: string
 }
+*/

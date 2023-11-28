@@ -1,5 +1,5 @@
 import { Resolvers } from '../../types'
-import { store } from './store'
+import { store } from './store' /*
 import { application, externalData } from './factories'
 
 export const resolvers: Resolvers = {
@@ -45,3 +45,4 @@ export const resolvers: Resolvers = {
     },
   },
 }
+*/

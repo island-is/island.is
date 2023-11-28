@@ -1,4 +1,4 @@
-import { application } from './factories'
+//import { application } from './factories'
 import { NationalRegistryFamilyMember } from '../../types'
 import { createStore, faker } from '@island.is/shared/mocking'
 

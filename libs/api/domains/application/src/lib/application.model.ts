@@ -9,6 +9,8 @@ import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
 } from '../../gen/fetch'
+import { FormItemDtoTypeEnum } from '../../gen/fetch/models/FormItemDto'
+import { FieldDtoTypeEnum } from '../../gen/fetch/models/FieldDto'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -24,6 +26,14 @@ registerEnumType(ApplicationListAdminResponseDtoTypeIdEnum, {
 
 registerEnumType(ApplicationListAdminResponseDtoStatusEnum, {
   name: 'ApplicationListAdminResponseDtoStatusEnum',
+})
+
+registerEnumType(FormItemDtoTypeEnum, {
+  name: 'FormItemDtoTypeEnum',
+})
+
+registerEnumType(FieldDtoTypeEnum, {
+  name: 'FieldDtoTypeEnum',
 })
 
 @ObjectType()
@@ -75,11 +85,141 @@ class ActionCardMetaData {
 
   @Field(() => [ApplicationHistory], { nullable: true })
   history?: ApplicationHistory[]
+
   @Field(() => Number, { nullable: true })
   draftFinishedSteps?: number
 
   @Field(() => Number, { nullable: true })
   draftTotalSteps?: number
+}
+
+@ObjectType()
+export class ApplicationDataProviderItem {
+  @Field(() => String)
+  id!: string
+
+  @Field(() => String, { nullable: true })
+  action?: string
+
+  @Field(() => String, { nullable: true })
+  order?: number
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String, { nullable: true })
+  subTitle?: string
+
+  @Field(() => String, { nullable: true })
+  pageTitle?: string
+
+  @Field(() => String, { nullable: true })
+  source?: string
+}
+
+@ObjectType()
+export class ApplicationFormField {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
+  description?: string
+
+  @Field(() => String, { nullable: true })
+  isPartOfRepeater?: boolean
+
+  @Field(() => String, { nullable: true })
+  type?: FieldDtoTypeEnum
+
+  @Field(() => String, { nullable: true })
+  component?: string
+
+  @Field(() => String, { nullable: true })
+  disabled?: boolean
+
+  @Field(() => String, { nullable: true })
+  width?: string
+
+  @Field(() => String, { nullable: true })
+  colSpan?: string
+
+  @Field(() => String, { nullable: true })
+  defaultValue?: string
+
+  @Field(() => Boolean, { nullable: true })
+  doesNotRequireAnswer?: boolean
+
+  @Field(() => graphqlTypeJson, { nullable: true })
+  specifics?: object
+}
+
+@ObjectType()
+export class FormItem {
+  @Field(() => String, { nullable: true })
+  condition?: object
+
+  @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => FormItemDtoTypeEnum, { nullable: true })
+  type?: FormItemDtoTypeEnum
+
+  @Field(() => Boolean, { nullable: true })
+  isPartOfRepeater?: boolean
+
+  @Field(() => String, { nullable: true })
+  description?: string
+
+  @Field(() => String, { nullable: true })
+  space?: string
+
+  @Field(() => [FormItem], { nullable: true })
+  children?: FormItem[]
+
+  @Field(() => [ApplicationFormField], { nullable: true })
+  fields?: ApplicationFormField[]
+
+  @Field(() => String, { nullable: true })
+  draftPageNumber?: number
+
+  @Field(() => [ApplicationDataProviderItem], { nullable: true })
+  dataProviders?: ApplicationDataProviderItem[]
+}
+
+@ObjectType()
+export class ApplicationForm {
+  @Field(() => [FormItem], { nullable: true })
+  children?: FormItem[]
+
+  @Field(() => String, { nullable: true })
+  icon?: string
+
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => String, { nullable: true })
+  logo?: string
+
+  @Field(() => String, { nullable: true })
+  mode?: string
+
+  @Field(() => String, { nullable: true })
+  renderLastScreenBackButton?: boolean
+
+  @Field(() => String, { nullable: true })
+  renderLastScreenButton?: boolean
+
+  @Field(() => String, { nullable: true })
+  title?: string
+
+  @Field(() => String, { nullable: true })
+  type!: string
 }
 
 @ObjectType()
@@ -129,8 +269,8 @@ export class Application {
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
 
-  @Field(() => String, { nullable: true })
-  form?: string
+  @Field(() => ApplicationForm)
+  form!: ApplicationForm
 }
 
 @ObjectType()

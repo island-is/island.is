@@ -15,7 +15,7 @@ import {
 export function prerequisitesForm(
   title: string,
   providers: DataProviderBuilderItem[],
-): string {
+): Form {
   const formDefinition: Form = {
     id: 'PrerequisiteForm',
     title,
@@ -60,5 +60,5 @@ export function prerequisitesForm(
 
   formDefinition.children = [section]
   const form = buildForm(formDefinition)
-  return JSON.stringify(form) // TODO let template accept Form type
+  return form // TODO let template accept Form type
 }
