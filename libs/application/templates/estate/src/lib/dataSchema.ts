@@ -18,7 +18,6 @@ const asset = z
     initial: z.boolean(),
     enabled: z.boolean(),
     share: z.number(),
-    shareTemp: z.string().optional(),
   })
   .refine(
     ({ enabled, marketValue }) => {
@@ -37,21 +36,11 @@ const asset = z
     },
   )
   .refine(
-    ({ enabled, share }) => {
-      return enabled && share ? share > 0 && share <= 1 : true
+    ({ share }) => {
+      return share ? share > 0 && share <= 100 : true
     },
     {
       path: ['share'],
-    },
-  )
-  .refine(
-    ({ enabled, shareTemp }) => {
-      return enabled && shareTemp && shareTemp !== ''
-        ? isNumericalString(shareTemp)
-        : true
-    },
-    {
-      path: ['shareTemp'],
     },
   )
   .refine(

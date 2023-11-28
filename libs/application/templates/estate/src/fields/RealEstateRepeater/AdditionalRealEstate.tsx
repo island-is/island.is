@@ -15,8 +15,6 @@ import { m } from '../../lib/messages'
 import { useLazyQuery } from '@apollo/client'
 import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { Query, SearchForPropertyInput } from '@island.is/api/schema'
-import { convertToShare, isNumericalString } from '../../lib/utils'
-import { COMMA_REGEX, PERCENTAGE_REGEX } from '../../lib/constants'
 
 export const AdditionalRealEstate = ({
   field,
@@ -41,11 +39,10 @@ export const AdditionalRealEstate = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
-  const shareField = `${fieldIndex}.share`
-  const shareTempField = `${fieldIndex}.shareTemp`
   const marketValueField = `${fieldIndex}.marketValue`
+  const shareField = `${fieldIndex}.share`
 
-  const { control, setValue, clearErrors, getValues } = useFormContext()
+  const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
@@ -78,20 +75,6 @@ export const AdditionalRealEstate = ({
     }
   }, [getProperty, address, addressField, propertyNumberInput, setValue])
 
-  const handleShareInputChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const inputValue = event.target.value.replace('%', '')
-    if (isNumericalString(inputValue)) {
-      const numericValueStr = inputValue
-        .replace(PERCENTAGE_REGEX, '')
-        .replace(COMMA_REGEX, '.')
-      const share = convertToShare(numericValueStr)
-      setValue(shareField, share)
-      setValue(shareTempField, `${numericValueStr}%`)
-    }
-  }
-
   return (
     <Box position="relative" key={field.id} marginTop={2}>
       <Controller
@@ -104,12 +87,6 @@ export const AdditionalRealEstate = ({
         name={enabledField}
         control={control}
         defaultValue={field.enabled || false}
-        render={() => <input type="hidden" />}
-      />
-      <Controller
-        name={shareField}
-        control={control}
-        defaultValue={field.share || ''}
         render={() => <input type="hidden" />}
       />
       <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
@@ -148,12 +125,13 @@ export const AdditionalRealEstate = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <InputController
-            id={shareTempField}
-            label={formatMessage(m.propertyShare)}
-            defaultValue={field?.share ? (field.share * 100).toFixed() : '100%'}
-            onChange={(e) => handleShareInputChange(e)}
-            placeholder="100%"
-            error={error?.share || error?.shareTemp}
+            id={shareField}
+            name={shareField}
+            label={formatMessage(m.additionalPropertyShare)}
+            defaultValue={String(field.share)}
+            onChange={(e) => setValue(shareField, Number(e.target.value))}
+            error={error?.share}
+            type="text"
             required
           />
         </GridColumn>
@@ -163,7 +141,7 @@ export const AdditionalRealEstate = ({
             name={marketValueField}
             label={formatMessage(m.realEstateValueTitle)}
             defaultValue={field.marketValue}
-            placeholder={'0 kr.'}
+            placeholder="0 kr."
             error={error?.marketValue}
             currency
             size="sm"

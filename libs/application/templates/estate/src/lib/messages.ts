@@ -885,11 +885,6 @@ export const m = defineMessages({
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
   },
-  errorOnlyNumbers: {
-    id: 'es.application:error.errorOnlyNumbers',
-    defaultMessage: 'Eingöngu tölustafir leyfðir',
-    description: 'Letter entered in number field',
-  },
 
   // Inheritance step
   inheritanceAddMember: {
@@ -1018,6 +1013,11 @@ export const m = defineMessages({
   propertyShare: {
     id: 'es.application:propertyShare',
     defaultMessage: 'Eignarhluti',
+    description: 'Property share label',
+  },
+  additionalPropertyShare: {
+    id: 'es.application:additionalPropertyShare',
+    defaultMessage: 'Eignarhluti (%)',
     description: 'Property share label',
   },
   addProperty: {

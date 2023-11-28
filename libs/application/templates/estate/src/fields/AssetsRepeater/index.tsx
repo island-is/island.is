@@ -64,7 +64,7 @@ export const AssetsRepeater: FC<
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
-      share: undefined,
+      share: 100,
     })
   const handleRemoveAsset = (index: number) => remove(index)
 

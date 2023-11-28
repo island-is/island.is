@@ -26,7 +26,7 @@ export const RealEstateRepeater: FC<
     name: id,
   })
 
-  const { clearErrors, getValues } = useFormContext()
+  const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
     estate: { assets: EstateAsset[] }
@@ -40,7 +40,7 @@ export const RealEstateRepeater: FC<
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
