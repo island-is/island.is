@@ -47,7 +47,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
-          progress: 0.25,
           //onExit: defineTemplateApi - kalla á TR
           roles: [
             {
@@ -83,7 +82,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
-          progress: 0.25,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -119,7 +117,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          progress: 0.75,
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -164,7 +161,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
-          progress: 0.75,
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
@@ -203,7 +199,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           status: 'inprogress',
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           actionCard: {
             tag: {
               label: coreMessages.tagsRequiresAction,
@@ -238,7 +233,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.APPROVED,
           status: 'approved',
           lifecycle: DefaultStateLifeCycle,
-          progress: 1,
           actionCard: {
             pendingAction: {
               title: statesMessages.applicationApproved,
@@ -263,7 +257,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           name: States.REJECTED,
           status: 'rejected',
           lifecycle: DefaultStateLifeCycle,
-          progress: 1,
           actionCard: {
             historyLogs: [
               {

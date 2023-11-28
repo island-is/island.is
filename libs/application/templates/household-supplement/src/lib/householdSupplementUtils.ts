@@ -62,8 +62,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
-  console.log('additionalAttachments: ', additionalAttachments)
-  console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
 
   return {
     applicantEmail,
