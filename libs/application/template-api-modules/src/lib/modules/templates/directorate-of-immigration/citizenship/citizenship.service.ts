@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -21,13 +21,18 @@ import {
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { YES } from '@island.is/application/core'
+import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private attachmentService: ApplicationAttachmentService,
   ) {
     super(ApplicationTypes.CITIZENSHIP)
   }
@@ -101,6 +106,18 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const answers = application.answers as CitizenshipAnswers
 
+    const test = this.attachmentService.toDocumentDataList(
+      [
+        {
+          key: 'd9f4584e-af29-4cf7-b567-39735f7bd41d_stafrnt-sland-monorepo.pdf',
+          name: 'Stafrnt_sland_-_Monorepo.pdf',
+        },
+      ],
+      'test',
+      application,
+    )
+    this.logger.debug('Testing citizenship files', test)
+
     const residenceConditionInfo =
       await this.directorateOfImmigrationClient.getCitizenshipResidenceConditionInfo(
         auth,
@@ -127,6 +144,27 @@ export class CitizenshipService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
+    //1. Configure attachments
+    const test = this.attachmentService.toDocumentDataList(
+      [
+        {
+          key: 'd9f4584e-af29-4cf7-b567-39735f7bd41d_stafrnt-sland-monorepo.pdf',
+          name: 'Stafrnt_sland_-_Monorepo.pdf',
+        },
+      ],
+      'test',
+      application,
+    )
+    this.logger.debug('Testing citizenship files', test)
+    // const requests = attachmentStatusToAttachmentRequests()
+
+    // const attachments = await this.attachmentProvider.getFiles(
+    //   requests,
+    //   application,
+    // )
+
+    // const fileHashList = attachments.map((attachment) => attachment.hash)
+
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
