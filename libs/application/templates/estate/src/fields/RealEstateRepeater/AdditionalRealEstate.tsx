@@ -81,7 +81,7 @@ export const AdditionalRealEstate = ({
   const handleShareInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const inputValue = event.target.value;
+    const inputValue = event.target.value
     if (isNumericalString(inputValue)) {
       const numericValueStr = inputValue
         .replace(PERCENTAGE_REGEX, '')
