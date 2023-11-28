@@ -17,7 +17,7 @@ export const SocialInsuranceAdministrationClientConfig = defineConfig({
       'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
     ),
     fetch: {
-      timeout: env.optionalJSON('XROAD_TR_TIMEOUT') ?? 50000,
+      timeout: env.optionalJSON('XROAD_TR_TIMEOUT') ?? 30000,
     },
   }),
 })
