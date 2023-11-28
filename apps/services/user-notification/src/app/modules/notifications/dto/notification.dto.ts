@@ -18,8 +18,6 @@ export enum NotificationStatus {
 }
 
 export class ExtendedPaginationDto extends PaginationDto {
-  
-
   @IsOptional()
   @ApiPropertyOptional({
     description: 'locale',
