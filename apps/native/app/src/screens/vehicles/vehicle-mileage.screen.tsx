@@ -120,17 +120,21 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     (value?: string) => {
       const mileage = Number(String(value ?? '').replace(/\D/g, ''));
       if (mileage <= highestMileage) {
-        // @todo intl
-        Alert.alert('Error', 'Mileage input too low.');
+        Alert.alert(
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
+        );
         return false;
       } else if (mileage > 9999999) {
-        // @todo intl
-        Alert.alert('Error', 'Mileage input too high.');
+        Alert.alert(
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooHigh' }),
+        );
         return false;
       }
       return String(mileage);
     },
-    [highestMileage],
+    [highestMileage, intl],
   );
 
   const onSubmit = useCallback(() => {
@@ -148,19 +152,22 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       },
     }).then(res => {
       if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
-        // @todo intl
-        Alert.alert('Error', 'Failed to save mileage. Try again later.');
+        Alert.alert(
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+        );
       } else {
-        // @todo intl
-        Alert.alert('Success', 'Mileage saved successfully.');
+        Alert.alert(
+          intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+        );
       }
     });
-  }, [id, input, parseMileage, postMileage]);
+  }, [id, input, parseMileage, postMileage, intl]);
 
   const onEdit = useCallback(() => {
     return Alert.prompt(
-      // @todo intl
-      'Edit mileage',
+      intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
       undefined,
       [
         {
@@ -172,8 +179,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               return;
             }
             if (!internalId) {
-              // @todo intl
-              return Alert.alert('Error', 'Missing internal ID');
+              return Alert.alert(
+                intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+                intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+              );
             }
             updateMileage({
               variables: {
@@ -185,24 +194,22 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               },
             }).then(res => {
               if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
-                // @todo intl
                 Alert.alert(
-                  'Error',
-                  'Failed to update mileage. Try again later.',
+                  intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+                  intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
                 );
               } else {
-                // @todo intl
-                Alert.alert('Success', 'Mileage updated successfully.');
+                Alert.alert(
+                  intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
+                  intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),);
               }
             });
           },
-          // @todo intl
-          text: 'Senda inn breytingu',
+          text: intl.formatMessage({ id: 'vehicle.mileage.promptEditButton' }),
           style: 'default',
         },
         {
-          // @todo intl
-          text: 'Hætta við',
+          text: intl.formatMessage({ id: 'vehicle.mileage.promptCancelButton' }),
           style: 'cancel',
         },
       ],
@@ -210,7 +217,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       String(highestMileage),
       'number-pad',
     );
-  }, [data, highestMileage, id, parseMileage, updateMileage]);
+  }, [data, highestMileage, id, parseMileage, updateMileage, intl]);
 
   return (
     <FlatList
@@ -252,10 +259,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
             <TextField
               editable={canRegisterMileage}
               key="mileage-input"
-              // @todo intl
-              placeholder="Sláðu inn núverandi kílómetrastöðu"
-              // @todo intl
-              label="Kílómetrastaða"
+              placeholder={intl.formatMessage({ id: 'vehicle.mileage.inputPlaceholder' })}
+              label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
               value={input}
               maxLength={9}
               keyboardType="decimal-pad"
@@ -273,8 +278,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               }
             />
             <Button
-              // @todo intl
-              title="Skrá"
+              title={intl.formatMessage({ id: 'vehicle.mileage.inputSubmitButton' })}
               onPress={onSubmit}
               disabled={!canRegisterMileage}
             />
@@ -285,14 +289,12 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 variant="body3"
                 textAlign="center"
                 style={{marginTop: 16}}>
-                {/* @todo intl */}
-                Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum
+                {intl.formatMessage({ id: 'vehicle.mileage.registerIntervalCopy' })}
               </Typography>
             )}
             <Button
               icon={externalLinkIcon}
-              // @todo intl
-              title="Sjá nánari upplýsingar á island.is"
+              title={intl.formatMessage({ id: 'vehicle.mileage.moreInformationCopy' })}
               isTransparent
               textStyle={{fontSize: 12, lineHeight: 16}}
             />
@@ -301,8 +303,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           <Typography
             variant="heading4"
             style={{marginTop: 16, marginBottom: 16}}>
-            {/* @todo intl */}
-            Skráningar
+            {intl.formatMessage({ id: 'vehicle.mileage.historyTitle' })}
           </Typography>
         </View>
       }

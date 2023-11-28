@@ -1,6 +1,7 @@
 import {Skeleton, Typography, useDynamicColor} from '@ui';
 import {Image, Pressable, View} from 'react-native';
 import clock from '../../../assets/icons/clock.png';
+import { useIntl } from 'react-intl';
 
 export function MileageCell({
   title,
@@ -17,6 +18,7 @@ export function MileageCell({
   onPress?(): void;
   skeleton?: boolean;
 }) {
+  const intl = useIntl();
   const dynamicColor = useDynamicColor();
   if (skeleton) {
     return (
@@ -33,7 +35,6 @@ export function MileageCell({
   return (
     <Pressable onPress={editable ? onPress : undefined}>
       <View
-        onLayout={e => console.log(e.nativeEvent.layout.height)}
         style={{
           borderRadius: 8,
           paddingHorizontal: 16,
@@ -59,8 +60,8 @@ export function MileageCell({
               })}
               weight="600"
               size={12}>
-              {/* @todo intl */}
-              Breyta færslu
+
+              {intl.formatMessage({id: 'vehicle.mileage.editRecordButton' })}
             </Typography>
           )}
           {editable && <Image source={clock} style={{marginLeft: 4}} />}

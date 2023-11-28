@@ -77,6 +77,13 @@ const SkeletonItem = () => {
   );
 };
 
+const input = {
+  page: 1,
+  pageSize: 10,
+  showDeregeristered: true,
+  showHistory: true,
+};
+
 export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
   const flatListRef = useRef<FlatList>(null);
@@ -87,12 +94,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
     client,
     fetchPolicy: 'cache-first',
     variables: {
-      input: {
-        page: 1,
-        pageSize: 10,
-        showDeregeristered: true,
-        showHistory: true,
-      },
+      input,
     },
   });
 
@@ -110,7 +112,12 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
       }
       setLoading(true);
       res
-        .refetch()
+        .refetch({
+          input: {
+            ...input,
+            page: 1,
+          },
+        })
         .then(() => {
           loadingTimeout.current = setTimeout(() => {
             setLoading(false);
@@ -186,6 +193,36 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
         data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        onEndReached={() => {
+          if (res.loading) {
+            return;
+          }
+          const pageNumber = res.data?.vehiclesList?.paging?.pageNumber ?? 1;
+          const totalPages = res.data?.vehiclesList?.paging?.totalPages ?? 1;
+          if (pageNumber >= totalPages) {
+            return;
+          }
+
+          return res.fetchMore({
+            variables: {
+              input: {
+                ...input,
+                page: pageNumber + 1,
+              },
+            },
+            updateQuery(prev, {fetchMoreResult}) {
+              return {
+                vehiclesList: {
+                  ...fetchMoreResult.vehiclesList,
+                  vehicleList: [
+                    ...(prev.vehiclesList?.vehicleList ?? []),
+                    ...(fetchMoreResult.vehiclesList?.vehicleList ?? []),
+                  ],
+                },
+              };
+            },
+          });
+        }}
       />
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />

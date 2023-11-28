@@ -1,6 +1,6 @@
 import {Label, VehicleCard} from '@ui';
 import React from 'react';
-import {FormattedDate} from 'react-intl';
+import {FormattedDate, FormattedMessage} from 'react-intl';
 import {SafeAreaView, TouchableHighlight, View} from 'react-native';
 import {useTheme} from 'styled-components/native';
 import {navigateTo} from '../../../lib/deep-linking';
@@ -56,13 +56,16 @@ export const VehicleItem = React.memo(
               label={
                 isInspectionDeadline && nextInspection ? (
                   <Label color="warning" icon>
-                    {/* @todo intl */}
-                    Næsta skoðun <FormattedDate value={nextInspection} />
+                    <FormattedMessage
+                      id="vehicles.nextInspectionLabel"
+                      values={{
+                        date: <FormattedDate value={nextInspection} />,
+                      }}
+                    />
                   </Label>
                 ) : isMileageRequired ? (
                   <Label color="warning" icon>
-                    {/* @todo intl */}
-                    Skrá þarf kílómetrastöðu
+                    <FormattedMessage id="vehicles.mileageRequired" />
                   </Label>
                 ) : null
               }

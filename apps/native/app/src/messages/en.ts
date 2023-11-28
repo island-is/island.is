@@ -283,6 +283,8 @@ export const en: TranslatedMessages = {
   'vehicles.emptyListTitle': 'No vehicles found for the user',
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
+  'vehicles.nextInspectionLabel': 'Next inspection {date}',
+  'vehicles.mileageRequired': 'Mileage required',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -308,6 +310,25 @@ export const en: TranslatedMessages = {
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
+  'vehicleDetail.noInfo': 'No information received',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Error',
+  'vehicle.mileage.errorMileageInputTooLow': 'Mileage input too low',
+  'vehicle.mileage.errorMileageInputTooHigh': 'Mileage input too high',
+  'vehicle.mileage.errorFailedToUpdate': 'Update mileage seems to have failed. Please try again later.',
+  'vehicle.mileage.successTitle': 'Mileage updated',
+  'vehicle.mileage.successMessage': 'Mileage has been updated',
+  'vehicle.mileage.promptEditTitle': 'Edit mileage',
+  'vehicle.mileage.promptEditButton': 'Edit',
+  'vehicle.mileage.promptCancelButton': 'Cancel',
+  'vehicle.mileage.inputPlaceholder': 'Enter current mileage',
+  'vehicle.mileage.inputLabel': 'Mileage',
+  'vehicle.mileage.inputSubmitButton': 'Submit',
+  'vehicle.mileage.registerIntervalCopy': 'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.moreInformationCopy': 'See more information at island.is',
+  'vehicle.mileage.historyTitle': 'Mileage history',
+  'vehicle.mileage.editRecordButton': 'Edit mileage',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',

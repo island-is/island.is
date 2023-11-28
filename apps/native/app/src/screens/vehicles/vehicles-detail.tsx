@@ -51,8 +51,11 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
   if (noInfo && !loading) {
     return (
       <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        {/* @todo intl */}
-        <Text>Engin gögn bárust</Text>
+        <Text>
+          {intl.formatMessage({
+            id: 'vehicleDetail.noInfo',
+          })}
+        </Text>
       </View>
     );
   }
@@ -124,8 +127,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
           {isMileageEnabled && (
             <Button
-              // @todo intl
-              title="Kílómetrastaða"
+              title={intl.formatMessage({id: 'vehicle.mileage.inputLabel' })}
               onPress={() => {
                 navigateTo(`/vehicle-mileage/`, {
                   id,
