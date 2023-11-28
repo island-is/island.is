@@ -316,7 +316,8 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.errorTitle': 'Error',
   'vehicle.mileage.errorMileageInputTooLow': 'Mileage input too low',
   'vehicle.mileage.errorMileageInputTooHigh': 'Mileage input too high',
-  'vehicle.mileage.errorFailedToUpdate': 'Update mileage seems to have failed. Please try again later.',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Update mileage seems to have failed. Please try again later.',
   'vehicle.mileage.successTitle': 'Mileage updated',
   'vehicle.mileage.successMessage': 'Mileage has been updated',
   'vehicle.mileage.promptEditTitle': 'Edit mileage',
@@ -325,7 +326,8 @@ export const en: TranslatedMessages = {
   'vehicle.mileage.inputPlaceholder': 'Enter current mileage',
   'vehicle.mileage.inputLabel': 'Mileage',
   'vehicle.mileage.inputSubmitButton': 'Submit',
-  'vehicle.mileage.registerIntervalCopy': 'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.registerIntervalCopy':
+    'Mileage can only be recorded once every 30 days',
   'vehicle.mileage.moreInformationCopy': 'See more information at island.is',
   'vehicle.mileage.historyTitle': 'Mileage history',
   'vehicle.mileage.editRecordButton': 'Edit mileage',
