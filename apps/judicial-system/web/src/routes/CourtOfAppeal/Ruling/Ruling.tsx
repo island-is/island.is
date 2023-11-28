@@ -28,6 +28,7 @@ import {
   RulingModifiedModal,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -261,6 +262,29 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           </BlueBox>
         </Box>
+        {workingCase.appealRulingDecision ===
+          CaseAppealRulingDecision.CHANGED && (
+          <RestrictionLength
+            workingCase={workingCase}
+            handleIsolationChange={function (
+              event: React.ChangeEvent<HTMLInputElement>,
+            ): void {
+              throw new Error('Function not implemented.')
+            }}
+            handleIsolationDateChange={function (
+              date: Date | undefined,
+              valid: boolean,
+            ): void {
+              throw new Error('Function not implemented.')
+            }}
+            handleValidToDateChange={function (
+              date: Date | undefined,
+              valid: boolean,
+            ): void {
+              throw new Error('Function not implemented.')
+            }}
+          />
+        )}
         <Box marginBottom={5}>
           <Text as="h3" variant="h3" marginBottom={3}>
             {formatMessage(strings.conclusionHeading)}
