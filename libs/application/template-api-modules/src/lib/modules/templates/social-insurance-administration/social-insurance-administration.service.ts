@@ -19,7 +19,6 @@ import {
 import {
   Attachment,
   AttachmentTypeEnum,
-  ResponseError,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
@@ -27,7 +26,6 @@ import {
   getApplicationType,
   transformApplicationToOldAgePensionDTO,
 } from './social-insurance-administration-utils'
-import { coreErrorMessages } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -45,14 +43,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     super('SocialInsuranceAdministration')
   }
 
-  private parseErrors(e: Error | ResponseError) {
-    if (e instanceof Error) {
-      return e.message
-    }
-
-    return { message: e.message }
-  }
-
   private async initAttachments(
     application: Application,
     id: string,
@@ -63,7 +53,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     for (const attachment of attachments) {
       const Key = `${application.id}/${attachment.key}`
-      const pdf = await this.getPdf(Key, id)
+      const pdf = await this.getPdf(Key)
 
       result.push({
         name: attachment.name,
@@ -160,7 +150,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  async getPdf(key: string, fileUpload: string) {
+  async getPdf(key: string) {
     const file = await this.s3
       .getObject({ Bucket: this.attachmentBucket, Key: key })
       .promise()
