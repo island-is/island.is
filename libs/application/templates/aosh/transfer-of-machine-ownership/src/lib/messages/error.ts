@@ -17,11 +17,6 @@ export const error = defineMessages({
     defaultMessage: 'Reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
-  noInsuranceSelected: {
-    id: 'aosh.application:error.nothingSelected',
-    defaultMessage: 'Vinsamlega veldu tryggingarfélag',
-    description: 'If no insurance is selected',
-  },
   couldNotUpdateApplication: {
     id: 'aosh.application:error.couldNotUpdateApplication',
     defaultMessage: 'Ekki tókst að uppfæra umsókn, vinsamlegast reynið aftur',

@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { review, error } from '../../lib/messages'
+import { review, error, location } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { MachineLocation, ReviewScreenProps } from '../../shared'
 import { useFormContext } from 'react-hook-form'
@@ -35,9 +35,7 @@ export const Location: FC<
     postCode: savedSelectedValue?.postCode || 0,
     moreInfo: savedSelectedValue?.moreInfo || '',
   })
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined,
-  )
+  const [, setErrorMessage] = useState<string | undefined>(undefined)
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -72,27 +70,25 @@ export const Location: FC<
         setErrorMessage(undefined)
         setStep && setStep('overview')
       }
-    } else {
-      setErrorMessage(formatMessage(error.noInsuranceSelected))
     }
   }
 
   return (
     <Box>
       <Text marginBottom={1} variant="h2">
-        {formatMessage(insurance.general.title)}
+        {formatMessage(location.general.title)}
       </Text>
       <Text marginBottom={5}>
-        {formatMessage(insurance.general.description)}
+        {formatMessage(location.general.description)}
       </Text>
-      <Text variant="h5">{formatMessage(insurance.labels.addressTitle)}</Text>
+      <Text variant="h5">{formatMessage(location.labels.addressTitle)}</Text>
       <GridRow>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
           <InputController
             id="address"
             name="address"
             type="text"
-            label={formatMessage(insurance.labels.addressLabel)}
+            label={formatMessage(location.labels.addressLabel)}
             //error={errors && getErrorViaPath(errors, 'address')}
             backgroundColor="blue"
             required
@@ -111,7 +107,7 @@ export const Location: FC<
             name="postcode"
             type="text"
             format="###"
-            label={formatMessage(insurance.labels.postCodeLabel)}
+            label={formatMessage(location.labels.postCodeLabel)}
             backgroundColor="blue"
             required
             onChange={(event) => {
@@ -132,7 +128,7 @@ export const Location: FC<
             id="moreInfo"
             name="moreInfo"
             type="text"
-            label={formatMessage(insurance.labels.moreInfoLabel)}
+            label={formatMessage(location.labels.moreInfoLabel)}
             backgroundColor="blue"
             onChange={(event) => {
               setSelectedValue({
@@ -151,7 +147,7 @@ export const Location: FC<
             {formatMessage(review.buttons.back)}
           </Button>
           <Button icon="arrowForward" onClick={onForwardButtonClick}>
-            {formatMessage(insurance.labels.approveButton)}
+            {formatMessage(location.labels.approveButton)}
           </Button>
         </Box>
       </Box>

@@ -1,28 +1,18 @@
-// Insurance company with button - only visible to buyer
+// Location with button - only visible to buyer
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useState, useEffect } from 'react'
-import { Text, GridRow, GridColumn, Box } from '@island.is/island-ui/core'
+import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { error, overview } from '../../../lib/messages'
+import { overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
 import { ReviewScreenProps, MachineLocation } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 
-interface Props {
-  noInsuranceError: boolean
-}
-
 export const LocationSection: FC<
-  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps & Props>
-> = ({
-  setStep,
-  location = {},
-  reviewerNationalId = '',
-  application,
-  noInsuranceError,
-}) => {
+  React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
+> = ({ setStep, location = {}, reviewerNationalId = '', application }) => {
   const { formatMessage } = useLocale()
   const { answers } = application
 
@@ -70,23 +60,16 @@ export const LocationSection: FC<
     >
       <GridRow>
         <GridColumn span={['6/12']}>
-          <Text variant="h4" color={noInsuranceError ? 'red600' : 'dark400'}>
+          <Text variant="h4" color="dark400">
             {formatMessage(overview.labels.locationTitle)}
           </Text>
-          <Text color={noInsuranceError ? 'red600' : 'dark400'}>
+          <Text color="dark400">
             {machineLocation?.address && machineLocation?.postCode
               ? `${machineLocation.address} - ${machineLocation.postCode}`
               : formatMessage(overview.labels.noLocation)}
           </Text>
         </GridColumn>
       </GridRow>
-      {noInsuranceError && (
-        <Box marginTop={2}>
-          <Text variant="eyebrow" color="red600">
-            {formatMessage(error.noInsuranceSelected)}
-          </Text>
-        </Box>
-      )}
     </ReviewGroup>
   )
 }

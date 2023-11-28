@@ -8,6 +8,5 @@ export type TransferOfMachineOwnerShipAnswers = MachineAnswers
 
 export * from './utils'
 export * from './lib/messages/externalData'
-export * from './lib/messages/applicationCheck'
 
 export default template

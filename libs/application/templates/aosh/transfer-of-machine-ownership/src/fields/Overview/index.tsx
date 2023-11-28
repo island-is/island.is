@@ -5,17 +5,11 @@ import {
   Text,
   Divider,
   Button,
-  AlertMessage,
   InputError,
 } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
-import {
-  applicationCheck,
-  overview,
-  review,
-  error as errorMsg,
-} from '../../lib/messages'
+import { overview, review, error as errorMsg } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import {
   VehicleSection,
@@ -35,8 +29,6 @@ import {
   SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { getValueViaPath } from '@island.is/application/core'
-import { OwnerChangeValidationMessage } from '@island.is/api/schema'
 import { APPROVE_OWNER_CHANGE } from '../../graphql/queries'
 import { TransferOfMachineOwnerShipAnswers } from '../..'
 
@@ -48,7 +40,6 @@ export const Overview: FC<
 
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
-  const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
 
   const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
     onError: (e) => {
@@ -187,7 +178,6 @@ export const Overview: FC<
   }
 
   const onApproveButtonClick = async () => {
-    setNoInsuranceError(false)
     setLoading(true)
 
     await doApproveAndSubmit()
@@ -219,7 +209,6 @@ export const Overview: FC<
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}
-          noInsuranceError={noInsuranceError}
         />
 
         {error && (
@@ -227,47 +216,6 @@ export const Overview: FC<
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
-
-        {data?.vehicleOwnerChangeValidation?.hasError &&
-        data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
-          <Box>
-            <AlertMessage
-              type="error"
-              title={formatMessage(applicationCheck.validation.alertTitle)}
-              message={
-                <Box component="span" display="block">
-                  <ul>
-                    {data.vehicleOwnerChangeValidation.errorMessages.map(
-                      (error: OwnerChangeValidationMessage) => {
-                        const message = formatMessage(
-                          getValueViaPath(
-                            applicationCheck.validation,
-                            error?.errorNo || '',
-                          ),
-                        )
-                        const defaultMessage = error.defaultMessage
-                        const fallbackMessage =
-                          formatMessage(
-                            applicationCheck.validation.fallbackErrorMessage,
-                          ) +
-                          ' - ' +
-                          error?.errorNo
-
-                        return (
-                          <li key={error.errorNo}>
-                            <Text variant="small">
-                              {message || defaultMessage || fallbackMessage}
-                            </Text>
-                          </li>
-                        )
-                      },
-                    )}
-                  </ul>
-                </Box>
-              }
-            />
-          </Box>
-        ) : null}
 
         <Box marginTop={14}>
           <Divider />

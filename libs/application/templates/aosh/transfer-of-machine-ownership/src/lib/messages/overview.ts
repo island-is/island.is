@@ -23,17 +23,17 @@ export const overview = {
     locationTitle: {
       id: 'aosh.application:overview.labels.locationTitle',
       defaultMessage: 'Ný staðsetning tækis',
-      description: 'Insurance company title',
+      description: 'Location title',
     },
     noLocation: {
       id: 'aosh.application:overview.labels.noLocation',
       defaultMessage: 'Ekkert skráð',
-      description: 'User has not chosen an insurance company',
+      description: 'User has not chosen a location',
     },
     addLocationButton: {
       id: 'aosh.application:overview.labels.addLocation',
       defaultMessage: 'Skrá staðsetningu tækis',
-      description: 'Add insurance company button',
+      description: 'Add location button',
     },
     agreementDate: {
       id: 'aosh.application:overview.labels.agreementDate',
