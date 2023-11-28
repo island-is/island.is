@@ -132,7 +132,7 @@ export const householdSupplementFormMessage: MessageDir = {
       description: 'Bank',
     },
     householdSupplementDescription: {
-      id: 'hs.application:info.household.supplement.description',
+      id: 'hs.application:info.household.supplement.description#markdown',
       defaultMessage:
         'Til að eiga rétt á heimilisuppbót verður umsækjandi að vera einhleypur og búa einn. Einnig er heimilt að greiða heimilisuppbót til lífeyrisþega ef maki dvelur á stofnun fyrir aldraða. Tvær undantekningar eru á þessu: býr með barni/börnum yngri en 18 ára eða 18-25 ára ungmenni/um  sem er í námi eða ef ungmenni yngra en 25 ára er með tímabundið aðsetur fjarri lögheimili vegna náms.',
       description: 'english translation',
