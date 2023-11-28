@@ -1,8 +1,10 @@
 import {
+  buildCustomField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
+  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
@@ -39,6 +41,11 @@ export const form: Form = buildForm({
           title: m.readyToSubmit,
           description: '',
           children: [
+            buildCustomField({
+              id: 'inheritanceReport.finalStepAcknowledgement',
+              title: '',
+              component: 'FinalStep',
+            }),
             buildSubmitField({
               id: 'inheritanceReport.submit',
               title: '',
