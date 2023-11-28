@@ -1,8 +1,9 @@
 {
   "name": "@island.is/native-app",
-  "version": "0.0.1",
+  "version": "1.2.4",
   "private": true,
   "scripts": {
+    "version:increment": "cd android && fastlane increment_version && cd ../ios && fastlane increment_version",
     "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
