@@ -62,8 +62,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
-  console.log('additionalAttachments: ', additionalAttachments)
-  console.log('additionalAttachmentsRequired: ', additionalAttachmentsRequired)
 
   return {
     applicantEmail,
@@ -205,7 +203,6 @@ export function getAttachments(application: Application) {
   const attachments: Attachments[] = []
 
   const fileUpload = answers.fileUpload as FileUpload
-  console.log('FileUpload: ', fileUpload)
   if (householdSupplementHousing === HouseholdSupplementHousing.RENTER) {
     getAttachmentDetails(
       fileUpload?.leaseAgreement,
@@ -221,7 +218,6 @@ export function getAttachments(application: Application) {
 
   const additionalInfo =
     answers.fileUploadAdditionalFiles as AdditionalInformation
-  console.log('additionalInfo: ', additionalInfo)
   const additionalDocuments = [
     ...(additionalInfo.additionalDocuments &&
     additionalInfo.additionalDocuments?.length > 0
