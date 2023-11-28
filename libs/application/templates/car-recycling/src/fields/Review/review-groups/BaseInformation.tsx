@@ -6,11 +6,7 @@ import { getApplicationExternalData } from '../../../lib/carRecyclingUtils'
 import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 
-export const BaseInformation = ({
-  application,
-  editable,
-  groupHasNoErrors,
-}: ReviewGroupProps) => {
+export const BaseInformation = ({ application }: ReviewGroupProps) => {
   const {
     applicantName,
     applicantNationalId,
@@ -21,24 +17,22 @@ export const BaseInformation = ({
   const { formatMessage } = useLocale()
 
   return (
-    <ReviewGroup
-      isLast
-      isEditable={editable}
-      canCloseEdit={groupHasNoErrors([
-        'applicantInfo.email',
-        'applicantInfo.phonenumber',
-      ])}
-      triggerValidation
-    >
+    <ReviewGroup isLast>
       {applicantName !== '' && (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(carRecyclingMessages.review.name)}
               value={applicantName}
             />
           </GridColumn>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
             <DataValue
               label={formatMessage(carRecyclingMessages.review.nationalId)}
               value={formatKennitala(applicantNationalId)}
@@ -47,8 +41,11 @@ export const BaseInformation = ({
         </GridRow>
       )}
 
-      <GridRow marginBottom={3}>
-        <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={[3, 3, 3, 0]}
+        >
           <DataValue
             label={formatMessage(carRecyclingMessages.review.address)}
             value={applicantAddress}

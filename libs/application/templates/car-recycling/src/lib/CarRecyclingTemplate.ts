@@ -33,7 +33,7 @@ const enum States {
   DRAFT = 'draft',
   SUBMITTED = 'submitted',
 }
-type ReferenceTemplateEvent =
+type Events =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
@@ -44,18 +44,14 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-const determineMessageFromApplicationAnswers = (application: Application) => {
-  return carRecyclingMessages.name
-}
-
 const CarRecyclingTemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.CAR_RECYCLING,
-  name: determineMessageFromApplicationAnswers,
-  institution: carRecyclingMessages.institutionName,
+  name: carRecyclingMessages.shared.applicationName,
+  institution: carRecyclingMessages.shared.institution,
   translationNamespaces: [ApplicationConfigurations.CarRecycling.translation],
   dataSchema: DataSchema,
   featureFlag: Features.carRecyclingApplication,
@@ -66,7 +62,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
-        exit: [],
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
@@ -192,10 +187,13 @@ const CarRecyclingTemplate: ApplicationTemplate<
     },
   },
   mapUserToRole(
-    nationalId: string,
+    id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    return Roles.APPLICANT
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
   answerValidators,
 }
