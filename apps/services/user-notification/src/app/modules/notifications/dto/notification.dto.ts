@@ -1,4 +1,4 @@
-import { PageInfoDto } from '@island.is/nest/pagination'
+import { PageInfoDto, PaginationDto } from '@island.is/nest/pagination'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
@@ -17,7 +17,7 @@ export enum NotificationStatus {
   UNREAD = 'unread',
 }
 
-export class ExtendedPaginationDto extends PageInfoDto {
+export class ExtendedPaginationDto extends PaginationDto {
   
 
   @IsOptional()
