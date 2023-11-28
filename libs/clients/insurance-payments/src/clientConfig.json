@@ -1,0 +1,1176 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "TR Portal API", "version": "v1.0" },
+  "paths": {
+    "/api/protected/v1/Applicant/{applicationType}/eligible": {
+      "get": {
+        "tags": ["Applicant"],
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsEligibleForApplicationReturn"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsEligibleForApplicationReturn"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IsEligibleForApplicationReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Applicant": {
+      "get": {
+        "tags": ["Applicant"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ApplicantInfoReturn" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantInfoReturn" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ApplicantInfoReturn" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Applicant/onetimepayment": {
+      "post": {
+        "tags": ["Applicant"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/protected/v1/Application/withdrawal": {
+      "post": {
+        "tags": ["Application"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/protected/v1/Application/{applicationType}": {
+      "post": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": {} },
+            "text/json": { "schema": {} },
+            "application/*+json": { "schema": {} }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateApplicationFromPaperReturn"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Documents/documents/{documentId}": {
+      "get": {
+        "tags": ["Documents"],
+        "parameters": [
+          {
+            "name": "documentId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "authenticationType",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/currencies": {
+      "get": {
+        "tags": ["General"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              },
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              },
+              "text/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/PaymentPlan": {
+      "get": {
+        "tags": ["PaymentPlan"],
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Test/hello": {
+      "get": {
+        "tags": ["Test"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/protected/v1/Test": {
+      "get": {
+        "tags": ["Test"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/protected/v1/Test/hello/formbuilder": {
+      "get": {
+        "tags": ["Test"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    },
+    "/api/protected/v1/Validation/onetimepayment": {
+      "post": {
+        "tags": ["Validation"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "application/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              },
+              "text/json": {
+                "schema": { "type": "integer", "format": "int32" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Validation/withdrawal": {
+      "post": {
+        "tags": ["Validation"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/Application" }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          },
+          "200": { "description": "Success" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApplicantInfoReturn": {
+        "type": "object",
+        "properties": {
+          "emailAddress": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "bankAccount": {
+            "$ref": "#/components/schemas/GetBankInformationReturn"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Application": {
+        "type": "object",
+        "properties": {
+          "language": { "type": "string", "nullable": true },
+          "portalApplicationID": { "type": "string", "nullable": true },
+          "applicationType": { "type": "string", "nullable": true },
+          "applicationName": { "type": "string", "nullable": true },
+          "Dagssetning": { "type": "string", "format": "date-time" },
+          "Adilar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AssociatedUser" },
+            "nullable": true
+          },
+          "Notandagogn": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/InputData" },
+            "nullable": true
+          },
+          "Greidsla": { "$ref": "#/components/schemas/Payment" },
+          "files": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/File" },
+            "nullable": true
+          },
+          "status": { "$ref": "#/components/schemas/CurrentApplicationStatus" }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationFileTypes": {
+        "enum": [1, 2, 3, 4, 5],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AssociatedUser": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "heimili": { "type": "string", "nullable": true },
+          "stadur": { "type": "string", "nullable": true },
+          "postnumer": { "type": "string", "nullable": true },
+          "tegund": { "type": "integer", "format": "int32" },
+          "hlutverk": { "type": "string", "nullable": true },
+          "netfang": { "type": "string", "nullable": true },
+          "simi": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "CreateApplicationFromPaperReturn": {
+        "type": "object",
+        "properties": {
+          "applicationLineId": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "CurrentApplicationStatus": {
+        "enum": [70, 71, 73, 80, 90, 100, 1100, 1200],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Error": {
+        "required": ["message"],
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string" },
+          "errors": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ErrorDetails" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ErrorDetails": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "integer", "format": "int32" },
+          "message": { "type": "string", "nullable": true },
+          "help": { "type": "string", "nullable": true },
+          "trackingId": { "type": "string", "nullable": true },
+          "param": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "flokkur": { "$ref": "#/components/schemas/ApplicationFileTypes" },
+          "heiti": { "type": "string", "nullable": true },
+          "dags": { "type": "string", "format": "date-time" },
+          "tegund": { "type": "string", "nullable": true },
+          "FileID": { "type": "string", "nullable": true },
+          "ending": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "GetBankInformationReturn": {
+        "type": "object",
+        "properties": {
+          "bank": { "type": "string", "nullable": true },
+          "ledger": { "type": "string", "nullable": true },
+          "accountNumber": { "type": "string", "nullable": true },
+          "iban": { "type": "string", "nullable": true },
+          "swift": { "type": "string", "nullable": true },
+          "foreignBankName": { "type": "string", "nullable": true },
+          "foreignBankAddress": { "type": "string", "nullable": true },
+          "currency": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "InputData": {
+        "type": "object",
+        "properties": {
+          "guid": { "type": "string", "nullable": true },
+          "flokkur": { "type": "string", "nullable": true },
+          "heiti": { "type": "string", "nullable": true },
+          "tegund": { "type": "string", "nullable": true },
+          "gildi": { "type": "string", "nullable": true },
+          "countryCode": { "type": "string", "nullable": true },
+          "nafn": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "IsEligibleForApplicationReturn": {
+        "type": "object",
+        "properties": { "isEligible": { "type": "boolean" } },
+        "additionalProperties": false
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "upphaed": { "type": "string", "nullable": true },
+          "dags": { "type": "string", "format": "date-time", "nullable": true },
+          "korthafi": { "type": "string", "nullable": true },
+          "kortanumer": { "type": "string", "nullable": true },
+          "tegundKorts": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "Using the Authorization header with the Bearer scheme.",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "security": [{ "Bearer": ["Bearer"] }]
+}

@@ -1,0 +1,48 @@
+{
+  "name": "clients-insurance-payments",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/insurance-payments/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/insurance-payments/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/insurance-payments/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/insurance-payments"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/insurance-payments/gen/fetch -i libs/clients/insurance-payments/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}
