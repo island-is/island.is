@@ -776,7 +776,7 @@ export class InternalCaseService {
           defendantNationalIds && defendantNationalIds[0]
             ? defendantNationalIds[0].replace('-', '')
             : '',
-          validToDate, // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+          validToDate,
           theCase.conclusion ?? '',
           requestPdf,
           courtRecordPdf,
