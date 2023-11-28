@@ -39,14 +39,6 @@ Upload a new AAB to the Google Play store
 
 
 
-### android increment_build
-
-```sh
-[bundle exec] fastlane android increment_build
-```
-
-
-
 ### android beta
 
 ```sh

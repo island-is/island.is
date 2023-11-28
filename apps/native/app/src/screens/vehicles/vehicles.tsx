@@ -80,8 +80,8 @@ const SkeletonItem = () => {
 const input = {
   page: 1,
   pageSize: 10,
-  showDeregeristered: true,
-  showHistory: true,
+  showDeregeristered: false,
+  showHistory: false,
 };
 
 export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {

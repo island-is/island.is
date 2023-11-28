@@ -3,7 +3,6 @@
   "version": "1.2.4",
   "private": true,
   "scripts": {
-    "version:increment": "cd android && fastlane increment_version && cd ../ios && fastlane increment_version",
     "release:android": "cd android && ./gradlew bundleProdRelease bundleDevRelease",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -13,6 +12,7 @@
     "beta": "yarn beta:ios && yarn beta:android",
     "beta:ios": "cd ios && fastlane beta",
     "beta:android": "cd android && fastlane beta",
+    "alpha": "yarn beta:ios apps:dev && yarn beta:android apps:dev",
     "test": "jest",
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",

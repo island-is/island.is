@@ -79,8 +79,6 @@ platform :ios do
       end
       app_version = options[:app_version] || lane_context[SharedValues::LATEST_TESTFLIGHT_VERSION]
       build_number = options[:build_number] || lane_context[SharedValues::LATEST_TESTFLIGHT_BUILD_NUMBER]
-      puts app_version
-      puts build_number
       upload_to_testflight(
         app_version: app_version,
         build_number: build_number.to_s,

@@ -43,21 +43,14 @@ platform :android do
     increment_version_name(gradle_file_path: "app/build.gradle")
   end
 
-  lane :increment_build do
-    increment_version_code(gradle_file_path: "app/build.gradle")
-  end
-
   desc "Submit a new Beta Build"
   lane :beta do |options|
     apps = options[:apps] || 'dev,prod'
-    # Increment build version
-    changed = `git diff --name-only HEAD~1`.split("\n")
-    unless changed.include? "apps/native/app/android/app/build.gradle"
-      increment_build
-    else
-      puts "Not incrementing build version because app/build.gradle was changed."
-      puts "If you want to increment the build version, please do it manually."
-    end
+    version_code = latest_googleplay_version_code('prod')
+    increment_version_code(
+      gradle_file_path: "app/build.gradle",
+      version_code: version_code + 1
+    )
     # Build app variants
     gradle(
       task: apps.split(',').map { |app| "bundle#{app.capitalize}Release" }.join(' '),
@@ -71,5 +64,25 @@ platform :android do
       )
     end
   end
+end
 
+def latest_googleplay_version_code (app)
+  package_name = app == 'prod' ? 'is.island.app' : 'is.island.app.dev'
+  def safe_fetch_version_codes(track, package_name)
+    begin
+      google_play_track_version_codes(
+        track: track,
+        package_name: package_name,
+        json_key: 'service-account.json'
+      )
+    rescue StandardError
+      [0]
+    end
+  end
+  productionVersionCodes = app == 'prod' ? safe_fetch_version_codes('production', package_name) : [0]
+  betaVersionCodes = safe_fetch_version_codes('beta', package_name)
+  alphaVersionCodes = safe_fetch_version_codes('alpha', package_name)
+  internalVersionCodes = safe_fetch_version_codes('internal', package_name)
+  versionCodes = [productionVersionCodes, betaVersionCodes, alphaVersionCodes, internalVersionCodes].flatten
+  return versionCodes.max
 end
