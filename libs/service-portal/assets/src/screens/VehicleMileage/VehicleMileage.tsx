@@ -71,7 +71,7 @@ const VehicleMileage = () => {
         putAction({
           variables: {
             input: {
-              internalId: details?.[0]?.internalId,
+              internalId: parseInt(details[0].internalId),
               permno: id,
               mileage: String(submitData.odometerStatus),
             },

@@ -1641,7 +1641,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=2764'
+    NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1740,10 +1740,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '800m'
-      memory: '3072Mi'
+      memory: '4096Mi'
     requests:
       cpu: '400m'
-      memory: '2048Mi'
+      memory: '3072Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
