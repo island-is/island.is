@@ -1,7 +1,7 @@
 import {Skeleton, Typography, useDynamicColor} from '@ui';
 import {Image, Pressable, View} from 'react-native';
 import clock from '../../../assets/icons/clock.png';
-import { useIntl } from 'react-intl';
+import {useIntl} from 'react-intl';
 
 export function MileageCell({
   title,
@@ -60,8 +60,7 @@ export function MileageCell({
               })}
               weight="600"
               size={12}>
-
-              {intl.formatMessage({id: 'vehicle.mileage.editRecordButton' })}
+              {intl.formatMessage({id: 'vehicle.mileage.editRecordButton'})}
             </Typography>
           )}
           {editable && <Image source={clock} style={{marginLeft: 4}} />}

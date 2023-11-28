@@ -221,9 +221,12 @@ export const is = {
 
   // vehicle mileage
   'vehicle.mileage.errorTitle': 'Villa',
-  'vehicle.mileage.errorMileageInputTooLow': 'Innslegin kílómetrastaða er of lág',
-  'vehicle.mileage.errorMileageInputTooHigh': 'Innslegin kílómetrastaða er of há',
-  'vehicle.mileage.errorFailedToUpdate': 'Ekki virðist hafa tekist að uppfæra kílómetrastöðu. Vinsamlegast reynið síðar.',
+  'vehicle.mileage.errorMileageInputTooLow':
+    'Innslegin kílómetrastaða er of lág',
+  'vehicle.mileage.errorMileageInputTooHigh':
+    'Innslegin kílómetrastaða er of há',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Ekki virðist hafa tekist að uppfæra kílómetrastöðu. Vinsamlegast reynið síðar.',
   'vehicle.mileage.successTitle': 'Kílómetrastaða uppfærð',
   'vehicle.mileage.successMessage': 'Kílómetrastaða hefur verið uppfærð.',
   'vehicle.mileage.promptEditTitle': 'Breyta kílómetrastöðu',
@@ -232,7 +235,8 @@ export const is = {
   'vehicle.mileage.inputPlaceholder': 'Sláðu inn núverandi kílómetrastöðu',
   'vehicle.mileage.inputLabel': 'Kílómetrastaða',
   'vehicle.mileage.inputSubmitButton': 'Skrá',
-  'vehicle.mileage.registerIntervalCopy': 'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+  'vehicle.mileage.registerIntervalCopy':
+    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
   'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á island.is',
   'vehicle.mileage.historyTitle': 'Skráningar',
   'vehicle.mileage.editRecordButton': 'Breyta færslu',

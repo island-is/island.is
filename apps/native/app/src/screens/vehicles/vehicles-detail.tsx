@@ -127,7 +127,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
           {isMileageEnabled && (
             <Button
-              title={intl.formatMessage({id: 'vehicle.mileage.inputLabel' })}
+              title={intl.formatMessage({id: 'vehicle.mileage.inputLabel'})}
               onPress={() => {
                 navigateTo(`/vehicle-mileage/`, {
                   id,

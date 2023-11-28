@@ -121,14 +121,14 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       const mileage = Number(String(value ?? '').replace(/\D/g, ''));
       if (mileage <= highestMileage) {
         Alert.alert(
-          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-          intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
+          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+          intl.formatMessage({id: 'vehicle.mileage.errorMileageInputTooLow'}),
         );
         return false;
       } else if (mileage > 9999999) {
         Alert.alert(
-          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-          intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooHigh' }),
+          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+          intl.formatMessage({id: 'vehicle.mileage.errorMileageInputTooHigh'}),
         );
         return false;
       }
@@ -153,13 +153,13 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     }).then(res => {
       if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
         Alert.alert(
-          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-          intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+          intl.formatMessage({id: 'vehicle.mileage.errorFailedToUpdate'}),
         );
       } else {
         Alert.alert(
-          intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
-          intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+          intl.formatMessage({id: 'vehicle.mileage.successTitle'}),
+          intl.formatMessage({id: 'vehicle.mileage.successMessage'}),
         );
       }
     });
@@ -167,7 +167,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 
   const onEdit = useCallback(() => {
     return Alert.prompt(
-      intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
+      intl.formatMessage({id: 'vehicle.mileage.promptEditTitle'}),
       undefined,
       [
         {
@@ -180,8 +180,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
             }
             if (!internalId) {
               return Alert.alert(
-                intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-                intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+                intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+                intl.formatMessage({id: 'vehicle.mileage.errorFailedToUpdate'}),
               );
             }
             updateMileage({
@@ -195,21 +195,24 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
             }).then(res => {
               if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
                 Alert.alert(
-                  intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-                  intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+                  intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+                  intl.formatMessage({
+                    id: 'vehicle.mileage.errorFailedToUpdate',
+                  }),
                 );
               } else {
                 Alert.alert(
-                  intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
-                  intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),);
+                  intl.formatMessage({id: 'vehicle.mileage.successTitle'}),
+                  intl.formatMessage({id: 'vehicle.mileage.successMessage'}),
+                );
               }
             });
           },
-          text: intl.formatMessage({ id: 'vehicle.mileage.promptEditButton' }),
+          text: intl.formatMessage({id: 'vehicle.mileage.promptEditButton'}),
           style: 'default',
         },
         {
-          text: intl.formatMessage({ id: 'vehicle.mileage.promptCancelButton' }),
+          text: intl.formatMessage({id: 'vehicle.mileage.promptCancelButton'}),
           style: 'cancel',
         },
       ],
@@ -259,8 +262,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
             <TextField
               editable={canRegisterMileage}
               key="mileage-input"
-              placeholder={intl.formatMessage({ id: 'vehicle.mileage.inputPlaceholder' })}
-              label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
+              placeholder={intl.formatMessage({
+                id: 'vehicle.mileage.inputPlaceholder',
+              })}
+              label={intl.formatMessage({id: 'vehicle.mileage.inputLabel'})}
               value={input}
               maxLength={9}
               keyboardType="decimal-pad"
@@ -278,7 +283,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               }
             />
             <Button
-              title={intl.formatMessage({ id: 'vehicle.mileage.inputSubmitButton' })}
+              title={intl.formatMessage({
+                id: 'vehicle.mileage.inputSubmitButton',
+              })}
               onPress={onSubmit}
               disabled={!canRegisterMileage}
             />
@@ -289,12 +296,16 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 variant="body3"
                 textAlign="center"
                 style={{marginTop: 16}}>
-                {intl.formatMessage({ id: 'vehicle.mileage.registerIntervalCopy' })}
+                {intl.formatMessage({
+                  id: 'vehicle.mileage.registerIntervalCopy',
+                })}
               </Typography>
             )}
             <Button
               icon={externalLinkIcon}
-              title={intl.formatMessage({ id: 'vehicle.mileage.moreInformationCopy' })}
+              title={intl.formatMessage({
+                id: 'vehicle.mileage.moreInformationCopy',
+              })}
               isTransparent
               textStyle={{fontSize: 12, lineHeight: 16}}
             />
@@ -303,7 +314,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           <Typography
             variant="heading4"
             style={{marginTop: 16, marginBottom: 16}}>
-            {intl.formatMessage({ id: 'vehicle.mileage.historyTitle' })}
+            {intl.formatMessage({id: 'vehicle.mileage.historyTitle'})}
           </Typography>
         </View>
       }
