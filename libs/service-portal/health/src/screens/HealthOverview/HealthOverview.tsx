@@ -103,10 +103,11 @@ export const HealthOverview = () => {
           height={24}
           borderRadius="standard"
         />
-      ) : !insurance ? (
+      ) : !insurance || !insurance.isInsured ? (
         <AlertMessage
           type="info"
-          message={formatMessage(messages.noHealthInsurance)}
+          title={formatMessage(messages.noHealthInsurance)}
+          message={insurance?.explanation}
         />
       ) : (
         <Box>
