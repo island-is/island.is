@@ -4,8 +4,8 @@ import {
   buildDividerField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
+import { Application, RecordObject } from '@island.is/application/types'
+import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import {
@@ -52,30 +52,20 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers.estate as unknown as EstateInfo).assets
-        ?.filter((asset) => asset.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const sum = (answers.estate as unknown as EstateInfo).assets
-        ?.filter((asset) => asset.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      return sum > 0
-    },
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.assets',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.assets',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -154,30 +144,20 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateVehicleTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers.estate as unknown as EstateInfo).vehicles
-        ?.filter((vehicle) => vehicle.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const sum = (answers.estate as unknown as EstateInfo).vehicles
-        ?.filter((vehicle) => vehicle.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      return sum > 0
-    },
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.vehicles',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.vehicles',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -215,30 +195,20 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateGunsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers.estate as unknown as EstateInfo).guns
-        ?.filter((gun) => gun.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const sum = (answers.estate as unknown as EstateInfo).guns
-        ?.filter((gun) => gun.enabled)
-        .reduce((acc, cur) => {
-          const val = Number(cur.marketValue) ?? 0
-          return acc + val
-        }, 0)
-
-      return sum > 0
-    },
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.guns',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.guns',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -273,36 +243,18 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'bankAccountsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers as unknown as EstateSchema).bankAccounts?.reduce(
-        (acc, cur) => {
-          const val = Number(cur.balance) ?? 0
-          return acc + val
-        },
-        0,
-      )
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const bankAccounts = answers?.bankAccounts
-        ? (answers as unknown as EstateSchema).bankAccounts
-        : null
-
-      if (!bankAccounts) return false
-
-      const sum = bankAccounts.reduce((acc, cur) => {
-        const val = Number(cur.balance) ?? 0
-        return acc + val
-      }, 0)
-
-      return sum > 0
-    },
-    titleVariant: 'h4',
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['bankAccounts']>(
+        answers,
+        'bankAccounts',
+        'balance',
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['bankAccounts']>(
+        answers,
+        'bankAccounts',
+        'balance',
+      ),
   }),
   buildDividerField({
     condition: (answers) =>
@@ -350,36 +302,10 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'claimsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers as unknown as EstateSchema).claims?.reduce(
-        (acc, cur) => {
-          const val = Number(cur.value) ?? 0
-          return acc + val
-        },
-        0,
-      )
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const claims = answers?.claims
-        ? (answers as unknown as EstateSchema).claims
-        : null
-
-      if (!claims) return false
-
-      const sum = claims.reduce((acc, cur) => {
-        const val = Number(cur.value) ?? 0
-        return acc + val
-      }, 0)
-
-      return sum > 0
-    },
-    titleVariant: 'h4',
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
   }),
   buildDividerField({
     condition: (answers) =>
@@ -429,35 +355,10 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'stocksTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers as unknown as EstateSchema).stocks?.reduce(
-        (acc, cur) => {
-          const val = Number(cur.value) ?? 0
-          return acc + val
-        },
-        0,
-      )
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const stocks = answers?.stocks
-        ? (answers as unknown as EstateSchema).stocks
-        : null
-
-      if (!stocks) return false
-
-      const sum = stocks.reduce((acc, cur) => {
-        const val = Number(cur.value) ?? 0
-        return acc + val
-      }, 0)
-
-      return sum > 0
-    },
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
@@ -574,36 +475,37 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'debtsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const sum = (answers as unknown as EstateSchema).debts?.reduce(
-        (acc, cur) => {
-          const val = Number(cur.balance) ?? 0
-          return acc + val
-        },
-        0,
-      )
-
-      if (sum && sum > 0) {
-        return formatCurrency(String(sum))
-      }
-
-      return null
-    },
-    condition: (answers) => {
-      const debts = answers?.debts
-        ? (answers as unknown as EstateSchema).debts
-        : null
-
-      if (!debts) return false
-
-      const sum = debts.reduce((acc, cur) => {
-        const val = Number(cur.balance) ?? 0
-        return acc + val
-      }, 0)
-
-      return sum > 0
-    },
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
     titleVariant: 'h4',
   }),
   buildDividerField({}),
 ]
+
+const getSumFromAnswers = <T = unknown>(
+  answers: Application['answers'],
+  path: string,
+  field: string,
+  fn?: (item: T) => boolean,
+): string | null => {
+  let arr: T[] = getValueViaPath(answers, path) ?? []
+
+  if (Array.isArray(arr)) {
+    if (fn) {
+      arr = arr.filter(fn)
+    }
+
+    const value = arr.reduce((acc, cur) => {
+      const val = (getValueViaPath(cur as RecordObject, field) as number) ?? 0
+      return acc + Number(val)
+    }, 0)
+
+    if (value && value > 0) {
+      return formatCurrency(String(value))
+    }
+  }
+
+  return null
+}
