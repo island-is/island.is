@@ -139,7 +139,7 @@ const VehicleMileage = () => {
             href: (str: any) => (
               <span>
                 <a
-                  href="https://island.is/flokkur/akstur-og-bifreidar"
+                  href={formatMessage(messages.mileageExtLink)}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.link}
@@ -169,11 +169,11 @@ const VehicleMileage = () => {
                         </Text>
                         <Text variant="default" paddingTop={1}>
                           {formatMessage(messages.mileageSuccessFormText, {
-                            date: updateData?.vehicleMileagePost?.readDate
-                              ? icelandLocalTime(
-                                  updateData?.vehicleMileagePost?.readDate,
-                                )
-                              : '',
+                            date: icelandLocalTime(
+                              updateData?.vehicleMileagePost?.readDate ??
+                                details?.[0].readDate ??
+                                undefined,
+                            ),
                           })}
                         </Text>
                       </>
