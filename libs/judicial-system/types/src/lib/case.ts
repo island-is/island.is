@@ -623,17 +623,3 @@ export function getAppealedDate(
 ): string | undefined {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
-
-export function useAppealValidToDates(
-  decision?: CaseDecision,
-  state?: CaseState,
-  appealRulingDecision?: CaseAppealRulingDecision,
-  appealState?: CaseAppealState,
-) {
-  return (
-    (decision === CaseDecision.ACCEPTING || CaseDecision.ACCEPTING_PARTIALLY) &&
-    state === CaseState.ACCEPTED &&
-    appealRulingDecision === CaseAppealRulingDecision.CHANGED &&
-    appealState === CaseAppealState.COMPLETED
-  )
-}

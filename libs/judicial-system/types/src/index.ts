@@ -82,7 +82,6 @@ export {
   getAppealedDate,
   defenderCaseFileCategoriesForIndictmentCases,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-  useAppealValidToDates,
 } from './lib/case'
 export type {
   Case,
