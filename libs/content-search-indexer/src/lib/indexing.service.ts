@@ -63,11 +63,12 @@ export class IndexingService {
       let postSyncOptions: SyncResponse['postSyncOptions']
 
       while (initialFetch || nextPageToken) {
-        // importers can skip import by returning null
         const importerResponse = await importer.doSync({
           ...options,
           nextPageToken,
         })
+
+        // importers can skip import by returning null
         if (!importerResponse) {
           didImportAll = false
           return true
