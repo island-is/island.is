@@ -35,11 +35,6 @@ export const overview = {
       defaultMessage: 'Skrá staðsetningu tækis',
       description: 'Add insurance company button',
     },
-    salePrice: {
-      id: 'aosh.application:overview.labels.salePrice',
-      defaultMessage: 'Söluverð:',
-      description: 'Saleprice label',
-    },
     agreementDate: {
       id: 'aosh.application:overview.labels.agreementDate',
       defaultMessage: 'Dagsetning samnings:',

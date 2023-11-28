@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { insurance, review, error } from '../../lib/messages'
+import { review, error } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { MachineLocation, ReviewScreenProps } from '../../shared'
 import { useFormContext } from 'react-hook-form'

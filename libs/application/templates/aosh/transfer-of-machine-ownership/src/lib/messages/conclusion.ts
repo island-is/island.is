@@ -36,7 +36,7 @@ export const conclusion = {
     },
     accordionText: {
       id: 'aosh.application:conclusion.default.accordionText',
-      defaultMessage: `Nú þarf kaupandi að samþykkja skráninguna (og meðeigendur og umráðamenn 
+      defaultMessage: `Nú þarf kaupandi að samþykkja skráninguna (og umráðamaður 
         ef það á við). Það þarf að gerast innan 7 daga. Að því loknu verða eigendaskiptin skráð. 
         Ef því verður ekki lokið fyrir þann tíma verður eigendaskiptunum hafnað og seljandi 
         fær skráningargjaldið endurgreitt inn á kortið sem greitt var með.`,

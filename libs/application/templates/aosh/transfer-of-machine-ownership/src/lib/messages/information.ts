@@ -52,11 +52,6 @@ export const information = {
         defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
         description: 'Pick machine has an error title',
       },
-      isNotDebtLessTag: {
-        id: 'aosh.application:information.labels.pickMachine.isNotDebtLessTag',
-        defaultMessage: 'Ógreidd bifreiðagjöld',
-        description: 'Pick machine is not debt less tag',
-      },
     }),
     machine: defineMessages({
       sectionTitle: {
@@ -84,16 +79,6 @@ export const information = {
         id: 'aosh.application:information.labels.machine.type',
         defaultMessage: 'Tegund',
         description: 'Machine type label',
-      },
-      salePrice: {
-        id: 'aosh.application:information.labels.machine.salePrice',
-        defaultMessage: 'Söluverð (kr.)',
-        description: 'Sale price for machine label',
-      },
-      purchasePrice: {
-        id: 'aosh.application:information.labels.machine.purchasePrice',
-        defaultMessage: 'Kaupverð (kr.)',
-        description: 'Purchase price for machine label',
       },
       date: {
         id: 'aosh.application:information.labels.machine.date',
@@ -212,11 +197,6 @@ export const information = {
         id: 'aosh.application:information.labels.operator.add',
         defaultMessage: 'Bæta við umráðamanni',
         description: 'Operator add label',
-      },
-      main: {
-        id: 'aosh.application:information.labels.operator.main',
-        defaultMessage: 'aðal',
-        description: 'Main label - for main operator',
       },
       identicalError: {
         id: 'ta.cov.application:information.labels.operator.identicalError',

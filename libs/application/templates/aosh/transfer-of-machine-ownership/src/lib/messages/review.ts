@@ -112,7 +112,7 @@ export const review = {
       buyerOperator: {
         id: 'aosh.application:review.step.description.buyerOperator',
         defaultMessage:
-          'Beðið er eftir að umráðamaður/menn kaupanda staðfesti eigendaskiptin',
+          'Beðið er eftir að umráðamaður kaupanda staðfesti eigendaskiptin',
         description:
           'Buyer operator description in status step part of review process',
       },
