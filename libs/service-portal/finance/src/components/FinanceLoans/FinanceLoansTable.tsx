@@ -141,6 +141,10 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
                             title: 'Fjöldi gjalddaga eftir',
                             value: loan.numberOfPaymentDatesRemaining || '-',
                           },
+                          {
+                            title: 'Lántakandi',
+                            value: loan.name || '-',
+                          },
                         ]}
                       />
                     </GridColumn>
