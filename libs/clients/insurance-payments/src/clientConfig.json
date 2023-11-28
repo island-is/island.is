@@ -1162,7 +1162,9 @@
           "tegundKorts": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
-      }
+      },
+      "ProblemDetails": { "additionalProperties": false },
+      "ValidationProblemDetails": { "additionalProperties": false }
     },
     "securitySchemes": {
       "Bearer": {

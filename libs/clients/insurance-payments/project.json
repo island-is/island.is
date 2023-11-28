@@ -30,6 +30,7 @@
       "options": {
         "commands": [
           "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10008/TR-Protected/getOpenAPI?serviceCode=external-v1 > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
