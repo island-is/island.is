@@ -81,14 +81,13 @@ export const AdditionalRealEstate = ({
   const handleShareInputChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    const inputValue = event.target.value.replace('%', '')
+    const inputValue = event.target.value;
     if (isNumericalString(inputValue)) {
       const numericValueStr = inputValue
         .replace(PERCENTAGE_REGEX, '')
         .replace(COMMA_REGEX, '.')
       const share = convertToShare(numericValueStr)
       setValue(shareField, share)
-      setValue(shareTempField, `${numericValueStr}%`)
     }
   }
 
@@ -150,9 +149,9 @@ export const AdditionalRealEstate = ({
           <InputController
             id={shareTempField}
             label={formatMessage(m.propertyShare)}
-            defaultValue={field?.share ? (field.share * 100).toFixed() : '100%'}
+            defaultValue={field?.share ? (field.share * 100).toFixed() : '100'}
             onChange={(e) => handleShareInputChange(e)}
-            placeholder="100%"
+            placeholder="100"
             error={error?.share || error?.shareTemp}
             required
           />
