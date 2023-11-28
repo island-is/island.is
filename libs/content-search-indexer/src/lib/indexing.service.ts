@@ -75,8 +75,8 @@ export class IndexingService {
         }
 
         const {
-          postSyncOptions: importerResponsePostSyncOptions,
           nextPageToken: importerResponseNextPageToken,
+          postSyncOptions: importerResponsePostSyncOptions,
           ...elasticData
         } = importerResponse
         await this.elasticService.bulk(elasticIndex, elasticData)
