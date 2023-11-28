@@ -337,5 +337,5 @@ export const readableIndictmentSubtypes = (
 }
 
 export const sanitize = (str: string) => {
-  return str.replace('"', '')
+  return str.replace(/"/g, '')
 }
