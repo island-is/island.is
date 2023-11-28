@@ -105,7 +105,4 @@ export class CaseListEntry {
 
   @ApiPropertyOptional()
   appealRulingDecision?: CaseAppealRulingDecision
-
-  @ApiPropertyOptional()
-  appealValidToDate?: Date
 }

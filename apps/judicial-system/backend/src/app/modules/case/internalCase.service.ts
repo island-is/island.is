@@ -28,7 +28,6 @@ import {
   completedCaseStates,
   isIndictmentCase,
   isRestrictionCase,
-  useAppealValidToDates,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -756,28 +755,15 @@ export class InternalCaseService {
           [],
         )
 
-        let validToDate: Date | undefined
-        if (
-          [
+        const validToDate =
+          ([
             CaseType.CUSTODY,
             CaseType.ADMISSION_TO_FACILITY,
             CaseType.TRAVEL_BAN,
-          ].includes(theCase.type)
-        ) {
-          if (
-            useAppealValidToDates(
-              theCase.decision,
-              theCase.state,
-              theCase.appealRulingDecision,
-              theCase.appealState,
-            ) &&
-            theCase.appealValidToDate
-          ) {
-            validToDate = theCase.appealValidToDate
-          } else if (theCase.state === CaseState.ACCEPTED) {
-            validToDate = theCase.validToDate
-          }
-        }
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
         const delivered = await this.policeService.updatePoliceCase(
           user,
@@ -790,7 +776,7 @@ export class InternalCaseService {
           defendantNationalIds && defendantNationalIds[0]
             ? defendantNationalIds[0].replace('-', '')
             : '',
-          validToDate ?? new Date(), // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+          validToDate, // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
           theCase.conclusion ?? '',
           requestPdf,
           courtRecordPdf,

@@ -102,7 +102,4 @@ export class CaseListEntry {
 
   @Field(() => CaseAppealRulingDecision, { nullable: true })
   readonly appealRulingDecision?: CaseAppealRulingDecision
-
-  @Field({ nullable: true })
-  readonly appealValidToDate?: string
 }

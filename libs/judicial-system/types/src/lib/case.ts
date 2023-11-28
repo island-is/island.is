@@ -323,7 +323,6 @@ export interface CaseListEntry
     | 'appealedDate'
     | 'appealCaseNumber'
     | 'appealRulingDecision'
-    | 'appealValidToDate'
   > {
   parentCaseId?: string
 }
