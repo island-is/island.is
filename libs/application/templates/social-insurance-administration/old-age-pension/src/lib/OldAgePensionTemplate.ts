@@ -58,7 +58,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -103,7 +102,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
               logMessage: coreHistoryMessages.applicationSent,
             },
           },
-          progress: 0.25,
           onExit: defineTemplateApi({
             action: Actions.SEND_APPLICATION,
             namespace: 'SocialInsuranceAdministration',
@@ -139,7 +137,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
         exit: ['clearAssignees', 'createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
-          progress: 0.75,
           status: 'inprogress',
           lifecycle: pruneAfterDays(365),
           actionCard: {
@@ -176,7 +173,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
+              id: Roles.ORGINIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -197,7 +194,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
         exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          progress: 0.75,
           status: 'inprogress',
           lifecycle: pruneAfterDays(365),
           actionCard: {
@@ -223,7 +219,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
+              id: Roles.ORGINIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -258,7 +254,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
             },
           },
           lifecycle: pruneAfterDays(90),
-          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -270,7 +265,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINISATION_REVIEWER,
+              id: Roles.ORGINIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -286,7 +281,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          progress: 1,
           status: 'approved',
           actionCard: {
             pendingAction: {
@@ -311,7 +305,6 @@ const OldAgePensionTemplate: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: States.REJECTED,
-          progress: 1,
           status: 'rejected',
           actionCard: {
             pendingAction: {
@@ -452,7 +445,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
           'fileUploadAdditionalFiles.additionalDocuments',
           mergedAdditionalDocumentRequired,
         )
-        unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
+        unset(answers, 'fileUploadAdditionalFilesRequired')
 
         return context
       }),
@@ -468,7 +461,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
     const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
     if (id === TR_ID) {
-      return Roles.ORGINISATION_REVIEWER
+      return Roles.ORGINIZATION_REVIEWER
     }
 
     return undefined

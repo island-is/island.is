@@ -21,7 +21,6 @@ import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
 import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
 import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
 

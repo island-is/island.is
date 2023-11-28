@@ -44,7 +44,6 @@ export type Events =
   | { type: DefaultEvents.EDIT }
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
-  // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
   | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
   | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
   | { type: OAPEvents.PENDING }
@@ -53,7 +52,7 @@ export type Events =
 
 export enum Roles {
   APPLICANT = 'applicant',
-  ORGINISATION_REVIEWER = 'tryggingastofnun',
+  ORGINIZATION_REVIEWER = 'tryggingastofnun',
 }
 
 export enum States {
