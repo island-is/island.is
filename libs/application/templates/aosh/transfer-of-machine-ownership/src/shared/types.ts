@@ -14,8 +14,6 @@ export interface ReviewScreenProps {
   reviewerNationalId?: string
   setBuyerOperators?: (s: Operator[]) => void
   buyerOperators?: Operator[]
-  setMainOperator?: (s: string) => void
-  mainOperator?: string
 }
 
 export type ReviewState =
@@ -23,14 +21,12 @@ export type ReviewState =
   | 'overview'
   | 'conclusion'
   | 'addPeople'
-  | 'mainOperator'
   | 'location'
 
 export type UserInformation = z.TypeOf<typeof UserInformationSchema>
 export type Operator = z.TypeOf<typeof OperatorSchema>
 export type Rejecter = z.TypeOf<typeof RejecterSchema>
 
-// Review
 interface ReviewerProps {
   nationalId: string
   name: string

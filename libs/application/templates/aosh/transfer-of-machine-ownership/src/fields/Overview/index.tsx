@@ -42,13 +42,7 @@ import { TransferOfMachineOwnerShipAnswers } from '../..'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({
-  setStep,
-  reviewerNationalId = '',
-  buyerOperators = [],
-  mainOperator = '',
-  ...props
-}) => {
+> = ({ setStep, reviewerNationalId = '', buyerOperators = [], ...props }) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
@@ -218,7 +212,6 @@ export const Overview: FC<
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
           buyerOperators={buyerOperators}
-          mainOperator={mainOperator}
           {...props}
         />
 

@@ -95,13 +95,6 @@ export const ReviewOperatorRepeater: FC<
     setStep && setStep('overview')
   }
 
-  const shouldUpdateMainOperator = () => {
-    const availableOperators = tempBuyerOperators.filter(({ wasRemoved }) => {
-      return wasRemoved !== 'true'
-    })
-    return availableOperators.length > 1
-  }
-
   const onForwardButtonClick = async () => {
     setIdenticalError(checkDuplicate())
     if (!checkDuplicate()) {
@@ -141,8 +134,7 @@ export const ReviewOperatorRepeater: FC<
             setBuyerOperators(tempBuyerOperators)
             setGenericErrorMessage(undefined)
             setErrorMessage(undefined)
-            setStep &&
-              setStep(shouldUpdateMainOperator() ? 'mainOperator' : 'overview')
+            setStep && setStep('overview')
           }
         }
       }

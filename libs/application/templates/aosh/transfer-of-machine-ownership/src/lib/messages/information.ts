@@ -280,28 +280,5 @@ export const information = {
         description: 'Approve button for operators',
       },
     }),
-    mainOperator: defineMessages({
-      sectionTitle: {
-        id: 'aosh.application:information.labels.mainOperator.sectionTitle',
-        defaultMessage: 'Umráðamaður',
-        description: 'Main operator section title',
-      },
-      title: {
-        id: 'aosh.application:information.labels.mainOperator.title',
-        defaultMessage: 'Veldu aðal-umráðamann',
-        description: 'Main operator title',
-      },
-      description: {
-        id: 'aosh.application:information.labels.mainOperator.description',
-        defaultMessage:
-          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
-        description: 'Main operator description',
-      },
-      radioFieldLabel: {
-        id: 'aosh.application:information.labels.mainOperator.radioFieldLabel',
-        defaultMessage: 'Skráðir umráðamenn',
-        description: 'Main operator radio field label',
-      },
-    }),
   },
 }

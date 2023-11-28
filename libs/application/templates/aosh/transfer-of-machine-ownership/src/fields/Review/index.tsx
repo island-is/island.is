@@ -9,7 +9,6 @@ import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
-import { ReviewMainOperator } from '../ReviewMainOperator'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -23,13 +22,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const [buyerOperators, setBuyerOperators] = useState<Operator[]>(
     getValueViaPath(application.answers, 'buyerOperator', []) as Operator[],
   )
-  const [mainOperator, setMainOperator] = useState<string>(
-    getValueViaPath(
-      application.answers,
-      'buyerMainOperator.nationalId',
-      '',
-    ) as string,
-  )
+
   const reviewerNationalId = userInfo?.profile.nationalId || null
 
   const filteredBuyerOperators = buyerOperators.filter(
@@ -57,7 +50,6 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             reviewerNationalId={reviewerNationalId}
             location={location}
             buyerOperators={filteredBuyerOperators}
-            mainOperator={mainOperator}
             {...props}
           />
         )
@@ -77,16 +69,6 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             reviewerNationalId={reviewerNationalId}
             setBuyerOperators={setBuyerOperators}
             buyerOperators={buyerOperators}
-            {...props}
-          />
-        )
-      case 'mainOperator':
-        return (
-          <ReviewMainOperator
-            setStep={setStep}
-            buyerOperators={buyerOperators}
-            setMainOperator={setMainOperator}
-            mainOperator={mainOperator}
             {...props}
           />
         )
