@@ -1,5 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  IsBoolean,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -43,4 +44,14 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsEnum(Locale)
   locale?: Locale
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  documentNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  emailNotifications?: boolean
 }
