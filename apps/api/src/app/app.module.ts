@@ -141,6 +141,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
@@ -291,6 +292,7 @@ const environment = getConfig
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
+    SignatureCollectionModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

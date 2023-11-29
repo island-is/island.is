@@ -86,6 +86,7 @@
 /libs/portals/admin/petition                                                                             @island-is/juni
 /libs/portals/admin/signature-collection                                                                 @island-is/juni
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
+/libs/api/domains/signature-collection                                                                   @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja

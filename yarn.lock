@@ -33600,6 +33600,7 @@ __metadata:
     "@nx/eslint-plugin": 16.9.0
     "@nx/express": 16.9.0
     "@nx/jest": 16.9.0
+    "@nx/js": 16.9.0
     "@nx/linter": 16.9.0
     "@nx/nest": 16.9.0
     "@nx/next": 16.9.0
@@ -33864,7 +33865,7 @@ __metadata:
     regenerator-runtime: 0.13.7
     remark-parse: 9.0.0
     rosetta: 1.0.0
-    rxjs: 7.0.0
+    rxjs: ^7.8.0
     sanitize-html: 2.10.0
     sequelize: 6.19.0
     sequelize-cli: 6.4.1
@@ -33894,7 +33895,7 @@ __metadata:
     ts-jest: 29.1.0
     ts-morph: 16.0.0
     ts-node: 10.9.1
-    tslib: 1.14.1
+    tslib: 2.3.0
     type-fest: 1.1.3
     typescript: 5.1.6
     ua-parser-js: 1.0.33
@@ -47067,15 +47068,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.0.0":
-  version: 7.0.0
-  resolution: "rxjs@npm:7.0.0"
-  dependencies:
-    tslib: ~2.1.0
-  checksum: 18838ae66565fb61c054c14bdeac00ffbf3ecb33fef652a6de075f00b79c8d59eb36e7b0c1a6dc8fd8beefc56243361be01d5a8814d57a1e02946a7ae90a018b
-  languageName: node
-  linkType: hard
-
 "rxjs@npm:7.8.1, rxjs@npm:^7.8.0":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
@@ -51048,17 +51040,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:1.14.1, tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
-  version: 1.14.1
-  resolution: "tslib@npm:1.14.1"
-  checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
-  languageName: node
-  linkType: hard
-
 "tslib@npm:1.9.3":
   version: 1.9.3
   resolution: "tslib@npm:1.9.3"
   checksum: 56ef6325adb72c6477fb48256304507a2c475d69d7ead4644d61f5685fac2a275a38cf217c556e63fc3c177e729426d730e2c2e71c8042dc6cc57338a849edb2
+  languageName: node
+  linkType: hard
+
+"tslib@npm:2.3.0":
+  version: 2.3.0
+  resolution: "tslib@npm:2.3.0"
+  checksum: 8869694c26e4a7b56d449662fd54a4f9ba872c889d991202c74462bd99f10e61d5bd63199566c4284c0f742277736292a969642cc7b590f98727a7cae9529122
   languageName: node
   linkType: hard
 
@@ -51087,6 +51079,13 @@ __metadata:
   version: 2.6.0
   resolution: "tslib@npm:2.6.0"
   checksum: c01066038f950016a18106ddeca4649b4d76caa76ec5a31e2a26e10586a59fceb4ee45e96719bf6c715648e7c14085a81fee5c62f7e9ebee68e77a5396e5538f
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^1.10.0, tslib@npm:^1.11.1, tslib@npm:^1.13.0, tslib@npm:^1.8.1, tslib@npm:^1.9.0":
+  version: 1.14.1
+  resolution: "tslib@npm:1.14.1"
+  checksum: dbe628ef87f66691d5d2959b3e41b9ca0045c3ee3c7c7b906cc1e328b39f199bb1ad9e671c39025bd56122ac57dfbf7385a94843b1cc07c60a4db74795829acd
   languageName: node
   linkType: hard
 
