@@ -176,6 +176,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addDataToCountryList('dateFrom', value as string, index)
               }
+              maxDate={new Date()}
               required
             />
           </Column>
@@ -189,6 +190,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addDataToCountryList('dateTo', value as string, index)
               }
+              maxDate={new Date()}
               required
             />
           </Column>

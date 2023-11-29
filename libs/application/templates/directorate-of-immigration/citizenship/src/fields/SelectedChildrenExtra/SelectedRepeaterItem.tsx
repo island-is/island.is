@@ -216,6 +216,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
                 error={
                   errors && getErrorViaPath(errors, otherParentBirthDateField)
                 }
+                maxDate={new Date()}
               />
             </GridColumn>
           </GridRow>
