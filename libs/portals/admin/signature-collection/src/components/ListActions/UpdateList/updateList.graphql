@@ -1,0 +1,5 @@
+mutation UpdateList($input: UpdateEndorsementListInput!) {
+  endorsementSystemUpdateEndorsementList(input: $input) {
+    id
+  }
+}

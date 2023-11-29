@@ -81,9 +81,10 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/              @island-is/juni
 /libs/application/templates/inheritance-report/                                                          @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
+/libs/application/templates/signature-collection                                                         @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
-/libs/application/templates/signature-collection                                                         @island-is/juni
+/libs/portals/admin/signature-collection                                                                 @island-is/juni
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja

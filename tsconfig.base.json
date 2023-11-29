@@ -762,6 +762,9 @@
       "@island.is/portals/admin/service-desk": [
         "libs/portals/admin/service-desk/src/index.ts"
       ],
+      "@island.is/portals/admin/signature-collection": [
+        "libs/portals/admin/signature-collection/src/index.ts"
+      ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"

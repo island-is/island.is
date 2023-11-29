@@ -1,0 +1,31 @@
+query allLists {
+  signatureCollectionAllLists {
+    id
+    title
+
+    area {
+      id
+      name
+      min
+      max
+    }
+    endTime
+    startTime
+    owner {
+      nationalId
+      name
+      phone
+      email
+    }
+    collectors {
+      nationalId
+      name
+      phone
+      email
+    }
+    active
+    collectionId
+    link
+		numberOfSignatures
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "name": "portals-admin-signature-collection",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/portals/admin/signature-collection/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/portals/admin/signature-collection/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/portals/admin/signature-collection"
+      ],
+      "options": {
+        "jestConfig": "libs/portals/admin/signature-collection/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/signature-collection/src/**/**/*.codegen.ts",
+        "command": "graphql-codegen --config libs/portals/admin/signature-collection/codegen.yml"
+      }
+    }
+  },
+  "tags": ["scope:portals-admin", "lib:portals-admin"]
+}
