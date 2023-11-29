@@ -18,7 +18,6 @@ import {
 } from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import PaperUpload from './components/paperUpload'
-import { format } from 'date-fns'
 
 const List = () => {
   const { list } = useLoaderData() as { list: SignatureList }

@@ -13,7 +13,8 @@ export const m = defineMessages({
   },
   signatureListsIntro: {
     id: 'admin-portal.signature-collection:signatureListsIntro',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur. Amet est turpis sem semper senectus tellus.',
     description: '',
   },
   listDateTil: {
