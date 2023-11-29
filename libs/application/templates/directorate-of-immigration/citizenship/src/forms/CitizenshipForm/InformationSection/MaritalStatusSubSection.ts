@@ -71,10 +71,51 @@ export const MaritalStatusSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
-          title: information.labels.maritalStatus.marritalStatusDate,
+          title: information.labels.maritalStatus.marriedStatusDate,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (_, externalData) => {
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+            const maritalStatus = spouseDetails?.maritalStatus
+
+            const isMarried = maritalStatus === '3'
+            return isMarried
+          },
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+
+            return spouseDetails?.lastModified
+              ? formatDate(new Date(spouseDetails.lastModified))
+              : ''
+          },
+        }),
+        buildTextField({
+          id: 'maritalStatus.dateOfMaritalStatusStr',
+          title: information.labels.maritalStatus.cohabitationStatusDate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          condition: (_, externalData) => {
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+            const maritalStatus = spouseDetails?.maritalStatus
+            const hasSpouse = !!spouseDetails?.nationalId
+
+            const isCohabitation = maritalStatus === '1' && hasSpouse
+            return isCohabitation
+          },
           defaultValue: (application: Application) => {
             const spouseDetails = getValueViaPath(
               application.externalData,
