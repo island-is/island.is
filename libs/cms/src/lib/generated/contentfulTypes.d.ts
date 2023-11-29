@@ -2847,7 +2847,7 @@ export interface IOrganizationSubpageFields {
   title: string
 
   /** Slug */
-  slug?: string | undefined
+  slug: string
 
   /** Intro */
   intro?: string | undefined
