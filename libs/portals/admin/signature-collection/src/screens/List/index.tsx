@@ -5,7 +5,12 @@ import { SignatureList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { GridColumn, GridContainer, GridRow, Hidden } from '@island.is/island-ui/core'
+import {
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+} from '@island.is/island-ui/core'
 
 const List = () => {
   const list = useLoaderData() as SignatureList
@@ -29,12 +34,13 @@ const List = () => {
         </GridColumn>
         <GridColumn
           offset={['0', '0', '1/12']}
-          span={['12/12', '12/12', '8/12']}>
-            {list &&
-              <IntroHeader title={list.owner.name + ' - ' + list.area.name} />
-            }
+          span={['12/12', '12/12', '8/12']}
+        >
+          {list && (
+            <IntroHeader title={list.owner.name + ' - ' + list.area.name} />
+          )}
         </GridColumn>
-        </GridRow>
+      </GridRow>
     </GridContainer>
   )
 }
