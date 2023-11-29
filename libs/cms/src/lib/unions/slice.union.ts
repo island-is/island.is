@@ -104,10 +104,6 @@ import { Form, mapForm } from '../models/form.model'
 import { mapStepper, Stepper } from '../models/stepper.model'
 import { GraphCard, mapGraphCard } from '../models/graphCard.model'
 import {
-  LifeEventPageListSlice,
-  mapLifeEventPageListSlice,
-} from '../models/lifeEventPageListSlice.model'
-import {
   AnchorPageListSlice,
   mapAnchorPageListSlice,
 } from '../models/anchorPageListSlice.model'
@@ -220,7 +216,6 @@ export const SliceUnion = createUnionType({
     Form,
     Stepper,
     GraphCard,
-    LifeEventPageListSlice,
     AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,
@@ -301,7 +296,7 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
     case 'lifeEventPageListSlice':
-      return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
+      return mapAnchorPageListSlice(slice as ILifeEventPageListSlice)
     case 'anchorPageList':
       return mapAnchorPageListSlice(slice as IAnchorPageList)
     case 'sidebarCard':

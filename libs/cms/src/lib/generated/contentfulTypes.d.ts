@@ -1338,7 +1338,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: IAnchorPage[] | undefined
+  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1883,7 +1883,7 @@ export interface ILifeEventPageListSliceFields {
   title?: string | undefined
 
   /** List */
-  lifeEventPageList?: ILifeEventPage[] | undefined
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
 }
 
 export interface ILifeEventPageListSlice
@@ -2847,7 +2847,7 @@ export interface IOrganizationSubpageFields {
   title: string
 
   /** Slug */
-  slug: string
+  slug?: string | undefined
 
   /** Intro */
   intro?: string | undefined
