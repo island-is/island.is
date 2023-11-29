@@ -173,7 +173,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINIZATION_REVIEWER,
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -219,7 +219,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               read: 'all',
             },
             {
-              id: Roles.ORGINIZATION_REVIEWER,
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -265,7 +265,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
               write: 'all',
             },
             {
-              id: Roles.ORGINIZATION_REVIEWER,
+              id: Roles.ORGANIZATION_REVIEWER,
               formLoader: () =>
                 import('../forms/InReview').then((val) =>
                   Promise.resolve(val.InReview),
@@ -461,7 +461,7 @@ const OldAgePensionTemplate: ApplicationTemplate<
 
     const TR_ID = InstitutionNationalIds.TRYGGINGASTOFNUN
     if (id === TR_ID) {
-      return Roles.ORGINIZATION_REVIEWER
+      return Roles.ORGANIZATION_REVIEWER
     }
 
     return undefined
