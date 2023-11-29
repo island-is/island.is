@@ -362,6 +362,7 @@ api:
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1'
+    XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -431,6 +432,8 @@ api:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
+    CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL'
+    CHART_STATISTIC_SOURCE_DATA_PATHS: '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
@@ -1638,7 +1641,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=2764'
+    NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1693,10 +1696,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '700m'
-            memory: '3072Mi'
+            memory: '4096Mi'
           requests:
             cpu: '300m'
-            memory: '2048Mi'
+            memory: '3072Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1737,10 +1740,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '800m'
-      memory: '3072Mi'
+      memory: '4096Mi'
     requests:
       cpu: '400m'
-      memory: '2048Mi'
+      memory: '3072Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'

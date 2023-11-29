@@ -71,6 +71,7 @@ import {
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
+import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -140,6 +141,8 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
+import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
 const environment = getConfig
@@ -250,6 +253,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    StatisticsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -307,6 +311,7 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
+        VehiclesMileageClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
@@ -351,6 +356,7 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        StatisticsClientConfig,
       ],
     }),
   ],

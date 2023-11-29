@@ -27,3 +27,20 @@ export const formatDateWithTime = (date: string) => {
     return date
   }
 }
+
+export const icelandLocalTime = (date?: string) => {
+  const targetTimeZone = 'Atlantic/Reykjavik'
+
+  // Get the current local time
+  const theTime = date ? new Date(date) : new Date()
+
+  // Convert local time to a string in the target time zone
+  const formattedTime = theTime.toLocaleDateString('is-IS', {
+    timeZone: targetTimeZone,
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  })
+
+  return formattedTime
+}

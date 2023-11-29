@@ -6,23 +6,53 @@ import {
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
+  PersidnoLookupResultDto,
 } from '@island.is/clients/vehicles'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import {
+  CanregistermileagePermnoGetRequest,
+  GetMileageReadingRequest,
+  MileageReadingApi,
+  PostMileageReadingModel,
+  PutMileageReadingModel,
+  RequiresmileageregistrationPermnoGetRequest,
+  RootPostRequest,
+  RootPutRequest,
+} from '@island.is/clients/vehicles-mileage'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
+import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
+import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
+import isSameDay from 'date-fns/isSameDay'
+
+const isReadDateToday = (d?: Date) => {
+  if (!d) {
+    return false
+  }
+
+  const today = new Date()
+  const inputDate = new Date(d)
+
+  return isSameDay(today, inputDate)
+}
 
 @Injectable()
 export class VehiclesService {
   constructor(
-    @Inject(VehicleSearchApi) private vehiclesApi: VehicleSearchApi,
+    private vehiclesApi: VehicleSearchApi,
+    private mileageReadingApi: MileageReadingApi,
+    private vehiclesPDFApi: PdfApi,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}
 
   private getVehiclesWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private getMileageWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getVehiclesForUser(
@@ -45,6 +75,18 @@ export class VehiclesService {
           ? `${input.permno}*`
           : `${input.permno}`
         : undefined,
+    })
+  }
+
+  async getVehiclesForUserOldService(
+    auth: User,
+    showDeregistered: boolean,
+    showHistory: boolean,
+  ): Promise<PersidnoLookupResultDto> {
+    return await this.getVehiclesWithAuth(auth).vehicleHistoryGet({
+      requestedPersidno: auth.nationalId,
+      showDeregistered: showDeregistered,
+      showHistory: showHistory,
     })
   }
 
@@ -103,5 +145,79 @@ export class VehiclesService {
     const { data } = res
     if (!data) return null
     return data[0]
+  }
+
+  async getVehicleMileage(
+    auth: User,
+    input: GetMileageReadingRequest,
+  ): Promise<VehicleMileageOverview | null> {
+    const res = await this.getMileageWithAuth(auth).getMileageReading({
+      permno: input.permno,
+    })
+
+    const latestDate = res?.[0]?.readDate
+
+    return {
+      data: res,
+      permno: input.permno,
+      editing: isReadDateToday(latestDate ?? undefined),
+    }
+  }
+
+  async postMileageReading(
+    auth: User,
+    input: RootPostRequest['postMileageReadingModel'],
+  ): Promise<PostMileageReadingModel | null> {
+    if (!input) return null
+
+    const res = await this.getMileageWithAuth(auth).rootPost({
+      postMileageReadingModel: input,
+    })
+
+    return res
+  }
+
+  async putMileageReading(
+    auth: User,
+    input: RootPutRequest['putMileageReadingModel'],
+  ): Promise<PutMileageReadingModel | null> {
+    if (!input) return null
+
+    const res = await this.getMileageWithAuth(auth).rootPut({
+      putMileageReadingModel: input,
+    })
+    return res
+  }
+
+  async canRegisterMileage(
+    auth: User,
+    input: CanregistermileagePermnoGetRequest,
+  ): Promise<boolean> {
+    const res = await this.getMileageWithAuth(auth).canregistermileagePermnoGet(
+      {
+        permno: input.permno,
+      },
+    )
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
+    return res
+  }
+
+  async requiresMileageRegistration(
+    auth: User,
+    input: RequiresmileageregistrationPermnoGetRequest,
+  ): Promise<boolean> {
+    const res = await this.getMileageWithAuth(
+      auth,
+    ).requiresmileageregistrationPermnoGet({
+      permno: input.permno,
+    })
+
+    if (typeof res === 'string') {
+      return res === 'true'
+    }
+    return res
   }
 }
