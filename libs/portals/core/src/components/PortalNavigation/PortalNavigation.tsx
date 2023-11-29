@@ -52,6 +52,8 @@ export function PortalNavigation({
     return null
   }
 
+  console.log(nav)
+
   /**
    * This function recursively renders navigation items unless they are hidden
    * with the navHide flag.

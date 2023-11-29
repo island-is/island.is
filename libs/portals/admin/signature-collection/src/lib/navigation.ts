@@ -11,8 +11,8 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   path: SignatureCollectionPaths.SignatureLists,
   children: [
     {
-      name: m.signatureListsTitle,
-      path: SignatureCollectionPaths.SignatureList,
+      name: m.collectionTitle,
+      path: SignatureCollectionPaths.SignatureLists,
       activeIfExact: true,
     },
   ],

@@ -13,7 +13,7 @@ const allowedScopes: string[] = [AdminPortalScope.petitionsAdmin]
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
-  layout: 'default',
+  layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: (props) => [

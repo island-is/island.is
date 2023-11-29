@@ -21,8 +21,8 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur',
     description: '',
   },
-  listCardText: {
-    id: 'admin-portal.signature-collection:listCardText',
+  collectionTitle: {
+    id: 'admin-portal.signature-collection:collectionTitle',
     defaultMessage: 'Forsetakosningar 2024',
     description: '',
   },
