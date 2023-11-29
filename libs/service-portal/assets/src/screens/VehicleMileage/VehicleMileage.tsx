@@ -71,7 +71,7 @@ const VehicleMileage = () => {
         putAction({
           variables: {
             input: {
-              internalId: details?.[0]?.internalId,
+              internalId: parseInt(details[0].internalId),
               permno: id,
               mileage: String(submitData.odometerStatus),
             },
@@ -139,7 +139,7 @@ const VehicleMileage = () => {
             href: (str: any) => (
               <span>
                 <a
-                  href="https://island.is/flokkur/akstur-og-bifreidar"
+                  href={formatMessage(messages.mileageExtLink)}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.link}
@@ -156,32 +156,38 @@ const VehicleMileage = () => {
           <form onSubmit={handleSubmit(handleSubmitForm)}>
             <GridContainer>
               <GridRow marginBottom={2}>
-                <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
-                  {isFormEditable ? (
-                    <>
+                {loading ? (
+                  <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
+                    <SkeletonLoader display="block" width={220} height={30} />
+                  </GridColumn>
+                ) : (
+                  <GridColumn span={['8/8', '8/8', '8/8', '5/8']}>
+                    {isFormEditable ? (
+                      <>
+                        <Text as="h3" variant="h5">
+                          {formatMessage(messages.mileageSuccessFormTitle)}
+                        </Text>
+                        <Text variant="default" paddingTop={1}>
+                          {formatMessage(messages.mileageSuccessFormText, {
+                            date: icelandLocalTime(
+                              updateData?.vehicleMileagePost?.readDate ??
+                                details?.[0].readDate ??
+                                undefined,
+                            ),
+                          })}
+                        </Text>
+                      </>
+                    ) : canRegisterMileage === true ? (
                       <Text as="h3" variant="h5">
-                        {formatMessage(messages.mileageSuccessFormTitle)}
+                        {formatMessage(messages.vehicleMileageInputTitle)}
                       </Text>
-                      <Text variant="default" paddingTop={1}>
-                        {formatMessage(messages.mileageSuccessFormText, {
-                          date: updateData?.vehicleMileagePost?.readDate
-                            ? icelandLocalTime(
-                                updateData?.vehicleMileagePost?.readDate,
-                              )
-                            : '',
-                        })}
+                    ) : (
+                      <Text as="h3" variant="h5">
+                        {formatMessage(messages.mileageAlreadyRegistered)}
                       </Text>
-                    </>
-                  ) : canRegisterMileage === true ? (
-                    <Text as="h3" variant="h5">
-                      {formatMessage(messages.vehicleMileageInputTitle)}
-                    </Text>
-                  ) : (
-                    <Text as="h3" variant="h5">
-                      {formatMessage(messages.mileageAlreadyRegistered)}
-                    </Text>
-                  )}
-                </GridColumn>
+                    )}
+                  </GridColumn>
+                )}
               </GridRow>
               <GridRow
                 alignItems="flexStart"

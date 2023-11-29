@@ -189,6 +189,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // General
+  total: {
+    id: 'es.application:total',
+    defaultMessage: 'Samtals',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
