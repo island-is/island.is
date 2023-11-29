@@ -9,14 +9,16 @@ const servicePostgresInfo = {
   // The service has only read permissions
   username: 'services_user_notification_read',
   name: dbName,
-  passwordSecret: '/k8s/feature-user-notification-store-and-get-user-notification/readonly/DB_PASSWORD', //'/k8s/user-notification/readonly/DB_PASSWORD',
+  passwordSecret:
+    '/k8s/feature-user-notification-store-and-get-user-notification/readonly/DB_PASSWORD', //'/k8s/user-notification/readonly/DB_PASSWORD',
 }
 
 const workerPostgresInfo = {
   // Worker has write permissions
   username: 'services_user_notification',
   name: dbName,
-  passwordSecret: '/k8s/feature-user-notification-store-and-get-user-notification/DB_PASSWORD',// '/k8s/user-notification/DB_PASSWORD',
+  passwordSecret:
+    '/k8s/feature-user-notification-store-and-get-user-notification/DB_PASSWORD', // '/k8s/user-notification/DB_PASSWORD',
   // extensions: ['uuid-ossp'], // TODO is this needed ?
 }
 
