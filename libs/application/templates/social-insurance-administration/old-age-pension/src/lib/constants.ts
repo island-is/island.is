@@ -71,7 +71,6 @@ export enum States {
 export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOAD = 'fileUpload',
-  EMPLOYMENT = 'employment',
   VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
 }

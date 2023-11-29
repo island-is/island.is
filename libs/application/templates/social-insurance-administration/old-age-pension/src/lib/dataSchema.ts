@@ -6,6 +6,7 @@ import {
   NO,
   YES,
   TaxLevelOptions,
+  Employment,
 } from './constants'
 import { errorMessages, validatorErrorMessages } from './messages'
 import {
@@ -136,6 +137,23 @@ export const dataSchema = z.object({
         params: validatorErrorMessages.requireAttachment,
       }),
   }),
+  employment: z
+    .object({
+      status: z.enum([Employment.SELFEMPLOYED, Employment.EMPLOYEE]),
+      selfEmployedAttachment: z.array(FileSchema),
+    })
+    .partial()
+    .refine(
+      ({ status, selfEmployedAttachment }) =>
+        status === Employment.SELFEMPLOYED &&
+        selfEmployedAttachment !== undefined
+          ? selfEmployedAttachment.length !== 0
+          : true,
+      {
+        params: validatorErrorMessages.requireAttachment,
+        path: ['selfEmployedAttachment'],
+      },
+    ),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>
