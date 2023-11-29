@@ -55,7 +55,7 @@ export const VehicleItem = React.memo(
               number={item.regno}
               label={
                 isInspectionDeadline && nextInspection ? (
-                  <Label color="warning" icon>
+                  <Label color="danger" icon>
                     <FormattedMessage
                       id="vehicles.nextInspectionLabel"
                       values={{
