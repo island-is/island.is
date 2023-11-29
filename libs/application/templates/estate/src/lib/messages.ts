@@ -189,6 +189,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // General
+  total: {
+    id: 'es.application:total',
+    defaultMessage: 'Samtals',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -240,6 +247,11 @@ export const m = defineMessages({
     id: 'es.application:email',
     defaultMessage: 'Netfang',
     description: '',
+  },
+  relationToDeceased: {
+    id: 'es.application:relationToDeceased',
+    defaultMessage: 'Tengsl við hinn látna',
+    description: 'Relation label',
   },
 
   // Estate members, assets, vehicles
