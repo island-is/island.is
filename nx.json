@@ -153,7 +153,7 @@
       "!{projectRoot}/src/test-setup.[jt]s"
     ],
     "graphql-files": [
-      "{workspaceRoot}/apps/api/src/api.graphql",
+      { "runtime": "node scripts/hash-files apps/api/src/api.graphql" },
       "{projectRoot}/codegen.yml",
       "{projectRoot}/**/*.graphql"
     ],
