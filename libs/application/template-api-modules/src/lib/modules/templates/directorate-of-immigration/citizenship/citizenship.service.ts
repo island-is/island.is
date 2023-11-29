@@ -195,26 +195,19 @@ export class CitizenshipService extends BaseTemplateApiService {
           familyName: p.familyName,
         }))
 
-    //TODOx
-    const applicantCriminalRecordAttachments: {
-      name: string
-      key: string
-      countryId?: string
-    }[] = []
-    // Get attachment array with countryId field from attachment map
-    // const applicantCriminalRecordAttachments = []
-    // const criminalRecordMap =
-    //   answers.supportingDocuments?.criminalRecordMap || {}
-    // for (const countryId in Object.keys(criminalRecordMap)) {
-    //   const attachments = criminalRecordMap[countryId] || []
-    //   for (let j = 0; j < attachments.length; j++) {
-    //     if (countryId)
-    //       applicantCriminalRecordAttachments.push({
-    //         ...attachments[j],
-    //         countryId,
-    //       })
-    //   }
-    // }
+    // Get attachment array with countryId field from attachment array of arrays
+    const applicantCriminalRecordAttachments = []
+    const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
+    for (let i = 0; i < criminalRecordList.length; i++) {
+      const countryId = i.toString()
+      const attachments = criminalRecordList[i]?.attachment || []
+      for (let j = 0; j < attachments.length; j++) {
+        applicantCriminalRecordAttachments.push({
+          ...attachments[j],
+          countryId,
+        })
+      }
+    }
 
     // Submit the application
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(

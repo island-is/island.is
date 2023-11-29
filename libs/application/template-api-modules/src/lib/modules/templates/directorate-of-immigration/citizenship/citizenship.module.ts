@@ -8,7 +8,7 @@ import {
   DirectorateOfImmigrationClientModule,
   DirectorateOfImmigrationClientConfig,
 } from '@island.is/clients/directorate-of-immigration'
-import { S3 } from 'aws-sdk'
+
 export class CitizenshipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
