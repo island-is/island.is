@@ -132,29 +132,33 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     console.log('--------submitApplication')
 
-    const answers = application.answers as CitizenshipAnswers
+    try {
+      const answers = application.answers as CitizenshipAnswers
 
-    //1. Configure attachments
-    const passportAttachments = answers?.passport?.attachment || []
-    if (passportAttachments[0]?.key) {
-      const passportFile = answers?.passport?.attachment
-        ? await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+      //1. Configure attachments
+      const passportAttachments = answers?.passport?.attachment || []
+      if (passportAttachments[0]?.key) {
+        const passportFile = answers?.passport?.attachment
+          ? await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+              application,
+              passportAttachments[0].key,
+            )
+          : ''
+        this.logger.info('----passport file', passportFile)
+      }
+
+      const subsistenceCertificates =
+        answers?.supportingDocuments?.subsistenceCertificate || []
+      if (subsistenceCertificates[0]?.key) {
+        const subsistenceCertificateFile =
+          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
             application,
-            passportAttachments[0].key,
+            subsistenceCertificates[0].key,
           )
-        : ''
-      this.logger.info('----passport file', passportFile)
-    }
-
-    const subsistenceCertificates =
-      answers?.supportingDocuments?.subsistenceCertificate || []
-    if (subsistenceCertificates[0]?.key) {
-      const subsistenceCertificateFile =
-        await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-          application,
-          subsistenceCertificates[0].key,
-        )
-      this.logger.info('----subsistence file', subsistenceCertificateFile)
+        this.logger.info('----subsistence file', subsistenceCertificateFile)
+      }
+    } catch (e) {
+      this.logger.error('----error submitApplication', e)
     }
 
     // // const requests = attachmentStatusToAttachmentRequests()
