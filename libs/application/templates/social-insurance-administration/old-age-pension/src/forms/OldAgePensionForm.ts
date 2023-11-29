@@ -255,30 +255,18 @@ export const OldAgePensionForm: Form = buildForm({
               description: '',
               children: [
                 buildAlertMessageField({
-                  id: 'paymentInfo.icelandicAlertMessage',
+                  id: 'paymentInfo.alertMessage',
                   title: oldAgePensionFormMessage.shared.alertTitle,
-                  message: oldAgePensionFormMessage.payment.alertMessage,
+                  message: (application: Application) => {
+                    const { bankAccountType } = getApplicationAnswers(
+                      application.answers,
+                    )
+                    return bankAccountType === BankAccountType.ICELANDIC
+                      ? oldAgePensionFormMessage.payment.alertMessage
+                      : oldAgePensionFormMessage.payment.alertMessageForeign
+                  },
                   doesNotRequireAnswer: true,
                   alertType: 'info',
-                  condition: (formValue: FormValue, externalData) => {
-                    const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
-                    return radio === BankAccountType.ICELANDIC
-                  },
-                }),
-                buildAlertMessageField({
-                  id: 'paymentInfo.foreignAlertMessage',
-                  title: oldAgePensionFormMessage.shared.alertTitle,
-                  message: oldAgePensionFormMessage.payment.alertMessageForeign,
-                  doesNotRequireAnswer: true,
-                  alertType: 'info',
-                  condition: (formValue: FormValue, externalData) => {
-                    const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
-                    return radio === BankAccountType.FOREIGN
-                  },
                 }),
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
