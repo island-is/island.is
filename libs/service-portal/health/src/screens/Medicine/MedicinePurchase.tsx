@@ -43,7 +43,7 @@ export const MedicinePurchase = () => {
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
-  const fetchedLineItems = new Map<string, RightsPortalDrugBillLine[]>()
+  const [fetchedLineItems] = useState(new Map<string, RightsPortalDrugBillLine[]>)
   const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
     if (!dateFrom || !dateTo) return ''
     return `${formatDateFns(dateFrom, DATE_FORMAT)} - ${formatDateFns(
