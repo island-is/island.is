@@ -76,10 +76,9 @@ export enum AnswerValidationConstants {
 }
 
 export enum TaxLevelOptions {
-  INCOME = '0',
+  INCOME = '2',
   FIRST_LEVEL = '1',
-  SECOND_LEVEL = '2',
-  THIRD_LEVEL = '3',
+  SECOND_LEVEL = '3',
 }
 
 export enum ApplicationType {

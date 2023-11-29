@@ -61,15 +61,15 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre
                       .retirementPensionApplicationDescription,
                 },
-                // {
-                //   value: ApplicationType.HALF_OLD_AGE_PENSION,
-                //   label:
-                //     oldAgePensionFormMessage.pre
-                //       .halfRetirementPensionApplicationTitle,
-                //   subLabel:
-                //     oldAgePensionFormMessage.pre
-                //       .halfRetirementPensionApplicationDescription,
-                // },
+                {
+                  value: ApplicationType.HALF_OLD_AGE_PENSION,
+                  label:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationTitle,
+                  subLabel:
+                    oldAgePensionFormMessage.pre
+                      .halfRetirementPensionApplicationDescription,
+                },
                 {
                   value: ApplicationType.SAILOR_PENSION,
                   label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
@@ -181,13 +181,6 @@ export const PrerequisitesForm: Form = buildForm({
                   ],
                 }),
               ],
-            }),
-            // Has to be here so that the submit button appears (does not appear if no screen is left).
-            // Tackle that as AS task.
-            buildDescriptionField({
-              id: 'unused',
-              title: '',
-              description: '',
             }),
           ],
         }),

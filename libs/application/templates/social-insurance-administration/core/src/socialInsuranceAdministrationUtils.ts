@@ -54,11 +54,11 @@ export const validSWIFT = (value: string | undefined) => {
   return value ? swiftRegex.test(value) : false
 }
 
-export const useCurrencies = (currencies: Array<string>) => {
-  return (
-    currencies.map((i) => ({
-      label: i,
-      value: i,
-    })) ?? []
-  )
-}
+// export const currencies = (currencies: Array<string>) => {
+//   return (
+//     currencies.map((i) => ({
+//       label: i,
+//       value: i,
+//     })) ?? []
+//   )
+// }

@@ -299,13 +299,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
     },
-    taxThirdLevel: {
-      id: 'oap.application:payment.tax.forth.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 3 í útreikningum staðgreiðslu (46,25% af tekjum yfir 1.151.012 kr.)',
-      description:
-        'I want tax level 3 to be taken into account in the withholding calculations (46,25% of income over ISK 1,151,012)',
-    },
     icelandicBankAccount: {
       id: 'oap.application:payment.icelandic.bank.account',
       defaultMessage: 'Íslenskur reikningur',

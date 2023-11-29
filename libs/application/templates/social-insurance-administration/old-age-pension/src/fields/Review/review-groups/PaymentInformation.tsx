@@ -8,29 +8,27 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { getTaxLevelOption } from './utils'
 import { YES, BankAccountType } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 
 export const PaymentInformation = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [
-    {
-      taxLevel,
-      personalAllowance,
-      personalAllowanceUsage,
-      bank,
-      bankAccountType,
-      iban,
-      swift,
-      bankName,
-      bankAddress,
-      currency,
-    },
-  ] = useStatefulAnswers(application)
+  const {
+    taxLevel,
+    personalAllowance,
+    personalAllowanceUsage,
+    bank,
+    bankAccountType,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 
