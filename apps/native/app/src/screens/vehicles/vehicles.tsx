@@ -1,7 +1,14 @@
 import {EmptyList, Skeleton, TopLine} from '@ui';
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {FormattedMessage} from 'react-intl';
-import {Animated, FlatList, Image, RefreshControl, View} from 'react-native';
+import {
+  ActivityIndicator,
+  Animated,
+  FlatList,
+  Image,
+  RefreshControl,
+  View,
+} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import {useTheme} from 'styled-components/native';
 import illustrationSrc from '../../assets/illustrations/moving.png';
@@ -88,6 +95,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
   useNavigationOptions(componentId);
   const flatListRef = useRef<FlatList>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const scrollY = useRef(new Animated.Value(0)).current;
   const loadingTimeout = useRef<NodeJS.Timeout>();
   const res = useGetUserVehiclesQuery({
@@ -202,27 +210,38 @@ export const VehiclesScreen: NavigationFunctionComponent = ({componentId}) => {
           if (pageNumber >= totalPages) {
             return;
           }
-
-          return res.fetchMore({
-            variables: {
-              input: {
-                ...input,
-                page: pageNumber + 1,
-              },
-            },
-            updateQuery(prev, {fetchMoreResult}) {
-              return {
-                vehiclesList: {
-                  ...fetchMoreResult.vehiclesList,
-                  vehicleList: [
-                    ...(prev.vehiclesList?.vehicleList ?? []),
-                    ...(fetchMoreResult.vehiclesList?.vehicleList ?? []),
-                  ],
+          setLoadingMore(true);
+          return res
+            .fetchMore({
+              variables: {
+                input: {
+                  ...input,
+                  page: pageNumber + 1,
                 },
-              };
-            },
-          });
+              },
+              updateQuery(prev, {fetchMoreResult}) {
+                return {
+                  vehiclesList: {
+                    ...fetchMoreResult.vehiclesList,
+                    vehicleList: [
+                      ...(prev.vehiclesList?.vehicleList ?? []),
+                      ...(fetchMoreResult.vehiclesList?.vehicleList ?? []),
+                    ],
+                  },
+                };
+              },
+            })
+            .then(() => {
+              setLoadingMore(false);
+            });
         }}
+        ListFooterComponent={
+          loadingMore ? (
+            <View>
+              <ActivityIndicator size="small" animating />
+            </View>
+          ) : null
+        }
       />
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />

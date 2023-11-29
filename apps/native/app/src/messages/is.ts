@@ -233,7 +233,7 @@ export const is = {
   'vehicle.mileage.promptEditButton': 'Senda inn breytingu',
   'vehicle.mileage.promptCancelButton': 'Hætta við',
   'vehicle.mileage.inputPlaceholder': 'Sláðu inn núverandi kílómetrastöðu',
-  'vehicle.mileage.inputLabel': 'Kílómetrastaða',
+  'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
   'vehicle.mileage.inputSubmitButton': 'Skrá',
   'vehicle.mileage.registerIntervalCopy':
     'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',

@@ -120,7 +120,16 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
                 loading={loading}
                 error={isError}
                 label={intl.formatMessage({id: 'vehicleDetail.odometer'})}
-                value={`${data?.vehiclesDetail?.lastMileage?.mileage} km`}
+                value={
+                  data?.vehiclesDetail?.lastMileage?.mileage
+                    ? `${intl.formatNumber(
+                        parseInt(
+                          data?.vehiclesDetail?.lastMileage?.mileage,
+                          10,
+                        ),
+                      )} km`
+                    : '-'
+                }
               />
             )}
           </InputRow>
@@ -131,6 +140,11 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               onPress={() => {
                 navigateTo(`/vehicle-mileage/`, {
                   id,
+                  title: {
+                    type: title,
+                    year: basicInfo?.year,
+                    color: registrationInfo?.color,
+                  },
                 });
               }}
               style={{marginHorizontal: 16}}
@@ -169,7 +183,12 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               loading={loading}
               error={isError}
               label={intl.formatMessage({id: 'vehicleDetail.unpaidVehicleFee'})}
-              value={`${inspectionInfo?.carTax} kr.`}
+              value={
+                typeof inspectionInfo?.carTax === 'undefined' ||
+                inspectionInfo?.carTax === null
+                  ? '-'
+                  : `${inspectionInfo?.carTax} kr.`
+              }
             />
           </InputRow>
 

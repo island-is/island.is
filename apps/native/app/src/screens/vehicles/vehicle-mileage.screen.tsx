@@ -1,28 +1,20 @@
-import {FormattedDate, FormattedNumber, useIntl} from 'react-intl';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {FlatList, Pressable, Alert, View} from 'react-native';
-import {
-  Button,
-  Divider,
-  Input,
-  TextField,
-  Typography,
-  useDynamicColor,
-} from '@ui';
-import externalLinkIcon from '../../assets/icons/external-link.png';
+import {Button, Divider, TextField, Typography} from '@ui';
 import {useCallback, useMemo, useState} from 'react';
+import {FormattedDate, useIntl} from 'react-intl';
+import {Alert, FlatList, View} from 'react-native';
+import {NavigationFunctionComponent} from 'react-native-navigation';
+import externalLinkIcon from '../../assets/icons/external-link.png';
+import {client} from '../../graphql/client';
 import {
   GetVehicleMileageDocument,
   GetVehicleMileageQuery,
-  VehicleFragmentFragmentDoc,
-  VehicleMileageDetailFragmentFragmentDoc,
   useGetUserVehiclesDetailQuery,
   useGetVehicleMileageQuery,
   usePostVehicleMileageMutation,
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema';
-import {client} from '../../graphql/client';
+import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {openBrowser} from '../../lib/rn-island';
 import {MileageCell} from './components/mileage-cell';
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -33,7 +25,7 @@ const {getNavigationOptions, useNavigationOptions} =
 
 export const originCodes = {
   'ISLAND.IS': 'Ísland.is',
-  SKODUN: 'Skoðunarstöð',
+  SKODUN: 'Skoðun',
 };
 
 type ListItem =
@@ -47,7 +39,8 @@ type ListItem =
 
 export const VehicleMileageScreen: NavigationFunctionComponent<{
   id: string;
-}> = ({componentId, id}) => {
+  title?: {type: string; year: string; color: string};
+}> = ({componentId, id, title}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
   const [input, setInput] = useState('');
@@ -57,7 +50,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     variables: {
       input: {
         regno: '',
-        permno: id,
+        permno: '', // id,
         vin: '',
       },
     },
@@ -110,11 +103,13 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 
   const vehicle = useMemo(() => {
     return {
-      type: `${info.data?.vehiclesDetail?.basicInfo?.model} ${info.data?.vehiclesDetail?.basicInfo?.subModel}`,
-      year: info.data?.vehiclesDetail?.basicInfo?.year,
-      color: info.data?.vehiclesDetail?.registrationInfo?.color,
+      type:
+        title?.type ??
+        `${info.data?.vehiclesDetail?.basicInfo?.model} ${info.data?.vehiclesDetail?.basicInfo?.subModel}`,
+      year: title?.year ?? info.data?.vehiclesDetail?.basicInfo?.year,
+      color: title?.color ?? info.data?.vehiclesDetail?.registrationInfo?.color,
     };
-  }, [info.data]);
+  }, [info.data, title]);
 
   const parseMileage = useCallback(
     (value?: string) => {
@@ -187,9 +182,9 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
             updateMileage({
               variables: {
                 input: {
-                  mileage,
+                  mileage: mileage.toString(),
                   permno: id,
-                  internalId,
+                  internalId: Number(internalId),
                 },
               },
             }).then(res => {
@@ -306,6 +301,12 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               title={intl.formatMessage({
                 id: 'vehicle.mileage.moreInformationCopy',
               })}
+              onPress={() =>
+                openBrowser(
+                  'https://island.is/flokkur/akstur-og-bifreidar',
+                  componentId,
+                )
+              }
               isTransparent
               textStyle={{fontSize: 12, lineHeight: 16}}
             />
