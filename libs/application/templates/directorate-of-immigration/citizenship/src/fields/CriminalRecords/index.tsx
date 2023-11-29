@@ -29,22 +29,24 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
       {filteredCountryList &&
         filteredCountryList.map((x) => {
           return (
-            <FileUploadController
-              key={x.countryId}
-              application={application}
-              id={`${field.id}.${x.countryId}.attachment`}
-              header={`Sakavottorð - ${
-                countryOptions.filter(
-                  (z) => z.id?.toString() === x.countryId,
-                )[0]?.name
-              }`}
-              description={formatMessage(
-                supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-              )}
-              buttonLabel={formatMessage(
-                supportingDocuments.labels.otherDocuments.buttonText,
-              )}
-            />
+            <Box paddingBottom={2}>
+              <FileUploadController
+                key={x.countryId}
+                application={application}
+                id={`${field.id}.${x.countryId}.attachment`}
+                header={`Sakavottorð - ${
+                  countryOptions.filter(
+                    (z) => z.id?.toString() === x.countryId,
+                  )[0]?.name
+                }`}
+                description={formatMessage(
+                  supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+                )}
+                buttonLabel={formatMessage(
+                  supportingDocuments.labels.otherDocuments.buttonText,
+                )}
+              />
+            </Box>
           )
         })}
     </Box>
