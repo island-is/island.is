@@ -29,3 +29,4 @@ export type OrganizationSlugType =
   | 'umhverfisstofnun'
   | 'vegagerdin'
   | 'landlaeknir'
+  | 'hugverkastofan'

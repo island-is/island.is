@@ -9,7 +9,7 @@ export const ApiConfig = {
   useFactory: (config: ConfigType<typeof IntellectualPropertiesClientConfig>) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
-        logErrorResponseBody: true,
+        organizationSlug: 'hugverkastofan',
         name: 'clients-intellectual-properties',
       }),
       basePath: `https://webapi.hugverk.is/apiv3`,
