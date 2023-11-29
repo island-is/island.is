@@ -8,6 +8,7 @@ import {
 } from 'class-validator'
 
 import { Locale } from '../../user-profile/types/localeTypes'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 export class UserProfileDto {
   @ApiProperty()
@@ -53,4 +54,14 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly needsNudge?: boolean | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly emailStatus?: DataStatus
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  readonly mobileStatus?: DataStatus
 }

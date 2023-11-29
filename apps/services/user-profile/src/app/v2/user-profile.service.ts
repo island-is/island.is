@@ -14,6 +14,7 @@ import { formatPhoneNumber } from '../utils/format-phone-number'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
+import { DataStatus } from '../user-profile/types/dataStatusTypes'
 
 export const NUDGE_INTERVAL = 6
 
@@ -47,6 +48,8 @@ export class UserProfileService {
         emailVerified: false,
         documentNotifications: true,
         needsNudge: null,
+        mobileStatus: DataStatus.NOT_DEFINED,
+        emailStatus: DataStatus.NOT_DEFINED,
       }
     }
 
@@ -57,6 +60,8 @@ export class UserProfileService {
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
+      mobileStatus: userProfile.mobileStatus as DataStatus,
+      emailStatus: userProfile.emailStatus as DataStatus,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
     }
@@ -153,10 +158,16 @@ export class UserProfileService {
         ...(isEmailDefined && {
           email: userProfile.email || null,
           emailVerified: userProfile.email !== '',
+          emailStatus: userProfile.email
+            ? DataStatus.VERIFIED
+            : DataStatus.EMPTY,
         }),
         ...(isMobilePhoneNumberDefined && {
           mobilePhoneNumber: formattedPhoneNumber || null,
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
+          mobileStatus: formattedPhoneNumber
+            ? DataStatus.VERIFIED
+            : DataStatus.EMPTY,
         }),
         ...(isDefined(userProfile.locale) && {
           locale: userProfile.locale,
