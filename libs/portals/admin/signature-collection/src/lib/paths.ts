@@ -1,4 +1,4 @@
 export enum SignatureCollectionPaths {
-  PetitionsRoot = '/medmaelasofnun',
-  PetitionList = '/medmaelasofnun/:id',
+  SignatureLists = '/medmaelasofnun',
+  SignatureList = '/medmaelasofnun/:id',
 }

@@ -1,5 +1,4 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { EndorsementList } from '../../lib/utils/types'
 import {
   EndorsementSystemGetSingleEndorsementListDocument,
   EndorsementSystemGetSingleEndorsementListQuery,
@@ -10,7 +9,7 @@ import {
 } from './getEndorsements.generated'
 
 export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
-  return async ({ params }): Promise<EndorsementList> => {
+  return async ({ params }): Promise<any> => {
     if (!params.listId) {
       throw new Error('Listid not provided in parameters')
     }

@@ -2,7 +2,6 @@ query allLists {
   signatureCollectionAllLists {
     id
     title
-
     area {
       id
       name
@@ -26,6 +25,6 @@ query allLists {
     active
     collectionId
     link
-		numberOfSignatures
+    numberOfSignatures
   }
 }

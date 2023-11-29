@@ -3,16 +3,16 @@ import { SignatureCollectionPaths } from './paths'
 import { m } from './messages'
 
 export const signatureCollectionNavigation: PortalNavigationItem = {
-  name: m.petitionsTitle,
+  name: m.signatureListsTitle,
   icon: {
     icon: 'settings',
   },
-  description: m.intro,
-  path: SignatureCollectionPaths.PetitionsRoot,
+  description: m.signatureListsIntro,
+  path: SignatureCollectionPaths.SignatureLists,
   children: [
     {
-      name: m.petitionListsOverview,
-      path: SignatureCollectionPaths.PetitionsRoot,
+      name: m.signatureListsTitle,
+      path: SignatureCollectionPaths.SignatureList,
       activeIfExact: true,
     },
   ],

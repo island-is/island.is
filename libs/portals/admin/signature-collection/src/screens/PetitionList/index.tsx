@@ -28,11 +28,9 @@ import {
   PaginatedEndorsementResponse,
   EndorsementList,
 } from '@island.is/api/schema'
-import { EndorsementList as EndorsementListLoaderType } from '../../lib/utils/types'
 
 const PetitionList = () => {
-  const { listId, petition, endorsements } =
-    useLoaderData() as EndorsementListLoaderType
+  const { listId, petition, endorsements } = useLoaderData() as any
   const { formatMessage } = useLocale()
   const navigation = useNavigation()
   const navigate = useNavigate()
