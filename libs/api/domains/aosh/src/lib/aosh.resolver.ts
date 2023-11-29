@@ -13,6 +13,7 @@ import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
 import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
+import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -61,6 +62,21 @@ export class AoshResolver {
       return true // Operation was successful
     } catch (error) {
       console.log('confirmOwnerChange Error: ', error)
+      // Handle errors here
+      return false // Operation failed
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async changeMachineSupervisor(
+    @CurrentUser() auth: User,
+    @Args('input') input: ChangeMachineSupervisor,
+  ): Promise<boolean> {
+    try {
+      await this.aoshApi.changeMachineSupervisor(auth, input)
+      return true // Operation was successful
+    } catch (error) {
+      console.log('changeMachineSupervisor Error: ', error)
       // Handle errors here
       return false // Operation failed
     }

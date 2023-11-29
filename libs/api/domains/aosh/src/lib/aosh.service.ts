@@ -3,7 +3,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
 import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
-import { TransferOfMachineOwnershipClient } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import {
+  ChangeMachineSupervisor,
+  TransferOfMachineOwnershipClient,
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 @Injectable()
@@ -45,6 +48,16 @@ export class AoshApi {
         auth,
         regNumber,
       )) || false
+    )
+  }
+
+  async changeMachineSupervisor(
+    auth: User,
+    changeSupervisor: ChangeMachineSupervisor,
+  ): Promise<void> {
+    await this.transferOfMachineOwnershipClient.changeMachineSupervisor(
+      auth,
+      changeSupervisor,
     )
   }
 }

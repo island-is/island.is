@@ -96,6 +96,8 @@ import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/drivi
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
 import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
+import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
+import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -148,6 +150,7 @@ export const modules = [
   DrivingLicenseDuplicateModule,
   CitizenshipModule,
   TransferOfMachineOwnershipTemplateModule,
+  ChangeMachineSupervisorTemplateModule,
 ]
 
 export const services = [
@@ -201,4 +204,5 @@ export const services = [
   DrivingLicenseDuplicateService,
   CitizenshipService,
   TransferOfMachineOwnershipTemplateService,
+  ChangeMachineSupervisorTemplateService,
 ]

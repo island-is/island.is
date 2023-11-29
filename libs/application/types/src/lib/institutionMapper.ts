@@ -77,4 +77,6 @@ export const institutionMapper = {
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
     InstitutionTypes.VINNUEFTIRLITID,
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]:
+    InstitutionTypes.VINNUEFTIRLITID,
 }

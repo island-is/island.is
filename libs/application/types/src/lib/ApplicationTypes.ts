@@ -51,6 +51,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
 }
 
 export const ApplicationConfigurations = {
@@ -261,5 +262,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'vinnueftirlitid',
     translation: 'aosh.application',
+  },
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
+    slug: 'umradaskipti-vela',
+    translation: 'aosh-u.application',
   },
 }

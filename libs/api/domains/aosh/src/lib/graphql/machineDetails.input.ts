@@ -38,6 +38,12 @@ export class AoshMachineDetails {
   @Field(() => String, { nullable: true })
   licensePlateNumber?: string | null
 
+  @Field(() => String, { nullable: true })
+  supervisorName?: string | null
+
+  @Field(() => String, { nullable: true })
+  supervisorNationalId?: string | null
+
   @Field(() => AoshMachineLinks, { nullable: true })
   _links?: AoshMachineLinks | null
 }

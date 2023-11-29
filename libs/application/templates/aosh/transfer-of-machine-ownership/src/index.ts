@@ -1,8 +1,8 @@
 import template from './lib/TransferOfMachineOwnershipTemplate'
 import { MachineAnswers } from './lib/dataSchema'
 
-export const getFields = () => import('./fields/')
-export const getDataProviders = () => import('./dataProviders/')
+export const getFields = () => import('./fields')
+export const getDataProviders = () => import('./dataProviders')
 
 export type TransferOfMachineOwnerShipAnswers = MachineAnswers
 

@@ -22,3 +22,15 @@ export type ConfirmOwnerChange = {
   supervisorPhoneNumber?: string | null
   machineAddress?: string | null
 }
+
+export type ChangeMachineSupervisor = {
+  machineId?: string | null
+  delegateNationalId?: string | null
+  ownerNationalId?: string | null
+  supervisorNationalId?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+  address?: string | null
+  postalCode?: number | null
+  moreInfo?: string | null
+}

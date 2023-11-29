@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import {
   MachineCategoryApi,
   MachineOwnerChangeApi,
+  MachineSupervisorChangeApi,
   MachinesApi,
 } from '../../gen/fetch/apis'
 import {
@@ -12,6 +13,7 @@ import {
 import { CustomMachineApi } from './apiConfiguration'
 import {
   apiChangeMachineOwnerToApiRequest,
+  apiChangeMachineSupervisorToApiRequest,
   confirmChangeToApiRequest,
 } from './transferOfMachineOwnershipClient.utils'
 import { MachineFriendlyDto } from '../../gen/fetch/models/MachineFriendlyDto'
@@ -24,6 +26,7 @@ export class TransferOfMachineOwnershipClient {
     private readonly machineApi: CustomMachineApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
+    private readonly machineSupervisorChangeApi: MachineSupervisorChangeApi,
   ) {}
 
   private machinesApiWithAuth(auth: Auth) {
@@ -40,6 +43,12 @@ export class TransferOfMachineOwnershipClient {
 
   private machineCategoryApiWithAuth(auth: Auth) {
     return this.machineCategoryApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineSupervisorChangeApiWithAuth(auth: Auth) {
+    return this.machineSupervisorChangeApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
   }
 
   public async getMachines(auth: User): Promise<MachineFriendlyDto[]> {
@@ -83,5 +92,16 @@ export class TransferOfMachineOwnershipClient {
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
       input,
     )
+  }
+
+  public async changeMachineSupervisor(
+    auth: Auth,
+    ownerChange: ChangeMachineOwner,
+  ) {
+    const input = apiChangeMachineSupervisorToApiRequest(ownerChange)
+
+    await this.machineSupervisorChangeApiWithAuth(
+      auth,
+    ).apiMachineSupervisorChangePost(input)
   }
 }

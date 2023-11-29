@@ -253,6 +253,9 @@
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
       ],
+      "@island.is/application/templates/aosh/change-machine-supervisor": [
+        "libs/application/templates/aosh/change-machine-supervisor/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/transfer-of-machine-ownership": [
         "libs/application/templates/aosh/transfer-of-machine-ownership/src/index.ts"
       ],
