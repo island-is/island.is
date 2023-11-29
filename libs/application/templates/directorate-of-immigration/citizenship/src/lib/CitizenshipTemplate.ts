@@ -130,7 +130,7 @@ const template: ApplicationTemplate<
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
           onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
+            action: ApiActions.submitApplication,
           }),
           roles: [
             {

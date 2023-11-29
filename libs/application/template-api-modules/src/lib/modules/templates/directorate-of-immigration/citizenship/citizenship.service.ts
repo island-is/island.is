@@ -146,6 +146,8 @@ export class CitizenshipService extends BaseTemplateApiService {
           answers?.supportingDocuments?.subsistenceCertificate[0].key,
         )
       : ''
+
+    this.logger.info('blabla', passportFile)
     // const requests = attachmentStatusToAttachmentRequests()
 
     // const attachments = await this.attachmentProvider.getFiles(
