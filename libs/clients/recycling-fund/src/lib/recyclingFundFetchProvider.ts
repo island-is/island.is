@@ -19,13 +19,15 @@ export const RecyclingFundFetchProvider: Provider<EnhancedFetchAPI> = {
   useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) =>
     createEnhancedFetch({
       name: 'clients-recycling-fund',
-      autoAuth: {
-        mode: 'tokenExchange',
-        issuer: idsClientConfig.issuer,
-        clientId: idsClientConfig.clientId,
-        clientSecret: idsClientConfig.clientSecret,
-        scope: [RecyclingFundScope.recyclingFund],
-      },
+      autoAuth: idsClientConfig.isConfigured
+        ? {
+            mode: 'tokenExchange',
+            issuer: idsClientConfig.issuer,
+            clientId: idsClientConfig.clientId,
+            clientSecret: idsClientConfig.clientSecret,
+            scope: [RecyclingFundScope.recyclingFund],
+          }
+        : undefined,
     }),
   inject: [IdsClientConfig.KEY],
 }

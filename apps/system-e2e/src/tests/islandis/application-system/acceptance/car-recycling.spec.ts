@@ -32,7 +32,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
-/*applicationTest.describe('Car recycling', () => {
+applicationTest.describe('Car recycling', () => {
   applicationTest(
     'Should be able to create application',
     async ({ applicationPage }) => {
@@ -127,4 +127,4 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
       )
     },
   )
-})*/
+})

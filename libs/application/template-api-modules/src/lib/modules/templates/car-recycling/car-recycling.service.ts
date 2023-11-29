@@ -103,7 +103,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       })
     } catch (error) {
       isError = true
-      this.logger.error(error)
+      this.logger.error(error.messages)
     }
     try {
       canceledVehicles.forEach(async (vehicle) => {
@@ -112,7 +112,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       })
     } catch (error) {
       isError = true
-      this.logger.error(error)
+      this.logger.error(error.messages)
     }
 
     return new Promise((resolve, reject) => {
