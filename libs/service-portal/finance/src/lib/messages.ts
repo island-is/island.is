@@ -53,11 +53,11 @@ export const m = defineMessages({
     defaultMessage: 'Kostnaður',
   },
   priceImprovementPayment: {
-    id: 'sp.finance-loans:cost-payment',
+    id: 'sp.finance-loans:price-improvement-payment',
     defaultMessage: 'Verð afborgun',
   },
   priceImprovementInterest: {
-    id: 'sp.finance-loans:cost-payment',
+    id: 'sp.finance-loans:price-improvement-interest',
     defaultMessage: 'Verð vextir',
   },
 

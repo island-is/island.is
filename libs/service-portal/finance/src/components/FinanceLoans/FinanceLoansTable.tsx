@@ -9,7 +9,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { amountFormat, formatDate, m } from '@island.is/service-portal/core'
-import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
+import {
+  ExpandRow,
+  ExpandHeader,
+  downloadLink,
+} from '@island.is/service-portal/core'
 import {
   GetHmsLoansLoanHistoryQuery,
   useGetHmsLoansLoanHistoryPdfLazyQuery,
@@ -35,13 +39,11 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
   ] = useGetHmsLoansLoanHistoryPdfLazyQuery({
     onCompleted: (data) => {
       if (data.hmsLoansLoanHistoryPdf?.data) {
-        const downloadLink = document.createElement('a')
-        downloadLink.href = `data:${
-          data.hmsLoansLoanHistoryPdf.mime ?? 'application/pdf'
-        };base64,${data.hmsLoansLoanHistoryPdf.data}`
-        downloadLink.download =
-          data.hmsLoansLoanHistoryPdf.name ?? 'lanayfirlit.pdf'
-        downloadLink.click()
+        downloadLink(
+          data.hmsLoansLoanHistoryPdf.data,
+          data.hmsLoansLoanHistoryPdf.mime ?? 'application/pdf',
+          data.hmsLoansLoanHistoryPdf.name ?? 'lanayfirlit.pdf',
+        )
       }
     },
   })

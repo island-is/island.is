@@ -10,6 +10,7 @@ import {
   UserInfoLine,
   amountFormat,
   m,
+  downloadLink,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import {
@@ -66,10 +67,7 @@ export const HealthOverview = () => {
     const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
 
     if (downloadData?.data && downloadData.fileName) {
-      const downloadLink = document.createElement('a')
-      downloadLink.href = 'data:application/pdf;base64,' + downloadData?.data
-      downloadLink.download = downloadData.fileName
-      downloadLink.click()
+      downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
     }
   }
 
