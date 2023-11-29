@@ -12,7 +12,6 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
     })
 
     const lists = data?.signatureCollectionAllLists ?? []
-
-    return { lists }
+    return lists
   }
 }

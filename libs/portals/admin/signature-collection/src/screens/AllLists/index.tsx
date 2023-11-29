@@ -12,7 +12,7 @@ import { format } from 'date-fns'
 const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { lists } = useLoaderData() as any
+  const lists = useLoaderData() as SignatureList[]
   const { revalidate } = useRevalidator()
 
   useEffect(() => {

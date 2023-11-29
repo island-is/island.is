@@ -31,4 +31,9 @@ export const m = defineMessages({
     defaultMessage: 'Skoða lista',
     description: '',
   },
+  singleList: {
+    id: 'admin-portal.signature-collection:singleList',
+    defaultMessage: 'Meðmælalisti',
+    description: '',
+  },
 })
