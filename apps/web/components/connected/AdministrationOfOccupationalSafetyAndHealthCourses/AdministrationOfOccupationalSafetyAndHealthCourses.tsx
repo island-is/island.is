@@ -122,63 +122,55 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
                   key={`course-${index}`}
                   href={course.registrationUrl}
                   borderRadius="large"
-                  borderColor="transparent"
-                  borderWidth="large"
+                  borderColor="blue200"
+                  borderWidth="standard"
                   flexDirection="column"
-                  color={'blue'}
-                  height="full"
-                  width="full"
+                  color="blue"
                   marginBottom={4}
+                  paddingX={4}
+                  paddingY={3}
                 >
                   <Box
-                    borderWidth="standard"
-                    borderColor="standard"
-                    borderRadius="standard"
-                    paddingX={4}
-                    paddingY={3}
+                    alignItems="flexStart"
+                    display="flex"
+                    flexDirection={[
+                      'columnReverse',
+                      'columnReverse',
+                      'columnReverse',
+                      'columnReverse',
+                      'row',
+                    ]}
+                    justifyContent="spaceBetween"
+                    marginBottom={2}
                   >
-                    <Box
-                      alignItems="flexStart"
-                      display="flex"
-                      flexDirection={[
-                        'columnReverse',
-                        'columnReverse',
-                        'columnReverse',
-                        'columnReverse',
-                        'row',
-                      ]}
-                      justifyContent="spaceBetween"
-                      marginBottom={2}
-                    >
-                      <Text variant="h3" color={'blue400'}>
-                        {course.name}
-                      </Text>
-                      <Box marginBottom={[2, 2, 2, 2]}>
-                        <Tag disabled>{course.location}</Tag>
-                      </Box>
+                    <Text variant="h3" color={'blue400'}>
+                      {course.name}
+                    </Text>
+                    <Box marginBottom={[2, 2, 2, 2]}>
+                      <Tag disabled>{course.location}</Tag>
                     </Box>
-                    <Box
-                      display="flex"
-                      flexDirection={['column', 'column', 'column', 'row']}
-                    >
-                      <Box style={{ flex: '0 0 50%' }}>
-                        <Text>
-                          {n('validPeriodLabel', 'Dagsetning')}:{' '}
-                          {dateFrom !== dateTo
-                            ? dateFrom + ' - ' + dateTo
-                            : dateFrom}
-                        </Text>
-                        <Text paddingBottom={2}>
-                          {n('time', 'Klukkan')}: {course.time}
-                        </Text>
-                      </Box>
+                  </Box>
+                  <Box
+                    display="flex"
+                    flexDirection={['column', 'column', 'column', 'row']}
+                  >
+                    <Box style={{ flex: '0 0 50%' }}>
+                      <Text>
+                        {n('validPeriodLabel', 'Dagsetning')}:{' '}
+                        {dateFrom !== dateTo
+                          ? dateFrom + ' - ' + dateTo
+                          : dateFrom}
+                      </Text>
+                      <Text paddingBottom={2}>
+                        {n('time', 'Klukkan')}: {course.time}
+                      </Text>
+                    </Box>
 
-                      <Box paddingLeft={[0, 0, 0, 2]}>
-                        <Text>
-                          {n('price', 'Verð')}:{' '}
-                          {getCurrencyString(course.price || 0)}
-                        </Text>
-                      </Box>
+                    <Box paddingLeft={[0, 0, 0, 2]}>
+                      <Text>
+                        {n('price', 'Verð')}:{' '}
+                        {getCurrencyString(course.price || 0)}
+                      </Text>
                     </Box>
                   </Box>
                 </FocusableBox>
