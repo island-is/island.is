@@ -70,15 +70,22 @@ export const MaritalStatusSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'maritalStatus.dateOfMaritalStatus',
+          id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marritalStatusDate,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            formatDate(
-              application.externalData?.spouseDetails?.data?.lastModified,
-            ),
+          defaultValue: (application: Application) => {
+            const spouseDetails = getValueViaPath(
+              application.externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+
+            return spouseDetails?.lastModified
+              ? formatDate(new Date(spouseDetails.lastModified))
+              : ''
+          },
         }),
         buildTextField({
           id: 'maritalStatus.nationalId',

@@ -157,7 +157,7 @@ export const UserInformationSubSection = buildSubSection({
 
             const date = residenceInIcelandLastChangeDate
 
-            return date ? formatDate(date) : ''
+            return date ? formatDate(new Date(date)) : ''
           },
         }),
         buildTextField({
