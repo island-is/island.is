@@ -145,20 +145,20 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
         },
       },
-      [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
-        chargeItemCodes: getChargeItemCodes,
-        submitTarget: States.COMPLETED,
-        onExit: [
-          defineTemplateApi({
-            action: ApiActions.submitApplication,
-            triggerEvent: DefaultEvents.SUBMIT,
-          }),
-        ],
-      }),
+      // [States.PAYMENT]: buildPaymentState({
+      //   organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
+      //   chargeItemCodes: getChargeItemCodes,
+      //   submitTarget: States.COMPLETED,
+      //   onExit: [
+      //     defineTemplateApi({
+      //       action: ApiActions.submitApplication,
+      //       triggerEvent: DefaultEvents.SUBMIT,
+      //     }),
+      //   ],
+      // }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
