@@ -12,17 +12,18 @@ function commandExistsSync(cmd) {
     return false
   }
 }
-// Determine the command for container operations
-const containerer = (() => {
+
+const getBuilder = () => {
   if (commandExistsSync('podman')) {
     return 'podman'
+  } else if (commandExistsSync('flatpak-spawn --host podman')) {
+    return 'flatpak-spawn --host podman'
   } else if (commandExistsSync('docker')) {
     return 'docker'
   }
   console.error('Please install podman or docker')
   return 'docker'
-  // process.exit(1)
-})()
+}
 
 function diffObjects(a, b) {
   const diff = { 'diff+': {}, 'diff-': {} }
@@ -131,7 +132,7 @@ async function mkRunCommand({
 }) {
   const credentials = await getCredentials(profile)
   const cmd = [
-    builder ?? containerer,
+    builder,
     `run`,
     `--rm`,
     `--name ${service}`,
@@ -158,9 +159,6 @@ async function mkRunCommand({
  * @param {string} target - The target stage in the Dockerfile to build.
  */
 function buildDockerImage(containerImage, builder, target) {
-  if (!builder) {
-    builder = containerer
-  }
   console.log(
     `Preparing docker image for restarting deployments - \uD83D\uDE48`,
   )
@@ -255,9 +253,6 @@ const runProxy = async ({
   port,
   proxyPort,
 }) => {
-  if (!builder) {
-    builder = containerer
-  }
   if (!port || !proxyPort) {
     throw new Error(
       `Missing required arguments for running the proxy (port=${port}, proxyPort=${proxyPort})`,
@@ -341,7 +336,7 @@ async function main() {
             })
             .option('builder', {
               description: 'docker or podman',
-              default: 'docker',
+              default: getBuilder(),
             })
             .demandOption(
               'namespace',
@@ -350,13 +345,7 @@ async function main() {
             .option('profile', {
               description: 'AWS profile to use',
             })
-            .demandOption('service', 'Name of the Kubernetes service')
-            .check(function (argv) {
-              if (!['docker', 'podman'].includes(argv.builder)) {
-                throw new Error('Only docker or podman allowed')
-              }
-              return true
-            }),
+            .demandOption('service', 'Name of the Kubernetes service'),
         runProxy,
       )
       .command(
@@ -395,7 +384,6 @@ async function main() {
 module.exports = {
   runProxy,
   restartService,
-  containerer,
 }
 if (require.main === module) {
   main()
