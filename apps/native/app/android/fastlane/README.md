@@ -38,7 +38,6 @@ Upload a new AAB to the Google Play store
 ```
 
 
-
 ### android beta
 
 ```sh
