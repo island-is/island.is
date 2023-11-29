@@ -114,7 +114,6 @@ export class CitizenshipService extends BaseTemplateApiService {
         },
       ],
       'test',
-      application,
     )
     this.logger.debug('Testing citizenship files', test)
 
@@ -153,9 +152,8 @@ export class CitizenshipService extends BaseTemplateApiService {
         },
       ],
       'test',
-      application,
     )
-    this.logger.debug('Testing citizenship files', test)
+    this.logger.info('Testing citizenship files', test)
     // const requests = attachmentStatusToAttachmentRequests()
 
     // const attachments = await this.attachmentProvider.getFiles(

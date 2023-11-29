@@ -34,7 +34,6 @@ export class ApplicationAttachmentService {
       const list = await this.toDocumentDataList(
         answers,
         attachmentAnswerKeys[i],
-        application,
       )
       attachments.push(...list)
     }
@@ -47,22 +46,19 @@ export class ApplicationAttachmentService {
       name: string
     }>,
     answerKey: string,
-    application: Application,
   ): Promise<AttachmentData[]> {
     return await Promise.all(
       answers.map(async ({ key, name }) => {
-        const url = (
-          application.attachments as {
-            [key: string]: string
-          }
-        )[key]
+        const fileName = key
 
-        if (!url) {
+        if (!fileName) {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
+        } else {
+          logger.info('did not fail to get url from application state')
         }
         const fileContent =
-          (await this.s3Service.getFilecontentAsBase64(url)) ?? ''
+          (await this.s3Service.getFilecontentAsBase64(fileName)) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
