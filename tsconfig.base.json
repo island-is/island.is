@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api-domains/intellectual-properties": [
+        "libs/api/domains/intellectual-properties/src/index.ts"
+      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
@@ -455,9 +458,6 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients/intellectual-properties": [
-        "libs/clients/intellectual-properties/src/index.ts"
-      ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
@@ -550,6 +550,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
+      "@island.is/clients/intellectual-properties": [
+        "libs/clients/intellectual-properties/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
