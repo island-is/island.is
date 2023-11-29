@@ -145,7 +145,17 @@ const ParentsSchema = z.object({
 const FileDocumentSchema = z.object({
   name: z.string(),
   key: z.string(),
-  url: z.string().optional(),
+  // url: z.string().optional(),
+})
+
+const CriminalRecordFileDocumentSchema = z.object({
+  name: z.string().optional(),
+  key: z.string().optional(),
+  // url: z.string().optional(),
+})
+
+const CriminalRecordSchema = z.object({
+  attachment: z.array(CriminalRecordFileDocumentSchema).optional(),
 })
 
 const PassportSchema = z.object({
@@ -175,10 +185,6 @@ const MaritalStatusSchema = z.object({
   citizenship: z.string().optional(),
   dateOfMaritalStatus: z.string().min(1),
   explanation: z.string().optional(),
-})
-
-const CriminalRecordSchema = z.object({
-  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const SupportingDocumentsSchema = z.object({

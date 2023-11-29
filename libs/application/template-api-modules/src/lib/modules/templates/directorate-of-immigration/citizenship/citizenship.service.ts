@@ -202,10 +202,13 @@ export class CitizenshipService extends BaseTemplateApiService {
       const countryId = i.toString()
       const attachments = criminalRecordList[i]?.attachment || []
       for (let j = 0; j < attachments.length; j++) {
-        applicantCriminalRecordAttachments.push({
-          ...attachments[j],
-          countryId,
-        })
+        const attachment = attachments[j]
+        if (attachment?.name && attachment?.key)
+          applicantCriminalRecordAttachments.push({
+            name: attachment.name,
+            key: attachment.key,
+            countryId,
+          })
       }
     }
 
