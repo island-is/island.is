@@ -342,7 +342,8 @@ const Search: Screen<CategoryProps> = ({
 
   const getItemLink = (item: SearchEntryType) => {
     if (
-      (item.__typename === 'AnchorPage' ||  item.__typename === 'LifeEventPage') &&
+      (item.__typename === 'AnchorPage' ||
+        item.__typename === 'LifeEventPage') &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
@@ -366,7 +367,8 @@ const Search: Screen<CategoryProps> = ({
 
   const getItemImages = (item: SearchEntryType) => {
     if (
-      (item.__typename === 'AnchorPage' ||  item.__typename === 'LifeEventPage') &&
+      (item.__typename === 'AnchorPage' ||
+        item.__typename === 'LifeEventPage') &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return {
