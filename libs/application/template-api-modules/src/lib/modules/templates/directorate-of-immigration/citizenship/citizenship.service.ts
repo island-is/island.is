@@ -196,21 +196,26 @@ export class CitizenshipService extends BaseTemplateApiService {
         }))
 
     // Get attachment array with countryId field from attachment array of arrays
-    const applicantCriminalRecordAttachments = []
-    const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
-    for (let i = 0; i < criminalRecordList.length; i++) {
-      const countryId = i.toString()
-      const attachments = criminalRecordList[i]?.attachment || []
-      for (let j = 0; j < attachments.length; j++) {
-        const attachment = attachments[j]
-        if (attachment?.name && attachment?.key)
-          applicantCriminalRecordAttachments.push({
-            name: attachment.name,
-            key: attachment.key,
-            countryId,
-          })
-      }
-    }
+    const applicantCriminalRecordAttachments: {
+      name: string
+      key: string
+      countryId: string
+    }[] = []
+    // const applicantCriminalRecordAttachments = []
+    // const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
+    // for (let i = 0; i < criminalRecordList.length; i++) {
+    //   const countryId = i.toString()
+    //   const attachments = criminalRecordList[i]?.attachment || []
+    //   for (let j = 0; j < attachments.length; j++) {
+    //     const attachment = attachments[j]
+    //     if (attachment?.name && attachment?.key)
+    //       applicantCriminalRecordAttachments.push({
+    //         name: attachment.name,
+    //         key: attachment.key,
+    //         countryId,
+    //       })
+    //   }
+    // }
 
     // Submit the application
     await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
