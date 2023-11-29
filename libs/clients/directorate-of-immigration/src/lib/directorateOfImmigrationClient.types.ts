@@ -47,19 +47,19 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryOfIssuerId: string
-    // file: { filename: string; fileUrl: string }[]
+    file: { filename: string; base64: string }[]
   }
   supportingDocuments: {
-    // birthCertificate?: { filename: string; fileUrl: string }[]
-    // subsistenceCertificate: { filename: string; fileUrl: string }[]
-    // subsistenceCertificateForTown: { filename: string; fileUrl: string }[]
-    // certificateOfLegalResidenceHistory: { filename: string; fileUrl: string }[]
-    // icelandicTestCertificate: { filename: string; fileUrl: string }[]
-    // criminalRecordList: {
-    //   filename: string
-    //   fileUrl: string
-    //   countryId: string
-    // }[]
+    birthCertificate?: { filename: string; base64: string }[]
+    subsistenceCertificate: { filename: string; base64: string }[]
+    subsistenceCertificateForTown: { filename: string; base64: string }[]
+    certificateOfLegalResidenceHistory: { filename: string; base64: string }[]
+    icelandicTestCertificate: { filename: string; base64: string }[]
+    criminalRecordList: {
+      filename: string
+      base64: string
+      countryId: string
+    }[]
   }
   children: {
     nationalId: string
@@ -74,13 +74,13 @@ export interface CitizenshipApplication {
     passportNumber: string
     passportTypeId: number
     countryIdOfIssuer: string
-    // file: { filename: string; fileUrl: string }[]
+    file: { filename: string; base64: string }[]
   }[]
   childrenSupportingDocuments: {
     nationalId: string
-    // birthCertificate: { filename: string; fileUrl: string }[]
-    // writtenConsentFromChild?: { filename: string; fileUrl: string }[]
-    // writtenConsentFromOtherParent?: { filename: string; fileUrl: string }[]
-    // custodyDocuments: { filename: string; fileUrl: string }[]
+    birthCertificate: { filename: string; base64: string }[]
+    writtenConsentFromChild?: { filename: string; base64: string }[]
+    writtenConsentFromOtherParent?: { filename: string; base64: string }[]
+    custodyDocuments: { filename: string; base64: string }[]
   }[]
 }

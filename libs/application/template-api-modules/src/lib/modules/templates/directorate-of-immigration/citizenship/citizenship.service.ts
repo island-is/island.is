@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
@@ -21,13 +21,10 @@ import {
 } from '@island.is/clients/directorate-of-immigration'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { YES } from '@island.is/application/core'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class CitizenshipService extends BaseTemplateApiService {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly directorateOfImmigrationClient: DirectorateOfImmigrationClient,
     private readonly nationalRegistryApi: NationalRegistryClientService,
@@ -132,44 +129,6 @@ export class CitizenshipService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<void> {
     console.log('--------submitApplication')
 
-    try {
-      const answers = application.answers as CitizenshipAnswers
-
-      //1. Configure attachments
-      const passportAttachments = answers?.passport?.attachment || []
-      if (passportAttachments[0]?.key) {
-        const passportFile = answers?.passport?.attachment
-          ? await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-              application,
-              passportAttachments[0].key,
-            )
-          : ''
-        this.logger.info('----passport file', passportFile)
-      }
-
-      const subsistenceCertificates =
-        answers?.supportingDocuments?.subsistenceCertificate || []
-      if (subsistenceCertificates[0]?.key) {
-        const subsistenceCertificateFile =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
-            application,
-            subsistenceCertificates[0].key,
-          )
-        this.logger.info('----subsistence file', subsistenceCertificateFile)
-      }
-    } catch (e) {
-      this.logger.error('----error submitApplication', e)
-    }
-
-    // // const requests = attachmentStatusToAttachmentRequests()
-
-    // // const attachments = await this.attachmentProvider.getFiles(
-    // //   requests,
-    // //   application,
-    // // )
-
-    // // const fileHashList = attachments.map((attachment) => attachment.hash)
-
     // const { paymentUrl } = application.externalData.createCharge.data as {
     //   paymentUrl: string
     // }
@@ -188,49 +147,75 @@ export class CitizenshipService extends BaseTemplateApiService {
     //   )
     // }
 
-    // const individual = application.externalData.individual?.data as
-    //   | NationalRegistryIndividual
-    //   | undefined
-    // const residenceInIcelandLastChangeDate = application.externalData
-    //   .residenceInIcelandLastChangeDate?.data as Date | null
-    // const nationalRegistryBirthplace = application.externalData
-    //   .nationalRegistryBirthplace?.data as
-    //   | NationalRegistryBirthplace
-    //   | undefined
-    // const spouseDetails = application.externalData.spouseDetails?.data as
-    //   | NationalRegistrySpouse
-    //   | undefined
-    // const childrenCustodyInformation = application.externalData
-    //   .childrenCustodyInformation?.data as
-    //   | ApplicantChildCustodyInformation[]
-    //   | undefined
-    // const applicantPassport = { ...answers.passport, attachment: passportFile }
-    // const filteredCountriesOfResidence =
-    //   answers.countriesOfResidence?.hasLivedAbroad == YES &&
-    //   answers.countriesOfResidence?.selectedAbroadCountries
-    //     ?.filter((c) => c.wasRemoved !== 'true')
-    //     ?.map((c) => ({
-    //       countryId: c.countryId,
-    //     }))
-    // const filteredStaysAbroad =
-    //   answers.staysAbroad?.hasStayedAbroad == YES &&
-    //   answers.staysAbroad?.selectedAbroadCountries
-    //     ?.filter((s) => s.wasRemoved !== 'true')
-    //     ?.map((s) => ({
-    //       countryId: s.countryId,
-    //       dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
-    //       dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
-    //       purpose: s.purpose,
-    //     }))
-    // const filteredParents =
-    //   answers.parentInformation?.hasValidParents == YES &&
-    //   answers.parentInformation?.parents
-    //     ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
-    //     ?.map((p) => ({
-    //       nationalId: p.nationalId || '',
-    //       givenName: p.givenName,
-    //       familyName: p.familyName,
-    //     }))
+    const answers = application.answers as CitizenshipAnswers
+
+    const passportAttachments = answers?.passport?.attachment || []
+    if (passportAttachments[0]?.key) {
+      const passportFile =
+        await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+          application,
+          passportAttachments[0].key,
+        )
+      console.log('--------passportFileLength', passportFile.length)
+    }
+
+    const applicantPassportFiles = await Promise.all(
+      answers?.passport?.attachment?.map(async (file) => {
+        const base64 =
+          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            application,
+            file.key,
+          )
+        return {
+          filename: file.name,
+          base64,
+        }
+      }) || [],
+    )
+
+    const individual = application.externalData.individual?.data as
+      | NationalRegistryIndividual
+      | undefined
+    const residenceInIcelandLastChangeDate = application.externalData
+      .residenceInIcelandLastChangeDate?.data as Date | null
+    const nationalRegistryBirthplace = application.externalData
+      .nationalRegistryBirthplace?.data as
+      | NationalRegistryBirthplace
+      | undefined
+    const spouseDetails = application.externalData.spouseDetails?.data as
+      | NationalRegistrySpouse
+      | undefined
+    const childrenCustodyInformation = application.externalData
+      .childrenCustodyInformation?.data as
+      | ApplicantChildCustodyInformation[]
+      | undefined
+    const applicantPassport = answers.passport
+    const filteredCountriesOfResidence =
+      answers.countriesOfResidence?.hasLivedAbroad == YES &&
+      answers.countriesOfResidence?.selectedAbroadCountries
+        ?.filter((c) => c.wasRemoved !== 'true')
+        ?.map((c) => ({
+          countryId: c.countryId,
+        }))
+    const filteredStaysAbroad =
+      answers.staysAbroad?.hasStayedAbroad == YES &&
+      answers.staysAbroad?.selectedAbroadCountries
+        ?.filter((s) => s.wasRemoved !== 'true')
+        ?.map((s) => ({
+          countryId: s.countryId,
+          dateFrom: s.dateFrom ? new Date(s.dateFrom) : undefined,
+          dateTo: s.dateTo ? new Date(s.dateTo) : undefined,
+          purpose: s.purpose,
+        }))
+    const filteredParents =
+      answers.parentInformation?.hasValidParents == YES &&
+      answers.parentInformation?.parents
+        ?.filter((p) => p.nationalId && p.wasRemoved !== 'true')
+        ?.map((p) => ({
+          nationalId: p.nationalId || '',
+          givenName: p.givenName,
+          familyName: p.familyName,
+        }))
     // const criminalRecordListFlattened = []
     // const criminalRecordList =
     //   answers.supportingDocuments?.criminalRecordList || []
@@ -241,137 +226,155 @@ export class CitizenshipService extends BaseTemplateApiService {
     //     for (let j = 0; j < fileList.length; j++) {
     //       criminalRecordListFlattened.push({
     //         countryId: countryId,
-    //         filename: fileList[j].name,
-    //         fileUrl: fileList[j].url,
+    //         filename: fileList[j].filename,
+    //         base64: fileList[j].base64,
     //       })
     //     }
     //   }
     // }
 
-    // if (!applicantPassport) {
-    //   throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
-    // }
+    if (!applicantPassport) {
+      throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
+    }
 
-    // // Submit the application
-    // await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
-    //   auth,
-    //   {
-    //     selectedChildren:
-    //       answers.selectedChildrenExtraData?.map((c) => ({
-    //         nationalId: c.nationalId,
-    //         otherParentNationalId: c.otherParentNationalId,
-    //         otherParentBirtDate: c.otherParentBirtDate
-    //           ? new Date(c.otherParentBirtDate)
-    //           : undefined,
-    //         otherParentName: c.otherParentName,
-    //       })) || [],
-    //     isFormerIcelandicCitizen: answers.formerIcelander === YES,
-    //     givenName: individual?.givenName,
-    //     familyName: individual?.familyName,
-    //     fullName: individual?.fullName,
-    //     address: individual?.address?.streetAddress,
-    //     postalCode: individual?.address?.postalCode,
-    //     city: individual?.address?.city,
-    //     email: answers.userInformation?.email,
-    //     phone: answers.userInformation?.phone,
-    //     citizenshipCode: individual?.citizenship?.code,
-    //     residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
-    //     birthCountry: nationalRegistryBirthplace?.location,
-    //     maritalStatusCode: spouseDetails?.maritalStatus,
-    //     dateOfMaritalStatus: spouseDetails?.lastModified,
-    //     spouse: spouseDetails?.nationalId
-    //       ? {
-    //           nationalId: spouseDetails.nationalId,
-    //           name: spouseDetails.name,
-    //           birthCountry: spouseDetails.birthplace?.location,
-    //           citizenshipCode: spouseDetails.citizenship?.code,
-    //           address: spouseDetails.address?.streetAddress,
-    //           reasonDifferentAddress: answers.maritalStatus?.explanation,
-    //         }
-    //       : undefined,
-    //     parents: filteredParents || [],
-    //     countriesOfResidence: filteredCountriesOfResidence || [],
-    //     staysAbroad: filteredStaysAbroad || [],
-    //     passport: {
-    //       dateOfIssue: new Date(applicantPassport.publishDate),
-    //       dateOfExpiry: new Date(applicantPassport.expirationDate),
-    //       passportNumber: applicantPassport.passportNumber,
-    //       passportTypeId: parseInt(applicantPassport.passportTypeId),
-    //       countryOfIssuerId: applicantPassport.countryOfIssuerId,
-    //       //   file:
-    //       //     applicantPassport.file?.map((file) => ({
-    //       //       filename: file.name,
-    //       //       fileUrl: file.url,
-    //       //     })) || [],
-    //     },
-    //     supportingDocuments: {
-    //       //   birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
-    //       //     (file) => ({ filename: file.filename, base64: file.base64 }),
-    //       //   ),
-    //       subsistenceCertificate: subsistenceCertificate,
-    //       //   subsistenceCertificateForTown:
-    //       //     answers.supportingDocuments?.subsistenceCertificateForTown?.map(
-    //       //       (file) => ({ filename: file.filename, base64: file.base64 }),
-    //       //     ) || [],
-    //       //   certificateOfLegalResidenceHistory:
-    //       //     answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
-    //       //       (file) => ({ filename: file.filename, base64: file.base64 }),
-    //       //     ) || [],
-    //       //   icelandicTestCertificate:
-    //       //     answers.supportingDocuments?.icelandicTestCertificate?.map(
-    //       //       (file) => ({
-    //       //         filename: file.filename,
-    //       //         base64: file.base64,
-    //       //       }),
-    //       //     ) || [],
-    //       //   criminalRecordList: criminalRecordListFlattened,
-    //     },
-    //     children:
-    //       childrenCustodyInformation?.map((c) => ({
-    //         nationalId: c.nationalId,
-    //         fullName: c.fullName,
-    //         givenName: c.givenName,
-    //         familyName: c.familyName,
-    //       })) || [],
-    //     childrenPassport:
-    //       answers.childrenPassport?.map((p) => ({
-    //         nationalId: p.nationalId,
-    //         dateOfIssue: new Date(p.publishDate),
-    //         dateOfExpiry: new Date(p.expirationDate),
-    //         passportNumber: p.passportNumber,
-    //         passportTypeId: parseInt(p.passportTypeId),
-    //         countryIdOfIssuer: p.countryOfIssuerId,
-    //         // file:
-    //         //   p.file?.map((file) => ({
-    //         //     filename: file.filename,
-    //         //     base64: file.base64,
-    //         //   })) || [],
-    //       })) || [],
-    //     childrenSupportingDocuments:
-    //       answers.childrenSupportingDocuments?.map((d) => ({
-    //         nationalId: d.nationalId,
-    //         // birthCertificate:
-    //         //   d.birthCertificate?.map((file) => ({
-    //         //     filename: file.filename,
-    //         //     base64: file.base64,
-    //         //   })) || [],
-    //         // writtenConsentFromChild:
-    //         //   d.writtenConsentFromChild?.map((file) => ({
-    //         //     filename: file.filename,
-    //         //     base64: file.base64,
-    //         //   })) || [],
-    //         // writtenConsentFromOtherParent:
-    //         //   d.writtenConsentFromOtherParent?.map((file) => ({
-    //         //     filename: file.filename,
-    //         //     base64: file.base64,
-    //         //   })) || [],
-    //         // custodyDocuments:
-    //         //   d.custodyDocuments?.map((file) => ({
-    //         //     filename: file.filename,
-    //         //     base64: file.base64,
-    //         //   })) || [],
-    //       })) || [],
-    //   },
-    // )
+    // Submit the application
+    await this.directorateOfImmigrationClient.submitApplicationForCitizenship(
+      auth,
+      {
+        selectedChildren:
+          answers.selectedChildrenExtraData?.map((c) => ({
+            nationalId: c.nationalId,
+            otherParentNationalId: c.otherParentNationalId,
+            otherParentBirtDate: c.otherParentBirtDate
+              ? new Date(c.otherParentBirtDate)
+              : undefined,
+            otherParentName: c.otherParentName,
+          })) || [],
+        isFormerIcelandicCitizen: answers.formerIcelander === YES,
+        givenName: individual?.givenName,
+        familyName: individual?.familyName,
+        fullName: individual?.fullName,
+        address: individual?.address?.streetAddress,
+        postalCode: individual?.address?.postalCode,
+        city: individual?.address?.city,
+        email: answers.userInformation?.email,
+        phone: answers.userInformation?.phone,
+        citizenshipCode: individual?.citizenship?.code,
+        residenceInIcelandLastChangeDate: residenceInIcelandLastChangeDate,
+        birthCountry: nationalRegistryBirthplace?.location,
+        maritalStatusCode: spouseDetails?.maritalStatus,
+        dateOfMaritalStatus: spouseDetails?.lastModified,
+        spouse: spouseDetails?.nationalId
+          ? {
+              nationalId: spouseDetails.nationalId,
+              name: spouseDetails.name,
+              birthCountry: spouseDetails.birthplace?.location,
+              citizenshipCode: spouseDetails.citizenship?.code,
+              address: spouseDetails.address?.streetAddress,
+              reasonDifferentAddress: answers.maritalStatus?.explanation,
+            }
+          : undefined,
+        parents: filteredParents || [],
+        countriesOfResidence: filteredCountriesOfResidence || [],
+        staysAbroad: filteredStaysAbroad || [],
+        passport: {
+          dateOfIssue: new Date(applicantPassport.publishDate),
+          dateOfExpiry: new Date(applicantPassport.expirationDate),
+          passportNumber: applicantPassport.passportNumber,
+          passportTypeId: parseInt(applicantPassport.passportTypeId),
+          countryOfIssuerId: applicantPassport.countryOfIssuerId,
+          // file:
+          //   applicantPassport.file?.map((file) => ({
+          //     filename: file.filename,
+          //     base64: file.base64,
+          //   })) || [],
+          file: applicantPassportFiles,
+        },
+        supportingDocuments: {
+          // birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
+          //   (file) => ({ filename: file.filename, base64: file.base64 }),
+          // ),
+          // subsistenceCertificate:
+          //   answers.supportingDocuments?.subsistenceCertificate?.map(
+          //     (file) => ({
+          //       filename: file.filename,
+          //       base64: file.base64,
+          //     }),
+          //   ) || [],
+          // subsistenceCertificateForTown:
+          //   answers.supportingDocuments?.subsistenceCertificateForTown?.map(
+          //     (file) => ({ filename: file.filename, base64: file.base64 }),
+          //   ) || [],
+          // certificateOfLegalResidenceHistory:
+          //   answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
+          //     (file) => ({ filename: file.filename, base64: file.base64 }),
+          //   ) || [],
+          // icelandicTestCertificate:
+          //   answers.supportingDocuments?.icelandicTestCertificate?.map(
+          //     (file) => ({
+          //       filename: file.filename,
+          //       base64: file.base64,
+          //     }),
+          //   ) || [],
+          // criminalRecordList: criminalRecordListFlattened,
+          birthCertificate: [],
+          subsistenceCertificate: [],
+          subsistenceCertificateForTown: [],
+          certificateOfLegalResidenceHistory: [],
+          icelandicTestCertificate: [],
+          criminalRecordList: [],
+        },
+        children:
+          childrenCustodyInformation?.map((c) => ({
+            nationalId: c.nationalId,
+            fullName: c.fullName,
+            givenName: c.givenName,
+            familyName: c.familyName,
+          })) || [],
+        childrenPassport:
+          answers.childrenPassport?.map((p) => ({
+            nationalId: p.nationalId,
+            dateOfIssue: new Date(p.publishDate),
+            dateOfExpiry: new Date(p.expirationDate),
+            passportNumber: p.passportNumber,
+            passportTypeId: parseInt(p.passportTypeId),
+            countryIdOfIssuer: p.countryOfIssuerId,
+            // file:
+            //   p.file?.map((file) => ({
+            //     filename: file.filename,
+            //     base64: file.base64,
+            //   })) || [],
+            file: [],
+          })) || [],
+        childrenSupportingDocuments:
+          answers.childrenSupportingDocuments?.map((d) => ({
+            nationalId: d.nationalId,
+            // birthCertificate:
+            //   d.birthCertificate?.map((file) => ({
+            //     filename: file.filename,
+            //     base64: file.base64,
+            //   })) || [],
+            // writtenConsentFromChild:
+            //   d.writtenConsentFromChild?.map((file) => ({
+            //     filename: file.filename,
+            //     base64: file.base64,
+            //   })) || [],
+            // writtenConsentFromOtherParent:
+            //   d.writtenConsentFromOtherParent?.map((file) => ({
+            //     filename: file.filename,
+            //     base64: file.base64,
+            //   })) || [],
+            // custodyDocuments:
+            //   d.custodyDocuments?.map((file) => ({
+            //     filename: file.filename,
+            //     base64: file.base64,
+            //   })) || [],
+            birthCertificate: [],
+            writtenConsentFromChild: [],
+            writtenConsentFromOtherParent: [],
+            custodyDocuments: [],
+          })) || [],
+      },
+    )
   }
 }
