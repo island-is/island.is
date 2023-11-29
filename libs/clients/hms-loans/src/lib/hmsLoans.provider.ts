@@ -33,7 +33,7 @@ export const HmsLoansApiProvider: Provider<LibraApi> = {
                 scope: [HmsScope.loans],
               }
             : undefined,
-          timeout: 60000,
+          timeout: 30000,
         }),
         basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
         headers: {
