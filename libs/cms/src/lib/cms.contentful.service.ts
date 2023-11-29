@@ -613,9 +613,9 @@ export class CmsContentfulService {
       'fields.slug': slug,
     }
 
-    let items = [];
+    let items = []
 
-    const { items: anchorPageItems }  = await this.contentfulRepository
+    const { items: anchorPageItems } = await this.contentfulRepository
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPage'))
 
@@ -633,7 +633,7 @@ export class CmsContentfulService {
       items = lifeEventItems as types.ILifeEventPage[]
     }
 
-    return (items).map(mapAnchorPage)[0] ?? null
+    return items.map(mapAnchorPage)[0] ?? null
   }
 
   async getAnchorPages(lang: string): Promise<AnchorPage[]> {
@@ -642,9 +642,9 @@ export class CmsContentfulService {
       order: 'sys.createdAt',
     }
 
-    let items = [];
+    let items = []
 
-    const { items: anchorPageItems }  = await this.contentfulRepository
+    const { items: anchorPageItems } = await this.contentfulRepository
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPages'))
 
@@ -662,7 +662,7 @@ export class CmsContentfulService {
       items = lifeEventItems as types.ILifeEventPage[]
     }
 
-    return (items).map(mapAnchorPage)
+    return items.map(mapAnchorPage)
   }
 
   async getAnchorPagesInCategory(
@@ -675,9 +675,9 @@ export class CmsContentfulService {
       'fields.category.fields.slug': slug,
     }
 
-    let items = [];
+    let items = []
 
-    const { items: anchorPageItems }  = await this.contentfulRepository
+    const { items: anchorPageItems } = await this.contentfulRepository
       .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
       .catch(errorHandler('getAnchorPagesInCategory'))
 
@@ -695,7 +695,7 @@ export class CmsContentfulService {
       items = lifeEventItems as types.ILifeEventPage[]
     }
 
-    return (items).map(mapAnchorPage)
+    return items.map(mapAnchorPage)
   }
 
   async getAlertBanner({
