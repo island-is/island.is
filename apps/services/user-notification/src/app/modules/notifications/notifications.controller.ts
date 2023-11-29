@@ -164,7 +164,7 @@ export class NotificationsController {
 
     // TEMP CHECK FOR READ AND WRITE
     try {
-      console.log("attempting to read from db")
+      console.log('attempting to read from db')
       const findAll = await this.notificationsService.tempFindAll()
       console.log(findAll)
     } catch (error) {
@@ -172,15 +172,12 @@ export class NotificationsController {
     }
 
     try {
-      console.log("attempting to write to db")
+      console.log('attempting to write to db')
       const create = await this.notificationsService.create(body)
       console.log(create)
     } catch (error) {
       this.logger.debug('Error creating notification', error)
     }
-
-    
-
 
     //////////////////////////////////
     return { id }
