@@ -153,15 +153,17 @@
       "!{projectRoot}/src/test-setup.[jt]s"
     ],
     "graphql-files": [
-      { "runtime": "node scripts/hash-files apps/api/src/api.graphql" },
+      {
+        "runtime": "node scripts/hash-files apps/api/src/api.graphql"
+      },
       "{projectRoot}/codegen.yml",
       "{projectRoot}/**/*.graphql"
     ],
-    "schema-files": [
-      "{projectRoot}/**/clientConfig.@(yml|yaml|json)"
-    ],
+    "schema-files": ["{projectRoot}/**/clientConfig.@(yml|yaml|json)"],
     "schema-outputs": [
-      { "dependentTasksOutputFiles": "**/*openapi.@(yml|yaml|json)" }
+      {
+        "dependentTasksOutputFiles": "**/*openapi.@(yml|yaml|json)"
+      }
     ]
   }
 }
