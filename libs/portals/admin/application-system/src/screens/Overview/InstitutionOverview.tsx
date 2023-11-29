@@ -64,6 +64,8 @@ const InstitutionOverview = () => {
       variables: {
         input: {
           nationalId: userInfo.profile.nationalId,
+          page,
+          count: pageSize,
           applicantNationalId: filters.nationalId
             ? filters.nationalId.replace('-', '')
             : '',
@@ -72,7 +74,7 @@ const InstitutionOverview = () => {
       onCompleted: (q) => {
         // Initialize available applications from the initial response
         // So that we can use them to filter by
-        const names = q.applicationApplicationsInstitutionAdmin?.data
+        const names = q.applicationApplicationsInstitutionAdmin?.rows
           ?.filter((x) => !!x.name)
           .map((x) => x.name ?? '')
         if (names) {
@@ -83,9 +85,11 @@ const InstitutionOverview = () => {
 
   const isLoading = queryLoading || orgsLoading
   const applicationApplicationsInstitutionAdmin =
-    response?.applicationApplicationsInstitutionAdmin?.data ?? []
+    response?.applicationApplicationsInstitutionAdmin?.rows ?? []
   const applicationAdminList =
     applicationApplicationsInstitutionAdmin as AdminApplication[]
+  const numberOfItems =
+    response?.applicationApplicationsInstitutionAdmin?.count ?? 0
   const organizations = (orgData?.getOrganizations?.items ??
     []) as Organization[]
 
@@ -96,7 +100,6 @@ const InstitutionOverview = () => {
     return allApplications?.some((x) => typeIds?.includes(x))
   })
 
-  console.log(availableOrganizations)
   const handleSearchChange = (nationalId: string) => {
     if (nationalId.length === 11 || nationalId.length === 0) {
       setFilters((prev) => ({
@@ -176,7 +179,7 @@ const InstitutionOverview = () => {
         filters={filters}
         applications={availableApplications ?? []}
         organizations={availableOrganizations ?? []}
-        numberOfDocuments={applicationAdminList?.length}
+        numberOfDocuments={numberOfItems}
       />
       {isLoading && filters.nationalId?.length === 11 ? (
         <SkeletonLoader
@@ -193,6 +196,7 @@ const InstitutionOverview = () => {
           setPage={setPage}
           pageSize={pageSize}
           shouldShowCardButtons={false}
+          numberOfItems={numberOfItems}
         />
       )}
     </Box>

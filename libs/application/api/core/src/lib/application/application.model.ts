@@ -11,7 +11,7 @@ import {
   ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/types'
-import { PaginatedResponse } from '@island.is/nest/pagination'
+import { Expose } from 'class-transformer'
 
 @Table({
   tableName: 'application',
@@ -152,6 +152,11 @@ export class Application extends Model {
   draftTotalSteps!: number
 }
 
-export class ApplicationPaginatedResponse extends PaginatedResponse(
-  Application,
-) {}
+export class ApplicationPaginatedResponse {
+  @ApiProperty({ type: [Application] })
+  @Expose()
+  rows!: Application[]
+  @ApiProperty()
+  @Expose()
+  count!: number
+}

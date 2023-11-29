@@ -41,7 +41,7 @@ query getInstitutionApplications(
   $input: ApplicationApplicationsInstitutionAdminInput!
 ) {
   applicationApplicationsInstitutionAdmin(input: $input) {
-    data {
+    rows {
       id
       typeId
       applicant
@@ -77,10 +77,7 @@ query getInstitutionApplications(
         draftFinishedSteps
       }
     }
-    totalCount
-    pageInfo {
-      hasNextPage
-    }
+    count
   }
 }
 

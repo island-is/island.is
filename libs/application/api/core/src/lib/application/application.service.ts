@@ -116,20 +116,15 @@ export class ApplicationService {
 
   async findAllByInstitutionAndFilters(
     nationalId: string,
+    page: number,
+    count: number,
     status?: string,
     applicantNationalId?: string,
-    query?: PaginationDto,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
     const typeIds = this.getTypeIdsForInstitution(nationalId)
 
-    return await paginate({
-      Model: this.applicationModel,
-      limit: query?.limit ?? 12,
-      after: query?.after ?? '',
-      before: query?.before ?? '',
-      primaryKeyField: 'id',
-      orderOption: [['modified', 'DESC']],
+    return this.applicationModel.findAndCountAll({
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
@@ -145,6 +140,9 @@ export class ApplicationService {
           [Op.eq]: true,
         },
       },
+      limit: count,
+      offset: (page - 1) * count,
+      order: [['modified', 'DESC']],
     })
   }
 

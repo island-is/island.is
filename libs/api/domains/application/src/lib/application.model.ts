@@ -182,11 +182,9 @@ export class ApplicationAdmin {
 @ObjectType()
 export class ApplicationAdminPaginatedResponse {
   @Field(() => [ApplicationAdmin])
-  data!: ApplicationAdmin[]
+  rows!: ApplicationAdmin[]
   @Field(() => Number)
-  totalCount!: number
-  @Field(() => PageInfoDto)
-  pageInfo!: PageInfoDto
+  count!: number
 }
 
 @ObjectType()

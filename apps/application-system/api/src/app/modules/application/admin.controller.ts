@@ -25,6 +25,7 @@ import {
 } from './dto/applicationAdmin.response.dto'
 import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
 import { PaginationDto } from '@island.is/nest/pagination'
+import { ApplicationAdminPaginatedSerializer } from './tools/applicationAdminPaginated.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -96,10 +97,10 @@ export class AdminController {
   }
   @Scopes(AdminPortalScope.applicationSystem)
   @BypassDelegation()
-  @Get('admin/institution/:nationalId/applications')
-  @UseInterceptors(ApplicationAdminSerializer)
+  @Get('admin/institution/:nationalId/applications/:page/:count')
+  @UseInterceptors(ApplicationAdminPaginatedSerializer)
   @Audit<ApplicationAdminPaginatedResponse>({
-    resources: (apps) => apps.data.map((app) => app.id),
+    resources: (apps) => apps.rows.map((app) => app.id),
   })
   @Documentation({
     description: 'Get applications for a specific institution',
@@ -114,6 +115,16 @@ export class AdminController {
           required: true,
           description: `To get the applications for a specific institution's national id.`,
         },
+        page: {
+          type: 'number',
+          required: true,
+          description: `The page to fetch`,
+        },
+        count: {
+          type: 'number',
+          required: true,
+          description: `Number of items to fetch`,
+        },
       },
       query: {
         status: {
@@ -127,27 +138,22 @@ export class AdminController {
           required: false,
           description: 'To filter applications by applicant nationalId.',
         },
-        query: {
-          type: PaginationDto,
-          required: false,
-          description: 'Pagination info',
-        },
       },
     },
   })
   async findAllInstitutionAdmin(
     @Param('nationalId') nationalId: string,
+    @Param('page') page: number,
+    @Param('count') count: number,
     @Query('status') status?: string,
     @Query('applicantNationalId') applicantNationalId?: string,
-    @Query('query') query?: PaginationDto,
   ) {
-    this.logger.debug(`Getting institution applications with status ${status}`)
-
     return this.applicationService.findAllByInstitutionAndFilters(
       nationalId,
+      page ?? 1,
+      count ?? 12,
       status,
       applicantNationalId,
-      query,
     )
   }
 }

@@ -2,7 +2,6 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { IsArray, IsNumber, IsString } from 'class-validator'
 import { BaseApplicationResponseDto } from './application.response.dto'
-import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto {
   @ApiPropertyOptional()
@@ -25,14 +24,10 @@ export class ApplicationAdminPaginatedResponse {
   @ApiProperty({ type: [ApplicationListAdminResponseDto] })
   @Expose()
   @IsArray()
-  data!: ApplicationListAdminResponseDto[]
+  rows!: ApplicationListAdminResponseDto[]
 
   @ApiProperty()
   @Expose()
   @IsNumber()
-  totalCount!: number
-
-  @ApiProperty()
-  @Expose()
-  pageInfo!: PageInfoDto
+  count!: number
 }

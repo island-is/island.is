@@ -99,6 +99,8 @@ export class ApplicationService {
       user,
     ).adminControllerFindAllInstitutionAdmin({
       nationalId: input.nationalId,
+      page: input.page,
+      count: input.count,
       locale,
       status: input.status?.join(','),
       applicantNationalId: input.applicantNationalId,
