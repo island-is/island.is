@@ -1,7 +1,7 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES } from './constants'
-import { errorMessages } from './messages'
+import { errorMessages, validatorErrorMessages } from './messages'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
 import { formatBankInfo } from './pensionSupplementUtils'
@@ -14,6 +14,11 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 const validateOptionalPhoneNumber = (value: string) => {
   return isValidPhoneNumber(value) || value === ''
 }
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -65,6 +70,13 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.period },
     ),
+  fileUploadAdditionalFilesRequired: z.object({
+    additionalDocumentsRequired: z
+      .array(FileSchema)
+      .refine((a) => a.length !== 0, {
+        params: validatorErrorMessages.requireAttachment,
+      }),
+  }),
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

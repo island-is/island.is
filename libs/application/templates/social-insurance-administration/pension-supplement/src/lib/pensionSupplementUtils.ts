@@ -66,7 +66,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
-    'fileUploadAdditionalFiles.additionalDocumentsRequired',
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -180,10 +180,10 @@ export function getAttachments(application: Application) {
   }
 
   const { answers } = application
-  const { 
-    applicationReason, 
+  const {
+    applicationReason,
     additionalAttachments,
-    additionalAttachmentsRequired, 
+    additionalAttachmentsRequired,
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
@@ -234,22 +234,21 @@ export function getAttachments(application: Application) {
   })
 
   const additionalDocuments = [
-  ...(additionalAttachments &&
-    additionalAttachments?.length > 0
-    ? additionalAttachments
-    : []),
-  ...(additionalAttachmentsRequired &&
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
+      : []),
+    ...(additionalAttachmentsRequired &&
     additionalAttachmentsRequired?.length > 0
-    ? additionalAttachmentsRequired
-    : []),
-]
+      ? additionalAttachmentsRequired
+      : []),
+  ]
 
-if (additionalDocuments.length > 0) {
-  getAttachmentDetails(
-    additionalDocuments,
-    AttachmentTypes.ADDITIONAL_DOCUMENTS,
-  )
-}
+  if (additionalDocuments.length > 0) {
+    getAttachmentDetails(
+      additionalDocuments,
+      AttachmentTypes.ADDITIONAL_DOCUMENTS,
+    )
+  }
 
   return attachments
 }

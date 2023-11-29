@@ -293,11 +293,11 @@ const PensionSupplementTemplate: ApplicationTemplate<
           'fileUploadAdditionalFiles.additionalDocuments',
           mergedAdditionalDocumentRequired,
         )
-        unset(answers, 'fileUploadAdditionalFiles.additionalDocumentsRequired')
+        unset(answers, 'fileUploadAdditionalFilesRequired')
 
         return context
       }),
-    }
+    },
   },
   mapUserToRole(
     id: string,
