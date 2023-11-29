@@ -7,7 +7,12 @@ import { information } from '../../lib/messages'
 import { Box } from '@island.is/island-ui/core'
 import { RadioController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath, NO, YES } from '@island.is/application/core'
+import {
+  getErrorViaPath,
+  getValueViaPath,
+  NO,
+  YES,
+} from '@island.is/application/core'
 import { ParentsToApplicant } from '../../shared'
 import { ParentRepeaterItem } from './ParentRepeaterItem'
 
@@ -112,7 +117,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
         onSelect={(value) => {
           handleValidParentsChange(value)
         }}
-        defaultValue={hasValidParents === YES ? hasValidParents : NO}
+        defaultValue={hasValidParents}
         options={[
           {
             value: YES,
@@ -125,6 +130,9 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
             label: formatMessage(information.labels.radioButtons.radioOptionNo),
           },
         ]}
+        error={
+          errors && getErrorViaPath(errors, 'parentInformation.hasValidParents')
+        }
       />
 
       {!!parents &&
