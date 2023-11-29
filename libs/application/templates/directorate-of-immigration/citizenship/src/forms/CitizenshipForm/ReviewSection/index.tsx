@@ -4,7 +4,6 @@ import {
   buildMultiField,
 } from '@island.is/application/core'
 import { review } from '../../../lib/messages'
-import { FormValue } from '@island.is/application/types'
 
 export const ReviewSection = buildSection({
   id: 'review',
@@ -14,10 +13,6 @@ export const ReviewSection = buildSection({
       id: 'reviewMultiField',
       title: review.general.pageTitle,
       description: review.general.description,
-      condition: (application: FormValue, _) => {
-        console.log('application', application)
-        return true
-      },
       space: 1,
       children: [
         buildCustomField({

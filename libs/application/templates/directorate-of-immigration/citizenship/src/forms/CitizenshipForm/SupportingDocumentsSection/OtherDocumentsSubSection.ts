@@ -11,7 +11,6 @@ import { supportingDocuments } from '../../../lib/messages'
 import {
   Answer,
   Application,
-  FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
@@ -26,10 +25,6 @@ export const OtherDocumentsSubSection = buildSubSection({
     buildMultiField({
       id: Routes.SUPPORTINGDOCUMENTS,
       title: supportingDocuments.labels.otherDocuments.pageTitle,
-      condition: (application: FormValue, _) => {
-        console.log('application', application)
-        return true
-      },
       description: (application: Application) => {
         const applicant = getValueViaPath(
           application.externalData,
@@ -111,7 +106,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildFileUploadField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.icelandicTest`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.icelandicTestCertificate`,
           title: supportingDocuments.labels.otherDocuments.icelandicTest,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
@@ -123,7 +118,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildCustomField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.criminalRecord`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.criminalRecordMap`,
           title: '',
           component: 'CriminalRecords',
         }),

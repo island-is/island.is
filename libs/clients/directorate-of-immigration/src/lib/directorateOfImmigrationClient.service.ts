@@ -228,7 +228,7 @@ export class DirectorateOfImmigrationClient {
       },
       {
         attachmentType: AttachmentType.CriminalRecord,
-        fileList: application.supportingDocuments.criminalRecordList || [],
+        fileList: application.supportingDocuments.criminalRecord || [],
       },
     ]
     for (let j = 0; j < attachmentList.length; j++) {
@@ -242,7 +242,7 @@ export class DirectorateOfImmigrationClient {
             attachmentType: file.attachmentType,
             fileName: file.fileList[k].filename,
             base64Contents: file.fileList[k].base64,
-            countryCode: file.fileList[k].countryId,
+            countryCode: file.fileList[k].countryId || '1', //TODOx
           },
         })
       }
@@ -343,6 +343,7 @@ export class DirectorateOfImmigrationClient {
               attachmentType: file.attachmentType,
               fileName: file.fileList[k].filename,
               base64Contents: file.fileList[k].base64,
+              countryCode: '1', //TODOx
             },
           })
         }

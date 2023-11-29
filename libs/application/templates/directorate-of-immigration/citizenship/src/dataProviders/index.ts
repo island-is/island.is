@@ -63,7 +63,6 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
   namespace: 'NationalRegistry',
   params: {
     validateAlreadyHasIcelandicCitizenship: true,
-    legalDomicileIceland: true,
     ageToValidate: 18,
     ageToValidateError: {
       title: error.notOldEnough,

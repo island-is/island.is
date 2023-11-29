@@ -177,18 +177,16 @@ const MaritalStatusSchema = z.object({
   explanation: z.string().optional(),
 })
 
-const CriminalRecordSchema = z.object({
-  countryId: z.string().min(1).optional(),
-  file: z.array(FileDocumentSchema).optional(),
-})
-
 const SupportingDocumentsSchema = z.object({
   birthCertificate: z.array(FileDocumentSchema).optional(),
   subsistenceCertificate: z.array(FileDocumentSchema).optional(),
   subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
   certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
-  icelandicTest: z.array(FileDocumentSchema).optional(),
-  criminalRecordList: z.array(CriminalRecordSchema).optional(),
+  icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
+  //TODOx
+  // criminalRecordMap: z
+  //   .record(z.string(), z.array(FileDocumentSchema).optional())
+  //   .optional(),
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({

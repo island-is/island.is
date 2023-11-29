@@ -130,7 +130,7 @@ const template: ApplicationTemplate<
           progress: 0.25,
           lifecycle: pruneAfterDays(1),
           onExit: defineTemplateApi({
-            action: ApiActions.submitApplication,
+            action: ApiActions.submitApplication, //TODOx
           }),
           roles: [
             {
@@ -145,9 +145,11 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+          // [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED }, //TODOx
         },
       },
+      //TODOx
       // [States.PAYMENT]: buildPaymentState({
       //   organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
       //   chargeItemCodes: getChargeItemCodes,

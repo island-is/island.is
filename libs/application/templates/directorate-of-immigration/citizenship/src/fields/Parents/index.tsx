@@ -19,7 +19,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
   }
 
   const [hasValidParents, setHasValidParents] = useState(
-    getValueViaPath(answers, 'parentInformation.hasValidParents', '') as string, // TODO test new default
+    getValueViaPath(answers, 'parentInformation.hasValidParents', NO) as string,
   )
 
   //This is used to determine weather parent information comes from answer or national registry, to determine if the column is read only or not
