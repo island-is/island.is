@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common'
-
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Success } from './models/success.model'
@@ -12,7 +11,6 @@ import { SignatureListNationalIdsInput } from './dto/signatureListNationalIds.in
 import { Bulk } from './models/bulk.model'
 import { Signee } from './models/signee.model'
 import { SignatureListInput } from './dto/singatureList.input'
-import * as nationalId from 'kennitala'
 import { FindSignatureInput } from './dto/findSignature.input'
 
 @Injectable()
