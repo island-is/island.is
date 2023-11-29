@@ -1,7 +1,6 @@
 import { createUnionType } from '@nestjs/graphql'
 import { Article, mapArticle } from '../models/article.model'
 import { mapSubArticle, SubArticle } from '../models/subArticle.model'
-import { LifeEventPage, mapLifeEventPage } from '../models/lifeEventPage.model'
 import { AnchorPage, mapAnchorPage } from '../models/anchorPage.model'
 import { AdgerdirPage, mapAdgerdirPage } from '../models/adgerdirPage.model'
 import {
@@ -55,7 +54,6 @@ export const PageUnion = createUnionType({
   types: () => [
     Article,
     SubArticle,
-    LifeEventPage,
     AnchorPage,
     AdgerdirPage,
     AdgerdirFrontpage,
@@ -78,7 +76,7 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
       return mapSubArticle(page as ISubArticle)
     }
     case 'lifeEventPage': {
-      return mapLifeEventPage(page as ILifeEventPage)
+      return mapAnchorPage(page as ILifeEventPage)
     }
     case 'anchorPage': {
       return mapAnchorPage(page as IAnchorPage)

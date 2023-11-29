@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { IAnchorPage, IAnchorPageFields } from '../generated/contentfulTypes'
+import { IAnchorPage, IAnchorPageFields, ILifeEventPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
@@ -50,7 +50,7 @@ export class AnchorPage {
   featuredImage?: Image | null
 }
 
-export const mapAnchorPage = ({ fields, sys }: IAnchorPage): AnchorPage => ({
+export const mapAnchorPage = ({ fields, sys }: IAnchorPage | ILifeEventPage): AnchorPage => ({
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle ?? '',

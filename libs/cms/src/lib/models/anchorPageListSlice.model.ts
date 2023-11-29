@@ -19,9 +19,15 @@ export class AnchorPageListSlice {
 export const mapAnchorPageListSlice = ({
   fields,
   sys,
-}: IAnchorPageList | ILifeEventPageListSlice): SystemMetadata<AnchorPageListSlice> => ({
-  typename: 'AnchorPageListSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  pages: fields.pages ? fields.pages.map(mapAnchorPage) : [],
-})
+}: IAnchorPageList | ILifeEventPageListSlice): SystemMetadata<AnchorPageListSlice> => {
+  const lifeEventlist = (fields as ILifeEventPageListSlice['fields']).lifeEventPageList
+  const pages = (fields as IAnchorPageList['fields']).pages
+  const list = lifeEventlist ?? pages ?? [];
+
+  return {
+    typename: 'AnchorPageListSlice',
+    id: sys.id,
+    title: fields.title ?? '',
+    pages: list.map(mapAnchorPage)
+  }
+}
