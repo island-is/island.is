@@ -12,7 +12,6 @@ import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
 import {
-  AdditionalInformation,
   Attachments,
   FileType,
   FileUpload,
@@ -58,7 +57,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
-    'fileUploadAdditionalFiles.additionalDocumentsRequired',
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
   const comment = getValueViaPath(answers, 'comment') as string
@@ -198,7 +197,12 @@ export function getAttachments(application: Application) {
   }
 
   const { answers } = application
-  const { householdSupplementChildren, householdSupplementHousing } =
+  const { 
+    householdSupplementChildren, 
+    householdSupplementHousing,
+    additionalAttachments,
+    additionalAttachmentsRequired
+  } =
     getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
@@ -216,16 +220,14 @@ export function getAttachments(application: Application) {
     )
   }
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments &&
+      additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+      additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 

@@ -14,8 +14,3 @@ export interface Attachments {
   attachments: FileType[]
   label: MessageDescriptor
 }
-
-export interface AdditionalInformation {
-  additionalDocuments?: FileType[]
-  additionalDocumentsRequired?: FileType[]
-}

@@ -1,7 +1,7 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { NO, YES, HouseholdSupplementHousing } from './constants'
-import { errorMessages } from './messages'
+import { errorMessages, validatorErrorMessages } from './messages'
 import addYears from 'date-fns/addYears'
 import { formatBankInfo } from './householdSupplementUtils'
 
@@ -13,6 +13,12 @@ const isValidPhoneNumber = (phoneNumber: string) => {
 const validateOptionalPhoneNumber = (value: string) => {
   return isValidPhoneNumber(value) || value === ''
 }
+
+const FileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -34,6 +40,13 @@ export const dataSchema = z.object({
       },
       { params: errorMessages.bank },
     ),
+  }),
+  fileUploadAdditionalFilesRequired: z.object({
+    additionalDocumentsRequired: z
+      .array(FileSchema)
+      .refine((a) => a.length !== 0, {
+        params: validatorErrorMessages.requireAttachment,
+      }),
   }),
   householdSupplement: z.object({
     housing: z.enum([

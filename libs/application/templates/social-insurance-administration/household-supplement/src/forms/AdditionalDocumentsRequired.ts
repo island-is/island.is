@@ -29,7 +29,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
           title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
-              id: 'fileUploadAdditionalFiles.additionalDocumentsRequired',
+              id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
               title:
                 householdSupplementFormMessage.fileUpload.additionalFileTitle,
               description:
