@@ -10,6 +10,7 @@ import {
   UserInfoLine,
   amountFormat,
   m,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import {
@@ -88,12 +89,13 @@ export const HealthOverview = () => {
   }
 
   return (
-    <Box paddingY={4}>
+    <Box>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SYSLUMENN_SLUG}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
       </Box>
       {loading ? (
@@ -103,10 +105,11 @@ export const HealthOverview = () => {
           height={24}
           borderRadius="standard"
         />
-      ) : !insurance ? (
+      ) : !insurance || !insurance.isInsured ? (
         <AlertMessage
           type="info"
-          message={formatMessage(messages.noHealthInsurance)}
+          title={formatMessage(messages.noHealthInsurance)}
+          message={insurance?.explanation}
         />
       ) : (
         <Box>

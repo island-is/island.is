@@ -195,7 +195,12 @@ const VehicleDetail = () => {
         {!loading && (downloadServiceURL || reqMileageReg) && (
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
-              <Box display="flex" justifyContent="flexStart" printHidden>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
                 {reqMileageReg && (
                   <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                     <Button
@@ -222,28 +227,26 @@ const VehicleDetail = () => {
                   </Box>
                 )}
                 {downloadServiceURL && (
-                  <>
-                    <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                      <Button
-                        colorScheme="default"
-                        icon="receipt"
-                        iconType="outline"
-                        size="default"
-                        type="button"
-                        variant="utility"
-                        onClick={() => formSubmit(`${downloadServiceURL}`)}
-                      >
-                        {formatMessage(messages.vehicleHistoryReport)}
-                      </Button>
-                    </Box>
-                    <Box paddingRight={2}>
-                      <Dropdown
-                        label={formatMessage(messages.actions)}
-                        dropdownItems={dropdownArray}
-                      />
-                    </Box>
-                  </>
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <Button
+                      colorScheme="default"
+                      icon="receipt"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                      onClick={() => formSubmit(`${downloadServiceURL}`)}
+                    >
+                      {formatMessage(messages.vehicleHistoryReport)}
+                    </Button>
+                  </Box>
                 )}
+                <Box paddingRight={2}>
+                  <Dropdown
+                    label={formatMessage(messages.actions)}
+                    dropdownItems={dropdownArray}
+                  />
+                </Box>
               </Box>
             </GridColumn>
           </GridRow>
