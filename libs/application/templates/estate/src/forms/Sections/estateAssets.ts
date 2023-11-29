@@ -176,18 +176,17 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.bankAccount.defaultMessage,
+                    title: m.bankAccount,
                     id: 'accountNumber',
-                    format: '#### - ## - ######',
                   },
                   {
-                    title: m.bankAccountBalance.defaultMessage,
+                    title: m.bankAccountBalance,
                     id: 'balance',
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.bankAccountRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.bankAccount.defaultMessage,
+                repeaterButtonText: m.bankAccountRepeaterButton,
+                repeaterHeaderText: m.bankAccount,
               },
             ),
           ],
@@ -224,17 +223,17 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.claimsPublisher.defaultMessage,
+                    title: m.claimsPublisher,
                     id: 'publisher',
                   },
                   {
-                    title: m.claimsAmount.defaultMessage,
+                    title: m.claimsAmount,
                     id: 'value',
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.claimsTitle.defaultMessage,
+                repeaterButtonText: m.claimsRepeaterButton,
+                repeaterHeaderText: m.claimsTitle,
               },
             ),
           ],
@@ -271,34 +270,34 @@ export const estateAssets = buildSection({
               {
                 fields: [
                   {
-                    title: m.stocksOrganization.defaultMessage,
+                    title: m.stocksOrganization,
                     id: 'organization',
                   },
                   {
-                    title: m.stocksNationalId.defaultMessage,
+                    title: m.stocksNationalId,
                     id: 'nationalId',
                     format: '######-####',
                   },
                   {
-                    title: m.stocksFaceValue.defaultMessage,
+                    title: m.stocksFaceValue,
                     id: 'faceValue',
                     currency: true,
                   },
                   {
-                    title: m.stocksRateOfChange.defaultMessage,
+                    title: m.stocksRateOfChange,
                     id: 'rateOfExchange',
                     type: 'number',
                   },
                   {
-                    title: m.stocksValue.defaultMessage,
+                    title: m.stocksValue,
                     id: 'value',
                     backgroundColor: 'white',
                     currency: true,
                     readOnly: true,
                   },
                 ],
-                repeaterButtonText: m.stocksRepeaterButton.defaultMessage,
-                repeaterHeaderText: m.stocksTitle.defaultMessage,
+                repeaterButtonText: m.stocksRepeaterButton,
+                repeaterHeaderText: m.stocksTitle,
               },
             ),
           ],
