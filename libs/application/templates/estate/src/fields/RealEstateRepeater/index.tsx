@@ -54,7 +54,6 @@ export const RealEstateRepeater: FC<
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
-
           if (!asset.initial) {
             return acc
           }
