@@ -158,9 +158,8 @@
       "{projectRoot}/**/*.graphql"
     ],
     "schema-files": [
-      "{projectRoot}/**/*openapi.yaml",
-      "{projectRoot}/**/openapi.json",
-      "{projectRoot}/**/clientConfig.json"
+      "{projectRoot}/**/*openapi.@(yml|yaml|json)",
+      "{projectRoot}/**/clientConfig.@(yml|yaml|json)"
     ]
   }
 }
