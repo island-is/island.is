@@ -12,9 +12,7 @@
   "paths": {
     "/api/Namskeid": {
       "get": {
-        "tags": [
-          "Namskeid"
-        ],
+        "tags": ["Namskeid"],
         "responses": {
           "200": {
             "description": "Success",
