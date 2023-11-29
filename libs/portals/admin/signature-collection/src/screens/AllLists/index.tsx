@@ -1,5 +1,6 @@
 import {
   ActionCard,
+  Box,
   GridColumn,
   GridContainer,
   GridRow,
@@ -42,49 +43,53 @@ const Lists = () => {
           offset={['0', '0', '1/12']}
           span={['12/12', '12/12', '8/12']}
         >
-          <IntroHeader
-            title={formatMessage(m.signatureListsTitle)}
-            intro={formatMessage(m.signatureListsIntro)}
-          />
-          <Stack space={5}>
-            {lists.map((list: SignatureList) => {
-              return (
-                <ActionCard
-                  key={list.id}
-                  eyebrow={
-                    formatMessage(m.listDateTil) +
-                    ': ' +
-                    format(new Date(list.endTime), 'dd.MM.yyyy')
-                  }
-                  heading={list.owner.name + ' - ' + list.area.name}
-                  text={formatMessage(m.collectionTitle)}
-                  progressMeter={{
-                    currentProgress: list.numberOfSignatures ?? 0,
-                    maxProgress: list.area.min,
-                    withLabel: true,
-                  }}
-                  cta={{
-                    label: formatMessage(m.viewList),
-                    variant: 'text',
-                    icon: 'arrowForward',
-                    onClick: () => {
-                      navigate(
-                        SignatureCollectionPaths.SignatureList.replace(
-                          ':id',
-                          list.id,
-                        ),
-                        {
-                          state: {
-                            list,
-                          },
+          {lists && lists.length > 0 && (
+            <Box>
+              <IntroHeader
+                title={formatMessage(m.signatureListsTitle)}
+                intro={formatMessage(m.signatureListsIntro)}
+              />
+              <Stack space={5}>
+                {lists.map((list: SignatureList) => {
+                  return (
+                    <ActionCard
+                      key={list.id}
+                      eyebrow={
+                        formatMessage(m.listDateTil) +
+                        ': ' +
+                        format(new Date(list.endTime), 'dd.MM.yyyy')
+                      }
+                      heading={list.owner.name + ' - ' + list.area.name}
+                      text={formatMessage(m.collectionTitle)}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
+                      cta={{
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.SignatureList.replace(
+                              ':id',
+                              list.id,
+                            ),
+                            {
+                              state: {
+                                list,
+                              },
+                            },
+                          )
                         },
-                      )
-                    },
-                  }}
-                />
-              )
-            })}
-          </Stack>
+                      }}
+                    />
+                  )
+                })}
+              </Stack>
+            </Box>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

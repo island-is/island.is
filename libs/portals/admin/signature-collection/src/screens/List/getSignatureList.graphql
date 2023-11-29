@@ -25,5 +25,6 @@ query listbyid($input: IdInput!) {
     active
     collectionId
     link
+    numberOfSignatures
   }
 }
