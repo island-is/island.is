@@ -17,7 +17,7 @@ const workerPostgresInfo = {
   username: 'services_user_notification',
   name: dbName,
   passwordSecret: '/k8s/user-notification/DB_PASSWORD',
-  extensions: ['uuid-ossp'],
+  // extensions: ['uuid-ossp'],
 }
 
 export const userNotificationServiceSetup =
