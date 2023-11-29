@@ -24,6 +24,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
           title={formatMessage(messages.payments)}
           intro={formatMessage(messages.paymentsIntro)}
           serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
         <LinkV2
           href={formatMessage(
