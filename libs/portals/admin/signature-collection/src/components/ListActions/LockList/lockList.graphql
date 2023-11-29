@@ -1,5 +1,0 @@
-mutation LockList($input: FindEndorsementListInput!) {
-  endorsementSystemLockEndorsementList(input: $input) {
-    id
-  }
-}
