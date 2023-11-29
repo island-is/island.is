@@ -461,7 +461,7 @@ const Results = ({
                   item: {
                     type: 'link',
                     string: linkResolver(
-                      typename === 'anchorpage'
+                      (typename === 'lifeeventpage' || typename === 'anchorpage')
                         ? extractAnchorPageLinkType(item as AnchorPage)
                         : typename,
                       variables,
