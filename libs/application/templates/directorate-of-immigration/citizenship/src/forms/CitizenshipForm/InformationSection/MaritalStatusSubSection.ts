@@ -53,12 +53,24 @@ export const MaritalStatusSubSection = buildSubSection({
           title: information.labels.maritalStatus.titleStatus,
           titleVariant: 'h5',
         }),
+        // If married:
         buildTextField({
           id: 'maritalStatus.status',
           title: information.labels.maritalStatus.status,
           backgroundColor: 'white',
           width: 'half',
           readOnly: true,
+          condition: (_, externalData) => {
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+            const maritalStatus = spouseDetails?.maritalStatus
+
+            const isMarried = maritalStatus === '3'
+            return isMarried
+          },
           defaultValue: (application: Application) => {
             const individual = getValueViaPath(
               application.externalData,
@@ -69,6 +81,7 @@ export const MaritalStatusSubSection = buildSubSection({
             return individual?.maritalTitle?.description
           },
         }),
+        // If married:
         buildTextField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marriedStatusDate,
@@ -98,6 +111,36 @@ export const MaritalStatusSubSection = buildSubSection({
               : ''
           },
         }),
+        // If cohabitation:
+        buildTextField({
+          id: 'maritalStatus.status',
+          title: information.labels.maritalStatus.status,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          condition: (_, externalData) => {
+            const spouseDetails = getValueViaPath(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            ) as NationalRegistrySpouse | undefined
+            const maritalStatus = spouseDetails?.maritalStatus
+            const hasSpouse = !!spouseDetails?.nationalId
+
+            const isCohabitation = maritalStatus === '1' && hasSpouse
+            return isCohabitation
+          },
+          defaultValue: (application: Application) => {
+            const individual = getValueViaPath(
+              application.externalData,
+              'individual.data',
+              undefined,
+            ) as NationalRegistryIndividual | undefined
+
+            return individual?.maritalTitle?.description
+          },
+        }),
+        // If cohabitation:
         buildTextField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.cohabitationStatusDate,
