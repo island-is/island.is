@@ -17,7 +17,7 @@ const asset = z
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    share: z.number().optional(),
+    share: z.number(),
   })
   .refine(
     ({ enabled, marketValue }) => {
@@ -33,6 +33,14 @@ const asset = z
     },
     {
       path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share > 0 && share <= 100 : true
+    },
+    {
+      path: ['share'],
     },
   )
   .refine(
