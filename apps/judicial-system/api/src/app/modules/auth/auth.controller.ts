@@ -238,9 +238,8 @@ export class AuthController {
           redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
         }
       }
-
-      return undefined
     }
+    return undefined
   }
 
   private async redirectAuthenticatedUser(
