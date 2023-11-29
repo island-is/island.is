@@ -1,0 +1,170 @@
+import { useState } from 'react'
+import { useQuery } from '@apollo/client/react'
+
+import {
+  AlertMessage,
+  Box,
+  FocusableBox,
+  LoadingDots,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+
+import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries'
+import { getCurrencyString, getDateFormat } from './utils'
+
+interface AdministrationOfOccupationalSafetyAndHealthCoursesProps {
+  slice: ConnectedComponent
+}
+
+type ListState = 'loading' | 'loaded' | 'error'
+
+const AdministrationOfOccupationalSafetyAndHealthCourses = ({
+  slice,
+}: AdministrationOfOccupationalSafetyAndHealthCoursesProps) => {
+  const n = useNamespace(slice.json ?? {})
+
+  const [listState, setListState] = useState<ListState>('loading')
+  const [courses, setCourses] = useState<
+    Query['administrationOfOccupationalSafetyAndHealthCourses']['courses']
+  >([])
+
+  const normalizesAndMatch = (value1: string, value2: string) => {
+    return value1.toLowerCase().trim() === value2.toLowerCase().trim()
+  }
+
+  useQuery<Query>(GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY, {
+    onCompleted: (data) => {
+      const fetchedCourses = [
+        ...(data?.administrationOfOccupationalSafetyAndHealthCourses.courses ??
+          []),
+      ]
+      setCourses(
+        fetchedCourses.filter((fetchedCourses) => {
+          const category = slice.configJson?.category
+          const subCategory = slice.configJson?.subCategory
+          return category && subCategory
+            ? normalizesAndMatch(fetchedCourses.category, category) &&
+                normalizesAndMatch(fetchedCourses.subCategory, subCategory)
+            : category
+            ? normalizesAndMatch(fetchedCourses.category, category)
+            : subCategory
+            ? normalizesAndMatch(fetchedCourses.subCategory, subCategory)
+            : fetchedCourses
+        }),
+      )
+      setListState('loaded')
+    },
+    onError: () => {
+      setListState('error')
+    },
+  })
+
+  return (
+    <Box>
+      {listState === 'loading' && (
+        <Box
+          display="flex"
+          marginTop={4}
+          marginBottom={20}
+          justifyContent="center"
+        >
+          <LoadingDots />
+        </Box>
+      )}
+      {listState === 'error' && (
+        <AlertMessage
+          title={n('errorTitle', 'Villa')}
+          message={n('errorMessage', 'Ekki tókst að sækja áfengisleyfi.')}
+          type="error"
+        />
+      )}
+
+      {listState === 'loaded' && courses.length === 0 && (
+        <Box display="flex" marginTop={4} justifyContent="center">
+          <Text variant="h3">{n('noResults', 'Engin Námskeið fundust.')}</Text>
+        </Box>
+      )}
+      {listState === 'loaded' && courses.length > 0 && (
+        <Box>
+          <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>
+            {courses.map((course, index) => {
+              return (
+                <FocusableBox
+                  key={`course-${index}`}
+                  href={course.registrationUrl}
+                  borderRadius="large"
+                  borderColor="transparent"
+                  borderWidth="large"
+                  flexDirection="column"
+                  color={'blue'}
+                  height="full"
+                  width="full"
+                  marginBottom={4}
+                >
+                  <Box
+                    borderWidth="standard"
+                    borderColor="standard"
+                    borderRadius="standard"
+                    paddingX={4}
+                    paddingY={3}
+                  >
+                    <Box
+                      alignItems="flexStart"
+                      display="flex"
+                      flexDirection={[
+                        'columnReverse',
+                        'columnReverse',
+                        'columnReverse',
+                        'columnReverse',
+                        'row',
+                      ]}
+                      justifyContent="spaceBetween"
+                      marginBottom={2}
+                    >
+                      <Text variant="h3" color={'blue400'}>
+                        {course.name}
+                      </Text>
+                      <Box marginBottom={[2, 2, 2, 2]}>
+                        <Tag disabled>{course.location}</Tag>
+                      </Box>
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexDirection={['column', 'column', 'column', 'row']}
+                      //justifyContent={'spaceBetween'}
+                    >
+                      <Box style={{ flex: '0 0 50%' }}>
+                        <Text>
+                          {n('validPeriodLabel', 'Dagsetning')}:{' '}
+                          {course.dateFrom !== course.dateTo
+                            ? getDateFormat(course.dateFrom) +
+                              ' - ' +
+                              getDateFormat(course.dateTo)
+                            : getDateFormat(course.dateFrom)}
+                        </Text>
+                        <Text paddingBottom={2}>
+                          {n('time', 'Klukkan')}: {course.time}
+                        </Text>
+                      </Box>
+
+                      <Box paddingLeft={[0, 0, 0, 2]}>
+                        <Text>
+                          {n('price', 'Verð')}:{' '}
+                          {getCurrencyString(course.price || 0)}
+                        </Text>
+                      </Box>
+                    </Box>
+                  </Box>
+                </FocusableBox>
+              )
+            })}
+          </Box>
+        </Box>
+      )}
+    </Box>
+  )
+}
+export default AdministrationOfOccupationalSafetyAndHealthCourses

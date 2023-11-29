@@ -1,0 +1,121 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "VaentanlegNamskeid.WebApi",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "/namskeid"
+    }
+  ],
+  "paths": {
+    "/api/Namskeid": {
+      "get": {
+        "tags": [
+          "Namskeid"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamskeidDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamskeidDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NamskeidDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "NamskeidDto": {
+        "required": [
+          "DagsFra",
+          "DagsTil",
+          "Flokkur",
+          "LysingAVef",
+          "Nafn",
+          "NamskeidID",
+          "Skraningarslod",
+          "Stada",
+          "Stadsetning",
+          "Timi",
+          "Undirflokkur",
+          "Verd"
+        ],
+        "type": "object",
+        "properties": {
+          "NamskeidID": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Nafn": {
+            "type": "string"
+          },
+          "DagsFra": {
+            "type": "string",
+            "readOnly": true
+          },
+          "DagsTil": {
+            "type": "string"
+          },
+          "Timi": {
+            "type": "string"
+          },
+          "Stadsetning": {
+            "type": "string"
+          },
+          "Verd": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Skraningarslod": {
+            "type": "string",
+            "readOnly": true
+          },
+          "Stada": {
+            "type": "string",
+            "readOnly": true
+          },
+          "Flokkur": {
+            "type": "string",
+            "readOnly": true
+          },
+          "Undirflokkur": {
+            "type": "string"
+          },
+          "LysingAVef": {
+            "type": "string"
+          },
+          "AlltafOpid": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
