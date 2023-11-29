@@ -46,7 +46,11 @@ platform :android do
   desc "Submit a new Beta Build"
   lane :beta do |options|
     apps = options[:apps] || 'dev,prod'
-    version_code = latest_googleplay_version_code('prod')
+    version_code = [
+      latest_googleplay_version_code('dev'),
+      latest_googleplay_version_code('prod'),
+    ].max
+
     increment_version_code(
       gradle_file_path: "app/build.gradle",
       version_code: version_code + 1
