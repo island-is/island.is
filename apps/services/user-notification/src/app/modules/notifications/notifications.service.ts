@@ -166,6 +166,11 @@ export class NotificationsService {
     return template
   }
 
+
+  async tempFindAll(): Promise<any>{
+    const allRows = await this.notificationModel.findAll()
+    return allRows
+  }
   async findOne(
     user: User,
     id: number,
@@ -309,9 +314,9 @@ export class NotificationsService {
   }
 
   // Just a test function for easy creating WHILE DEVELOPING
-  async create(user: User): Promise<any> {
+  async create(user: any): Promise<any> { //user: User temp change for db bypassauth testing
     const exampleNotificationData = {
-      recipient: user.nationalId,
+      recipient: '0101302989', // temp hardfix // user.nationalId,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
       args: [
         {
@@ -329,6 +334,7 @@ export class NotificationsService {
     try {
       return this.notificationModel.create(exampleNotificationData as any)
     } catch (error) {
+      this.logger.debug(error)
       return Error
     }
   }
