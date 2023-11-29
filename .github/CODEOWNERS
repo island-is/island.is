@@ -137,7 +137,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
-/libs/clients/finance/                                                                                   @island-isshugsmidjan
+/libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
 /libs/clients/work-machines/                                                                             @island-is/hugsmidjan
