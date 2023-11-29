@@ -2485,6 +2485,7 @@ user-notification-worker:
   enabled: true
   env:
     CONTENTFUL_HOST: 'cdn.contentful.com'
+    DB_EXTENSIONS: 'uuid-ossp'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
@@ -2533,6 +2534,7 @@ user-notification-worker:
             cpu: '50m'
             memory: '128Mi'
     env:
+      DB_EXTENSIONS: 'uuid-ossp'
       DB_HOST: 'postgres-applications.internal'
       DB_NAME: 'services_user_notification'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
