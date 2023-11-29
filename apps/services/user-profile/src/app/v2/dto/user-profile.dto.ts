@@ -54,14 +54,4 @@ export class UserProfileDto {
   @IsOptional()
   @IsBoolean()
   readonly needsNudge?: boolean | null
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly emailStatus?: DataStatus
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsString()
-  readonly mobileStatus?: DataStatus
 }
