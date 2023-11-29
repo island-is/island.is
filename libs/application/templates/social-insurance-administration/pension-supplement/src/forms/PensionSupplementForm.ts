@@ -374,7 +374,7 @@ export const PensionSupplementForm: Form = buildForm({
           title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.additionalDocuments',
+              id: 'fileUploadAdditionalFiles.additionalDocuments',
               title:
                 pensionSupplementFormMessage.fileUpload.additionalFileTitle,
               description:

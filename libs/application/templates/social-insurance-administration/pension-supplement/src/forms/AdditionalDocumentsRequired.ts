@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildFileUploadField,
   buildForm,
@@ -25,17 +24,12 @@ export const AdditionalDocumentsRequired: Form = buildForm({
       id: 'reviewUpload',
       title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
       children: [
-        buildCustomField({
-          id: 'uploadAdditionalFilesInfoScreen',
-          title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
-          component: 'UploadAdditionalFilesInfoScreen',
-        }),
         buildMultiField({
           id: 'additionalDocumentsScreen',
           title: pensionSupplementFormMessage.fileUpload.additionalFileTitle,
           children: [
             buildFileUploadField({
-              id: 'fileUpload.additionalDocuments',
+              id: 'fileUploadAdditionalFiles.additionalDocumentsRequired',
               title:
                 pensionSupplementFormMessage.fileUpload.additionalFileTitle,
               description:
