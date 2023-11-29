@@ -35,6 +35,7 @@ import {
   OrganizationSubpage,
 } from '../models/organizationSubpage.model'
 import { mapProjectPage, ProjectPage } from '../models/projectPage.model'
+import { LifeEventPage } from '../models/lifeEventPage.model'
 
 export type PageTypes =
   | IArticle
@@ -55,6 +56,7 @@ export const PageUnion = createUnionType({
     Article,
     SubArticle,
     AnchorPage,
+    LifeEventPage,
     AdgerdirPage,
     AdgerdirFrontpage,
     News,

@@ -134,6 +134,7 @@ import {
   ChartNumberBox,
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
+import { LifeEventPageListSlice } from '../models/lifeEventPageList.model'
 
 type SliceTypes =
   | ITimeline
@@ -216,6 +217,7 @@ export const SliceUnion = createUnionType({
     Form,
     Stepper,
     GraphCard,
+    LifeEventPageListSlice,
     AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,

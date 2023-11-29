@@ -18,6 +18,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           slug
           pageType
         }
+        ... on LifeEventPage {
+          id
+          title
+          slug
+          pageType
+        }
         ... on News {
           id
           title
@@ -144,6 +150,35 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
         }
 
         ... on AnchorPage {
+          id
+          title
+          slug
+          intro
+          category {
+            id
+            slug
+            title
+          }
+          image {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          pageType
+        }
+
+        ... on LifeEventPage {
           id
           title
           slug
