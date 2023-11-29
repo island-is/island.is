@@ -1,7 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const MAIN_QUEUE_NAME = 'user-notification'
-const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
+const MAIN_QUEUE_NAME = 'user-notification-TEMP' // TODO change me back on merge
+const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure-TEMP' // TODO change me back on merge
 
 const dbName = 'services_user_notification'
 
