@@ -16,6 +16,10 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries'
 import { getCurrencyString, parseDateString } from './utils'
 
+const normalizesAndMatch = (value1: string, value2: string) => {
+  return value1.toLowerCase().trim() === value2.toLowerCase().trim()
+}
+
 interface AdministrationOfOccupationalSafetyAndHealthCoursesProps {
   slice: ConnectedComponent
 }
@@ -33,10 +37,6 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
     Query['administrationOfOccupationalSafetyAndHealthCourses']['courses']
   >([])
 
-  const normalizesAndMatch = (value1: string, value2: string) => {
-    return value1.toLowerCase().trim() === value2.toLowerCase().trim()
-  }
-
   useQuery<Query>(GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY, {
     onCompleted: (data) => {
       const fetchedCourses = [
@@ -47,14 +47,23 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
         fetchedCourses.filter((fetchedCourses) => {
           const category = slice.configJson?.category
           const subCategory = slice.configJson?.subCategory
-          return category && subCategory
-            ? normalizesAndMatch(fetchedCourses.category, category) &&
-                normalizesAndMatch(fetchedCourses.subCategory, subCategory)
-            : category
-            ? normalizesAndMatch(fetchedCourses.category, category)
-            : subCategory
-            ? normalizesAndMatch(fetchedCourses.subCategory, subCategory)
-            : fetchedCourses
+
+          if (category && subCategory) {
+            return (
+              normalizesAndMatch(fetchedCourses.category, category) &&
+              normalizesAndMatch(fetchedCourses.subCategory, subCategory)
+            )
+          }
+
+          if (category) {
+            return normalizesAndMatch(fetchedCourses.category, category)
+          }
+
+          if (subCategory) {
+            return normalizesAndMatch(fetchedCourses.subCategory, subCategory)
+          }
+
+          return fetchedCourses
         }),
       )
       setListState('loaded')
