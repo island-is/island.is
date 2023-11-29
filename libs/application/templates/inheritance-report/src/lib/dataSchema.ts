@@ -82,9 +82,12 @@ export const inheritanceReportSchema = z.object({
             issuer: z.string(),
             nationalId: z.string(),
             value: z.string().refine((v) => v),
-          }).refine(
+          })
+          .refine(
             ({ nationalId }) => {
-              return nationalId && nationalId !== '' ? kennitala.isValid(nationalId) : true
+              return nationalId && nationalId !== ''
+                ? kennitala.isValid(nationalId)
+                : true
             },
             {
               path: ['nationalId'],

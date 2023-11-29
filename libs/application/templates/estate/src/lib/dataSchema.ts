@@ -272,7 +272,9 @@ export const estateSchema = z.object({
     )
     .refine(
       ({ nationalId }) => {
-        return nationalId && nationalId !== '' ? kennitala.isValid(nationalId) : true
+        return nationalId && nationalId !== ''
+          ? kennitala.isValid(nationalId)
+          : true
       },
       {
         path: ['nationalId'],
