@@ -93,10 +93,8 @@ describe('MeUserProfileController', () => {
         nationalId: testUserProfile.nationalId,
         email: null,
         emailVerified: false,
-        emailStatus: DataStatus.NOT_DEFINED,
         mobilePhoneNumber: null,
         mobilePhoneNumberVerified: false,
-        mobileStatus: DataStatus.NOT_DEFINED,
         locale: null,
         documentNotifications: true,
         needsNudge: null,
@@ -247,8 +245,6 @@ describe('MeUserProfileController', () => {
         emailVerified: true,
         mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
-        emailStatus: DataStatus.VERIFIED,
-        mobileStatus: DataStatus.VERIFIED,
       })
 
       // Assert Db records
@@ -278,7 +274,6 @@ describe('MeUserProfileController', () => {
         nationalId: testUserProfile.nationalId,
         mobilePhoneNumber: formattedNewPhoneNumber,
         mobilePhoneNumberVerified: true,
-        mobileStatus: DataStatus.VERIFIED,
       })
 
       // Assert Db records
@@ -308,7 +303,6 @@ describe('MeUserProfileController', () => {
         nationalId: testUserProfile.nationalId,
         mobilePhoneNumber: formatPhoneNumber(audkenniSimNumber),
         mobilePhoneNumberVerified: true,
-        mobileStatus: DataStatus.VERIFIED,
       })
 
       // Assert Db records
@@ -339,7 +333,6 @@ describe('MeUserProfileController', () => {
         nationalId: testUserProfile.nationalId,
         email: newEmail,
         emailVerified: true,
-        emailStatus: DataStatus.VERIFIED,
       })
 
       // Assert Db records
@@ -521,8 +514,6 @@ describe('MeUserProfileController', () => {
         mobilePhoneNumberVerified: false,
         email: null,
         emailVerified: false,
-        mobileStatus: DataStatus.EMPTY,
-        emailStatus: DataStatus.EMPTY,
       })
 
       // Assert Db records

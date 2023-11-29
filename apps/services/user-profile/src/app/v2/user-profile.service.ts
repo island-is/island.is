@@ -48,8 +48,6 @@ export class UserProfileService {
         emailVerified: false,
         documentNotifications: true,
         needsNudge: null,
-        mobileStatus: DataStatus.NOT_DEFINED,
-        emailStatus: DataStatus.NOT_DEFINED,
       }
     }
 
@@ -60,8 +58,6 @@ export class UserProfileService {
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
       emailVerified: userProfile.emailVerified,
-      mobileStatus: userProfile.mobileStatus as DataStatus,
-      emailStatus: userProfile.emailStatus as DataStatus,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
     }
