@@ -24,19 +24,19 @@ import { LoanHistoryPdf } from './models/loanHistoryPdf.model'
 export class HmsLoansResolver {
   constructor(private hmsLoansService: HmsLoansClientService) {}
 
-  @Query(() => [LoanHistory], { name: 'hmsLoansLoanHistory', nullable: true })
+  @Query(() => [LoanHistory], { name: 'hmsLoansHistory', nullable: true })
   @Audit()
-  async getHmsLoansLoanHistory(@CurrentUser() user: User) {
-    return await this.hmsLoansService.getHmsLoansLoanHistory(user)
+  async getHmsLoansHistory(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansHistory(user)
   }
 
   @Query(() => LoanHistoryPdf, {
-    name: 'hmsLoansLoanHistoryPdf',
+    name: 'hmsLoansHistoryPdf',
     nullable: true,
   })
   @Audit()
-  async getHmsLoansLoanHistoryPdf(@CurrentUser() user: User) {
-    return await this.hmsLoansService.getHmsLoansLoanHistoryPdf(user)
+  async getHmsLoansHistoryPdf(@CurrentUser() user: User) {
+    return await this.hmsLoansService.getHmsLoansHistoryPdf(user)
   }
 
   @Query(() => [PaymentHistory], {

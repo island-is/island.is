@@ -1,5 +1,5 @@
-query GetHmsLoansLoanHistory {
-  hmsLoansLoanHistory {
+query GetHmsLoansHistory {
+  hmsLoansHistory {
     loanId
     name
     homeAddress
@@ -57,8 +57,8 @@ query GetHmsLoansLoanHistory {
   }
 }
 
-query GetHmsLoansLoanHistoryPdf {
-  hmsLoansLoanHistoryPdf {
+query GetHmsLoansHistoryPdf {
+  hmsLoansHistoryPdf {
     mime
     data
     name

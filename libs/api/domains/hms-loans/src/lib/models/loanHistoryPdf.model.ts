@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('HmsLoansLoanHistoryPdf')
+@ObjectType('HmsLoansHistoryPdf')
 export class LoanHistoryPdf {
   @Field(() => String, { nullable: true })
   mime?: string
