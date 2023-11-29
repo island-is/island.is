@@ -154,7 +154,7 @@ const PassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const ChildrenPassportSchema = z.object({
@@ -164,7 +164,7 @@ const ChildrenPassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const MaritalStatusSchema = z.object({
@@ -187,7 +187,7 @@ const SupportingDocumentsSchema = z.object({
   subsistenceCertificate: z.array(FileDocumentSchema).optional(),
   subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
   certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
-  icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
+  icelandicTest: z.array(FileDocumentSchema).optional(),
   criminalRecordList: z.array(CriminalRecordSchema).optional(),
 })
 

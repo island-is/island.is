@@ -8,8 +8,6 @@ import {
   DirectorateOfImmigrationClientModule,
   DirectorateOfImmigrationClientConfig,
 } from '@island.is/clients/directorate-of-immigration'
-import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
-import { S3Service } from './attachments/s3.service'
 import { S3 } from 'aws-sdk'
 export class CitizenshipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -24,15 +22,7 @@ export class CitizenshipModule {
           load: [DirectorateOfImmigrationClientConfig],
         }),
       ],
-      providers: [
-        CitizenshipService,
-        ApplicationAttachmentService,
-        S3Service,
-        {
-          provide: S3,
-          useValue: new S3(),
-        },
-      ],
+      providers: [CitizenshipService],
       exports: [CitizenshipService],
     }
   }

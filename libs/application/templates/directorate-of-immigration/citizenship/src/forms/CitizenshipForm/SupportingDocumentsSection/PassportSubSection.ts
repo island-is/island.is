@@ -148,7 +148,7 @@ export const PassportSubSection = buildSubSection({
           },
         }),
         buildFileUploadField({
-          id: `${Routes.PASSPORT}.file`,
+          id: `${Routes.PASSPORT}.attachment`,
           title: supportingDocuments.labels.passport.fileUpload,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
