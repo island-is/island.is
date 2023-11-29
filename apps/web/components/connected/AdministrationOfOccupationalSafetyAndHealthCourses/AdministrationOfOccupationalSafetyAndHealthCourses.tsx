@@ -11,9 +11,10 @@ import {
 } from '@island.is/island-ui/core'
 import { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { GET_ADMINISTRATION_OF_SAFETY_AND_HEALTH_COURSES_QUERY } from './queries'
-import { getCurrencyString, getDateFormat } from './utils'
+import { getCurrencyString, parseDateString } from './utils'
 
 interface AdministrationOfOccupationalSafetyAndHealthCoursesProps {
   slice: ConnectedComponent
@@ -25,6 +26,7 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
   slice,
 }: AdministrationOfOccupationalSafetyAndHealthCoursesProps) => {
   const n = useNamespace(slice.json ?? {})
+  const { format } = useDateUtils()
 
   const [listState, setListState] = useState<ListState>('loading')
   const [courses, setCourses] = useState<
@@ -91,6 +93,21 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
         <Box>
           <Box paddingTop={[4, 4, 6]} paddingBottom={[4, 5, 10]}>
             {courses.map((course, index) => {
+              const dateFormat = 'dd.MMM'
+
+              let dateFrom = format(
+                parseDateString(course.dateFrom),
+                dateFormat,
+              )
+              if (dateFrom.endsWith('.')) {
+                dateFrom = dateFrom.slice(0, dateFrom.length - 1)
+              }
+
+              let dateTo = format(parseDateString(course.dateTo), dateFormat)
+              if (dateTo.endsWith('.')) {
+                dateTo = dateTo.slice(0, dateTo.length - 1)
+              }
+
               return (
                 <FocusableBox
                   key={`course-${index}`}
@@ -134,16 +151,13 @@ const AdministrationOfOccupationalSafetyAndHealthCourses = ({
                     <Box
                       display="flex"
                       flexDirection={['column', 'column', 'column', 'row']}
-                      //justifyContent={'spaceBetween'}
                     >
                       <Box style={{ flex: '0 0 50%' }}>
                         <Text>
                           {n('validPeriodLabel', 'Dagsetning')}:{' '}
-                          {course.dateFrom !== course.dateTo
-                            ? getDateFormat(course.dateFrom) +
-                              ' - ' +
-                              getDateFormat(course.dateTo)
-                            : getDateFormat(course.dateFrom)}
+                          {dateFrom !== dateTo
+                            ? dateFrom + ' - ' + dateTo
+                            : dateFrom}
                         </Text>
                         <Text paddingBottom={2}>
                           {n('time', 'Klukkan')}: {course.time}
