@@ -10,11 +10,13 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
-  UserProfileApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
-import { NationalRegistryCohabitantsApi } from '../dataProviders'
+import {
+  NationalRegistryCohabitantsApi,
+  SocialInsuranceAdministrationApplicantApi,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -31,6 +33,7 @@ export const PrerequisitesForm: Form = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: householdSupplementFormMessage.pre.externalDataSection,
+          subTitle: householdSupplementFormMessage.pre.externalDataDescription,
           checkboxLabel: householdSupplementFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
@@ -57,12 +60,13 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: UserProfileApi,
+              provider: SocialInsuranceAdministrationApplicantApi,
               title:
-                householdSupplementFormMessage.pre.userProfileInformationTitle,
+                householdSupplementFormMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
               subTitle:
                 householdSupplementFormMessage.pre
-                  .userProfileInformationSubTitle,
+                  .socialInsuranceAdministrationInformationDescription,
             }),
             buildDataProviderItem({
               provider: NationalRegistryCohabitantsApi,

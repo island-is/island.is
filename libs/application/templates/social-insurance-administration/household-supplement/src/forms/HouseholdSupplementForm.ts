@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
-import { UserProfile } from '@island.is/api/schema'
 import {
   HouseholdSupplementHousing,
   FILE_SIZE_LIMIT,
@@ -29,6 +28,7 @@ import {
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
 } from '../lib/householdSupplementUtils'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -60,11 +60,12 @@ export const HouseholdSupplementForm: Form = buildForm({
                   title: householdSupplementFormMessage.info.applicantEmail,
                   width: 'half',
                   variant: 'email',
-                  required: true,
+                  disabled: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.email
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.emailAddress
                   },
                 }),
                 buildPhoneField({
@@ -72,11 +73,11 @@ export const HouseholdSupplementForm: Form = buildForm({
                   title:
                     householdSupplementFormMessage.info.applicantPhonenumber,
                   width: 'half',
-                  required: true,
                   defaultValue: (application: Application) => {
-                    const data = application.externalData.userProfile
-                      .data as UserProfile
-                    return data.mobilePhoneNumber
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+                    return data.phoneNumber
                   },
                 }),
               ],
@@ -107,14 +108,22 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.bank',
                   title: householdSupplementFormMessage.info.paymentBank,
-                  backgroundColor: 'white',
-                  //disabled: true,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
-                    const userProfile = application.externalData.userProfile
-                      .data as UserProfile
-                    return userProfile.bankInfo
+                    const data = application.externalData
+                      .socialInsuranceAdministrationApplicant
+                      .data as ApplicantInfo
+
+                    // TODO: Tímabundið (Þangað til nýja BankAccount component er búið til)
+                    return data.bankAccount &&
+                      data.bankAccount.bank &&
+                      data.bankAccount.ledger &&
+                      data.bankAccount.accountNumber
+                      ? data.bankAccount.bank +
+                          data.bankAccount.ledger +
+                          data.bankAccount.accountNumber
+                      : ''
                   },
                 }),
               ],
