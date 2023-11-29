@@ -40,7 +40,7 @@ export const m = defineMessages({
     defaultMessage: 'Fyrsti gjalddagi',
   },
   originalAmount: {
-    id: 'sp.finance-loans:first-payment-date',
+    id: 'sp.finance-loans:original-amount',
     defaultMessage: 'Upphafleg fjárhæð',
   },
 
