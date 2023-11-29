@@ -11,7 +11,6 @@ interface Project {
 
 const checkTags = async (filePath: string) => {
   const projectText = await readFile(filePath, 'utf8')
-  console.log(filePath)
   const project = JSON.parse(projectText) as Project
   const tagsRaw = project.tags ?? []
   const tags = tagsRaw.map((tag) => tag.split(':'))
