@@ -41,10 +41,14 @@ export class BrokerService {
   async getPerson(
     nationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
+    useFakeApi?: boolean,
   ): Promise<PersonV3 | null> {
     const user =
       rawData ??
-      (await this.nationalRegistryV3.getAllDataIndividual(nationalId))
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        nationalId,
+        useFakeApi ?? false,
+      ))
 
     if (!user?.kennitala) {
       return null

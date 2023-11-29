@@ -169,9 +169,9 @@ const ChildrenPassportSchema = z.object({
 const MaritalStatusSchema = z.object({
   status: z.string().min(1),
   nationalId: z.string().min(1),
-  birthCountry: z.string().min(1),
+  birthCountry: z.string().optional(),
   name: z.string().min(1),
-  citizenship: z.string().min(1),
+  citizenship: z.string().optional(),
   dateOfMaritalStatus: z.string().min(1),
   explanation: z.string().optional(),
 })
@@ -241,10 +241,12 @@ export const CitizenshipSchema = z.object({
   passport: PassportSchema,
   childrenPassport: z.array(ChildrenPassportSchema).optional(),
   maritalStatus: MaritalStatusSchema,
-  formerIcelander: z
-    .string()
-    .min(1)
-    .refine((v) => v === YES),
+  // TODO revert
+  // formerIcelander: z
+  //   .string()
+  //   .min(1)
+  //   .refine((v) => v === YES),
+  formerIcelander: z.enum([YES, NO]),
   supportingDocuments: SupportingDocumentsSchema,
   childrenSupportingDocuments: z
     .array(ChildrenSupportingDocumentsSchema)

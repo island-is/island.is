@@ -1,3 +1,4 @@
+import React, { ReactNode, useEffect, useState } from 'react'
 import {
   GridColumn,
   GridRow,
@@ -12,6 +13,7 @@ import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { OrganizationSlugType } from '@island.is/shared/constants'
+import { ISLANDIS_SLUG } from '../../utils/constants'
 
 interface Props {
   serviceProviderSlug?: OrganizationSlugType
@@ -20,6 +22,8 @@ interface Props {
   narrow?: boolean
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
+  introComponent?: ReactNode
+  tooltipVariant?: 'light' | 'dark' | 'white'
 }
 export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const { marginBottom } = props
@@ -28,7 +32,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const isMobile = width < theme.breakpoints.md
 
   const { data: organization, loading } = useOrganization(
-    props.serviceProviderSlug,
+    props.serviceProviderSlug ?? ISLANDIS_SLUG,
   )
 
   const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
@@ -48,6 +52,11 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             {formatMessage(props.intro)}
           </Text>
         )}
+        {props.introComponent && (
+          <Text variant="default" paddingTop={1}>
+            {props.introComponent}
+          </Text>
+        )}
         {props.children}
       </GridColumn>
       {!isMobile && organization && (
@@ -59,6 +68,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
+            tooltipVariant={props.tooltipVariant ?? 'light'}
           />
         </GridColumn>
       )}
