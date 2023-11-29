@@ -1,6 +1,9 @@
 import { Box, Link, ProfileCard, Text } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
-import type { AnchorPageListSlice as AnchorPageListSliceSchema, LifeEventPageListSlice } from '@island.is/web/graphql/schema'
+import type {
+  AnchorPageListSlice as AnchorPageListSliceSchema,
+  LifeEventPageListSlice,
+} from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
@@ -18,7 +21,10 @@ export const AnchorPageListSlice: React.FC<
 > = ({ slice, namespace, renderAnchorPagesAsProfileCards = false }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const list = (slice as AnchorPageListSliceSchema).pages ?? (slice as LifeEventPageListSlice).lifeEventPageList ?? []
+  const list =
+    (slice as AnchorPageListSliceSchema).pages ??
+    (slice as LifeEventPageListSlice).lifeEventPageList ??
+    []
 
   if (renderAnchorPagesAsProfileCards) {
     return (

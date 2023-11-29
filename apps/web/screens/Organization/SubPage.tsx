@@ -302,7 +302,10 @@ const renderSlices = (
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (slice.__typename === 'AnchorPageListSlice' || slice.__typename === 'LifeEventPageListSlice') {
+        if (
+          slice.__typename === 'AnchorPageListSlice' ||
+          slice.__typename === 'LifeEventPageListSlice'
+        ) {
           return (
             <SliceMachine
               key={slice.id}
