@@ -11,3 +11,4 @@ bootstrap({
     return [graphqlUrl]
   },
 })
+
