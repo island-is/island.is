@@ -11,7 +11,8 @@ export const SelectLicenseSection = buildSection({
   children: [
     buildMultiField({
       id: 'selectLicence.multiField',
-      title: 'test',
+      title: information.labels.selectLicense.pageTitle,
+      description: information.labels.selectLicense.description,
       children: [
         buildCustomField({
           id: 'selectLicence',
