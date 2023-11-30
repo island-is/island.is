@@ -30,7 +30,7 @@ import {
   Sticky,
   Webreader,
 } from '@island.is/web/components'
-import { WatsonChatPanel } from '@island.is/web/components'
+import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 import {
   Image,
@@ -38,13 +38,16 @@ import {
   OrganizationPage,
   OrganizationTheme,
 } from '@island.is/web/graphql/schema'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
+import {
+  useLinkResolver,
+  useNamespace,
+  usePlausiblePageview,
+} from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DefaultHeader } from './Themes/DefaultTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
@@ -199,6 +202,8 @@ export const getThemeConfig = (
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
 > = ({ organizationPage }) => {
+  const { linkResolver } = useLinkResolver()
+
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -281,10 +286,12 @@ export const OrganizationHeader: React.FC<
           background={getBackgroundStyle(organizationPage.themeProperties)}
           title={organizationPage.title}
           logo={organizationPage.organization?.logo?.url}
+          logoHref={
+            linkResolver('organizationpage', [organizationPage.slug]).href
+          }
           titleColor={
             organizationPage.themeProperties.darkText ? 'dark400' : 'white'
           }
-          slug={organizationPage.slug}
         />
       )
   }

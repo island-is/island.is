@@ -1,4 +1,5 @@
 import {
+  DefaultHeader,
   DefaultProjectHeader,
   DirectorateOfHealthDashboardHeader,
   EntryProjectHeader,
@@ -19,7 +20,6 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
     case 'ukraine':
       return <UkraineProjectHeader projectPage={projectPage} />
     case 'opinbernyskopun':
-      return (
         <DefaultProjectHeader
           projectPage={projectPage}
           headerImageObjectFit="contain"
@@ -31,8 +31,10 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <DirectorateOfHealthDashboardHeader projectPage={projectPage} />
     case 'grindavik':
       return <GrindavikProjectHeader projectPage={projectPage} />
-    default:
+    case 'default-v2':
       return <DefaultProjectHeader projectPage={projectPage} />
+    default:
+      return <DefaultHeader title={projectPage.title} />
   }
 }
 

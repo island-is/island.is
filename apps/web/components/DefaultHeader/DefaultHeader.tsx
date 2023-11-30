@@ -1,7 +1,7 @@
 import React from 'react'
+import cn from 'classnames'
 
 import { Box, Hidden, Link, Text, TextProps } from '@island.is/island-ui/core'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 import * as styles from './DefaultHeader.css'
 
@@ -11,8 +11,8 @@ interface HeaderProps {
   background?: string
   title: string
   logo?: string
+  logoHref?: string
   titleColor?: TextProps['color']
-  slug: string
 }
 
 const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
@@ -21,12 +21,13 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   background,
   title,
   logo,
+  logoHref,
   titleColor = 'dark400',
-  slug,
 }) => {
-  const { linkResolver } = useLinkResolver()
   const imageProvided = !!image
   const logoProvided = !!logo
+
+  const LinkWrapper = logoHref ? Link : Box
 
   return (
     <>
@@ -34,7 +35,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
         <Hidden below="lg">
           <div className={styles.contentContainer}>
             <div className={styles.innerContentContainer}>
-              <Link href={linkResolver('organizationpage', [slug]).href}>
+              <LinkWrapper href={logoHref as string}>
                 <Box
                   className={styles.logoContainer}
                   borderRadius="circle"
@@ -42,13 +43,13 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                 >
                   <img className={styles.logo} src={logo} alt="" />
                 </Box>
-              </Link>
+              </LinkWrapper>
             </div>
           </div>
         </Hidden>
       )}
       <div
-        className={`${!fullWidth ? styles.gridContainerWidth : ''}`}
+        className={cn({ [styles.gridContainerWidth]: !fullWidth })}
         style={{
           background: background,
         }}
@@ -58,7 +59,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
             <div className={styles.textInnerContainer}>
               {logoProvided && (
                 <Hidden above="md">
-                  <Link href={linkResolver('organizationpage', [slug]).href}>
+                  <LinkWrapper href={logoHref as string}>
                     <Box
                       className={styles.logoContainerMobile}
                       borderRadius="circle"
@@ -66,7 +67,7 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                     >
                       <img className={styles.logo} src={logo} alt="" />
                     </Box>
-                  </Link>
+                  </LinkWrapper>
                 </Hidden>
               )}
               <Text variant="h1" as="h1" color={titleColor}>
