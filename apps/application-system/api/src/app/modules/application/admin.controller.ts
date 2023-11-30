@@ -138,6 +138,16 @@ export class AdminController {
           required: false,
           description: 'To filter applications by applicant nationalId.',
         },
+        from: {
+          type: 'string',
+          required: false,
+          description: 'Only return results cerated after specified date',
+        },
+        to: {
+          type: 'string',
+          required: false,
+          description: 'Only return results cerated before specified date',
+        },
       },
     },
   })
@@ -147,6 +157,8 @@ export class AdminController {
     @Param('count') count: number,
     @Query('status') status?: string,
     @Query('applicantNationalId') applicantNationalId?: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
   ) {
     return this.applicationService.findAllByInstitutionAndFilters(
       nationalId,
@@ -154,6 +166,8 @@ export class AdminController {
       count ?? 12,
       status,
       applicantNationalId,
+      from,
+      to,
     )
   }
 }

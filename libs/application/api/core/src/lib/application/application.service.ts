@@ -11,7 +11,7 @@ import {
 } from '@island.is/application/types'
 import { Application, ApplicationPaginatedResponse } from './application.model'
 import { invertBy } from 'lodash'
-import { PaginationDto, paginate } from '@island.is/nest/pagination'
+import { endOfDay, startOfDay } from 'date-fns'
 
 const applicationIsNotSetToBePruned = () => ({
   [Op.or]: [
@@ -120,9 +120,13 @@ export class ApplicationService {
     count: number,
     status?: string,
     applicantNationalId?: string,
+    from?: string,
+    to?: string,
   ): Promise<ApplicationPaginatedResponse> {
     const statuses = status?.split(',')
     const typeIds = this.getTypeIdsForInstitution(nationalId)
+    const toDate = to ? endOfDay(new Date(to)) : undefined
+    const fromDate = from ? startOfDay(new Date(from)) : undefined
 
     return this.applicationModel.findAndCountAll({
       where: {
@@ -134,7 +138,15 @@ export class ApplicationService {
                 [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
               }
             : {},
-          applicationIsNotSetToBePruned(),
+          // applicationIsNotSetToBePruned(),
+          fromDate && toDate
+            ? {
+                [Op.and]: [
+                  { created: { [Op.gte]: fromDate } },
+                  { created: { [Op.lte]: toDate } },
+                ],
+              }
+            : {},
         ],
         isListed: {
           [Op.eq]: true,

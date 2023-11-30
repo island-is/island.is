@@ -78,27 +78,28 @@ export const getBaseUrlForm = () => {
 export const getFilteredApplications = (
   applications: AdminApplication[],
   {
-    period,
     multiChoiceFilters,
     institutionFilters,
+    period,
   }: {
-    period: ApplicationFilters['period']
     multiChoiceFilters: Record<MultiChoiceFilter, string[] | undefined>
     institutionFilters?: string[]
+    period?: ApplicationFilters['period']
   },
 ) => {
   let filteredApplications = applications
   const multiChoiceStatus = multiChoiceFilters[MultiChoiceFilter.STATUS]
   const multiChoiceApplication =
     multiChoiceFilters[MultiChoiceFilter.APPLICATION]
-  const { from, to } = period
 
-  if (from) {
+  if (period?.from) {
+    const { from } = period
     filteredApplications = filteredApplications.filter(
       (x) => new Date(x.created) > startOfDay(from),
     )
   }
-  if (to) {
+  if (period?.to) {
+    const { to } = period
     filteredApplications = filteredApplications.filter(
       (x) => endOfDay(to) > new Date(x.created),
     )

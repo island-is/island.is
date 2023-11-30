@@ -26,13 +26,21 @@ export class ApplicationApplicationsInstitutionAdminInput extends OmitType(
   ApplicationApplicationsAdminInput,
   ['typeId'],
 ) {
-  @Field(() => String, { nullable: true })
-  @IsOptional()
-  applicantNationalId?: string
-
   @Field(() => Number)
   page!: number
 
   @Field(() => Number)
   count!: number
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  applicantNationalId?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  from?: string
+
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  to?: string
 }

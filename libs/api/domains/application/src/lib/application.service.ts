@@ -104,6 +104,8 @@ export class ApplicationService {
       locale,
       status: input.status?.join(','),
       applicantNationalId: input.applicantNationalId,
+      from: input.from,
+      to: input.to,
     })
   }
   async create(input: CreateApplicationInput, auth: Auth) {

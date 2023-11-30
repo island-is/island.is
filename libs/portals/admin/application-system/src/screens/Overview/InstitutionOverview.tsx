@@ -64,11 +64,13 @@ const InstitutionOverview = () => {
       variables: {
         input: {
           nationalId: userInfo.profile.nationalId,
-          page,
+          page: page,
           count: pageSize,
           applicantNationalId: filters.nationalId
             ? filters.nationalId.replace('-', '')
             : '',
+          from: filters.period.from?.toISOString(),
+          to: filters.period.to?.toISOString(),
         },
       },
       onCompleted: (q) => {
@@ -157,7 +159,7 @@ const InstitutionOverview = () => {
 
   const filteredApplicationList = getFilteredApplications(
     applicationAdminList ?? [],
-    { multiChoiceFilters, institutionFilters, period: filters.period },
+    { multiChoiceFilters, institutionFilters },
   )
   return (
     <Box>
