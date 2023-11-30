@@ -1,10 +1,9 @@
 import {
-  buildCustomField,
+  buildCheckboxField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubmitField,
-  buildTextField,
 } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
@@ -16,6 +15,7 @@ import { funeralCost } from './sections/funeralCost'
 import { applicant } from './sections/applicant'
 import { dataCollection } from './sections/dataCollection'
 import { deceased } from './sections/deceased'
+import { YES } from '../lib/constants'
 
 export const form: Form = buildForm({
   id: 'inheritanceReport',
@@ -39,12 +39,20 @@ export const form: Form = buildForm({
         buildMultiField({
           id: 'finalStep',
           title: m.readyToSubmit,
-          description: '',
+          description: m.beforeSubmitStatement,
           children: [
-            buildCustomField({
-              id: 'inheritanceReport.finalStepAcknowledgement',
+            buildCheckboxField({
+              id: 'confirmAction',
               title: '',
-              component: 'FinalStep',
+              large: false,
+              backgroundColor: 'white',
+              defaultValue: [],
+              options: [
+                {
+                  value: YES,
+                  label: m.inheritanceReportSubmissionCheckbox,
+                },
+              ],
             }),
             buildSubmitField({
               id: 'inheritanceReport.submit',
