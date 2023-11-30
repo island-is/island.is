@@ -167,7 +167,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
             </Text>
           </Box>
           <div className={styles.firstCourtDocument}>
-            <Text marginBottom={[1, 0]}>
+            <Text marginBottom={[1, 1, 1, 0]}>
               {formatMessage(courtDocuments.text)}
             </Text>
             <Box component="span">

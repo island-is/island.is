@@ -47,7 +47,7 @@ export const dropdownContainer = style({
   alignItems: 'center',
   minWidth: theme.spacing[28],
   marginTop: theme.spacing[2],
-  marginBottom: theme.spacing[2],
+  marginBottom: theme.spacing[1],
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
@@ -63,7 +63,7 @@ export const firstCourtDocument = style({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  marginBottom: theme.spacing[3],
+  marginBottom: theme.spacing[2],
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
