@@ -33,6 +33,7 @@ import {
   IStepper,
   IGraphCard,
   ILifeEventPageListSlice,
+  IAnchorPageList,
   ISidebarCard,
   IPowerBiSlice,
   ITableSlice,
@@ -103,9 +104,9 @@ import { Form, mapForm } from '../models/form.model'
 import { mapStepper, Stepper } from '../models/stepper.model'
 import { GraphCard, mapGraphCard } from '../models/graphCard.model'
 import {
-  LifeEventPageListSlice,
-  mapLifeEventPageListSlice,
-} from '../models/lifeEventPageListSlice.model'
+  AnchorPageListSlice,
+  mapAnchorPageListSlice,
+} from '../models/anchorPageListSlice.model'
 import { mapSidebarCard, SidebarCard } from '../models/sidebarCard.model'
 import { PowerBiSlice, mapPowerBiSlice } from '../models/powerBiSlice.model'
 import { mapTableSlice, TableSlice } from '../models/tableSlice.model'
@@ -133,6 +134,7 @@ import {
   ChartNumberBox,
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
+import { LifeEventPageListSlice } from '../models/lifeEventPageList.model'
 
 type SliceTypes =
   | ITimeline
@@ -166,6 +168,7 @@ type SliceTypes =
   | IStepper
   | IGraphCard
   | ILifeEventPageListSlice
+  | IAnchorPageList
   | ISidebarCard
   | IPowerBiSlice
   | ITableSlice
@@ -215,6 +218,7 @@ export const SliceUnion = createUnionType({
     Stepper,
     GraphCard,
     LifeEventPageListSlice,
+    AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,
     TableSlice,
@@ -294,7 +298,9 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
     case 'lifeEventPageListSlice':
-      return mapLifeEventPageListSlice(slice as ILifeEventPageListSlice)
+      return mapAnchorPageListSlice(slice as ILifeEventPageListSlice)
+    case 'anchorPageList':
+      return mapAnchorPageListSlice(slice as IAnchorPageList)
     case 'sidebarCard':
       return mapSidebarCard(slice as ISidebarCard)
     case 'powerBiSlice':
