@@ -117,7 +117,9 @@ export class SignatureCollectionService {
   }
 
   //   SignedList
-  async signedList(nationalId: string): Promise<SignatureCollectionList | null> {
+  async signedList(
+    nationalId: string,
+  ): Promise<SignatureCollectionList | null> {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(Lists[0])
@@ -187,7 +189,9 @@ export class SignatureCollectionService {
   }
 
   //   Create
-  async create(input: SignatureCollectionListInput): Promise<SignatureCollectionSuccess> {
+  async create(
+    input: SignatureCollectionListInput,
+  ): Promise<SignatureCollectionSuccess> {
     console.log(input)
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -227,7 +231,9 @@ export class SignatureCollectionService {
   }
 
   //   DelegateList
-  async delegateList(input: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionSuccess> {
+  async delegateList(
+    input: SignatureCollectionNationalIdsInput,
+  ): Promise<SignatureCollectionSuccess> {
     console.log('delegateList ', input)
     return new Promise((resolve) => {
       setTimeout(() => {
@@ -237,7 +243,9 @@ export class SignatureCollectionService {
   }
 
   //   UndelegateList
-  async undelegateList(input: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionSuccess> {
+  async undelegateList(
+    input: SignatureCollectionNationalIdsInput,
+  ): Promise<SignatureCollectionSuccess> {
     console.log('undelegateList ', input)
     return new Promise((resolve) => {
       setTimeout(() => {

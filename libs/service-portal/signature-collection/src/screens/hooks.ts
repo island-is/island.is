@@ -7,7 +7,11 @@ import {
   GetOwnerLists,
   GetSignedList,
 } from './queries'
-import { SignatureCollectionList, SignatureCollectionSignature, SignatureCollectionSuccess } from '@island.is/api/schema'
+import {
+  SignatureCollectionList,
+  SignatureCollectionSignature,
+  SignatureCollectionSuccess,
+} from '@island.is/api/schema'
 
 interface SignatureListInfo {
   signatureCollectionList?: SignatureCollectionList
@@ -65,7 +69,8 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
   })
 
   const listSignees =
-    (listSignatures?.signatureCollectionSignatures as SignatureCollectionSignature[]) ?? []
+    (listSignatures?.signatureCollectionSignatures as SignatureCollectionSignature[]) ??
+    []
   return { listSignees, refetchListSignees, loadingSignees }
 }
 
@@ -77,7 +82,8 @@ export const useGetSignedList = () => {
   } = useQuery<SignedList>(GetSignedList)
 
   const signedList =
-    (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ?? {}
+    (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ??
+    {}
   return { signedList, loadingSignedList, refetchSignedList }
 }
 
@@ -86,7 +92,8 @@ export const useGetOwnerLists = () => {
     useQuery<OwnerLists>(GetOwnerLists)
 
   const ownerLists =
-    (getOwnerLists?.signatureCollectionListsByOwner as SignatureCollectionList[]) ?? []
+    (getOwnerLists?.signatureCollectionListsByOwner as SignatureCollectionList[]) ??
+    []
   return { ownerLists, loadingLists }
 }
 
@@ -113,6 +120,8 @@ export const useIsOwner = () => {
   const { data: getIsOwner, loading: loadingIsOwner } =
     useQuery<IsOwner>(GetIsOwner)
 
-  const isOwner = (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ?? false
+  const isOwner =
+    (getIsOwner?.signatureCollectionIsOwner as SignatureCollectionSuccess) ??
+    false
   return { isOwner, loadingIsOwner }
 }

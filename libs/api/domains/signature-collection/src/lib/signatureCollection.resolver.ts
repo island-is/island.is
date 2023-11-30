@@ -60,17 +60,13 @@ export class SignatureCollectionResolver {
 
   //   signatureCollectionAllLists
   @Query(() => [SignatureCollectionList])
-  async signatureCollectionAllLists(): Promise<
-    SignatureCollectionList[]
-  > {
+  async signatureCollectionAllLists(): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allLists()
   }
 
   //   signatureCollectionAllOpenLists
   @Query(() => [SignatureCollectionList])
-  async signatureCollectionAllOpenLists(): Promise<
-    SignatureCollectionList[]
-  > {
+  async signatureCollectionAllOpenLists(): Promise<SignatureCollectionList[]> {
     return this.signatureCollectionService.allOpenLists()
   }
 
