@@ -39,8 +39,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       async (message, job): Promise<void> => {
         const messageId = job.id
         // FIRST THING IS TO WRITE TO DB
-        this.logger.info("messsage", message)
-        this.logger.info("job", job)
+        this.logger.info('messsage', message)
+        this.logger.info('job', job)
         this.logger.info('Message received by worker ... ...', { messageId })
         const exampleNotificationData = {
           recipient: '0101302989', // temp hardfix // user.nationalId,
@@ -57,7 +57,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           ],
           status: NotificationStatus.UNREAD,
         }
-    
+
         try {
           this.logger.info("attempt create", message)
           const res = this.notificationModel.create(exampleNotificationData as any)
@@ -68,7 +68,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         } catch (error) {
           this.logger.error(error)
         }
-      
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({

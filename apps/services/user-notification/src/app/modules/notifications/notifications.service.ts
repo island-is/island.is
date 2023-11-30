@@ -166,7 +166,6 @@ export class NotificationsService {
     return template
   }
 
-
   async findOne(
     user: User,
     id: number,
