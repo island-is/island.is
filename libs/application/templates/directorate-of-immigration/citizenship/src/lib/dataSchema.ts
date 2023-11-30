@@ -143,8 +143,8 @@ const ParentsSchema = z.object({
 })
 
 const FileDocumentSchema = z.object({
-  filename: z.string(),
-  base64: z.string(),
+  name: z.string(),
+  key: z.string(),
 })
 
 const PassportSchema = z.object({
@@ -153,7 +153,7 @@ const PassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const ChildrenPassportSchema = z.object({
@@ -163,7 +163,7 @@ const ChildrenPassportSchema = z.object({
   passportNumber: z.string().min(1),
   passportTypeId: z.string().min(1),
   countryOfIssuerId: z.string().min(1),
-  file: z.array(FileDocumentSchema).optional(),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const MaritalStatusSchema = z.object({
@@ -177,8 +177,8 @@ const MaritalStatusSchema = z.object({
 })
 
 const CriminalRecordSchema = z.object({
-  countryId: z.string().min(1).optional(),
-  file: z.array(FileDocumentSchema).optional(),
+  countryId: z.string().min(1),
+  attachment: z.array(FileDocumentSchema).optional(),
 })
 
 const SupportingDocumentsSchema = z.object({
@@ -187,7 +187,7 @@ const SupportingDocumentsSchema = z.object({
   subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
   certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
   icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
-  criminalRecordList: z.array(CriminalRecordSchema).optional(),
+  criminalRecord: z.array(CriminalRecordSchema).optional(),
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({
