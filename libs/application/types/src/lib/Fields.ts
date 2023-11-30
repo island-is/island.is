@@ -365,6 +365,7 @@ export interface ImageField extends BaseField {
   imageWidth?: 'full' | 'auto'
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
 }
 
 export type Field =

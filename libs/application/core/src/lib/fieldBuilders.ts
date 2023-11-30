@@ -571,9 +571,10 @@ export function buildImageField(
     title,
     image,
     alt,
-    imageWidth = 'full',
     marginTop,
     marginBottom,
+    imageWidth = 'full',
+    titleVariant = 'h4',
   } = data
   return {
     children: undefined,
@@ -584,6 +585,7 @@ export function buildImageField(
     imageWidth,
     marginTop,
     marginBottom,
+    titleVariant,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
   }
