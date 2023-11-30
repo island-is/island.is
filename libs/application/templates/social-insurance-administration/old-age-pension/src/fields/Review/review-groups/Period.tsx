@@ -3,16 +3,20 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { errorMessages, oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { MONTHS } from '../../../lib/constants'
-import { isMoreThan2Year } from '../../../lib/oldAgePensionUtils'
+import {
+  getApplicationAnswers,
+  isMoreThan2Year,
+} from '../../../lib/oldAgePensionUtils'
 
 export const Period = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ selectedYear, selectedMonth }] = useStatefulAnswers(application)
+  const { selectedYear, selectedMonth } = getApplicationAnswers(
+    application.answers,
+  )
   const month = MONTHS.find((x) => x.value === selectedMonth)
   const { formatMessage } = useLocale()
 

@@ -18,6 +18,8 @@ import {
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
+  FormValue,
+  ExternalData,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -145,38 +147,23 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bankAccountType = getValueViaPath(
     answers,
-    'paymentInfo.bankAccountInfo.bankAccountType',
+    'paymentInfo.bankAccountType',
   ) as BankAccountType
 
-  const bank = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.bank',
-  ) as string
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
-  const iban = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.iban',
-  ) as string
+  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
 
-  const swift = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.swift',
-  ) as string
+  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
 
-  const bankName = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.bankName',
-  ) as string
+  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
 
   const bankAddress = getValueViaPath(
     answers,
-    'paymentInfo.bankAccountInfo.bankAddress',
+    'paymentInfo.bankAddress',
   ) as string
 
-  const currency = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.currency',
-  ) as string
+  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
   return {
     pensionFundQuestion,
@@ -573,10 +560,6 @@ export function getTaxOptions() {
       value: TaxLevelOptions.SECOND_LEVEL,
       label: oldAgePensionFormMessage.payment.taxSecondLevel,
     },
-    {
-      value: TaxLevelOptions.THIRD_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxThirdLevel,
-    },
   ]
 
   return options
@@ -657,4 +640,31 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   }
+}
+
+export const getCurrencies = (externalData: ExternalData) => {
+  const { currencies } = getApplicationExternalData(externalData)
+
+  return (
+    currencies.map((i) => ({
+      label: i,
+      value: i,
+    })) ?? []
+  )
+}
+
+export const typeOfBankInfo = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { bankAccountType } = getApplicationAnswers(answers)
+  const { bankInfo } = getApplicationExternalData(externalData)
+
+  return bankAccountType
+    ? bankAccountType
+    : !isEmpty(bankInfo)
+    ? bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+      ? BankAccountType.ICELANDIC
+      : BankAccountType.FOREIGN
+    : BankAccountType.ICELANDIC
 }

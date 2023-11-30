@@ -5,7 +5,7 @@ import ResidenceHistoryTable from './ResidenceHistoryTable'
 
 export const ResidenceHistory: FC<FieldBaseProps> = ({ application }) => {
   return (
-    <Box>
+    <Box paddingBottom={6}>
       <ResidenceHistoryTable application={application} />
     </Box>
   )

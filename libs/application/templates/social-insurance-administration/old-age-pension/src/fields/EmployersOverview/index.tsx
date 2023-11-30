@@ -56,10 +56,6 @@ const EmployersOverview: FC<RepeaterProps> = ({
     updateApplication,
   ])
 
-  useEffect(() => {
-    onUpdateApplication(employers)
-  }, [employers])
-
   const onDeleteEmployer = async (email: string) => {
     const reducedEmployers = employers?.filter((e) => e.email !== email)
     if (!reducedEmployers) {

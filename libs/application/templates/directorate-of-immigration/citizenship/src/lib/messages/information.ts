@@ -86,10 +86,15 @@ export const information = {
         defaultMessage: 'Maki þinn',
         description: 'Marital status title spouse',
       },
-      marritalStatusDate: {
-        id: 'doi.cs.application:information.labels.maritalStatus.marritalStatusDate',
+      marriedStatusDate: {
+        id: 'doi.cs.application:information.labels.maritalStatus.marriedStatusDate',
         defaultMessage: 'Dagsetning hjúskapar',
-        description: 'Marital status change date spouse',
+        description: 'Married status change date spouse',
+      },
+      cohabitationStatusDate: {
+        id: 'doi.cs.application:information.labels.maritalStatus.cohabitationStatusDate',
+        defaultMessage: 'Dagsetning sambúðar',
+        description: 'Cohabitation status change date spouse',
       },
       status: {
         id: 'doi.cs.application:information.labels.maritalStatus.status',

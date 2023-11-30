@@ -182,13 +182,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
               ],
             }),
-            // Has to be here so that the submit button appears (does not appear if no screen is left).
-            // Tackle that as AS task.
-            buildDescriptionField({
-              id: 'unused',
-              title: '',
-              description: '',
-            }),
           ],
         }),
         buildMultiField({

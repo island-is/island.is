@@ -52,7 +52,7 @@ export type Events =
 
 export enum Roles {
   APPLICANT = 'applicant',
-  ORGINIZATION_REVIEWER = 'tryggingastofnun',
+  ORGANIZATION_REVIEWER = 'tryggingastofnun',
 }
 
 export enum States {
@@ -71,16 +71,14 @@ export enum States {
 export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOAD = 'fileUpload',
-  EMPLOYMENT = 'employment',
   VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
 }
 
 export enum TaxLevelOptions {
-  INCOME = '0',
+  INCOME = '2',
   FIRST_LEVEL = '1',
-  SECOND_LEVEL = '2',
-  THIRD_LEVEL = '3',
+  SECOND_LEVEL = '3',
 }
 
 export enum ApplicationType {

@@ -3,15 +3,15 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { EmployersTable } from '../../components/EmployersTable'
+import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
 
 export const Employers = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ employers }] = useStatefulAnswers(application)
+  const { employers } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
 
   return (
