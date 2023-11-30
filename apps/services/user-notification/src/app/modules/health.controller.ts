@@ -11,8 +11,8 @@ export class NotificationsInfraController extends InfraController {
   }
 
   @Get('readiness')
-//   @ApiOkResponse({ type: {ok:boolean} }) // TODO HOOOK THIS UP
-  async readiness(): Promise<{ok:boolean}> {
+  //   @ApiOkResponse({ type: {ok:boolean} }) // TODO HOOOK THIS UP
+  async readiness(): Promise<{ ok: boolean }> {
     const result = true
     return { ok: result }
   }
