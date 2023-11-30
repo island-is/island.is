@@ -1,10 +1,11 @@
 {
-  "root": "libs/application/templates/social-insurance-administration/pension-supplement",
+  "name": "application-templates-social-insurance-administration-pension-supplement",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/pension-supplement/src",
   "projectType": "library",
   "targets": {
     "lint": {
-      "executor": "@nrwl/linter:eslint",
+      "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": [
@@ -13,9 +14,9 @@
       }
     },
     "test": {
-      "executor": "@nrwl/jest:jest",
+      "executor": "@nx/jest:jest",
       "outputs": [
-        "coverage/libs/application/templates/social-insurance-administration/pension-supplement"
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/pension-supplement"
       ],
       "options": {
         "jestConfig": "libs/application/templates/social-insurance-administration/pension-supplement/jest.config.js",
@@ -23,9 +24,9 @@
       }
     },
     "extract-strings": {
-      "executor": "@nrwl/workspace:run-commands",
+      "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/social-insurance-administration/pension-supplement/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/pension-supplement/src/lib/messages.ts'"
       }
     }
   },

@@ -13,7 +13,10 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
-import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -60,6 +63,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 pensionSupplementFormMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
             }),
           ],
         }),

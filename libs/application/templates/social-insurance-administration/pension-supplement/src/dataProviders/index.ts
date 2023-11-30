@@ -10,3 +10,9 @@ export const SocialInsuranceAdministrationApplicantApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationApplicant',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
+  action: 'getCurrencies',
+  externalDataId: 'socialInsuranceAdministrationCurrencies',
+  namespace: 'SocialInsuranceAdministration',
+})

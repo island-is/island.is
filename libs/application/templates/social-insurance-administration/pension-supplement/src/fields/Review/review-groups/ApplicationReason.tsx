@@ -40,7 +40,7 @@ export const ApplicationReason = ({
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
           <Label>
             {formatMessage(
-              pensionSupplementFormMessage.info.applicationReasonTitle,
+              pensionSupplementFormMessage.applicationReason.title,
             )}
           </Label>
           <BulletList type="ul">

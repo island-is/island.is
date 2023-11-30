@@ -18,13 +18,12 @@ import {
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
-import { UserProfile } from '@island.is/api/schema'
 import {
   getApplicationReasonOptions,
   getApplicationAnswers,
 } from '../lib/pensionSupplementUtils'
 import { ApplicationReason, FILE_SIZE_LIMIT } from '../lib/constants'
-import { ApplicantInfo } from '../types'
+import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -81,58 +80,24 @@ export const PensionSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: pensionSupplementFormMessage.info.paymentTitle,
+          title: pensionSupplementFormMessage.payment.title,
           children: [
-            buildMultiField({
+            buildCustomField({
               id: 'paymentInfo',
-              title: pensionSupplementFormMessage.info.paymentTitle,
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'paymentInfo.alert',
-                    title: pensionSupplementFormMessage.info.paymentAlertTitle,
-                    component: 'FieldAlertMessage',
-                    doesNotRequireAnswer: true,
-                    description:
-                      pensionSupplementFormMessage.info.paymentAlertMessage,
-                  },
-                  { type: 'info' },
-                ),
-                buildTextField({
-                  id: 'paymentInfo.bank',
-                  title: pensionSupplementFormMessage.info.paymentBank,
-                  format: '####-##-######',
-                  placeholder: '0000-00-000000',
-                  defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-
-                    // TODO: Tímabundið (Þangað til nýja BankAccount component er búið til)
-                    return data.bankAccount &&
-                      data.bankAccount.bank &&
-                      data.bankAccount.ledger &&
-                      data.bankAccount.accountNumber
-                      ? data.bankAccount.bank +
-                          data.bankAccount.ledger +
-                          data.bankAccount.accountNumber
-                      : ''
-                  },
-                }),
-              ],
+              title: pensionSupplementFormMessage.payment.title,
+              component: 'BankAccount',
             }),
           ],
         }),
         buildSubSection({
           id: 'reason',
-          title: pensionSupplementFormMessage.info.applicationReasonTitle,
+          title: pensionSupplementFormMessage.applicationReason.title,
           children: [
             buildCheckboxField({
               id: 'applicationReason',
-              title: pensionSupplementFormMessage.info.applicationReasonTitle,
+              title: pensionSupplementFormMessage.applicationReason.title,
               description:
-                pensionSupplementFormMessage.info.applicationReasonDescription,
+                pensionSupplementFormMessage.applicationReason.description,
               required: true,
               options: getApplicationReasonOptions(),
             }),

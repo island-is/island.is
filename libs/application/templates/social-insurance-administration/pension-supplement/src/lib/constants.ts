@@ -77,3 +77,8 @@ export const MONTHS = [
   { value: 'November', label: pensionSupplementFormMessage.months.november },
   { value: 'December', label: pensionSupplementFormMessage.months.desember },
 ]
+
+export enum BankAccountType {
+  ICELANDIC = 'icelandic',
+  FOREIGN = 'foreign',
+}

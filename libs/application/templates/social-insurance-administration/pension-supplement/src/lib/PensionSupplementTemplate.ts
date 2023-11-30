@@ -1,3 +1,6 @@
+import { assign } from 'xstate'
+import set from 'lodash/set'
+import unset from 'lodash/unset'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -14,14 +17,14 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { Events, Roles, States } from './constants'
+import { Events, Roles, States, BankAccountType } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { pensionSupplementFormMessage, statesMessages } from './messages'
-import { SocialInsuranceAdministrationApplicantApi } from '../dataProviders'
-import { assign } from 'xstate'
-import set from 'lodash/set'
-import unset from 'lodash/unset'
+import {
+  SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+} from '../dataProviders'
 import { getApplicationAnswers } from './pensionSupplementUtils'
 
 const PensionSupplementTemplate: ApplicationTemplate<
@@ -64,6 +67,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationCurrenciesApi,
               ],
               delete: true,
             },
@@ -74,6 +78,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearBankAccountInfo'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -277,6 +282,23 @@ const PensionSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      clearBankAccountInfo: assign((context) => {
+        const { application } = context
+        const { bankAccountType } = getApplicationAnswers(application.answers)
+
+        if (bankAccountType === BankAccountType.ICELANDIC) {
+          unset(application.answers, 'paymentInfo.iban')
+          unset(application.answers, 'paymentInfo.swift')
+          unset(application.answers, 'paymentInfo.bankName')
+          unset(application.answers, 'paymentInfo.bankAddress')
+          unset(application.answers, 'paymentInfo.currency')
+        }
+
+        if (bankAccountType === BankAccountType.FOREIGN) {
+          unset(application.answers, 'paymentInfo.bank')
+        }
+        return context
+      }),
       moveAdditionalDocumentRequired: assign((context) => {
         const { application } = context
         const { answers } = application
