@@ -135,4 +135,4 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .readiness('/liveness')
-    .readiness('/liveness')// change to readiness - when ready ;)
+    .readiness('/liveness') // change to readiness - when ready ;)

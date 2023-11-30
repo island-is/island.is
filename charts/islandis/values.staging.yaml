@@ -2409,9 +2409,9 @@ user-notification:
     DB_NAME: 'services_user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_user_notification_read'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure-TEMP'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification-TEMP'
+    MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=345'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -2424,7 +2424,7 @@ user-notification:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2489,9 +2489,9 @@ user-notification-worker:
     DB_NAME: 'services_user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_user_notification'
-    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure-TEMP'
+    DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.staging01.devland.is'
-    MAIN_QUEUE_NAME: 'user-notification-TEMP'
+    MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
@@ -2506,7 +2506,7 @@ user-notification-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:

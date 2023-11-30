@@ -49,6 +49,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         // don't send message unless user wants this type of notification
+        // TODO change to pushNotifications
         if (!profile.documentNotifications) {
           this.logger.info(
             'User does not have notifications enabled this message type',
