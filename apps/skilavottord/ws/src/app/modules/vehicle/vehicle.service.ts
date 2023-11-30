@@ -63,9 +63,13 @@ export class VehicleService {
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
-        return true
+        // Remove old request if new owner
+        if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
+          return true
+        } else {
+          await findVehicle.destroy()
+        }
       }
-
       // Save vehicle to database
       await vehicle.save()
       return true

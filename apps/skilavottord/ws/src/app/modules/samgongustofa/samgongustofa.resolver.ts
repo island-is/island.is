@@ -1,7 +1,5 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
-
+import { Query, Resolver } from '@nestjs/graphql'
 import { Authorize, CurrentUser, User } from '../auth'
-
 import { VehicleInformation } from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
 
