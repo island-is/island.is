@@ -263,7 +263,14 @@ export const OldAgePensionForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
                     )
-                    return bankAccountType === BankAccountType.ICELANDIC
+                    const type =
+                      bankAccountType ??
+                      typeOfBankInfo(
+                        application.answers,
+                        application.externalData,
+                      )
+
+                    return type === BankAccountType.ICELANDIC
                       ? oldAgePensionFormMessage.payment.alertMessage
                       : oldAgePensionFormMessage.payment.alertMessageForeign
                   },
@@ -358,7 +365,6 @@ export const OldAgePensionForm: Form = buildForm({
                   placeholder: oldAgePensionFormMessage.payment.selectCurrency,
                   options: ({ externalData }: Application) =>
                     getCurrencies(externalData),
-                  //options: getCurrencies,
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,

@@ -61,15 +61,15 @@ export const PrerequisitesForm: Form = buildForm({
                     oldAgePensionFormMessage.pre
                       .retirementPensionApplicationDescription,
                 },
-                {
-                  value: ApplicationType.HALF_OLD_AGE_PENSION,
-                  label:
-                    oldAgePensionFormMessage.pre
-                      .halfRetirementPensionApplicationTitle,
-                  subLabel:
-                    oldAgePensionFormMessage.pre
-                      .halfRetirementPensionApplicationDescription,
-                },
+                // {
+                //   value: ApplicationType.HALF_OLD_AGE_PENSION,
+                //   label:
+                //     oldAgePensionFormMessage.pre
+                //       .halfRetirementPensionApplicationTitle,
+                //   subLabel:
+                //     oldAgePensionFormMessage.pre
+                //       .halfRetirementPensionApplicationDescription,
+                // },
                 {
                   value: ApplicationType.SAILOR_PENSION,
                   label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
