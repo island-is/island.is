@@ -3,8 +3,11 @@ import {
   ActionCard,
   AlertMessage,
   Box,
+  Button,
   Divider,
+  FocusableBox,
   Pagination,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
@@ -18,22 +21,23 @@ import {
 } from '../../lib/carRecyclingUtils'
 import { carRecyclingMessages } from '../../lib/messages'
 
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { useFormContext } from 'react-hook-form'
+
+import { VehicleDto } from '../../lib/types'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
   const { formatMessage } = useLocale()
 
-  const [currentVehiclesList, setCurrentVehiclesList] = useState<
-    VehicleMiniDto[]
-  >([])
+  const [currentVehiclesList, setCurrentVehiclesList] = useState<VehicleDto[]>(
+    [],
+  )
   const [selectedVehiclesList, setSelectedVehiclesList] = useState<
-    VehicleMiniDto[]
+    VehicleDto[]
   >([])
-  const [allVehiclesList, setAllVehiclesList] = useState<VehicleMiniDto[]>([])
+  const [allVehiclesList, setAllVehiclesList] = useState<VehicleDto[]>([])
 
   const [canceledVehiclesList, setCanceledVehiclesList] = useState<
-    VehicleMiniDto[]
+    VehicleDto[]
   >([])
 
   const { setValue } = useFormContext()
@@ -74,9 +78,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
   }, [selectedVehiclesList, setValue])
 
   function filterSelectedVehiclesFromList(
-    selectedList: VehicleMiniDto[],
-    allVehicles: VehicleMiniDto[],
-  ): VehicleMiniDto[] {
+    selectedList: VehicleDto[],
+    allVehicles: VehicleDto[],
+  ): VehicleDto[] {
     // Not show selected vehicles in filered list
     return allVehicles.filter(
       (vehicle1) =>
@@ -85,13 +89,13 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
   }
 
   function filterVehiclesList(
-    vehicle: VehicleMiniDto,
-    list: VehicleMiniDto[],
-  ): VehicleMiniDto[] {
+    vehicle: VehicleDto,
+    list: VehicleDto[],
+  ): VehicleDto[] {
     return list.filter((item) => item.permno !== vehicle.permno)
   }
 
-  function getRoleLabel(vechicle: VehicleMiniDto): string {
+  function getRoleLabel(vechicle: VehicleDto): string {
     if (vechicle.role === 'Eigandi') {
       return formatMessage(carRecyclingMessages.cars.owner)
     } else if (vechicle.role === 'Meðeigandi')
@@ -101,7 +105,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
     }
   }
 
-  function onRecycle(vehicle: VehicleMiniDto): void {
+  function onRecycle(vehicle: VehicleDto): void {
     setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle }])
 
     // Remove selected vehicle from current list
@@ -117,7 +121,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
     setCanceledVehiclesList(filteredCanceledVehiclesList)
   }
 
-  function onCancel(vehicle: VehicleMiniDto): void {
+  function onCancel(vehicle: VehicleDto): void {
     const filteredSelectedVehiclesList = filterVehiclesList(
       vehicle,
       selectedVehiclesList,
@@ -126,16 +130,10 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
     setSelectedVehiclesList(filteredSelectedVehiclesList)
 
     // Add selected vehicle back to the non selected list
-    setCurrentVehiclesList((vehicles: VehicleMiniDto[]) => [
-      vehicle,
-      ...vehicles,
-    ])
+    setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
 
-    // Keep bookkeeping about canceled recycling
-    setCanceledVehiclesList((vehicles: VehicleMiniDto[]) => [
-      vehicle,
-      ...vehicles,
-    ])
+    // Keep bookeeping about canceled recycling
+    setCanceledVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
   return (
@@ -179,23 +177,78 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
       >
         <Label>{formatMessage(carRecyclingMessages.cars.selectedTitle)}</Label>
       </Box>
-      {selectedVehiclesList.map((vehicle: VehicleMiniDto, index) => {
+      {selectedVehiclesList.map((vehicle: VehicleDto, index) => {
         return (
           <Box marginBottom={2} key={index} id="vehicles.selectedVehicles">
-            <ActionCard
+            <FocusableBox
               key={vehicle.permno}
-              cta={{
-                icon: undefined,
-                buttonType: {
-                  variant: 'primary',
-                  colorScheme: 'destructive',
-                },
-                label: formatMessage(carRecyclingMessages.cars.cancel),
-                onClick: () => onCancel(vehicle),
-              }}
-              heading={vehicle.permno || ''}
-              text={`${vehicle.make}, ${vehicle.color}`}
-            />
+              borderRadius="large"
+              borderColor="blue200"
+              borderWidth="standard"
+              flexDirection="column"
+              color="blue"
+              marginBottom={4}
+              paddingX={4}
+              paddingY={3}
+            >
+              <Box
+                alignItems="flexStart"
+                display="flex"
+                flexDirection={['row']}
+                justifyContent="spaceBetween"
+                marginBottom={2}
+                flexWrap={'wrap'}
+              >
+                <Text variant="h3" color={'blue400'}>
+                  {vehicle.permno}
+                </Text>
+
+                <InputController
+                  id={vehicle.permno + 'input'}
+                  label={formatText(
+                    carRecyclingMessages.cars.odometer,
+                    application,
+                    formatMessage,
+                  )}
+                  backgroundColor="blue"
+                  placeholder="0"
+                  size="sm"
+                  type="number"
+                  defaultValue={vehicle.odometer}
+                  suffix=" "
+                  thousandSeparator
+                  rightAlign={true}
+                  onChange={(e) => {
+                    const list = selectedVehiclesList.map((prevVehicle) =>
+                      vehicle.permno === prevVehicle.permno
+                        ? { ...vehicle, odometer: e.target.value }
+                        : prevVehicle,
+                    )
+
+                    setSelectedVehiclesList(list)
+                  }}
+                />
+              </Box>
+              <Box
+                display="flex"
+                flexDirection={['column', 'column', 'column', 'row']}
+                justifyContent="spaceBetween"
+              >
+                <Box style={{ flex: '0 0 50%' }}>
+                  <Text>{`${vehicle.make}, ${vehicle.color}`}</Text>
+                </Box>
+                <Box>
+                  <Button
+                    onClick={() => onCancel(vehicle)}
+                    colorScheme="destructive"
+                    variant="primary"
+                    size="medium"
+                  >
+                    {formatMessage(carRecyclingMessages.cars.cancel)}
+                  </Button>
+                </Box>
+              </Box>
+            </FocusableBox>
           </Box>
         )
       })}
@@ -207,7 +260,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
 
       {currentVehiclesList
         .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
-        .map((vehicle: VehicleMiniDto, index) => {
+        .map((vehicle: VehicleDto, index) => {
           return (
             <Box
               marginBottom={2}

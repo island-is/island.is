@@ -39,7 +39,7 @@ describe('answerValidators', () => {
 
     expect(answerValidators['vehicles'](newAnswers, application)).toStrictEqual(
       {
-        message: errorMessages.mustSelectACar,
+        message: errorMessages.mustSelectAVehicle,
         path: 'vehicles',
         values: undefined,
       },

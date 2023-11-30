@@ -1,26 +1,25 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-
-import { VehicleMiniDto } from '@island.is/clients/vehicles'
+import { VehicleDto } from './types'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const selectedVehicles = getValueViaPath(
     answers,
     'vehicles.selectedVehicles',
     [],
-  ) as VehicleMiniDto[]
+  ) as VehicleDto[]
 
   const allVehicles = getValueViaPath(
     answers,
     'vehicles.allVehicles',
     [],
-  ) as VehicleMiniDto[]
+  ) as VehicleDto[]
 
   const canceledVehicles = getValueViaPath(
     answers,
     'vehicles.canceledVehicles',
     [],
-  ) as VehicleMiniDto[]
+  ) as VehicleDto[]
 
   return {
     selectedVehicles,
@@ -63,7 +62,7 @@ export function getApplicationExternalData(
     externalData,
     'vehiclesList.data',
     [],
-  ) as VehicleMiniDto[]
+  ) as VehicleDto[]
 
   return {
     applicantName,

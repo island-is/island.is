@@ -138,6 +138,11 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Ökutæki valin til endurvinnslu',
       description: 'Vehicles selected for recycling',
     },
+    odometer: {
+      id: 'rf.cr.application:odometer',
+      defaultMessage: 'Kílómetrastaða',
+      description: 'Vehicles milage status',
+    },
   }),
   review: defineMessages({
     confirmSectionTitle: {
@@ -180,6 +185,11 @@ export const carRecyclingMessages: MessageDir = {
       id: 'rf.cr.application:review.buttons.edit',
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
+    },
+    odometer: {
+      id: 'rf.cr.application:odometer',
+      defaultMessage: 'Kílómetrastaða',
+      description: 'Vehicles milage status',
     },
   }),
   conclusionScreen: defineMessages({
@@ -234,8 +244,8 @@ export const statesMessages = defineMessages({
 })
 
 export const errorMessages = defineMessages({
-  mustSelectACar: {
-    id: 'rf.cr.application:validator.must.select.a.car',
+  mustSelectAVehicle: {
+    id: 'rf.cr.application:validator.must.select.a.vehicle',
     defaultMessage:
       'Vinsamlegast veldu að minnsta kosti eitt ökutæki til að halda áfram.',
     description: 'Please select a vehicle then continue',

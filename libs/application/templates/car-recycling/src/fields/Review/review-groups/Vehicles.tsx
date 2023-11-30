@@ -5,13 +5,14 @@ import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { States } from '../../../shared/constants'
 import { getApplicationAnswers } from '../../../lib/carRecyclingUtils'
+import isNumber from 'lodash/isNumber'
 
 export const Vehicles = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, formatNumber } = useLocale()
 
   const { selectedVehicles } = getApplicationAnswers(application.answers)
 
@@ -40,9 +41,22 @@ export const Vehicles = ({
             borderRadius="large"
             padding={4}
             marginBottom={2}
+            display="flex"
+            flexDirection={['row']}
+            justifyContent={'spaceBetween'}
           >
-            <Label>{formatMessage(vehicle.permno || '')}</Label>
-            {vehicle.make}, {vehicle.color}
+            <Box>
+              <Label>{formatMessage(vehicle.permno || '')}</Label>
+              {vehicle.make}, {vehicle.color}
+            </Box>
+            {vehicle.odometer && isNumber(+vehicle.odometer) && (
+              <Box>
+                <Label>
+                  {formatMessage(carRecyclingMessages.review.odometer)}
+                </Label>
+                {formatNumber(+vehicle.odometer)} km
+              </Box>
+            )}
           </Box>
         )
       })}
