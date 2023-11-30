@@ -486,6 +486,9 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/car-recycling": [
+        "libs/clients/car-recycling/src/index.ts"
+      ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
@@ -577,9 +580,6 @@
       "@island.is/clients/passports": ["libs/clients/passports/src/index.ts"],
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
-      ],
-      "@island.is/clients/car-recycling": [
-        "libs/clients/car-recycling/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
