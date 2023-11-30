@@ -111,7 +111,7 @@ export const supportingDocuments = {
       birthCertificate: {
         id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.birthCertificate',
         defaultMessage:
-          'Fæðingarvottorð (ef sótt um sem barn ísl. ríkisborgara)',
+          'Fæðingarvottorð (vegna sótt er um sem barn ísl. ríkisborgara)',
         description: 'birthCertificate title',
       },
       acceptedFileTypes: {

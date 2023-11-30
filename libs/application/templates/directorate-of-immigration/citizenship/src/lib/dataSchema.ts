@@ -173,7 +173,7 @@ const MaritalStatusSchema = z.object({
   birthCountry: z.string().optional(),
   name: z.string().min(1),
   citizenship: z.string().optional(),
-  dateOfMaritalStatus: z.string().min(1),
+  dateOfMaritalStatusStr: z.string().min(1),
   explanation: z.string().optional(),
 })
 
