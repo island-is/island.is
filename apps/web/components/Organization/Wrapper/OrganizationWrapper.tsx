@@ -296,7 +296,7 @@ export const OrganizationHeader: React.FC<
           }
           imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
           imageIsFullHeight={
-            organizationPage.themeProperties.imageIsFullHeight ?? false
+            organizationPage.themeProperties.imageIsFullHeight ?? true
           }
         />
       )

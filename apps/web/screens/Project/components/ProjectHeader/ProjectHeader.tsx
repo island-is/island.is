@@ -44,6 +44,10 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           }
           fullWidth={projectPage.themeProperties?.fullWidth ?? false}
           image={projectPage.defaultHeaderImage?.url}
+          imageIsFullHeight={
+            projectPage.themeProperties?.imageIsFullHeight ?? true
+          }
+          imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
         />
       )
   }

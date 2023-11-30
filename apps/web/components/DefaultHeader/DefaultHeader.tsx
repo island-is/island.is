@@ -61,7 +61,18 @@ export const DefaultHeader: React.FC<
         }}
       >
         <div className={styles.gridContainer}>
-          <div className={styles.textContainer}>
+          <div
+            className={styles.textContainer}
+            style={
+              !logoProvided
+                ? {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                  }
+                : {}
+            }
+          >
             <div className={styles.textInnerContainer}>
               {logoProvided && (
                 <Hidden above="md">
