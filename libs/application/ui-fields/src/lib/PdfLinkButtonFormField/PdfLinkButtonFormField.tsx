@@ -39,7 +39,7 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
                   filename: file.filename,
                 })
             }}
-            tag="Pdf"
+            tag="PDF"
             colorScheme="blue"
           >
             {file.buttonText &&
