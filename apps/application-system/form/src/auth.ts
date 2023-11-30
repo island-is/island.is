@@ -44,7 +44,7 @@ if (userMocked) {
       MunicipalitiesFinancialAidScope.applicant,
       ApiScope.assets,
       ApiScope.samgongustofaVehicles,
-      ApiScope.recyclingFund,
+      ApiScope.carRecycling,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

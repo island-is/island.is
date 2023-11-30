@@ -1,7 +1,5 @@
 import { Args, Mutation, Resolver } from '@nestjs/graphql'
-
 import { CurrentUser, User } from '../auth'
-
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import { UseGuards } from '@nestjs/common'
 import { CreateOwnerInput } from './dto/createOwner.input'

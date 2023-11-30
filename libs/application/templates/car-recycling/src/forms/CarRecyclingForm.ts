@@ -9,6 +9,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { carRecyclingMessages } from '../lib/messages'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const CarRecyclingForm: Form = buildForm({
   id: 'carsOverview',
@@ -80,12 +81,13 @@ export const CarRecyclingForm: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: carRecyclingMessages.conclusionScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertTitle: carRecyclingMessages.conclusionScreen.alertTitle,
+      expandableHeader: carRecyclingMessages.conclusionScreen.nextStepsLabel,
+      expandableDescription:
+        carRecyclingMessages.conclusionScreen.accordionText,
     }),
   ],
 })

@@ -1,5 +1,5 @@
 import { createApplication } from '@island.is/application/testing'
-import { RecyclingFundClientService } from '@island.is/clients/recycling-fund'
+import { CarRecyclingClientService } from '@island.is/clients/car-recycling'
 import { Test, TestingModule } from '@nestjs/testing'
 import { CarRecyclingService } from './car-recycling.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
@@ -17,7 +17,7 @@ describe('CarRecyclingService', () => {
           useValue: logger,
         },
         {
-          provide: RecyclingFundClientService,
+          provide: CarRecyclingClientService,
           useClass: jest.fn(() => ({
             sendApplication: () =>
               Promise.resolve({

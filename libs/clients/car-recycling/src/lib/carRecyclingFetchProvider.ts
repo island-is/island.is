@@ -11,21 +11,21 @@ import {
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 
-export const RecyclingFundFetchKey = 'RecyclingFundFetchProviderKey'
+export const CarRecyclingFetchProviderKey = 'CarRecyclingFetchProviderKey'
 
-export const RecyclingFundFetchProvider: Provider<EnhancedFetchAPI> = {
-  provide: RecyclingFundFetchKey,
+export const CarRecyclingFetchProvider: Provider<EnhancedFetchAPI> = {
+  provide: CarRecyclingFetchProviderKey,
   scope: LazyDuringDevScope,
   useFactory: (idsClientConfig: ConfigType<typeof IdsClientConfig>) =>
     createEnhancedFetch({
-      name: 'clients-recycling-fund',
+      name: 'clients-car-recycling',
       autoAuth: idsClientConfig.isConfigured
         ? {
             mode: 'tokenExchange',
             issuer: idsClientConfig.issuer,
             clientId: idsClientConfig.clientId,
             clientSecret: idsClientConfig.clientSecret,
-            scope: [RecyclingFundScope.recyclingFund],
+            scope: [RecyclingFundScope.carRecycling],
           }
         : undefined,
     }),

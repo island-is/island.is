@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-recycling-fund',
+  displayName: 'clients-car-recycling',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -12,5 +12,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/recycling-fund',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/car-recycling',
 }

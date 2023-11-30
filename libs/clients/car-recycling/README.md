@@ -1,4 +1,4 @@
-# Recycling fund Client (Úrvinnslusjóður)
+# Car recycling Client (Úrvinnslusjóður)
 
 ## About
 
@@ -6,7 +6,7 @@ This library implements a client to use Car recycling (Skilavottorð) APIs
 
 ## Running unit tests
 
-Run `nx test clients-recycling-fund` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test clients-car-recycling` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Code owners and maintainers
 

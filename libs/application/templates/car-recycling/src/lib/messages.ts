@@ -194,9 +194,12 @@ export const carRecyclingMessages: MessageDir = {
         'Ökutæki er tilbúið til afskráningar. Til að klára afskráningu þarf að fara með ökutækið til móttökuaðila. Greiðsla til eiganda kemur sjálfkrafa þegar bifreið hefur verið afhent til endurvinnslu.',
       description: 'Vehicle is ready for deregistration. To finalise the deregistration process the vehicle must be delivered to a reception centre. A payment will automatically be deposited to the owner once the vehicle has been delivered for recycling',
     },
-    bulletList: {
-      id: 'rf.cr.application:conclusion.screen.bullet.list#markdown',
-      defaultMessage: '* Þú ferð með ökutæki til móttökuaðila.\n* Móttökuaðili tekur á móti ökutæki og afskráir.\n* Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.',
+    accordionText: {
+      id: `rf.cr.application:conclusion.accordion.text`,
+      defaultMessage:
+        `* Þú ferð með ökutæki til móttökuaðila.\n` +
+        `* Móttökuaðili tekur á móti ökutæki og afskráir.\n` +
+        `* Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.`,
       description: '* You deliver the vehicle to a reception centre.\n* A receiving partner recieves the vehicle and deregisters it.\n* Payment shall be received within two days of the delivery of the vehicle',
     },
     nextStepsLabel: {
