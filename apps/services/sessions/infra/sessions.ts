@@ -57,7 +57,11 @@ export const serviceSetup = (): ServiceBuilder<'services-sessions'> =>
       GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY',
     })
     .volumes(...geoipVolume)
-    .readiness('/liveness')
+    .readiness({
+      initialDelaySeconds: 30,
+      path: '/readiness',
+      timeoutSeconds: 30,
+    })
     .liveness('/liveness')
     .replicaCount({
       default: 1,
