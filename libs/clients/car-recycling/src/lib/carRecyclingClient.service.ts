@@ -6,9 +6,6 @@ import type { EnhancedFetchAPI } from '@island.is/clients/middlewares'
 import type { ConfigType } from '@island.is/nest/config'
 
 import {
-  CreateRequestDocument,
-  CreateRequestMutation,
-  CreateRequestMutationVariables,
   SkilavottordRecyclingRequestDocument,
   SkilavottordRecyclingRequestMutationVariables,
   SkilavottordVehicleDocument,
@@ -18,8 +15,8 @@ import {
 } from './createRecyclingRequest.generated'
 
 import { RecyclingRequestTypes } from '../../gen/schema'
-import { RecyclingFundClientConfig } from './recyclingFundClient.config'
-import { RecyclingFundFetchKey } from './recyclingFundFetchProvider'
+import { CarRecyclingClientConfig } from './carRecyclingClient.config'
+import { CarRecyclingFetchProviderKey } from './carRecyclingFetchProvider'
 
 const baseGqlRequestOptions = {
   method: 'POST',
@@ -28,16 +25,23 @@ const baseGqlRequestOptions = {
   },
 }
 
+interface RequestBody {
+  query: string
+  variables: {
+    input: object
+  }
+}
+
 @Injectable()
-export class RecyclingFundClientService {
+export class CarRecyclingClientService {
   constructor(
-    @Inject(RecyclingFundClientConfig.KEY)
-    private readonly config: ConfigType<typeof RecyclingFundClientConfig>,
-    @Inject(RecyclingFundFetchKey)
+    @Inject(CarRecyclingClientConfig.KEY)
+    private readonly config: ConfigType<typeof CarRecyclingClientConfig>,
+    @Inject(CarRecyclingFetchProviderKey)
     private readonly fetch: EnhancedFetchAPI,
   ) {}
 
-  async createRecyclingFundRequest(user: User, body: any) {
+  async gqlRequestWithAuth(user: User, body: RequestBody) {
     return await this.fetch(this.config.gqlBasePath, {
       ...baseGqlRequestOptions,
       auth: user,
@@ -45,38 +49,8 @@ export class RecyclingFundClientService {
     })
   }
 
-  async createRecyclingRequest(user: User) {
-    // This could be abstratcted into a more generic fetch method with types
-    const response = await this.fetch(this.config.gqlBasePath, {
-      ...baseGqlRequestOptions,
-      auth: user,
-      body: JSON.stringify({
-        query: print(CreateRequestDocument),
-        variables: {
-          input: {
-            permno: 'THS45',
-            requestType: RecyclingRequestTypes.pendingRecycle,
-          },
-        } as CreateRequestMutationVariables,
-      }),
-    })
-
-    if (!response.ok) {
-      throw new Error(`Failed to creating recycling request from`)
-    }
-
-    const data = (await response.json()) as CreateRequestMutation
-
-    console.log('response from createRecyclingRequest GQL', {
-      status: response.status,
-      data,
-    })
-
-    return data.createRecyclingRequestAppSys.status
-  }
-
   async createOwner(user: User, applicantName: string) {
-    const response = await this.createRecyclingFundRequest(user, {
+    const response = await this.gqlRequestWithAuth(user, {
       query: print(SkilavottordVehicleOwnerDocument),
       variables: {
         input: {
@@ -94,7 +68,7 @@ export class RecyclingFundClientService {
 
   async createVehicle(user: User, permno: string) {
     try {
-      const response = await this.createRecyclingFundRequest(user, {
+      const response = await this.gqlRequestWithAuth(user, {
         query: print(SkilavottordVehicleDocument),
         variables: {
           input: {
@@ -118,7 +92,7 @@ export class RecyclingFundClientService {
     permno: string,
     requestType: RecyclingRequestTypes,
   ) {
-    const response = await this.createRecyclingFundRequest(user, {
+    const response = await this.gqlRequestWithAuth(user, {
       query: print(SkilavottordRecyclingRequestDocument),
       variables: {
         input: {

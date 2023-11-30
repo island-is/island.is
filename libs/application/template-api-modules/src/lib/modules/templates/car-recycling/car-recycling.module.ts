@@ -4,14 +4,14 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { SharedTemplateAPIModule } from '../../shared'
 import { CarRecyclingService } from './car-recycling.service'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
-import { RecyclingFundClientModule } from '@island.is/clients/recycling-fund'
+import { CarRecyclingClientModule } from '@island.is/clients/car-recycling'
 
 export class CarRecyclingModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: CarRecyclingModule,
       imports: [
-        RecyclingFundClientModule,
+        CarRecyclingClientModule,
         SharedTemplateAPIModule.register(config),
         ApplicationApiCoreModule,
       ],

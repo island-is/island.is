@@ -1,15 +1,15 @@
 schema:
   - apps/skilavottord/ws/src/api.graphql
 generates:
-  libs/clients/recycling-fund/gen/schema.ts:
+  libs/clients/car-recycling/gen/schema.ts:
     plugins:
       - typescript
     config:
       namingConvention:
         enumValues: keep
-  libs/clients/recycling-fund/src/:
+  libs/clients/car-recycling/src/:
     documents:
-      - libs/clients/recycling-fund/src/**/*.graphql
+      - libs/clients/car-recycling/src/**/*.graphql
     preset: 'near-operation-file'
     presetConfig:
       # location from the `src` folder of the library

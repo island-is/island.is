@@ -57,7 +57,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
   featureFlag: Features.carRecyclingApplication,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   allowMultipleApplicationsInDraft: true,
-  requiredScopes: [ApiScope.recyclingFund],
+  requiredScopes: [ApiScope.carRecycling],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

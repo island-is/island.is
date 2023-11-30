@@ -2,9 +2,9 @@ import { Inject, Injectable } from '@nestjs/common'
 
 import { ApplicationTypes } from '@island.is/application/types'
 import {
-  RecyclingFundClientService,
+  CarRecyclingClientService,
   RecyclingRequestTypes,
-} from '@island.is/clients/recycling-fund'
+} from '@island.is/clients/car-recycling'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -23,7 +23,7 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 export class CarRecyclingService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private recyclingFundService: RecyclingFundClientService,
+    private carRecyclingService: CarRecyclingClientService,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
   }
@@ -33,7 +33,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
       application.externalData,
     )
 
-    const response = await this.recyclingFundService.createOwner(
+    const response = await this.carRecyclingService.createOwner(
       auth,
       applicantName,
     )
@@ -51,7 +51,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async createVehicle(auth: User, vehicle: VehicleMiniDto) {
     if (vehicle && vehicle.permno) {
-      return await this.recyclingFundService.createVehicle(auth, vehicle.permno)
+      return await this.carRecyclingService.createVehicle(auth, vehicle.permno)
     }
   }
 
@@ -61,7 +61,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
     recyclingRequestType: RecyclingRequestTypes,
   ) {
     if (vehicle && vehicle.permno) {
-      return await this.recyclingFundService.recycleVehicle(
+      return await this.carRecyclingService.recycleVehicle(
         auth,
         vehicle.permno,
         recyclingRequestType,

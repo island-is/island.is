@@ -6,8 +6,8 @@ const schema = z.object({
   gqlBasePath: z.string(),
 })
 
-export const RecyclingFundClientConfig = defineConfig({
-  name: 'RecyclingFundClientConfig',
+export const CarRecyclingClientConfig = defineConfig({
+  name: 'CarRecyclingClientConfig',
   schema,
   load: (env) => ({
     gqlBasePath: env.required(

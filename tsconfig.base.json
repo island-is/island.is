@@ -578,8 +578,8 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
-      "@island.is/clients/recycling-fund": [
-        "libs/clients/recycling-fund/src/index.ts"
+      "@island.is/clients/car-recycling": [
+        "libs/clients/car-recycling/src/index.ts"
       ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
