@@ -12,7 +12,9 @@ export const Period = ({
   goToScreen,
   hasError,
 }: ReviewGroupProps) => {
-  const { selectedYear, selectedMonth } = getApplicationAnswers(application.answers)
+  const { selectedYear, selectedMonth } = getApplicationAnswers(
+    application.answers,
+  )
   const month = MONTHS.find((x) => x.value === selectedMonth)
   const { formatMessage } = useLocale()
 

@@ -2,7 +2,10 @@ import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
-import { getApplicationAnswers, getApplicationExternalData } from '../../../lib/householdSupplementUtils'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/householdSupplementUtils'
 import { householdSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { formatNumber } from 'libphonenumber-js'

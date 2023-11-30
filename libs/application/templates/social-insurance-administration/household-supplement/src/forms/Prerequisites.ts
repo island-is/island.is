@@ -8,7 +8,6 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
@@ -56,7 +55,7 @@ export const PrerequisitesForm: Form = buildForm({
                 householdSupplementFormMessage.pre.skraInformationSubTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
+              provider: NationalRegistryCohabitantsApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -68,12 +67,31 @@ export const PrerequisitesForm: Form = buildForm({
                 householdSupplementFormMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
             }),
-            buildDataProviderItem({
-              provider: NationalRegistryCohabitantsApi,
-              title: '',
-            }),
           ],
         }),
+        // buildMultiField({
+        //   id: 'isNotEligible',
+        //   title: householdSupplementFormMessage.pre.isNotEligibleLabel,
+        //   // condition: (_, externalData) => {
+        //   //   const { isEligible } = getApplicationExternalData(externalData)
+        //   //   // Show if applicant is not eligible
+        //   //   return !isEligible
+        //   // },
+        //   children: [
+        //     buildDescriptionField({
+        //       id: 'isNotEligible',
+        //       title: '',
+        //       description:
+        //         householdSupplementFormMessage.pre.isNotEligibleDescription,
+        //     }),
+        //     // Empty submit field to hide all buttons in the footer
+        //     buildSubmitField({
+        //       id: '',
+        //       title: '',
+        //       actions: [],
+        //     }),
+        //   ],
+        // }),
       ],
     }),
     buildSection({

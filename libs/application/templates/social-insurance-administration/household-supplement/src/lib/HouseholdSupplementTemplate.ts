@@ -8,12 +8,12 @@ import {
   ApplicationRole,
   DefaultEvents,
   NationalRegistryUserApi,
-  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
   pruneAfterDays,
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
@@ -36,11 +36,11 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: householdSupplementFormMessage.shared.institution,
-  readyForProduction: false, // hafa þetta svona atm?
   translationNamespaces: [
     ApplicationConfigurations.HouseholdSupplement.translation,
   ],
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -48,8 +48,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
-          lifecycle: pruneAfterDays(1),
-          //onExit: defineTemplateApi - kalla á TR
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -67,7 +66,6 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
-                NationalRegistrySpouseApi,
                 NationalRegistryCohabitantsApi,
                 SocialInsuranceAdministrationApplicantApi,
               ],
@@ -83,7 +81,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           actionCard: {
             description: statesMessages.draftDescription,
             historyLogs: {
@@ -118,7 +116,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             tag: {
               label: statesMessages.pendingTag,
@@ -162,7 +160,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           status: 'inprogress',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: pruneAfterDays(365),
           actionCard: {
             pendingAction: {
               title: statesMessages.tryggingastofnunInReviewTitle,
@@ -200,7 +198,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         meta: {
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(970),
+          lifecycle: pruneAfterDays(90),
           actionCard: {
             tag: {
               label: coreMessages.tagsRequiresAction,

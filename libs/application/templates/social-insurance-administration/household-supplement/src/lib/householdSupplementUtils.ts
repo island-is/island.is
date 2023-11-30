@@ -11,11 +11,7 @@ import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
-import {
-  Attachments,
-  FileType,
-  FileUpload,
-} from '../types'
+import { Attachments, FileType, FileUpload } from '../types'
 
 enum AttachmentTypes {
   LEASE_AGREEMENT = 'leaseAgreement',
@@ -112,26 +108,6 @@ export function getApplicationExternalData(
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
-  const hasSpouse = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data',
-  ) as object
-
-  const spouseName = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.name',
-  ) as string
-
-  const spouseNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.nationalId',
-  ) as string
-
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
-
   const bank = getValueViaPath(
     externalData,
     'userProfile.data.bankInfo',
@@ -143,10 +119,6 @@ export function getApplicationExternalData(
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
-    hasSpouse,
-    spouseName,
-    spouseNationalId,
-    maritalStatus,
     bank,
   }
 }
@@ -197,13 +169,12 @@ export function getAttachments(application: Application) {
   }
 
   const { answers } = application
-  const { 
-    householdSupplementChildren, 
+  const {
+    householdSupplementChildren,
     householdSupplementHousing,
     additionalAttachments,
-    additionalAttachmentsRequired
-  } =
-    getApplicationAnswers(answers)
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const fileUpload = answers.fileUpload as FileUpload
@@ -221,12 +192,11 @@ export function getAttachments(application: Application) {
   }
 
   const additionalDocuments = [
-    ...(additionalAttachments &&
-      additionalAttachments?.length > 0
+    ...(additionalAttachments && additionalAttachments?.length > 0
       ? additionalAttachments
       : []),
     ...(additionalAttachmentsRequired &&
-      additionalAttachmentsRequired?.length > 0
+    additionalAttachmentsRequired?.length > 0
       ? additionalAttachmentsRequired
       : []),
   ]
