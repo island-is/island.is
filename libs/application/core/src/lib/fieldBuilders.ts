@@ -251,6 +251,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -265,6 +266,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }

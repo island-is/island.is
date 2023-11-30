@@ -53,6 +53,7 @@ export const PassportSubSection = buildSubSection({
           title: supportingDocuments.labels.passport.publishDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          maxDate: new Date(),
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
