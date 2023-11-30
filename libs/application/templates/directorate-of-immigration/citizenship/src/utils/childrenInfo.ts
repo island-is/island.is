@@ -1,10 +1,15 @@
 import {
+  // Answer,
   ApplicantChildCustodyInformation,
   ExternalData,
   FormValue,
 } from '@island.is/application/types'
 import { Citizenship } from '../lib/dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
+
+// export interface FormValueWithRecord {
+//   [key: string]: Answer | Record<string, FormValue>
+// }
 
 export const hasChildren = (externalData: ExternalData): boolean => {
   const children = getValueViaPath(

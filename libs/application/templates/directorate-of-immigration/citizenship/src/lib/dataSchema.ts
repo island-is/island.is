@@ -148,12 +148,6 @@ const FileDocumentSchema = z.object({
   // url: z.string().optional(),
 })
 
-const FileDocumentSchema2 = z.object({
-  name: z.string().optional(),
-  key: z.string().optional(),
-  // url: z.string().optional(),
-})
-
 const PassportSchema = z.object({
   publishDate: z.string().min(1),
   expirationDate: z.string().min(1),
@@ -183,17 +177,15 @@ const MaritalStatusSchema = z.object({
   explanation: z.string().optional(),
 })
 
-// const CriminalRecordSchema = z.object({
-//   attachment: z.array(FileDocumentSchema2).optional(),
-// })
-
 const SupportingDocumentsSchema = z.object({
   birthCertificate: z.array(FileDocumentSchema).optional(),
   subsistenceCertificate: z.array(FileDocumentSchema).optional(),
   subsistenceCertificateForTown: z.array(FileDocumentSchema).optional(),
   certificateOfLegalResidenceHistory: z.array(FileDocumentSchema).optional(),
   icelandicTestCertificate: z.array(FileDocumentSchema).optional(),
-  // criminalRecord: z.array(CriminalRecordSchema).optional(),
+  criminalRecordMap: z
+    .record(z.string(), z.array(FileDocumentSchema))
+    .optional(),
 })
 
 const ChildrenSupportingDocumentsSchema = z.object({
