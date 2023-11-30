@@ -5,7 +5,6 @@ import {
 } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  SYSLUMENN_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
