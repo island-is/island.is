@@ -33,6 +33,7 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { getApplicationAnswers } from './householdSupplementUtils'
+import { Features } from '@island.is/feature-flags'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -42,6 +43,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: householdSupplementFormMessage.shared.institution,
+  featureFlag: Features.householdSupplementApplication,
   translationNamespaces: [
     ApplicationConfigurations.HouseholdSupplement.translation,
   ],
