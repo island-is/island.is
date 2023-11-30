@@ -9,7 +9,12 @@ import {ComponentRegistry} from '../utils/component-registry';
 import {getRightButtons} from '../utils/get-main-root';
 import messaging from '@react-native-firebase/messaging';
 import {client} from '../graphql/client';
-import gql from 'graphql-tag';
+import {
+  AddUserProfileDeviceTokenDocument,
+  AddUserProfileDeviceTokenMutationVariables,
+  DeleteUserProfileDeviceTokenDocument,
+  DeleteUserProfileDeviceTokenMutationVariables,
+} from '../graphql/types/schema';
 
 export interface Notification {
   id: string;
@@ -145,14 +150,11 @@ export const notificationsStore = create<NotificationsStore>(
             if (pushToken) {
               // Attempt to remove old push token
               try {
-                await client.mutate({
-                  mutation: gql`
-                    mutation deleteUserProfileDeviceToken(
-                      $input: UserDeviceTokenInput!
-                    ) {
-                      deleteUserProfileDeviceToken(input: $input)
-                    }
-                  `,
+                await client.mutate<
+                  object,
+                  DeleteUserProfileDeviceTokenMutationVariables
+                >({
+                  mutation: DeleteUserProfileDeviceTokenDocument,
                   variables: {
                     input: {
                       deviceToken: pushToken,
@@ -167,18 +169,8 @@ export const notificationsStore = create<NotificationsStore>(
             // Register the new push token
             try {
               await client
-                .mutate({
-                  mutation: gql`
-                    mutation addUserProfileDeviceToken(
-                      $input: UserDeviceTokenInput!
-                    ) {
-                      addUserProfileDeviceToken(input: $input) {
-                        id
-                        nationalId
-                        deviceToken
-                      }
-                    }
-                  `,
+                .mutate<object, AddUserProfileDeviceTokenMutationVariables>({
+                  mutation: AddUserProfileDeviceTokenDocument,
                   variables: {
                     input: {
                       deviceToken: token,

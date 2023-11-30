@@ -4,12 +4,11 @@ import {FormattedDate, useIntl} from 'react-intl';
 import {Alert, FlatList, View} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import externalLinkIcon from '../../assets/icons/external-link.png';
-import {client} from '../../graphql/client';
 import {
   GetVehicleMileageDocument,
   GetVehicleMileageQuery,
-  useGetUserVehiclesDetailQuery,
   useGetVehicleMileageQuery,
+  useGetVehicleQuery,
   usePostVehicleMileageMutation,
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema';
@@ -44,8 +43,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId);
   const intl = useIntl();
   const [input, setInput] = useState('');
-  const info = useGetUserVehiclesDetailQuery({
-    client,
+  const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {
@@ -56,7 +54,6 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     },
   });
   const res = useGetVehicleMileageQuery({
-    client,
     fetchPolicy: 'cache-and-network',
     variables: {
       input: {
@@ -64,9 +61,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       },
     },
   });
-  const [postMileage] = usePostVehicleMileageMutation({client});
+  const [postMileage] = usePostVehicleMileageMutation();
   const [updateMileage] = useUpdateVehicleMileageMutation({
-    client,
     refetchQueries: [GetVehicleMileageDocument],
   });
 

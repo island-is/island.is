@@ -2,12 +2,13 @@ import {useQuery} from '@apollo/client';
 import {Alert, Button, Input, InputRow} from '@ui';
 import React from 'react';
 import {ScrollView, View} from 'react-native';
-import {client} from '../../graphql/client';
-import {NATION_REGISTRY_USER_QUERY} from '../../graphql/queries/national-registry-user.query';
+// import {client} from '../../graphql/client';
+// import {NATION_REGISTRY_USER_QUERY} from '../../graphql/queries/national-registry-user.graphql';
 import {useIntl} from 'react-intl';
 import {usePreferencesStore} from '../../stores/preferences-store';
 import {testIDs} from '../../utils/test-ids';
 import {navigateTo} from '../../lib/deep-linking';
+import {useNationalRegistryUserQuery} from '../../graphql/types/schema';
 
 export function formatNationalId(str = '') {
   return [str.substr(0, 6), str.substr(6, 4)].join('-');
@@ -16,11 +17,10 @@ export function formatNationalId(str = '') {
 export function PersonalInfoContent() {
   const intl = useIntl();
   const {dismiss, dismissed} = usePreferencesStore();
-  const natRegRes = useQuery(NATION_REGISTRY_USER_QUERY, {
-    client,
+  const natRegRes = useNationalRegistryUserQuery({
     fetchPolicy: 'cache-and-network',
   });
-  const natRegData = natRegRes?.data?.nationalRegistryUser || {};
+  const natRegData = natRegRes?.data?.nationalRegistryUser;
   const errorNatReg = !!natRegRes.error;
   const loadingNatReg = natRegRes.loading;
 
@@ -47,8 +47,8 @@ export function PersonalInfoContent() {
           error={errorNatReg}
           label={intl.formatMessage({id: 'user.natreg.nationalId'})}
           value={
-            !loadingNatReg && !errorNatReg
-              ? formatNationalId(String(natRegData.nationalId))
+            !loadingNatReg && !errorNatReg && natRegData?.nationalId
+              ? formatNationalId(String(natRegData?.nationalId))
               : undefined
           }
         />
@@ -72,7 +72,12 @@ export function PersonalInfoContent() {
           label={intl.formatMessage({id: 'user.natreg.gender'})}
           value={
             !loadingNatReg && !errorNatReg
-              ? intl.formatMessage({id: 'user.natreg.genderValue'}, natRegData)
+              ? intl.formatMessage(
+                  {id: 'user.natreg.genderValue'},
+                  {
+                    gender: natRegData?.gender ?? '',
+                  },
+                )
               : undefined
           }
         />
@@ -86,7 +91,10 @@ export function PersonalInfoContent() {
             !loadingNatReg && !errorNatReg
               ? intl.formatMessage(
                   {id: 'user.natreg.maritalStatusValue'},
-                  natRegData,
+                  {
+                    gender: natRegData?.gender ?? '',
+                    maritalStatus: natRegData?.maritalStatus ?? '',
+                  },
                 )
               : undefined
           }

@@ -10,7 +10,8 @@ import React, {
 import {useAuthStore} from '../stores/auth-store';
 import * as configcat from 'configcat-js';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getConfig} from '../config';
+import {environments, getConfig} from '../config';
+import {useEnvironmentStore} from '../stores/environment-store';
 
 interface FeatureFlagUser {
   identifier: string;
@@ -55,22 +56,23 @@ class ConfigCatAsyncStorageCache {
   }
 }
 
-// const logger = configcat.createConsoleLogger(configcat.LogLevel.Info);
-const featureFlagClient = configcat.getClient(
-  getConfig().configCat ?? '',
-  configcat.PollingMode.AutoPoll,
-  {
-    dataGovernance: configcat.DataGovernance.EuOnly,
-    // logger: logger,
-    cache: new ConfigCatAsyncStorageCache(),
-  },
-);
-
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
 > = ({children}) => {
   const {userInfo} = useAuthStore();
   const [time, setTime] = useState(Date.now());
+  const {environment = environments.prod} = useEnvironmentStore();
+
+  const featureFlagClient = useMemo(() => {
+    return configcat.getClient(
+      environment.configCat ?? '',
+      configcat.PollingMode.AutoPoll,
+      {
+        dataGovernance: configcat.DataGovernance.EuOnly,
+        cache: new ConfigCatAsyncStorageCache(),
+      },
+    );
+  }, [environment]);
 
   useEffect(() => {
     const listener = () => setTime(Date.now());
@@ -79,7 +81,7 @@ export const FeatureFlagProvider: FC<
     return () => {
       featureFlagClient.removeListener('configChanged', listener);
     };
-  }, []);
+  }, [featureFlagClient]);
 
   const context = useMemo<FeatureFlagClient>(() => {
     const userAuth =
@@ -102,6 +104,7 @@ export const FeatureFlagProvider: FC<
       },
       dispose: () => featureFlagClient.dispose(),
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [featureFlagClient, userInfo, time]);
 
   return (

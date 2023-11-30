@@ -11,12 +11,13 @@ import React from 'react';
 import {useIntl} from 'react-intl';
 import {Image, SafeAreaView, TouchableOpacity} from 'react-native';
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png';
-import {IApplication} from '../../graphql/fragments/application.fragment';
 import {navigateTo} from '../../lib/deep-linking';
 import {openBrowser} from '../../lib/rn-island';
 import {getApplicationUrl} from '../../utils/applications-utils';
+import {Application} from '../../graphql/types/schema';
+
 interface ApplicationsModuleProps {
-  applications: IApplication[];
+  applications: Application[];
   loading: boolean;
   componentId: string;
   hideAction?: boolean;
@@ -35,7 +36,7 @@ export const ApplicationsModule = React.memo(
     const children = applications.slice(0, 5).map(application => (
       <StatusCard
         key={application.id}
-        title={application.name!}
+        title={application.name ?? ''}
         date={new Date(application.created)}
         badge={
           <Badge
@@ -45,7 +46,7 @@ export const ApplicationsModule = React.memo(
             )}
           />
         }
-        progress={application.progress * 100}
+        progress={(application.progress ?? 0) * 100}
         actions={[
           {
             text: intl.formatMessage({

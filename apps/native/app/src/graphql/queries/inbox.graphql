@@ -1,0 +1,33 @@
+query ListOrganizations {
+  getOrganizations(input: {lang: "is-IS", perPage: 200}) {
+    items {
+      ...OrganizationFragment
+    }
+  }
+}
+
+query ListDocuments($input: GetDocumentListInput!) {
+  listDocumentsV2(input: $input) {
+    data {
+      ...ListDocument
+    }
+    totalCount
+  }
+}
+
+query GetDocument($input: GetDocumentInput!) {
+  getDocument(input: $input) {
+    fileType
+    content
+    url
+    html
+  }
+}
+
+mutation PostMailActionMutation($input: PostMailActionResolverInput!) {
+  postMailAction(input: $input) {
+    success
+    messageId
+    action
+  }
+}

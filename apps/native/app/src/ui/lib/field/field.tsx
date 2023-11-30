@@ -29,12 +29,12 @@ const Value = styled.Text<{size?: 'large' | 'small'}>`
 `;
 
 interface FieldProps {
-  label: string;
-  value?: string;
+  label?: string | null;
+  value?: string | null;
   loading?: boolean;
   compact?: boolean;
   size?: 'large' | 'small';
-  style?: any;
+  style?: any | null;
 }
 
 const isJSONDate = (str: string) =>
@@ -50,7 +50,9 @@ export function Field({
 }: FieldProps) {
   const intl = useIntl();
 
-  if (value === '') return <></>;
+  if (value === '') {
+    return <></>;
+  }
 
   const val = String(value ?? '')
     .split(' ')

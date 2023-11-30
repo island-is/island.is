@@ -3,8 +3,7 @@ import React from 'react';
 import {useIntl} from 'react-intl';
 import {ScrollView, Text, View} from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
-import {client} from '../../graphql/client';
-import {useGetUserVehiclesDetailQuery} from '../../graphql/types/schema';
+import {useGetVehicleQuery} from '../../graphql/types/schema';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {navigateTo} from '../../lib/deep-linking';
 import {testIDs} from '../../utils/test-ids';
@@ -30,8 +29,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
     false,
   );
 
-  const {data, loading, error} = useGetUserVehiclesDetailQuery({
-    client,
+  const {data, loading, error} = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {

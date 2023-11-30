@@ -11,8 +11,11 @@ import {setContext} from '@apollo/client/link/context';
 import {onError} from '@apollo/client/link/error';
 import {RetryLink} from '@apollo/client/link/retry';
 import {authStore} from '../stores/auth-store';
-import {getConfig} from '../config';
+import {config, getConfig} from '../config';
 import {environmentStore} from '../stores/environment-store';
+import {openBrowser} from '../lib/rn-island';
+import {cognitoAuthUrl} from '../screens/cognito-auth/config-switcher';
+import {MainBottomTabs} from '../utils/component-registry';
 
 const httpLink = new HttpLink({
   uri() {
@@ -80,6 +83,9 @@ const errorLink = onError(
           redirectUrl.indexOf('cognito.shared.devland.is') >= 0
         ) {
           authStore.setState({cognitoAuthUrl: redirectUrl});
+          if (config.isTestingApp && authStore.getState().authorizeResult) {
+            openBrowser(cognitoAuthUrl(), MainBottomTabs);
+          }
         }
       }
     }

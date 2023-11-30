@@ -1,17 +1,23 @@
 import {Button, NavigationBarSheet, TextField, Typography} from '@ui';
 import React, {useEffect, useState} from 'react';
-import {View, Text, ScrollView, Alert} from 'react-native';
+import {View, ScrollView, Alert} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {useIntl} from 'react-intl';
 import {testIDs} from '../../utils/test-ids';
 import {navigateTo} from '../../lib/deep-linking';
-import {useUserProfile} from './profile-queries';
 import {client} from '../../graphql/client';
-import {CREATE_SMS_VERIFICATION} from '../../graphql/queries/create-sms-verification.mutation';
-import {UPDATE_ISLYKILL_DELETE_INPUT} from '../../graphql/queries/update-islykill-settings.mutation';
-import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
-
+import {
+  CreateSmsVerificationDocument,
+  CreateSmsVerificationInput,
+  CreateSmsVerificationMutation,
+  CreateSmsVerificationMutationVariables,
+  DeleteIslykillValueDocument,
+  DeleteIslykillValueMutation,
+  DeleteIslykillValueMutationVariables,
+  GetProfileDocument,
+  useGetProfileQuery,
+} from '../../graphql/types/schema';
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -32,7 +38,7 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId);
   const intl = useIntl();
   const [loading, setLoading] = useState(false);
-  const userProfile = useUserProfile();
+  const userProfile = useGetProfileQuery();
   const [text, onChangeText] = React.useState(phone ?? '');
 
   const originalPhone = parsePhone(
@@ -91,14 +97,17 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
               setLoading(true);
               try {
                 if (isEmpty) {
-                  const res = await client.mutate({
-                    mutation: UPDATE_ISLYKILL_DELETE_INPUT,
+                  const res = await client.mutate<
+                    DeleteIslykillValueMutation,
+                    DeleteIslykillValueMutationVariables
+                  >({
+                    mutation: DeleteIslykillValueDocument,
                     variables: {
                       input: {
                         mobilePhoneNumber: true,
                       },
                     },
-                    refetchQueries: [USER_PROFILE_QUERY],
+                    refetchQueries: [GetProfileDocument],
                   });
                   if (res.data) {
                     Navigation.dismissModal(componentId);
@@ -106,8 +115,11 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
                     throw new Error('Failed to delete phone number');
                   }
                 } else {
-                  const res = await client.mutate({
-                    mutation: CREATE_SMS_VERIFICATION,
+                  const res = await client.mutate<
+                    CreateSmsVerificationMutation,
+                    CreateSmsVerificationMutationVariables
+                  >({
+                    mutation: CreateSmsVerificationDocument,
                     variables: {
                       input: {
                         mobilePhoneNumber: text.replace(/-/g, ''),

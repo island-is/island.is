@@ -5,9 +5,7 @@ import {testIDs} from '../../utils/test-ids';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {Divider, Input, InputRow, NavigationBarSheet} from '@ui';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useQuery} from '@apollo/client';
-import {client} from '../../graphql/client';
-import {GET_SINGLE_PROPERTY_QUERY} from '../../graphql/queries/get-single-property-query';
+import { useGetAssetQuery } from '../../graphql/types/schema';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -22,12 +20,11 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
 }) => {
   useNavigationOptions(componentId);
 
-  const {data, loading, error} = useQuery(GET_SINGLE_PROPERTY_QUERY, {
-    client,
+  const {data, loading, error} = useGetAssetQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {
-        assetId: item?.propertyNumber,
+        assetId: item?.propertyNumber ?? '',
       },
     },
   });
@@ -68,7 +65,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                 {id: 'assetsDetail.activeAppraisal'},
                 {activeYear: appraisal?.activeYear},
               )}
-              value={`${intl.formatNumber(appraisal?.activeAppraisal)} kr.`}
+              value={appraisal?.activeAppraisal ? `${intl.formatNumber(appraisal?.activeAppraisal)} kr.` : '-'}
               size="big"
               noBorder
               isCompact
@@ -80,7 +77,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                 {id: 'assetsDetail.plannedAppraisal'},
                 {plannedYear: appraisal?.plannedYear},
               )}
-              value={`${intl.formatNumber(appraisal?.plannedAppraisal)} kr.`}
+              value={appraisal?.plannedAppraisal ? `${intl.formatNumber(appraisal?.plannedAppraisal)} kr.` : '-'}
               size="big"
               noBorder
               isCompact
@@ -89,7 +86,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
 
           <Divider spacing={2} style={{marginHorizontal: 16}} />
 
-          {unitsOfUse?.unitsOfUse.map((unit: any, index: number) => {
+          {(unitsOfUse?.unitsOfUse ?? []).map((unit, index) => {
             return (
               <View key={`${unit?.propertyNumber}-${index}`}>
                 <InputRow>
@@ -126,7 +123,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                     loading={isLoading}
                     error={isError}
                     label={intl.formatMessage({id: 'assetsDetail.postNumber'})}
-                    value={unit?.address?.postNumber}
+                    value={String(unit?.address?.postNumber ?? '-')}
                     noBorder
                     isCompact
                   />
@@ -154,7 +151,7 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                     isCompact
                   />
                 </InputRow>
-                {index + 1 < unitsOfUse?.unitsOfUse.length && (
+                {index + 1 < (unitsOfUse?.unitsOfUse ?? []).length && (
                   <Divider spacing={2} style={{marginHorizontal: 16}} />
                 )}
               </View>

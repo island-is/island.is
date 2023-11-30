@@ -6,7 +6,8 @@ import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {bankInfoObject, stringifyBankData} from '../../lib/bank-info-helper';
 import {testIDs} from '../../utils/test-ids';
-import {useUpdateUserProfile, useUserProfile} from './profile-queries';
+import {useUpdateUserProfile} from './profile-queries';
+import { useGetProfileQuery } from '../../graphql/types/schema';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -21,7 +22,7 @@ export const EditBankInfoScreen: NavigationFunctionComponent<any> = ({
 }) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
-  const userProfile = useUserProfile();
+  const userProfile = useGetProfileQuery();
   const {updateUserProfile, loading} = useUpdateUserProfile();
   const [info, setInfo] = React.useState(bankInfoObject(bankInfo));
   const [bank, onChangeBankText] = React.useState(info?.bank ?? '');

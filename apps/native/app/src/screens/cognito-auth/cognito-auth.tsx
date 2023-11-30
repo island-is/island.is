@@ -138,7 +138,6 @@ export const CognitoAuthScreen: NavigationFunctionComponent = ({
       </Text>
       <Button
         onPress={() => {
-          console.log(cognitoAuthUrl());
           openBrowser(cognitoAuthUrl(), componentId);
         }}
         title="Cognito Login"

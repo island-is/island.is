@@ -1,14 +1,12 @@
-import {useQuery} from '@apollo/client';
 import {Input, InputRow, NavigationBarSheet, Typography} from '@ui';
 import React from 'react';
 import {useIntl} from 'react-intl';
 import {SafeAreaView, ScrollView, View} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {client} from '../../graphql/client';
-import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
 import {formatNationalId} from '../more/personal-info-content';
+import {useNationalRegistryChildrenQuery} from '../../graphql/types/schema';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -24,8 +22,7 @@ export const FamilyDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId);
   const intl = useIntl();
 
-  const {data, loading, error} = useQuery(FAMILY_QUERY, {
-    client,
+  const {data, loading, error} = useNationalRegistryChildrenQuery({
     fetchPolicy: 'cache-first',
   });
   const {nationalRegistryUser, nationalRegistryChildren = []} = data || {};

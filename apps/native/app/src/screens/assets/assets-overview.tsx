@@ -18,8 +18,9 @@ import {testIDs} from '../../utils/test-ids';
 import illustrationSrc from '../../assets/illustrations/le-moving-s1.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import {navigateTo} from '../../lib/deep-linking';
-import {GET_REAL_ESTATE_QUREY} from '../../graphql/queries/get-real-estate-query';
+// import {GET_REAL_ESTATE_QUREY} from '../../graphql/queries/get-real-estate.graphql';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
+import {useListAssetsQuery} from '../../graphql/types/schema';
 
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks((theme, intl) => ({
@@ -72,8 +73,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current;
   const loadingTimeout = useRef<number>();
 
-  const assetsRes = useQuery(GET_REAL_ESTATE_QUREY, {
-    client,
+  const assetsRes = useListAssetsQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {
@@ -108,10 +108,14 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
 
   const paginate = () => {
     const newCursor = Math.ceil(
-      assetsList.length / assetsRes?.data?.assetsOverview.paging.pageSize + 1,
+      assetsList.length /
+        (assetsRes?.data?.assetsOverview?.paging?.pageSize ?? 0) +
+        1,
     );
 
-    if (newCursor > assetsRes?.data?.assetsOverview.paging.totalPages) {
+    if (
+      newCursor > (assetsRes?.data?.assetsOverview?.paging?.totalPages ?? 1)
+    ) {
       return;
     }
 

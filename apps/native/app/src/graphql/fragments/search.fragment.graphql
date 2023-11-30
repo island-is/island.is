@@ -1,0 +1,10 @@
+fragment SearchArticleFragment on Article {
+  id
+  title
+  slug
+  category {
+    id
+    title
+    slug
+  }
+}

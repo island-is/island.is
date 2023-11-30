@@ -1,11 +1,5 @@
-import {useQuery} from '@apollo/client';
 import {
   dynamicColor,
-  Field,
-  FieldCard,
-  FieldGroup,
-  FieldLabel,
-  FieldRow,
   Alert as InfoAlert,
   LicenceCard,
   LicenseCardType,
@@ -25,23 +19,18 @@ import {NavigationFunctionComponent} from 'react-native-navigation';
 import PassKit, {AddPassButton} from 'react-native-passkit-wallet';
 import * as FileSystem from 'expo-file-system';
 import styled, {useTheme} from 'styled-components/native';
-import {client} from '../../graphql/client';
-import {
-  IGenericLicenseDataField,
-  GenericUserLicensePkPassStatus,
-  IGenericUserLicense,
-} from '../../graphql/fragments/license.fragment';
-import {GENERATE_PKPASS_MUTATION} from '../../graphql/queries/generate-pkpass.mutation';
-import {
-  GenericLicenseType,
-  GetGenericLicenseInput,
-  GetLicenseResponse,
-  GET_GENERIC_LICENSE_QUERY,
-} from '../../graphql/queries/get-license.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus} from '../../types/license-type';
 import {useState} from 'react';
 import {useIntl} from 'react-intl';
+import {
+  GenericLicenseType,
+  GenericUserLicense,
+  GenericUserLicensePkPassStatus,
+  useGeneratePkPassMutation,
+  useGetLicenseQuery,
+} from '../../graphql/types/schema';
+import { FieldRender } from './components/field-render';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -97,112 +86,25 @@ const {useNavigationOptions, getNavigationOptions} =
     },
   );
 
-const FieldRender = ({data, level = 1, licenseType}: any) => {
-  return (
-    <>
-      {(data || []).map(
-        (
-          {type, name, label, value, fields}: IGenericLicenseDataField,
-          i: number,
-        ) => {
-          const key = `field-${type}-${i}`;
-
-          switch (type) {
-            case 'Value':
-              if (level === 1) {
-                return (
-                  <FieldGroup key={key}>
-                    <FieldRow>
-                      <Field
-                        size={i === 0 ? 'large' : 'small'}
-                        label={label}
-                        value={value}
-                      />
-                    </FieldRow>
-                  </FieldGroup>
-                );
-              } else {
-                return <Field key={key} label={label} value={value} compact />;
-              }
-
-            case 'Group':
-              if (label) {
-                return (
-                  <View key={key} style={{marginTop: 24, paddingBottom: 4}}>
-                    <FieldLabel>{label}</FieldLabel>
-                    {FieldRender({
-                      data: fields,
-                      level: 2,
-                      licenseType: licenseType,
-                    })}
-                  </View>
-                );
-              }
-              return (
-                <FieldGroup key={key}>
-                  <FieldRow>
-                    {FieldRender({
-                      data: fields,
-                      level: 2,
-                      licenseType: licenseType,
-                    })}
-                  </FieldRow>
-                </FieldGroup>
-              );
-
-            case 'Category':
-              return (
-                <FieldCard
-                  key={key}
-                  code={name}
-                  title={label}
-                  type={licenseType}
-                  hasFields={!!fields}>
-                  <FieldRow>
-                    {FieldRender({
-                      data: fields,
-                      level: 3,
-                      licenseType: licenseType,
-                    })}
-                  </FieldRow>
-                </FieldCard>
-              );
-
-            default:
-              return <Field key={key} label={label} value={value} />;
-          }
-        },
-      )}
-    </>
-  );
-};
-
 export const WalletPassScreen: NavigationFunctionComponent<{
   id: string;
-  item?: any;
+  item?: GenericUserLicense;
   cardHeight?: number;
 }> = ({id, item, componentId, cardHeight = 140}) => {
   useNavigationOptions(componentId);
   const theme = useTheme();
   const intl = useIntl();
-  const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
-    GET_GENERIC_LICENSE_QUERY,
-    {
-      client,
-      variables: {
-        input: {
-          licenseType: item?.license?.type,
-        },
+  const res = useGetLicenseQuery({
+    variables: {
+      input: {
+        licenseType: item?.license.type ?? '',
       },
     },
-  );
+  });
+  const [generatePkPass] = useGeneratePkPassMutation();
 
   const [addingToWallet, setAddingToWallet] = useState(false);
-
-  const data: IGenericUserLicense = {
-    ...item,
-    ...licenseRes.data?.genericLicense,
-  };
+  const data = res.data?.genericLicense ?? item;
 
   const onAddPkPass = async () => {
     const {canAddPasses, addPass} = Platform.select({
@@ -215,14 +117,16 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     if (canAddPass || Platform.OS === 'android') {
       try {
         setAddingToWallet(true);
-        const {data} = await client.mutate({
-          mutation: GENERATE_PKPASS_MUTATION,
+        const {data} = await generatePkPass({
           variables: {
             input: {
-              licenseType: item?.license?.type,
+              licenseType: item?.license?.type ?? '',
             },
           },
         });
+        if (!data?.generatePkPass.pkpassUrl) {
+          throw Error('Failed to generate pkpass');
+        }
         if (Platform.OS === 'android') {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -270,7 +174,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             if (passData.includes('text/html')) {
               throw new Error('Pass has expired');
             }
-            addPass(passData.substr(41), 'com.snjallveskid');
+            addPass(passData.substring(41), 'com.snjallveskid');
           }
           setAddingToWallet(false);
         };
@@ -344,7 +248,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
               />
             </View>
           )}
-          {!data?.payload?.data && licenseRes.loading ? (
+          {!data?.payload?.data && res.loading ? (
             <ActivityIndicator
               size="large"
               color="#0061FF"
@@ -371,7 +275,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           type={data?.license?.type as LicenseCardType}
           date={new Date(Number(data?.fetch?.updated))}
           status={
-            !data.payload?.metadata?.expired
+            !data?.payload?.metadata?.expired
               ? LicenseStatus.VALID
               : LicenseStatus.NOT_VALID
           }

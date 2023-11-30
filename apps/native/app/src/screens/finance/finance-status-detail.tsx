@@ -4,12 +4,7 @@ import {ScrollView, View} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
-import {useQuery} from '@apollo/client';
-import {client} from '../../graphql/client';
-import {
-  GET_FINANCE_STATUS_DETAILS,
-  GetFinanceStatusDetails,
-} from '../../graphql/queries/get-finance-detail-status.query';
+import { useGetFinanceStatusDetailsQuery } from '../../graphql/types/schema';
 
 const {useNavigationOptions} = createNavigationOptionHooks(() => ({
   topBar: {
@@ -24,16 +19,13 @@ export const FinanceStatusDetailScreen: NavigationFunctionComponent<{
 }> = ({componentId, chargeTypeId, orgId, index}) => {
   useNavigationOptions(componentId);
   const intl = useIntl();
-  const {loading, ...financeStatusDetails} = useQuery<{
-    getFinanceStatusDetails: GetFinanceStatusDetails;
-  }>(GET_FINANCE_STATUS_DETAILS, {
+  const {loading, ...financeStatusDetails} = useGetFinanceStatusDetailsQuery({
     variables: {
       input: {
         orgID: orgId,
         chargeTypeID: chargeTypeId,
       },
     },
-    client,
   });
   const error = !!financeStatusDetails.error;
   const item =

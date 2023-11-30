@@ -1,16 +1,6 @@
-import {
-  ApolloProvider,
-  useFragment_experimental,
-  useQuery,
-} from '@apollo/client';
+import {useFragment_experimental} from '@apollo/client';
 import {blue400, dynamicColor, Header, Loader, Typography} from '@ui';
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {FormattedDate, useIntl} from 'react-intl';
 import {Animated, Platform, StyleSheet, View} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
@@ -24,15 +14,6 @@ import Share from 'react-native-share';
 import WebView from 'react-native-webview';
 import styled from 'styled-components/native';
 import {client} from '../../graphql/client';
-import {
-  GetDocumentResponse,
-  GET_DOCUMENT_QUERY,
-} from '../../graphql/queries/get-document.query';
-import {
-  DocumentV2,
-  LIST_DOCUMENTS_QUERY,
-  LIST_DOCUMENT_FRAGMENT,
-} from '../../graphql/queries/list-documents.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {authStore} from '../../stores/auth-store';
 import {useOrganizationsStore} from '../../stores/organizations-store';
@@ -40,7 +21,13 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry';
-import {toggleAction} from '../../graphql/queries/inbox-actions';
+import {
+  Document,
+  ListDocumentFragmentDoc,
+  ListDocumentsDocument,
+  useGetDocumentQuery,
+} from '../../graphql/types/schema';
+import {toggleAction} from '../../lib/post-mail-action';
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -192,8 +179,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [accessToken, setAccessToken] = useState<string>();
   const [error, setError] = useState(false);
 
-  const doc = useFragment_experimental<DocumentV2>({
-    fragment: LIST_DOCUMENT_FRAGMENT,
+  const doc = useFragment_experimental<Document>({
+    fragment: ListDocumentFragmentDoc,
     from: {
       __typename: 'Document',
       id: docId,
@@ -201,7 +188,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   });
 
-  const docRes = useQuery<GetDocumentResponse>(GET_DOCUMENT_QUERY, {
+  const docRes = useGetDocumentQuery({
     client,
     variables: {
       input: {
@@ -218,7 +205,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useEffect(() => {
     if (doc.missing) {
       client.query({
-        query: LIST_DOCUMENTS_QUERY,
+        query: ListDocumentsDocument,
         variables: {
           input: {
             page: 1,
@@ -240,8 +227,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     Navigation.mergeOptions(componentId, {
       topBar: {
         rightButtons: getRightButtons({
-          archived: doc.data?.archived,
-          bookmarked: doc.data?.bookmarked,
+          archived: doc.data?.archived ?? false,
+          bookmarked: doc.data?.bookmarked ?? false,
         }),
       },
     });

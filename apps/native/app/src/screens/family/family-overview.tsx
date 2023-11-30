@@ -1,11 +1,5 @@
 import {useQuery} from '@apollo/client';
-import {
-  dynamicColor,
-  EmptyList,
-  FamilyMemberCard,
-  Skeleton,
-  TopLine,
-} from '@ui';
+import {EmptyList, FamilyMemberCard, Skeleton, TopLine} from '@ui';
 import React, {useCallback, useRef, useState} from 'react';
 import {
   Animated,
@@ -25,8 +19,9 @@ import illustrationSrc from '../../assets/illustrations/hero_spring.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import {navigateTo} from '../../lib/deep-linking';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
+// import {FAMILY_QUERY} from '../../graphql/queries/list-family-query';
 import {formatNationalId} from '../more/personal-info-content';
+import {useNationalRegistryChildrenQuery} from '../../graphql/types/schema';
 
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks((theme, intl) => ({
@@ -74,8 +69,7 @@ export const FamilyOverviewScreen: NavigationFunctionComponent = ({
   const scrollY = useRef(new Animated.Value(0)).current;
   const loadingTimeout = useRef<number>();
 
-  const familyRes = useQuery(FAMILY_QUERY, {
-    client,
+  const familyRes = useNationalRegistryChildrenQuery({
     fetchPolicy: 'network-only',
   });
   const {nationalRegistryUser, nationalRegistryChildren = []} =

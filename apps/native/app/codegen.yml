@@ -1,5 +1,6 @@
 schema:
   - apps/api/src/api.graphql
+  - apps/native/app/src/graphql/types/client.gql
 documents:
   - apps/native/app/src/**/*.graphql
 generates:

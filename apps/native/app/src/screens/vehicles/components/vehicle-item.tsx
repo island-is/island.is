@@ -4,14 +4,14 @@ import {FormattedDate, FormattedMessage} from 'react-intl';
 import {SafeAreaView, TouchableHighlight, View} from 'react-native';
 import {useTheme} from 'styled-components/native';
 import {navigateTo} from '../../../lib/deep-linking';
-import {GetUserVehiclesQuery} from '../../../graphql/types/schema';
+import {ListVehiclesQuery} from '../../../graphql/types/schema';
 
 function differenceInMonths(a: Date, b: Date) {
   return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear());
 }
 
 type VehicleListItem = NonNullable<
-  NonNullable<GetUserVehiclesQuery['vehiclesList']>['vehicleList']
+  NonNullable<ListVehiclesQuery['vehiclesList']>['vehicleList']
 >[0];
 
 export const VehicleItem = React.memo(

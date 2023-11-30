@@ -1,0 +1,36 @@
+fragment Address on PropertyLocation {
+  locationNumber
+  postNumber
+  municipality
+  propertyNumber
+  display
+  displayShort
+}
+
+fragment Appraisal on Appraisal {
+  activeAppraisal
+  plannedAppraisal
+  activeStructureAppraisal
+  plannedStructureAppraisal
+  activePlotAssessment
+  plannedPlotAssessment
+  activeYear
+  plannedYear
+}
+
+fragment unitsOfUse on UnitOfUse {
+  propertyNumber
+  unitOfUseNumber
+  marking
+  usageDisplay
+  displaySize
+  buildYearDisplay
+  fireAssessment
+  explanation
+  appraisal {
+    ...Appraisal
+  }
+  address {
+    ...Address
+  }
+}

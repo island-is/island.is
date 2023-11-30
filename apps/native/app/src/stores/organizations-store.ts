@@ -5,9 +5,9 @@ import create, {State} from 'zustand/vanilla';
 import organizations from '../graphql/cache/organizations.json';
 import islandLogoSrc from '../assets/logo/logo-64w.png';
 import {client} from '../graphql/client';
-import {GET_ORGANIZATIONS_QUERY} from '../graphql/queries/get-organizations.query';
 import {ImageSourcePropType} from 'react-native';
 import {lowerCase} from '../lib/lowercase';
+import { ListOrganizationsDocument } from '../graphql/types/schema';
 
 interface Organization {
   id: string;
@@ -71,7 +71,7 @@ export const organizationsStore = create<OrganizationsStore>(
       actions: {
         updateOriganizations: async () => {
           const querySub = client
-            .watchQuery({query: GET_ORGANIZATIONS_QUERY})
+            .watchQuery({query: ListOrganizationsDocument})
             .subscribe(({data}) => {
               set({organizations: processItems(data.getOrganizations.items)});
               querySub.unsubscribe();

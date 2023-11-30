@@ -1,0 +1,43 @@
+
+query ListLicenses($input: GetGenericLicensesInput!, $locale: String) {
+  genericLicenses(input: $input, locale: $locale) {
+    ...GenericUserLicenseFragment
+  }
+}
+
+query GetLicense($input: GetGenericLicenseInput!) {
+  genericLicense(input: $input) {
+    ...GenericUserLicenseFragment
+  }
+}
+
+mutation GeneratePkPass($input: GeneratePkPassInput!) {
+  generatePkPass(input: $input) {
+    pkpassUrl
+  }
+}
+
+mutation VerifyPkPass($input: VerifyPkPassInput!) {
+  verifyPkPass(input: $input) {
+    data
+    valid
+    error {
+      status
+      message
+      data
+    }
+  }
+}
+
+query GetIdentityDocument {
+  getIdentityDocument {
+    ...identityDocumentFragment
+  }
+  getIdentityDocumentChildren {
+    childNationalId
+    childName
+    passports {
+      ...identityDocumentFragment
+    }
+  }
+}

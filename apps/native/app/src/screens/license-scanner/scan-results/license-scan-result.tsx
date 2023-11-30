@@ -2,7 +2,8 @@ import {ScanResultCard} from '@ui';
 import React, {useEffect, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {client} from '../../../graphql/client';
-import {VERIFY_PKPASS_MUTATION} from '../../../graphql/queries/verify-pkpass.mutation';
+import {useVerifyPkPassMutation} from '../../../graphql/types/schema';
+// import {VERIFY_PKPASS_MUTATION} from '../../../graphql/queries/verify-pkpass.mutation';
 
 export const LicenseScanResult = ({
   data,
@@ -19,21 +20,20 @@ export const LicenseScanResult = ({
   const [nationalId, setNationalId] = useState<string>();
   const [photo, setPhoto] = useState<string>();
   const intl = useIntl();
+  const [verifyPkPass] = useVerifyPkPassMutation();
 
   useEffect(() => {
     onLoad(!loading);
   }, [loading]);
 
   useEffect(() => {
-    client
-      .mutate({
-        mutation: VERIFY_PKPASS_MUTATION,
-        variables: {
-          input: {
-            data,
-          },
+    verifyPkPass({
+      variables: {
+        input: {
+          data,
         },
-      })
+      },
+    })
       .then(res => {
         if (res.errors) {
           setError(true);
@@ -42,7 +42,7 @@ export const LicenseScanResult = ({
           );
           setLoading(false);
         } else {
-          const {data, valid, error: smartError} = res.data.verifyPkPass;
+          const {data, valid, error: smartError} = res.data?.verifyPkPass ?? {};
 
           if (!valid && smartError) {
             setError(true);
@@ -55,7 +55,7 @@ export const LicenseScanResult = ({
             setLoading(false);
           } else {
             try {
-              const {name, nationalId, photo} = JSON.parse(data);
+              const {name, nationalId, photo} = JSON.parse(data ?? '{}');
               setError(false);
               setErrorMessage(undefined);
               setNationalId(nationalId);

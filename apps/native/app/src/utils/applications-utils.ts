@@ -1,7 +1,9 @@
 import {getConfig} from '../config';
 import {ApplicationConfigurations} from '@island.is/application/types/lib/ApplicationTypes';
-import {IApplication} from '../graphql/fragments/application.fragment';
-import {IArticleSearchResults} from 'src/graphql/fragments/search.fragment';
+import {
+  Application,
+  SearchArticleFragmentFragment,
+} from '../graphql/types/schema';
 
 export const getSlugFromType = (type: string) => {
   for (const [key, value] of Object.entries(ApplicationConfigurations)) {
@@ -13,7 +15,9 @@ export const getSlugFromType = (type: string) => {
   return undefined;
 };
 
-export const getApplicationUrl = (application: IApplication) => {
+export const getApplicationUrl = (
+  application: Pick<Application, 'typeId' | 'id'>,
+) => {
   const slug = getSlugFromType(application.typeId);
   const uri = `${getConfig().apiUrl.replace(/api$/, 'umsoknir')}/${slug}/${
     application.id
@@ -22,7 +26,7 @@ export const getApplicationUrl = (application: IApplication) => {
 };
 
 export const getApplicationOverviewUrl = (
-  application: IArticleSearchResults,
+  application: Pick<SearchArticleFragmentFragment, 'slug'>,
 ) => {
   const uri = `${getConfig().apiUrl.replace(/api$/, '')}${application.slug}`;
   return uri;

@@ -1,5 +1,5 @@
-import {useQuery} from '@apollo/client';
-import {Button, TopLine} from '@ui';
+// import {useQuery} from '@apollo/client';
+import {TopLine} from '@ui';
 import React, {
   ReactElement,
   useCallback,
@@ -17,11 +17,6 @@ import {
 import CodePush from 'react-native-code-push';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {client} from '../../graphql/client';
-import {
-  ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
-} from '../../graphql/queries/list-applications.query';
 import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {notificationsStore} from '../../stores/notifications-store';
@@ -31,7 +26,7 @@ import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from './applications-module';
 import {NotificationsModule} from './notifications-module';
 import {OnboardingModule} from './onboarding-module';
-import {navigateTo} from '../../lib/deep-linking';
+import {Application, useListApplicationsQuery} from '../../graphql/types/schema';
 
 interface ListItem {
   id: string;
@@ -102,10 +97,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
     flatListRef.current?.scrollToOffset({offset: -150, animated: true});
   });
 
-  const applicationsRes = useQuery<ListApplicationsResponse>(
-    LIST_APPLICATIONS_QUERY,
-    {client},
-  );
+  const applicationsRes = useListApplicationsQuery();
 
   const [loading, setLoading] = useState(false);
 
@@ -144,7 +136,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
       id: 'applications',
       component: (
         <ApplicationsModule
-          applications={applicationsRes.data?.applicationApplications ?? []}
+          applications={(applicationsRes.data?.applicationApplications ?? []) as Application[]}
           loading={applicationsRes.loading}
           componentId={componentId}
         />

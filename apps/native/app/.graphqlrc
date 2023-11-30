@@ -1,3 +1,5 @@
 overwrite: true
-schema: ../../api/src/api.graphql
+schema:
+  - ../../api/src/api.graphql
+  - ./src/graphql/types/client.gql
 documents: src/**/*.graphql

@@ -1,6 +1,6 @@
 import {useQuery} from '@apollo/client';
 import {EmptyList, Heading, ListButton, TopLine} from '@ui';
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {useIntl} from 'react-intl';
 import {
   Animated,
@@ -13,13 +13,6 @@ import {
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {client} from '../../graphql/client';
-import {IArticleSearchResults} from '../../graphql/fragments/search.fragment';
-import {
-  ListApplicationsResponse,
-  LIST_APPLICATIONS_QUERY,
-} from '../../graphql/queries/list-applications.query';
-import {LIST_SEARCH_QUERY} from '../../graphql/queries/list-search.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {openBrowser} from '../../lib/rn-island';
@@ -27,10 +20,17 @@ import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from '../home/applications-module';
 import {getApplicationOverviewUrl} from '../../utils/applications-utils';
+import {
+  Application,
+  SearchArticleFragmentFragment,
+  SearchableContentTypes,
+  useListApplicationsQuery,
+  useListSearchQuery,
+} from '../../graphql/types/schema';
 
 type ListItem =
-  | {id: string; type: 'skeleton' | 'empty'}
-  | (IArticleSearchResults & {type: undefined});
+  | {id: string; __typename: 'Skeleton'}
+  | SearchArticleFragmentFragment;
 
 const {useNavigationOptions, getNavigationOptions} =
   createNavigationOptionHooks(
@@ -76,81 +76,58 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId);
-  const SEARCH_QUERY_SIZE = 100;
-  const SEARCH_QUERY_TYPE = 'webArticle';
-  const CONTENTFUL_FILTER = 'umsokn';
-  const QUERY_STRING_DEFAULT = '*';
-
   const flatListRef = useRef<FlatList>(null);
   const [loading, setLoading] = useState(false);
   const intl = useIntl();
-  const [items, setItems] = useState([]);
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const input = {
-    queryString: QUERY_STRING_DEFAULT,
-    types: [SEARCH_QUERY_TYPE],
-    contentfulTags: [CONTENTFUL_FILTER],
-    size: SEARCH_QUERY_SIZE,
-    page: 1,
-  };
-
-  const res = useQuery(LIST_SEARCH_QUERY, {
-    client,
+  const res = useListSearchQuery({
     variables: {
-      input,
+      input: {
+        queryString: '*',
+        types: [SearchableContentTypes.WebArticle],
+        contentfulTags: ['umsokn'],
+        size: 100,
+        page: 1,
+      },
     },
   });
 
-  const applicationsRes = useQuery<ListApplicationsResponse>(
-    LIST_APPLICATIONS_QUERY,
-    {client},
-  );
+  const applicationsRes = useListApplicationsQuery();
 
-  useEffect(() => {
-    if (!res.loading && res.data) {
-      setItems(
-        [...(res?.data?.searchResults?.items || [])].sort(
-          (a: IArticleSearchResults, b: IArticleSearchResults) =>
-            a.title.localeCompare(b.title),
-        ) as any,
-      );
+  const data = useMemo<ListItem[]>(() => {
+    if (!res.data && res.loading) {
+      return Array.from({length: 8}).map((_, id) => ({
+        __typename: 'Skeleton',
+        id: id.toString(),
+      }));
     }
+
+    if (!res.loading && res.data) {
+      const articles = [
+        ...(res?.data?.searchResults?.items ?? []),
+      ] as SearchArticleFragmentFragment[];
+      return articles.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    return [];
   }, [res.data, res.loading]);
 
-  const renderItem = useCallback(({item}: any) => {
-    if (item.type === 'skeleton') {
+  const renderItem = useCallback(({item}: {item: ListItem; index: number}) => {
+    if (item.__typename === 'Skeleton') {
       return <ListButton title="skeleton" isLoading />;
     }
-
-    if (item.type === 'empty') {
+    if (item.__typename === 'Article') {
       return (
-        <View style={{marginTop: 80, paddingHorizontal: 16}}>
-          <EmptyList
-            title={intl.formatMessage({id: 'applications.emptyListTitle'})}
-            description={intl.formatMessage({
-              id: 'applications.emptyListDescription',
-            })}
-            image={
-              <Image
-                source={illustrationSrc}
-                style={{height: 176, width: 134}}
-              />
-            }
-          />
-        </View>
+        <ListButton
+          key={item.id}
+          title={item.title}
+          onPress={() =>
+            openBrowser(getApplicationOverviewUrl(item), componentId)
+          }
+        />
       );
     }
-
-    return (
-      <ListButton
-        key={item.id}
-        title={item.title}
-        onPress={() =>
-          openBrowser(getApplicationOverviewUrl(item), componentId)
-        }
-      />
-    );
+    return null;
   }, []);
 
   useActiveTabItemPress(3, () => {
@@ -161,19 +138,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   });
 
   const keyExtractor = useCallback((item: ListItem) => item.id, []);
-
-  const isFirstLoad = !res.data;
-  const isError = !!res.error;
-  const isLoading = res.loading;
-  const isEmpty = (items ?? []).length === 0;
-  const isSkeltonView = isLoading && isFirstLoad && !isError;
-  const isEmptyView = !loading && isEmpty;
-
-  const emptyItem = [{id: '0', type: 'empty'}] as ListItem[];
-  const skeletonItems = Array.from({length: 8}).map((_, id) => ({
-    id: id.toString(),
-    type: 'skeleton',
-  })) as ListItem[];
 
   return (
     <>
@@ -190,12 +154,31 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         )}
         keyExtractor={keyExtractor}
         keyboardDismissMode="on-drag"
-        data={isSkeltonView ? skeletonItems : isEmptyView ? emptyItem : items}
+        data={data}
+        ListEmptyComponent={
+          <View style={{marginTop: 80, paddingHorizontal: 16}}>
+            <EmptyList
+              title={intl.formatMessage({id: 'applications.emptyListTitle'})}
+              description={intl.formatMessage({
+                id: 'applications.emptyListDescription',
+              })}
+              image={
+                <Image
+                  source={illustrationSrc}
+                  style={{height: 176, width: 134}}
+                />
+              }
+            />
+          </View>
+        }
         renderItem={renderItem}
         ListHeaderComponent={
           <View style={{flex: 1}}>
             <ApplicationsModule
-              applications={applicationsRes.data?.applicationApplications ?? []}
+              applications={
+                (applicationsRes.data?.applicationApplications ??
+                  []) as Application[]
+              }
               loading={applicationsRes.loading}
               componentId={componentId}
               hideAction={true}

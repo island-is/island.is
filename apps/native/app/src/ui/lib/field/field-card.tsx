@@ -9,7 +9,7 @@ import IconC from '../../assets/licenece-type/icon-c.png';
 import IconCE from '../../assets/licenece-type/icon-ce.png';
 import IconD from '../../assets/licenece-type/icon-d.png';
 import IconDE from '../../assets/licenece-type/icon-de.png';
-import {LicenseCardType} from '../card/licence-card';
+import {GenericLicenseType} from '../../../graphql/types/schema';
 
 const Host = styled.View`
   border-width: ${({theme}) => theme.border.width.standard}px;
@@ -74,7 +74,7 @@ interface FieldCardProps {
   code?: string;
   title?: string;
   children: React.ReactNode;
-  type: LicenseCardType;
+  type?: GenericLicenseType;
   hasFields?: boolean;
 }
 

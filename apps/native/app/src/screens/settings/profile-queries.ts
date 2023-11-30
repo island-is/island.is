@@ -1,15 +1,17 @@
-import {useMutation, useQuery} from '@apollo/client';
+import {useQuery} from '@apollo/client';
 import {client} from '../../graphql/client';
-import {UPDATE_USER_PROFILE} from '../../graphql/queries/update-user-profile.mutation';
-import {USER_PROFILE_QUERY} from '../../graphql/queries/user-profile.query';
+import {
+  useUpdateProfileMutation,
+  GetProfileDocument,
+  GetProfileQueryVariables,
+  GetProfileQuery,
+} from '../../graphql/types/schema';
 
 export const useUpdateUserProfile = () => {
-  const [updateUserProfileMutation, {loading, error}] = useMutation(
-    UPDATE_USER_PROFILE,
-    {
+  const [updateUserProfileMutation, {loading, error}] =
+    useUpdateProfileMutation({
       client,
-    },
-  );
+    });
 
   const updateUserProfile = (input: {
     email?: string;
@@ -25,8 +27,8 @@ export const useUpdateUserProfile = () => {
     }).then(res => {
       if (res.data) {
         try {
-          client.query({
-            query: USER_PROFILE_QUERY,
+          client.query<GetProfileQuery, GetProfileQueryVariables>({
+            query: GetProfileDocument,
             fetchPolicy: 'network-only',
           });
         } catch (err) {
@@ -43,8 +45,3 @@ export const useUpdateUserProfile = () => {
     error,
   };
 };
-
-export const useUserProfile = () =>
-  useQuery(USER_PROFILE_QUERY, {
-    client,
-  });

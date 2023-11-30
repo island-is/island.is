@@ -1,4 +1,3 @@
-import {useQuery} from '@apollo/client';
 import {
   Accordion,
   AccordionItem,
@@ -21,14 +20,13 @@ import {
 } from 'react-native';
 import {NavigationFunctionComponent} from 'react-native-navigation';
 import styled from 'styled-components/native';
-import {client} from '../../graphql/client';
-import {GET_IDENTITY_DOCUMENT_QUERY} from '../../graphql/queries/get-identity-document.query';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {LicenseStatus, LicenseType} from '../../types/license-type';
 import IconStatusVerified from '../../assets/icons/valid.png';
 import IconStatusNonVerified from '../../assets/icons/warning.png';
 import {useFeatureFlag} from '../../contexts/feature-flag-provider';
 import {openBrowser} from '../../lib/rn-island';
+import {useGetIdentityDocumentQuery} from '../../graphql/types/schema';
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -100,15 +98,14 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
   );
 
   const intl = useIntl();
-  const {data, loading, error} = useQuery(GET_IDENTITY_DOCUMENT_QUERY, {
-    client,
+  const {data, loading, error} = useGetIdentityDocumentQuery({
     fetchPolicy: 'cache-first',
   });
 
   const passportData = data?.getIdentityDocument;
-  const item = passportData?.find((x: any) => x.number === id) || null;
+  const item = passportData?.find(x => x.number === id) || null;
 
-  const childrenPassport = data?.getIdentityDocumentChildren;
+  const childrenPassport = data?.getIdentityDocumentChildren ?? [];
 
   const isInvalid = item?.status?.toLowerCase() === 'invalid';
   const expireWarning = !!item?.expiresWithinNoticeTime;
@@ -222,15 +219,16 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                 {intl.formatMessage({id: 'walletPassport.children'})}
               </Label>
               <Accordion>
-                {childrenPassport?.map((child: any) => {
+                {childrenPassport?.map(child => {
                   const isInvalid =
-                    child?.status?.toLowerCase() === 'invalid' ||
-                    child?.passports?.length === 0;
+                    child?.passports?.some(
+                      p => p.status?.toLowerCase() === 'invalid',
+                    ) || child?.passports?.length === 0;
                   const noPassport = child?.passports?.length === 0;
                   return (
                     <AccordionItem
                       key={child.childNationalId}
-                      title={child?.childName}
+                      title={child?.childName ?? '-'}
                       icon={
                         <Image
                           source={
@@ -243,7 +241,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                         />
                       }>
                       <View>
-                        {child.passports?.map((passport: any) => {
+                        {child.passports?.map(passport => {
                           return (
                             <View key={passport.number}>
                               <InputRow>

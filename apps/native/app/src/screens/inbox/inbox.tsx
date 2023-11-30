@@ -1,4 +1,4 @@
-import {useQuery} from '@apollo/client';
+// import {useQuery} from '@apollo/client';
 import {
   Button,
   EmptyList,
@@ -25,8 +25,8 @@ import {useTheme} from 'styled-components/native';
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
-import {client} from '../../graphql/client';
-import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.query';
+// import {client} from '../../graphql/client';
+// import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.graphql';
 import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {navigateTo} from '../../lib/deep-linking';
@@ -36,13 +36,16 @@ import {ComponentRegistry} from '../../utils/component-registry';
 import {getRightButtons} from '../../utils/get-main-root';
 import {testIDs} from '../../utils/test-ids';
 import {
-  GetDocumentListInput,
-  ListDocumentsV2,
-} from '../../graphql/queries/list-documents.query';
-import {Document} from 'src/graphql/types/schema';
+  Document,
+  ListDocumentsDocument,
+  ListDocumentsQuery,
+  ListDocumentsQueryVariables,
+  useListDocumentsQuery,
+} from '../../graphql/types/schema';
 import {setBadgeCountAsync} from 'expo-notifications';
-import {toggleAction} from '../../graphql/queries/inbox-actions';
 import FilterIcon from '../../assets/icons/filter-icon.png';
+import {toggleAction} from '../../lib/post-mail-action';
+import {client} from '../../graphql/client';
 
 type ListItem =
   | {id: string; type: 'skeleton' | 'empty'}
@@ -135,11 +138,7 @@ function useThrottleState(state: string, delay = 500) {
 }
 
 const useUnreadCount = () => {
-  const res = useQuery<
-    {listDocumentsV2: ListDocumentsV2},
-    {input: GetDocumentListInput}
-  >(LIST_DOCUMENTS_QUERY, {
-    client,
+  const res = useListDocumentsQuery({
     fetchPolicy: 'cache-first',
     variables: {
       input: {
@@ -174,7 +173,7 @@ function applyFilters(filters?: Filters) {
 function useInboxQuery(incomingFilters?: Filters) {
   const [filters, setFilters] = useState(applyFilters(incomingFilters));
   const [page, setPage] = useState<number>(1);
-  const [data, setData] = useState<ListDocumentsV2>();
+  const [data, setData] = useState<ListDocumentsQuery['listDocumentsV2']>();
   const [refetching, setRefetching] = useState(true);
   const [loading, setLoading] = useState(false);
   const [refetcher, setRefetcher] = useState(0);
@@ -207,8 +206,8 @@ function useInboxQuery(incomingFilters?: Filters) {
     setLoading(true);
     // Fetch data
     client
-      .query<{listDocumentsV2: ListDocumentsV2}>({
-        query: LIST_DOCUMENTS_QUERY,
+      .query<ListDocumentsQuery, ListDocumentsQueryVariables>({
+        query: ListDocumentsDocument,
         fetchPolicy: 'network-only',
         variables: {
           input: {
@@ -221,8 +220,11 @@ function useInboxQuery(incomingFilters?: Filters) {
       .then(res => {
         if (page > 1) {
           setData(prevData => ({
-            data: [...(prevData?.data ?? []), ...res.data.listDocumentsV2.data],
-            totalCount: res.data.listDocumentsV2.totalCount,
+            data: [
+              ...(prevData?.data ?? []),
+              ...(res.data.listDocumentsV2?.data ?? []),
+            ],
+            totalCount: res.data.listDocumentsV2?.totalCount,
           }));
         } else {
           setData(res.data.listDocumentsV2);
