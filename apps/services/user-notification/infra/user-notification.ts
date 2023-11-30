@@ -44,7 +44,7 @@ export const userNotificationServiceSetup =
           '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
       })
       .liveness('/liveness')
-      .readiness('/liveness')// change to readiness - when ready ;)
+      .readiness('/liveness') // change to readiness - when ready ;)
       .ingress({
         primary: {
           host: {
