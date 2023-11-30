@@ -33,7 +33,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <DirectorateOfHealthDashboardHeader projectPage={projectPage} />
     case 'grindavik':
       return <GrindavikProjectHeader projectPage={projectPage} />
-    default:
+    case 'default-v2':
       return (
         <DefaultHeader
           title={projectPage.title}
@@ -48,6 +48,15 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
             projectPage.themeProperties?.imageIsFullHeight ?? true
           }
           imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
+        />
+      )
+    default:
+      return (
+        <DefaultProjectHeader
+          projectPage={projectPage}
+          headerImageObjectFit={
+            projectPage.themeProperties.imageObjectFit || 'cover'
+          }
         />
       )
   }
