@@ -291,6 +291,9 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
 /libs/clients/directorate-of-immigration/                                                                @island-is/origo
 
+/libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
+
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa
 
