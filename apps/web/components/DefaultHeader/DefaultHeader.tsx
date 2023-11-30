@@ -76,11 +76,9 @@ export const DefaultHeader: React.FC<
                   </LinkWrapper>
                 </Hidden>
               )}
-              <Box>
-                <Text variant="h1" as="h1" color={titleColor}>
-                  {title}
-                </Text>
-              </Box>
+              <Text variant="h1" as="h1" color={titleColor}>
+                {title}
+              </Text>
             </div>
           </div>
           {imageProvided && (
