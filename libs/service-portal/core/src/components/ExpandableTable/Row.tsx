@@ -29,6 +29,7 @@ interface Props {
 
   expandWhenLoadingFinished?: boolean
   onExpandCallback?: () => void
+  startExpanded?: boolean
 }
 
 const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
@@ -43,10 +44,11 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   showLine = true,
   expandWhenLoadingFinished = false,
   error,
+  startExpanded = false,
 }) => {
   const { formatMessage } = useLocale()
-  const [expanded, toggleExpand] = useState<boolean>(false)
-  const [closed, setClosed] = useState<boolean>(true)
+  const [expanded, toggleExpand] = useState<boolean>(startExpanded)
+  const [closed, setClosed] = useState<boolean>(!startExpanded)
 
   const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
