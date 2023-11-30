@@ -9,14 +9,22 @@ const ALGORITHM = 'aes-256-cbc'
  * @param key You secret key
  * @returns URL safe Base64
  */
-export const encrypt = (text: string, key: string): string => {
-  const derivedKey = hashKey(key)
+export const maskString = (text: string, key: string): string | null => {
+  try {
+    const derivedKey = hashKey(key)
 
-  const cipher = createCipheriv(ALGORITHM, derivedKey, Buffer.alloc(16))
-  const encrypted =
-    cipher.update(text, 'utf-8', 'base64') + cipher.final('base64')
+    const cipher = createCipheriv(ALGORITHM, derivedKey, Buffer.alloc(16))
+    const encrypted =
+      cipher.update(text, 'utf-8', 'base64') + cipher.final('base64')
 
-  return Base64.encodeURI(encrypted)
+    return Base64.encodeURI(encrypted)
+  } catch (e) {
+    console.error({
+      name: 'unmaskString',
+      error: e,
+    })
+    return null
+  }
 }
 
 /**
@@ -24,7 +32,10 @@ export const encrypt = (text: string, key: string): string => {
  * @param key The secret key you used in encrypt()
  * @returns Reveals the string hidden by encrypt()
  */
-export const decrypt = (encryptedText: string, key: string): string => {
+export const unmaskString = (
+  encryptedText: string,
+  key: string,
+): string | null => {
   try {
     const encryptedData = Base64.decode(encryptedText)
     const derivedKey = hashKey(key)
@@ -35,7 +46,11 @@ export const decrypt = (encryptedText: string, key: string): string => {
       decipher.final('utf-8')
     )
   } catch (e) {
-    return encryptedText
+    console.error({
+      name: 'unmaskString',
+      error: e,
+    })
+    return null
   }
 }
 

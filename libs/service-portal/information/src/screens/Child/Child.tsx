@@ -29,7 +29,7 @@ import { spmm } from '../../lib/messages'
 import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
-import { decrypt } from '@island.is/shared/utils'
+import { unmaskString } from '@island.is/shared/utils'
 
 type UseParams = {
   baseId: string
@@ -44,7 +44,7 @@ const Child = () => {
   const { data, loading, error } = useNationalRegistryChildCustodyQuery({
     variables: {
       api: 'v3',
-      childNationalId: decrypt(baseId, userInfo.profile.nationalId),
+      childNationalId: unmaskString(baseId, userInfo.profile.nationalId),
     },
   })
 
@@ -74,7 +74,8 @@ const Child = () => {
   )
 
   const isChildOrChildOfUser = isChild || isChildOfUser
-  if (!baseId || (!loading && !isChildOrChildOfUser && !error))
+  const noChildFound = !loading && !isChildOrChildOfUser && !error
+  if (!baseId || noChildFound)
     return (
       <NotFound
         title={defineMessage({

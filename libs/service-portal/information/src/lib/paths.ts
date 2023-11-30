@@ -4,7 +4,6 @@ export enum InformationPaths {
   SettingsOld = '/stillingar/minar-stillingar/',
   Settings = '/min-gogn/stillingar/',
   Child = '/min-gogn/yfirlit/barn/:baseId',
-  FamilyMember = '/min-gogn/yfirlit/:nationalId',
   Spouse = '/min-gogn/yfirlit/maki/',
   UserInfo = '/min-gogn/yfirlit/minar-upplysingar',
   Petitions = '/min-gogn/listar/',

@@ -12,7 +12,7 @@ import { useUserInfo } from '@island.is/auth/react'
 
 import { FamilyMemberCard } from '../../components/FamilyMemberCard/FamilyMemberCard'
 import { spmm } from '../../lib/messages'
-import { encrypt } from '@island.is/shared/utils'
+import { maskString } from '@island.is/shared/utils'
 import { useUserInfoOverviewQuery } from './UserInfoOverview.generated'
 
 const UserInfoOverview = () => {
@@ -62,7 +62,7 @@ const UserInfoOverview = () => {
             title={child.fullName || ''}
             nationalId={child.nationalId}
             baseId={
-              encrypt(child.nationalId, userInfo.profile.nationalId) ?? ''
+              maskString(child.nationalId, userInfo.profile.nationalId) ?? ''
             }
             familyRelation="child"
           />

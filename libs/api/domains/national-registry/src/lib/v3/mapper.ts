@@ -24,7 +24,7 @@ import { ChildCustodyV3, PersonV3 } from '../shared/types'
 import { Housing } from '../shared/models/housing.model'
 import { Name } from '../shared/models/name.model'
 import * as kennitala from 'kennitala'
-import { encrypt, isDefined } from '@island.is/shared/utils'
+import { maskString, isDefined } from '@island.is/shared/utils'
 
 export function formatPersonDiscriminated(
   individual?: EinstaklingurDTOAllt | null,
@@ -85,7 +85,7 @@ export function formatPerson(
     ),
     ...(nationalId &&
       individual.kennitala && {
-        baseId: encrypt(individual.kennitala, nationalId),
+        baseId: maskString(individual.kennitala, nationalId),
       }),
 
     //DEPRECATION LINE -- below shall be removed

@@ -9,17 +9,24 @@ interface Props {
   title: string
   nationalId: string
   baseId?: string
-  familyRelation?: 'child' | 'spouse' | 'child2'
   currentUser?: boolean
 }
 
-export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
-  title,
-  nationalId,
-  currentUser,
-  familyRelation,
-  baseId,
-}) => {
+type UniqueProps =
+  | {
+      familyRelation?: 'child'
+      baseId: string
+    }
+  | {
+      familyRelation?: 'spouse'
+      baseId?: never
+    }
+
+type FamilyMemberCardProps = UniqueProps & Props
+
+export const FamilyMemberCard: FC<
+  React.PropsWithChildren<FamilyMemberCardProps>
+> = ({ title, nationalId, currentUser, familyRelation, baseId }) => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
   const [familyRelationData, setFamilyRelationData] = useState<{
@@ -33,45 +40,21 @@ export const FamilyMemberCard: FC<React.PropsWithChildren<Props>> = ({
   }, [familyRelation])
 
   const getFamilyRelationData = () => {
-    switch (familyRelation) {
-      case 'child':
-        return {
-          label: formatMessage({
-            id: 'sp.family:child',
-            defaultMessage: 'Barn',
-          }),
-          path: InformationPaths.Child.replace(':baseId', baseId ?? ''),
-        }
-      case 'spouse':
-        return {
-          label: formatMessage({
-            id: 'sp.family:spouse',
-            defaultMessage: 'Maki',
-          }),
-          path: InformationPaths.Spouse,
-        }
-      case 'child2':
-        return {
-          label: formatMessage({
-            id: 'sp.family:child',
-            defaultMessage: 'Barn',
-          }),
-          path: InformationPaths.FamilyMember.replace(
-            ':nationalId',
-            nationalId,
-          ),
-        }
-      default:
-        return {
-          label: formatMessage({
-            id: 'sp.family:family-member',
-            defaultMessage: 'Fjölskyldumeðlimur',
-          }),
-          path: InformationPaths.FamilyMember.replace(
-            ':nationalId',
-            nationalId,
-          ),
-        }
+    if (familyRelation === 'spouse') {
+      return {
+        label: formatMessage({
+          id: 'sp.family:spouse',
+          defaultMessage: 'Maki',
+        }),
+        path: InformationPaths.Spouse,
+      }
+    }
+    return {
+      label: formatMessage({
+        id: 'sp.family:child',
+        defaultMessage: 'Barn',
+      }),
+      path: InformationPaths.Child.replace(':baseId', baseId ?? ''),
     }
   }
 
