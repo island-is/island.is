@@ -15,7 +15,13 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import { Events, Roles, States } from './constants'
+import {
+  Events,
+  HouseholdSupplementHousing,
+  Roles,
+  States,
+  YES,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
@@ -78,6 +84,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['clearFileUpload'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -298,6 +305,23 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           mergedAdditionalDocumentRequired,
         )
         unset(answers, 'fileUploadAdditionalFilesRequired')
+
+        return context
+      }),
+      clearFileUpload: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        const { householdSupplementHousing, householdSupplementChildren } =
+          getApplicationAnswers(answers)
+
+        if (householdSupplementChildren !== YES) {
+          unset(answers, 'fileUpload.schoolConfirmation')
+        }
+
+        if (householdSupplementHousing !== HouseholdSupplementHousing.RENTER) {
+          unset(answers, 'fileUpload.leaseAgreement')
+        }
 
         return context
       }),
