@@ -118,7 +118,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildCustomField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.criminalRecordMap`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.criminalRecord`,
           title: '',
           component: 'CriminalRecords',
         }),

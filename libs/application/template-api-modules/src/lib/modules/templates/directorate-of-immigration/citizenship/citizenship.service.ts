@@ -196,42 +196,19 @@ export class CitizenshipService extends BaseTemplateApiService {
         }))
 
     // Get attachment array with countryId field from attachment array of arrays
-    // const applicantCriminalRecordAttachments: {
-    //   name: string
-    //   key: string
-    //   countryId: string
-    // }[] = []
-
-    // Get attachment array with countryId field from attachment array of arrays
-    // const applicantCriminalRecordAttachments = []
-    // const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
-    // for (let i = 0; i < criminalRecordList.length; i++) {
-    //   const countryId = i.toString()
-    //   const attachments = criminalRecordList[i]?.attachment || []
-    //   for (let j = 0; j < attachments.length; j++) {
-    //     const attachment = attachments[j]
-    //     if (attachment?.name && attachment?.key)
-    //       applicantCriminalRecordAttachments.push({
-    //         name: attachment.name,
-    //         key: attachment.key,
-    //         countryId,
-    //       })
-    //   }
-    // }
-
-    // Get attachment array with countryId field from attachment map
     const applicantCriminalRecordAttachments = []
-    const criminalRecordMap =
-      answers.supportingDocuments?.criminalRecordMap || {}
-    for (const countryId in Object.keys(criminalRecordMap)) {
-      if (countryId) {
-        const attachments = criminalRecordMap[countryId] || []
-        for (let j = 0; j < attachments.length; j++) {
+    const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
+    for (let i = 0; i < criminalRecordList.length; i++) {
+      const countryId = criminalRecordList[i]?.countryId
+      const attachments = criminalRecordList[i]?.attachment || []
+      for (let j = 0; j < attachments.length; j++) {
+        const attachment = attachments[j]
+        if (countryId && attachment?.name && attachment?.key)
           applicantCriminalRecordAttachments.push({
-            ...attachments[j],
+            name: attachment.name,
+            key: attachment.key,
             countryId,
           })
-        }
       }
     }
 
