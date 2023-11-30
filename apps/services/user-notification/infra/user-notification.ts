@@ -46,7 +46,7 @@ export const userNotificationServiceSetup =
       })
 
       .readiness('/liveness')
-      .readiness('/liveness')// change to readiness - when ready ;)
+      .readiness('/liveness') // change to readiness - when ready ;)
       .ingress({
         primary: {
           host: {
