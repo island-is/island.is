@@ -29,6 +29,7 @@ import {
   getApplicationAnswers,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -334,48 +335,47 @@ export const HouseholdSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: householdSupplementFormMessage.confirm.section,
+      title: householdSupplementFormMessage.confirm.overviewTitle,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirm',
           title: '',
+          description: '',
           children: [
-            buildMultiField({
-              id: 'confirm',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmScreen',
-                    title: householdSupplementFormMessage.confirm.title,
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: householdSupplementFormMessage.confirm.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: householdSupplementFormMessage.confirm.title,
-                      type: 'primary',
-                    },
-                  ],
-                }),
+            buildCustomField(
+              {
+                id: 'confirmScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: householdSupplementFormMessage.confirm.title,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: householdSupplementFormMessage.confirm.title,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: householdSupplementFormMessage.conclusionScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertTitle: householdSupplementFormMessage.conclusionScreen.alertTitle,
+      alertMessage:
+        householdSupplementFormMessage.conclusionScreen.alertMessage,
+      expandableDescription:
+        householdSupplementFormMessage.conclusionScreen.bulletList,
+      expandableIntro:
+        householdSupplementFormMessage.conclusionScreen.nextStepsText,
     }),
   ],
 })

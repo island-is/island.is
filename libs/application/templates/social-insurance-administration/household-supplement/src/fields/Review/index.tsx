@@ -71,7 +71,6 @@ export const Review: FC<ReviewScreenProps> = ({
     }
   }
 
-  // TODO: Hvaða states eiga sjá þetta? Mega öll state sjá nema DRAFT og PREREQUISITES??
   const canView =
     state === States.TRYGGINGASTOFNUN_SUBMITTED ||
     state === States.TRYGGINGASTOFNUN_IN_REVIEW ||
@@ -85,7 +84,9 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(householdSupplementFormMessage.confirm.title)}
+                {formatMessage(
+                  householdSupplementFormMessage.confirm.overviewTitle,
+                )}
               </Text>
             </Box>
             <Box marginBottom={10}>

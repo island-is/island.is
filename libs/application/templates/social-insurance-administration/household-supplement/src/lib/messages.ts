@@ -376,6 +376,11 @@ export const householdSupplementFormMessage: MessageDir = {
     },
     alertTitle: {
       id: 'hs.application:conclusionScreen.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Your application has been received',
+    },
+    alertMessage: {
+      id: 'hs.application:conclusionScreen.alertMessage',
       defaultMessage:
         'Umsókn um heimilisuppbót hefur verið send til Tryggingastofnunar',
       description:
