@@ -1,5 +1,7 @@
 import { execSync } from 'child_process'
-import { createDb } from './create-db'
+import { createDb } from './lib/db'
+import { Pool } from 'pg'
+
 type ContainerConfig = {
   containerName: string
   masterUser: string
@@ -47,7 +49,7 @@ describe('PostgreSQL operations', () => {
   })
 
   beforeAll(() => {
-    pool = new Pool({
+    const pool = new Pool({
       user: 'postgres',
       host: 'localhost',
       database: 'postgres',
