@@ -15,6 +15,7 @@ export interface IntroHeaderProps {
   title: MessageDescriptor | string
   intro?: MessageDescriptor | string
   img?: string
+  imgPosition?: 'center' | 'right'
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
@@ -31,6 +32,7 @@ export const IntroHeader = ({
   marginBottom = 6,
   children,
   isSubheading = false,
+  imgPosition = 'center',
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
@@ -50,7 +52,10 @@ export const IntroHeader = ({
       {img && (
         <GridColumn span={['8/8', '3/8']}>
           <Hidden print={hideImgPrint} below="lg">
-            <Box textAlign="center" padding={[6, 0]}>
+            <Box
+              textAlign={imgPosition === 'right' ? 'right' : 'center'}
+              padding={[6, 0]}
+            >
               <img src={img} alt="" />
             </Box>
           </Hidden>

@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  // All lists
   signatureCollection: {
     id: 'admin-portal.signature-collection:signatureCollection',
     defaultMessage: 'Söfnun meðmæla',
@@ -15,6 +16,11 @@ export const m = defineMessages({
     id: 'admin-portal.signature-collection:signatureListsIntro',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur. Amet est turpis sem semper senectus tellus.',
+    description: '',
+  },
+  searchInAllListsPlaceholder: {
+    id: 'admin-portal.signature-collection:searchInAllListsPlaceholder',
+    defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
   listDateTil: {
@@ -32,6 +38,18 @@ export const m = defineMessages({
     defaultMessage: 'Skoða lista',
     description: '',
   },
+  noLists: {
+    id: 'admin-portal.signature-collection:noLists',
+    defaultMessage: 'Engir meðmælalistar',
+    description: '',
+  },
+  noListsFoundBySearch: {
+    id: 'admin-portal.signature-collection:noListsFoundBySearch',
+    defaultMessage: 'Engir listar fundust þegar leitað var að',
+    description: '',
+  },
+
+  // View list
   singleList: {
     id: 'admin-portal.signature-collection:singleList',
     defaultMessage: 'Meðmælalisti',
@@ -50,6 +68,11 @@ export const m = defineMessages({
   searchInListPlaceholder: {
     id: 'admin-portal.signature-collection:searchInListPlaceholder',
     defaultMessage: 'Leitaðu að nafni eða kennitölu',
+    description: '',
+  },
+  filterLists: {
+    id: 'admin-portal.signature-collection:filterLists',
+    defaultMessage: 'Sía niðurstöður',
     description: '',
   },
   signeeDate: {
@@ -77,14 +100,14 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum',
     description: '',
   },
-  updateListEndTime: {
-    id: 'admin-portal.signature-collection:updateListEndTime',
+  updateListEndTimeButton: {
+    id: 'admin-portal.signature-collection:updateListEndTimeButton',
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
-  updateListEndTimeButton: {
-    id: 'admin-portal.signature-collection:updateListEndTimeButton',
-    defaultMessage: 'Framlengja',
+  confirmListReviewed: {
+    id: 'admin-portal.signature-collection:confirmListReviewed',
+    defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
 

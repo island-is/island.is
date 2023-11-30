@@ -3,8 +3,8 @@ import {
   Text,
   Table as T,
   Pagination,
-  Input,
   Icon,
+  FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -24,21 +24,20 @@ const Signees = () => {
 
   return (
     <Box marginTop={5}>
-      <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
+      <Text variant="h3">
+        {formatMessage(m.listSigneesHeader) + ` (${signees.length})`}
+      </Text>
       <Box
         display={['block', 'flex']}
         justifyContent="spaceBetween"
         marginTop={3}
       >
         <Box className={searchWidth} marginBottom={[2, 0]}>
-          <Input
+          <FilterInput
             name="searchSignee"
-            placeholder={formatMessage(m.searchInListPlaceholder)}
-            icon={{ name: 'search' }}
-            backgroundColor="blue"
-            size="sm"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(v) => setSearchTerm(v)}
+            placeholder={formatMessage(m.searchInListPlaceholder)}
           />
         </Box>
       </Box>

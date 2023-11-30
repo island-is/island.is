@@ -18,6 +18,8 @@ import {
 } from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import PaperUpload from './components/paperUpload'
+import img from '../../../assets/img.jpg'
+import { format } from 'date-fns'
 
 const List = () => {
   const { list } = useLoaderData() as { list: SignatureList }
@@ -45,38 +47,25 @@ const List = () => {
         >
           {!!list && (
             <Box>
-              <IntroHeader title={list.owner.name + ' - ' + list.area.name} />
+              <IntroHeader
+                title={list.owner.name + ' - ' + list.area.name}
+                intro={formatMessage(m.signatureListsIntro)}
+                img={img}
+                imgPosition="right"
+              />
               <Stack space={3}>
-                <Box>
-                  <Text variant="h5">
-                    {formatMessage(m.listSigneesNumberHeader)}
-                  </Text>
-                  <Text variant="default">{list.numberOfSignatures}</Text>
-                </Box>
-                <Box>
-                  <Text variant="h5" marginBottom={1}>
-                    {formatMessage(m.updateListEndTime)}
-                  </Text>
-                  <Box display="flex">
-                    <Box width="half">
-                      <DatePicker
-                        appearInline
-                        label={formatMessage(m.signeeDate)}
-                        locale="is"
-                        handleChange={(date) => console.log(date)}
-                        minDate={new Date(list.endTime)}
-                        selected={new Date(list.endTime)}
-                        placeholderText=""
-                        size="sm"
-                      />
-                    </Box>
-
-                    <Box marginX={[0, 3]}>
-                      <Button iconType="outline">
-                        {formatMessage(m.updateListEndTimeButton)}
-                      </Button>
-                    </Box>
-                  </Box>
+                <Box display="flex" justifyContent="spaceBetween">
+                  <Button icon="reload" iconType="outline">
+                    {formatMessage(m.updateListEndTimeButton)}
+                  </Button>
+                  <Button
+                    icon="lockClosed"
+                    iconType="outline"
+                    variant="ghost"
+                    colorScheme="destructive"
+                  >
+                    {formatMessage(m.confirmListReviewed)}
+                  </Button>
                 </Box>
                 <Signees />
                 <PaperUpload />

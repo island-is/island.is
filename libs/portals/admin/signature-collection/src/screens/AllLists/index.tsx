@@ -2,11 +2,12 @@ import {
   ActionCard,
   Box,
   DropdownMenu,
+  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Input,
+  Text,
   Stack,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -14,23 +15,47 @@ import { m } from '../../lib/messages'
 
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import { SignatureList } from '@island.is/api/schema'
 import { format } from 'date-fns'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { searchWidth } from '../styles.css'
+import { useDebounce } from 'react-use'
+import img from '../../../assets/img.jpg'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const lists = useLoaderData() as SignatureList[]
-  const { revalidate } = useRevalidator()
-  const [searchTerm, setSearchTerm] = useState('')
 
-  useEffect(() => {
-    revalidate()
-  }, [])
+  const lists = useLoaderData() as SignatureList[]
+  const [searchFor, setSearchFor] = useState('')
+  const [allLists, setAllLists] = useState(lists)
+
+  const onSearch = (searchTerm: string) => {
+    if (searchTerm.length) {
+      const searchResults = lists.filter((list: SignatureList) => {
+        return (
+          list.owner.name.toLowerCase().includes(searchTerm) ||
+          list.area.name.toLowerCase().includes(searchTerm) ||
+          list.owner.nationalId.includes(searchTerm)
+        )
+      })
+
+      setAllLists(searchResults)
+      console.log(allLists)
+    } else {
+      setAllLists(lists)
+    }
+  }
+
+  useDebounce(
+    () => {
+      onSearch(searchFor)
+    },
+    500,
+    [lists, searchFor],
+  )
 
   return (
     <GridContainer>
@@ -50,23 +75,29 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
+            img={img}
+            imgPosition="right"
           />
-          <Box display="flex" marginBottom={10}>
+          <Box display={['block', 'flex']} marginBottom={[5, 10]}>
             <Box className={searchWidth} marginRight={2}>
-              <Input
+              <FilterInput
                 name="searchList"
-                icon={{ name: 'search' }}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Leita"
-                size="md"
+                value={searchFor}
+                onChange={(v) => setSearchFor(v)}
+                placeholder={formatMessage(m.searchInAllListsPlaceholder)}
               />
             </Box>
-            <DropdownMenu title="Sía niðurstöður" icon="filter" items={[]} />
+            <Box marginTop={[2, 0]}>
+              <DropdownMenu
+                title={formatMessage(m.filterLists)}
+                icon="filter"
+                items={[]}
+              />
+            </Box>
           </Box>
-          {lists && lists.length > 0 && (
+          {allLists && allLists.length > 0 ? (
             <Stack space={5}>
-              {lists.map((list: SignatureList) => {
+              {allLists.map((list: SignatureList) => {
                 return (
                   <ActionCard
                     key={list.id}
@@ -99,6 +130,15 @@ const Lists = () => {
                 )
               })}
             </Stack>
+          ) : searchFor.length > 0 ? (
+            <Box display="flex">
+              <Text>{formatMessage(m.noListsFoundBySearch)}</Text>
+              <Box marginLeft={1}>
+                <Text variant="h5">{searchFor}</Text>
+              </Box>
+            </Box>
+          ) : (
+            <Text>{formatMessage(m.noLists)}</Text>
           )}
         </GridColumn>
       </GridRow>
