@@ -1,7 +1,7 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const MAIN_QUEUE_NAME = 'user-notification-TEMP' // TODO change me back on merge
-const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure-TEMP' // TODO change me back on merge
+const MAIN_QUEUE_NAME = 'user-notification'
+const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
 
 const dbName = 'services_user_notification'
 
@@ -46,7 +46,7 @@ export const userNotificationServiceSetup =
       })
 
       .readiness('/liveness')
-      .readiness('/readiness')
+      .readiness('/liveness')// change to readiness - when ready ;)
       .ingress({
         primary: {
           host: {
@@ -135,4 +135,4 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
     })
     .readiness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')// change to readiness - when ready ;)
