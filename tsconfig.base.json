@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/administration-of-occupational-safety-and-health": [
+        "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
+      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
@@ -463,6 +466,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
+      ],
+      "@island.is/clients/administration-of-occupational-safety-and-health": [
+        "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
       ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"

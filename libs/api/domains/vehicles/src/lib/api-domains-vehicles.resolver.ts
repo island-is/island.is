@@ -43,19 +43,29 @@ export class VehiclesResolver {
   @Audit()
   async getVehicleList(
     @CurrentUser() user: User,
-    @Args('input') input: GetVehiclesForUserInput,
+    @Args('input', { nullable: true }) input?: GetVehiclesForUserInput,
   ) {
-    const res = await this.vehiclesService.getVehiclesForUser(user, input)
-    const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
-    return {
-      vehicleList: res.data,
-      paging: {
-        pageNumber: res.pageNumber,
-        pageSize: res.pageSize,
-        totalPages: res.totalPages,
-        totalRecords: res.totalRecords,
-      },
-      downloadServiceURL: !input.type ? downloadServiceURL : null,
+    if (input) {
+      const res = await this.vehiclesService.getVehiclesForUser(user, input)
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      return {
+        vehicleList: res.data,
+        paging: {
+          pageNumber: res.pageNumber,
+          pageSize: res.pageSize,
+          totalPages: res.totalPages,
+          totalRecords: res.totalRecords,
+        },
+        downloadServiceURL: !input?.type ? downloadServiceURL : null,
+      }
+    } else {
+      const res = await this.vehiclesService.getVehiclesForUserOldService(
+        user,
+        false,
+        false,
+      )
+      const downloadServiceURL = `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/${user.nationalId}`
+      return { ...res?.data, downloadServiceURL }
     }
   }
 

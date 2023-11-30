@@ -1,9 +1,10 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
-export const GET_LIFE_EVENT_QUERY = gql`
-  query GetLifeEvent($input: GetLifeEventPageInput!) {
-    getLifeEventPage(input: $input) {
+export const GET_ANCHOR_PAGE_QUERY = gql`
+  query GetAnchorPage($input: GetAnchorPageInput!) {
+    getAnchorPage(input: $input) {
       id
       title
       slug
@@ -23,9 +24,9 @@ export const GET_LIFE_EVENT_QUERY = gql`
   ${slices}
 `
 
-export const GET_LIFE_EVENTS_QUERY = gql`
-  query GetLifeEvents($input: GetLifeEventsInput!) {
-    getLifeEvents(input: $input) {
+export const GET_ANCHOR_PAGES_QUERY = gql`
+  query GetAnchorPages($input: GetAnchorPagesInput!) {
+    getAnchorPages(input: $input) {
       id
       title
       slug
@@ -42,9 +43,9 @@ export const GET_LIFE_EVENTS_QUERY = gql`
   }
 `
 
-export const GET_LIFE_EVENTS_IN_CATEGORY_QUERY = gql`
-  query GetLifeEventsInCategory($input: GetLifeEventsInCategoryInput!) {
-    getLifeEventsInCategory(input: $input) {
+export const GET_ANCHOR_PAGES_IN_CATEGORY_QUERY = gql`
+  query GetAnchorPagesInCategory($input: GetAnchorPagesInCategoryInput!) {
+    getAnchorPagesInCategory(input: $input) {
       id
       title
       slug
