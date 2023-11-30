@@ -33,7 +33,7 @@ interface Props {
   pageSize: number
   organizations: Organization[]
   shouldShowCardButtons?: boolean
-  numberOfItems?: number
+  numberOfItems?: number // Set this if using paginated data from api
 }
 
 export const ApplicationsTable = ({
@@ -48,8 +48,8 @@ export const ApplicationsTable = ({
   const { formatMessage } = useLocale()
 
   const pagedDocuments = {
-    from: (page - 1) * pageSize,
-    to: pageSize * page,
+    from: numberOfItems ? 0 : (page - 1) * pageSize,
+    to: numberOfItems ? numberOfItems : pageSize * page,
     totalPages: numberOfItems
       ? Math.ceil(numberOfItems / pageSize)
       : Math.ceil(applications.length / pageSize),
