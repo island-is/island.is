@@ -573,6 +573,7 @@ export function buildImageField(
     alt,
     marginTop,
     marginBottom,
+    condition,
     imageWidth = 'full',
     titleVariant = 'h4',
   } = data
@@ -585,6 +586,7 @@ export function buildImageField(
     imageWidth,
     marginTop,
     marginBottom,
+    condition,
     titleVariant,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
