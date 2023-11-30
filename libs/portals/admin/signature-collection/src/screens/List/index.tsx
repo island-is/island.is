@@ -20,7 +20,7 @@ import {
 import Signees from './components/signees'
 import PaperUpload from './components/paperUpload'
 import img from '../../../assets/img.jpg'
-import { format } from 'date-fns'
+import format from 'date-fns/format'
 
 const List = () => {
   const { list } = useLoaderData() as { list: SignatureList }
