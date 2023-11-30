@@ -63,6 +63,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
 
+  const additionalAttachments = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFiles.additionalDocuments',
+  ) as FileType[]
+
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+  ) as FileType[]
+
   const comment = getValueViaPath(answers, 'comment') as string
 
   const bankAccountType = getValueViaPath(
@@ -91,6 +101,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationReason,
     selectedYear,
     selectedMonth,
+    additionalAttachments,
+    additionalAttachmentsRequired,
     comment,
     bankAccountType,
     bank,
@@ -201,7 +213,11 @@ export function getAttachments(application: Application) {
   }
 
   const { answers } = application
-  const { applicationReason } = getApplicationAnswers(answers)
+  const {
+    applicationReason,
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const pensionSupplementAttachments =
@@ -250,12 +266,19 @@ export function getAttachments(application: Application) {
     }
   })
 
-  if (
-    pensionSupplementAttachments.additionalDocuments &&
-    pensionSupplementAttachments.additionalDocuments?.length > 0
-  ) {
+  const additionalDocuments = [
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
+      : []),
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
+      : []),
+  ]
+
+  if (additionalDocuments.length > 0) {
     getAttachmentDetails(
-      pensionSupplementAttachments?.additionalDocuments,
+      additionalDocuments,
       AttachmentTypes.ADDITIONAL_DOCUMENTS,
     )
   }

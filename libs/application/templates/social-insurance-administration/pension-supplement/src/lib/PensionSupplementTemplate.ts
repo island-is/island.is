@@ -1,4 +1,5 @@
 import { assign } from 'xstate'
+import set from 'lodash/set'
 import unset from 'lodash/unset'
 import {
   ApplicationTemplate,
@@ -47,7 +48,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
-          progress: 0.25,
           //onExit: defineTemplateApi - kalla á TR
           roles: [
             {
@@ -90,7 +90,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
               logMessage: statesMessages.applicationSent,
             },
           },
-          progress: 0.25,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -117,7 +116,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
-          progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
@@ -162,7 +160,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          progress: 0.75,
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           actionCard: {
@@ -192,6 +189,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['moveAdditionalDocumentRequired'],
         meta: {
           status: 'inprogress',
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
@@ -213,7 +211,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
             ],
           },
           lifecycle: pruneAfterDays(970),
-          progress: 0.5,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -235,7 +232,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          progress: 1,
           status: 'approved',
           actionCard: {
             pendingAction: {
@@ -260,7 +256,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
       [States.REJECTED]: {
         meta: {
           name: States.REJECTED,
-          progress: 1,
           status: 'rejected',
           actionCard: {
             historyLogs: [
@@ -302,6 +297,25 @@ const PensionSupplementTemplate: ApplicationTemplate<
         if (bankAccountType === BankAccountType.FOREIGN) {
           unset(application.answers, 'paymentInfo.bank')
         }
+        return context
+      }),
+      moveAdditionalDocumentRequired: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { additionalAttachmentsRequired, additionalAttachments } =
+          getApplicationAnswers(answers)
+
+        const mergedAdditionalDocumentRequired = [
+          ...additionalAttachments,
+          ...additionalAttachmentsRequired,
+        ]
+
+        set(
+          answers,
+          'fileUploadAdditionalFiles.additionalDocuments',
+          mergedAdditionalDocumentRequired,
+        )
+        unset(answers, 'fileUploadAdditionalFilesRequired')
 
         return context
       }),
