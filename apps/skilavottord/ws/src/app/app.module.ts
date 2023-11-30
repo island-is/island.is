@@ -41,7 +41,7 @@ const autoSchemaFile = environment.production
     AuthModule,
     AuthJwtModule.register({
       audience: null,
-      issuer: 'https://identity-server.dev01.devland.is',
+      issuer: environment.auth.issuer,
     }),
     AccessControlModule,
     RecyclingRequestModule,
