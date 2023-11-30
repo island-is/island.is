@@ -183,7 +183,7 @@ export const information = {
         description: 'Stays abroad sub section title',
       },
       pageSubTitle: {
-        id: 'doi.cs.application:information.labels.staysAbroad.subSectionTitle',
+        id: 'doi.cs.application:information.labels.staysAbroad.pageSubTitle',
         defaultMessage:
           'Gefðu upplýsingar um dvöl erlendis lengur en 3 mánuði frá lögheimilisskráningu, til þess dags þegar þessi umsókn er lögð fram.',
         description: 'Stays abroad sub section title',

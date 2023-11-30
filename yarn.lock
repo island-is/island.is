@@ -53607,10 +53607,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xmldom@github:xmldom/xmldom#0.7.0":
-  version: 0.7.0
-  resolution: "xmldom@https://github.com/xmldom/xmldom.git#commit=c568938641cc1f121cef5b4df80fcfda1e489b6e"
-  checksum: 86beb4f90675610ad4c2de68a46c7747b90b2a077fa73069973bd681b07fe4384361cfe1785d090e42f499095a7cfaadc3988a1aca2a3ef55c3d9d9a98d9e1d0
+"xmldom@npm:0.1.27":
+  version: 0.1.27
+  resolution: "xmldom@npm:0.1.27"
+  checksum: a61ad9bd04c87f6df1dc69e88c0f14e3a761d85a9e3f5047b89c2db2b84491ebe25e1ac9a69e4bfc2a9d142b78614a476cc256932606b8a4bb91f342d43f034a
+  languageName: node
+  linkType: hard
+
+"xmldom@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "xmldom@npm:0.3.0"
+  checksum: a4d1e48dc7fa5f5e460c24e26d9d2d98edc52cdfcbf3b2c0edbb61d1808d1af986bc3ef7f4cafa673edf3f08130ed2def9ec6d0a993e2f33c2804b1726cab100
   languageName: node
   linkType: hard
 
