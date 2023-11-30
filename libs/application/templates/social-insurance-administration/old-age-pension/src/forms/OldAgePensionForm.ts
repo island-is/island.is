@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
+  buildExpandableDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -13,6 +14,7 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
+  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -876,55 +878,80 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      title: oldAgePensionFormMessage.review.overviewTitle,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirm',
           title: '',
+          description: '',
           children: [
-            buildMultiField({
-              id: 'confirm',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmScreen',
-                    title: oldAgePensionFormMessage.review.confirmTitle,
-                    component: 'Review',
+            buildCustomField(
+              {
+                id: 'confirmScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: oldAgePensionFormMessage.review.confirmTitle,
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: oldAgePensionFormMessage.review.cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
                   },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: oldAgePensionFormMessage.review.confirmTitle,
-                  actions: [
-                    {
-                      event: DefaultEvents.ABORT,
-                      name: oldAgePensionFormMessage.review.cancelButton,
-                      type: 'reject',
-                      condition: (answers) => {
-                        const { tempAnswers } = getApplicationAnswers(answers)
-                        return !!tempAnswers
-                      },
-                    },
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.review.confirmTitle,
-                      type: 'primary',
-                    },
-                  ],
-                }),
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: oldAgePensionFormMessage.review.confirmTitle,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
+      ],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      children: [
+        buildMultiField({
+          id: 'conclusion.multifield',
           title: oldAgePensionFormMessage.conclusionScreen.title,
-          component: 'Conclusion',
+          children: [
+            buildAlertMessageField({
+              id: 'conclusion.alert',
+              title: oldAgePensionFormMessage.conclusionScreen.title,
+              alertType: 'warning',
+              message: oldAgePensionFormMessage.conclusionScreen.alertTitle,
+            }),
+            buildExpandableDescriptionField({
+              id: 'conclusion.bullet',
+              title: oldAgePensionFormMessage.conclusionScreen.nextStepsLabel,
+              introText:
+                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
+              description: oldAgePensionFormMessage.conclusionScreen.bulletList,
+              startExpanded: true,
+            }),
+            buildMessageWithLinkButtonField({
+              id: 'conclusion.goToIncomePlan',
+              title: '',
+              url: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+              buttonTitle:
+                oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
+              message:
+                oldAgePensionFormMessage.conclusionScreen.incomePlanCardText,
+            }),
+          ],
         }),
       ],
     }),
