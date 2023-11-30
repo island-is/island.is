@@ -264,7 +264,7 @@ export const errorMessages = defineMessages({
   cancelRecycleVehicleDescription: {
     id: 'rf.cr.application:error.cancel.recycle.vehicle.description',
     defaultMessage:
-      'Ekki tókst að afskrá bifreið úr endurvinnslu hjá Úrvinnslusjóði',
+      'Ekki tókst að afskrá bifreið í endurvinnslu hjá Úrvinnslusjóði',
     description: 'Unable to deregister vehicle at the Icelandic Recycling Fund',
   },
 })
