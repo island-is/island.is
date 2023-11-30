@@ -28,21 +28,6 @@ export const ExampleForm: Form = buildForm({
   title: 'Atvinnuleysisbætur',
   mode: FormModes.DRAFT,
   children: [
-    buildFormConclusionSection({
-      sectionTitle: m.conditionsSection,
-      expandableHeader: m.conditionsSection,
-      expandableIntro: m.conditionsSection,
-      expandableDescription: m.conditionsSection,
-      multiFieldTitle: m.conditionsSection,
-      conclusionLinkLabel: m.conditionsSection,
-      conclusionLink: 'https://www.island.is',
-      alertType: 'warning',
-      alertTitle: m.conditionsSection,
-      alertMessage: m.conditionsSection,
-      bottomButtonLabel: m.conditionsSection,
-      bottomButtonMessage: m.conditionsSection,
-      bottomButtonLink: 'https://www.island.is/test',
-    }),
     buildSection({
       id: 'conditions',
       title: m.conditionsSection,
