@@ -1,10 +1,10 @@
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { States } from '../../../shared/constants'
+import { getApplicationAnswers } from '../../../lib/carRecyclingUtils'
 
 export const Vehicles = ({
   application,
@@ -13,7 +13,7 @@ export const Vehicles = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
 
-  const [{ selectedVehicles }] = useStatefulAnswers(application)
+  const { selectedVehicles } = getApplicationAnswers(application.answers)
 
   const { state } = application
 
