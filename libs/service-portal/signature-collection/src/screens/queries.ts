@@ -116,6 +116,14 @@ export const GetOwnerLists = gql`
     }
   }
 `
+
+export const GetIsOwner = gql`
+  query isOwner {
+    signatureCollectionIsOwner {
+      success
+    }
+  }
+`
 export const GetListsBySigneeArea = gql`
   query listsByArea($input: SignatureCollectionAreaInput!) {
     signatureCollectionListsByArea(input: $input) {
@@ -144,14 +152,6 @@ export const GetListsBySigneeArea = gql`
       active
       collectionId
       link
-    }
-  }
-`
-
-export const GetIsOwner = gql`
-  query isOwner {
-    signatureCollectionIsOwner {
-      success
     }
   }
 `
