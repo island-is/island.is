@@ -23,8 +23,8 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
-  listDateTil: {
-    id: 'admin-portal.signature-collection:listDateTil',
+  listEndTime: {
+    id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
     description: '',
   },
@@ -114,13 +114,13 @@ export const m = defineMessages({
   // Upload
   uploadFile: {
     id: 'admin-portal.signature-collection:uploadFile',
-    defaultMessage: 'Bæta einning við meðmælum á blaði',
+    defaultMessage: 'Bæta einning við meðmælum af blaði',
     description: '',
   },
   uploadFileDescription: {
     id: 'admin-portal.signature-collection:uploadFileDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non felis augue. Integer erat sapien, auctor ac porttitor ut, lacinia quis erat. Vivamus quis sollicitudin turpis. Aliquam erat volutpat. Donec ut ante malesuada, varius erat ut, scelerisque sapien. Sed in eros at purus sollicitudin feugiat non non arcu. Nullam at sapien eu nisi tempor pulvinar ut sed nibh. Sed ex libero, vestibulum vitae eros sit amet, sagittis cursus lacus.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non felis augue. Integer erat sapien, auctor ac porttitor ut, lacinia quis erat. Vivamus quis sollicitudin turpis. Aliquam erat volutpat. Donec ut ante malesuada, varius erat ut, scelerisque sapien. Sed in eros at purus sollicitudin feugiat non non arcu. Nullam at sapien eu nisi tempor pulvinar ut sed nibh.',
     description: '',
   },
   uploadHeader: {

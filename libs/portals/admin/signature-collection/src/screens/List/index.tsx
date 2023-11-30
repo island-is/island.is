@@ -13,6 +13,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Input,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
@@ -55,9 +56,19 @@ const List = () => {
               />
               <Stack space={3}>
                 <Box display="flex" justifyContent="spaceBetween">
-                  <Button icon="reload" iconType="outline">
-                    {formatMessage(m.updateListEndTimeButton)}
-                  </Button>
+                  <Box display="flex">
+                    <Input
+                      readOnly
+                      name="endTime"
+                      value={format(new Date(list.endTime), 'dd.mm.yyyy') ?? ''}
+                      label={formatMessage(m.listEndTime)}
+                      size="sm"
+                    />
+                    <Box marginLeft={2}>
+                      <Button icon="calendar" iconType="outline" />
+                    </Box>
+                  </Box>
+
                   <Button
                     icon="lockClosed"
                     iconType="outline"

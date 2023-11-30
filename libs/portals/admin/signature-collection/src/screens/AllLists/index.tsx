@@ -102,7 +102,7 @@ const Lists = () => {
                   <ActionCard
                     key={list.id}
                     eyebrow={
-                      formatMessage(m.listDateTil) +
+                      formatMessage(m.listEndTime) +
                       ': ' +
                       format(new Date(list.endTime), 'dd.MM.yyyy')
                     }
