@@ -242,7 +242,7 @@ export class DirectorateOfImmigrationClient {
             attachmentType: file.attachmentType,
             fileName: file.fileList[k].filename,
             base64Contents: file.fileList[k].base64,
-            countryCode: file.fileList[k].countryId || '1', //TODOx
+            countryCode: file.fileList[k].countryId,
           },
         })
       }
@@ -343,7 +343,6 @@ export class DirectorateOfImmigrationClient {
               attachmentType: file.attachmentType,
               fileName: file.fileList[k].filename,
               base64Contents: file.fileList[k].base64,
-              countryCode: '1', //TODOx
             },
           })
         }

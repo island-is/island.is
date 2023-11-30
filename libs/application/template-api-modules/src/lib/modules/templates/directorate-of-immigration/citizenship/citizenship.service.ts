@@ -128,26 +128,23 @@ export class CitizenshipService extends BaseTemplateApiService {
     application,
     auth,
   }: TemplateApiModuleActionProps): Promise<void> {
-    //TODOx
-    console.log('--------submitApplication')
+    const { paymentUrl } = application.externalData.createCharge.data as {
+      paymentUrl: string
+    }
+    if (!paymentUrl) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
 
-    // const { paymentUrl } = application.externalData.createCharge.data as {
-    //   paymentUrl: string
-    // }
-    // if (!paymentUrl) {
-    //   throw new Error(
-    //     'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-    //   )
-    // }
+    const isPayment: { fulfilled: boolean } | undefined =
+      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
 
-    // const isPayment: { fulfilled: boolean } | undefined =
-    //   await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
-
-    // if (!isPayment?.fulfilled) {
-    //   throw new Error(
-    //     'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-    //   )
-    // }
+    if (!isPayment?.fulfilled) {
+      throw new Error(
+        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+      )
+    }
 
     const answers = application.answers as CitizenshipAnswers
 
