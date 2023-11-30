@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Owner {
+export class SignatureCollectionOwner {
   @Field()
   nationalId!: string
 

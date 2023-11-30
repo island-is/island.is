@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Area {
+export class SignatureCollectionArea {
   @Field(() => ID)
   id!: string
 

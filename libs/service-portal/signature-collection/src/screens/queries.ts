@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GetListById = gql`
-  query listbyid($input: IdInput!) {
+  query listbyid($input: SignatureCollectionIdInput!) {
     signatureCollectionList(input: $input) {
       id
       title
@@ -34,7 +34,7 @@ export const GetListById = gql`
 `
 
 export const GetListSignatures = gql`
-  query Signatures($input: IdInput!) {
+  query Signatures($input: SignatureCollectionIdInput!) {
     signatureCollectionSignatures(input: $input) {
       id
       listId
@@ -117,7 +117,7 @@ export const GetOwnerLists = gql`
   }
 `
 export const GetListsBySigneeArea = gql`
-  query listsByArea($input: AreaInput!) {
+  query listsByArea($input: SignatureCollectionAreaInput!) {
     signatureCollectionListsByArea(input: $input) {
       id
       title

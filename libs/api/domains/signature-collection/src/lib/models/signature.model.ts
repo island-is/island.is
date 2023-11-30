@@ -1,8 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Signee } from './signee.model'
+import { SignatureCollectionSignee } from './signee.model'
 
 @ObjectType()
-export class Signature {
+export class SignatureCollectionSignature {
   @Field(() => ID)
   id!: string
 
@@ -15,8 +15,8 @@ export class Signature {
   @Field(() => Date)
   modified!: Date
 
-  @Field(() => Signee)
-  signee!: Signee
+  @Field(() => SignatureCollectionSignee)
+  signee!: SignatureCollectionSignee
 
   @Field(() => Boolean, { nullable: true })
   active?: boolean
