@@ -55,6 +55,11 @@ export class NotificationsController {
   async createNotification(
     @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
+    this.logger.info('Creating notification', {
+      recipient: body.recipient,
+      organization: body.organization,
+      documentId: body.documentId,
+    })
     return this.createHnippNotification({
       recipient: body.recipient,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
@@ -91,6 +96,9 @@ export class NotificationsController {
   async getNotificationTemplates(
     @Query('locale') locale: string,
   ): Promise<HnippTemplate[]> {
+    this.logger.info(
+      `Fetching templates from Contentful GQL for locale: ${locale}`,
+    )
     return await this.notificationsService.getTemplates(locale)
   }
 
