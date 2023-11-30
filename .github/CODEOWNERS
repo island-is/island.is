@@ -232,6 +232,8 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/housing-benefit-calculator/                                                                @island-is/stefna
 /libs/clients/ship-registry/                                                                             @island-is/stefna
 /libs/api/domains/ship-registry/                                                                         @island-is/stefna
+/libs/clients/administration-of-occupational-safety-and-health/                                          @island-is/stefna
+/libs/api/domains/administration-of-occupational-safety-and-health/                                      @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 

@@ -122,6 +122,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -289,6 +290,7 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
+    AdministrationOfOccupationalSafetyAndHealthModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
