@@ -14,6 +14,7 @@ const PaperUpload = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
+  const [uploadResults, setUploadResults] = useState(false)
 
   return (
     <Box marginTop={5}>
@@ -46,31 +47,33 @@ const PaperUpload = () => {
               header={formatMessage(m.uploadHeader)}
               description={formatMessage(m.uploadText)}
               buttonLabel={formatMessage(m.uploadButton)}
-              onChange={() => console.log('todo')}
+              onChange={() => setUploadResults(true)}
               onRemove={() => console.log('todo')}
             />
-            <Box marginTop={10}>
-              <Text variant="h4" marginBottom={1}>
-                {formatMessage(m.uploadResultsHeader)}
-              </Text>
-              <Accordion dividerOnTop={false}>
-                <AccordionItem
-                  id="uploadSuccess"
-                  labelVariant="default"
-                  label={formatMessage(m.nationalIdsSuccess)}
-                >
-                  <Text>{formatMessage(m.tempMessage)}</Text>
-                </AccordionItem>
-                <AccordionItem
-                  id="uploadError"
-                  labelVariant="default"
-                  labelColor="red600"
-                  label={formatMessage(m.nationalIdsError)}
-                >
-                  <Text>{formatMessage(m.tempMessage)}</Text>
-                </AccordionItem>
-              </Accordion>
-            </Box>
+            {uploadResults && (
+              <Box marginTop={10} marginBottom={5}>
+                <Text variant="h4" marginBottom={1}>
+                  {formatMessage(m.uploadResultsHeader)}
+                </Text>
+                <Accordion dividerOnTop={false}>
+                  <AccordionItem
+                    id="uploadSuccess"
+                    labelVariant="default"
+                    label={formatMessage(m.nationalIdsSuccess)}
+                  >
+                    <Text>{formatMessage(m.tempMessage)}</Text>
+                  </AccordionItem>
+                  <AccordionItem
+                    id="uploadError"
+                    labelVariant="default"
+                    labelColor="red600"
+                    label={formatMessage(m.nationalIdsError)}
+                  >
+                    <Text>{formatMessage(m.tempMessage)}</Text>
+                  </AccordionItem>
+                </Accordion>
+              </Box>
+            )}
           </>
         )}
       </Box>

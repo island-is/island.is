@@ -92,11 +92,6 @@ const Lists = () => {
                             ':id',
                             list.id,
                           ),
-                          {
-                            state: {
-                              list,
-                            },
-                          },
                         )
                       },
                     }}
