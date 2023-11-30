@@ -6,7 +6,6 @@ export const wrapper = style({
   display: 'grid',
   gap: theme.spacing[2],
   gridTemplateColumns: '1fr',
-  gridTemplateRows: 'auto auto',
   width: '100%',
 })
 
