@@ -5,7 +5,7 @@ import { Box, Hidden, Link, Text, TextProps } from '@island.is/island-ui/core'
 
 import * as styles from './DefaultHeader.css'
 
-interface HeaderProps {
+export interface DefaultHeaderProps {
   fullWidth?: boolean
   image?: string
   background?: string
@@ -13,9 +13,13 @@ interface HeaderProps {
   logo?: string
   logoHref?: string
   titleColor?: TextProps['color']
+  imagePadding?: string
+  imageIsFullHeight?: boolean
 }
 
-const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
+export const DefaultHeader: React.FC<
+  React.PropsWithChildren<DefaultHeaderProps>
+> = ({
   fullWidth,
   image,
   background,
@@ -23,6 +27,8 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   logo,
   logoHref,
   titleColor = 'dark400',
+  imagePadding = '20px',
+  imageIsFullHeight = true,
 }) => {
   const imageProvided = !!image
   const logoProvided = !!logo
@@ -70,14 +76,25 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
                   </LinkWrapper>
                 </Hidden>
               )}
-              <Text variant="h1" as="h1" color={titleColor}>
-                {title}
-              </Text>
+              <Box>
+                <Text variant="h1" as="h1" color={titleColor}>
+                  {title}
+                </Text>
+              </Box>
             </div>
           </div>
           {imageProvided && (
             <Hidden below="lg">
-              <img className={styles.headerImage} src={image} alt="header" />
+              <img
+                style={{
+                  padding: imagePadding,
+                  objectFit: 'contain',
+                  height: imageIsFullHeight ? '100%' : undefined,
+                }}
+                className={styles.headerImage}
+                src={image}
+                alt=""
+              />
             </Hidden>
           )}
         </div>
@@ -85,5 +102,3 @@ const DefaultHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
     </>
   )
 }
-
-export default DefaultHeader

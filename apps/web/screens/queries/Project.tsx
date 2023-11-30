@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, nestedOneColumnTextFields, slices } from './fragments'
 
 export const GET_PROJECT_PAGE_QUERY = gql`
@@ -113,6 +114,15 @@ export const GET_PROJECT_PAGE_QUERY = gql`
         height
       }
       defaultHeaderBackgroundColor
+      themeProperties {
+        gradientStartColor
+        gradientEndColor
+        backgroundColor
+        textColor
+        fullWidth
+        imagePadding
+        imageIsFullHeight
+      }
     }
   }
   ${slices}

@@ -54,10 +54,8 @@ export const textInnerContainer = style({
 })
 
 export const headerImage = style({
-  height: '100%',
   width: '100%',
-  objectFit: 'contain',
-  padding: '20px',
+  maxHeight: '100%',
   ...themeUtils.responsiveStyle({
     xs: {
       order: 0,

@@ -22,6 +22,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
@@ -290,7 +291,12 @@ export const OrganizationHeader: React.FC<
             linkResolver('organizationpage', [organizationPage.slug]).href
           }
           titleColor={
-            organizationPage.themeProperties.darkText ? 'dark400' : 'white'
+            (organizationPage.themeProperties
+              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
+          }
+          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
+          imageIsFullHeight={
+            organizationPage.themeProperties.imageIsFullHeight ?? false
           }
         />
       )

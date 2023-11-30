@@ -1,5 +1,6 @@
 import {
   DefaultHeader,
+  DefaultHeaderProps,
   DefaultProjectHeader,
   DirectorateOfHealthDashboardHeader,
   EntryProjectHeader,
@@ -20,6 +21,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
     case 'ukraine':
       return <UkraineProjectHeader projectPage={projectPage} />
     case 'opinbernyskopun':
+      return (
         <DefaultProjectHeader
           projectPage={projectPage}
           headerImageObjectFit="contain"
@@ -31,10 +33,19 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <DirectorateOfHealthDashboardHeader projectPage={projectPage} />
     case 'grindavik':
       return <GrindavikProjectHeader projectPage={projectPage} />
-    case 'default-v2':
-      return <DefaultProjectHeader projectPage={projectPage} />
     default:
-      return <DefaultHeader title={projectPage.title} />
+      return (
+        <DefaultHeader
+          title={projectPage.title}
+          background={projectPage.defaultHeaderBackgroundColor}
+          titleColor={
+            (projectPage.themeProperties
+              ?.textColor as DefaultHeaderProps['titleColor']) || 'dark400'
+          }
+          fullWidth={projectPage.themeProperties?.fullWidth ?? false}
+          image={projectPage.defaultHeaderImage?.url}
+        />
+      )
   }
 }
 
