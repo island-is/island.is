@@ -33,7 +33,7 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
               <FileUploadController
                 key={x.countryId}
                 application={application}
-                id={`${field.id}.${x.countryId}.attachment`}
+                id={`${field.id}.${x.countryId}`}
                 header={`Sakavottorð - ${
                   countryOptions.filter(
                     (z) => z.id?.toString() === x.countryId,
