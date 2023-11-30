@@ -43,9 +43,8 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
                 application={application}
                 id={`${field.id}[${index}].attachment`}
                 header={`Sakavottorð - ${
-                  countryOptions.filter(
-                    (z) => z.id?.toString() === x.countryId,
-                  )[0]?.name
+                  countryOptions.find((z) => z.id?.toString() === x.countryId)
+                    ?.name
                 }`}
                 description={formatMessage(
                   supportingDocuments.labels.otherDocuments.acceptedFileTypes,

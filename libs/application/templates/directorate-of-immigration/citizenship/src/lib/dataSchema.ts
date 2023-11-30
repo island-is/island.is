@@ -145,7 +145,6 @@ const ParentsSchema = z.object({
 const FileDocumentSchema = z.object({
   name: z.string(),
   key: z.string(),
-  // url: z.string().optional(),
 })
 
 const PassportSchema = z.object({
