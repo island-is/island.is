@@ -12,6 +12,7 @@ import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
 import { Attachments, FileType, FileUpload } from '../types'
+import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 enum AttachmentTypes {
   LEASE_AGREEMENT = 'leaseAgreement',
@@ -20,11 +21,6 @@ enum AttachmentTypes {
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
-
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
@@ -59,7 +55,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const comment = getValueViaPath(answers, 'comment') as string
 
   return {
-    applicantEmail,
     applicantPhonenumber,
     householdSupplementHousing,
     householdSupplementChildren,
@@ -91,35 +86,22 @@ export function getApplicationExternalData(
     'nationalRegistry.data.nationalId',
   ) as string
 
-  const applicantAddress = getValueViaPath(
+  const bankInfo = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.streetAddress',
-  ) as string
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
+  ) as BankInfo
 
-  const applicantPostalCode = getValueViaPath(
+  const email = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.postalCode',
-  ) as string
-
-  const applicantLocality = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.locality',
-  ) as string
-
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
-
-  const bank = getValueViaPath(
-    externalData,
-    'userProfile.data.bankInfo',
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
 
   return {
     cohabitants,
     applicantName,
     applicantNationalId,
-    applicantAddress,
-    applicantMunicipality,
-    bank,
+    bankInfo,
+    email,
   }
 }
 
