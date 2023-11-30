@@ -9,6 +9,7 @@ import {
   buildCustomField,
   buildRadioField,
   buildFileUploadField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -94,18 +95,14 @@ export const HouseholdSupplementForm: Form = buildForm({
               title: householdSupplementFormMessage.info.paymentTitle,
               description: '',
               children: [
-                buildCustomField(
-                  {
-                    id: 'paymentInfo.alert',
-                    title:
-                      householdSupplementFormMessage.info.paymentAlertTitle,
-                    component: 'FieldAlertMessage',
-                    doesNotRequireAnswer: true,
-                    description:
-                      householdSupplementFormMessage.info.paymentAlertMessage,
-                  },
-                  { type: 'info' },
-                ),
+                buildAlertMessageField({
+                  id: 'paymentInfo.alert',
+                  title: householdSupplementFormMessage.info.paymentAlertTitle,
+                  message:
+                    householdSupplementFormMessage.info.paymentAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
                 buildTextField({
                   id: 'paymentInfo.bank',
                   title: householdSupplementFormMessage.info.paymentBank,
@@ -142,24 +139,20 @@ export const HouseholdSupplementForm: Form = buildForm({
                 householdSupplementFormMessage.info
                   .householdSupplementDescription,
               children: [
-                buildCustomField(
-                  {
-                    id: 'householdSupplement.alert',
-                    title:
-                      householdSupplementFormMessage.info
-                        .householdSupplementAlertTitle,
-                    component: 'FieldAlertMessage',
-                    doesNotRequireAnswer: true,
-                    description:
-                      householdSupplementFormMessage.info
-                        .householdSupplementAlertDescription,
-
-                    condition: (_, externalData) => {
-                      return isExistsCohabitantOlderThan25(externalData)
-                    },
+                buildAlertMessageField({
+                  id: 'householdSupplement.alert',
+                  title:
+                    householdSupplementFormMessage.info
+                      .householdSupplementAlertTitle,
+                  message:
+                    householdSupplementFormMessage.info
+                      .householdSupplementAlertDescription,
+                  doesNotRequireAnswer: true,
+                  alertType: 'warning',
+                  condition: (_, externalData) => {
+                    return isExistsCohabitantOlderThan25(externalData)
                   },
-                  { type: 'warning' },
-                ),
+                }),
                 buildRadioField({
                   id: 'householdSupplement.housing',
                   title:

@@ -65,13 +65,13 @@ export const householdSupplementFormMessage: MessageDir = {
     },
     skraInformationSubTitle: {
       id: 'hs.application:skra.info.subtitle',
-      defaultMessage: 'Sækir upplýsingar um þig, maka og börn.',
-      description: 'Information about you, spouse and children.',
+      defaultMessage: 'Upplýsingar um þig og lögheimilistengsl.',
+      description: 'Information about you and ...',
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'hs.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
-      description: 'Information regarding income and circumstances',
+      defaultMessage: 'Upplýsingar af mínum síðum hjá Tryggingastofnun',
+      description: 'english translation',
     },
     socialInsuranceAdministrationInformationDescription: {
       id: 'hs.application:prerequisites.socialInsuranceAdministration.description#markdown',
@@ -84,6 +84,19 @@ export const householdSupplementFormMessage: MessageDir = {
       id: 'hs.application:start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
+    },
+    isNotEligibleLabel: {
+      id: 'hs.application:is.not.eligible.label',
+      defaultMessage: 'Því miður hefur þú ekki rétt á heimilisuppbót',
+      description:
+        'Unfortunately, you are not entitled to household supplement',
+    },
+    isNotEligibleDescription: {
+      id: 'hs.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ekki lífeyrisþegi.\n* Maki þinn delur ekki á stofnun fyrir aldraða.\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following.\n* You are not a pensioner.\n* Your spouse does not belong to an institution for the elderly.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
   }),
 

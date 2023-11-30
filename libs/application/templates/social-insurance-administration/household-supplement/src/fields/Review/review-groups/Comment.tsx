@@ -3,15 +3,14 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { householdSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { getApplicationAnswers } from '../../../lib/householdSupplementUtils'
 
 export const Comment = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ comment }] = useStatefulAnswers(application)
-
+  const { comment } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
 
   return (
