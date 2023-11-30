@@ -4,17 +4,14 @@ import {
   UseGuards,
   forwardRef,
 } from '@nestjs/common'
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
-import { Authorize, CurrentUser, Role, User } from '../auth'
+import { CurrentUser, Role, User } from '../auth'
 import { SamgongustofaService } from '../samgongustofa'
-import { VehicleModel } from '../vehicle'
 import { CreateRecyclingRequestInput } from './dto/createRecyclingRequest.input'
 import {
   RecyclingRequestModel,
   RecyclingRequestResponse,
-  RequestStatus,
 } from './recyclingRequest.model'
 import { RecyclingRequestService } from './recyclingRequest.service'
 
@@ -26,90 +23,6 @@ export class RecyclingRequestAppSysResolver {
     @Inject(forwardRef(() => SamgongustofaService))
     private samgongustofaService: SamgongustofaService,
   ) {}
-
-  @Mutation(() => RequestStatus)
-  async createRecyclingRequestAppSys(
-    @CurrentUser() user: User,
-    @Args('input') input: CreateRecyclingRequestInput,
-  ): Promise<RequestStatus> {
-    return {
-      status: true,
-    }
-  }
-
-  @Authorize({ roles: [Role.developer, Role.recyclingFund] })
-  @Query(() => [RecyclingRequestModel])
-  async skilavottordAllRecyclingRequestsAppSys(): Promise<
-    RecyclingRequestModel[]
-  > {
-    const recyclingRequests = await this.recyclingRequestService.findAll()
-    return recyclingRequests
-  }
-
-  @Query(() => [RecyclingRequestModel])
-  async skilavottordUserRecyclingRequestAppSys(
-    @CurrentUser() user: User,
-    @Args('permno') perm: string,
-  ): Promise<RecyclingRequestModel[]> {
-    const vehicle = await this.samgongustofaService.getUserVehicle(
-      user.nationalId,
-      perm,
-      false,
-    )
-    if (!vehicle) {
-      throw new NotFoundException(
-        `Car with license plate ${perm} was not found for this user`,
-      )
-    }
-
-    const userLastRecyclingRequest =
-      await this.recyclingRequestService.findUserRecyclingRequestWithPermno(
-        vehicle,
-      )
-    return userLastRecyclingRequest
-  }
-
-  @Authorize({
-    roles: [
-      Role.developer,
-      Role.recyclingCompany,
-      Role.recyclingFund,
-      Role.recyclingCompanyAdmin,
-    ],
-  })
-  @Query(() => [RecyclingRequestModel])
-  async skilavottordRecyclingRequestsAppSys(
-    @Args('permno') perm: string,
-  ): Promise<RecyclingRequestModel[]> {
-    const recyclingRequests =
-      await this.recyclingRequestService.findAllWithPermno(perm)
-    return recyclingRequests
-  }
-
-  @Authorize({
-    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
-  })
-  @Query(() => Boolean)
-  async skilavottordDeRegisterVehicleAppSys(
-    @Args('vehiclePermno') nid: string,
-    @Args('recyclingPartner') station: string,
-  ): Promise<boolean> {
-    return this.recyclingRequestService.deRegisterVehicle(nid, station)
-  }
-
-  @Authorize({
-    roles: [Role.developer, Role.recyclingCompany, Role.recyclingCompanyAdmin],
-  })
-  @Query(() => VehicleModel)
-  async skilavottordVehicleReadyToDeregisteredAppSys(
-    @CurrentUser() user: User,
-    @Args('permno') permno: string,
-  ): Promise<VehicleModel> {
-    return this.recyclingRequestService.getVehicleInfoToDeregistered(
-      user,
-      permno,
-    )
-  }
 
   @Mutation(() => RecyclingRequestResponse)
   async createSkilavottordRecyclingRequestAppSys(
@@ -141,7 +54,6 @@ export class RecyclingRequestAppSysResolver {
         `User doesn't have right to deregistered the vehicle`,
       )
     }
-
     return this.recyclingRequestService.createRecyclingRequest(
       user,
       input.requestType,
