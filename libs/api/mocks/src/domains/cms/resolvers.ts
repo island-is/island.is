@@ -55,16 +55,16 @@ export const resolvers: Resolvers = {
     getSingleNews: (parent, args) =>
       store.newsList.find((news) => news.slug === args.input.slug) || null,
 
-    getLifeEvents: () => store.lifeEvents,
+    getAnchorPages: () => store.anchorPages,
 
-    getLifeEventPage: (parent, args) =>
-      store.lifeEvents.find(
-        (lifeEvent) => lifeEvent.slug === args.input.slug,
+    getAnchorPage: (parent, args) =>
+      store.anchorPages.find(
+        (anchorPage) => anchorPage.slug === args.input.slug,
       ) || null,
 
-    getLifeEventsInCategory: (parent, args) => {
-      return store.lifeEvents.filter(
-        (lifeEvent) => lifeEvent.category?.slug === args.input.slug,
+    getAnchorPagesInCategory: (parent, args) => {
+      return store.anchorPages.filter(
+        (anchorPage) => anchorPage.category?.slug === args.input.slug,
       )
     },
 

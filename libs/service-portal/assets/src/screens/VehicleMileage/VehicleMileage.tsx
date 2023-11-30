@@ -136,7 +136,7 @@ const VehicleMileage = () => {
         <IntroHeader
           title={m.vehicleMileage}
           introComponent={formatMessage(messages.vehicleMileageIntro, {
-            href: (str: any) => (
+            href: (str: React.ReactNode) => (
               <span>
                 <a
                   href={formatMessage(messages.mileageExtLink)}
@@ -206,6 +206,7 @@ const VehicleMileage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
+                    disabled={!isFormEditable && !canRegisterMileage}
                     defaultValue={''}
                     onChange={(e) => setFormValue(e.target.value)}
                     rules={{

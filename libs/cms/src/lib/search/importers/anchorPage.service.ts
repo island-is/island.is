@@ -3,35 +3,34 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
-import { ILifeEventPage } from '../../generated/contentfulTypes'
-import { mapLifeEventPage } from '../../models/lifeEventPage.model'
+import { IAnchorPage } from '../../generated/contentfulTypes'
+import { mapAnchorPage } from '../../models/anchorPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class LifeEventsPageSyncService
-  implements CmsSyncProvider<ILifeEventPage>
-{
-  processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
-    logger.info('Processing sync data for life event pages')
+export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
+  processSyncData(entries: processSyncDataInput<IAnchorPage>) {
+    logger.info('Processing sync data for anchor pages')
 
-    // only process life events that we consider not to be empty and dont have circular structures
+    // only process anchor pages that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: Entry<any>): entry is ILifeEventPage =>
-        entry.sys.contentType.sys.id === 'lifeEventPage' &&
+      (entry: Entry<any>): entry is IAnchorPage =>
+        entry.sys.contentType.sys.id === 'anchorPage' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
   }
 
-  doMapping(entries: ILifeEventPage[]) {
-    logger.info('Mapping life event pages', { count: entries.length })
+  doMapping(entries: IAnchorPage[]) {
+    logger.info('Mapping anchor pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
-          const mapped = mapLifeEventPage(entry)
+          const mapped = mapAnchorPage(entry)
           const content = extractStringsFromObject(mapped.content)
 
+          // TODO - this needs to be removed after successful migration
           let type = 'webLifeEventPage'
 
           if (entry.fields?.pageType === 'Digital Iceland Service') {
@@ -49,13 +48,13 @@ export class LifeEventsPageSyncService
             contentWordCount: content.split(/\s+/).length,
             type,
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({ ...mapped, typename: 'LifeEventPage' }),
+            response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
             tags: [],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }
         } catch (error) {
-          logger.warn('Failed to import life event page', {
+          logger.warn('Failed to import anchor page', {
             error: error.message,
             id: entry?.sys?.id,
           })

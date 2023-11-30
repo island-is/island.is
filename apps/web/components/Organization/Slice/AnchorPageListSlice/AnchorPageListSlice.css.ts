@@ -15,7 +15,7 @@ export const profileCardContainer = style({
   }),
 })
 
-export const lifeEventCardContainer = style({
+export const anchorPageCardContainer = style({
   display: 'grid',
   gap: '24px',
   gridTemplateColumns: '1fr',
