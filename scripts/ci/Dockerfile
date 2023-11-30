@@ -5,11 +5,25 @@ ARG CONTAINER_PLAYWRIGHT_BROWSER=chromium
 ARG CONTAINER_NODE_VERSION=18-alpine3.15
 ARG CONTAINER_NGINX_VERSION=1.21-alpine
 ARG CONTAINER_JQ_VERSION=1.6
+ARG CONTAINER_FEDORA_VERSION=39
+ARG CONTAINER_UBUNTU_VERSION=22.04
 
 # Base layers
-FROM $CONTAINER_IMAGE_REGISTRY/docker/library/node:${CONTAINER_NODE_VERSION} as base-node
-FROM $CONTAINER_IMAGE_REGISTRY/nginx/nginx:${CONTAINER_NGINX_VERSION} as base-nginx
+ARG CONTAINER_IMAGE_REGISTRY
+FROM ${CONTAINER_IMAGE_REGISTRY}/docker/library/fedora:${CONTAINER_FEDORA_VERSION} as base-fedora
+ARG CONTAINER_IMAGE_REGISTRY
+FROM ${CONTAINER_IMAGE_REGISTRY}/docker/library/ubuntu:${CONTAINER_UBUNTU_VERSION} as base-ubuntu
+ARG CONTAINER_IMAGE_REGISTRY
+FROM ${CONTAINER_IMAGE_REGISTRY}/docker/library/node:${CONTAINER_NODE_VERSION} as base-node
+ARG CONTAINER_IMAGE_REGISTRY
+FROM ${CONTAINER_IMAGE_REGISTRY}/nginx/nginx:${CONTAINER_NGINX_VERSION} as base-nginx
+ARG CONTAINER_PLAYWRIGHT_VERSION
 FROM mcr.microsoft.com/playwright:${CONTAINER_PLAYWRIGHT_VERSION} as base-playwright
+
+# Layer aliases
+FROM base-ubuntu as base-localdev
+# FROM base-node as base-localdev
+# FROM base-fedora as base-localdev
 
 
 FROM base-node as deps
@@ -27,6 +41,7 @@ RUN CI=true yarn install --immutable
 
 FROM deps as src
 
+ARG CONTAINER_JQ_VERSION
 RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-${CONTAINER_JQ_VERSION}/jq-linux64 && \
   chmod a+x /tmp/jq-linux64 && \
   mv /tmp/jq-linux64 /usr/bin/jq
@@ -73,6 +88,7 @@ USER runner
 
 FROM base-output-with-pg as output-express
 
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT []
@@ -84,6 +100,7 @@ ENV PORT=4200
 
 # TODO: smallify
 COPY --from=deps /build/node_modules /webapp/node_modules
+ARG APP_DIST_HOME
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
@@ -146,6 +163,7 @@ RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
 
+ARG CONTAINER_PLAYWRIGHT_BROWSER
 RUN yarn playwright install ${CONTAINER_PLAYWRIGHT_BROWSER}
 
 COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
@@ -171,5 +189,4 @@ FROM base-output as output-native
 RUN echo "not-implemented"
 
 
-FROM src as output-localdev
-RUN yarn install
+FROM base-localdev as output-localdev

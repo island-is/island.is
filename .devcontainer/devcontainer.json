@@ -2,20 +2,31 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/alpine
 {
-  "name": "Alpine",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "mcr.microsoft.com/devcontainers/base:alpine-3.18",
+  "name": "Digital Iceland Devcontainer",
   "features": {
-    "ghcr.io/devcontainers/features/aws-cli:1": {},
-    "ghcr.io/devcontainers-contrib/features/shfmt:1": {},
-    "ghcr.io/devcontainers-contrib/features/sqlfmt:1": {},
-    "ghcr.io/enricosecondulfo/devcontainer-features/volta:1": {},
-    "ghcr.io/devcontainers-community/npm-features/prettier:1": {}
+    // "ghcr.io/devcontainers-contrib/features/bash-command:1": {},
+    // "ghcr.io/devcontainers/features/aws-cli:1": {},
+    // "ghcr.io/devcontainers-contrib/features/shfmt:1": {},
+    // "ghcr.io/devcontainers-contrib/features/sqlfmt:1": {},
+    // "ghcr.io/enricosecondulfo/devcontainer-features/volta:1": {},
+    // "ghcr.io/devcontainers-community/npm-features/prettier:1": {}
+  },
+
+  // TODO: Fix bind errors in Fedora due to SELinux
+  // "securityOpt": ["seccomp=unconfined"],
+
+  "build": {
+    "dockerfile": "../scripts/ci/Dockerfile",
+    "context": "../",
+    "target": "output-localdev"
   },
   // "remoteUser": "devcontainer",
-  "remoteUser": "root"
-  // "workspaceMount": "",
-  // "runArgs": ["--volume=${localWorkspaceFolder}:/workspaces/${localWorkspaceFolderBasename}:Z"],
+  // "remoteUser": "devcontainer",
+  // "workspaceMount": ""
+  "workspaceMount": "",
+  "runArgs": [
+    "--volume=${localWorkspaceFolder}:/workspaces/${localWorkspaceFolderBasename}:Z"
+  ]
   // "remoteEnv": {
   // 	"HOME": ""
   // }
