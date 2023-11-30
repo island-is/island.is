@@ -1,7 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 import { Person } from './person.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
-import { Category } from './category.model'
 
 @ObjectType('IntellectualPropertyPatent')
 export class Patent {
@@ -11,17 +10,14 @@ export class Patent {
   @Field()
   name!: string
 
-  @Field(() => Category, { nullable: true })
-  category?: Category
-
   @Field(() => Person, { nullable: true })
   owner?: Person
 
   @Field(() => Person, { nullable: true })
   agent?: Person
 
-  @Field(() => Person, { nullable: true })
-  inventors?: Person
+  @Field(() => [Person], { nullable: true })
+  inventors?: Array<Person>
 
   @Field(() => ApplicationLifecycle)
   lifecycle?: ApplicationLifecycle

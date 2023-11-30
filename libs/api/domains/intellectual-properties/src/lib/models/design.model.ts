@@ -8,8 +8,8 @@ export class Design {
   @Field()
   hId!: string
 
-  @Field()
-  applicationNumber!: string
+  @Field({ nullable: true })
+  applicationNumber?: string
 
   @Field(() => ApplicationLifecycle)
   lifecycle?: ApplicationLifecycle

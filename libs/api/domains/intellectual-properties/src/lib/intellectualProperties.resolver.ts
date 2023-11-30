@@ -11,28 +11,34 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { IntellectualPropertyService } from './intellectualProperties.service'
 import { isDefined } from '@island.is/shared/utils'
-import { IntellectualProperty } from './models/intellectualProperty.model'
+import { IntellectualPropertiesResponse } from './models/intellectualProperty.model'
+import { Patent } from './models/patent.model'
+import { ImageList } from './models/imageList.model'
+import { Design } from './models/design.model'
+import { Trademark } from './models/trademark.model'
+import { IntellectualPropertyDesignImagesInput } from './dto/designImages.input'
+import { IntellectualPropertyInput } from './dto/ip.input'
+import { IntellectualPropertiesService } from './intellectualProperties.service'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/intellectual-property' })
 export class IntellectualPropertyResolver {
   constructor(
-    private readonly ipService: IntellectualPropertyService,
+    private readonly ipService: IntellectualPropertiesService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(ApiScope.internal)
-  @Query(() => [IntellectualProperty], {
+  @Query(() => IntellectualPropertiesResponse, {
     name: 'intellectualProperties',
     nullable: true,
   })
   @Audit()
   async getIntellectualProperties(
     @CurrentUser() user: User,
-  ): Promise<Array<typeof IntellectualProperty> | null> {
+  ): Promise<IntellectualPropertiesResponse | null> {
     const data = await Promise.all([
       this.ipService.getPatents(user),
       this.ipService.getDesigns(user),
@@ -42,7 +48,7 @@ export class IntellectualPropertyResolver {
     const flattenedData = data.filter(isDefined).flat()
 
     return {
-      count: flattenedData.length,
+      totalCount: flattenedData.length,
       items: flattenedData,
     }
   }
@@ -55,8 +61,8 @@ export class IntellectualPropertyResolver {
   @Audit()
   getIntellectualPropertiesPatentById(
     @CurrentUser() user: User,
-    @Args('input', { tiespe: () => GetIntellectualPropertiesInput })
-    input: GetIntellectualPropertiesInput,
+    @Args('input', { type: () => IntellectualPropertyInput })
+    input: IntellectualPropertyInput,
   ) {
     return this.ipService.getPatentById(user, input.key)
   }
@@ -69,8 +75,8 @@ export class IntellectualPropertyResolver {
   @Audit()
   async getIntellectualPropertyDesignById(
     @CurrentUser() user: User,
-    @Args('input', { type: () => GetIntellectualPropertyInput })
-    input: GetIntellectualPropertyInput,
+    @Args('input', { type: () => IntellectualPropertyInput })
+    input: IntellectualPropertyInput,
   ) {
     return this.ipService.getDesignById(user, input.key)
   }
@@ -83,8 +89,8 @@ export class IntellectualPropertyResolver {
   @Audit()
   async getIntellectualPropertyDesignImageList(
     @CurrentUser() user: User,
-    @Args('input', { type: () => GetIntellectualPropertyInput })
-    input: GetIntellectualPropertyInput,
+    @Args('input', { type: () => IntellectualPropertyInput })
+    input: IntellectualPropertyInput,
   ): Promise<ImageList | null> {
     const images = await this.ipService.getDesignImages(user, input.key)
     if (!images) {
@@ -105,8 +111,8 @@ export class IntellectualPropertyResolver {
   @Audit()
   getIntellectualPropertyDesignImageById(
     @CurrentUser() user: User,
-    @Args('input', { type: () => GetIntellectualPropertyDesignImagesInput })
-    input: GetIntellectualPropertyDesignImagesInput,
+    @Args('input', { type: () => IntellectualPropertyDesignImagesInput })
+    input: IntellectualPropertyDesignImagesInput,
   ) {
     return this.ipService.getDesignImage(
       user,
@@ -135,8 +141,8 @@ export class IntellectualPropertyResolver {
   @Audit()
   getIntellectualPropertyTrademarkById(
     @CurrentUser() user: User,
-    @Args('input', { type: () => GetIntellectualPropertyInput })
-    input: GetIntellectualPropertyInput,
+    @Args('input', { type: () => IntellectualPropertyInput })
+    input: IntellectualPropertyInput,
   ) {
     return this.ipService.getTrademarkByVmId(user, input.key)
   }

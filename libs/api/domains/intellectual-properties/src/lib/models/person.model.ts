@@ -13,16 +13,16 @@ export class Person {
   address?: string
 
   @Field(() => String, { nullable: true })
-  postalcode?: string
+  postalCode?: string
 
   @Field(() => String, { nullable: true })
   city?: string
 
   @Field(() => String, { nullable: true })
-  country?: string
+  county?: string
 
   @Field(() => Country, { nullable: true })
-  countryDetails?: Country
+  country?: Country
 
   @Field(() => String, { nullable: true })
   email?: string
@@ -31,7 +31,10 @@ export class Person {
   telephone?: string
 
   @Field(() => String, { nullable: true })
-  mobilephone?: string
+  mobilePhone?: string
+
+  @Field({ nullable: true })
+  isForeign?: boolean
 
   @Field(() => String, { nullable: true })
   ssn?: string

@@ -26,7 +26,7 @@ export class Trademark {
   vmId!: string
 
   @Field(() => String, { nullable: true })
-  text?: string | null
+  text?: string
 
   @Field(() => TrademarkType, { nullable: true })
   type?: TrademarkType
@@ -42,9 +42,6 @@ export class Trademark {
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => String, { nullable: true })
-  statusEN?: string
 
   @Field(() => [Person], { nullable: true })
   markOwners?: Array<Person>

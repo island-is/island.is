@@ -21,7 +21,7 @@ export class ApplicationLifecycle {
   internationalRegistrationDate?: Date
 
   @Field(() => Date, { nullable: true })
-  registeredDate?: Date
+  registrationDate?: Date
 
   @Field(() => Date, { nullable: true })
   maxValidObjectionDate?: Date
@@ -33,13 +33,16 @@ export class ApplicationLifecycle {
   publishDate?: Date
 
   @Field(() => Date, { nullable: true })
+  lastModified?: Date
+
+  @Field(() => Date, { nullable: true })
   announcementDate?: Date
 
   @Field(() => Date, { nullable: true })
   expiryDate?: Date
 
   @Field(() => Date, { nullable: true })
-  unregisteredDate?: Date
+  unregistrationDate?: Date
 
   @Field(() => Date, { nullable: true })
   renewalDate?: Date

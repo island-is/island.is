@@ -1,4 +1,4 @@
-import { Field, ObjectType, createUnionType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, createUnionType } from '@nestjs/graphql'
 import { Design } from './design.model'
 import { Trademark } from './trademark.model'
 import { Patent } from './patent.model'
@@ -8,23 +8,20 @@ export const IntellectualProperty = createUnionType({
   types: () => [Design, Trademark, Patent] as const,
   resolveType(value) {
     if (value.hId) {
-      return 'IntellectualPropertiesDesign'
+      return Design
     }
     if (value.vmId) {
-      return 'IntellectualPropertiesTrademark'
+      return Trademark
     }
-    return 'IntellectualPropertiesPatent'
+    return Patent
   },
 })
 
-@ObjectType('IntellectualPropertiesPaginated')
-export class PaginatedData {
-  @Field(() => [IntellectualProperty])
-  data!: Array<typeof IntellectualProperty>
+@ObjectType('IntellectualPropertiesResponse')
+export class IntellectualPropertiesResponse {
+  @Field(() => [IntellectualProperty, { nullable: true }])
+  items?: Array<typeof IntellectualProperty>
 
-  @Field()
+  @Field(() => Int)
   totalCount!: number
-
-  @Field(() => PageInfoDto)
-  pageInfo!: PageInfoDto
 }

@@ -7,7 +7,7 @@ import { PageInfoDto } from '../dto/pageinfo.dto'
  * https://typegraphql.com/docs/generic-types.html
  */
 
-interface ClassType<T = any> {
+export interface ClassType<T = any> {
   new (...args: any[]): T
 }
 
