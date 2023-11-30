@@ -23,13 +23,13 @@ import {
   WatsonChatPanel,
 } from '@island.is/web/components'
 import {
-  GET_LIFE_EVENT_QUERY,
+  GET_ANCHOR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
 } from '@island.is/web/screens/queries'
 import {
-  GetLifeEventQuery,
+  GetAnchorPageQuery,
   GetNamespaceQuery,
-  QueryGetLifeEventPageArgs,
+  QueryGetAnchorPageArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { createNavigation } from '@island.is/web/utils/navigation'
@@ -45,16 +45,16 @@ import { Webreader } from '@island.is/web/components'
 import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 import { watsonConfig } from './config'
 
-interface LifeEventProps {
-  lifeEvent: GetLifeEventQuery['getLifeEventPage']
+interface AnchorPageProps {
+  anchorPage: GetAnchorPageQuery['getAnchorPage']
   namespace: GetNamespaceQuery['getNamespace']
   locale: Locale
 }
 
-export const LifeEvent: Screen<LifeEventProps> = ({
+export const AnchorPage: Screen<AnchorPageProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  lifeEvent: { id, image, title, intro, content, featuredImage },
+  anchorPage: { id, image, title, intro, content, featuredImage },
   namespace,
   locale,
 }) => {
@@ -243,15 +243,15 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   )
 }
 
-LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
+AnchorPage.getProps = async ({ apolloClient, locale, query }) => {
   const [
     {
-      data: { getLifeEventPage: lifeEvent },
+      data: { getAnchorPage: anchorPage },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetLifeEventQuery, QueryGetLifeEventPageArgs>({
-      query: GET_LIFE_EVENT_QUERY,
+    apolloClient.query<GetAnchorPageQuery, QueryGetAnchorPageArgs>({
+      query: GET_ANCHOR_PAGE_QUERY,
       fetchPolicy: 'no-cache',
       variables: {
         input: { lang: locale, slug: String(query.slug) },
@@ -275,11 +275,11 @@ LifeEvent.getProps = async ({ apolloClient, locale, query }) => {
       ),
   ])
 
-  if (!lifeEvent) {
-    throw new CustomNextError(404, 'Life Event not found')
+  if (!anchorPage) {
+    throw new CustomNextError(404, 'Anchor Page not found')
   }
 
-  return { lifeEvent, namespace, locale: locale as Locale }
+  return { anchorPage, namespace, locale: locale as Locale }
 }
 
-export default withMainLayout(LifeEvent)
+export default withMainLayout(AnchorPage)
