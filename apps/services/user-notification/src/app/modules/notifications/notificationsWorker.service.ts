@@ -6,6 +6,9 @@ import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { InjectModel } from '@nestjs/sequelize'
+import { NotificationStatus } from './dto/notification.dto'
+import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
 
@@ -21,6 +24,8 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private logger: Logger,
     @Inject(IS_RUNNING_AS_WORKER)
     private isRunningAsWorker: boolean,
+    @InjectModel(Notification)
+    private readonly notificationModel: typeof Notification,
   ) {}
 
   onApplicationBootstrap() {
@@ -33,7 +38,34 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
+        // FIRST THING IS TO WRITE TO DB
+        this.logger.info("messsage", message)
+        this.logger.info("job", job)
         this.logger.info('Message received by worker ... ...', { messageId })
+        const exampleNotificationData = {
+          recipient: '0101302989', // temp hardfix // user.nationalId,
+          templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+          args: [
+            {
+              key: 'organization',
+              value: 'Hnipp Test Crew',
+            },
+            {
+              key: 'documentId',
+              value: 'abcd-abcd-abcd-abcd',
+            },
+          ],
+          status: NotificationStatus.UNREAD,
+        }
+    
+        try {
+          this.logger.info("attempt create", message)
+          const res = this.notificationModel.create(exampleNotificationData as any)
+          this.logger.info("result", res)
+        } catch (error) {
+          this.logger.error(error)
+        }
+      
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({

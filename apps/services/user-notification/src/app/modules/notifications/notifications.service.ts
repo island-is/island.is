@@ -166,10 +166,7 @@ export class NotificationsService {
     return template
   }
 
-  async tempFindAll(): Promise<any> {
-    const allRows = await this.notificationModel.findAll()
-    return allRows
-  }
+
   async findOne(
     user: User,
     id: number,
@@ -189,21 +186,7 @@ export class NotificationsService {
     } else {
       const template = await this.getTemplate(notification.templateId, locale)
       const formattedTemplate = this.formatArguments(notification, template)
-      // const response = {
-      //   ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-      //   message: {
-      //     title: formattedTemplate.notificationTitle,
-      //     body: formattedTemplate.notificationBody,
-      //     dataCopy: formattedTemplate.notificationDataCopy,
-      //     clickAction: formattedTemplate.clickAction,
-      //   }
-      // };
-
-      // return response;
       return {
-        // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-        // message: i a
-        // notification: {
         id: notification.id,
         messageId: notification.messageId,
         sender: 'Hnipp Stofnun',
@@ -214,7 +197,6 @@ export class NotificationsService {
         created: notification.created,
         updated: notification.updated,
         status: notification.status,
-        // }
       }
     }
   }
@@ -239,9 +221,6 @@ export class NotificationsService {
         if (template) {
           const formattedTemplate = this.formatArguments(notification, template)
           return {
-            // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-            // message: i a
-            // notification: {
             id: notification.id,
             messageId: notification.messageId,
             sender: 'Hnipp Stofnun',
@@ -252,7 +231,6 @@ export class NotificationsService {
             created: notification.created,
             updated: notification.updated,
             status: notification.status,
-            // }
           }
         }
       },
@@ -282,21 +260,7 @@ export class NotificationsService {
       const res = await notification.save()
       const template = await this.getTemplate(notification.templateId)
       const formattedTemplate = this.formatArguments(notification, template)
-      // const response = {
-      //   ...res.toJSON(), // Convert Sequelize model instance to a plain object
-      //   message: {
-      //     title: formattedTemplate.notificationTitle,
-      //     body: formattedTemplate.notificationBody,
-      //     dataCopy: formattedTemplate.notificationDataCopy,
-      //     clickAction: formattedTemplate.clickAction,
-      //   },
-      // }
-
-      // return response;
       return {
-        // ...notification.toJSON(), // Convert Sequelize model instance to a plain object
-        // message: i a
-        // notification: {
         id: notification.id,
         messageId: notification.messageId,
         sender: 'Hnipp Stofnun',
@@ -307,7 +271,6 @@ export class NotificationsService {
         created: notification.created,
         updated: notification.updated,
         status: notification.status,
-        // }
       }
     }
   }

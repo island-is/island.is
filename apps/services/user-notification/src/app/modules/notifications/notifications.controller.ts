@@ -161,25 +161,6 @@ export class NotificationsController {
     // add to queue
     const id = await this.queue.add(body)
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
-
-    // TEMP CHECK FOR READ AND WRITE
-    try {
-      console.log('attempting to read from db')
-      const findAll = await this.notificationsService.tempFindAll()
-      console.log(findAll)
-    } catch (error) {
-      this.logger.debug('Error findAll notification', error)
-    }
-
-    try {
-      console.log('attempting to write to db')
-      const create = await this.notificationsService.create(body)
-      console.log(create)
-    } catch (error) {
-      this.logger.debug('Error creating notification', error)
-    }
-
-    //////////////////////////////////
     return { id }
   }
 }
