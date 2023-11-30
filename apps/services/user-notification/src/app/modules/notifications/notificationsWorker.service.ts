@@ -61,6 +61,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         try {
           this.logger.info("attempt create", message)
           const res = this.notificationModel.create(exampleNotificationData as any)
+          const allRows = await this.notificationModel.findAll()
+          console.log("allrows",allRows.length)
+          // get all rows count 
           this.logger.info("result", res)
         } catch (error) {
           this.logger.error(error)

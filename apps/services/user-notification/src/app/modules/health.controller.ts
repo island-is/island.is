@@ -1,5 +1,5 @@
 import { InfraController } from '@island.is/infra-nest-server'
-import { BadRequestException, Controller, Get } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 // import { ApiOkResponse } from '@nestjs/swagger'
 // import { Readiness } from './dto/readinessDto'
 // import dns from 'dns'
@@ -11,7 +11,7 @@ export class NotificationsInfraController extends InfraController {
   }
 
   @Get('readiness')
-//   @ApiOkResponse({ type: {ok:boolean} })
+//   @ApiOkResponse({ type: {ok:boolean} }) // TODO HOOOK THIS UP
   async readiness(): Promise<{ok:boolean}> {
     const result = true
     return { ok: result }
