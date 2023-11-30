@@ -118,6 +118,7 @@ export enum FieldTypes {
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
   PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
+  IMAGE = 'IMAGE',
 }
 
 export enum FieldComponents {
@@ -141,6 +142,7 @@ export enum FieldComponents {
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
   PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
+  IMAGE = 'ImageFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -355,6 +357,16 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+export interface ImageField extends BaseField {
+  readonly type: FieldTypes.IMAGE
+  component: FieldComponents.IMAGE
+  image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
+  alt?: string
+  imageWidth?: 'full' | 'auto'
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -377,3 +389,4 @@ export type Field =
   | AlertMessageField
   | LinkField
   | PaymentChargeOverviewField
+  | ImageField

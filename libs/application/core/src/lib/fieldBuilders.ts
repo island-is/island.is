@@ -33,6 +33,7 @@ import {
   SelectField,
   SubmitField,
   TextField,
+  ImageField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -559,5 +560,31 @@ export function buildPaymentChargeOverviewField(
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildImageField(
+  data: Omit<ImageField, 'type' | 'component' | 'children'>,
+): ImageField {
+  const {
+    id,
+    title,
+    image,
+    alt,
+    imageWidth = 'full',
+    marginTop,
+    marginBottom,
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    image,
+    alt,
+    imageWidth,
+    marginTop,
+    marginBottom,
+    type: FieldTypes.IMAGE,
+    component: FieldComponents.IMAGE,
   }
 }
