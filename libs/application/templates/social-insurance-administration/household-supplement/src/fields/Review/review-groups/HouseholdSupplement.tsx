@@ -8,15 +8,15 @@ import { useLocale } from '@island.is/localization'
 import { householdSupplementFormMessage } from '../../../lib/messages'
 import { HouseholdSupplementHousing } from '../../../lib/constants'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
+import { getApplicationAnswers } from '../../../lib/householdSupplementUtils'
 
 export const HouseholdSupplement = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ householdSupplementHousing, householdSupplementChildren }] =
-    useStatefulAnswers(application)
+  const { householdSupplementHousing, householdSupplementChildren } =
+    getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 

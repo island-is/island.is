@@ -70,8 +70,8 @@ export const householdSupplementFormMessage: MessageDir = {
     },
     socialInsuranceAdministrationInformationTitle: {
       id: 'hs.application:prerequisites.socialInsuranceAdministration.title',
-      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
-      description: 'Information regarding income and circumstances',
+      defaultMessage: 'Upplýsingar af mínum síðum hjá Tryggingastofnun',
+      description: 'english translation',
     },
     socialInsuranceAdministrationInformationDescription: {
       id: 'hs.application:prerequisites.socialInsuranceAdministration.description#markdown',
