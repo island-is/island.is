@@ -161,9 +161,8 @@
     ],
     "schema-files": ["{projectRoot}/**/clientConfig.@(yml|yaml|json)"],
     "schema-outputs": [
-      {
-        "dependentTasksOutputFiles": "**/*openapi.@(yml|yaml|json)"
-      }
+      { "dependentTasksOutputFiles": "**/*openapi.@(yml|yaml|json)" },
+      { "dependentTasksOutputFiles": "**/api.graphql" }
     ]
   }
 }
