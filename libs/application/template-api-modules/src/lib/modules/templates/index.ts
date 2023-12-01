@@ -91,6 +91,8 @@ import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-l
 import { DrivingLearnersPermitService } from './driving-learners-permit/driving-learners-permit.service'
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
+import { UniversityModule } from './university/university.module'
+import { UniversityService } from './university/university.service'
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
@@ -145,6 +147,7 @@ export const modules = [
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
   CitizenshipModule,
+  UniversityModule,
 ]
 
 export const services = [
@@ -197,4 +200,5 @@ export const services = [
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
   CitizenshipService,
+  UniversityService,
 ]

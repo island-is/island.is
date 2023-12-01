@@ -3,4 +3,5 @@ export enum InstitutionNationalIds {
   SYSLUMENN = '6509142520',
   FISKISTOFA = '6608922069',
   UTLENDINGASTOFNUN = '6702696399',
+  HASKOLARADUNEYTI = '',
 }
