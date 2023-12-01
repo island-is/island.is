@@ -65,6 +65,39 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
+  private async getAdditionalAttachments(application: Application): Promise<Attachment> {
+    const { additionalAttachmentsRequired } = getApplicationAnswers(application.answers)
+    
+    // const attachments: Attachment[] = []
+
+    // attachments.push(
+    //   ...(await this.initAttachments(
+    //     application,
+    //     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+    //     AttachmentTypeEnum.PDF,
+    //     additionalAttachmentsRequired,
+    //   )),
+    // )
+
+    let result: Attachment = {
+      name: '',
+      type: AttachmentTypeEnum.PDF,
+      file: ''
+    }
+    for (const attachment of additionalAttachmentsRequired) {
+      const Key = `${application.id}/${attachment.key}`
+      const pdf = await this.getPdf(Key)
+
+      result = {
+        name: attachment.name,
+        type: AttachmentTypeEnum.PDF,
+        file: pdf,
+      }
+    }
+    console.log('resutl ', result)
+    return result
+  }
+
   private async getAttachments(
     application: Application,
   ): Promise<Attachment[]> {
@@ -181,6 +214,16 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
+  }
+
+  async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
+    const attachments = await this.getAdditionalAttachments(application)
+    //const documentsDTO = transformAdditionalDocumentsDTO(application, attachments)
+
+    console.log('documentsDTO ', attachments)
+    const response = await this.siaClientService.sendAdditionalDocuments(auth, application.id, attachments)
+    return response
+    //throw Error()
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {

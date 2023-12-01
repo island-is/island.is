@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Social Insurance Administration API
-  version: 1.0.7
+  version: 1.1.0
   contact:
     name: Social Insurance Administration (Tryggingastofnun)
 servers:
@@ -29,6 +29,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/OldAgePension'
+        required: true
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Response'
+        '500':
+          description: internal Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+  /Application/{applicationId}/documents:
+    post:
+      tags:
+        - send additional documents
+      operationId: SendDocuments
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: false
+          x-position: 1
+      requestBody:
+        x-name: documents
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Attachment'
         required: true
       responses:
         '200':
@@ -325,5 +358,9 @@ components:
       type: array
       items:
         type: string
+    Documents:
+      type: array
+      items:
+        $ref: '#/components/schemas/Attachment'
 security:
   - bearerAuth: []
