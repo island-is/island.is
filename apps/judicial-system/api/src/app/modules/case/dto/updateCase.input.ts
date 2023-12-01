@@ -323,4 +323,16 @@ export class UpdateCaseInput implements UpdateCase {
   @Allow()
   @Field({ nullable: true })
   readonly appealRulingModifiedHistory?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealValidToDate?: string
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly isAppealCustodyIsolation?: boolean
+
+  @Allow()
+  @Field({ nullable: true })
+  readonly appealIsolationToDate?: string
 }
