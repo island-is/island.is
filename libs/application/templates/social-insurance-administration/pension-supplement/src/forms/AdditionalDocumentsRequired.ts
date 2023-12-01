@@ -7,12 +7,12 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import Logo from '../assets/Logo'
-import { FILE_SIZE_LIMIT } from '../lib/constants'
 import {
   inReviewFormMessages,
   pensionSupplementFormMessage,
 } from '../lib/messages'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const AdditionalDocumentsRequired: Form = buildForm({
   id: 'PensionSupplementInReviewUpload',

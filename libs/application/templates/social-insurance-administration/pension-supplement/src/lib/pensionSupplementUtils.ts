@@ -1,54 +1,23 @@
-import { MessageDescriptor } from 'react-intl'
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, Option } from '@island.is/application/types'
 import {
   ApplicationReason,
   AttachmentLabel,
+  AttachmentTypes,
   MONTHS,
-  BankAccountType,
 } from './constants'
 import { pensionSupplementFormMessage } from './messages'
 import subYears from 'date-fns/subYears'
 import addMonths from 'date-fns/addMonths'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-
-interface FileType {
-  key: string
-  name: string
-}
-
-interface PensionSupplementAttachments {
-  assistedCareAtHome?: FileType[]
-  additionalDocuments?: FileType[]
-  houseRentAgreement?: FileType[]
-  houseRentAllowance?: FileType[]
-  assistedLiving?: FileType[]
-  purchaseOfHearingAids?: FileType[]
-  halfwayHouse?: FileType[]
-}
-
-enum AttachmentTypes {
-  ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
-  MEDICINE_COST = 'medicineCost',
-  HOUSE_RENT = 'houseRent',
-  ASSISTED_LIVING = 'assistedLiving',
-  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
-  OXYGEN_FILTER_COST = 'oxygenFilterCost',
-  HALFWAY_HOUSE = 'halfwayHouse',
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
-
-interface Attachments {
-  attachments: FileType[]
-  label: MessageDescriptor
-}
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { PensionSupplementAttachments } from '../types'
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
-
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
@@ -96,7 +65,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
   return {
-    applicantEmail,
     applicantPhonenumber,
     applicationReason,
     selectedYear,
@@ -144,6 +112,11 @@ export function getApplicationExternalData(
 
   const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
 
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -159,6 +132,7 @@ export function getApplicationExternalData(
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
+    email,
     bankInfo,
     currencies,
   }

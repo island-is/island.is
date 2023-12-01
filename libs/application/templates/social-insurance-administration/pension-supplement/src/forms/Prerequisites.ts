@@ -8,15 +8,14 @@ import {
 import {
   Form,
   FormModes,
-  NationalRegistrySpouseApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
@@ -84,7 +83,12 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: pensionSupplementFormMessage.confirm.section,
+      title: pensionSupplementFormMessage.confirm.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: pensionSupplementFormMessage.conclusionScreen.section,
       children: [],
     }),
   ],

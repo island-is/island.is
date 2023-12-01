@@ -6,7 +6,6 @@ import { getAttachments } from '../../../lib/pensionSupplementUtils'
 
 export const Attachments = ({ application }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-
   const attachments = getAttachments(application)
 
   return (

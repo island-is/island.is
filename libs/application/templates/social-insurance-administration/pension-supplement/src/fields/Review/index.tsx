@@ -12,11 +12,11 @@ import { ApplicationReason } from './review-groups/ApplicationReason'
 import { Attachments } from './review-groups/Attachments'
 
 import { pensionSupplementFormMessage } from '../../lib/messages'
-import { States } from '../../lib/constants'
 import { handleServerError } from '@island.is/application/ui-components'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
 import { Period } from './review-groups/Period'
 import { Comment } from './review-groups/Comment'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 interface ReviewScreenProps {
   application: Application

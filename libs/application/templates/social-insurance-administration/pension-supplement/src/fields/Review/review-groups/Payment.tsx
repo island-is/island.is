@@ -8,18 +8,23 @@ import { useLocale } from '@island.is/localization'
 
 import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { BankAccountType } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const Payment = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [
-    { bank, bankAccountType, iban, swift, bankName, bankAddress, currency },
-  ] = useStatefulAnswers(application)
-
+  const {
+    bank,
+    bankAccountType,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
 
   return (

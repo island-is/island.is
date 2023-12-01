@@ -15,7 +15,6 @@ import { RadioFormField } from '@island.is/application/ui-fields'
 import { useFormContext } from 'react-hook-form'
 import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { pensionSupplementFormMessage } from '../../lib/messages'
-import { BankAccountType } from '../../lib/constants'
 import {
   InputController,
   SelectController,
@@ -28,11 +27,11 @@ import {
 } from '../../lib/pensionSupplementUtils'
 import {
   friendlyFormatSWIFT,
-  useCurrencies,
   getBankIsk,
   friendlyFormatIBAN,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
   const { id } = field
@@ -43,10 +42,10 @@ export const BankAccount: FC<FieldBaseProps> = ({ application, field }) => {
   const { formatMessage } = useLocale()
 
   const { bankAccountType } = getApplicationAnswers(application.answers)
-  const { bankInfo, currencies } = getApplicationExternalData(
+  const { bankInfo } = getApplicationExternalData(
     application.externalData,
   )
-  const currenciesOptions = useCurrencies(currencies)
+  const currenciesOptions = [{ label: 'EUR', value: 'EUR' }] //useCurrencies(currencies)
 
   const [selectedBankAccountType, setSelectedBankAccountType] =
     useState<BankAccountType>(

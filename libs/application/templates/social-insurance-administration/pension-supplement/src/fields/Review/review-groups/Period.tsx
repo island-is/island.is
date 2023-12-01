@@ -3,8 +3,8 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { MONTHS } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../lib/pensionSupplementUtils'
 
 export const Period = ({
   application,
@@ -12,7 +12,9 @@ export const Period = ({
   goToScreen,
   hasError,
 }: ReviewGroupProps) => {
-  const [{ selectedYear, selectedMonth }] = useStatefulAnswers(application)
+  const { selectedYear, selectedMonth } = getApplicationAnswers(
+    application.answers,
+  )
   const month = MONTHS.find((x) => x.value === selectedMonth)
   const { formatMessage } = useLocale()
 

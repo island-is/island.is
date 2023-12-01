@@ -10,20 +10,22 @@ import {
   buildCheckboxField,
   buildFileUploadField,
 } from '@island.is/application/core'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { pensionSupplementFormMessage } from '../lib/messages'
 import {
   getApplicationReasonOptions,
   getApplicationAnswers,
 } from '../lib/pensionSupplementUtils'
-import { ApplicationReason, FILE_SIZE_LIMIT } from '../lib/constants'
+import { ApplicationReason } from '../lib/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const PensionSupplementForm: Form = buildForm({
   id: 'PensionSupplementDraft',
@@ -382,48 +384,46 @@ export const PensionSupplementForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: pensionSupplementFormMessage.confirm.section,
+      title: pensionSupplementFormMessage.confirm.overviewTitle,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirm',
           title: '',
+          description: '',
           children: [
-            buildMultiField({
-              id: 'confirm',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmScreen',
-                    title: pensionSupplementFormMessage.confirm.title,
-                    component: 'Review',
-                  },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: pensionSupplementFormMessage.confirm.title,
-                  actions: [
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: pensionSupplementFormMessage.confirm.title,
-                      type: 'primary',
-                    },
-                  ],
-                }),
+            buildCustomField(
+              {
+                id: 'confirmScreen',
+                title: pensionSupplementFormMessage.confirm.title,
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: pensionSupplementFormMessage.confirm.title,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: pensionSupplementFormMessage.confirm.title,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: pensionSupplementFormMessage.conclusionScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      alertTitle: pensionSupplementFormMessage.conclusionScreen.title,
+      alertMessage: pensionSupplementFormMessage.conclusionScreen.alertTitle,
+      expandableDescription:
+        pensionSupplementFormMessage.conclusionScreen.bulletList,
+      expandableIntro:
+        pensionSupplementFormMessage.conclusionScreen.nextStepsText,
     }),
   ],
 })

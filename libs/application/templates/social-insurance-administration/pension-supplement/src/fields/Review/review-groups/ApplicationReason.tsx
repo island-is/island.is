@@ -11,18 +11,18 @@ import { formatText } from '@island.is/application/core'
 
 import { pensionSupplementFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
-import { getApplicationReasonOptions } from '../../../lib/pensionSupplementUtils'
+import {
+  getApplicationAnswers,
+  getApplicationReasonOptions,
+} from '../../../lib/pensionSupplementUtils'
 
 export const ApplicationReason = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [{ applicationReason }] = useStatefulAnswers(application)
-
+  const { applicationReason } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
-
   const applicationReasonOptions = getApplicationReasonOptions()
 
   const reasons = applicationReason.map((reason) => {

@@ -1,16 +1,11 @@
-export interface BankInfo {
-  bank?: string
-  ledger?: string
-  accountNumber?: string
-  iban?: string
-  swift?: string
-  foreignBankName?: string
-  foreignBankAddress?: string
-  currency?: string
-}
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
-export interface ApplicantInfo {
-  bankAccount?: BankInfo
-  phoneNumber?: string
-  emailAddress?: string
+export interface PensionSupplementAttachments {
+  assistedCareAtHome?: FileType[]
+  additionalDocuments?: FileType[]
+  houseRentAgreement?: FileType[]
+  houseRentAllowance?: FileType[]
+  assistedLiving?: FileType[]
+  purchaseOfHearingAids?: FileType[]
+  halfwayHouse?: FileType[]
 }

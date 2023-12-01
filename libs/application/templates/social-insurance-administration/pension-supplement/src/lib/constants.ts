@@ -1,36 +1,5 @@
-import { DefaultEvents } from '@island.is/application/types'
 import { MessageDescriptor } from 'react-intl'
 import { pensionSupplementFormMessage } from './messages'
-
-export const YES = 'yes'
-export const NO = 'no'
-
-export const FILE_SIZE_LIMIT = 5000000 // 5MB
-
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.EDIT }
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
-
-export enum Roles {
-  APPLICANT = 'applicant',
-}
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  DONE = 'done',
-
-  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
-  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
-
-  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-
-  REJECTED = 'rejected',
-  APPROVED = 'approved',
-}
 
 export enum ApplicationReason {
   MEDICINE_COST = 'medicineCost', // Lyfja- eða sjúkrahjálp
@@ -78,7 +47,13 @@ export const MONTHS = [
   { value: 'December', label: pensionSupplementFormMessage.months.desember },
 ]
 
-export enum BankAccountType {
-  ICELANDIC = 'icelandic',
-  FOREIGN = 'foreign',
+export enum AttachmentTypes {
+  ASSISTED_CARE_AT_HOME = 'assistedCareAtHome',
+  MEDICINE_COST = 'medicineCost',
+  HOUSE_RENT = 'houseRent',
+  ASSISTED_LIVING = 'assistedLiving',
+  PURCHASE_OF_HEARING_AIDS = 'purchaseOfHearingAids',
+  OXYGEN_FILTER_COST = 'oxygenFilterCost',
+  HALFWAY_HOUSE = 'halfwayHouse',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
 }

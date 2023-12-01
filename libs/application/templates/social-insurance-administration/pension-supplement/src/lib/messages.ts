@@ -406,11 +406,6 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   confirm: defineMessages({
-    section: {
-      id: 'ul.application:confirm.section',
-      defaultMessage: 'Staðfesting',
-      description: 'Confirm',
-    },
     title: {
       id: 'ul.application:confirm.title',
       defaultMessage: 'Senda inn umsókn',
@@ -455,6 +450,11 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   conclusionScreen: defineMessages({
+    section: {
+      id: 'ul.application:conclusionScreen.section',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirm',
+    },
     title: {
       id: 'ul.application:conclusionScreen.title',
       defaultMessage: 'Umsókn móttekin',

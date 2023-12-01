@@ -1,6 +1,5 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { BankAccountType, NO, YES } from './constants'
 import { errorMessages, validatorErrorMessages } from './messages'
 import { ApplicationReason } from './constants'
 import addYears from 'date-fns/addYears'
@@ -9,6 +8,8 @@ import {
   validIBAN,
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { NO, YES } from '@island.is/application/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

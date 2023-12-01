@@ -17,7 +17,6 @@ import {
   pruneAfterDays,
   DefaultStateLifeCycle,
 } from '@island.is/application/core'
-import { Events, Roles, States, BankAccountType } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { pensionSupplementFormMessage, statesMessages } from './messages'
@@ -26,6 +25,12 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { getApplicationAnswers } from './pensionSupplementUtils'
+import {
+  BankAccountType,
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const PensionSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,6 +45,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
     ApplicationConfigurations.PensionSupplement.translation,
   ],
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -48,7 +54,6 @@ const PensionSupplementTemplate: ApplicationTemplate<
           name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: pruneAfterDays(1),
-          //onExit: defineTemplateApi - kalla á TR
           roles: [
             {
               id: Roles.APPLICANT,
