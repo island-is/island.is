@@ -17,6 +17,8 @@ import {
   AlcoholLicencesList,
   BrokersList,
   CatchQuotaCalculator,
+  Chart,
+  ChartNumberBox,
   ChartsCard,
   DrivingInstructorList,
   EmailSignup,
@@ -40,6 +42,8 @@ import {
 } from '@island.is/web/components'
 import {
   AccordionSlice as AccordionSliceSchema,
+  Chart as ChartSchema,
+  ChartNumberBox as ChartNumberBoxSchema,
   Embed as EmbedSchema,
   FeaturedSupportQnAs as FeaturedSupportQNAsSchema,
   OverviewLinks as OverviewLinksSliceSchema,
@@ -50,6 +54,7 @@ import {
   TableSlice as TableSliceSchema,
 } from '@island.is/web/graphql/schema'
 
+import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
@@ -95,6 +100,10 @@ export const webRenderConnectedComponent = (slice) => {
       return <PublicShipSearch slice={slice} />
     case 'Meistaraleyfi/MasterLicences':
       return <MasterList slice={slice} />
+    case 'Vinnueftirlitid/Namskeid':
+      return (
+        <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
+      )
     default:
       break
   }
@@ -144,6 +153,10 @@ const defaultRenderComponent = {
   Embed: (slice: EmbedSchema) => <EmbedSlice slice={slice} />,
   OverviewLinks: (slice: OverviewLinksSliceSchema) => (
     <OverviewLinksSlice slice={slice} />
+  ),
+  Chart: (slice: ChartSchema) => <Chart slice={slice} />,
+  ChartNumberBox: (slice: ChartNumberBoxSchema) => (
+    <ChartNumberBox slice={slice} />
   ),
 }
 

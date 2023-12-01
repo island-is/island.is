@@ -164,7 +164,7 @@ export const isDefendantStepValidRC = (
     policeCaseNumbers.length > 0 &&
     !someDefendantIsInvalid(workingCase) &&
     (workingCase.defenderName
-      ? workingCase.requestSharedWithDefender !== undefined
+      ? Boolean(workingCase.requestSharedWithDefender)
       : true) &&
     validate([
       ...policeCaseNumbers.map(
@@ -190,7 +190,7 @@ export const isDefendantStepValidIC = (
     workingCase.type === caseType &&
     !someDefendantIsInvalid(workingCase) &&
     (workingCase.defenderName
-      ? workingCase.requestSharedWithDefender !== undefined
+      ? Boolean(workingCase.requestSharedWithDefender)
       : true) &&
     validate([
       [workingCase.type, ['empty']],
@@ -429,9 +429,10 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 export const isAdminUserFormValid = (user: User): boolean => {
   return (
     (user.institution &&
+      user.role &&
       validate([
-        [user.name, ['empty']],
         [user.nationalId, ['empty', 'national-id']],
+        [user.name, ['empty']],
         [user.title, ['empty']],
         [user.mobileNumber, ['empty']],
         [user.email, ['empty', 'email-format']],

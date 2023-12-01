@@ -92,6 +92,7 @@ identity-server:
     ASPNETCORE_URLS: 'http://*:5000'
     AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log'
     AWS__SystemsManager__ParameterStore__DataProtectionPrefix: '/k8s/identity-server/DataProtectionSecret'
+    Application__AllowedRedirectUris: 'https://beta.staging01.devland.is/minarsidur'
     Application__MinCompletionPortThreads: '10'
     AudkenniSettings__Retries: '24'
     CORECLR_ENABLE_PROFILING: '1'
@@ -274,7 +275,7 @@ services-auth-delegation-api:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.staging01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.staging01.devland.is/r1/IS-TEST'
@@ -328,10 +329,10 @@ services-auth-delegation-api:
   resources:
     limits:
       cpu: '400m'
-      memory: '256Mi'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '192Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'

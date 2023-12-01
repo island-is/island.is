@@ -10,16 +10,29 @@ import { EstateTypes, YES } from '../../lib/constants'
 export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
-  condition: (answers) =>
-    getValueViaPath(answers, 'selectedEstate') ===
-    EstateTypes.estateWithoutAssets
-      ? getValueViaPath(answers, 'estateAssets.estateDebtsExist') === YES
-      : true,
+  condition: (answers) => {
+    return getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets
+      ? getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+      : true
+  },
   children: [
     buildMultiField({
       id: 'debts',
       title: m.debtsTitle,
-      description: m.debtsDescription,
+      description: (application) =>
+        application.answers.selectedEstate === EstateTypes.estateWithoutAssets
+          ? /* EIGNALAUST DÁNARBU */
+            m.debtsDescriptionEstateWithoutAssets
+          : application.answers.selectedEstate === EstateTypes.officialDivision
+          ? /* OPINBER SKIPTI */
+            m.debtsDescriptionOfficialDivision
+          : application.answers.selectedEstate ===
+            EstateTypes.permitForUndividedEstate
+          ? /* SETA Í ÓSKIPTU BÚI */
+            m.debtsDescriptionUndividedEstate
+          : /* EINKASKIPTI */
+            m.debtsDescriptionDivisionOfEstateByHeirs,
       children: [
         buildCustomField(
           {
@@ -30,26 +43,26 @@ export const estateDebts = buildSection({
           {
             fields: [
               {
-                title: m.debtsCreditorName.defaultMessage,
+                title: m.debtsCreditorName,
                 id: 'creditorName',
               },
               {
-                title: m.debtsNationalId.defaultMessage,
+                title: m.debtsNationalId,
                 id: 'nationalId',
                 format: '######-####',
               },
               {
-                title: m.debtsLoanIdentity.defaultMessage,
+                title: m.debtsLoanIdentity,
                 id: 'loanIdentity',
               },
               {
-                title: m.debtsBalance.defaultMessage,
+                title: m.debtsBalance,
                 id: 'balance',
                 currency: true,
               },
             ],
-            repeaterButtonText: m.debtsRepeaterButton.defaultMessage,
-            repeaterHeaderText: m.debtsCreditorHeader.defaultMessage,
+            repeaterButtonText: m.debtsRepeaterButton,
+            repeaterHeaderText: m.debtsCreditorHeader,
           },
         ),
       ],

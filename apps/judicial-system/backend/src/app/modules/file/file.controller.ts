@@ -28,12 +28,15 @@ import {
 } from '@island.is/judicial-system/types'
 
 import {
-  assistantRule,
-  judgeRule,
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
-  registrarRule,
 } from '../../guards'
 import {
   Case,
@@ -71,9 +74,12 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('file/url')
   @ApiCreatedResponse({
@@ -94,9 +100,12 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Post('file')
   @ApiCreatedResponse({
@@ -123,9 +132,12 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
     prisonSystemStaffRule,
   )
   @Get('file/:fileId/url')
@@ -149,9 +161,12 @@ export class FileController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
-    judgeRule,
-    registrarRule,
-    assistantRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
   )
   @Delete('file/:fileId')
   @ApiOkResponse({
@@ -176,7 +191,7 @@ export class FileController {
     CaseReceivedGuard,
     CaseFileExistsGuard,
   )
-  @RolesRules(judgeRule, registrarRule)
+  @RolesRules(districtCourtJudgeRule, districtCourtRegistrarRule)
   @Post('file/:fileId/court')
   @ApiOkResponse({
     type: UploadFileToCourtResponse,
