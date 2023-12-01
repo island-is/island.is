@@ -1,6 +1,5 @@
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { RatioType } from './lib/constants'
-import { MessageDescriptor } from 'react-intl'
-
 export interface CombinedResidenceHistory {
   country: string
   periodFrom: Date
@@ -47,17 +46,6 @@ export interface IncompleteEmployer {
   ratioYearly?: string
   ratioMonthlyAvg?: string
 }
-
-export interface Attachments {
-  attachments: FileType[]
-  label: MessageDescriptor
-}
-
-export interface FileType {
-  key: string
-  name: string
-}
-
 export interface FileUpload {
   earlyRetirement?: FileType[]
   pension?: FileType[]

@@ -7,6 +7,7 @@ import {
 import {
   ApplicationType,
   getApplicationAnswers,
+  getApplicationExternalData,
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
@@ -21,7 +22,6 @@ export const transformApplicationToOldAgePensionDTO = (
     applicationType,
     selectedYear,
     selectedMonth,
-    applicantEmail,
     applicantPhonenumber,
     bank,
     bankAccountType,
@@ -36,7 +36,7 @@ export const transformApplicationToOldAgePensionDTO = (
     bankAddress,
     currency,
   } = getApplicationAnswers(application.answers)
-
+  const { email } = getApplicationExternalData(application.externalData)
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
     application.answers,
@@ -77,7 +77,7 @@ export const transformApplicationToOldAgePensionDTO = (
       taxLevel: +taxLevel,
     },
     applicantInfo: {
-      email: applicantEmail,
+      email: email,
       phonenumber: applicantPhonenumber,
     },
     hasAbroadResidence: YES === residenceHistoryQuestion,
