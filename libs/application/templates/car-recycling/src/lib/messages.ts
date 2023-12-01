@@ -195,12 +195,10 @@ export const carRecyclingMessages: MessageDir = {
       description: 'Vehicle is ready for deregistration. To finalise the deregistration process the vehicle must be delivered to a reception centre. A payment will automatically be deposited to the owner once the vehicle has been delivered for recycling',
     },
     accordionText: {
-      id: `rf.cr.application:conclusion.accordion.text`,
+      id: 'rf.cr.application:conclusion.accordion.text#markdown',
       defaultMessage:
-        `* Þú ferð með ökutæki til móttökuaðila.\n` +
-        `* Móttökuaðili tekur á móti ökutæki og afskráir.\n` +
-        `* Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.`,
-      description: '* You deliver the vehicle to a reception centre.\n* A receiving partner recieves the vehicle and deregisters it.\n* Payment shall be received within two days of the delivery of the vehicle',
+        'Þú ferð með ökutæki til móttökuaðila. Móttökuaðili tekur á móti ökutæki og afskráir. Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.',
+      description: 'You deliver the vehicle to a reception centre. A receiving partner recieves the vehicle and deregisters it. Payment shall be received within two days of the delivery of the vehicle',
     },
     nextStepsLabel: {
       id: 'rf.cr.application:conclusion.screen.next.steps.label',
