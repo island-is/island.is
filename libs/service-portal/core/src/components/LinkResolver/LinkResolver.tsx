@@ -29,12 +29,12 @@ export const LinkResolver = ({
         })}
         onClick={
           skipOutboundTrack
-            ? () =>
+            ? undefined
+            : () =>
                 servicePortalOutboundLink({
                   url: formatPlausiblePathToParams(pathname).url,
                   outboundUrl: href,
                 })
-            : undefined
         }
       >
         {children}
