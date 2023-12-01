@@ -181,6 +181,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
+
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      // TODO: Implement sendApplication for HOUSEHOLD_SUPPLEMENT
+      console.log('Send household supplement application (Not implemented)')
+    }
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {

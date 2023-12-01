@@ -1,3 +1,8 @@
+import { assign } from 'xstate'
+import unset from 'lodash/unset'
+import set from 'lodash/set'
+import cloneDeep from 'lodash/cloneDeep'
+
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -10,6 +15,7 @@ import {
   NationalRegistryUserApi,
   InstitutionNationalIds,
   YES,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -26,16 +32,14 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
-import { assign } from 'xstate'
-import set from 'lodash/set'
-import unset from 'lodash/unset'
-import { getApplicationAnswers } from './householdSupplementUtils'
 import { Features } from '@island.is/feature-flags'
 import {
   Events,
   Roles,
   States,
+  Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { getApplicationAnswers } from './householdSupplementUtils'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -89,7 +93,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearFileUpload'],
+        exit: ['clearFileUpload', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -101,6 +105,12 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               logMessage: statesMessages.applicationSent,
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -122,9 +132,11 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        exit: ['createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
@@ -174,6 +186,9 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -259,9 +274,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          },
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
         },
       },
       [States.APPROVED]: {
@@ -317,6 +330,57 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Copy the current answers to temp. If the user cancels the edits,
+       * we will restore the answers to their original state from temp.
+       */
+      createTempAnswers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempAnswers', cloneDeep(answers))
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the answers to their original state from temp.
+       */
+      restoreAnswersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+        const { tempAnswers } = getApplicationAnswers(answers)
+
+        if (answers.tempAnswers) {
+          Object.assign(answers, tempAnswers)
+          unset(answers, 'tempAnswers')
+        }
+
+        return context
+      }),
+      /**
+       * The edits were submitted. Clear out temp.
+       */
+      clearTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempAnswers')
+
+        return context
+      }),
       moveAdditionalDocumentRequired: assign((context) => {
         const { application } = context
         const { answers } = application

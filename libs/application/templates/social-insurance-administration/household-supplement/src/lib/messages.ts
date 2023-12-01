@@ -388,6 +388,11 @@ export const householdSupplementFormMessage: MessageDir = {
         'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'Please review the application before submitting.',
     },
+    cancelButton: {
+      id: 'hs.application:cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
     leaseAgreementAttachment: {
       id: 'hs.application:confirm.lease.agreement.attachment',
       defaultMessage: 'Undirritaður leigusamningur',

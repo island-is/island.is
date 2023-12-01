@@ -505,6 +505,15 @@ export const HouseholdSupplementForm: Form = buildForm({
               title: householdSupplementFormMessage.confirm.title,
               actions: [
                 {
+                  event: DefaultEvents.ABORT,
+                  name: householdSupplementFormMessage.confirm.cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
+                  },
+                },
+                {
                   event: DefaultEvents.SUBMIT,
                   name: householdSupplementFormMessage.confirm.title,
                   type: 'primary',
