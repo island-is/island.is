@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
   DelegationConfig,
+  HealthModule,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
@@ -31,6 +32,7 @@ import { ScopesModule } from './scopes/scopes.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
+    HealthModule,
     ClientsModule,
     DelegationsModule,
     DomainsModule,
