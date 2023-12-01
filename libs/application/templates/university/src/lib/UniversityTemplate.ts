@@ -20,13 +20,8 @@ import { Events, States, Roles } from './constants'
 import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
-import { CitizenshipSchema } from './dataSchema'
-import {
-  UserProfileApi,
-  
-  NationalRegistryIndividualApi,
-  
-} from '../dataProviders'
+import { UniversitySchema } from './dataSchema'
+import { UserProfileApi, NationalRegistryIndividualApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
 
@@ -35,12 +30,12 @@ const template: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.CITIZENSHIP,
+  type: ApplicationTypes.UNIVERSITY,
   name: applicationMessage.name,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [ApplicationConfigurations.Citizenship.translation],
-  dataSchema: CitizenshipSchema,
-  featureFlag: Features.citizenship,
+  translationNamespaces: [ApplicationConfigurations.University.translation],
+  dataSchema: UniversitySchema,
+  featureFlag: Features.university,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -78,12 +73,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [
-                NationalRegistryIndividualApi,
-                
-                UserProfileApi,
-                
-              ],
+              api: [NationalRegistryIndividualApi, UserProfileApi],
             },
           ],
         },
@@ -93,7 +83,7 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Ríkisborgararéttur',
+          name: 'Umsókn um inngöngu í háskóla',
           status: 'draft',
           actionCard: {
             tag: {
@@ -129,7 +119,7 @@ const template: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        organizationId: InstitutionNationalIds.UTLENDINGASTOFNUN,
+        organizationId: InstitutionNationalIds.HASKOLARADUNEYTI,
         chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
         onExit: [

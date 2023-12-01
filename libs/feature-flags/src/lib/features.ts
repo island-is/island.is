@@ -25,6 +25,7 @@ export enum Features {
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
+  university = 'isUniversityEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

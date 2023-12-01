@@ -83,4 +83,5 @@ export const institutionMapper = {
     InstitutionTypes.EMBAETTI_LANDLAEKNIS,
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
     InstitutionTypes.VINNUEFTIRLITID,
+  [ApplicationTypes.UNIVERSITY]: InstitutionTypes.HASKOLARADUNEYTI,
 }

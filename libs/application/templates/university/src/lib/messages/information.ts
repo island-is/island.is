@@ -9,5 +9,17 @@ export const information = {
     },
   }),
   labels: {
+    programSelection: defineMessages({
+      sectionTitle: {
+        id: 'uni.application:information.labels.programSelection.sectionTitle',
+        defaultMessage: 'Námsval',
+        description: 'Program selection section title',
+      },
+      title: {
+        id: 'uni.application:information.labels.programSelection.title',
+        defaultMessage: 'Valið nám',
+        description: 'Program selection title',
+      },
+    }),
   },
 }

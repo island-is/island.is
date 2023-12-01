@@ -16,17 +16,19 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/university"
+      ],
       "options": {
         "jestConfig": "libs/application/templates/university/jest.config.ts",
         "passWithNoTests": true
       },
       "extract-strings": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/university/src/**/*.{js,ts,tsx}'"
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/university/src/**/*.{js,ts,tsx}'"
+        }
       }
-    }
     }
   }
 }
