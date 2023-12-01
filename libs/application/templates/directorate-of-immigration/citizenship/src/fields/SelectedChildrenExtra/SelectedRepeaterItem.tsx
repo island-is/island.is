@@ -44,7 +44,7 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
 }) => {
   const { application, field, errors } = props
   const { setValue } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const [showMoreQuestions, setShowMoreQuestions] = useState<boolean>(
     repeaterField.hasFullCustody === 'no' ? true : false,
@@ -210,11 +210,13 @@ export const SelectedRepeaterItem: FC<Props & FieldBaseProps> = ({
               <DatePickerController
                 defaultValue={currentBirthDate}
                 id={otherParentBirthDateField}
+                locale={lang}
                 label={formatMessage(selectChildren.extraInformation.dateLabel)}
                 onChange={(value) => setCurrentBirthDate(value as string)}
                 error={
                   errors && getErrorViaPath(errors, otherParentBirthDateField)
                 }
+                maxDate={new Date()}
               />
             </GridColumn>
           </GridRow>
