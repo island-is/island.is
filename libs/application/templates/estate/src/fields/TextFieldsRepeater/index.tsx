@@ -16,7 +16,6 @@ import { Answers } from '../../types'
 import * as styles from '../styles.css'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import { getValueViaPath } from '@island.is/application/core'
 
 type Field = {
   id: string
@@ -36,7 +35,6 @@ type Props = {
       repeaterButtonText: string
       repeaterHeaderText: string
       sumField: string
-      parentField: string
     }
   }
 }
