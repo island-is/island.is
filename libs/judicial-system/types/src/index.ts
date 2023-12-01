@@ -80,8 +80,8 @@ export {
   getAppealInfo,
   getStatementDeadline,
   getAppealedDate,
-  defenderAccessCaseFileCategoriesForIndictmentCases as defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases as defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  defenderCaseFileCategoriesForIndictmentCases,
+  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
   prosecutorShouldSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
