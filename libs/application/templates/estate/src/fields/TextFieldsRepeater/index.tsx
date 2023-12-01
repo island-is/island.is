@@ -17,6 +17,7 @@ import { m } from '../../lib/messages'
 import * as styles from '../styles.css'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
+import NumberFormat from 'react-number-format'
 
 type Field = {
   id: string
@@ -106,18 +107,21 @@ export const TextFieldsRepeater: FC<
     const stockValues: { faceValue?: string; rateOfExchange?: string } =
       getValues(fieldIndex)
 
-    let total
-
     const faceValue = stockValues?.faceValue
     const rateOfExchange = stockValues?.rateOfExchange
 
     if (faceValue && rateOfExchange) {
-      const a = faceValue.replace(/[^\d]/g, '')
+      // convert a string like 1.000,00 to 1000.00
+      const a = faceValue.replace('.', '').replace(',', '.')
       const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
 
-      total = Math.round(parseFloat(a) * parseFloat(b))
+      const aVal = parseFloat(a)
+      const bVal = parseFloat(b)
 
-      setValue(`${fieldIndex}.value`, String(total))
+      const total = aVal * bVal
+      const totalString = total.toFixed(2).replace('.', ',')
+
+      setValue(`${fieldIndex}.value`, totalString)
 
       if (total > 0) {
         clearErrors(`${fieldIndex}.value`)
@@ -158,7 +162,78 @@ export const TextFieldsRepeater: FC<
             )}
 
             <GridRow>
-              {props.fields.map((field: Field, idx) => {
+              {props.fields.map((field: Field) => {
+                const key = `${id}.${field.id}`
+
+                if (key === 'stocks.faceValue') {
+                  const value = getValues(fieldIndex)?.faceValue ?? ''
+
+                  return (
+                    <GridColumn
+                      span={['1/1', '1/2']}
+                      paddingBottom={2}
+                      key={field.id}
+                    >
+                      <NumberFormat
+                        customInput={Input}
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        label={formatMessage(field.title)}
+                        placeholder={field.placeholder}
+                        value={value}
+                        type="text"
+                        decimalScale={2}
+                        decimalSeparator=","
+                        backgroundColor="white"
+                        thousandSeparator="."
+                        suffix=" kr."
+                        autoComplete="off"
+                        hasError={
+                          !!errors && errors[id] && (errors[id] as any)[index]
+                            ? (errors[id] as any)[index][field.id]
+                            : undefined
+                        }
+                        onChange={(e: { target: { value: string } }) => {
+                          setValue(`${fieldIndex}.faceValue`, e.target.value)
+
+                          if (valueKeys.includes(field.id)) {
+                            updateValue(fieldIndex)
+                          }
+                        }}
+                      />
+                    </GridColumn>
+                  )
+                }
+
+                if (key === 'stocks.value') {
+                  const value = getValues(fieldIndex)?.value ?? ''
+
+                  return (
+                    <GridColumn
+                      span={['1/1', '1/2']}
+                      paddingBottom={2}
+                      key={field.id}
+                    >
+                      <NumberFormat
+                        customInput={Input}
+                        id={`${fieldIndex}.${field.id}`}
+                        name={`${fieldIndex}.${field.id}`}
+                        readOnly
+                        label={formatMessage(field.title)}
+                        placeholder={field.placeholder}
+                        value={value}
+                        type="text"
+                        decimalScale={6}
+                        decimalSeparator=","
+                        backgroundColor="white"
+                        thousandSeparator="."
+                        suffix=" kr."
+                        autoComplete="off"
+                      />
+                    </GridColumn>
+                  )
+                }
+
                 return (
                   <GridColumn
                     span={['1/1', '1/2']}
@@ -183,7 +258,7 @@ export const TextFieldsRepeater: FC<
                           ? (errors[id] as any)[index][field.id]
                           : undefined
                       }
-                      onChange={(e) => {
+                      onChange={() => {
                         if (valueKeys.includes(field.id)) {
                           updateValue(fieldIndex)
                         }
