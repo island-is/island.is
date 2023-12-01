@@ -31,14 +31,16 @@ import {
   CombinedResidenceHistory,
   Employer,
   IncompleteEmployer,
-  FileType,
   SelfEmployed,
   FileUpload,
-  Attachments,
 } from '../types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
 
 export function getApplicationAnswers(answers: Application['answers']) {
@@ -55,11 +57,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
-
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
 
   const applicantPhonenumber = getValueViaPath(
     answers,
@@ -162,7 +159,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationType,
     selectedYear,
     selectedMonth,
-    applicantEmail,
     applicantPhonenumber,
     bank,
     residenceHistoryQuestion,
@@ -246,6 +242,11 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -272,6 +273,7 @@ export function getApplicationExternalData(
     spouseNationalId,
     maritalStatus,
     isEligible,
+    email,
     bankInfo,
     currencies,
   }

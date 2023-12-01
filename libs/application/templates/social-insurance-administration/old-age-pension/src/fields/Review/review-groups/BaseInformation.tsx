@@ -16,6 +16,7 @@ export const BaseInformation = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const {
+    email,
     applicantName,
     applicantNationalId,
     applicantAddress,
@@ -23,9 +24,7 @@ export const BaseInformation = ({
     spouseName,
     spouseNationalId,
   } = getApplicationExternalData(application.externalData)
-  const { applicantEmail, applicantPhonenumber } = getApplicationAnswers(
-    application.answers,
-  )
+  const { applicantPhonenumber } = getApplicationAnswers(application.answers)
   const { formatMessage } = useLocale()
 
   return (
@@ -86,7 +85,7 @@ export const BaseInformation = ({
         >
           <DataValue
             label={formatMessage(oldAgePensionFormMessage.review.email)}
-            value={applicantEmail}
+            value={email}
           />
         </GridColumn>
 

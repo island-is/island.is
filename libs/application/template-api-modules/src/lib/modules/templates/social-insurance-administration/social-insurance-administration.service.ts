@@ -13,7 +13,6 @@ import {
   Employment,
   getApplicationAnswers,
   isEarlyRetirement,
-  FileType,
   errorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
@@ -27,6 +26,7 @@ import {
   transformApplicationToOldAgePensionDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 

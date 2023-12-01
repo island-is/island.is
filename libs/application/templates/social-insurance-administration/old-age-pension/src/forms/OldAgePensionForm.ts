@@ -2,7 +2,6 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
-  buildExpandableDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -14,7 +13,6 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -28,7 +26,7 @@ import {
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import Logo from '../assets/Logo'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ApplicationType,
@@ -52,6 +50,7 @@ import {
   friendlyFormatSWIFT,
   getBankIsk,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {
   BankAccountType,
@@ -928,40 +927,19 @@ export const OldAgePensionForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'conclusion',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
-      children: [
-        buildMultiField({
-          id: 'conclusion.multifield',
-          title: oldAgePensionFormMessage.conclusionScreen.title,
-          children: [
-            buildAlertMessageField({
-              id: 'conclusion.alert',
-              title: oldAgePensionFormMessage.conclusionScreen.title,
-              alertType: 'warning',
-              message: oldAgePensionFormMessage.conclusionScreen.alertTitle,
-            }),
-            buildExpandableDescriptionField({
-              id: 'conclusion.bullet',
-              title: oldAgePensionFormMessage.conclusionScreen.nextStepsLabel,
-              introText:
-                oldAgePensionFormMessage.conclusionScreen.nextStepsText,
-              description: oldAgePensionFormMessage.conclusionScreen.bulletList,
-              startExpanded: true,
-            }),
-            buildMessageWithLinkButtonField({
-              id: 'conclusion.goToIncomePlan',
-              title: '',
-              url: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
-              buttonTitle:
-                oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
-              message:
-                oldAgePensionFormMessage.conclusionScreen.incomePlanCardText,
-            }),
-          ],
-        }),
-      ],
+    buildFormConclusionSection({
+      multiFieldTitle: oldAgePensionFormMessage.conclusionScreen.title,
+      alertTitle: oldAgePensionFormMessage.conclusionScreen.title,
+      alertMessage: oldAgePensionFormMessage.conclusionScreen.alertTitle,
+      alertType: 'warning',
+      expandableDescription:
+        oldAgePensionFormMessage.conclusionScreen.bulletList,
+      expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
+      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLabel:
+        oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
+      bottomButtonMessage:
+        oldAgePensionFormMessage.conclusionScreen.incomePlanCardText,
     }),
   ],
 })
