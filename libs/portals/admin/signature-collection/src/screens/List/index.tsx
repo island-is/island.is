@@ -8,14 +8,12 @@ import { m } from '../../lib/messages'
 import {
   Box,
   Button,
-  DatePicker,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
   Input,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import PaperUpload from './components/paperUpload'

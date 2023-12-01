@@ -13,14 +13,14 @@ import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
 import { Signature } from '@island.is/api/schema'
-import { searchWidth } from '../../styles.css'
+import { mobileWidthBox } from '../../styles.css'
+import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
   const { formatMessage } = useLocale()
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
   const { signees } = useLoaderData() as { signees: Signature[] }
-  const page_size = 10
 
   return (
     <Box marginTop={5}>
@@ -32,7 +32,7 @@ const Signees = () => {
         justifyContent="spaceBetween"
         marginTop={3}
       >
-        <Box className={searchWidth} marginBottom={[2, 0]}>
+        <Box className={mobileWidthBox} marginBottom={[2, 0]}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
@@ -55,7 +55,7 @@ const Signees = () => {
             </T.Head>
             <T.Body>
               {signees
-                .slice(page_size * (page - 1), page_size * page)
+                .slice(pageSize * (page - 1), pageSize * page)
                 .map((s) => {
                   const boxColor =
                     s.signatureType === 'Paper' ? 'purple100' : 'white'
@@ -104,7 +104,7 @@ const Signees = () => {
           <Box marginTop={5}>
             <Pagination
               totalItems={signees.length}
-              itemsPerPage={page_size}
+              itemsPerPage={pageSize}
               page={page}
               renderLink={(page, className, children) => (
                 <Box

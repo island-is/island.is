@@ -23,6 +23,26 @@ export const m = defineMessages({
     defaultMessage: 'Leita eftir nafni, kennitölu eða svæði',
     description: '',
   },
+  filter: {
+    id: 'admin-portal.signature-collection:filter',
+    defaultMessage: 'Sía',
+    description: '',
+  },
+  filterBy: {
+    id: 'admin-portal.signature-collection:filterBy',
+    defaultMessage: 'Sía eftir',
+    description: '',
+  },
+  countryArea: {
+    id: 'admin-portal.signature-collection:countryArea',
+    defaultMessage: 'Landsfjórðungur',
+    description: '',
+  },
+  clearFilters: {
+    id: 'admin-portal.signature-collection:clearFilters',
+    defaultMessage: 'Hreinsa allar síur',
+    description: '',
+  },
   listEndTime: {
     id: 'admin-portal.signature-collection:listEndTime',
     defaultMessage: 'Lokadagur',
@@ -72,7 +92,7 @@ export const m = defineMessages({
   },
   filterLists: {
     id: 'admin-portal.signature-collection:filterLists',
-    defaultMessage: 'Sía niðurstöður',
+    defaultMessage: 'Sía',
     description: '',
   },
   signeeDate: {

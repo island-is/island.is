@@ -11,7 +11,7 @@ export const listsLoader: WrappedLoaderFn = ({ client }) => {
       fetchPolicy: 'network-only',
     })
 
-    const lists = data?.signatureCollectionAllLists ?? []
-    return lists
+    const allLists = data?.signatureCollectionAllLists ?? []
+    return allLists
   }
 }
