@@ -1,22 +1,14 @@
 import {
-  CallToAction,
   Condition,
-  DataProviderItem,
-  DataProviderPermissionItem,
   FieldComponents,
   FieldTypes,
-  Form,
   FormItemTypes,
-  FormText,
-  MaybeWithApplicationAndField,
-  Option,
+  IDataProviderItem,
+  IField,
+  IForm,
+  IFormItem,
 } from '@island.is/application/types'
-import {
-  ApiExtraModels,
-  ApiProperty,
-  ApiPropertyOptional,
-  getSchemaPath,
-} from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose, Type } from 'class-transformer'
 import {
   IsArray,
@@ -25,12 +17,11 @@ import {
   IsNumber,
   IsObject,
   IsString,
-  ValidateNested,
 } from 'class-validator'
 
 type FieldValue = string | number | boolean | Date
 
-export class FieldDto {
+export class FieldDto implements IField {
   @ApiProperty()
   @IsString()
   @Expose()
@@ -93,7 +84,7 @@ export class FieldDto {
   specifics?: Record<string, FieldValue>
 }
 
-export class DataProviderItemDto {
+export class DataProviderItemDto implements IDataProviderItem {
   @ApiProperty()
   @IsString()
   @Expose()
@@ -130,7 +121,7 @@ export class DataProviderItemDto {
   source?: string
 }
 
-export class FormItemDto {
+export class FormItemDto implements IFormItem {
   @IsObject()
   @ApiPropertyOptional()
   condition?: Condition | undefined
@@ -188,7 +179,7 @@ export class FormItemDto {
   dataProviders?: DataProviderItemDto[]
 }
 
-export class FormDto {
+export class FormDto implements IForm {
   @ApiProperty({ type: [FormItemDto], default: [] })
   children!: FormItemDto[]
 
@@ -232,176 +223,3 @@ export class FormDto {
   @IsString()
   type!: FormItemTypes.FORM
 }
-
-/*
-export class TextField extends BaseField {
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  type!: FieldTypes.TEXT
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  variant?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  backgroundColor?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  format?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  suffix?: string
-
-  @ApiPropertyOptional()
-  @IsNumber()
-  @Expose()
-  rows?: number
-
-  @ApiPropertyOptional()
-  @IsBoolean()
-  @Expose()
-  required?: boolean
-}
-
-export class SubmitField extends BaseField {
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  type!: FieldTypes.SUBMIT
-
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  override component!: FieldComponents.SUBMIT
-
-  @ApiProperty()
-  @IsArray()
-  @Expose()
-  actions!: CallToAction[]
-
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  placement!: 'footer' | 'screen'
-
-  @ApiPropertyOptional()
-  @IsBoolean()
-  @Expose()
-  refetchApplicationAfterSubmit?: boolean
-}
-
-export class ExternalDataProvider extends FormItem {
-  @ApiProperty()
-  @IsArray()
-  @Expose()
-  dataProviders!: DataProviderItem[]
-
-  @ApiPropertyOptional()
-  @IsArray()
-  @Expose()
-  otherPermissions?: DataProviderPermissionItem[]
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  checkboxLabel?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  subTitle?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  description?: string
-
-  @ApiPropertyOptional()
-  @ValidateNested()
-  @Type(() => SubmitField)
-  @Expose()
-  submitField?: SubmitField
-}
-
-export class RadioField extends BaseField {
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  type!: FieldTypes.RADIO
-
-  @ApiProperty()
-  @IsArray()
-  @Expose()
-  options!: MaybeWithApplicationAndField<Option[]>
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  backgroundColor?: string
-
-  @ApiPropertyOptional()
-  @IsBoolean()
-  @Expose()
-  largeButtons?: boolean
-
-  @ApiPropertyOptional()
-  @IsBoolean()
-  @Expose()
-  required?: boolean
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  space?: string
-
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  override component!: FieldComponents.RADIO
-}
-
-export class DescriptionField extends BaseField {
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  type!: FieldTypes.DESCRIPTION
-
-  @ApiProperty()
-  @IsString()
-  @Expose()
-  override component!: FieldComponents.DESCRIPTION
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  toolTip?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  titleToolTip?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  titleVariant?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  marginBottom?: string
-
-  @ApiPropertyOptional()
-  @IsString()
-  @Expose()
-  space?: string
-}
-*/

@@ -1,5 +1,5 @@
 import { Form } from '@island.is/application/types'
-import { startForm } from '../../../form/formBuilder'
+import { startForm } from '@island.is/application/utils'
 
 export const generateCompleted = (title: string): Form => {
   const completed = {

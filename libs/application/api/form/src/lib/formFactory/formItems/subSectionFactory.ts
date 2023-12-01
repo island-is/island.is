@@ -1,9 +1,11 @@
 import { FormItemTypes, SectionChildren } from '@island.is/application/types'
 
 import { IFormItemFactory } from './IFormItemFactory'
-import { MultiFieldFactory } from './MultifieldFactory'
+import { MultiFieldFactory } from './multifieldFactory'
 import { FormItemDto } from '../../dto/form.dto'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class SubSectionFactory implements IFormItemFactory {
   constructor(private multiFieldFactory: MultiFieldFactory) {}
   create(item: SectionChildren): FormItemDto {

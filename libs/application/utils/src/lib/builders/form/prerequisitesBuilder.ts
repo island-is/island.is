@@ -60,5 +60,5 @@ export function prerequisitesForm(
 
   formDefinition.children = [section]
   const form = buildForm(formDefinition)
-  return form // TODO let template accept Form type
+  return form
 }

@@ -101,7 +101,7 @@ export class ApplicationDataProviderItem {
   @Field(() => String, { nullable: true })
   action?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Number, { nullable: true })
   order?: number
 
   @Field(() => String)

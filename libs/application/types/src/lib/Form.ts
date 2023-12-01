@@ -5,7 +5,13 @@ import { MessageDescriptor } from 'react-intl'
 
 import type { BoxProps } from '@island.is/island-ui/core/types'
 
-import { Field, RecordObject, SubmitField } from './Fields'
+import {
+  Field,
+  FieldComponents,
+  FieldTypes,
+  RecordObject,
+  SubmitField,
+} from './Fields'
 import { Condition } from './Condition'
 import { Application, FormValue } from './Application'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -80,6 +86,7 @@ export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
 export type FormNode = Form | Section | SubSection | FormLeaf
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
+export type FormItemChildren = Section | SubSection | FormLeaf
 
 export interface FormItem extends TestSupport {
   readonly id?: string
@@ -186,3 +193,56 @@ export type RepeaterProps = {
 }
 
 export type ValidationRecord = { [key: string]: string | ValidationRecord }
+
+type FieldValue = string | number | boolean | Date
+
+export interface IField {
+  id: string
+  title: string
+  description?: string
+  isPartOfRepeater?: boolean
+  type: FieldTypes
+  component: FieldComponents
+  disabled?: boolean
+  width?: string
+  colSpan?: string
+  defaultValue?: string
+  doesNotRequireAnswer?: boolean
+  specifics?: Record<string, FieldValue>
+}
+
+export interface IDataProviderItem {
+  id: string
+  action?: string
+  order?: number
+  title: string
+  subTitle?: string
+  pageTitle?: string
+  source?: string
+}
+
+export interface IFormItem {
+  condition?: Condition
+  title: string
+  id: string
+  type: FormItemTypes
+  isPartOfRepeater?: boolean
+  description?: string
+  space?: string
+  children: IFormItem[]
+  fields?: IField[]
+  draftPageNumber?: number
+  dataProviders?: IDataProviderItem[]
+}
+
+export interface IForm {
+  children: IFormItem[]
+  icon?: string
+  id: string
+  logo?: string
+  mode?: string
+  renderLastScreenBackButton?: boolean
+  renderLastScreenButton?: boolean
+  title: string
+  type: FormItemTypes.FORM
+}

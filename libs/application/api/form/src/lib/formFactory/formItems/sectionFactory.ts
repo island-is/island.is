@@ -6,7 +6,7 @@ import {
 import { FormItemDto } from '../../dto/form.dto'
 import { IFormItemFactory } from './IFormItemFactory'
 import { SubSectionFactory } from './subSectionFactory'
-import { MultiFieldFactory } from './MultifieldFactory'
+import { MultiFieldFactory } from './multifieldFactory'
 import { ExternalDataProviderFactory } from './externalDataProviderFactory'
 import { Injectable } from '@nestjs/common'
 
