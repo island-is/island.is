@@ -6,6 +6,7 @@ import { useLocale } from '@island.is/localization'
 import * as kennitala from 'kennitala'
 import { Routes } from '../../lib/constants'
 import { GenericReview } from '../../components/GenericReview'
+import { formatDate, formatPhoneNumber } from '../../utils'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -31,17 +32,25 @@ export const ApplicantReview: FC<Props> = ({
           answers?.userInformation?.citizenship
         }`,
         `${formatMessage(personal.labels.userInformation.birthCountry)}: ${
-          answers?.userInformation?.birthCountry
+          answers?.userInformation?.birthCountry || ''
         }`,
       ]}
       rightColumnItems={[
         answers?.userInformation?.address,
         answers?.userInformation?.postalCode,
-        answers?.userInformation?.phone.replace(/^(.{3})(.*)$/, '$1 $2'),
+        `${formatPhoneNumber(answers?.userInformation?.phone)}`,
         `${formatMessage(
           personal.labels.userInformation
             .residenceInIcelandLastChangeDateShorter,
-        )}: ${answers?.userInformation?.residenceInIcelandLastChangeDate}`,
+        )}: ${
+          answers?.userInformation?.residenceInIcelandLastChangeDate
+            ? formatDate(
+                new Date(
+                  answers.userInformation.residenceInIcelandLastChangeDate,
+                ),
+              )
+            : ''
+        }`,
       ]}
       leftDescription={formatMessage(review.labels.applicant)}
       goToScreen={goToScreen}
