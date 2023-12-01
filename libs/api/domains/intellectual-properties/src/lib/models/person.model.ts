@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 import { Country } from './country.model'
 
-@ObjectType('IntellectualPropertyDesignPerson')
+@ObjectType('IntellectualPropertiesDesignPerson')
 export class Person {
   @Field(() => String, { nullable: true })
   id?: string

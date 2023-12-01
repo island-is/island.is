@@ -2,13 +2,13 @@ import { ObjectType, Field } from '@nestjs/graphql'
 import { Person } from './person.model'
 import { ApplicationLifecycle } from './applicationLifecycle.model'
 
-@ObjectType('IntellectualPropertyPatent')
+@ObjectType('IntellectualPropertiesPatent')
 export class Patent {
   @Field()
-  applicationNumber!: string
-
-  @Field()
   name!: string
+
+  @Field({ nullable: true })
+  applicationNumber!: string
 
   @Field(() => Person, { nullable: true })
   owner?: Person

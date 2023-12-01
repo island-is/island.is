@@ -144,6 +144,7 @@ import { NationalRegistryModule } from '@island.is/api/domains/national-registry
 import { PCardClientConfig } from '@island.is/clients/p-card'
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
+import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectual-properties'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
 const environment = getConfig
@@ -254,6 +255,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    IntellectualPropertiesModule,
     StatisticsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({

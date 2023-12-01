@@ -42,7 +42,7 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
-      "@island.is/api-domains/intellectual-properties": [
+      "@island.is/api/domains/intellectual-properties": [
         "libs/api/domains/intellectual-properties/src/index.ts"
       ],
       "@island.is/api/domains/air-discount-scheme": [
