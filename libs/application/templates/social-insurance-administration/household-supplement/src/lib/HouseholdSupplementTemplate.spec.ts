@@ -173,7 +173,7 @@ describe('Household Supplement Template', () => {
             fileUploadAdditionalFilesRequired: {
               additionalDocumentsRequired: [],
             },
-          },  
+          },
         }),
         HouseholdSupplementTemplate,
       )

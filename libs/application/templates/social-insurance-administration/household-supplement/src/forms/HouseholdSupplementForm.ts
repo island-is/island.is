@@ -20,7 +20,6 @@ import {
   FormValue,
   YES,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
 import { HouseholdSupplementHousing } from '../lib/constants'
 import {
@@ -43,6 +42,7 @@ import {
   friendlyFormatSWIFT,
   getBankIsk,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',

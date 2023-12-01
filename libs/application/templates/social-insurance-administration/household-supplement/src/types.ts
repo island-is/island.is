@@ -1,16 +1,6 @@
-import { MessageDescriptor } from 'react-intl'
-
-export interface FileType {
-  key: string
-  name: string
-}
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export interface FileUpload {
   leaseAgreement?: FileType[]
   schoolConfirmation?: FileType[]
-}
-
-export interface Attachments {
-  attachments: FileType[]
-  label: MessageDescriptor
 }

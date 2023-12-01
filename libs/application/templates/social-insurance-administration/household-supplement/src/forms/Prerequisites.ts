@@ -10,13 +10,13 @@ import {
   FormModes,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',

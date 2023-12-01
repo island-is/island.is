@@ -18,8 +18,12 @@ import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
-import { Attachments, FileType, FileUpload } from '../types'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { FileUpload } from '../types'
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'

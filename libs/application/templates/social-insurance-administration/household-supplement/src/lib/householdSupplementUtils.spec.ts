@@ -343,4 +343,3 @@ describe('shouldNotUpdateBankAccount', () => {
     expect(false).toEqual(res)
   })
 })
-
