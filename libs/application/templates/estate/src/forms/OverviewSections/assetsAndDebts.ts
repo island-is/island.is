@@ -263,6 +263,7 @@ export const overviewAssetsAndDebts = [
         'bankAccounts',
         'balance',
       ),
+      titleVariant: 'h4',
   }),
   buildDividerField({
     condition: (answers) =>
@@ -314,6 +315,7 @@ export const overviewAssetsAndDebts = [
       getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+      titleVariant: 'h4',
   }),
   buildDividerField({
     condition: (answers) =>
