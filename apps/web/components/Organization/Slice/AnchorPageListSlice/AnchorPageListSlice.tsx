@@ -1,28 +1,35 @@
 import { Box, Link, ProfileCard, Text } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
-import type { LifeEventPageListSlice as LifeEventPageListSliceSchema } from '@island.is/web/graphql/schema'
+import type {
+  AnchorPageListSlice as AnchorPageListSliceSchema,
+  LifeEventPageListSlice,
+} from '@island.is/web/graphql/schema'
 import { linkResolver, useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { extractAnchorPageLinkType } from '@island.is/web/utils/anchorPage'
 
-import * as styles from './LifeEventPageListSlice.css'
+import * as styles from './AnchorPageListSlice.css'
 
-interface LifeEventPageListSliceProps {
-  slice: LifeEventPageListSliceSchema
+interface AnchorPageListSliceProps {
+  slice: AnchorPageListSliceSchema | LifeEventPageListSlice
   namespace: Record<string, string>
-  renderLifeEventPagesAsProfileCards?: boolean
+  renderAnchorPagesAsProfileCards?: boolean
 }
 
-export const LifeEventPageListSlice: React.FC<
-  React.PropsWithChildren<LifeEventPageListSliceProps>
-> = ({ slice, namespace, renderLifeEventPagesAsProfileCards = false }) => {
+export const AnchorPageListSlice: React.FC<
+  React.PropsWithChildren<AnchorPageListSliceProps>
+> = ({ slice, namespace, renderAnchorPagesAsProfileCards = false }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const list =
+    (slice as AnchorPageListSliceSchema).pages ??
+    (slice as LifeEventPageListSlice).lifeEventPageList ??
+    []
 
-  if (renderLifeEventPagesAsProfileCards) {
+  if (renderAnchorPagesAsProfileCards) {
     return (
       <Box className={styles.profileCardContainer} marginLeft={[0, 0, 0, 0, 6]}>
-        {slice.lifeEventPageList?.map((page) => {
+        {list.map((page) => {
           const linkType = extractAnchorPageLinkType(page)
 
           const href = linkResolver(linkType, [page.slug], activeLocale).href
@@ -57,8 +64,8 @@ export const LifeEventPageListSlice: React.FC<
           {slice.title}
         </Text>
       )}
-      <Box className={styles.lifeEventCardContainer}>
-        {slice.lifeEventPageList?.map((page) => (
+      <Box className={styles.anchorPageCardContainer}>
+        {list.map((page) => (
           <IconTitleCard
             heading={page.shortTitle || page.title}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
