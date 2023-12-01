@@ -5,7 +5,7 @@ import {testIDs} from '../../utils/test-ids';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {Divider, Input, InputRow, NavigationBarSheet} from '@ui';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import { useGetAssetQuery } from '../../graphql/types/schema';
+import {useGetAssetQuery} from '../../graphql/types/schema';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({
@@ -65,7 +65,11 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                 {id: 'assetsDetail.activeAppraisal'},
                 {activeYear: appraisal?.activeYear},
               )}
-              value={appraisal?.activeAppraisal ? `${intl.formatNumber(appraisal?.activeAppraisal)} kr.` : '-'}
+              value={
+                appraisal?.activeAppraisal
+                  ? `${intl.formatNumber(appraisal?.activeAppraisal)} kr.`
+                  : '-'
+              }
               size="big"
               noBorder
               isCompact
@@ -77,7 +81,11 @@ export const AssetsDetailScreen: NavigationFunctionComponent<{item: any}> = ({
                 {id: 'assetsDetail.plannedAppraisal'},
                 {plannedYear: appraisal?.plannedYear},
               )}
-              value={appraisal?.plannedAppraisal ? `${intl.formatNumber(appraisal?.plannedAppraisal)} kr.` : '-'}
+              value={
+                appraisal?.plannedAppraisal
+                  ? `${intl.formatNumber(appraisal?.plannedAppraisal)} kr.`
+                  : '-'
+              }
               size="big"
               noBorder
               isCompact

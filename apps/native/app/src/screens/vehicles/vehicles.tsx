@@ -14,7 +14,10 @@ import {useTheme} from 'styled-components/native';
 import illustrationSrc from '../../assets/illustrations/moving.png';
 import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
 import {useFeatureFlag} from '../../contexts/feature-flag-provider';
-import {ListVehiclesQuery, useListVehiclesQuery} from '../../graphql/types/schema';
+import {
+  ListVehiclesQuery,
+  useListVehiclesQuery,
+} from '../../graphql/types/schema';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
 import {VehicleItem} from './components/vehicle-item';

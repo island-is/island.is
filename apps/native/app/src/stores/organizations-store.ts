@@ -7,7 +7,7 @@ import islandLogoSrc from '../assets/logo/logo-64w.png';
 import {client} from '../graphql/client';
 import {ImageSourcePropType} from 'react-native';
 import {lowerCase} from '../lib/lowercase';
-import { ListOrganizationsDocument } from '../graphql/types/schema';
+import {ListOrganizationsDocument} from '../graphql/types/schema';
 
 interface Organization {
   id: string;

@@ -1,4 +1,3 @@
-
 query ListLicenses($input: GetGenericLicensesInput!, $locale: String) {
   genericLicenses(input: $input, locale: $locale) {
     ...GenericUserLicenseFragment

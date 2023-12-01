@@ -14,7 +14,11 @@ import {navigateTo} from '../../../lib/deep-linking';
 import {showPicker} from '../../../lib/show-picker';
 import chevronDown from '../../../assets/icons/chevron-down.png';
 import {LightButton} from './light-button';
-import {ChargeType, GetFinanceStatusDetails, Organization} from '../../../graphql/types/finance.types';
+import {
+  ChargeType,
+  GetFinanceStatusDetails,
+  Organization,
+} from '../../../graphql/types/finance.types';
 
 const Row = styled.View<{border?: boolean}>`
   flex-direction: row;
@@ -78,7 +82,8 @@ export function FinanceStatusCardContainer({
     },
     skip: !open,
   });
-  const financeStatusDetails: GetFinanceStatusDetails = res.data?.getFinanceStatusDetails;
+  const financeStatusDetails: GetFinanceStatusDetails =
+    res.data?.getFinanceStatusDetails;
 
   const chargeItemSubjects = [
     ...new Set(
@@ -224,7 +229,9 @@ export function FinanceStatusCardContainer({
             {res.loading ? (
               <Skeleton height={18} />
             ) : (
-              <Typography>{intl.formatNumber(chargeType.totals)} kr.</Typography>
+              <Typography>
+                {intl.formatNumber(chargeType.totals)} kr.
+              </Typography>
             )}
           </Cell>
         </Row>
@@ -276,7 +283,9 @@ export function FinanceStatusCardContainer({
                 :
               </Typography>
               <Pressable onPress={() => Linking.openURL(`mailto:${org.email}`)}>
-                <Typography style={{paddingTop: 4, color: blue400}}>{org.email}</Typography>
+                <Typography style={{paddingTop: 4, color: blue400}}>
+                  {org.email}
+                </Typography>
               </Pressable>
             </Cell>
           ) : null}
@@ -290,7 +299,9 @@ export function FinanceStatusCardContainer({
                 :
               </Typography>
               <Pressable onPress={() => Linking.openURL(`tel:${org.phone}`)}>
-                <Typography style={{paddingTop: 4, color: blue400}}>{org.phone}</Typography>
+                <Typography style={{paddingTop: 4, color: blue400}}>
+                  {org.phone}
+                </Typography>
               </Pressable>
             </Cell>
           ) : null}

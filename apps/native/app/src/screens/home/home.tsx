@@ -26,7 +26,10 @@ import {testIDs} from '../../utils/test-ids';
 import {ApplicationsModule} from './applications-module';
 import {NotificationsModule} from './notifications-module';
 import {OnboardingModule} from './onboarding-module';
-import {Application, useListApplicationsQuery} from '../../graphql/types/schema';
+import {
+  Application,
+  useListApplicationsQuery,
+} from '../../graphql/types/schema';
 
 interface ListItem {
   id: string;
@@ -136,7 +139,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({componentId}) => {
       id: 'applications',
       component: (
         <ApplicationsModule
-          applications={(applicationsRes.data?.applicationApplications ?? []) as Application[]}
+          applications={
+            (applicationsRes.data?.applicationApplications ??
+              []) as Application[]
+          }
           loading={applicationsRes.loading}
           componentId={componentId}
         />

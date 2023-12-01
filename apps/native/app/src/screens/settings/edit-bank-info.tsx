@@ -7,7 +7,7 @@ import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-
 import {bankInfoObject, stringifyBankData} from '../../lib/bank-info-helper';
 import {testIDs} from '../../utils/test-ids';
 import {useUpdateUserProfile} from './profile-queries';
-import { useGetProfileQuery } from '../../graphql/types/schema';
+import {useGetProfileQuery} from '../../graphql/types/schema';
 
 const {getNavigationOptions, useNavigationOptions} =
   createNavigationOptionHooks(() => ({

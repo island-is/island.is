@@ -30,7 +30,7 @@ import {
   useGeneratePkPassMutation,
   useGetLicenseQuery,
 } from '../../graphql/types/schema';
-import { FieldRender } from './components/field-render';
+import {FieldRender} from './components/field-render';
 
 const Information = styled.ScrollView`
   flex: 1;

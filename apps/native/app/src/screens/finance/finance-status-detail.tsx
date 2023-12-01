@@ -4,7 +4,7 @@ import {ScrollView, View} from 'react-native';
 import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
 import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
 import {testIDs} from '../../utils/test-ids';
-import { useGetFinanceStatusDetailsQuery } from '../../graphql/types/schema';
+import {useGetFinanceStatusDetailsQuery} from '../../graphql/types/schema';
 
 const {useNavigationOptions} = createNavigationOptionHooks(() => ({
   topBar: {
