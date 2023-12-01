@@ -5,7 +5,6 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
-  Hidden,
   Text,
   Stack,
   Pagination,
@@ -68,16 +67,17 @@ const Lists = () => {
   return (
     <GridContainer>
       <GridRow direction="row">
-        <GridColumn span={['0', '0', '12/12', '3/12']}>
-          <Hidden below="md">
-            <PortalNavigation
-              navigation={signatureCollectionNavigation}
-              title={formatMessage(m.signatureListsTitle)}
-            />
-          </Hidden>
+        <GridColumn
+          span={['12/12', '5/12', '5/12', '3/12']}
+          offset={['0', '7/12', '7/12', '0']}
+        >
+          <PortalNavigation
+            navigation={signatureCollectionNavigation}
+            title={formatMessage(m.signatureListsTitle)}
+          />
         </GridColumn>
         <GridColumn
-          paddingTop={[0, 0, 5, 2]}
+          paddingTop={[5, 5, 5, 2]}
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
@@ -143,19 +143,25 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                {(filters.input.length > 0 || filters.area.length > 0) &&
-                  lists.length > 0 && (
-                    <Box
-                      display="flex"
-                      justifyContent="flexEnd"
-                      alignItems="flexEnd"
-                      style={{ minWidth: '150px' }}
-                    >
-                      <Text variant="eyebrow" textAlign="right">
-                        {formatMessage(m.uploadResultsHeader)}: {lists.length}
-                      </Text>
-                    </Box>
-                  )}
+
+                <Box
+                  display="flex"
+                  justifyContent="flexEnd"
+                  alignItems="flexEnd"
+                  style={{ minWidth: '150px' }}
+                >
+                  {filters.input.length > 0 || filters.area.length > 0
+                    ? lists.length > 0 && (
+                        <Text variant="eyebrow" textAlign="right">
+                          {formatMessage(m.uploadResultsHeader)}: {lists.length}
+                        </Text>
+                      )
+                    : allLists.length > 0 && (
+                        <Text variant="eyebrow" textAlign="right">
+                          {formatMessage(m.totalListResults)}: {allLists.length}
+                        </Text>
+                      )}
+                </Box>
               </Box>
             </GridColumn>
           </GridRow>

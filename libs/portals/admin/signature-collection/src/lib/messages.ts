@@ -163,6 +163,11 @@ export const m = defineMessages({
     defaultMessage: 'Niðurstöður',
     description: '',
   },
+  totalListResults: {
+    id: 'admin-portal.signature-collection:totalListResults',
+    defaultMessage: 'Samtals fjöldi',
+    description: '',
+  },
   nationalIdsSuccess: {
     id: 'admin-portal.signature-collection:nationalIdsSuccess',
     defaultMessage: 'Kennitölur sem tókst að hlaða upp',
