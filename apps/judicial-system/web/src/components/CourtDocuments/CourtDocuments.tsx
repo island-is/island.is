@@ -13,7 +13,6 @@ import { Box, IconDeprecated, Tag, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { formatRequestCaseType } from '@island.is/judicial-system/formatters'
 import { core, courtDocuments } from '@island.is/judicial-system-web/messages'
-import Trash from '@island.is/judicial-system-web/src/components/Icon/Trash'
 import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   CourtDocument,
@@ -22,6 +21,7 @@ import {
 } from '@island.is/judicial-system-web/src/types'
 
 import { useCase } from '../../utils/hooks'
+import Trash from '../Icons/Trash'
 import MultipleValueList from '../MultipleValueList/MultipleValueList'
 import * as styles from './CourtDocuments.css'
 
