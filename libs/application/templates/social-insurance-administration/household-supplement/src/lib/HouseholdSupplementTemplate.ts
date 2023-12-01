@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   InstitutionNationalIds,
+  YES,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -16,13 +17,7 @@ import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
-import {
-  Events,
-  HouseholdSupplementHousing,
-  Roles,
-  States,
-  YES,
-} from './constants'
+import { HouseholdSupplementHousing } from './constants'
 import { dataSchema } from './dataSchema'
 import { answerValidators } from './answerValidators'
 import { householdSupplementFormMessage, statesMessages } from './messages'
@@ -36,6 +31,11 @@ import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { getApplicationAnswers } from './householdSupplementUtils'
 import { Features } from '@island.is/feature-flags'
+import {
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const HouseholdSupplementTemplate: ApplicationTemplate<
   ApplicationContext,

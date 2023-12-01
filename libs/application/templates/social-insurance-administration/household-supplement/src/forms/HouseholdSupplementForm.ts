@@ -18,14 +18,11 @@ import {
   Form,
   FormModes,
   FormValue,
+  YES,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
-import {
-  HouseholdSupplementHousing,
-  FILE_SIZE_LIMIT,
-  YES,
-} from '../lib/constants'
+import { HouseholdSupplementHousing } from '../lib/constants'
 import {
   getYesNOOptions,
   isExistsCohabitantOlderThan25,
@@ -35,7 +32,10 @@ import {
   getCurrencies,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  BankAccountType,
+  FILE_SIZE_LIMIT,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
 import {

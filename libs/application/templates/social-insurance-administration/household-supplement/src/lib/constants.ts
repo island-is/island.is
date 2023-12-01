@@ -1,37 +1,5 @@
-import { DefaultEvents } from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
-
-export const YES = 'yes'
-export const NO = 'no'
-
-export const FILE_SIZE_LIMIT = 5000000 // 5MB
-
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.EDIT }
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
-
-export enum Roles {
-  APPLICANT = 'applicant',
-  ORGANIZATION_REVIEWER = 'tryggingastofnun',
-}
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  DONE = 'done',
-
-  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted',
-  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview',
-
-  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired',
-
-  REJECTED = 'rejected',
-  APPROVED = 'approved',
-}
 
 export enum HouseholdSupplementHousing {
   HOUSEOWNER = 'houseOwner',
@@ -69,3 +37,9 @@ export const MONTHS = [
   { value: 'November', label: householdSupplementFormMessage.months.november },
   { value: 'December', label: householdSupplementFormMessage.months.desember },
 ]
+
+export enum AttachmentTypes {
+  LEASE_AGREEMENT = 'leaseAgreement',
+  SCHOOL_CONFIRMATION = 'schoolConfirmation',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+}

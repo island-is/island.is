@@ -1,7 +1,7 @@
-import { Answer } from '@island.is/application/types'
+import { Answer, YES } from '@island.is/application/types'
 
 import { validatorErrorMessages } from '../messages'
-import { AnswerValidationConstants, YES } from '../constants'
+import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
 
 export const paymentInfo = (newAnswer: unknown) => {

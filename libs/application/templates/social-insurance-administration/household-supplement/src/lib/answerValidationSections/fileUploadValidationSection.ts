@@ -1,8 +1,7 @@
-import { Answer, Application } from '@island.is/application/types'
+import { Answer, Application, YES } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
 import {
   AnswerValidationConstants,
-  YES,
   HouseholdSupplementHousing,
 } from '../constants'
 import { getApplicationAnswers } from '../householdSupplementUtils'

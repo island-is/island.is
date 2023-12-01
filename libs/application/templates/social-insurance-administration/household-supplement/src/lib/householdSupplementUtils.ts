@@ -1,10 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   HouseholdSupplementHousing,
-  YES,
-  NO,
   AttachmentLabel,
   MONTHS,
+  AttachmentTypes,
 } from './constants'
 import {
   Option,
@@ -12,6 +11,8 @@ import {
   YesOrNo,
   ExternalData,
   FormValue,
+  YES,
+  NO,
 } from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
@@ -22,12 +23,6 @@ import { BankInfo } from '@island.is/application/templates/social-insurance-admi
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
-
-enum AttachmentTypes {
-  LEASE_AGREEMENT = 'leaseAgreement',
-  SCHOOL_CONFIRMATION = 'schoolConfirmation',
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const applicantPhonenumber = getValueViaPath(

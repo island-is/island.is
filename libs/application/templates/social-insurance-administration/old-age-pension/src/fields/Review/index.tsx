@@ -1,4 +1,9 @@
-import { Application, Field, RecordObject } from '@island.is/application/types'
+import {
+  Application,
+  Field,
+  RecordObject,
+  YES,
+} from '@island.is/application/types'
 import {
   Box,
   GridColumn,
@@ -21,7 +26,7 @@ import { Employers } from './review-groups/Employers'
 import { PaymentInformation } from './review-groups/PaymentInformation'
 import { oldAgePensionFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
-import { ApplicationType, Employment, YES, States } from '../../lib/constants'
+import { ApplicationType, Employment } from '../../lib/constants'
 import {
   RadioValue,
   ReviewGroup,
@@ -29,6 +34,7 @@ import {
 } from '@island.is/application/ui-components'
 import { OnePaymentPerYear } from './review-groups/OnePaymentPerYear'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 interface ReviewScreenProps {
   application: Application
