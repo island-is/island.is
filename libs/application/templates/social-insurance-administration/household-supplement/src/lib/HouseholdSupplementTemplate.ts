@@ -29,6 +29,7 @@ import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -44,7 +45,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
   name: householdSupplementFormMessage.shared.applicationTitle,
   institution: householdSupplementFormMessage.shared.institution,
-  //featureFlag: Features.householdSupplementApplication,
+  featureFlag: Features.householdSupplementApplication,
   translationNamespaces: [
     ApplicationConfigurations.HouseholdSupplement.translation,
   ],
@@ -77,6 +78,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationCurrenciesApi,
               ],
               delete: true,
             },

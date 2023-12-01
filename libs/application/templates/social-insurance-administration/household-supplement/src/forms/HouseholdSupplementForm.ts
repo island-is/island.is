@@ -10,12 +10,14 @@ import {
   buildRadioField,
   buildFileUploadField,
   buildAlertMessageField,
+  buildSelectField,
 } from '@island.is/application/core'
 import {
   Application,
   DefaultEvents,
   Form,
   FormModes,
+  FormValue,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 import { householdSupplementFormMessage } from '../lib/messages'
@@ -28,9 +30,19 @@ import {
   getYesNOOptions,
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
+  getApplicationExternalData,
+  typeOfBankInfo,
+  getCurrencies,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import isEmpty from 'lodash/isEmpty'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getBankIsk,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const HouseholdSupplementForm: Form = buildForm({
   id: 'HouseholdSupplementDraft',
@@ -88,40 +100,171 @@ export const HouseholdSupplementForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'payment',
-          title: householdSupplementFormMessage.info.paymentTitle,
+          title: householdSupplementFormMessage.payment.title,
           children: [
             buildMultiField({
               id: 'paymentInfo',
-              title: householdSupplementFormMessage.info.paymentTitle,
+              title: householdSupplementFormMessage.payment.title,
               description: '',
               children: [
                 buildAlertMessageField({
-                  id: 'paymentInfo.alert',
-                  title: householdSupplementFormMessage.info.paymentAlertTitle,
-                  message:
-                    householdSupplementFormMessage.info.paymentAlertMessage,
+                  id: 'paymentInfo.alertMessage',
+                  title: householdSupplementFormMessage.shared.alertTitle,
+                  message: (application: Application) => {
+                    const { bankAccountType } = getApplicationAnswers(
+                      application.answers,
+                    )
+                    const type =
+                      bankAccountType ??
+                      typeOfBankInfo(
+                        application.answers,
+                        application.externalData,
+                      )
+
+                    return type === BankAccountType.ICELANDIC
+                      ? householdSupplementFormMessage.payment.alertMessage
+                      : householdSupplementFormMessage.payment
+                          .alertMessageForeign
+                  },
                   doesNotRequireAnswer: true,
                   alertType: 'info',
                 }),
+                buildRadioField({
+                  id: 'paymentInfo.bankAccountType',
+                  title: '',
+                  defaultValue: (application: Application) =>
+                    typeOfBankInfo(
+                      application.answers,
+                      application.externalData,
+                    ),
+                  options: [
+                    {
+                      label:
+                        householdSupplementFormMessage.payment
+                          .icelandicBankAccount,
+                      value: BankAccountType.ICELANDIC,
+                    },
+                    {
+                      label:
+                        householdSupplementFormMessage.payment
+                          .foreignBankAccount,
+                      value: BankAccountType.FOREIGN,
+                    },
+                  ],
+                  largeButtons: false,
+                  required: true,
+                }),
                 buildTextField({
                   id: 'paymentInfo.bank',
-                  title: householdSupplementFormMessage.info.paymentBank,
+                  title: householdSupplementFormMessage.payment.bank,
                   format: '####-##-######',
                   placeholder: '0000-00-000000',
                   defaultValue: (application: Application) => {
-                    const data = application.externalData
-                      .socialInsuranceAdministrationApplicant
-                      .data as ApplicantInfo
-
-                    // TODO: Tímabundið (Þangað til nýja BankAccount component er búið til)
-                    return data.bankAccount &&
-                      data.bankAccount.bank &&
-                      data.bankAccount.ledger &&
-                      data.bankAccount.accountNumber
-                      ? data.bankAccount.bank +
-                          data.bankAccount.ledger +
-                          data.bankAccount.accountNumber
-                      : ''
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return getBankIsk(bankInfo)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.ICELANDIC
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.iban',
+                  title: householdSupplementFormMessage.payment.iban,
+                  placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return friendlyFormatIBAN(bankInfo.iban)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.swift',
+                  title: householdSupplementFormMessage.payment.swift,
+                  placeholder: 'AAAA BB CC XXX',
+                  width: 'half',
+                  onChange: (e) => {
+                    console.log('e ', e)
+                    const formattedSWIFT = friendlyFormatSWIFT(e.target.value)
+                    console.log('formatted ', formattedSWIFT)
+                  },
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return friendlyFormatSWIFT(bankInfo.swift)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildSelectField({
+                  id: 'paymentInfo.currency',
+                  title: householdSupplementFormMessage.payment.currency,
+                  width: 'half',
+                  placeholder:
+                    householdSupplementFormMessage.payment.selectCurrency,
+                  options: ({ externalData }: Application) =>
+                    getCurrencies(externalData),
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.currency : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bankName',
+                  title: householdSupplementFormMessage.payment.bankName,
+                  width: 'half',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bankAddress',
+                  title: householdSupplementFormMessage.payment.bankAddress,
+                  width: 'half',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
                   },
                 }),
               ],

@@ -15,6 +15,7 @@ import { householdSupplementFormMessage } from '../lib/messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
@@ -66,6 +67,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 householdSupplementFormMessage.pre
                   .socialInsuranceAdministrationInformationDescription,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
             }),
           ],
         }),
