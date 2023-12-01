@@ -34,8 +34,7 @@ export const carRecyclingMessages: MessageDir = {
     },
     externalDataDescription: {
       id: 'rf.cr.application:external.data.description',
-      defaultMessage:
-        'Eftirfarandi upplýsingar verða sóttar rafrænt',
+      defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
       description: 'The following information will be retrieved electronically',
     },
     nationalRegistryInformationTitle: {
@@ -74,7 +73,8 @@ export const carRecyclingMessages: MessageDir = {
       id: 'rf.cr.application:prerequisites.checkbox.provider',
       defaultMessage:
         'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description: 'I understand that the above information will be collected during the application process',
+      description:
+        'I understand that the above information will be collected during the application process',
     },
   }),
   cars: defineMessages({
@@ -126,7 +126,8 @@ export const carRecyclingMessages: MessageDir = {
     onlyOwnerCanRecyle: {
       id: 'rf.cr.application:only.owner.can.recyle',
       defaultMessage: 'Aðeins eigandi ökutækis má skrá í endurvinnslu',
-      description: 'Only the owner of the vehicle may register it for recycling',
+      description:
+        'Only the owner of the vehicle may register it for recycling',
     },
     cancel: {
       id: 'rf.cr.application:cancel',
@@ -192,13 +193,15 @@ export const carRecyclingMessages: MessageDir = {
       id: 'rf.cr.application:conclusion.screen.title',
       defaultMessage:
         'Ökutæki er tilbúið til afskráningar. Til að klára afskráningu þarf að fara með ökutækið til móttökuaðila. Greiðsla til eiganda kemur sjálfkrafa þegar bifreið hefur verið afhent til endurvinnslu.',
-      description: 'Vehicle is ready for deregistration. To finalise the deregistration process the vehicle must be delivered to a reception centre. A payment will automatically be deposited to the owner once the vehicle has been delivered for recycling',
+      description:
+        'Vehicle is ready for deregistration. To finalise the deregistration process the vehicle must be delivered to a reception centre. A payment will automatically be deposited to the owner once the vehicle has been delivered for recycling',
     },
     accordionText: {
       id: 'rf.cr.application:conclusion.accordion.text#markdown',
       defaultMessage:
         'Þú ferð með ökutæki til móttökuaðila. Móttökuaðili tekur á móti ökutæki og afskráir. Greiðsla berst innan tveggja daga eftir afhendingu á ökutæki.',
-      description: 'You deliver the vehicle to a reception centre. A receiving partner recieves the vehicle and deregisters it. Payment shall be received within two days of the delivery of the vehicle',
+      description:
+        'You deliver the vehicle to a reception centre. A receiving partner recieves the vehicle and deregisters it. Payment shall be received within two days of the delivery of the vehicle',
     },
     nextStepsLabel: {
       id: 'rf.cr.application:conclusion.screen.next.steps.label',
@@ -246,18 +249,21 @@ export const errorMessages = defineMessages({
   createOwnerDescription: {
     id: 'rf.cr.application:error.create.owner.description',
     defaultMessage: 'Ekki tókst að stofna eiganda bifreiðar hjá Úrvinnslusjóði',
-    description: 'Unable to create vehicle owner at the Icelandic Recycling Fund',
+    description:
+      'Unable to create vehicle owner at the Icelandic Recycling Fund',
   },
   createVehicleDescription: {
     id: 'rf.cr.application:error.create.vehicle.description',
     defaultMessage: 'Ekki tókst að stofna valda bifreið hjá Úrvinnslusjóði',
-    description: 'Unable to create selected vehicle at the Icelandic Recycling Fund',
+    description:
+      'Unable to create selected vehicle at the Icelandic Recycling Fund',
   },
   recycleVehicleDescription: {
     id: 'rf.cr.application:error.recycle.vehicle.description',
     defaultMessage:
       'Ekki tókst að skrá bifreið til endurvinnslu hjá Úrvinnslusjóði',
-    description: 'Unable to register vehicle for recycling at the Icelandic Recycling Fund',
+    description:
+      'Unable to register vehicle for recycling at the Icelandic Recycling Fund',
   },
   cancelRecycleVehicleDescription: {
     id: 'rf.cr.application:error.cancel.recycle.vehicle.description',
