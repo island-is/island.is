@@ -4,18 +4,28 @@ import { isExternalLink } from '../../utils/isExternalLink'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './LinkButton.css'
 
-interface Props {
+interface SharedProps {
   to: string
   text: string
-  icon?: ButtonProps['icon']
   skipOutboundTrack?: boolean
-  /**
-   * default variant is "text"
-   */
-  variant?: 'button' | 'text'
 }
 
-export const LinkButton: FC<React.PropsWithChildren<Props>> = ({
+type Props =
+  | {
+      variant?: 'button'
+      icon?: ButtonProps['icon']
+    }
+  | {
+      /**
+       * default variant is "text"
+       */
+      variant?: 'text'
+      icon?: never
+    }
+
+type LinkButtonProps = SharedProps & Props
+
+export const LinkButton: FC<React.PropsWithChildren<LinkButtonProps>> = ({
   variant = 'text',
   to,
   text,
