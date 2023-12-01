@@ -13,9 +13,9 @@ import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useMutation } from '@apollo/client'
 import { EmployersTable } from '../components/EmployersTable'
-import { States } from '../../lib/constants'
 import { getApplicationAnswers } from '../../lib/oldAgePensionUtils'
 import { Employer } from '../../types'
+import { States } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const EmployersOverview: FC<RepeaterProps> = ({
   error,

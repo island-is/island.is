@@ -36,6 +36,18 @@ export const period = (newAnswer: unknown, application: Application) => {
   const startDateYear = startDate.getFullYear()
   const endDateYear = endDate.getFullYear()
 
+  console.log('startDate ', startDate)
+  console.log('startYear ', startDateYear)
+  console.log('end year ', endDateYear)
+  console.log('year ', +year)
+
+  console.log('startDateYear > +year ', startDateYear > +year)
+  console.log('endDateYear < +year ', endDateYear < +year)
+
+  // startYear  2022
+  // end year  2024
+  // year  2021
+
   if (startDateYear > +year || endDateYear < +year) {
     return buildError(validatorErrorMessages.periodYear, `${PERIOD}.year`)
   }

@@ -22,8 +22,10 @@ import {
   Form,
   FormModes,
   FormValue,
+  NO,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import Logo from '../assets/Logo'
@@ -31,14 +33,9 @@ import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ApplicationType,
   Employment,
-  FILE_SIZE_LIMIT,
-  NO,
   RatioType,
-  YES,
-  IS,
   maritalStatuses,
   TaxLevelOptions,
-  BankAccountType,
 } from '../lib/constants'
 import {
   getApplicationAnswers,
@@ -56,6 +53,11 @@ import {
   getBankIsk,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
+import {
+  BankAccountType,
+  FILE_SIZE_LIMIT,
+  IS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',

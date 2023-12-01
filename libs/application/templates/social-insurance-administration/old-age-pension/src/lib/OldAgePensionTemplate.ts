@@ -25,7 +25,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 
-import { Actions, Events, Roles, States, BankAccountType } from './constants'
 import { dataSchema } from './dataSchema'
 import { oldAgePensionFormMessage, statesMessages } from './messages'
 import { answerValidators } from './answerValidators'
@@ -37,6 +36,13 @@ import {
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { getApplicationAnswers } from './oldAgePensionUtils'
+import {
+  Actions,
+  BankAccountType,
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const OldAgePensionTemplate: ApplicationTemplate<
   ApplicationContext,

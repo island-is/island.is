@@ -1,17 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   oldAgePensionAge,
-  YES,
   fishermenMinAge,
   earlyRetirementMinAge,
   earlyRetirementMaxAge,
-  NO,
   ApplicationType,
   Employment,
   TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
-  BankAccountType,
+  AttachmentTypes,
 } from './constants'
 import {
   Option,
@@ -20,6 +18,8 @@ import {
   YesOrNo,
   FormValue,
   ExternalData,
+  YES,
+  NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -36,18 +36,10 @@ import {
   FileUpload,
   Attachments,
 } from '../types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import isEmpty from 'lodash/isEmpty'
-
-enum AttachmentTypes {
-  PENSION = 'pension',
-  EARLY_RETIREMENT = 'earlyRetirement',
-  FISHERMAN = 'fishermen',
-  SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-  FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
-}
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
@@ -605,10 +597,6 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
-}
-
-export const formatBank = (bankInfo: string) => {
-  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }
 
 // We should only send bank account to TR if applicant is registering

@@ -12,7 +12,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../lib/oldAgePensionUtils'
-import { YES, NO } from '../../../lib/constants'
+import { NO, YES } from '@island.is/application/types'
 
 export const ResidenceHistory = ({
   application,
