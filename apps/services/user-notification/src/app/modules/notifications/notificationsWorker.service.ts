@@ -44,6 +44,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         this.logger.info('Message received by worker ... ...', { messageId })
         const exampleNotificationData = {
           recipient: '0101302989', // temp hardfix // user.nationalId,
+          messageId,
           templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
           args: [
             {
@@ -59,15 +60,22 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         try {
-          this.logger.info("attempt create", message)
-          const res = this.notificationModel.create(exampleNotificationData as any)
-          const allRows = await this.notificationModel.findAll()
-          console.log("allrows",allRows.length)
-          // get all rows count 
-          this.logger.info("result", res)
+          this.logger.debug("attempt create", message)
+          const res = await this.notificationModel.create(exampleNotificationData as any)
+          this.logger.debug("create result", res)
         } catch (error) {
           this.logger.error(error)
         }
+
+        try {
+          this.logger.debug("getting all rows")
+          const allRows = await this.notificationModel.findAll()
+          this.logger.debug("length",allRows.length)
+        } catch (error) {
+          this.logger.error(error)
+        }
+
+       
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({

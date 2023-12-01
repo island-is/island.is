@@ -163,4 +163,12 @@ export class NotificationsController {
     this.logger.info('Message queued ... ...', { messageId: id, ...body })
     return { id }
   }
+
+  @Get('/')
+  @Version('1')
+  async getAll(
+    
+  ): Promise<any> {
+    return await this.notificationsService.getAll()
+  }
 }

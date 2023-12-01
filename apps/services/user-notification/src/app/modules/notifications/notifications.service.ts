@@ -300,4 +300,8 @@ export class NotificationsService {
       return Error
     }
   }
+
+  async getAll(): Promise<Notification[]> {
+    return await this.notificationModel.findAll()
+  }
 }
