@@ -576,8 +576,11 @@ export const OrganizationFooter: React.FC<
             imageUrl={organization.logo?.url}
             heading={organization.title}
             columns={organization.footerItems}
-            background={organization?.footerConfig?.background}
-            color={organization?.footerConfig?.color}
+            background={organization.footerConfig?.background}
+            color={
+              organization.footerConfig?.color ||
+              organization.footerConfig?.textColor
+            }
           />
           <Divider />
         </>
