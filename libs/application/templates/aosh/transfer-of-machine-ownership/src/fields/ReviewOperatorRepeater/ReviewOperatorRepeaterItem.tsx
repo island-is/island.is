@@ -22,8 +22,8 @@ interface Props {
   index: number
   repeaterField: GenericFormField<Operator>
   handleRemove: (index: number) => void
-  setBuyerOperators?: (s: Operator[]) => void
-  buyerOperators?: Operator[]
+  setBuyerOperator?: (s: Operator) => void
+  buyerOperator?: Operator
   errorMessage?: string
 }
 
@@ -34,8 +34,8 @@ export const ReviewOperatorRepeaterItem: FC<
   index,
   handleRemove,
   repeaterField,
-  setBuyerOperators,
-  buyerOperators,
+  setBuyerOperator,
+  buyerOperator,
   errorMessage,
   ...props
 }) => {
@@ -56,8 +56,8 @@ export const ReviewOperatorRepeaterItem: FC<
   const wasRemovedField = `${fieldIndex}.wasRemoved`
 
   useEffect(() => {
-    if (setBuyerOperators && buyerOperators && index > -1) {
-      const temp = [...buyerOperators]
+    if (setBuyerOperator && buyerOperator && index > -1) {
+      const temp = buyerOperator
       const itemValue = {
         email,
         phone,
@@ -65,8 +65,7 @@ export const ReviewOperatorRepeaterItem: FC<
         name,
         wasRemoved: repeaterField.wasRemoved,
       }
-      temp[index] = itemValue
-      setBuyerOperators(temp)
+      setBuyerOperator(temp)
       setValue(nationalIdField, nationalId)
       setValue(nameField, name)
       setValue(emailField, email)

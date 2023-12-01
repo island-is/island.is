@@ -39,8 +39,6 @@ export const MachineRadioField: FC<
   const onRadioControllerSelect = (s: string) => {
     const currentMachine = currentMachineList[parseInt(s, 10)]
     setIsLoading(true)
-    console.log('onRadioController')
-    console.log('currentMachine', currentMachine)
     setValue('pickMachine.id', currentMachine.id)
     setValue('machine.id', currentMachine.id)
     setValue('machine.category', currentMachine.category)
@@ -50,6 +48,7 @@ export const MachineRadioField: FC<
     setValue('machine.type', type || '')
     setValue('machine.subType', subType.join() || '')
     setValue('machine.date', new Date().toISOString())
+    setValue('machine.test', 'testing')
     setMachineId(currentMachine.id || '')
     setIsLoading(false)
   }

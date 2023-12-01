@@ -43,7 +43,7 @@ export class AoshMachineDetails {
 }
 
 @ObjectType()
-export class AoshMachineLinks {
+class AoshMachineLinks {
   @Field(() => String, { nullable: true })
   href?: string
 
@@ -55,10 +55,4 @@ export class AoshMachineLinks {
 
   @Field(() => String, { nullable: true })
   displayTitle?: string
-}
-
-@InputType()
-export class MachineDetailsInput {
-  @Field()
-  id!: string
 }

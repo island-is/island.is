@@ -1,7 +1,6 @@
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import { Operator, UserInformation } from '../shared'
-import { isLastReviewer } from './isLastReviewer'
+import { UserInformation } from '../shared'
 
 export const hasReviewerApproved = (
   reviewerNationalId: string,
@@ -17,23 +16,10 @@ export const hasReviewerApproved = (
     if (!hasApproved) return false
   }
 
-  // Check if reviewer is buyers operator and has not approved
-  const filteredBuyerOperators = (
-    getValueViaPath(answers, 'buyerOperator', []) as Operator[]
-  ).filter(({ wasRemoved }) => wasRemoved !== 'true')
-  const buyerOperator = filteredBuyerOperators.find(
-    (operator) => operator.nationalId === reviewerNationalId,
-  )
-  if (buyerOperator) {
-    const hasApproved = buyerOperator?.approved || false
-    if (!hasApproved) return false
-  }
-
   // Check if reviewer is seller and everyone else has approved
   if (
     (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
-      reviewerNationalId &&
-    isLastReviewer(reviewerNationalId, answers, filteredBuyerOperators)
+    reviewerNationalId
   ) {
     return false
   }

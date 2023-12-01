@@ -19,6 +19,7 @@ export enum Features {
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
+  transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

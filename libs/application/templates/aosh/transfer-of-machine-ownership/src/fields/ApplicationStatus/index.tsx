@@ -17,21 +17,15 @@ import { coreMessages } from '@island.is/application/core'
 export const ApplicationStatus: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = (props) => {
-  const {
-    application,
-    setStep,
-    reviewerNationalId = '',
-    buyerOperators,
-  } = props
+  const { application, setStep, reviewerNationalId = '' } = props
   const { formatMessage } = useLocale()
 
-  const steps = getReviewSteps(application, buyerOperators || [])
+  const steps = getReviewSteps(application)
 
   const showReviewButton = !hasReviewerApproved(
     reviewerNationalId,
     application.answers,
   )
-  console.log('application', application)
 
   return (
     <Box marginBottom={10}>

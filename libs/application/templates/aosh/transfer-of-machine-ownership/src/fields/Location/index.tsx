@@ -47,7 +47,6 @@ export const Location: FC<
       setValue('location.address', selectedValue.address)
       setValue('location.postCode', selectedValue.postCode)
       setValue('location.moreInfo', selectedValue.moreInfo)
-      console.log('selectedValue', selectedValue)
       const res = await updateApplication({
         variables: {
           input: {
@@ -89,7 +88,6 @@ export const Location: FC<
             name="address"
             type="text"
             label={formatMessage(location.labels.addressLabel)}
-            //error={errors && getErrorViaPath(errors, 'address')}
             backgroundColor="blue"
             required
             onChange={(event) => {

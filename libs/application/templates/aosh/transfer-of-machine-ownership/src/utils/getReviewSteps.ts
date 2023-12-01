@@ -4,13 +4,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { review } from '../lib/messages'
 import { States } from '../lib/constants'
 
-export const getReviewSteps = (
-  application: Application,
-  buyerOperators: Operator[],
-) => {
-  const vehiclePlate = getValueViaPath(
+export const getReviewSteps = (application: Application) => {
+  const regNumber = getValueViaPath(
     application.answers,
-    'pickVehicle.plate',
+    'machine.regNumber',
     '',
   ) as string
 
@@ -22,20 +19,16 @@ export const getReviewSteps = (
     false,
   ) as boolean
 
-  const buyerOperatorNotApproved = buyerOperators.find(
-    (operator) => !operator.approved,
-  )
-
   const isComplete = application.state === States.COMPLETED
 
   const steps = [
-    // Transfer of vehicle: Always approved
+    // Transfer of machine: Always approved
     {
       tagText: review.step.tagText.received,
       tagVariant: 'mint',
-      title: review.step.title.transferOfVehicle,
-      description: review.step.description.transferOfVehicle,
-      messageValue: vehiclePlate,
+      title: review.step.title.transferOfMachine,
+      description: review.step.description.transferOfMachine,
+      messageValue: regNumber,
     },
     // Payment: Always approved
     {
@@ -60,24 +53,6 @@ export const getReviewSteps = (
           approved: buyerApproved || isComplete,
         },
       ],
-    },
-    // Buyers operators
-    {
-      tagText:
-        !buyerOperatorNotApproved || isComplete
-          ? review.step.tagText.received
-          : review.step.tagText.pendingApproval,
-      tagVariant: !buyerOperatorNotApproved || isComplete ? 'mint' : 'purple',
-      title: review.step.title.buyerOperator,
-      description: review.step.description.buyerOperator,
-      visible: buyerOperators.length > 0,
-      reviewer: buyerOperators.map((reviewer) => {
-        return {
-          nationalId: reviewer.nationalId,
-          name: reviewer.name,
-          approved: reviewer.approved || false,
-        }
-      }),
     },
   ] as ReviewSectionProps[]
 

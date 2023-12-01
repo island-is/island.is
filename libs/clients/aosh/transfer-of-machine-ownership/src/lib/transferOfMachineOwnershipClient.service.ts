@@ -66,19 +66,25 @@ export class TransferOfMachineOwnershipClient {
     return result.paymentRequiredForOwnerChange
   }
 
-  public async changeMachineOwner(auth: Auth, ownerChange: ChangeMachineOwner) {
+  public async initiateOwnerChangeProcess(
+    auth: Auth,
+    ownerChange: ChangeMachineOwner,
+  ) {
     const input = apiChangeMachineOwnerToApiRequest(ownerChange)
 
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePost(
       input,
     )
   }
-
+  // TODO : call this in the submitApplication method in the template service
   public async confirmOwnerChange(
     auth: Auth,
     confirmChange: ConfirmOwnerChange,
   ) {
-    const input = confirmChangeToApiRequest(confirmChange)
+    const input = confirmChangeToApiRequest(
+      confirmChange,
+      auth.nationalId || '',
+    )
 
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
       input,

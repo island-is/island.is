@@ -19,15 +19,14 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
     getValueViaPath(application.answers, 'location') as MachineLocation,
   )
 
-  const [buyerOperators, setBuyerOperators] = useState<Operator[]>(
-    getValueViaPath(application.answers, 'buyerOperator', []) as Operator[],
+  const [buyerOperator, setBuyerOperator] = useState<Operator>(
+    getValueViaPath(application.answers, 'buyerOperator') as Operator,
   )
 
   const reviewerNationalId = userInfo?.profile.nationalId || null
 
-  const filteredBuyerOperators = buyerOperators.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
+  const filteredBuyerOperator =
+    buyerOperator.wasRemoved !== 'true' ? buyerOperator : null
 
   const displayScreen = (
     displayStep: ReviewState,
@@ -39,7 +38,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ApplicationStatus
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            buyerOperators={filteredBuyerOperators}
+            buyerOperator={filteredBuyerOperator}
             {...props}
           />
         )
@@ -49,7 +48,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
             location={location}
-            buyerOperators={filteredBuyerOperators}
+            buyerOperator={filteredBuyerOperator}
             {...props}
           />
         )
@@ -58,7 +57,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ReviewConclusion
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            buyerOperators={filteredBuyerOperators}
+            buyerOperator={filteredBuyerOperator}
             {...props}
           />
         )
@@ -67,8 +66,8 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
           <ReviewOperatorRepeater
             setStep={setStep}
             reviewerNationalId={reviewerNationalId}
-            setBuyerOperators={setBuyerOperators}
-            buyerOperators={buyerOperators}
+            setBuyerOperator={setBuyerOperator}
+            buyerOperator={buyerOperator}
             {...props}
           />
         )

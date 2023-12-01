@@ -22,7 +22,7 @@ query GetMachineDetails($id: String!) {
     productionNumber
     productionCountry
     licensePlateNumber
-    _links {
+    links {
       href
       rel
       method
@@ -31,9 +31,3 @@ query GetMachineDetails($id: String!) {
   }
 }
 `
-
-export const APPROVE_OWNER_CHANGE = `
-      mutation ConfirmOwnerChange($input: ConfirmOwnerChange!) {
-        confirmOwnerChange(input: $input)
-      }
-    `

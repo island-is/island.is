@@ -1,22 +1,22 @@
 export type ChangeMachineOwner = {
-  id?: string
-  machineId?: string | null
-  buyerNationalId?: string | null
-  delegateNationalId?: string | null
-  sellerNationalId?: string | null
-  dateOfOwnerChange?: Date | null
-  paymentId?: string | null
-  phoneNumber?: string | null
-  email?: string | null
+  applicationId: string
+  machineId: string
+  buyerNationalId: string
+  delegateNationalId: string
+  sellerNationalId: string
+  dateOfOwnerChange: Date
+  paymentId: string
+  phoneNumber: string
+  email: string
 }
 
 export type ConfirmOwnerChange = {
-  id?: string
-  machineId?: string | null
+  applicationId: string
+  machineId: string
   machineMoreInfo?: string | null
-  machinePostalCode?: number | null
-  buyerNationalId?: string | null
-  delegateNationalId?: string | null
+  machinePostalCode?: number
+  buyerNationalId: string
+  delegateNationalId: string
   supervisorNationalId?: string | null
   supervisorEmail?: string | null
   supervisorPhoneNumber?: string | null

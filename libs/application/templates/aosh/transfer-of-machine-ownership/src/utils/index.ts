@@ -10,7 +10,6 @@ export { getSelectedMachine } from './getSelectedMachine'
 export { getReviewSteps } from './getReviewSteps'
 export { hasReviewerApproved } from './hasReviewerApproved'
 export { getApproveAnswers } from './getApproveAnswers'
-export { isLastReviewer } from './isLastReviewer'
 export { getRejecter } from './getRejecter'
 
 export const getChargeItemCodes = (): Array<string> => {

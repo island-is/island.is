@@ -12,8 +12,8 @@ export interface ReviewScreenProps {
   setLocation?: (location: MachineLocation) => void
   location?: MachineLocation
   reviewerNationalId?: string
-  setBuyerOperators?: (s: Operator[]) => void
-  buyerOperators?: Operator[]
+  setBuyerOperator?: (s: Operator) => void
+  buyerOperator?: Operator | null
 }
 
 export type ReviewState =
@@ -44,20 +44,6 @@ export interface ReviewSectionProps {
   isComplete?: boolean
 }
 
-export type VehiclesCurrentVehicle = {
-  permno?: string
-  make?: string
-  color?: string
-  role?: string
-}
-
-type MachineLink = {
-  href: string
-  rel: string
-  method: string
-  displayTitle: string
-}
-
 export type Machine = {
   id?: string
   regNumber?: string
@@ -65,32 +51,6 @@ export type Machine = {
   subType?: string
   type?: string
   category?: string
-}
-
-export type MachineDetails = {
-  id?: string
-  registrationNumber?: string
-  type?: string
-  status?: string
-  category?: string
-  subCategory?: string
-  productionYear?: number
-  registrationDate?: string
-  ownerNumber?: string | null
-  productionNumber?: string
-  productionCountry?: string
-  licensePlateNumber?: string | null
-  importer?: string
-  insurer?: string
-  ownerName?: string
-  ownerNationalId?: string
-  ownerAddress?: string
-  ownerPostcode?: string
-  supervisorName?: string
-  supervisorNationalId?: string
-  supervisorAddress?: string
-  supervisorPostcode?: string
-  _links?: MachineLink[] | null
 }
 
 export type MachineLocation = {

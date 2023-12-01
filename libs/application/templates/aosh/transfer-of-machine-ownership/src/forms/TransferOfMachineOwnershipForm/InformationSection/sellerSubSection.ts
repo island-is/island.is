@@ -3,7 +3,6 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
-  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'

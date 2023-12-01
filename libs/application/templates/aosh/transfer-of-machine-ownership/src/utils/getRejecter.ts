@@ -15,22 +15,6 @@ export const getRejecter = (reviewerNationalId: string, answers: FormValue) => {
         type: 'buyer',
       } as Rejecter
     }
-
-    const buyerOperators = getValueViaPath(
-      answers,
-      'buyerOperator',
-      [],
-    ) as Operator[]
-    const buyerOperator = buyerOperators
-      .filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .find((operator) => operator.nationalId === reviewerNationalId)
-    if (buyerOperator) {
-      return {
-        regNumber: id,
-        name: buyerOperator.name,
-        nationalId: buyerOperator.nationalId,
-      } as Rejecter
-    }
   } catch (error) {
     console.log('getRejector ERROR', error)
   }

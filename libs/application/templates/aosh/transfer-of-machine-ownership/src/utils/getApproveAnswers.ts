@@ -51,35 +51,5 @@ export const getApproveAnswers = (
     })
   }
 
-  // If reviewer is buyers operator
-  const buyerOperators = getValueViaPath(
-    answers,
-    'buyerOperator',
-    [],
-  ) as Operator[]
-  const buyerOperator = buyerOperators
-    .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find((operator) => operator.nationalId === reviewerNationalId)
-  if (
-    buyerOperator &&
-    (buyerOperator.approved === undefined || buyerOperator.approved === false)
-  ) {
-    Object.assign(returnAnswers, {
-      buyerOperator: buyerOperators.map((operator) => {
-        return {
-          nationalId: operator.nationalId,
-          name: operator.name,
-          email: operator.email,
-          phone: operator.phone,
-          wasRemoved: operator.wasRemoved,
-          approved:
-            operator.nationalId === reviewerNationalId
-              ? true
-              : operator.approved || false,
-        }
-      }),
-    })
-  }
-
   return returnAnswers
 }

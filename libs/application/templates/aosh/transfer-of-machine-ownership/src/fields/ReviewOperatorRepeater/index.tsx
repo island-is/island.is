@@ -18,7 +18,7 @@ import { getValueViaPath } from '@island.is/application/core'
 
 export const ReviewOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({ setStep, setBuyerOperators, buyerOperators = [], ...props }) => {
+> = ({ setStep, setBuyerOperator, buyerOperator = {}, ...props }) => {
   const { application } = props
 
   const { locale, formatMessage } = useLocale()
@@ -33,57 +33,26 @@ export const ReviewOperatorRepeater: FC<
     string | undefined
   >(undefined)
 
-  const [identicalError, setIdenticalError] = useState<boolean>(false)
+  const [tempBuyerOperator, setTempBuyerOperator] = useState<
+    Operator | undefined
+  >(buyerOperator || undefined)
 
-  const [tempBuyerOperators, setTempBuyerOperators] =
-    useState<Operator[]>(buyerOperators)
-
-  const allOperators = tempBuyerOperators.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
-
-  const checkDuplicate = () => {
-    const existingBuyerOperators = allOperators.map(({ nationalId }) => {
-      return nationalId
-    })
-
-    const buyerNationalId = getValueViaPath(
-      application.answers,
-      'buyer.nationalId',
-    ) as string
-
-    const jointOperators = [...existingBuyerOperators, buyerNationalId]
-    return !!jointOperators.some((nationalId, index) => {
-      return (
-        nationalId &&
-        nationalId.length > 0 &&
-        jointOperators.indexOf(nationalId) !== index
-      )
-    })
-  }
+  const operator =
+    tempBuyerOperator?.wasRemoved !== 'true' ? tempBuyerOperator : undefined
 
   const handleAdd = () =>
-    setTempBuyerOperators([
-      ...tempBuyerOperators,
-      {
-        name: '',
-        nationalId: '',
-        email: '',
-        phone: '',
-      },
-    ])
+    setTempBuyerOperator({
+      name: '',
+      nationalId: '',
+      email: '',
+      phone: '',
+    })
 
-  const handleRemove = (position: number) => {
-    if (position > -1) {
-      setTempBuyerOperators(
-        tempBuyerOperators.map((buyerOperator, index) => {
-          if (index === position) {
-            return { ...buyerOperator, wasRemoved: 'true' }
-          }
-          return buyerOperator
-        }),
-      )
-    }
+  const handleRemove = () => {
+    setTempBuyerOperator({
+      ...tempBuyerOperator,
+      wasRemoved: 'true',
+    })
   }
 
   const onBackButtonClick = () => {
@@ -93,46 +62,39 @@ export const ReviewOperatorRepeater: FC<
   }
 
   const onForwardButtonClick = async () => {
-    setIdenticalError(checkDuplicate())
-    if (!checkDuplicate()) {
-      setIdenticalError(false)
-      if (tempBuyerOperators && setBuyerOperators) {
-        const notValid = allOperators.find((field) => {
-          if (
-            !(field.email && field.email.length > 0) ||
-            !(field.name && field.name.length > 0) ||
-            !(field.nationalId && field.nationalId.length > 0) ||
-            !(field.phone && field.phone.length > 0)
-          ) {
-            return true
-          }
-          return false
-        })
-        if (notValid) {
-          setGenericErrorMessage(undefined)
-          setErrorMessage(formatMessage(error.fillInValidInput))
-        } else {
-          const res = await updateApplication({
-            variables: {
-              input: {
-                id: application.id,
-                answers: {
-                  buyerOperator: tempBuyerOperators,
-                },
+    if (tempBuyerOperator && setBuyerOperator) {
+      const notValid =
+        !(tempBuyerOperator.email && tempBuyerOperator.email.length > 0) ||
+        !(tempBuyerOperator.name && tempBuyerOperator.name.length > 0) ||
+        !(
+          tempBuyerOperator.nationalId &&
+          tempBuyerOperator.nationalId.length > 0
+        ) ||
+        !(tempBuyerOperator.phone && tempBuyerOperator.phone.length > 0)
+
+      if (notValid) {
+        setGenericErrorMessage(undefined)
+        setErrorMessage(formatMessage(error.fillInValidInput))
+      } else {
+        const res = await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: {
+                buyerOperator: tempBuyerOperator,
               },
-              locale,
             },
-          })
-          if (!res.data) {
-            setGenericErrorMessage(
-              formatMessage(error.couldNotUpdateApplication),
-            )
-          } else {
-            setBuyerOperators(tempBuyerOperators)
-            setGenericErrorMessage(undefined)
-            setErrorMessage(undefined)
-            setStep && setStep('overview')
-          }
+            locale,
+          },
+        })
+
+        if (!res.data) {
+          setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
+        } else {
+          setBuyerOperator(tempBuyerOperator)
+          setGenericErrorMessage(undefined)
+          setErrorMessage(undefined)
+          setStep && setStep('overview')
         }
       }
     }
@@ -147,22 +109,18 @@ export const ReviewOperatorRepeater: FC<
         {formatMessage(information.labels.buyerOperators.description)}
       </Text>
       <Box>
-        {tempBuyerOperators?.map((field, index) => {
-          return (
-            <ReviewOperatorRepeaterItem
-              id="buyerOperator"
-              repeaterField={field}
-              index={index}
-              key={`${index}-buyerOperator`}
-              handleRemove={handleRemove}
-              setBuyerOperators={setTempBuyerOperators}
-              buyerOperators={tempBuyerOperators}
-              errorMessage={errorMessage}
-              {...props}
-            />
-          )
-        })}
-        {tempBuyerOperators.length === 0 || allOperators.length === 0 ? (
+        <ReviewOperatorRepeaterItem
+          id="buyerOperator"
+          repeaterField={tempBuyerOperator || {}}
+          index={0} // Assuming it's the first (or only) buyerOperator
+          key={`0-buyerOperator`}
+          handleRemove={handleRemove}
+          setBuyerOperator={setTempBuyerOperator}
+          buyerOperator={tempBuyerOperator}
+          errorMessage={errorMessage}
+          {...props}
+        />
+        {!tempBuyerOperator || Object.keys(tempBuyerOperator).length === 0 ? (
           <Box
             display="flex"
             alignItems="stretch"
@@ -181,18 +139,11 @@ export const ReviewOperatorRepeater: FC<
           </Box>
         ) : null}
       </Box>
+
       {genericErrorMessage && (
         <Text variant="eyebrow" color="red600">
           {genericErrorMessage}
         </Text>
-      )}
-      {identicalError && (
-        <Box marginTop={4}>
-          <AlertMessage
-            type="error"
-            title={formatMessage(information.labels.operator.identicalError)}
-          />
-        </Box>
       )}
       <Box style={{ marginTop: '40vh' }}>
         <Divider />

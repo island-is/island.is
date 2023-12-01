@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { EmailRecipient, EmailRole } from './types'
-import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
+import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 export const getApplicationPruneDateStr = (
   applicationCreated: Date,
 ): string => {
@@ -22,7 +22,7 @@ export const pathToAsset = (file: string) => {
 }
 
 export const getRecipients = (
-  answers: TransferOfMachineOwnerShipAnswers,
+  answers: TransferOfMachineOwnershipAnswers,
   roles: Array<EmailRole>,
 ): Array<EmailRecipient> => {
   const recipientList: Array<EmailRecipient> = []
@@ -51,22 +51,49 @@ export const getRecipients = (
     })
   }
 
-  // Buyer's operators
-  const buyerOperators = answers?.buyerOperator?.filter(
-    ({ wasRemoved }) => wasRemoved !== 'true',
-  )
-  if (roles.includes(EmailRole.buyerOperator) && buyerOperators) {
-    for (let i = 0; i < buyerOperators.length; i++) {
-      recipientList.push({
-        ssn: buyerOperators[i].nationalId || '',
-        name: buyerOperators[i].name || '',
-        email: buyerOperators[i].email,
-        phone: buyerOperators[i].phone,
-        role: EmailRole.buyerOperator,
-        approved: buyerOperators[i].approved,
-      })
-    }
+  // Buyer's operator
+  const buyerOperator =
+    answers?.buyerOperator?.wasRemoved !== 'true' ? answers.buyerOperator : null
+  if (roles.includes(EmailRole.buyerOperator) && buyerOperator) {
+    recipientList.push({
+      ssn: buyerOperator.nationalId || '',
+      name: buyerOperator.name || '',
+      email: buyerOperator.email,
+      phone: buyerOperator.phone,
+      role: EmailRole.buyerOperator,
+      approved: buyerOperator.approved,
+    })
   }
 
   return recipientList
+}
+
+export const getRecipientBySsn = (
+  answers: TransferOfMachineOwnershipAnswers,
+  ssn: string,
+): EmailRecipient | undefined => {
+  // Seller
+  if (answers.seller?.nationalId === ssn) {
+    return {
+      ssn: answers.seller.nationalId,
+      name: answers.seller.name,
+      email: answers.seller.email,
+      phone: answers.seller.phone,
+      role: EmailRole.seller,
+      approved: true,
+    }
+  }
+}
+
+export const getRoleNameById = (roleId: EmailRole): string | undefined => {
+  switch (roleId) {
+    case EmailRole.seller:
+      return 'Seljandi'
+    case EmailRole.buyer:
+      return 'Kaupandi'
+    case EmailRole.buyerOperator:
+      return 'Umráðamaður kaupanda'
+    default:
+      undefined
+  }
 }

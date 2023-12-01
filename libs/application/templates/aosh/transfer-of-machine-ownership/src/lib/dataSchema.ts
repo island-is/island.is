@@ -75,14 +75,14 @@ export const RejecterSchema = z.object({
   regNumber: z.string(),
   name: z.string(),
   nationalId: z.string(),
-  type: z.enum(['buyer', 'operator']),
+  type: z.enum(['buyer']),
 })
 
 export const MachineAnswersSchema = z.object({
   buyer: UserInformationSchema,
   seller: UserInformationSchema,
   machine: z.object({
-    id: z.string().optional(),
+    id: z.string(),
     date: z.string().optional(),
     type: z.string().optional(),
     plate: z.string().optional(),
@@ -100,7 +100,7 @@ export const MachineAnswersSchema = z.object({
     postCode: z.number(),
     moreInfo: z.string(),
   }),
-  buyerOperator: z.array(OperatorSchema),
+  buyerOperator: OperatorSchema.optional(),
   approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })

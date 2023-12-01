@@ -18,6 +18,7 @@ import {
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
+import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -74,7 +75,6 @@ const reviewStatePendingAction = (
     }
   }
 }
-
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -83,6 +83,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
+  featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],

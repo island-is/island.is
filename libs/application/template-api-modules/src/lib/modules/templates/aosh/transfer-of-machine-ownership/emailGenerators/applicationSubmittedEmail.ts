@@ -1,20 +1,16 @@
 import { Message } from '@island.is/email-service'
 import { EmailTemplateGeneratorProps } from '../../../../../types'
-import { ApplicationConfigurations } from '@island.is/application/types'
-import {
-  getApplicationPruneDateStr,
-  pathToAsset,
-} from '../transfer-of-machine-ownership.utils'
 import { EmailRecipient } from '../types'
-import { getValueViaPath } from '@island.is/application/core'
+import { pathToAsset } from '../transfer-of-machine-ownership.utils'
+import { ApplicationConfigurations } from '@island.is/application/types'
 import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 
-export type RequestReviewEmail = (
+export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,
   recipient: EmailRecipient,
 ) => Message
 
-export const generateRequestReviewEmail: RequestReviewEmail = (
+export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   props,
   recipient,
 ): Message => {
@@ -23,13 +19,12 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
     options: { email, clientLocationOrigin },
   } = props
   const answers = application.answers as TransferOfMachineOwnershipAnswers
-  const regNumber = getValueViaPath(answers, 'machine.regNumber') as string
+  const regNumber = answers?.machine.regNumber
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
-  if (!regNumber) throw new Error('Registration Number was undefined')
+  if (!regNumber) throw new Error('Permno was undefined')
 
-  const subject = 'Tilkynning um eigendaskipti - Vantar samþykki'
-  const pruneDateStr = getApplicationPruneDateStr(application.created)
+  const subject = 'Tilkynning um eigendaskipti - Búið er að skrá beiðni'
 
   return {
     from: {
@@ -64,17 +59,15 @@ export const generateRequestReviewEmail: RequestReviewEmail = (
           context: {
             copy:
               `<span>Góðan dag,</span><br/><br/>` +
-              `<span>Þín bíður ósamþykkt beiðni um eigendaskipti fyrir tækið ${regNumber} á island.is.</span><br/>` +
-              `<span>Þú hefur 7 daga til þess að samþykkja beiðnina.</span><br/>` +
-              `<span>Ef eigendaskiptin hafa ekki verið samþykkt fyrir ${pruneDateStr} munu þau falla niður.</span><br/>` +
-              `<span>Hægt er að fara yfir beiðnina á island.is eða með því að smella á hlekkinn hér fyrir neðan.</span><br/>`,
+              `<span>Eigendaskipti fyrir tækið ${regNumber} hafa verið skráð.</span><br/>` +
+              `<span>Allir aðilar samþykktu inn á island.is/umsoknir og búið er að greiða fyrir tilkynninguna.</span>`,
           },
         },
         {
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfMachineOwnership.slug}/${application.id}`,
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}`,
           },
         },
       ],

@@ -16,7 +16,6 @@ import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
 import { ReviewScreenProps } from '../../shared'
-import { isLastReviewer } from '../../utils'
 import { CopyLink } from '@island.is/application/ui-components'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
@@ -24,18 +23,8 @@ import { coreMessages } from '@island.is/application/core'
 export const ReviewConclusion: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = (props) => {
-  const {
-    refetch,
-    reviewerNationalId = '',
-    application,
-    buyerOperators = [],
-  } = props
+  const { refetch, application } = props
   const { formatMessage } = useLocale()
-  const isLast = isLastReviewer(
-    reviewerNationalId,
-    application.answers,
-    buyerOperators,
-  )
 
   const onForwardButtonClick = () => {
     refetch?.()
@@ -44,9 +33,7 @@ export const ReviewConclusion: FC<
   return (
     <Box>
       <Text variant="h2" marginBottom={4}>
-        {formatMessage(
-          isLast ? conclusion.general.approvedTitle : conclusion.general.title,
-        )}
+        {formatMessage(conclusion.general.approvedTitle)}
       </Text>
       <Box marginBottom={5}>
         <AlertMessage
@@ -60,13 +47,7 @@ export const ReviewConclusion: FC<
         label={formatMessage(conclusion.default.accordionTitle)}
         startExpanded={true}
       >
-        <Text>
-          {formatMessage(
-            isLast
-              ? conclusion.approved.accordionText
-              : conclusion.review.accordionText,
-          )}
-        </Text>
+        <Text>{formatMessage(conclusion.approved.accordionText)}</Text>
       </AccordionCard>
       <Box marginTop={3}>
         <Text variant="h4">{formatMessage(conclusion.default.shareLink)}</Text>

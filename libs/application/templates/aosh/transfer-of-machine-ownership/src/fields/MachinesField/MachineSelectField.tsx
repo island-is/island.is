@@ -38,16 +38,7 @@ export const MachineSelectField: FC<
   const [selectedMachine, setSelectedMachine] =
     useState<MachineHateoasDto | null>(
       currentMachine && currentMachine.registrationNumber
-        ? {
-            id: currentMachine.id,
-            registrationNumber: currentMachine.registrationNumber,
-            type: currentMachine.type,
-            ownerName: currentMachine.ownerName,
-            supervisorName: currentMachine.supervisorName,
-            status: currentMachine.status,
-            category: currentMachine.category,
-            ownerNumber: '',
-          }
+        ? currentMachine
         : null,
     )
   const [machineId, setMachineId] = useState<string>(
@@ -72,14 +63,7 @@ export const MachineSelectField: FC<
       getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
           setSelectedMachine({
-            id: currentMachine.id,
-            registrationNumber: currentMachine.registrationNumber,
-            type: currentMachine.type,
-            ownerName: currentMachine.ownerName,
-            supervisorName: currentMachine.supervisorName,
-            status: currentMachine.status,
-            links: currentMachine.links,
-            category: currentMachine.category,
+            ...currentMachine,
             ownerNumber: response.aoshMachineDetails?.ownerNumber || '',
           })
 
@@ -115,7 +99,6 @@ export const MachineSelectField: FC<
     }
   }
   // Use this when Links have been added to machine
-  // const isCurrentMachineDisabled = (machine: Machine | undefined | null) => !machine?._links?.some((link) => link.rel === "ownerChange");
 
   function isCurrentMachineDisabled(status?: string | null): boolean {
     const disabledStatuses = [

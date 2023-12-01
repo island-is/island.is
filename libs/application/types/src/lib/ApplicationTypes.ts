@@ -259,7 +259,7 @@ export const ApplicationConfigurations = {
     translation: 'doi.cs.application',
   },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
-    slug: 'vinnueftirlitid',
+    slug: 'eigendaskipti-taekis',
     translation: 'aosh.application',
   },
 }

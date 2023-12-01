@@ -18,23 +18,22 @@ import {
   OperatorSection,
   LocationSection,
 } from './sections'
-import {
-  getApproveAnswers,
-  hasReviewerApproved,
-  isLastReviewer,
-} from '../../utils'
+import { getApproveAnswers, hasReviewerApproved } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
 import {
   APPLICATION_APPLICATION,
   SUBMIT_APPLICATION,
 } from '@island.is/application/graphql'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { APPROVE_OWNER_CHANGE } from '../../graphql/queries'
-import { TransferOfMachineOwnerShipAnswers } from '../..'
+import { useLazyQuery, useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({ setStep, reviewerNationalId = '', buyerOperators = [], ...props }) => {
+> = ({
+  setStep,
+  reviewerNationalId = '',
+  buyerOperator: buyerOperators = {},
+  ...props
+}) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
@@ -78,7 +77,7 @@ export const Overview: FC<
       )
 
       // First approve application only (event=APPROVE)
-      const resApprove = await submitApplication({
+      await submitApplication({
         variables: {
           input: {
             id: application.id,
@@ -87,87 +86,10 @@ export const Overview: FC<
           },
         },
       })
-
-      const updatedApplication2 = resApprove?.data?.submitApplication
-
-      if (updatedApplication2) {
-        const isLast = isLastReviewer(
-          reviewerNationalId,
-          updatedApplication2.answers,
-          buyerOperators,
-        )
-        // Then check if user is the last approver (using newer updated application answers), if so we
-        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
-        if (isLast) {
-          const approveAnswers2 = getApproveAnswers(
-            reviewerNationalId,
-            updatedApplication2.answers,
-          )
-          console.log('updatedApplication2', updatedApplication2)
-          const answers =
-            updatedApplication2.answers as TransferOfMachineOwnerShipAnswers
-          console.log('answers', answers)
-          console.log('approveAnswers', approveAnswers)
-          console.log('input', {
-            id: application.id,
-            machineId: answers.machine?.id,
-            machineMoreInfo: answers.location?.moreInfo,
-            machinePostalCode: answers.location?.postCode,
-            machineAddress: answers.location?.address,
-            buyerNationalId: answers.buyer.nationalId,
-            delegateNationalId: reviewerNationalId,
-          })
-          await changeMachineOwnerMutation({
-            variables: {
-              input: {
-                id: application.id,
-                machineId: answers.machine?.id,
-                machineMoreInfo: answers.location?.moreInfo,
-                machinePostalCode: answers.location?.postCode,
-                machineAddress: answers.location?.address,
-                buyerNationalId: answers.buyer.nationalId,
-                delegateNationalId: reviewerNationalId,
-              },
-            },
-          })
-          const resSubmit = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: DefaultEvents.SUBMIT,
-                answers: approveAnswers2,
-              },
-            },
-          })
-
-          if (resSubmit?.data) {
-            setLoading(false)
-            setStep && setStep('conclusion')
-          }
-        } else {
-          setLoading(false)
-          setStep && setStep('conclusion')
-        }
-      }
+      setLoading(false)
+      setStep && setStep('conclusion')
     }
   }
-
-  const [changeMachineOwnerMutation, { data }] = useMutation(
-    gql`
-      ${APPROVE_OWNER_CHANGE}
-    `,
-    {
-      onCompleted: async (data) => {
-        console.log(data)
-        if (data && data.confirmOwnerChange) {
-          console.log('Change machine owner was successful')
-        } else {
-          // The operation failed
-          console.log('Change machine owner failed')
-        }
-      },
-    },
-  )
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -201,7 +123,7 @@ export const Overview: FC<
         />
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
-          buyerOperators={buyerOperators}
+          buyerOperator={buyerOperators}
           {...props}
         />
 
