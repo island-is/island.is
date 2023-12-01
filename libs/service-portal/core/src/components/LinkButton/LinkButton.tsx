@@ -1,5 +1,4 @@
 import { Button, ButtonProps } from '@island.is/island-ui/core'
-import { FC } from 'react'
 import { isExternalLink } from '../../utils/isExternalLink'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './LinkButton.css'
@@ -25,13 +24,13 @@ type Props =
 
 type LinkButtonProps = SharedProps & Props
 
-export const LinkButton: FC<React.PropsWithChildren<LinkButtonProps>> = ({
+export const LinkButton = ({
   variant = 'text',
   to,
   text,
   icon,
   skipOutboundTrack,
-}) => {
+}: LinkButtonProps) => {
   const isExternal = isExternalLink(to)
   if (variant === 'text') {
     return (
