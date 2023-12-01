@@ -543,7 +543,7 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                   : {operatingLicense.alcoholWeekendOutdoorLicense}
                 </Text>
               )}
-              {operatingLicense.maximumNumberOfGuests &&
+              {typeof operatingLicense.maximumNumberOfGuests === 'number' &&
                 operatingLicense.maximumNumberOfGuests > 0 && (
                   <Text paddingBottom={0}>
                     {n(
@@ -553,8 +553,8 @@ const OperatingLicenses: Screen<OperatingLicensesProps> = ({
                     : {operatingLicense.maximumNumberOfGuests}
                   </Text>
                 )}
-              {operatingLicense.numberOfDiningGuests &&
-                operatingLicense?.numberOfDiningGuests > 0 && (
+              {typeof operatingLicense.numberOfDiningGuests === 'number' &&
+                operatingLicense.numberOfDiningGuests > 0 && (
                   <Text paddingBottom={0}>
                     {n(
                       'operatingLicensesMaximumNumberOfDiningGuests',

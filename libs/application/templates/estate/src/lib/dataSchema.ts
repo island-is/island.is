@@ -261,6 +261,7 @@ export const estateSchema = z.object({
     .object({
       publisher: z.string(),
       value: z.string(),
+      nationalId: z.string().optional(),
     })
     .refine(
       ({ publisher, value }) => {
@@ -276,6 +277,16 @@ export const estateSchema = z.object({
       },
       {
         path: ['publisher'],
+      },
+    )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId && nationalId !== ''
+          ? kennitala.isValid(nationalId)
+          : true
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .array()
