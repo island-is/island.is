@@ -288,6 +288,9 @@ export interface Case {
   appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
+  appealValidToDate?: string
+  isAppealCustodyIsolation?: boolean
+  appealIsolationToDate?: string
 }
 
 export interface CaseListEntry
@@ -408,6 +411,9 @@ export interface UpdateCase
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -475,7 +481,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_RULING,
 ]
 
-export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
