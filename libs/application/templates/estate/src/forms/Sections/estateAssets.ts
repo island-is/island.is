@@ -299,7 +299,7 @@ export const estateAssets = buildSection({
                     title: m.stocksValue,
                     id: 'value',
                     backgroundColor: 'white',
-                    type: 'number',
+                    currency: true,
                     readOnly: true,
                   },
                 ],
