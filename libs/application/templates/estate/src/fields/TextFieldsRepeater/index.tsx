@@ -111,9 +111,8 @@ export const TextFieldsRepeater: FC<
     const rateOfExchange = stockValues?.rateOfExchange
 
     if (faceValue && rateOfExchange) {
-      // convert a string like 1.000,00 to 1000.00
-      const a = faceValue.replace('.', '').replace(',', '.')
-      const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
+      const a = faceValue.replace(/[^\d.]/g, '')
+      const b = rateOfExchange.replace(/[^\d.]/g, '')
 
       const aVal = parseFloat(a)
       const bVal = parseFloat(b)
@@ -166,7 +165,8 @@ export const TextFieldsRepeater: FC<
                 const key = `${id}.${field.id}`
 
                 if (key === 'stocks.faceValue') {
-                  const value = getValues(fieldIndex)?.faceValue ?? ''
+                  const value =
+                    getValues(fieldIndex)?.faceValue?.replace('.', ',') ?? ''
 
                   return (
                     <GridColumn
@@ -194,7 +194,13 @@ export const TextFieldsRepeater: FC<
                             : undefined
                         }
                         onChange={(e: { target: { value: string } }) => {
-                          setValue(`${fieldIndex}.faceValue`, e.target.value)
+                          // now change it back to the right format (e.g.: "1.123.123,123 kr." -> "1123123.123")
+                          const val =
+                            e.target.value
+                              ?.replace(/[^\d,]/g, '')
+                              .replace(',', '.') ?? ''
+
+                          setValue(`${fieldIndex}.faceValue`, val)
 
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)
