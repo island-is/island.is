@@ -68,7 +68,7 @@ const Lists = () => {
   return (
     <GridContainer>
       <GridRow direction="row">
-        <GridColumn span={['3/12']}>
+        <GridColumn span={['0', '0', '12/12', '3/12']}>
           <Hidden below="md">
             <PortalNavigation
               navigation={signatureCollectionNavigation}
@@ -77,8 +77,9 @@ const Lists = () => {
           </Hidden>
         </GridColumn>
         <GridColumn
-          offset={['0', '0', '1/12']}
-          span={['12/12', '12/12', '8/12']}
+          paddingTop={[0, 0, 5, 2]}
+          offset={['0', '0', '0', '1/12']}
+          span={['12/12', '12/12', '12/12', '8/12']}
         >
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
@@ -86,69 +87,79 @@ const Lists = () => {
             img={img}
             imgPosition="right"
           />
-          <Box marginBottom={5}>
-            <Filter
-              labelClear=""
-              labelClose=""
-              labelResult=""
-              labelOpen={formatMessage(m.filter)}
-              labelClearAll={formatMessage(m.clearFilters)}
-              resultCount={lists.length}
-              variant='popover'
-              reverse
-              onFilterClear={() => {
-                setFilters({
-                  area: [],
-                  input: '',
-                })
-              }}
-              filterInput={
-                <FilterInput
-                  name="input"
-                  placeholder={formatMessage(m.searchInAllListsPlaceholder)}
-                  value={filters.input}
-                  onChange={(value) => setFilters({ ...filters, input: value })}
-                />
-              }
-            >
-              <FilterMultiChoice
-                labelClear=''
-                categories={[
-                  {
-                    id: 'area',
-                    label: formatMessage(m.countryArea),
-                    selected: filters.area,
-                    filters: countryAreas,
-                  },
-                ]}
-                onChange={(event) =>
-                  setFilters({
-                    ...filters,
-                    [event.categoryId]: event.selected,
-                  })
-                }
-                onClear={(categoryId) =>
-                  setFilters({
-                    ...filters,
-                    [categoryId]: [],
-                  })
-                }
+          <GridRow marginBottom={5}>
+            <GridColumn span={['12/12', '12/12', '7/12']}>
+              <FilterInput
+                name="input"
+                placeholder={formatMessage(m.searchInAllListsPlaceholder)}
+                value={filters.input}
+                onChange={(value) => setFilters({ ...filters, input: value })}
+                backgroundColor="white"
               />
-            </Filter>
-            {(filters.input.length > 0 || filters.area.length > 0) &&
-              lists.length > 0 && (
-                <Box
-                  display="flex"
-                  alignItems="flexEnd"
-                  width="half"
-                  justifyContent="flexEnd"
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '5/12']}>
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                marginTop={[2, 2, 0, 0]}
+              >
+                <Filter
+                  labelClear=""
+                  labelClose=""
+                  labelResult=""
+                  labelOpen={formatMessage(m.filter)}
+                  labelClearAll={formatMessage(m.clearFilters)}
+                  resultCount={lists.length}
+                  variant="popover"
+                  reverse
+                  onFilterClear={() => {
+                    setFilters({
+                      area: [],
+                      input: '',
+                    })
+                  }}
                 >
-                  <Text variant="h5">
-                    {formatMessage(m.uploadResultsHeader)}: {lists.length}
-                  </Text>
-                </Box>
-              )}
-          </Box>
+                  <FilterMultiChoice
+                    labelClear=""
+                    categories={[
+                      {
+                        id: 'area',
+                        label: formatMessage(m.countryArea),
+                        selected: filters.area,
+                        filters: countryAreas,
+                      },
+                    ]}
+                    onChange={(event) =>
+                      setFilters({
+                        ...filters,
+                        [event.categoryId]: event.selected,
+                      })
+                    }
+                    onClear={(categoryId) =>
+                      setFilters({
+                        ...filters,
+                        [categoryId]: [],
+                      })
+                    }
+                  />
+                </Filter>
+                {(filters.input.length > 0 || filters.area.length > 0) &&
+                  lists.length > 0 && (
+                    <Box
+                      display="flex"
+                      justifyContent="flexEnd"
+                      alignItems="flexEnd"
+                      style={{ minWidth: '150px' }}
+                    >
+                      <Text variant="eyebrow" textAlign="right">
+                        {formatMessage(m.uploadResultsHeader)}: {lists.length}
+                      </Text>
+                    </Box>
+                  )}
+              </Box>
+            </GridColumn>
+          </GridRow>
+
           {lists?.length > 0 ? (
             <Stack space={5}>
               {lists

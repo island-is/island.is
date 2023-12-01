@@ -25,7 +25,7 @@ export const m = defineMessages({
   },
   filter: {
     id: 'admin-portal.signature-collection:filter',
-    defaultMessage: 'Sía',
+    defaultMessage: 'Opna síu',
     description: '',
   },
   filterBy: {
