@@ -52,13 +52,13 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.ref == 'ref/heads/main' }}
 
       - uses: actions/setup-node@v3
@@ -108,7 +108,7 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
         with:
           node-version: '18'
