@@ -84,9 +84,9 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
   return (
     <div
       className={cn({
-        [`${styles.wrapper}`]: true,
-        [`${styles.wrapperTwoChildren}`]: boxData.length === 2,
-        [`${styles.wrapperThreeChildren}`]: boxData.length === 3,
+        [styles.wrapper]: true,
+        [styles.wrapperTwoChildren]: boxData.length === 2,
+        [styles.wrapperThreeChildren]: boxData.length === 3,
       })}
     >
       {boxData.map((data, index) => {
@@ -105,9 +105,8 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
         return (
           <div
             className={cn({
-              [`${styles.numberBox}`]: true,
-              [`${styles.numberBoxFillWidth}`]:
-                boxData.length === 3 && index === 0,
+              [styles.numberBox]: true,
+              [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,
             })}
           >
             <h3 className={styles.title}>
