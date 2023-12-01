@@ -227,9 +227,9 @@ export const statesMessages = defineMessages({
     description: 'The application has been sent',
   },
   applicationSentDescription: {
-    id: 'oap.application:application.sent.description',
+    id: 'rf.cr.application:application.sent.description',
     defaultMessage: 'Hægt er að breyta umsókn',
-    description: ' It is possible to edit the application',
+    description: 'It is possible to edit the application',
   },
 })
 
