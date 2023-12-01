@@ -8,6 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/types'
 import HouseholdSupplementTemplate from './HouseholdSupplementTemplate'
+import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -46,6 +47,41 @@ describe('Household Supplement Template', () => {
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('tryggingastofnunSubmitted')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from draft to tryggingastofnunSubmitted on abort', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            confirmCorrectInfo: true,
+          },
+        }),
+        HouseholdSupplementTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunSubmitted')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to tryggingastofnunInReview on inreview', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        HouseholdSupplementTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: OAPEvents.INREVIEW,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunInReview')
     })
   })
 
@@ -101,16 +137,49 @@ describe('Household Supplement Template', () => {
   })
 
   describe('state transitions', () => {
-    it('should transition from additionalDocumentsRequired to tryggingastofnunInReview on approve', () => {
+    it('should transition from tryggingastofnunInReview to additionalDocumentsRequired on ADDITIONALDOCUMENTSREQUIRED', () => {
       const helper = new ApplicationTemplateHelper(
         buildApplication({
-          state: 'additionalDocumentsRequired',
+          state: 'tryggingastofnunInReview',
+          answers: {
+            fileUploadAdditionalFiles: {
+              additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
+              additionalDocumentsRequired: [],
+            },
+          },
         }),
         HouseholdSupplementTemplate,
       )
 
       const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.APPROVE,
+        type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('additionalDocumentsRequired')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from additionalDocumentsRequired to tryggingastofnunInReview on submit', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'additionalDocumentsRequired',
+          answers: {
+            fileUploadAdditionalFiles: {
+              additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
+              additionalDocumentsRequired: [],
+            },
+          },  
+        }),
+        HouseholdSupplementTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
       })
       expect(hasChanged).toBe(true)
       expect(newState).toBe('tryggingastofnunInReview')

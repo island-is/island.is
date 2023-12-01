@@ -11,6 +11,7 @@ import {
 import {
   getAvailableYears,
   getAvailableMonths,
+  shouldNotUpdateBankAccount,
 } from './householdSupplementUtils'
 import { MONTHS } from './constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
@@ -204,3 +205,142 @@ describe('isExistsCohabitantOlderThan25', () => {
     expect(res).toEqual(false)
   })
 })
+
+describe('shouldNotUpdateBankAccount', () => {
+  it('should return true if bank account returned from TR is not changed', () => {
+    const application = buildApplication({
+      answers: {
+        paymentInfo: {
+          bank: '222200123456',
+          bankAccountType: 'icelandic',
+        },
+      },
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = shouldNotUpdateBankAccount(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if bank account returned from TR is changed', () => {
+    const application = buildApplication({
+      answers: {
+        paymentInfo: {
+          bank: '222200000000',
+          bankAccountType: 'icelandic',
+        },
+      },
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = shouldNotUpdateBankAccount(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(false).toEqual(res)
+  })
+
+  it('should return true if foreign bank account returned from TR is not changed', () => {
+    const application = buildApplication({
+      answers: {
+        paymentInfo: {
+          bankAccountType: 'foreign',
+          iban: 'NL91ABNA0417164300',
+          swift: 'NEDSZAJJXXX',
+          bankName: 'Heiti banka',
+          bankAddress: 'Heimili banka',
+          currency: 'EUR',
+        },
+      },
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NL91ABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = shouldNotUpdateBankAccount(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if foreign bank account returned from TR is changed', () => {
+    const application = buildApplication({
+      answers: {
+        paymentInfo: {
+          bankAccountType: 'foreign',
+          iban: 'NL91ABNA0417164300',
+          swift: 'NEDSZAJJXXX',
+          bankName: 'Heiti banka',
+          bankAddress: 'Heimili banka',
+          currency: 'EUR',
+        },
+      },
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NLLLABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = shouldNotUpdateBankAccount(
+      application.answers,
+      application.externalData,
+    )
+
+    expect(false).toEqual(res)
+  })
+})
+
