@@ -140,6 +140,9 @@ export interface UpdateCase
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   state?: CaseState

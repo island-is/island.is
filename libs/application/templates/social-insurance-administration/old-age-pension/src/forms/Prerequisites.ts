@@ -232,6 +232,11 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
+      title: oldAgePensionFormMessage.review.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
       title: oldAgePensionFormMessage.review.confirmSectionTitle,
       children: [],
     }),
