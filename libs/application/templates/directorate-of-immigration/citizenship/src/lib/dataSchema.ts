@@ -19,7 +19,7 @@ const UserSchemaBase = z.object({
   email: z.string().min(1),
   phone: z.string().min(1),
   citizenship: z.string().min(1),
-  residenceInIcelandLastChangeDate: z.string().optional(),
+  residenceInIcelandLastChangeDateStr: z.string().optional(),
   birthCountry: z.string().optional(),
 })
 
