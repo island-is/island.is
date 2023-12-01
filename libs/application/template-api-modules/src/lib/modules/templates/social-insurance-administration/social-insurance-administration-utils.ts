@@ -7,11 +7,11 @@ import {
 import {
   ApplicationType,
   getApplicationAnswers,
-  BankAccountType,
-  formatBank,
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { formatBank } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,

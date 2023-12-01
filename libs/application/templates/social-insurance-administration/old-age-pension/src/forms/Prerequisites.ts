@@ -16,9 +16,10 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  NO,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { ApplicationType, NO } from '../lib/constants'
+import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,
