@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/administration-of-occupational-safety-and-health": [
+        "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
+      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
@@ -126,6 +129,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/hms-loans": [
+        "libs/api/domains/hms-loans/src/index.ts"
+      ],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -185,6 +191,9 @@
       ],
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
+      ],
+      "@island.is/api/domains/statistics": [
+        "libs/api/domains/statistics/src/index.ts"
       ],
       "@island.is/api/domains/syslumenn": [
         "libs/api/domains/syslumenn/src/index.ts"
@@ -456,6 +465,9 @@
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
+      "@island.is/clients/administration-of-occupational-safety-and-health": [
+        "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
+      ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
       ],
@@ -464,6 +476,9 @@
       ],
       "@island.is/clients/aircraft-registry": [
         "libs/clients/aircraft-registry/src/index.ts"
+      ],
+      "@island.is/clients/althingi-ombudsman": [
+        "libs/clients/althingi-ombudsman/src/index.ts"
       ],
       "@island.is/clients/aosh/transfer-of-machine-ownership": [
         "libs/clients/aosh/transfer-of-machine-ownership/src/index.ts"
@@ -530,6 +545,7 @@
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
+      "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
@@ -591,6 +607,7 @@
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
+      "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
@@ -626,6 +643,9 @@
         "libs/clients/vehicle-service-fjs-v1/src/index.ts"
       ],
       "@island.is/clients/vehicles": ["libs/clients/vehicles/src/index.ts"],
+      "@island.is/clients/vehicles-mileage": [
+        "libs/clients/vehicles-mileage/src/index.ts"
+      ],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
       "@island.is/clients/work-machines": [
         "libs/clients/work-machines/src/index.ts"
@@ -856,6 +876,9 @@
       ],
       "@island.is/service-portal/settings/islykill": [
         "libs/service-portal/settings/islykill/src/index.ts"
+      ],
+      "@island.is/service-portal/signature-collection": [
+        "libs/service-portal/signature-collection/src/index.ts"
       ],
       "@island.is/services/auth/testing": [
         "libs/services/auth/testing/src/index.ts"

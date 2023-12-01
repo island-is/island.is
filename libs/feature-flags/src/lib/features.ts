@@ -20,6 +20,7 @@ export enum Features {
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
+  complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -34,6 +35,8 @@ export enum Features {
   servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
+  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
+  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

@@ -328,6 +328,7 @@ api:
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/calc-v1'
     XROAD_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES_PATH: 'IS/GOV/5402697509/FJS-Protected/recruitment-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
@@ -352,6 +353,7 @@ api:
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
     XROAD_TRANSFER_MACHINE_OWNERSHIP_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
     XROAD_UNIVERSITY_OF_ICELAND_PATH: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1'
+    XROAD_VEHICLES_MILEAGE_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1'
     XROAD_VEHICLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Mitt-Svaedi-V1'
     XROAD_VEHICLE_CODETABLES_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Codetables-V1'
     XROAD_VEHICLE_INFOLOCKS_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Infolocks-V1'
@@ -423,6 +425,8 @@ api:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
     ADR_LICENSE_PASS_TEMPLATE_ID: '/k8s/api/ADR_LICENSE_PASS_TEMPLATE_ID'
     APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET'
+    CHART_STATISTIC_CACHE_TTL: '/k8s/api/CHART_STATISTIC_CACHE_TTL'
+    CHART_STATISTIC_SOURCE_DATA_PATHS: '/k8s/api/CHART_STATISTIC_SOURCE_DATA_PATHS'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
     DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY: '/k8s/api/DIRECTORATE_OF_IMMIGRATION_WATSON_ASSISTANT_CHAT_PRIVATE_RSA_KEY'
@@ -577,6 +581,7 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_PASSPORT_LICENSE_PATH: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1'
@@ -680,6 +685,9 @@ application-system-api:
       cpu: '75m'
       memory: '512Mi'
   secrets:
+    ALTHINGI_OMBUDSMAN_XROAD_PASSWORD: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD'
+    ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH'
+    ALTHINGI_OMBUDSMAN_XROAD_USERNAME: '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME'
     ARK_BASE_URL: '/k8s/application-system-api/ARK_BASE_URL'
     AUTH_JWT_SECRET: '/k8s/application-system/api/AUTH_JWT_SECRET'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -1028,6 +1036,7 @@ download-service:
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_LOANS_PATH: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS/EDU/5708150320/MMS-Protected/license-api-v1'
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
@@ -1628,7 +1637,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     ELASTIC_INDEX: 'island-is'
     ELASTIC_NODE: 'https://vpc-search-mw4w5c2m2g5edjrtvwbpzhkw24.eu-west-1.es.amazonaws.com'
-    NODE_OPTIONS: '--max-old-space-size=2764'
+    NODE_OPTIONS: '--max-old-space-size=3686'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -1683,10 +1692,10 @@ search-indexer-service:
         resources:
           limits:
             cpu: '700m'
-            memory: '3072Mi'
+            memory: '4096Mi'
           requests:
             cpu: '300m'
-            memory: '2048Mi'
+            memory: '3072Mi'
       - args:
           - '/webapp/migrateKibana.js'
         command:
@@ -1727,10 +1736,10 @@ search-indexer-service:
   resources:
     limits:
       cpu: '800m'
-      memory: '3072Mi'
+      memory: '4096Mi'
     requests:
       cpu: '400m'
-      memory: '2048Mi'
+      memory: '3072Mi'
   secrets:
     API_CMS_DELETION_TOKEN: '/k8s/search-indexer/API_CMS_DELETION_TOKEN'
     API_CMS_SYNC_TOKEN: '/k8s/search-indexer/API_CMS_SYNC_TOKEN'
