@@ -617,3 +617,17 @@ export function getAppealedDate(
 ): string | undefined {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
 }
+
+export function prosecutorShouldSelectDefenderForInvestigationCase(
+  type: CaseType,
+) {
+  return [
+    CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+    CaseType.EXPULSION_FROM_HOME,
+    CaseType.PAROLE_REVOCATION,
+    CaseType.PSYCHIATRIC_EXAMINATION,
+    CaseType.RESTRAINING_ORDER,
+    CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+    CaseType.OTHER,
+  ].includes(type)
+}
