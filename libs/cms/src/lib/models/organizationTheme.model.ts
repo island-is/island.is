@@ -3,6 +3,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 interface IOrganizationTheme {
   gradientStartColor?: string
   gradientEndColor?: string
+  useGradientColor?: boolean
   backgroundColor?: string
   darkText?: boolean
   fullWidth?: boolean
@@ -19,6 +20,9 @@ export class OrganizationTheme {
 
   @Field()
   gradientEndColor!: string
+
+  @Field(() => Boolean, { nullable: true })
+  useGradientColor?: boolean
 
   @Field(() => String, { nullable: true })
   backgroundColor?: string
@@ -51,10 +55,11 @@ export const mapOrganizationTheme = (
   return {
     gradientStartColor: theme.gradientStartColor ?? '',
     gradientEndColor: theme.gradientEndColor ?? '',
+    useGradientColor: !theme.useGradientColor ? false : true,
     backgroundColor: theme.backgroundColor ?? '',
     fullWidth: !theme.fullWidth ? false : true,
     textColor,
-    imagePadding: theme.imagePadding,
+    imagePadding: theme.imagePadding || '0px',
     imageIsFullHeight: theme.imageIsFullHeight ?? true,
     imageObjectFit: theme.imageObjectFit ?? 'cover',
   }
