@@ -94,7 +94,7 @@ const Lists = () => {
               labelOpen={formatMessage(m.filter)}
               labelClearAll={formatMessage(m.clearFilters)}
               resultCount={lists.length}
-              variant='popover'
+              variant="popover"
               reverse
               onFilterClear={() => {
                 setFilters({
@@ -112,7 +112,7 @@ const Lists = () => {
               }
             >
               <FilterMultiChoice
-                labelClear=''
+                labelClear=""
                 categories={[
                   {
                     id: 'area',
