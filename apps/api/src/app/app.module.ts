@@ -122,6 +122,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -141,6 +142,7 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 
@@ -287,6 +289,7 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
+    AdministrationOfOccupationalSafetyAndHealthModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
@@ -310,6 +313,7 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
+        VehiclesMileageClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,

@@ -54,11 +54,6 @@ export const validSWIFT = (value: string | undefined) => {
   return value ? swiftRegex.test(value) : false
 }
 
-export const useCurrencies = (currencies: Array<string>) => {
-  return (
-    currencies.map((i) => ({
-      label: i,
-      value: i,
-    })) ?? []
-  )
+export const formatBank = (bankInfo: string) => {
+  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
 }

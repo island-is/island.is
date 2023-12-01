@@ -9,6 +9,7 @@ import {
   buildRadioField,
   buildRepeater,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
@@ -18,31 +19,44 @@ import {
   DefaultEvents,
   Form,
   FormModes,
+  FormValue,
+  NO,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
+  YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import Logo from '../assets/Logo'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ApplicationType,
   Employment,
-  FILE_SIZE_LIMIT,
-  NO,
   RatioType,
-  YES,
-  IS,
   maritalStatuses,
   TaxLevelOptions,
 } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getCurrencies,
   getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
+  typeOfBankInfo,
 } from '../lib/oldAgePensionUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import {
+  friendlyFormatIBAN,
+  friendlyFormatSWIFT,
+  getBankIsk,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import isEmpty from 'lodash/isEmpty'
+import {
+  BankAccountType,
+  FILE_SIZE_LIMIT,
+  IS,
+} from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 export const OldAgePensionForm: Form = buildForm({
   id: 'OldAgePensionDraft',
@@ -166,7 +180,7 @@ export const OldAgePensionForm: Form = buildForm({
                   title:
                     oldAgePensionFormMessage.applicant
                       .applicantInfoMaritalTitle,
-                  condition: (answers, externalData) => {
+                  condition: (_, externalData) => {
                     const { hasSpouse } =
                       getApplicationExternalData(externalData)
                     if (hasSpouse) return true
@@ -243,10 +257,161 @@ export const OldAgePensionForm: Form = buildForm({
               title: oldAgePensionFormMessage.payment.title,
               description: '',
               children: [
-                buildCustomField({
-                  id: 'paymentInfo.bankAccountInfo',
+                buildAlertMessageField({
+                  id: 'paymentInfo.alertMessage',
+                  title: oldAgePensionFormMessage.shared.alertTitle,
+                  message: (application: Application) => {
+                    const { bankAccountType } = getApplicationAnswers(
+                      application.answers,
+                    )
+                    const type =
+                      bankAccountType ??
+                      typeOfBankInfo(
+                        application.answers,
+                        application.externalData,
+                      )
+
+                    return type === BankAccountType.ICELANDIC
+                      ? oldAgePensionFormMessage.payment.alertMessage
+                      : oldAgePensionFormMessage.payment.alertMessageForeign
+                  },
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                }),
+                buildRadioField({
+                  id: 'paymentInfo.bankAccountType',
                   title: '',
-                  component: 'BankAccount',
+                  defaultValue: (application: Application) =>
+                    typeOfBankInfo(
+                      application.answers,
+                      application.externalData,
+                    ),
+                  options: [
+                    {
+                      label:
+                        oldAgePensionFormMessage.payment.icelandicBankAccount,
+                      value: BankAccountType.ICELANDIC,
+                    },
+                    {
+                      label:
+                        oldAgePensionFormMessage.payment.foreignBankAccount,
+                      value: BankAccountType.FOREIGN,
+                    },
+                  ],
+                  largeButtons: false,
+                  required: true,
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bank',
+                  title: oldAgePensionFormMessage.payment.bank,
+                  format: '####-##-######',
+                  placeholder: '0000-00-000000',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return getBankIsk(bankInfo)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.ICELANDIC
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.iban',
+                  title: oldAgePensionFormMessage.payment.iban,
+                  placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return friendlyFormatIBAN(bankInfo.iban)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.swift',
+                  title: oldAgePensionFormMessage.payment.swift,
+                  placeholder: 'AAAA BB CC XXX',
+                  width: 'half',
+                  onChange: (e) => {
+                    console.log('e ', e)
+                    const formattedSWIFT = friendlyFormatSWIFT(e.target.value)
+                    console.log('formatted ', formattedSWIFT)
+                  },
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return friendlyFormatSWIFT(bankInfo.swift)
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildSelectField({
+                  id: 'paymentInfo.currency',
+                  title: oldAgePensionFormMessage.payment.currency,
+                  width: 'half',
+                  placeholder: oldAgePensionFormMessage.payment.selectCurrency,
+                  options: ({ externalData }: Application) =>
+                    getCurrencies(externalData),
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.currency : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bankName',
+                  title: oldAgePensionFormMessage.payment.bankName,
+                  width: 'half',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
+                }),
+                buildTextField({
+                  id: 'paymentInfo.bankAddress',
+                  title: oldAgePensionFormMessage.payment.bankAddress,
+                  width: 'half',
+                  defaultValue: (application: Application) => {
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+                    return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
+                  },
+                  condition: (formValue: FormValue, externalData) => {
+                    const radio =
+                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
+                      typeOfBankInfo(formValue, externalData)
+                    return radio === BankAccountType.FOREIGN
+                  },
                 }),
                 buildRadioField({
                   id: 'paymentInfo.personalAllowance',
@@ -254,6 +419,7 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
+                  required: true,
                   space: 'containerGutter',
                 }),
                 buildTextField({
@@ -368,7 +534,6 @@ export const OldAgePensionForm: Form = buildForm({
                   options: getYesNOOptions(),
                   width: 'half',
                   largeButtons: true,
-                  space: 'containerGutter',
                   condition: (_, externalData) => {
                     const { residenceHistory } =
                       getApplicationExternalData(externalData)
@@ -720,57 +885,61 @@ export const OldAgePensionForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
-      title: oldAgePensionFormMessage.review.confirmSectionTitle,
+      title: oldAgePensionFormMessage.review.overviewTitle,
       children: [
-        buildSubSection({
+        buildMultiField({
+          id: 'confirm',
           title: '',
+          description: '',
           children: [
-            buildMultiField({
-              id: 'confirm',
-              title: '',
-              description: '',
-              children: [
-                buildCustomField(
-                  {
-                    id: 'confirmScreen',
-                    title: oldAgePensionFormMessage.review.confirmTitle,
-                    component: 'Review',
+            buildCustomField(
+              {
+                id: 'confirmScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: oldAgePensionFormMessage.review.confirmTitle,
+              actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: oldAgePensionFormMessage.review.cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
                   },
-                  {
-                    editable: true,
-                  },
-                ),
-                buildSubmitField({
-                  id: 'submit',
-                  placement: 'footer',
-                  title: oldAgePensionFormMessage.review.confirmTitle,
-                  actions: [
-                    {
-                      event: DefaultEvents.ABORT,
-                      name: oldAgePensionFormMessage.review.cancelButton,
-                      type: 'reject',
-                      condition: (answers) => {
-                        const { tempAnswers } = getApplicationAnswers(answers)
-                        return !!tempAnswers
-                      },
-                    },
-                    {
-                      event: DefaultEvents.SUBMIT,
-                      name: oldAgePensionFormMessage.review.confirmTitle,
-                      type: 'primary',
-                    },
-                  ],
-                }),
+                },
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: oldAgePensionFormMessage.review.confirmTitle,
+                  type: 'primary',
+                },
               ],
             }),
           ],
         }),
-        buildCustomField({
-          id: 'thankYou',
-          title: oldAgePensionFormMessage.conclusionScreen.title,
-          component: 'Conclusion',
-        }),
       ],
+    }),
+    buildFormConclusionSection({
+      multiFieldTitle: oldAgePensionFormMessage.conclusionScreen.title,
+      alertTitle: oldAgePensionFormMessage.conclusionScreen.title,
+      alertMessage: oldAgePensionFormMessage.conclusionScreen.alertTitle,
+      alertType: 'warning',
+      expandableDescription:
+        oldAgePensionFormMessage.conclusionScreen.bulletList,
+      expandableIntro: oldAgePensionFormMessage.conclusionScreen.nextStepsText,
+      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLabel:
+        oldAgePensionFormMessage.conclusionScreen.incomePlanCardLabel,
+      bottomButtonMessage:
+        oldAgePensionFormMessage.conclusionScreen.incomePlanCardText,
     }),
   ],
 })

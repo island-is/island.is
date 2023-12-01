@@ -7,6 +7,7 @@ import {
 } from './social-insurance-administration.service'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { ApplicationTypes } from '@island.is/application/types'
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
@@ -50,6 +51,7 @@ describe('SocialInsuranceAdministrationService', () => {
           { key: 'key', name: 'name' },
         ],
       },
+      typeId: ApplicationTypes.OLD_AGE_PENSION,
     })
 
     // Also need to mock the pdf here

@@ -177,6 +177,7 @@ export enum SessionArrangements {
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
   COURT_DATE = 'COURT_DATE',
+  NOT_SHARED = 'NOT_SHARED',
 }
 
 export interface Case {
@@ -287,6 +288,9 @@ export interface Case {
   appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
+  appealValidToDate?: string
+  isAppealCustodyIsolation?: boolean
+  appealIsolationToDate?: string
 }
 
 export interface CaseListEntry
@@ -406,6 +410,10 @@ export interface UpdateCase
     | 'appealConclusion'
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
+    | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -418,7 +426,6 @@ export interface UpdateCase
   appealJudge1Id?: string
   appealJudge2Id?: string
   appealJudge3Id?: string
-  requestSharedWithDefender?: RequestSharedWithDefender | null
 }
 
 export interface TransitionCase {
@@ -474,7 +481,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_RULING,
 ]
 
-export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
@@ -526,13 +533,14 @@ const RequestSharedWithDefenderAllowedStates: {
     CaseState.RECEIVED,
     ...completedCaseStates,
   ],
+  [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
 }
 
 export function canDefenderViewRequest(theCase: Case) {
   const { requestSharedWithDefender, state, courtDate } = theCase
 
   if (!requestSharedWithDefender) {
-    return completedCaseStates.includes(state)
+    return false
   }
 
   const allowedStates =

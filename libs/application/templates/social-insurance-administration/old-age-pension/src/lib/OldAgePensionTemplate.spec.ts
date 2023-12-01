@@ -8,7 +8,7 @@ import {
   ApplicationStatus,
 } from '@island.is/application/types'
 import OldAgePensionTemplate from './OldAgePensionTemplate'
-import { OAPEvents } from './constants'
+import { OAPEvents } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 function buildApplication(data: {
   answers?: FormValue
@@ -144,6 +144,8 @@ describe('Old Age Pension Template', () => {
           answers: {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
               additionalDocumentsRequired: [],
             },
           },
@@ -167,6 +169,8 @@ describe('Old Age Pension Template', () => {
           answers: {
             fileUploadAdditionalFiles: {
               additionalDocuments: [],
+            },
+            fileUploadAdditionalFilesRequired: {
               additionalDocumentsRequired: [],
             },
           },
