@@ -45,14 +45,17 @@ export const numberBoxFillWidth = style({
   }),
 })
 
-export const title = style({
+export const titleWrapper = style({
   alignItems: 'flex-start',
   color: theme.color.dark400,
   display: 'flex',
-  fontSize: '14px',
-  fontWeight: theme.typography.semiBold,
   justifyContent: 'space-between',
   marginBottom: theme.spacing[1],
+})
+
+export const title = style({
+  fontSize: '14px',
+  fontWeight: theme.typography.semiBold,
 })
 
 export const value = style({

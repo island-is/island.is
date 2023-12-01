@@ -109,10 +109,10 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
               [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,
             })}
           >
-            <h3 className={styles.title}>
-              {data.title}
+            <div className={styles.titleWrapper}>
+              <h3 className={styles.title}>{data.title}</h3>
               {index === 0 && <Tooltip text={slice.numberBoxDescription} />}
-            </h3>
+            </div>
             <p className={styles.value}>
               {index > 0 && result !== 0 && (
                 <Icon
