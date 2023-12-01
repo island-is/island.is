@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { count } from 'console'
 import getConfig from 'next/config'
 import Link from 'next/link'
-import useSWR from 'swr'
 
 import {
   Box,
@@ -130,7 +128,7 @@ const HeaderContainer: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Inline>
       </Link>
       <Inline alignY="center" space={2}>
-        {isRobot === false && (
+        {(isRobot === false || (user && isAuthenticated)) && (
           <Hidden below="md">
             <Button
               variant="ghost"
