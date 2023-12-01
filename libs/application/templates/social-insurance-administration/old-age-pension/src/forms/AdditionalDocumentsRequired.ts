@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { inReviewFormMessages, oldAgePensionFormMessage } from '../lib/messages'
 import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
 

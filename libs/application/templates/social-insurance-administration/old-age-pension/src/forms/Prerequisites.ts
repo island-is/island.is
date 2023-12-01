@@ -18,7 +18,7 @@ import {
   NationalRegistryUserApi,
   NO,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {

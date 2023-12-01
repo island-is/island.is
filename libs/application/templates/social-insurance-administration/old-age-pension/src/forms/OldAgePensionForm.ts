@@ -2,7 +2,6 @@ import {
   buildAlertMessageField,
   buildCustomField,
   buildDescriptionField,
-  buildExpandableDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -14,7 +13,6 @@ import {
   buildSubmitField,
   buildSubSection,
   buildTextField,
-  buildMessageWithLinkButtonField,
 } from '@island.is/application/core'
 import {
   Application,
@@ -28,7 +26,7 @@ import {
   YES,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import Logo from '../assets/Logo'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   ApplicationType,
