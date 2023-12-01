@@ -28,6 +28,7 @@ import { householdSupplementFormMessage, statesMessages } from './messages'
 import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
+  SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
 import { assign } from 'xstate'
 import set from 'lodash/set'
@@ -76,6 +77,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 NationalRegistryCohabitantsApi,
                 SocialInsuranceAdministrationApplicantApi,
+                SocialInsuranceAdministrationCurrenciesApi,
               ],
               delete: true,
             },
