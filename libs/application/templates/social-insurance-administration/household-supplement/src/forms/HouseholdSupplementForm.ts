@@ -128,85 +128,96 @@ export const HouseholdSupplementForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'householdSupplementSection',
+      ],
+    }),
+    buildSection({
+      id: 'householdSupplementSection',
+      title: householdSupplementFormMessage.shared.householdSupplement,
+      children: [
+        buildMultiField({
+          id: 'householdSupplement',
           title: householdSupplementFormMessage.shared.householdSupplement,
+          description:
+            householdSupplementFormMessage.info.householdSupplementDescription,
           children: [
-            buildMultiField({
-              id: 'householdSupplement',
-              title: householdSupplementFormMessage.shared.householdSupplement,
-              description:
+            buildAlertMessageField({
+              id: 'householdSupplement.alert',
+              title:
                 householdSupplementFormMessage.info
-                  .householdSupplementDescription,
-              children: [
-                buildAlertMessageField({
-                  id: 'householdSupplement.alert',
-                  title:
+                  .householdSupplementAlertTitle,
+              message:
+                householdSupplementFormMessage.info
+                  .householdSupplementAlertDescription,
+              doesNotRequireAnswer: true,
+              alertType: 'warning',
+              condition: (_, externalData) => {
+                return isExistsCohabitantOlderThan25(externalData)
+              },
+            }),
+            buildRadioField({
+              id: 'householdSupplement.housing',
+              title:
+                householdSupplementFormMessage.info.householdSupplementHousing,
+              options: [
+                {
+                  value: HouseholdSupplementHousing.HOUSEOWNER,
+                  label:
                     householdSupplementFormMessage.info
-                      .householdSupplementAlertTitle,
-                  message:
+                      .householdSupplementHousingOwner,
+                },
+                {
+                  value: HouseholdSupplementHousing.RENTER,
+                  label:
                     householdSupplementFormMessage.info
-                      .householdSupplementAlertDescription,
-                  doesNotRequireAnswer: true,
-                  alertType: 'warning',
-                  condition: (_, externalData) => {
-                    return isExistsCohabitantOlderThan25(externalData)
-                  },
-                }),
-                buildRadioField({
-                  id: 'householdSupplement.housing',
-                  title:
-                    householdSupplementFormMessage.info
-                      .householdSupplementHousing,
-                  options: [
-                    {
-                      value: HouseholdSupplementHousing.HOUSEOWNER,
-                      label:
-                        householdSupplementFormMessage.info
-                          .householdSupplementHousingOwner,
-                    },
-                    {
-                      value: HouseholdSupplementHousing.RENTER,
-                      label:
-                        householdSupplementFormMessage.info
-                          .householdSupplementHousingRenter,
-                    },
-                  ],
-                  width: 'half',
-                  required: true,
-                }),
-                buildRadioField({
-                  id: 'householdSupplement.children',
-                  title:
-                    householdSupplementFormMessage.info
-                      .householdSupplementChildrenBetween18And25,
-                  options: getYesNOOptions(),
-                  width: 'half',
-                  required: true,
-                }),
+                      .householdSupplementHousingRenter,
+                },
               ],
+              width: 'half',
+              required: true,
+            }),
+            buildRadioField({
+              id: 'householdSupplement.children',
+              title:
+                householdSupplementFormMessage.info
+                  .householdSupplementChildrenBetween18And25,
+              options: getYesNOOptions(),
+              width: 'half',
+              required: true,
             }),
           ],
         }),
-        buildSubSection({
-          id: 'periodSection',
+      ],
+    }),
+    buildSection({
+      id: 'periodSection',
+      title: householdSupplementFormMessage.info.periodTitle,
+      children: [
+        buildMultiField({
+          id: 'periodField',
           title: householdSupplementFormMessage.info.periodTitle,
+          description: householdSupplementFormMessage.info.periodDescription,
           children: [
-            buildMultiField({
-              id: 'periodField',
+            buildCustomField({
+              id: 'period',
               title: householdSupplementFormMessage.info.periodTitle,
-              description:
-                householdSupplementFormMessage.info.periodDescription,
-              children: [
-                buildCustomField({
-                  id: 'period',
-                  title: householdSupplementFormMessage.info.periodTitle,
-                  component: 'Period',
-                }),
-              ],
+              component: 'Period',
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'fileUpload',
+      title: householdSupplementFormMessage.fileUpload.title,
+      condition: (answers) => {
+        const { householdSupplementHousing, householdSupplementChildren } =
+          getApplicationAnswers(answers)
+        return (
+          householdSupplementHousing === HouseholdSupplementHousing.RENTER ||
+          householdSupplementChildren === YES
+        )
+      },
+      children: [
         buildSubSection({
           id: 'fileUploadLeaseAgreement',
           title: householdSupplementFormMessage.fileUpload.leaseAgreementTitle,

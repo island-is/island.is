@@ -95,13 +95,33 @@ export const PrerequisitesForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'info',
+      id: 'infoSection',
       title: householdSupplementFormMessage.info.section,
+      children: [],
+    }),
+    buildSection({
+      id: 'householdSupplementSection',
+      title: householdSupplementFormMessage.shared.householdSupplement,
+      children: [],
+    }),
+    buildSection({
+      id: 'periodSection',
+      title: householdSupplementFormMessage.info.periodTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'fileUpload',
+      title: householdSupplementFormMessage.fileUpload.title,
       children: [],
     }),
     buildSection({
       id: 'additionalInfo',
       title: householdSupplementFormMessage.additionalInfo.section,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: householdSupplementFormMessage.confirm.overviewTitle,
       children: [],
     }),
     buildSection({

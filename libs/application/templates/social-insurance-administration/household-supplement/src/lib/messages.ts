@@ -221,6 +221,11 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
+    title: {
+      id: 'hs.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
     attachmentButton: {
       id: 'hs.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
