@@ -58,7 +58,8 @@ export class VehicleService {
     }
   }
 
-  async create(vehicle: VehicleModel): Promise<boolean> {
+  // async create(vehicle: VehicleModel): Promise<boolean> {
+  async create(): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)

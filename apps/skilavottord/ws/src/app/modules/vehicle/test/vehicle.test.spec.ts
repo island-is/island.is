@@ -1,6 +1,7 @@
 /* eslint-disable @nx/enforce-module-boundaries */
 import { Test, TestingModule } from '@nestjs/testing'
 import { UtilTest } from './util.test'
+import { VehicleModel } from '../vehicle.model'
 // import { VehicleModel } from '../vehicle.model'
 // import { VehicleService } from '../vehicle.service'
 
@@ -27,9 +28,15 @@ describe('TestJest', () => {
     expect(service).toBeDefined()
   })
 
-  // it('check add function', async () => {
-  //   service.findByVehicleId = () => Promise.resolve({} as VehicleModel)
-  //   const res = service.add(2, 2)
-  //   expect(res).toEqual(4)
-  // })
+  it('check add function', async () => {
+    // service.findByVehicleId = () => Promise.resolve({} as VehicleModel)
+    const res = service.add(2, 2)
+    expect(res).toEqual(4)
+  })
+
+  it('test check', async () => {
+    // service.findByVehicleId = () => Promise.resolve({} as VehicleModel)
+    const res = service.create()
+    expect(res).toEqual(4)
+  })
 })
