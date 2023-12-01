@@ -142,7 +142,7 @@ export const UserInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.residenceInIcelandLastChangeDate',
+          id: 'userInformation.residenceInIcelandLastChangeDateStr',
           title:
             personal.labels.userInformation.residenceInIcelandLastChangeDate,
           backgroundColor: 'white',
