@@ -47,6 +47,7 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
@@ -150,18 +151,6 @@ const lightThemes = [
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
 ]
-
-const getBackgroundStyle = (background: OrganizationTheme) => {
-  if (
-    background.useGradientColor &&
-    background.gradientStartColor &&
-    background.gradientEndColor
-  )
-    return `linear-gradient(99.09deg, ${background.gradientStartColor} 23.68%,
-      ${background.gradientEndColor} 123.07%),
-      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
-  return background.backgroundColor ?? ''
-}
 
 export const getThemeConfig = (
   theme?: string,

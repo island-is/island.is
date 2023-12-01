@@ -9,6 +9,7 @@ import {
   UkraineProjectHeader,
 } from '@island.is/web/components'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 interface ProjectHeaderProps {
   projectPage: ProjectPageSchema
@@ -37,7 +38,10 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return (
         <DefaultHeader
           title={projectPage.title}
-          background={projectPage.defaultHeaderBackgroundColor}
+          background={
+            projectPage.defaultHeaderBackgroundColor ||
+            getBackgroundStyle(projectPage.themeProperties)
+          }
           titleColor={
             (projectPage.themeProperties
               ?.textColor as DefaultHeaderProps['titleColor']) || 'dark400'
@@ -55,7 +59,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
         <DefaultProjectHeader
           projectPage={projectPage}
           headerImageObjectFit={
-            projectPage.themeProperties.imageObjectFit || 'cover'
+            projectPage.themeProperties?.imageObjectFit || 'cover'
           }
         />
       )
