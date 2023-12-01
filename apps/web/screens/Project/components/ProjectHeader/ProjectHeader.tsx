@@ -52,6 +52,9 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
             projectPage.themeProperties?.imageIsFullHeight ?? true
           }
           imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
+          imageObjectFit={
+            projectPage.themeProperties?.imageObjectFit || 'contain'
+          }
         />
       )
     default:

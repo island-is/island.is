@@ -117,11 +117,13 @@ export const GET_PROJECT_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        useGradientColor
         backgroundColor
         textColor
         fullWidth
         imagePadding
         imageIsFullHeight
+        imageObjectFit
       }
     }
   }

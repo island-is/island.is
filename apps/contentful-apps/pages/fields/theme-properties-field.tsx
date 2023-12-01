@@ -24,6 +24,7 @@ interface ThemeProperties {
   textColor?: TextColor
   imagePadding?: string
   imageIsFullHeight?: boolean
+  imageObjectFit?: 'contain' | 'cover'
   useGradientColor?: boolean
 }
 
@@ -169,6 +170,36 @@ const ThemePropertiesField = () => {
             isChecked={!state.imagePadding || state.imagePadding === '0px'}
             onChange={() => {
               updateState('imagePadding', '0px')
+            }}
+          >
+            0px
+          </Radio>
+        </Stack>
+      </Stack>
+
+      <Stack flexDirection="column" alignItems="flex-start" spacing="none">
+        <FormControl.Label>Image Object Fit</FormControl.Label>
+        <Stack flexDirection="row">
+          <Radio
+            name="imageObjectFitRadio"
+            id="imageObjectFitContain"
+            value="Yes"
+            isChecked={
+              !state.imageObjectFit || state.imageObjectFit === 'contain'
+            }
+            onChange={() => {
+              updateState('imageObjectFit', 'contain')
+            }}
+          >
+            20px
+          </Radio>
+          <Radio
+            name="imageObjectFitRadio"
+            id="imageObjectFitCover"
+            value="No"
+            isChecked={state.imageObjectFit === 'cover'}
+            onChange={() => {
+              updateState('imageObjectFit', 'cover')
             }}
           >
             0px
