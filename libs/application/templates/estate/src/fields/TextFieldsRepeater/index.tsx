@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
@@ -9,12 +9,14 @@ import {
   Button,
   Text,
   InputBackgroundColor,
+  Input,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
 
 import * as styles from '../styles.css'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
+import { getValueViaPath } from '@island.is/application/core'
 
 type Field = {
   id: string
@@ -33,6 +35,8 @@ type Props = {
       fields: Field[]
       repeaterButtonText: string
       repeaterHeaderText: string
+      sumField: string
+      parentField: string
     }
   }
 }
@@ -41,13 +45,32 @@ const valueKeys = ['rateOfExchange', 'faceValue']
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
-> = ({ field, errors }) => {
+> = ({ application, field, errors }) => {
   const { id, props } = field
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
+  const { answers } = application
+
+  const answersValues = getValueViaPath(answers, id) as Array<object>
+
   const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
+  
+  /* ------ Total ------ */
+  const answersValuesTotal = answersValues?.reduce(
+    (a: number, o: any) => a + Number(o[props.sumField]),
+    0,
+  )
+
+  const [total, setTotal] = useState(
+    answersValues?.length ? answersValuesTotal : 0,
+  )
+  /* ------ Set total value ------ */
+  useEffect(() => {
+    const addTotal = id.replace(props.parentField, 'total')
+    setValue(addTotal, total)
+  }, [id, total, setValue])
 
   const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
@@ -88,7 +111,7 @@ export const TextFieldsRepeater: FC<
       const a = faceValue.replace(/[^\d]/g, '')
       const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
 
-      total = Math.round(parseFloat(a) * parseFloat(b))
+      total = (parseFloat(a) * parseFloat(b))
 
       setValue(`${fieldIndex}.value`, String(total))
 
@@ -97,6 +120,15 @@ export const TextFieldsRepeater: FC<
       }
     }
   }
+
+  const calculateTotal = () => {
+    const values = getValues(id)
+
+    const total = values.reduce((acc: number, current: any) => Number(acc) + Number(current[props.sumField]), 0)
+  
+    setTotal(total);
+  };
+  
 
   return (
     <Box>
@@ -121,7 +153,10 @@ export const TextFieldsRepeater: FC<
                     size="small"
                     circle
                     icon="remove"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index);
+                      calculateTotal()
+                    }}
                   />
                 </Box>
               </>
@@ -157,6 +192,9 @@ export const TextFieldsRepeater: FC<
                         if (valueKeys.includes(field.id)) {
                           updateValue(fieldIndex)
                         }
+                        if (props.sumField === field.id) {
+                          calculateTotal()
+                        }
                       }}
                     />
                   </GridColumn>
@@ -164,8 +202,26 @@ export const TextFieldsRepeater: FC<
               })}
             </GridRow>
           </Box>
+          
         )
       })}
+       {!!fields.length && props.sumField && (
+        <Box marginTop={5}>
+          <GridRow>
+            <GridColumn span={['1/1', '1/2']}>
+              <Input
+                id={`${id}.total`}
+                name={`${id}.total`}
+                value={String(total)}
+                label="Samtals"
+                backgroundColor={'white'}
+                readOnly={true}
+                
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
       <Box marginTop={1}>
         <Button
           variant="text"

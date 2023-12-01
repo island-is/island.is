@@ -235,6 +235,7 @@ export const estateSchema = z.object({
     .object({
       accountNumber: z.string(),
       balance: z.string(),
+      total: z.number().optional(),
     })
     .refine(
       ({ accountNumber, balance }) => {
