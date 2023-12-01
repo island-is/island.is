@@ -5,6 +5,8 @@ import {
   Pagination,
   Icon,
   FilterInput,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -27,20 +29,18 @@ const Signees = () => {
       <Text variant="h3">
         {formatMessage(m.listSigneesHeader) + ` (${signees.length})`}
       </Text>
-      <Box
-        display={['block', 'flex']}
-        justifyContent="spaceBetween"
-        marginTop={3}
-      >
-        <Box className={mobileWidthBox} marginBottom={[2, 0]}>
+
+      <GridRow marginBottom={5} marginTop={3}>
+        <GridColumn span={['12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
             onChange={(v) => setSearchTerm(v)}
             placeholder={formatMessage(m.searchInListPlaceholder)}
+            backgroundColor="white"
           />
-        </Box>
-      </Box>
+        </GridColumn>
+      </GridRow>
       {signees && signees.length > 0 && (
         <Box marginTop={5}>
           <T.Table>

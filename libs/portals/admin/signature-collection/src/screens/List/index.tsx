@@ -32,17 +32,19 @@ const List = () => {
   return (
     <GridContainer>
       <GridRow direction="row">
-        <GridColumn span={['3/12']}>
-          <Hidden below="md">
-            <PortalNavigation
-              navigation={signatureCollectionNavigation}
-              title={formatMessage(m.signatureListsTitle)}
-            />
-          </Hidden>
+        <GridColumn
+          span={['12/12', '5/12', '5/12', '3/12']}
+          offset={['0', '7/12', '7/12', '0']}
+        >
+          <PortalNavigation
+            navigation={signatureCollectionNavigation}
+            title={formatMessage(m.signatureListsTitle)}
+          />
         </GridColumn>
         <GridColumn
-          offset={['0', '0', '1/12']}
-          span={['12/12', '12/12', '8/12']}
+          paddingTop={[5, 5, 5, 2]}
+          offset={['0', '0', '0', '1/12']}
+          span={['12/12', '12/12', '12/12', '8/12']}
         >
           {!!list && (
             <Box>
@@ -51,10 +53,11 @@ const List = () => {
                 intro={formatMessage(m.signatureListsIntro)}
                 img={img}
                 imgPosition="right"
+                imgHiddenBelow="sm"
               />
               <Stack space={3}>
-                <Box display="flex" justifyContent="spaceBetween">
-                  <Box display="flex">
+                <Box display={['block', 'flex']} justifyContent="spaceBetween">
+                  <Box display={['block', 'flex']}>
                     <Input
                       readOnly
                       name="endTime"
@@ -62,19 +65,30 @@ const List = () => {
                       label={formatMessage(m.listEndTime)}
                       size="sm"
                     />
-                    <Box marginLeft={2}>
-                      <Button icon="calendar" iconType="outline" />
-                    </Box>
+                    <Hidden below="sm">
+                      <Box marginLeft={2}>
+                        <Button icon="calendar" iconType="outline" />
+                      </Box>
+                    </Hidden>
                   </Box>
 
-                  <Button
-                    icon="lockClosed"
-                    iconType="outline"
-                    variant="ghost"
-                    colorScheme="destructive"
+                  <Box
+                    display={['flex', 'block']}
+                    marginTop={[2, 0]}
+                    justifyContent="spaceBetween"
                   >
-                    {formatMessage(m.confirmListReviewed)}
-                  </Button>
+                    <Hidden above="xs">
+                      <Button icon="calendar" iconType="outline" />
+                    </Hidden>
+                    <Button
+                      icon="lockClosed"
+                      iconType="outline"
+                      variant="ghost"
+                      colorScheme="destructive"
+                    >
+                      {formatMessage(m.confirmListReviewed)}
+                    </Button>
+                  </Box>
                 </Box>
                 <Signees />
                 <PaperUpload />

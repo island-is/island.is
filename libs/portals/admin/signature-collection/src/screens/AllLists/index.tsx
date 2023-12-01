@@ -86,6 +86,7 @@ const Lists = () => {
             intro={formatMessage(m.signatureListsIntro)}
             img={img}
             imgPosition="right"
+            imgHiddenBelow="sm"
           />
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '7/12']}>
