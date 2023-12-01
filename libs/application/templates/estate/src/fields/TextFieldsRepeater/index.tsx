@@ -115,7 +115,7 @@ export const TextFieldsRepeater: FC<
       const a = faceValue.replace(/[^\d]/g, '')
       const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
 
-      total = parseFloat(a) * parseFloat(b)
+      total = Math.round(parseFloat(a) * parseFloat(b))
 
       setValue(`${fieldIndex}.value`, String(total))
 

@@ -178,7 +178,7 @@ export const estateAssets = buildSection({
                   {
                     title: m.bankAccount,
                     id: 'accountNumber',
-                  },  
+                  },
                   {
                     title: m.bankAccountBalance,
                     id: 'balance',
@@ -188,7 +188,6 @@ export const estateAssets = buildSection({
                 repeaterButtonText: m.bankAccountRepeaterButton,
                 repeaterHeaderText: m.bankAccount,
                 sumField: 'balance',
-                parentField: 'bankAccounts',
               },
             ),
           ],
