@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
-import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
+import NumberFormat from 'react-number-format'
 import {
   Box,
   GridColumn,
@@ -17,7 +17,6 @@ import { m } from '../../lib/messages'
 import * as styles from '../styles.css'
 import { MessageDescriptor } from 'react-intl'
 import { useLocale } from '@island.is/localization'
-import NumberFormat from 'react-number-format'
 
 type Field = {
   id: string
@@ -46,7 +45,9 @@ const valueKeys = ['rateOfExchange', 'faceValue']
 
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
-> = ({ application, field, errors }) => {
+> = ({ field, errors }) => {
+  const [, updateState] = useState<unknown>()
+  const forceUpdate = useCallback(() => updateState({}), [])
   const { id, props } = field
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
@@ -110,22 +111,28 @@ export const TextFieldsRepeater: FC<
     const faceValue = stockValues?.faceValue
     const rateOfExchange = stockValues?.rateOfExchange
 
-    if (faceValue && rateOfExchange) {
-      const a = faceValue.replace(/[^\d.]/g, '')
-      const b = rateOfExchange.replace(/[^\d.]/g, '')
+    const a = faceValue?.replace(/[^\d.]/g, '') || '0'
+    const b = rateOfExchange?.replace(/[^\d.]/g, '') || '0'
 
-      const aVal = parseFloat(a)
-      const bVal = parseFloat(b)
+    const aVal = parseFloat(a)
+    const bVal = parseFloat(b)
 
-      const total = aVal * bVal
-      const totalString = total.toFixed(2).replace('.', ',')
-
-      setValue(`${fieldIndex}.value`, totalString)
-
-      if (total > 0) {
-        clearErrors(`${fieldIndex}.value`)
-      }
+    if (!aVal || !bVal) {
+      setValue(`${fieldIndex}.value`, '')
+      forceUpdate()
+      return
     }
+
+    const total = aVal * bVal
+    const totalString = total.toFixed(2).replace('.', ',')
+
+    setValue(`${fieldIndex}.value`, totalString)
+
+    if (total > 0) {
+      clearErrors(`${fieldIndex}.value`)
+    }
+
+    forceUpdate()
   }
 
   return (
