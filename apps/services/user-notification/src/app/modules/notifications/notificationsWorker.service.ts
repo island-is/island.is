@@ -60,22 +60,22 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         try {
-          this.logger.debug("attempt create", message)
-          const res = await this.notificationModel.create(exampleNotificationData as any)
-          this.logger.debug("create result", res)
+          this.logger.debug('attempt create', message)
+          const res = await this.notificationModel.create(
+            exampleNotificationData as any,
+          )
+          this.logger.debug('create result', res)
         } catch (error) {
           this.logger.error(error)
         }
 
         try {
-          this.logger.debug("getting all rows")
+          this.logger.debug('getting all rows')
           const allRows = await this.notificationModel.findAll()
-          this.logger.debug("length",allRows.length)
+          this.logger.debug('length', allRows.length)
         } catch (error) {
           this.logger.error(error)
         }
-
-       
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({
