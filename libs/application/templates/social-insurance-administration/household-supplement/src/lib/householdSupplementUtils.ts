@@ -6,12 +6,22 @@ import {
   AttachmentLabel,
   MONTHS,
 } from './constants'
-import { Option, Application, YesOrNo } from '@island.is/application/types'
+import {
+  Option,
+  Application,
+  YesOrNo,
+  ExternalData,
+  FormValue,
+} from '@island.is/application/types'
 import { householdSupplementFormMessage } from './messages'
 import addMonths from 'date-fns/addMonths'
 import subYears from 'date-fns/subYears'
 import * as kennitala from 'kennitala'
 import { Attachments, FileType, FileUpload } from '../types'
+import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import isEmpty from 'lodash/isEmpty'
 
 enum AttachmentTypes {
   LEASE_AGREEMENT = 'leaseAgreement',
@@ -20,17 +30,10 @@ enum AttachmentTypes {
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
-
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
   ) as string
-
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
   const householdSupplementHousing = getValueViaPath(
     answers,
@@ -58,17 +61,42 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const comment = getValueViaPath(answers, 'comment') as string
 
+  const bankAccountType = getValueViaPath(
+    answers,
+    'paymentInfo.bankAccountType',
+  ) as BankAccountType
+
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+
+  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
+
+  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
+
+  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
+
+  const bankAddress = getValueViaPath(
+    answers,
+    'paymentInfo.bankAddress',
+  ) as string
+
+  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
+
   return {
-    applicantEmail,
     applicantPhonenumber,
     householdSupplementHousing,
     householdSupplementChildren,
-    bank,
     selectedYear,
     selectedMonth,
     additionalAttachments,
     additionalAttachmentsRequired,
     comment,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
   }
 }
 
@@ -91,35 +119,28 @@ export function getApplicationExternalData(
     'nationalRegistry.data.nationalId',
   ) as string
 
-  const applicantAddress = getValueViaPath(
+  const bankInfo = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.streetAddress',
+    'socialInsuranceAdministrationApplicant.data.bankAccount',
+  ) as BankInfo
+
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
 
-  const applicantPostalCode = getValueViaPath(
+  const currencies = getValueViaPath(
     externalData,
-    'nationalRegistry.data.address.postalCode',
-  ) as string
-
-  const applicantLocality = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.locality',
-  ) as string
-
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
-
-  const bank = getValueViaPath(
-    externalData,
-    'userProfile.data.bankInfo',
-  ) as string
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
 
   return {
     cohabitants,
     applicantName,
     applicantNationalId,
-    applicantAddress,
-    applicantMunicipality,
-    bank,
+    bankInfo,
+    email,
+    currencies,
   }
 }
 
@@ -260,11 +281,64 @@ export function getAvailableMonths(
   return months
 }
 
-export const formatBankInfo = (bankInfo: string) => {
-  const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
-  if (formattedBankInfo && formattedBankInfo.length === 12) {
-    return formattedBankInfo
-  }
+export const formatBank = (bankInfo: string) => {
+  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+}
 
-  return bankInfo
+// We should only send bank account to TR if applicant is registering
+// new one or changing.
+export const shouldNotUpdateBankAccount = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+) => {
+  const { bankInfo } = getApplicationExternalData(externalData)
+  const {
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = getApplicationAnswers(answers)
+
+  if (bankAccountType === BankAccountType.ICELANDIC) {
+    return getBankIsk(bankInfo) === bank ?? false
+  } else {
+    return (
+      !isEmpty(bankInfo) &&
+      bankInfo.iban === iban &&
+      bankInfo.swift === swift &&
+      bankInfo.foreignBankName === bankName &&
+      bankInfo.foreignBankAddress === bankAddress &&
+      bankInfo.currency === currency
+    )
+  }
+}
+
+export const getCurrencies = (externalData: ExternalData) => {
+  const { currencies } = getApplicationExternalData(externalData)
+
+  return (
+    currencies.map((i) => ({
+      label: i,
+      value: i,
+    })) ?? []
+  )
+}
+
+export const typeOfBankInfo = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { bankAccountType } = getApplicationAnswers(answers)
+  const { bankInfo } = getApplicationExternalData(externalData)
+
+  return bankAccountType
+    ? bankAccountType
+    : !isEmpty(bankInfo)
+    ? bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+      ? BankAccountType.ICELANDIC
+      : BankAccountType.FOREIGN
+    : BankAccountType.ICELANDIC
 }

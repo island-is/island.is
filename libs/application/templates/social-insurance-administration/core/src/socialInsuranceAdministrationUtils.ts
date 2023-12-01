@@ -53,3 +53,7 @@ export const validSWIFT = (value: string | undefined) => {
 
   return value ? swiftRegex.test(value) : false
 }
+
+export const formatBank = (bankInfo: string) => {
+  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+}

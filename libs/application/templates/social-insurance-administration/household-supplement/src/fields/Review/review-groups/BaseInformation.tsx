@@ -15,12 +15,9 @@ export const BaseInformation = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { applicantEmail, applicantPhonenumber } = getApplicationAnswers(
-    application.answers,
-  )
-  const { applicantName, applicantNationalId } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { applicantPhonenumber } = getApplicationAnswers(application.answers)
+  const { applicantName, applicantNationalId, email } =
+    getApplicationExternalData(application.externalData)
   const { formatMessage } = useLocale()
   return (
     <ReviewGroup
@@ -60,7 +57,7 @@ export const BaseInformation = ({
         >
           <DataValue
             label={formatMessage(householdSupplementFormMessage.confirm.email)}
-            value={applicantEmail}
+            value={email}
           />
         </GridColumn>
 

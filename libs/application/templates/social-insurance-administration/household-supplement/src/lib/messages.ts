@@ -33,6 +33,11 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Heimilisuppbót',
       description: 'Household supplement',
     },
+    alertTitle: {
+      id: 'hs.application:alert.title',
+      defaultMessage: 'Athugið',
+      description: 'Attention',
+    },
   }),
 
   pre: defineMessages({
@@ -127,28 +132,6 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'Phone number',
     },
-    paymentTitle: {
-      id: 'hs.application:info.payment.title',
-      defaultMessage: 'Greiðsluupplýsingar',
-      description: 'Payment information',
-    },
-    paymentAlertTitle: {
-      id: 'hs.application:info.payment.alert.title',
-      defaultMessage: 'Athugið',
-      description: 'Attention',
-    },
-    paymentAlertMessage: {
-      id: 'hs.application:info.payment.alert.message',
-      defaultMessage:
-        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning.',
-      description:
-        'All payments from the Social Insurance Administration are paid into the below bank account. Should you change your account details all your payments from the Social Insurance Administration will be paid into that account.',
-    },
-    paymentBank: {
-      id: 'hs.application:info.payment.bank',
-      defaultMessage: 'Banki',
-      description: 'Bank',
-    },
     householdSupplementDescription: {
       id: 'hs.application:info.household.supplement.description#markdown',
       defaultMessage:
@@ -217,6 +200,72 @@ export const householdSupplementFormMessage: MessageDir = {
       id: 'hs.application:info.period.month.default.text',
       defaultMessage: 'Veldu mánuð',
       description: 'Select month',
+    },
+  }),
+
+  payment: defineMessages({
+    title: {
+      id: 'hs.application:payment.title',
+      defaultMessage: 'Greiðsluupplýsingar',
+      description: 'Payment information',
+    },
+    alertMessage: {
+      id: 'hs.application:payment.alert.message',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.',
+      description:
+        'All your payments from TR are paid into the bank account below. If you change your bank details, all your payments from the TR will be paid into that account.',
+    },
+    alertMessageForeign: {
+      id: 'hs.application:payment.alert.message.foreign#markdown',
+      defaultMessage:
+        'Allar þínar greiðslur frá Tryggingastofnun eru greiddar inn á bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inn á þann reikning. \n\nMikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa samband við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um IBAN-númer og SWIFT-númer. \n\nVinsamlegast athugið að greiðslur inn á erlenda reikninga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.',
+      description: 'english description',
+    },
+    bank: {
+      id: 'hs.application:payment.bank',
+      defaultMessage: 'Banki',
+      description: 'Bank',
+    },
+    icelandicBankAccount: {
+      id: 'hs.application:payment.icelandic.bank.account',
+      defaultMessage: 'Íslenskur reikningur',
+      description: 'Icelandic account',
+    },
+    foreignBankAccount: {
+      id: 'hs.application:payment.foreign.bank.account',
+      defaultMessage: 'Erlendur reikningur',
+      description: 'Foreign account',
+    },
+    iban: {
+      id: 'hs.application:payment.iban',
+      defaultMessage: 'IBAN',
+      description: 'IBAN',
+    },
+    swift: {
+      id: 'hs.application:payment.swift',
+      defaultMessage: 'SWIFT',
+      description: 'SWIFT',
+    },
+    bankName: {
+      id: 'hs.application:payment.bank.name',
+      defaultMessage: 'Heiti banka',
+      description: 'Bank name',
+    },
+    bankAddress: {
+      id: 'hs.application:payment.bank.address',
+      defaultMessage: 'Heimili banka',
+      description: 'Bank address',
+    },
+    currency: {
+      id: 'hs.application:payment.currency',
+      defaultMessage: 'Mynt',
+      description: 'Currency',
+    },
+    selectCurrency: {
+      id: 'hs.application:payment.select.currency',
+      defaultMessage: 'Veldu mynt',
+      description: 'Select currency',
     },
   }),
 
@@ -507,6 +556,27 @@ export const errorMessages = defineMessages({
     id: 'hs.application:error.period',
     defaultMessage: 'Tímabil þarf að vera gilt.',
     description: 'The period must be valid.',
+  },
+  noEmailFound: {
+    id: 'hs.application:error.no.email.found.title',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'english translation',
+  },
+  noEmailFoundDescription: {
+    id: 'hs.application:error.no.email.found.description',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það inná mínum síðum á tr.is og komdu svo aftur til að sækja um ellilífeyri.',
+    description: 'english translation',
+  },
+  iban: {
+    id: 'hs.application:error.iban',
+    defaultMessage: 'Ógilt IBAN',
+    description: 'Invalid IBAN',
+  },
+  swift: {
+    id: 'hs.application:error.swift',
+    defaultMessage: 'Ógilt SWIFT',
+    description: 'Invalid SWIFT',
   },
 })
 
