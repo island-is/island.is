@@ -23,7 +23,7 @@ const getTextBackgroundColor = (projectPage: ProjectPage) => {
 
 interface DefaultProjectHeaderProps {
   projectPage: ProjectPage
-  headerImageObjectFit?: 'cover' | 'contain'
+  headerImageObjectFit?: string
 }
 
 export const DefaultProjectHeader = ({
