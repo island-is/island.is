@@ -50,27 +50,31 @@ export const TextFieldsRepeater: FC<
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
-  const { answers } = application
-
-  const answersValues = getValueViaPath(answers, id) as Array<object>
 
   const { setValue, getValues, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
-  
-  /* ------ Total ------ */
-  const answersValuesTotal = answersValues?.reduce(
-    (a: number, o: any) => a + Number(o[props.sumField]),
-    0,
-  )
 
-  const [total, setTotal] = useState(
-    answersValues?.length ? answersValuesTotal : 0,
-  )
-  /* ------ Set total value ------ */
+  const [total, setTotal] = useState(0)
+
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce(
+      (acc: number, current: any) =>
+        Number(acc) + Number(current[props.sumField]),
+      0,
+    )
+
+    setTotal(total)
+  }, [getValues, id, props.sumField])
+
   useEffect(() => {
-    const addTotal = id.replace(props.parentField, 'total')
-    setValue(addTotal, total)
-  }, [id, total, setValue])
+    calculateTotal()
+  }, [calculateTotal])
 
   const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
@@ -111,7 +115,7 @@ export const TextFieldsRepeater: FC<
       const a = faceValue.replace(/[^\d]/g, '')
       const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
 
-      total = (parseFloat(a) * parseFloat(b))
+      total = parseFloat(a) * parseFloat(b)
 
       setValue(`${fieldIndex}.value`, String(total))
 
@@ -120,15 +124,6 @@ export const TextFieldsRepeater: FC<
       }
     }
   }
-
-  const calculateTotal = () => {
-    const values = getValues(id)
-
-    const total = values.reduce((acc: number, current: any) => Number(acc) + Number(current[props.sumField]), 0)
-  
-    setTotal(total);
-  };
-  
 
   return (
     <Box>
@@ -154,7 +149,7 @@ export const TextFieldsRepeater: FC<
                     circle
                     icon="remove"
                     onClick={() => {
-                      remove(index);
+                      remove(index)
                       calculateTotal()
                     }}
                   />
@@ -202,10 +197,9 @@ export const TextFieldsRepeater: FC<
               })}
             </GridRow>
           </Box>
-          
         )
       })}
-       {!!fields.length && props.sumField && (
+      {!!fields.length && props.sumField && (
         <Box marginTop={5}>
           <GridRow>
             <GridColumn span={['1/1', '1/2']}>
@@ -216,7 +210,6 @@ export const TextFieldsRepeater: FC<
                 label="Samtals"
                 backgroundColor={'white'}
                 readOnly={true}
-                
               />
             </GridColumn>
           </GridRow>
