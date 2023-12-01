@@ -49,6 +49,7 @@ export const textInnerContainer = style({
       paddingRight: '16px',
       paddingBottom: '105px',
       zIndex: 1,
+      justifyContent: 'center',
     },
   }),
 })

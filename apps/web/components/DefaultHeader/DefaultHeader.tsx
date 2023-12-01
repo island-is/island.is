@@ -99,7 +99,7 @@ export const DefaultHeader: React.FC<
               <img
                 style={{
                   padding: imagePadding,
-                  objectFit: imageObjectFit,
+                  objectFit: imageObjectFit as 'contain' | 'cover',
                   height: imageIsFullHeight ? '100%' : undefined,
                 }}
                 className={styles.headerImage}
