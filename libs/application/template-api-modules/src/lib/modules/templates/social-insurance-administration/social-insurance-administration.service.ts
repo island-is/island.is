@@ -27,6 +27,7 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { result } from 'lodash'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -65,37 +66,25 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
-  private async getAdditionalAttachments(application: Application): Promise<Attachment> {
+  private async getAdditionalAttachments(application: Application): Promise<Array<Attachment>> {
     const { additionalAttachmentsRequired } = getApplicationAnswers(application.answers)
+
+    console.log('additionalAttachmentsRequired ', additionalAttachmentsRequired)
     
-    // const attachments: Attachment[] = []
+    const attachments: Array<Attachment> = []
 
-    // attachments.push(
-    //   ...(await this.initAttachments(
-    //     application,
-    //     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-    //     AttachmentTypeEnum.PDF,
-    //     additionalAttachmentsRequired,
-    //   )),
-    // )
-
-    let result: Attachment = {
-      name: '',
-      type: AttachmentTypeEnum.PDF,
-      file: ''
+    if (additionalAttachmentsRequired && additionalAttachmentsRequired.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          'fileUploadAdditionalFiles.additionalDocuments',
+          AttachmentTypeEnum.PDF,
+          additionalAttachmentsRequired,
+        )),
+      )
     }
-    for (const attachment of additionalAttachmentsRequired) {
-      const Key = `${application.id}/${attachment.key}`
-      const pdf = await this.getPdf(Key)
 
-      result = {
-        name: attachment.name,
-        type: AttachmentTypeEnum.PDF,
-        file: pdf,
-      }
-    }
-    console.log('resutl ', result)
-    return result
+    return attachments
   }
 
   private async getAttachments(
@@ -218,7 +207,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
     const attachments = await this.getAdditionalAttachments(application)
-    //const documentsDTO = transformAdditionalDocumentsDTO(application, attachments)
 
     console.log('documentsDTO ', attachments)
     const response = await this.siaClientService.sendAdditionalDocuments(auth, application.id, attachments)

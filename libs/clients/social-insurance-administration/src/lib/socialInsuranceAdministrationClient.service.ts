@@ -52,7 +52,7 @@ export class SocialInsuranceAdministrationClientService {
   sendAdditionalDocuments(
     user: User,
     applicationId: string,
-    attachment: Attachment,
+    attachment: Array<Attachment>,
   ): Promise<Response> {
     return this.sendDocumentsAPIWithAuth(user).sendDocuments({
       applicationId,
