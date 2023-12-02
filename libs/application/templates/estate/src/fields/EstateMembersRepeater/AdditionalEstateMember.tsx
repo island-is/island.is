@@ -118,6 +118,8 @@ export const AdditionalEstateMember = ({
               name={dateOfBirthField}
               locale="is"
               maxDate={new Date()}
+              minYear={1900}
+              maxYear={new Date().getFullYear()}
               backgroundColor="blue"
               onChange={(d) => {
                 setValue(dateOfBirthField, d)
@@ -168,7 +170,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={emailField}
             name={emailField}
-            label={m.email.defaultMessage}
+            label={formatMessage(m.email)}
             defaultValue={field.email || ''}
             backgroundColor="blue"
             error={error?.email}
@@ -179,7 +181,7 @@ export const AdditionalEstateMember = ({
           <InputController
             id={phoneField}
             name={phoneField}
-            label={m.phone.defaultMessage}
+            label={formatMessage(m.phone)}
             defaultValue={field.phone || ''}
             backgroundColor="blue"
             format={'###-####'}

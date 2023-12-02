@@ -189,6 +189,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // General
+  total: {
+    id: 'es.application:total',
+    defaultMessage: 'Samtals',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -240,6 +247,11 @@ export const m = defineMessages({
     id: 'es.application:email',
     defaultMessage: 'Netfang',
     description: '',
+  },
+  relationToDeceased: {
+    id: 'es.application:relationToDeceased',
+    defaultMessage: 'Tengsl við hinn látna',
+    description: 'Relation label',
   },
 
   // Estate members, assets, vehicles
@@ -879,13 +891,6 @@ export const m = defineMessages({
     id: 'es.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
-  },
-
-  // Assets
-  errorNumberEmpty: {
-    id: 'es.application:error.errorNumberEmpty',
-    defaultMessage: 'Númer má ekki vera tómt',
-    description: 'Invalid general asset number error message',
   },
 
   // Inheritance step
