@@ -19,9 +19,16 @@ import { ProgramModeOfDelivery } from './programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ProgramCourse } from './programCourse'
 import { DegreeType, Season } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
-export class ProgramBase extends Model {
+export class ProgramBase extends Model<
+  InferAttributes<Program>,
+  InferCreationAttributes<Program>
+> {
   @ApiProperty({
     description: 'Program ID',
     example: '00000000-0000-0000-0000-000000000000',

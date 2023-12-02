@@ -13,7 +13,7 @@ import { ModeOfDelivery } from '@island.is/university-gateway'
 
 const currentUser = createCurrentUser()
 
-describe('ProgramService', () => {
+describe('ProgramController', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let fixtureFactory: FixtureFactory
@@ -46,7 +46,7 @@ describe('ProgramService', () => {
     await app.cleanUp()
   })
 
-  describe('getPrograms', () => {
+  describe('GET /programs', () => {
     it('should return 5 programs', async () => {
       const numPrograms = 5
 
@@ -66,7 +66,7 @@ describe('ProgramService', () => {
     })
   })
 
-  describe('getProgramById', () => {
+  describe('GET /programs/{id}', () => {
     it('should return program', async () => {
       const program = await fixtureFactory.createProgram({
         universityId: universityId,
@@ -91,7 +91,7 @@ describe('ProgramService', () => {
     })
   })
 
-  describe('getDurationInYears', () => {
+  describe('GET /duration-in-years', () => {
     it('should return unique list of duration in years', async () => {
       const possibleDurations = [2, 3, 5]
 

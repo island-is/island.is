@@ -11,7 +11,7 @@ import { AppModule } from '../../../app.module'
 
 const currentUser = createCurrentUser()
 
-describe('Application', () => {
+describe('ApplicationController', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let fixtureFactory: FixtureFactory
@@ -37,7 +37,7 @@ describe('Application', () => {
     await app.cleanUp()
   })
 
-  describe('getApplicationById', () => {
+  describe('GET /applications/{id}', () => {
     it('should throw error', async () => {
       const result = await server.get('/v1/applications')
 
@@ -45,7 +45,7 @@ describe('Application', () => {
     })
   })
 
-  describe('createApplication', () => {
+  describe('POST /applications', () => {
     it('should throw error', async () => {
       const result = await server.post('/v1/applications')
 
@@ -53,7 +53,7 @@ describe('Application', () => {
     })
   })
 
-  describe('updateApplication', () => {
+  describe('PATCH /applications/{id}', () => {
     it('should throw error', async () => {
       const result = await server.patch('/v1/applications')
 

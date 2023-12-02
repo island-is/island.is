@@ -58,11 +58,12 @@ export class FixtureFactory {
       descriptionEn: faker.random.words(),
       durationInYears: durationInYears,
       iscedCode: faker.random.word(),
-      modeOfDelivery: modeOfDeliveryList,
+      modeOfDelivery: [],
       active: true,
       tmpActive: false,
       allowException: false,
       allowThirdLevelQualification: false,
+      courses: [],
     })
 
     for (let i = 0; i < modeOfDeliveryList.length; i++) {
@@ -82,7 +83,7 @@ export class FixtureFactory {
       externalId: faker.datatype.uuid(),
       nameIs: faker.random.word(),
       nameEn: faker.random.word(),
-      universityId: program?.universityId,
+      universityId: program?.universityId || '',
       credits: 6,
     })
 

@@ -10,6 +10,7 @@ import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
 import { AuditModule } from '@island.is/nest/audit'
+import { AuthModule } from '@island.is/auth-nest-tools'
 import { environment } from '../environments'
 
 @Module({
@@ -19,6 +20,7 @@ import { environment } from '../environments'
     ProgramModule,
     UniversityModule,
     AuditModule.forRoot(environment.audit),
+    AuthModule.register(environment.auth),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

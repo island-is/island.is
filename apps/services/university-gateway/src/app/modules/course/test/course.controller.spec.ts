@@ -13,7 +13,7 @@ import { ModeOfDelivery } from '@island.is/university-gateway'
 
 const currentUser = createCurrentUser()
 
-describe('CourseService', () => {
+describe('CourseController', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let fixtureFactory: FixtureFactory
@@ -46,7 +46,7 @@ describe('CourseService', () => {
     await app.cleanUp()
   })
 
-  describe('getCourses', () => {
+  describe('GET /courses', () => {
     it('should return 10 courses for university', async () => {
       const numPrograms = 2
       const numCourses = 5
@@ -99,7 +99,7 @@ describe('CourseService', () => {
     })
   })
 
-  describe('getCourseById', () => {
+  describe('GET /courses/{id}', () => {
     it('should return course', async () => {
       const program = await fixtureFactory.createProgram({
         universityId: universityId,

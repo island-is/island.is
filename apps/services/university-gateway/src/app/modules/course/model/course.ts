@@ -13,12 +13,19 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { University } from '../../university/model/university'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'course',
 })
-export class Course extends Model {
+export class Course extends Model<
+  InferAttributes<Course>,
+  InferCreationAttributes<Course>
+> {
   @ApiProperty({
     description: 'Course ID',
     example: '00000000-0000-0000-0000-000000000000',

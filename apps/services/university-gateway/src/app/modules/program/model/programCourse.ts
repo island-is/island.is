@@ -16,12 +16,19 @@ import {
 import { Course } from '../../course/model/course'
 import { Program } from './program'
 import { CourseSeason, Requirement } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'program_course',
 })
-export class ProgramCourse extends Model {
+export class ProgramCourse extends Model<
+  InferAttributes<ProgramCourse>,
+  InferCreationAttributes<ProgramCourse>
+> {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

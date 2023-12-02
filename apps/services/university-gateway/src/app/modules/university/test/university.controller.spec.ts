@@ -11,7 +11,7 @@ import { AppModule } from '../../../app.module'
 
 const currentUser = createCurrentUser()
 
-describe('UniversityService', () => {
+describe('UniversityController', () => {
   let app: TestApp
   let server: SuperTest<Test>
   let fixtureFactory: FixtureFactory
@@ -37,7 +37,7 @@ describe('UniversityService', () => {
     await app.cleanUp()
   })
 
-  describe('getPrograms', () => {
+  describe('GET /universities', () => {
     it('should return 5 universities', async () => {
       const numUniversities = 5
 

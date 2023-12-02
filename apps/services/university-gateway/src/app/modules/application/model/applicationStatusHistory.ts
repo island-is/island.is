@@ -9,12 +9,19 @@ import {
 } from 'sequelize-typescript'
 import { Application } from './application'
 import { ApplicationStatus } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'application_status_history',
 })
-export class ApplicationStatusHistory extends Model {
+export class ApplicationStatusHistory extends Model<
+  InferAttributes<ApplicationStatusHistory>,
+  InferCreationAttributes<ApplicationStatusHistory>
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
