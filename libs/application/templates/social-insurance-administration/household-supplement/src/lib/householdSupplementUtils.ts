@@ -139,6 +139,11 @@ export function getApplicationExternalData(
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
 
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
+
   return {
     cohabitants,
     applicantName,
@@ -146,6 +151,7 @@ export function getApplicationExternalData(
     bankInfo,
     email,
     currencies,
+    isEligible,
   }
 }
 

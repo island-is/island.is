@@ -31,6 +31,7 @@ import {
   NationalRegistryCohabitantsApi,
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import {
@@ -83,6 +84,7 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
                 NationalRegistryCohabitantsApi,
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },

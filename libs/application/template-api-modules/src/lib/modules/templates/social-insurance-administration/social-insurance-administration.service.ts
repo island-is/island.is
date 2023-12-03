@@ -224,9 +224,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     if (isRunningOnEnvironment('local')) {
-      return { isEligible: true }
+      return { isEligible: false }
     }
-    const applicationType = getApplicationType(application).toLowerCase()
+
+    const applicationType =
+      application.typeId === ApplicationTypes.OLD_AGE_PENSION
+        ? getApplicationType(application).toLowerCase()
+        : application.typeId.toLowerCase()
+
     return await this.siaClientService.getIsEligible(auth, applicationType)
   }
 
