@@ -87,7 +87,9 @@ describe('answerValidators', () => {
 
   it('should return an error if selectedMonth is more than 2 years ago', () => {
     const newAnswers = {
-      year: addYears(today.setMonth(today.getMonth()+1), -2).getFullYear().toString(),
+      year: addYears(today.setMonth(today.getMonth() + 1), -2)
+        .getFullYear()
+        .toString(),
       month: MONTHS[addMonths(today, -2).getMonth()],
     }
 
