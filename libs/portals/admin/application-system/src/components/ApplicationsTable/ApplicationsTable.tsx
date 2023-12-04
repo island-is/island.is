@@ -58,11 +58,11 @@ export const ApplicationsTable = ({
     const copied = copyToClipboard(`${baseUrl}/${slug}/${application.id}`)
 
     if (copied) {
-      toast.success(formatMessage(m.copySuccessful))
+      toast.success(formatMessage(m.copyLinkSuccessful))
     }
   }
 
-  const handleCopyButtonClick = (
+  const handleCopyApplicationLink = (
     e: MouseEvent<HTMLButtonElement>,
     application: AdminApplication,
   ) => {
@@ -162,7 +162,7 @@ export const ApplicationsTable = ({
                                 m.copyLinkToApplication,
                               )}
                               onClick={(e) =>
-                                handleCopyButtonClick(e, application)
+                                handleCopyApplicationLink(e, application)
                               }
                             >
                               <Icon
@@ -179,7 +179,7 @@ export const ApplicationsTable = ({
                 >
                   <ApplicationDetails
                     application={application}
-                    onCopyButtonClick={copyApplicationLink}
+                    onCopyApplicationLink={copyApplicationLink}
                     shouldShowCardButtons={shouldShowCardButtons}
                   />
                 </Drawer>

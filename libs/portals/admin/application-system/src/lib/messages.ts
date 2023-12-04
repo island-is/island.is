@@ -94,9 +94,17 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:copyLinkToApplication',
     defaultMessage: 'Afrita tengil á umsókn',
   },
-  copySuccessful: {
-    id: 'admin-portal.application-system:copySuccessful',
+  copyApplicationId: {
+    id: 'admin-portal.application-system:copyApplicationId',
+    defaultMessage: 'Afrita ID á umsókn',
+  },
+  copyLinkSuccessful: {
+    id: 'admin-portal.application-system:copyLinkSuccessful',
     defaultMessage: 'Tengill afritaður',
+  },
+  copyIdSuccessful: {
+    id: 'admin-portal.application-system:copyIdSuccessful',
+    defaultMessage: 'ID afritað',
   },
   applicationPruned: {
     id: 'admin-portal.application-system:applicationPruned',

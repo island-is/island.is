@@ -1,27 +1,24 @@
 import {
   AlertMessage,
-  AlertMessageType,
   Box,
+  Button,
   GridColumn,
   GridRow,
   Icon,
   Text,
+  toast,
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import format from 'date-fns/format'
-import { PropsWithChildren, ReactNode } from 'react'
-import { getLogo, statusMapper } from '../../shared/utils'
+import { PropsWithChildren } from 'react'
 import { m } from '../../lib/messages'
 import { AdminApplication } from '../../types/adminApplication'
-import { Organization } from '@island.is/shared/types'
 import {
   ActionCardMetaData,
   ApplicationStatus,
   ApplicationTypes,
-  FormatMessage,
 } from '@island.is/application/types'
-import { ApplicationListAdminResponseDtoStatusEnum } from '@island.is/api/schema'
+import copyToClipboard from 'copy-to-clipboard'
 import { ApplicationCard } from '@island.is/application/ui-components'
 
 interface ValueLineProps {
@@ -47,66 +44,26 @@ const ValueLine = ({ title, children }: PropsWithChildren<ValueLineProps>) => {
   )
 }
 
-const buildHistoryItems = (
-  application: AdminApplication,
-  formatMessage: FormatMessage,
-) => {
-  if (application.status === ApplicationListAdminResponseDtoStatusEnum.draft)
-    return
-
-  const displayStatus = application.actionCard?.pendingAction
-    ?.displayStatus as AlertMessageType
-
-  let historyItems: ApplicationCardHistoryItem[] = []
-
-  const actionCardHistory = application.actionCard?.history
-  const lastHistoryItem = actionCardHistory
-    ? actionCardHistory[actionCardHistory.length - 1]
-    : undefined
-  const lastHistoryDate = lastHistoryItem?.date
-
-  if (application.actionCard?.pendingAction?.title) {
-    historyItems.push({
-      date: format(
-        lastHistoryDate ? new Date(lastHistoryDate) : new Date(),
-        'dd.MM.yyyy',
-      ),
-      title: formatMessage(application.actionCard.pendingAction.title ?? ''),
-      content: application.actionCard.pendingAction.content ? (
-        <AlertMessage
-          type={displayStatus ?? 'default'}
-          message={formatMessage(
-            application.actionCard.pendingAction.content ?? '',
-          )}
-        />
-      ) : undefined,
-    })
-  }
-
-  if (application.actionCard?.history) {
-    historyItems = historyItems.concat(
-      application.actionCard?.history.map((x) => ({
-        date: format(new Date(x.date), 'dd.MM.yyyy'),
-        title: x.log ? formatMessage(x.log) : '',
-      })),
-    )
-  }
-
-  return historyItems
-}
-
 interface Props {
   application: AdminApplication
-  onCopyButtonClick: (application: AdminApplication) => void
+  onCopyApplicationLink: (application: AdminApplication) => void
   shouldShowCardButtons?: boolean
 }
 
 export const ApplicationDetails = ({
   application,
-  onCopyButtonClick,
+  onCopyApplicationLink,
   shouldShowCardButtons = true,
 }: Props) => {
   const { formatMessage } = useLocale()
+
+  const handleCopyApplicationId = () => {
+    const copied = copyToClipboard(application.id)
+
+    if (copied) {
+      toast.success(formatMessage(m.copyIdSuccessful))
+    }
+  }
 
   return (
     <Box>
@@ -172,24 +129,44 @@ export const ApplicationDetails = ({
       >
         <Box>
           <Text variant="h3">{formatMessage(m.application)}</Text>
-          <Text variant="small">
-            <Text as="span" variant="small" fontWeight="semiBold">
-              ID:{' '}
+          <Box marginBottom={2} marginTop={1}>
+            <Button
+              size="small"
+              variant="text"
+              icon="copy"
+              iconType="outline"
+              onClick={() => onCopyApplicationLink(application)}
+            >
+              {formatMessage(m.copyLinkToApplication)}
+            </Button>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Text variant="small">
+              <Text as="span" variant="small" fontWeight="semiBold">
+                ID:{' '}
+              </Text>
+              {application.id}
             </Text>
-            {application.id}
-          </Text>
+            <Box marginLeft={1}>
+              <Tooltip
+                text={formatMessage(m.copyApplicationId)}
+                // We are already in a portal,
+                // and tooltip renders below the drawer if we render tooltip also in portal
+                renderInPortal={false}
+                placement="right"
+              >
+                <button onClick={handleCopyApplicationId}>
+                  <Icon
+                    icon="copy"
+                    size="small"
+                    type="outline"
+                    color="blue400"
+                  />
+                </button>
+              </Tooltip>
+            </Box>
+          </Box>
         </Box>
-        <Tooltip
-          text={formatMessage(m.copyLinkToApplication)}
-          // We are already in a portal,
-          // and tooltip renders below the drawer if we render tooltip also in portal
-          renderInPortal={false}
-          placement="left"
-        >
-          <button onClick={() => onCopyButtonClick(application)}>
-            <Icon icon="copy" type="outline" color="blue400" />
-          </button>
-        </Tooltip>
       </Box>
       {application && (
         <ApplicationCard
