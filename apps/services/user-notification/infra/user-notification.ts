@@ -16,7 +16,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
   typeof serviceName
 > =>
   service(serviceName)
-    .image(serviceName)
+    .image(`services-${serviceName}`)
     .namespace(serviceName)
     .serviceAccount(serviceName)
     .postgres(postgresInfo)
