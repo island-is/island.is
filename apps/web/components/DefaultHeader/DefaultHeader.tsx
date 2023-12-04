@@ -15,7 +15,7 @@ export interface DefaultHeaderProps {
   titleColor?: TextProps['color']
   imagePadding?: string
   imageIsFullHeight?: boolean
-  imageObjectFit?: string
+  imageObjectFit?: 'contain' | 'cover'
 }
 
 export const DefaultHeader: React.FC<
@@ -99,7 +99,7 @@ export const DefaultHeader: React.FC<
               <img
                 style={{
                   padding: imagePadding,
-                  objectFit: imageObjectFit as 'contain' | 'cover',
+                  objectFit: imageObjectFit,
                   height: imageIsFullHeight ? '100%' : undefined,
                 }}
                 className={styles.headerImage}
