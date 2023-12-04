@@ -1,11 +1,13 @@
+import { BankAccountType } from './constants'
 import {
   friendlyFormatSWIFT,
   getBankIsk,
   friendlyFormatIBAN,
   validIBAN,
   validSWIFT,
+  shouldNotUpdateBankAccount,
 } from './socialInsuranceAdministrationUtils'
-import { BankInfo } from './types'
+import { BankInfo, PaymentInfo } from './types'
 
 describe('getBankIsk', () => {
   it('should return icelandic bank number if bank, ledger and account number is returned', () => {
@@ -97,5 +99,79 @@ describe('friendlyFormat & valid', () => {
     const swift = validSWIFT(bankInfo.swift)
 
     expect(true).toEqual(swift)
+  })
+})
+
+describe('shouldNotUpdateBankAccount', () => {
+  it('should return true if bank account returned from TR is not changed', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankAccountType: BankAccountType.ICELANDIC,
+      bank: '222200123456',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if bank account returned from TR is changed', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankAccountType: BankAccountType.ICELANDIC,
+      bank: '222200000000',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(false).toEqual(res)
+  })
+
+  it('should return true if foreign bank account returned from TR is not changed', () => {
+    const bankInfo: BankInfo = {
+      iban: 'NL91ABNA0417164300',
+      swift: 'NEDSZAJJXXX',
+      foreignBankName: 'Heiti banka',
+      foreignBankAddress: 'Heimili banka',
+      currency: 'EUR',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankAccountType: BankAccountType.FOREIGN,
+      iban: 'NL91ABNA0417164300',
+      swift: 'NEDSZAJJXXX',
+      bankName: 'Heiti banka',
+      bankAddress: 'Heimili banka',
+      currency: 'EUR',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(true).toEqual(res)
+  })
+
+  it('should return false if foreign bank account returned from TR is changed', () => {
+    const bankInfo: BankInfo = {
+      iban: 'NLLLABNA0417164300',
+      swift: 'NEDSZAJJXXX',
+      foreignBankName: 'Heiti banka',
+      foreignBankAddress: 'Heimili banka',
+      currency: 'EUR',
+    }
+    const paymentInfo: PaymentInfo = {
+      bankAccountType: BankAccountType.FOREIGN,
+      iban: 'NL91ABNA0417164300',
+      swift: 'NEDSZAJJXXX',
+      bankName: 'Heiti banka',
+      bankAddress: 'Heimili banka',
+      currency: 'EUR',
+    }
+    const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
+
+    expect(false).toEqual(res)
   })
 })

@@ -1,5 +1,6 @@
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo } from './types'
+import { BankInfo, PaymentInfo } from './types'
+import { BankAccountType } from './constants'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -56,4 +57,55 @@ export const validSWIFT = (value: string | undefined) => {
 
 export const formatBank = (bankInfo: string) => {
   return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
+}
+
+// We should only send bank account to TR if applicant is registering
+// new one or changing.
+export const shouldNotUpdateBankAccount = (
+  bankInfo: BankInfo,
+  paymentInfo: PaymentInfo,
+) => {
+  const {
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = paymentInfo
+  if (bankAccountType === BankAccountType.ICELANDIC) {
+    return getBankIsk(bankInfo) === bank ?? false
+  } else {
+    return (
+      !isEmpty(bankInfo) &&
+      bankInfo.iban === iban &&
+      bankInfo.swift === swift &&
+      bankInfo.foreignBankName === bankName &&
+      bankInfo.foreignBankAddress === bankAddress &&
+      bankInfo.currency === currency
+    )
+  }
+}
+
+export const getCurrencies = (currencies: string[]) => {
+  return (
+    currencies.map((i) => ({
+      label: i,
+      value: i,
+    })) ?? []
+  )
+}
+
+export const typeOfBankInfo = (
+  bankInfo: BankInfo,
+  bankAccountType: BankAccountType,
+) => {
+  return bankAccountType
+    ? bankAccountType
+    : !isEmpty(bankInfo)
+    ? bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
+      ? BankAccountType.ICELANDIC
+      : BankAccountType.FOREIGN
+    : BankAccountType.ICELANDIC
 }

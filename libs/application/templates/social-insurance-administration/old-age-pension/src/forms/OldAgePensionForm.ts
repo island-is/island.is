@@ -38,17 +38,17 @@ import {
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getCurrencies,
   getTaxOptions,
   getYesNOOptions,
   isEarlyRetirement,
-  typeOfBankInfo,
 } from '../lib/oldAgePensionUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getBankIsk,
+  getCurrencies,
+  typeOfBankInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import isEmpty from 'lodash/isEmpty'
@@ -264,12 +264,13 @@ export const OldAgePensionForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
                     )
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
                     const type =
                       bankAccountType ??
-                      typeOfBankInfo(
-                        application.answers,
-                        application.externalData,
-                      )
+                      typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
                       ? oldAgePensionFormMessage.payment.alertMessage
@@ -281,11 +282,16 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
                   title: '',
-                  defaultValue: (application: Application) =>
-                    typeOfBankInfo(
+                  defaultValue: (application: Application) => {
+                    const { bankAccountType } = getApplicationAnswers(
                       application.answers,
+                    )
+                    const { bankInfo } = getApplicationExternalData(
                       application.externalData,
-                    ),
+                    )
+
+                    return typeOfBankInfo(bankInfo, bankAccountType)
+                  },
                   options: [
                     {
                       label:
@@ -313,9 +319,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return getBankIsk(bankInfo)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.ICELANDIC
                   },
                 }),
@@ -330,9 +340,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return friendlyFormatIBAN(bankInfo.iban)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -353,9 +367,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return friendlyFormatSWIFT(bankInfo.swift)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -364,8 +382,11 @@ export const OldAgePensionForm: Form = buildForm({
                   title: oldAgePensionFormMessage.payment.currency,
                   width: 'half',
                   placeholder: oldAgePensionFormMessage.payment.selectCurrency,
-                  options: ({ externalData }: Application) =>
-                    getCurrencies(externalData),
+                  options: ({ externalData }: Application) => {
+                    const { currencies } =
+                      getApplicationExternalData(externalData)
+                    return getCurrencies(currencies)
+                  },
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
@@ -373,9 +394,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.currency : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -390,9 +415,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -407,9 +436,13 @@ export const OldAgePensionForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
