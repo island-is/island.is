@@ -11,6 +11,7 @@ import {
 import { Chart as IChart } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
+import { CHART_HEIGHT } from '../constants'
 import {
   useGetChartBaseComponent,
   useGetChartComponentsWithRenderProps,
@@ -18,14 +19,16 @@ import {
 } from '../hooks'
 import { messages } from '../messages'
 import { ChartType } from '../types'
-import { decideChartBase, getCartesianGridComponents } from '../utils'
+import {
+  calculateChartSkeletonLoaderHeight,
+  decideChartBase,
+  getCartesianGridComponents,
+} from '../utils'
 import { AccessibilityTableRenderer } from './AccessibilityTableRenderer'
 import { renderChartComponents } from './ChartComponentRenderer'
 import { renderLegend } from './LegendRenderer'
 import { renderMultipleFillPatterns } from './PatternRenderer'
 import { renderTooltip } from './TooltipRenderer'
-
-const CHART_HEIGHT = 500
 
 type ChartProps = {
   slice: IChart
@@ -40,7 +43,7 @@ export const Chart = ({ slice }: ChartProps) => {
   const componentsWithAddedProps = useGetChartComponentsWithRenderProps(slice)
   const BaseChartComponent = useGetChartBaseComponent(slice)
   const chartUsesGrid = chartType !== ChartType.pie
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(slice.startExpanded)
   const { activeLocale } = useI18n()
   const cartesianGridComponents = useMemo(
     () => getCartesianGridComponents(activeLocale, chartUsesGrid),
@@ -52,7 +55,16 @@ export const Chart = ({ slice }: ChartProps) => {
   }
 
   if (queryResult.loading) {
-    return <SkeletonLoader width="100%" height={CHART_HEIGHT} />
+    return (
+      <SkeletonLoader
+        width="100%"
+        height={calculateChartSkeletonLoaderHeight(
+          slice.displayAsCard,
+          expanded,
+        )}
+        borderRadius="xl"
+      />
+    )
   }
 
   if (!queryResult.data || queryResult.data.length === 0) {

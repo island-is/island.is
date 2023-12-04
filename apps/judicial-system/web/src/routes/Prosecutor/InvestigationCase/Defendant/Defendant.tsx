@@ -15,6 +15,7 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
+import { prosecutorShouldSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -404,15 +405,9 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {[
-              CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-              CaseType.EXPULSION_FROM_HOME,
-              CaseType.PAROLE_REVOCATION,
-              CaseType.PSYCHIATRIC_EXAMINATION,
-              CaseType.RESTRAINING_ORDER,
-              CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-              CaseType.OTHER,
-            ].includes(workingCase.type) && (
+            {prosecutorShouldSelectDefenderForInvestigationCase(
+              workingCase.type,
+            ) && (
               <motion.section
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -3,45 +3,66 @@ import { style } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
-  width: '100%',
-  display: 'flex',
-  flexDirection: 'column',
+  display: 'grid',
   gap: theme.spacing[2],
-  maxWidth: '100%',
-  flexWrap: 'wrap',
+  gridTemplateColumns: '1fr',
+  width: '100%',
+})
+
+export const wrapperTwoChildren = style({
+  gridTemplateColumns: '2fr 1fr',
+})
+
+export const wrapperThreeChildren = style({
   ...themeUtils.responsiveStyle({
+    xs: {
+      gridTemplateColumns: '1fr 1fr',
+    },
     xl: {
-      flexDirection: 'row',
+      gridTemplateColumns: '1fr 1fr 1fr',
     },
   }),
 })
 
 export const numberBox = style({
-  padding: theme.spacing[3],
   backgroundColor: theme.color.blue100,
   borderRadius: theme.border.radius.large,
   color: theme.color.blue400,
-  flexBasis: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  padding: theme.spacing[3],
+})
 
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.xl}px)`]: {
-      flexBasis: 'unset',
+export const numberBoxFillWidth = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      gridColumn: 'span 2',
     },
-  },
+    xl: {
+      gridColumn: 'unset',
+    },
+  }),
+})
+
+export const titleWrapper = style({
+  alignItems: 'flex-start',
+  color: theme.color.dark400,
+  display: 'flex',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing[1],
 })
 
 export const title = style({
-  fontSize: '16px',
-  color: theme.color.dark400,
-  marginBottom: theme.spacing[1],
+  fontSize: '14px',
   fontWeight: theme.typography.semiBold,
 })
 
 export const value = style({
+  alignItems: 'center',
   color: theme.color.blue400,
+  display: 'flex',
   fontSize: '42px',
   fontWeight: theme.typography.semiBold,
-  display: 'flex',
   gap: theme.spacing[1],
-  alignItems: 'center',
 })
