@@ -2,7 +2,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
-const dbName = `services_${serviceName.replace('-', '_')}`
+const dbName = `${serviceName.replace('-', '_')}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
