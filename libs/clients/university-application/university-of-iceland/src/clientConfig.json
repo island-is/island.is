@@ -320,7 +320,7 @@
                               "SPRING",
                               "FALL",
                               "SUMMER",
-                              "WHOLE-YEAR",
+                              "WHOLE_YEAR",
                               "ANY"
                             ]
                           },

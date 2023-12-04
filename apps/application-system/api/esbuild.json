@@ -61,7 +61,8 @@
     "to-readable-stream",
     "url-parse-lax",
     "safer-buffer",
-    "canvas"
+    "canvas",
+    "path-scurry"
   ],
   "keepNames": true
 }

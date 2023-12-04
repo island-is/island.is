@@ -176,7 +176,7 @@
     "fridagar": "^3.2.0",
     "fuse.js": "6.6.2",
     "geoip-lite": "1.4.7",
-    "glob": "7.1.6",
+    "glob": "10.3.3",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.5",
     "graphql-type-json": "0.3.2",

@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "Samgöngustofa",
-    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-17 : 20231103.1",
+    "description": "Leitar eftir ökutækjum út frá fastanúmeri, skr�ningarnúmeri eða verksmiðjunúmeri - Release-22 : 20231122.2",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -766,6 +766,16 @@
           "rebuilt": { "type": "boolean", "nullable": true },
           "offroad": { "type": "boolean", "nullable": true },
           "taxgroup": { "type": "string", "nullable": true },
+          "nextAvailableMileageReadDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "requiresMileageRegistration": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canRegisterMileage": { "type": "boolean", "nullable": true },
           "technical": {
             "$ref": "#/components/schemas/BasicVehicleInformationTechnicalDto"
           },
@@ -888,6 +898,13 @@
             },
             "nullable": true
           },
+          "mileageReadings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BasicVehicleInformationMileageReadingDto"
+            },
+            "nullable": true
+          },
           "adr": {
             "$ref": "#/components/schemas/BasicVehicleInformationAdrAlterationDto"
           },
@@ -962,6 +979,20 @@
           "nr": { "type": "string", "nullable": true },
           "inspectionItemDescription": { "type": "string", "nullable": true },
           "explanation": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "BasicVehicleInformationMileageReadingDto": {
+        "type": "object",
+        "properties": {
+          "readDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "originCode": { "type": "string", "nullable": true },
+          "mileage": { "type": "string", "nullable": true },
+          "operation": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1700,7 +1731,17 @@
             "format": "date-time",
             "nullable": true
           },
-          "lastInspectionType": { "type": "string", "nullable": true }
+          "lastInspectionType": { "type": "string", "nullable": true },
+          "nextAvailableMileageReadDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "requiresMileageRegistration": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "canRegisterMileage": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1782,7 +1823,14 @@
             "type": "number",
             "format": "double",
             "nullable": true
-          }
+          },
+          "nextAvailableMileageReadDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "canRegisterMileage": { "type": "boolean" },
+          "requiresMileageRegistration": { "type": "boolean" }
         },
         "additionalProperties": false
       },

@@ -8,6 +8,7 @@ import {
 } from '../../gen/fetch'
 import {
   ApplicationStatus,
+  CourseSeason,
   DegreeType,
   FieldType,
   IApplication,
@@ -118,12 +119,17 @@ export class ReykjavikUniversityApplicationClient {
     for (let i = 0; i < courseList.length; i++) {
       const course = courseList[i]
       try {
-        let semesterSeason: Season | undefined = undefined
+        let semesterSeason: CourseSeason | undefined = undefined
         // TODO what value is this
         if (course.semesterSeason === 'NOTSET') {
-          semesterSeason = Season.FALL
+          semesterSeason = CourseSeason.ANY
         } else {
-          semesterSeason = mapStringToEnum(course.semesterSeason, Season)
+          semesterSeason = mapStringToEnum(course.semesterSeason, CourseSeason)
+        }
+        if (!semesterSeason) {
+          throw new Error(
+            `Not able to map semester season: ${course.semesterSeason?.toString()}`,
+          )
         }
 
         mappedRes.push({

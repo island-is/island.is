@@ -63,7 +63,6 @@ export class ProgramService {
           'allowThirdLevelQualification',
           'courses',
           'extraApplicationFields',
-          //TODOx add all apiHideProperty fields
         ],
       },
       include: [
