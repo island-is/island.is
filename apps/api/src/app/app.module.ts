@@ -122,6 +122,8 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
+import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -144,6 +146,7 @@ import { PCardClientConfig } from '@island.is/clients/p-card'
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 
 const environment = getConfig
 
@@ -288,6 +291,8 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
+    AdministrationOfOccupationalSafetyAndHealthModule,
+    UniversityGatewayApiModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
@@ -357,6 +362,7 @@ const environment = getConfig
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
         StatisticsClientConfig,
+        UniversityGatewayApiClientConfig,
       ],
     }),
   ],

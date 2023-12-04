@@ -136,10 +136,10 @@ const VehicleMileage = () => {
         <IntroHeader
           title={m.vehicleMileage}
           introComponent={formatMessage(messages.vehicleMileageIntro, {
-            href: (str: any) => (
+            href: (str: React.ReactNode) => (
               <span>
                 <a
-                  href="https://island.is/flokkur/akstur-og-bifreidar"
+                  href={formatMessage(messages.mileageExtLink)}
                   target="_blank"
                   rel="noreferrer"
                   className={styles.link}
@@ -169,11 +169,11 @@ const VehicleMileage = () => {
                         </Text>
                         <Text variant="default" paddingTop={1}>
                           {formatMessage(messages.mileageSuccessFormText, {
-                            date: updateData?.vehicleMileagePost?.readDate
-                              ? icelandLocalTime(
-                                  updateData?.vehicleMileagePost?.readDate,
-                                )
-                              : '',
+                            date: icelandLocalTime(
+                              updateData?.vehicleMileagePost?.readDate ??
+                                details?.[0].readDate ??
+                                undefined,
+                            ),
                           })}
                         </Text>
                       </>
@@ -206,6 +206,7 @@ const VehicleMileage = () => {
                     size="xs"
                     maxLength={12}
                     error={errors.odometerStatus?.message}
+                    disabled={!isFormEditable && !canRegisterMileage}
                     defaultValue={''}
                     onChange={(e) => setFormValue(e.target.value)}
                     rules={{
