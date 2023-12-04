@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { Application, RecordObject } from '@island.is/application/types'
@@ -45,6 +46,13 @@ export const overviewAssetsAndDebts = [
             m.overviewMarketValue.defaultMessage +
               ': ' +
               (asset.marketValue ? formatCurrency(asset.marketValue) : '0 kr.'),
+            m.propertyShare.defaultMessage +
+              ': ' +
+              (asset.share
+                ? asset.share > 1
+                  ? asset.share + '%'
+                  : asset.share * 100 + '%'
+                : ''),
           ],
         })),
     },
@@ -255,6 +263,7 @@ export const overviewAssetsAndDebts = [
         'bankAccounts',
         'balance',
       ),
+    titleVariant: 'h4',
   }),
   buildDividerField({
     condition: (answers) =>
@@ -306,6 +315,7 @@ export const overviewAssetsAndDebts = [
       getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
     condition: (answers) =>
       !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+    titleVariant: 'h4',
   }),
   buildDividerField({
     condition: (answers) =>

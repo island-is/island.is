@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import glob from 'glob'
+import { globSync } from 'glob'
 import handlebars from 'handlebars'
 import juice from 'juice'
 import { Attachment } from 'nodemailer/lib/mailer'
@@ -29,7 +29,7 @@ export class AdapterService {
       process.env.NODE_ENV !== 'production'
         ? 'libs/email-service/src/tools/design/*.hbs'
         : 'email-service-assets/*.hbs'
-    const files = glob.sync(path)
+    const files = globSync(path)
 
     files.forEach((file) => this.precompile(file))
   }
