@@ -67,7 +67,6 @@ export const ApplicationsOverview = () => {
           headers={currentNavigationItem.headers}
           applications={applications}
           setApplications={setApplications}
-          defaultHeaderSort={currentNavigationItem.defaultHeaderSort}
         />
       )}
 

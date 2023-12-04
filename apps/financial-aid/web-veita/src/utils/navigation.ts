@@ -1,7 +1,4 @@
-import {
-  ApplicationFiltersEnum,
-  ApplicationHeaderSortByEnum,
-} from '@island.is/financial-aid/shared/lib'
+import { ApplicationFiltersEnum } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
   {
@@ -10,13 +7,12 @@ export const navigationItems = [
     link: `/nymal`,
     applicationState: [ApplicationFiltersEnum.NEW],
     headers: [
-      { title: 'Nafn', sortBy: 'name' },
-      { title: 'Staða', sortBy: 'state' },
-      { title: 'Tími án umsjár', sortBy: 'modified' },
-      { title: 'Tímabil', sortBy: 'created' },
-      { title: 'Umsjá', sortBy: 'name' },
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Tími án umsjár' },
+      { title: 'Tímabil' },
+      { title: 'Umsjá' },
     ],
-    defaultHeaderSort: ApplicationHeaderSortByEnum.CREATED,
   },
   {
     group: 'Mitt',
@@ -24,13 +20,12 @@ export const navigationItems = [
     link: `/vinnslu`,
     applicationState: [ApplicationFiltersEnum.MYCASES],
     headers: [
-      { title: 'Nafn', sortBy: 'name' },
-      { title: 'Staða', sortBy: 'state' },
-      { title: 'Síðast uppfært', sortBy: 'modified' },
-      { title: 'Tímabil', sortBy: 'created' },
-      { title: 'Unnið af', sortBy: 'name' },
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Síðast uppfært' },
+      { title: 'Tímabil' },
+      { title: 'Unnið af' },
     ],
-    defaultHeaderSort: ApplicationHeaderSortByEnum.MODIFIED,
   },
   {
     group: 'Teymið',
@@ -41,13 +36,12 @@ export const navigationItems = [
       ApplicationFiltersEnum.DATANEEDED,
     ],
     headers: [
-      { title: 'Nafn', sortBy: 'name' },
-      { title: 'Staða', sortBy: 'state' },
-      { title: 'Úrlausnartími', sortBy: 'modified' },
-      { title: 'Tímabil', sortBy: 'created' },
-      { title: 'Unnið af', sortBy: 'name' },
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Úrlausnartími' },
+      { title: 'Tímabil' },
+      { title: 'Unnið af' },
     ],
-    defaultHeaderSort: ApplicationHeaderSortByEnum.MODIFIED,
   },
   {
     label: 'Afgreidd mál',
@@ -57,12 +51,11 @@ export const navigationItems = [
       ApplicationFiltersEnum.REJECTED,
     ],
     headers: [
-      { title: 'Nafn', sortBy: 'name' },
-      { title: 'Staða', sortBy: 'state' },
-      { title: 'Úrlausnartími', sortBy: 'modified' },
-      { title: 'Tímabil', sortBy: 'created' },
-      { title: 'Unnið af', sortBy: 'name' },
+      { title: 'Nafn' },
+      { title: 'Staða' },
+      { title: 'Úrlausnartími' },
+      { title: 'Tímabil' },
+      { title: 'Unnið af' },
     ],
-    defaultHeaderSort: ApplicationHeaderSortByEnum.MODIFIED,
   },
 ]

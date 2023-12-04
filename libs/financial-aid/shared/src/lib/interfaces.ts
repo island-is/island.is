@@ -9,7 +9,6 @@ import {
   FamilyStatus,
   AidType,
   UserType,
-  ApplicationHeaderSortByEnum,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -364,11 +363,9 @@ export interface ServiceCenter {
   active?: boolean
   link?: string
 }
-export interface SortableTableHeaderProps {
-  sortBy: ApplicationHeaderSortByEnum
-  title: string
-}
+
 export interface TableHeadersProps {
+  filterBy?: string
   title: string
 }
 

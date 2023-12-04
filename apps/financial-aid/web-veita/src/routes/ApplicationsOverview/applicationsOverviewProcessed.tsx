@@ -133,7 +133,6 @@ export const ApplicationsOverviewProcessed = () => {
             headers={currentNavigationItem.headers}
             applications={data?.filterApplications?.applications}
             emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
-            defaultHeaderSort={currentNavigationItem.defaultHeaderSort}
           />
         )}
         {error && (
