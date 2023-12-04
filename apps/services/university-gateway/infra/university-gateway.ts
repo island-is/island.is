@@ -14,7 +14,7 @@ const imageName = serviceName
 const postgresInfo = {
   username: dbName,
   name: dbName,
-  passwordSecret: `/k8s/${dbName}/DB_PASSWORD`,
+  passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
 }
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
