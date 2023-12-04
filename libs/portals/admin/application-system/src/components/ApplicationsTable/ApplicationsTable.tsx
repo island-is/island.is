@@ -144,7 +144,7 @@ export const ApplicationsTable = ({
                         </Box>
                       </T.Data>
                       <T.Data>
-                        <Tag disabled variant={tag.variant}>
+                        <Tag disabled variant={tag.variant} truncate>
                           {formatMessage(tag.label)}
                         </Tag>
                       </T.Data>
