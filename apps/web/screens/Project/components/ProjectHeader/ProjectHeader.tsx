@@ -53,7 +53,9 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           }
           imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
           imageObjectFit={
-            projectPage.themeProperties?.imageObjectFit || 'contain'
+            projectPage.themeProperties?.imageObjectFit === 'cover'
+              ? 'cover'
+              : 'contain'
           }
         />
       )
@@ -62,7 +64,9 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
         <DefaultProjectHeader
           projectPage={projectPage}
           headerImageObjectFit={
-            projectPage.themeProperties?.imageObjectFit || 'cover'
+            projectPage.themeProperties?.imageObjectFit === 'contain'
+              ? 'contain'
+              : 'cover'
           }
         />
       )

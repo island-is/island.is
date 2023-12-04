@@ -292,7 +292,9 @@ export const OrganizationHeader: React.FC<
             organizationPage.themeProperties.imageIsFullHeight ?? true
           }
           imageObjectFit={
-            organizationPage.themeProperties.imageObjectFit || 'contain'
+            organizationPage.themeProperties.imageObjectFit === 'cover'
+              ? 'cover'
+              : 'contain'
           }
         />
       )
