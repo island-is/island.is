@@ -2409,9 +2409,9 @@ user-notification:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_user_notification'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_user_notification'
+    DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2489,9 +2489,9 @@ user-notification-worker:
   env:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_user_notification'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_user_notification'
+    DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2537,9 +2537,9 @@ user-notification-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_user_notification'
+      DB_NAME: 'user_notification'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
-      DB_USER: 'services_user_notification'
+      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'

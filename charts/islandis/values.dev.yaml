@@ -2849,9 +2849,9 @@ user-notification:
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_user_notification'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_user_notification'
+    DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2929,9 +2929,9 @@ user-notification-worker:
   env:
     CONTENTFUL_HOST: 'preview.contentful.com'
     DB_HOST: 'postgres-applications.internal'
-    DB_NAME: 'services_user_notification'
+    DB_NAME: 'user_notification'
     DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-    DB_USER: 'services_user_notification'
+    DB_USER: 'user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_PATH: 'https://identity-server.dev01.devland.is'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2977,9 +2977,9 @@ user-notification-worker:
             memory: '128Mi'
     env:
       DB_HOST: 'postgres-applications.internal'
-      DB_NAME: 'services_user_notification'
+      DB_NAME: 'user_notification'
       DB_REPLICAS_HOST: 'dev-vidspyrna-aurora.cluster-ro-c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
-      DB_USER: 'services_user_notification'
+      DB_USER: 'user_notification'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/user-notification/DB_PASSWORD'
