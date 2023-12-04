@@ -1,4 +1,3 @@
-// LINE TO TRIGGER WEB IN DEPLOY-FEATURE BUILD - TO BE REMOVED
 import React, {
   FC,
   useEffect,
