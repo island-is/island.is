@@ -12,6 +12,7 @@ import {
   Icon,
   FocusableBox,
 } from '@island.is/island-ui/core'
+import { getVideoEmbedProperties } from '@island.is/shared/utils'
 
 import * as styles from './EmbeddedVideo.css'
 
@@ -19,6 +20,7 @@ export interface EmbeddedVideoProps {
   title?: string
   url: string
   locale?: string
+  thumbnailImageUrl?: string
 }
 
 const Texts = ({ termsUrl = '#' }) => ({
@@ -52,6 +54,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   title,
   url,
   locale,
+  thumbnailImageUrl,
 }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
   const [embedUrl, setEmbedUrl] = useState<string | null>(null)
@@ -64,38 +67,12 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   const { control } = methods
 
   useEffect(() => {
-    const item = new URL(url)
-
-    if (item.hostname.match(/(vimeo.com)/g)) {
-      const match = /vimeo.*\/(\d+)/i.exec(item.href)
-
-      if (match) {
-        setEmbedUrl(`https://player.vimeo.com/video/${match[1]}`)
-        setTermsUrl(`https://vimeo.com/terms`)
-        setType('VIMEO')
-      }
-    }
-
-    if (item.hostname.match(/(youtube.com|youtu.be)/g)) {
-      const regExp =
-        /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
-      const match = item.href.match(regExp)
-
-      let youtubeId: string | undefined = undefined
-
-      if (match) {
-        let id = match[7]
-        if (id.startsWith('/')) id = id.slice(1)
-        if (id.length === 11) youtubeId = id
-      }
-
-      if (youtubeId) {
-        setEmbedUrl(`https://www.youtube.com/embed/${youtubeId}`)
-        setTermsUrl(`https://www.youtube.com/t/terms`)
-        setType('YOUTUBE')
-      }
-    }
-  }, [])
+    const embedProperties = getVideoEmbedProperties(url)
+    if (!embedProperties) return
+    setEmbedUrl(embedProperties.embedUrl)
+    setTermsUrl(embedProperties.termsUrl)
+    setType(embedProperties.type)
+  }, [url])
 
   useEffect(() => {
     if (type) {
@@ -220,8 +197,10 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
           <Box
             position="relative"
             style={{
-              backgroundImage:
-                'url(http://i3.ytimg.com/vi/SUetxOg9gWI/hqdefault.jpg)',
+              backgroundImage: thumbnailImageUrl
+                ? `url(${thumbnailImageUrl})`
+                : '',
+              // TODO: create fallback thumbnail url
               width: '100%',
               height: '100%',
               backgroundRepeat: 'no-repeat',

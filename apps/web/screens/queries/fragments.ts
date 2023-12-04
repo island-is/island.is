@@ -217,6 +217,7 @@ export const slices = gql`
     id
     title
     url
+    thumbnailImageUrl
   }
 
   fragment SectionWithImageFields on SectionWithImage {

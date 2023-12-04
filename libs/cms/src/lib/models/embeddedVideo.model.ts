@@ -12,6 +12,9 @@ export class EmbeddedVideo {
 
   @Field()
   url!: string
+
+  @Field(() => String, { nullable: true })
+  thumbnailImageUrl?: string
 }
 
 export const mapEmbeddedVideo = ({
@@ -22,4 +25,5 @@ export const mapEmbeddedVideo = ({
   id: sys.id,
   title: fields.title ?? '',
   url: fields.url ?? '',
+  thumbnailImageUrl: fields.thumbnailImage?.fields?.file?.url ?? '',
 })
