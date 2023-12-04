@@ -139,7 +139,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}>${courtText}${courtOfAppealsText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}`,
               },
             },
           ],
