@@ -1,0 +1,5 @@
+mutation CreateCourtCase($input: CreateCourtCaseInput!) {
+  createCourtCase(input: $input) {
+    courtCaseNumber
+  }
+}

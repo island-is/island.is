@@ -1,0 +1,6 @@
+mutation ExtendCase($input: ExtendCaseInput!) {
+  extendCase(input: $input) {
+    id
+    type
+  }
+}

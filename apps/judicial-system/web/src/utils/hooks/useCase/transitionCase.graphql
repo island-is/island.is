@@ -1,0 +1,8 @@
+mutation TransitionCase($input: TransitionCaseInput!) {
+  transitionCase(input: $input) {
+    state
+    appealState
+    appealReceivedByCourtDate
+    statementDeadline
+  }
+}

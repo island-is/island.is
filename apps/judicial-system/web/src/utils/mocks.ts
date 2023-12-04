@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { TransitionCaseMutation } from './hooks/useCase/mutations'
+import { TransitionCaseDocument } from './hooks/useCase/transitionCase.generated'
 
 export const mockCourt = {
   id: 'court_id',
@@ -124,7 +124,7 @@ export const mockProsecutorQuery = [
 export const mockTransitonCaseMutation = (caseId: string) => [
   {
     request: {
-      query: TransitionCaseMutation,
+      query: TransitionCaseDocument,
       variables: {
         input: {
           id: caseId,
