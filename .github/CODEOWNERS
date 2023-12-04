@@ -136,7 +136,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/regulations-admin/                                                                     @island-is/hugsmidjan
 /libs/api/domains/rights-portal                                                                          @island-is/hugsmidjan
 /libs/api/domains/occupational-licenses/                                                                 @island-is/hugsmidjan
-/libs/api/domains/intellectual-properties/                                                                   @island-is/hugsmidjan
+/libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
@@ -187,7 +187,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/templates/health-insurance/                                                            @island-is/norda
 /libs/clients/rsk/company-registry                                                                       @island-is/norda
 /libs/api/domains/company-registry                                                                       @island-is/norda
-/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda                                                                       @island-is/norda
+/libs/clients/icelandic-health-insurance/health-insurance/                                               @island-is/norda
 /libs/clients/data-protection-complaint/                                                                 @island-is/norda
 /libs/clients/fishing-license/                                                                           @island-is/norda
 /libs/api/domains/fishing-license/                                                                       @island-is/norda
