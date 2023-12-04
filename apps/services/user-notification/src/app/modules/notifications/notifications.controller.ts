@@ -166,9 +166,7 @@ export class NotificationsController {
 
   @Get('/')
   @Version('1')
-  async getAll(
-    
-  ): Promise<any> {
+  async getAll(): Promise<any> {
     return await this.notificationsService.getAll()
   }
 }
