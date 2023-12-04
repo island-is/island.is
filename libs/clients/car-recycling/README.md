@@ -13,7 +13,7 @@ The `RECYCLING_FUND_GQL_BASE_PATH` config needs to be configured as to Skilavott
 To be able to generate the GraphQL library to use couple of things is needed to be done before code generation.
 
 - Use `graphql-codegen`, config it in `project.json`
-- Implement mutation and queries in a .grapql file
+- Implement mutation and queries in a .graphql file
 - Config the `codegen.yaml` to point to GraphQL schema and our .graphql file. In our case we are using the api.graphql schema from the skilavottord-ws backend
 
 Run `yarn codegen`

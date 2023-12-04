@@ -31,21 +31,19 @@ function buildApplication(data: {
 }
 
 describe('Old Age Pension Template', () => {
-  describe('state transitions', () => {
-    it('should transition from draft to submitted on submit', () => {
-      const helper = new ApplicationTemplateHelper(
-        buildApplication({
-          answers: {
-            confirmCorrectInfo: true,
-          },
-        }),
-        CarRecyclingTemplate,
-      )
-      const [hasChanged, newState] = helper.changeState({
-        type: DefaultEvents.SUBMIT,
-      })
-      expect(hasChanged).toBe(true)
-      expect(newState).toBe('submitted')
+  it('should transition from draft to submitted on submit', () => {
+    const helper = new ApplicationTemplateHelper(
+      buildApplication({
+        answers: {
+          confirmCorrectInfo: true,
+        },
+      }),
+      CarRecyclingTemplate,
+    )
+    const [hasChanged, newState] = helper.changeState({
+      type: DefaultEvents.SUBMIT,
     })
+    expect(hasChanged).toBe(true)
+    expect(newState).toBe('submitted')
   })
 })

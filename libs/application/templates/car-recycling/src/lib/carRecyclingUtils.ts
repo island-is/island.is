@@ -61,7 +61,7 @@ export function getApplicationExternalData(
 
   const vehiclesList = getValueViaPath(
     externalData,
-    'vehiclesList.data',
+    'currentVehicles.data',
     [],
   ) as VehicleMiniDto[]
 
