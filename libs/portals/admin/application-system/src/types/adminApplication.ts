@@ -10,6 +10,8 @@ export interface AdminApplication {
   modified: string
   name?: string
   institution?: string
+  pruned?: boolean
+  pruneAt?: string
   progress?: number
   actionCard?: ActionCardMetaData
   assignees: Array<string>

@@ -150,6 +150,12 @@ export class ApplicationAdmin {
   @Field(() => [String])
   applicantActors!: string[]
 
+  @Field(() => Date, { nullable: true })
+  pruneAt?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
+
   @Field(() => String)
   state!: string
 

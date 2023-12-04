@@ -9,6 +9,8 @@ query getApplications($input: ApplicationApplicationsAdminInput!) {
     assignees
     applicantActors
     name
+    pruned
+    pruneAt
     institution
     progress
     status

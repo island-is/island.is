@@ -88,6 +88,7 @@ export class AdminController {
       typeId,
       status,
       nationalId,
+      true,
     )
   }
 }
