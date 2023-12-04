@@ -61,7 +61,9 @@ const List = () => {
                     <Input
                       readOnly
                       name="endTime"
-                      value={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm') ?? ''}
+                      value={
+                        format(new Date(list.endTime), 'dd.MM.yyyy HH:mm') ?? ''
+                      }
                       label={formatMessage(m.listEndTime)}
                       size="sm"
                     />

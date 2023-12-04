@@ -40,10 +40,7 @@ const Signees = () => {
           />
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '5/12']}>
-          <Box
-            display="flex"
-            justifyContent="flexEnd"
-          >
+          <Box display="flex" justifyContent="flexEnd">
             <Box
               display="flex"
               justifyContent="flexEnd"
