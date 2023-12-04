@@ -856,6 +856,89 @@ export const vehicleMessage = defineMessages({
   },
 })
 
+export const ipMessages = defineMessages({
+  title: {
+    id: 'sp.intellectual-property:title',
+    defaultMessage: 'Hugverkaréttindin mín',
+  },
+  description: {
+    id: 'sp.intellectual-property:description',
+    defaultMessage: 'Lýsing',
+  },
+  baseInfo: {
+    id: 'sp.intellectual-property:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+  text: {
+    id: 'sp.intellectual-property:text',
+    defaultMessage: 'Texti',
+  },
+  image: {
+    id: 'sp.intellectual-property:image',
+    defaultMessage: 'Mynd',
+  },
+  images: {
+    id: 'sp.intellectual-property:images',
+    defaultMessage: 'Myndir',
+  },
+  audio: {
+    id: 'sp.intellectual-property:audio',
+    defaultMessage: 'Hljóðskrá',
+  },
+  video: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Myndband',
+  },
+  animation: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Hreyfimynd',
+  },
+  name: {
+    id: 'sp.intellectual-property:name',
+    defaultMessage: 'Nafn',
+  },
+  type: {
+    id: 'sp.intellectual-property:type',
+    defaultMessage: 'Tegund',
+  },
+  make: {
+    id: 'sp.intellectual-property:make',
+    defaultMessage: 'Gerð',
+  },
+  status: {
+    id: 'sp.intellectual-property:status',
+    defaultMessage: 'Staða',
+  },
+  internationalRegistration: {
+    id: 'sp.intellectual-property:international-registration',
+    defaultMessage: 'Alþjóðleg skráning',
+  },
+  internationalRegistrationDate: {
+    id: 'sp.intellectual-property:international-registration-date',
+    defaultMessage: 'Alþjóðlegur skráningardagur',
+  },
+  publish: {
+    id: 'sp.intellectual-property:publish',
+    defaultMessage: 'Birting',
+  },
+  publishDate: {
+    id: 'sp.intellectual-property:publish-date',
+    defaultMessage: 'Birtingardagur',
+  },
+  registration: {
+    id: 'sp.intellectual-property:registration',
+    defaultMessage: 'Skráning',
+  },
+  registrationDate: {
+    id: 'sp.intellectual-property:registration-date',
+    defaultMessage: 'Skráningardagur',
+  },
+  expires: {
+    id: 'sp.intellectual-property:expires',
+    defaultMessage: 'Gildir til',
+  },
+})
+
 export const urls = defineMessages({
   ownerChange: {
     id: 'sp.vehicles:url-owner-change',
