@@ -25,10 +25,12 @@ export class IdsUserGuard extends AuthGuard('jwt') {
   ) {
     // Throws if there is an error or missing user.
     super.handleRequest(error, user, info, context, status)
+
     // Check if there's a nationalId claim for an authenticated user.
     if (!user.nationalId) {
       throw new UnauthorizedException()
     }
+
     // AuthGuard saves user in request.user. We'll also save it as request.auth.
     const request = this.getRequest(context)
     request.auth = user
@@ -46,6 +48,7 @@ export class IdsUserGuard extends AuthGuard('jwt') {
     if (bypassAuth) {
       return true
     }
+
     // pass auth checking to JWT auth guard
     return super.canActivate(context)
   }
