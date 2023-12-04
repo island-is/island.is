@@ -188,6 +188,7 @@ export const estateAssets = buildSection({
                 repeaterButtonText: m.bankAccountRepeaterButton,
                 repeaterHeaderText: m.bankAccount,
                 sumField: 'balance',
+                currency: true,
               },
             ),
           ],
