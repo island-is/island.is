@@ -1,10 +1,12 @@
 import { TestingModuleBuilder } from '@nestjs/testing'
+import { INestApplication } from '@nestjs/common'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
-  testServer,
-  useDatabase,
-  useAuth,
   TestApp,
+  testServer,
+  useAuth,
+  useDatabase,
 } from '@island.is/testing/nest'
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import {
@@ -20,20 +22,17 @@ import { ConfigType } from '@island.is/nest/config'
 
 interface SetupOptions {
   user?: User
-  customScopeRules?: ConfigType<typeof DelegationConfig>['customScopeRules']
   override?: (builder: TestingModuleBuilder) => TestingModuleBuilder
 }
 
 const delegationConfig: ConfigType<typeof DelegationConfig> = {
   userInfoUrl: '',
-  customScopeRules: [],
   defaultValidityPeriodInDays: 90,
   isConfigured: true,
 }
 
 export const setupWithAuth = ({
   user = createCurrentUser(),
-  customScopeRules,
   override = (builder) => builder,
 }: SetupOptions = {}): Promise<TestApp> => {
   // Setup app with authentication and database
@@ -47,11 +46,10 @@ export const setupWithAuth = ({
         .overrideProvider(DelegationConfig.KEY)
         .useValue({
           ...delegationConfig,
-          ...(customScopeRules && { customScopeRules }),
         }),
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 }
@@ -60,7 +58,9 @@ export const setupWithoutAuth = (): Promise<TestApp> => {
   return testServer({
     appModule: AppModule,
     enableVersioning: true,
-    hooks: [useDatabase({ type: 'sqlite', provider: SequelizeConfigService })],
+    hooks: [
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
+    ],
   })
 }
 
@@ -72,7 +72,7 @@ export const setupWithoutPermission = ({
     enableVersioning: true,
     hooks: [
       useAuth({ auth: user }),
-      useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+      useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
     ],
   })
 }

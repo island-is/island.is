@@ -204,6 +204,7 @@ export class DelegationResourcesService {
       )
     }
 
+    console.log('apiScopeFilter', apiScopeFilter)
     return apiScopeFilter
   }
 
@@ -258,29 +259,35 @@ export class DelegationResourcesService {
     prefix?: string,
   ): Promise<Array<WhereOptions<ApiScope>>> {
     const skipScopes = await this.apiScopeModel
-      .findAll({
-        attributes: ['name', 'customDelegationOnlyFor'],
-        where: {
-          customDelegationOnlyFor: {
-            [Op.not]: null,
-          },
+    //   .findAll({
+    //     attributes: ['name', 'customDelegationOnlyFor'],
+    //     where: {
+    //       customDelegationOnlyFor: {
+    //         [Op.not]: null,
+    //       },
+    //     },
+    //   })
+    //   .then((scopes) =>
+    //     scopes
+    //       .filter(
+    //         (scopeRule) =>
+    //           !this.scopeRuleMatchesUser(
+    //             user,
+    //             scopeRule.customDelegationOnlyFor || [],
+    //           ),
+    //       )
+    //       .map((scopeRule) => scopeRule.name),
+    //   )
+    // return skipScopes.length === 0
+    //   ? []
+    //   : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
+    return [
+      {
+        [col(prefix, 'custom_delegation_only_for')]: {
+          [Op.overlap]: user.delegationType,
         },
-      })
-      .then((scopes) =>
-        scopes
-          .filter(
-            (scopeRule) =>
-              !this.scopeRuleMatchesUser(
-                user,
-                scopeRule.customDelegationOnlyFor || [],
-              ),
-          )
-          .map((scopeRule) => scopeRule.name),
-      )
-
-    return skipScopes.length === 0
-      ? []
-      : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
+      },
+    ]
   }
 
   private accessControlInclude(user: User): Includeable {

@@ -349,7 +349,9 @@ const createTestCases: Record<string, CreateTestCase> = {
     tenantId: TENANT_ID,
     input: {
       ...createInput,
-      customDelegationOnlyFor: [AuthDelegationType.LegalGuardian] as any,
+      customDelegationOnlyFor: [
+        AuthDelegationType.LegalGuardian,
+      ] as unknown as CustomDelegationOnlyForDelegationType[],
     },
     expected: {
       status: 400,

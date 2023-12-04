@@ -23,7 +23,7 @@ interface UseDatabase {
 
 const sharedConfig: SequelizeModuleOptions = {
   ...getOptions(),
-  synchronize: true,
+  synchronize: false,
 }
 
 const config: Record<Database, SequelizeModuleOptions> = {
@@ -114,7 +114,9 @@ export default ({ type, provider, skipTruncate = false }: UseDatabase) => ({
       // ignore
     }
 
-    await sequelize.sync({ logging: false, force: true })
+    await sequelize.sync({ logging: false, force: true }).catch((e) => {
+      console.log(e)
+    })
 
     return async () => {
       if (sequelize?.options.dialect === dialect.Postgres) {

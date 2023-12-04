@@ -114,7 +114,7 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
   domainName!: string
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
     validate: {
@@ -198,10 +198,9 @@ export class ApiScope extends Model<ModelAttributes, CreationAttributes> {
    *   @see {AuthScope.delegations} scope in their access token.
    */
   @Column({
-    type: DataType.ARRAY(DataType.ENUM),
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: true,
     defaultValue: null,
-    values: Object.values(CustomDelegationOnlyForDelegationType),
   })
   customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType[]
 

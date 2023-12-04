@@ -17,7 +17,6 @@ import {
 } from '@island.is/auth-api-lib'
 import { isDefined } from '@island.is/shared/utils'
 import { createNationalId } from '@island.is/testing/fixtures'
-import { TestApp } from '@island.is/testing/nest'
 
 import { accessOutgoingTestCases } from '../../../../test/access-outgoing-test-cases'
 import { setupWithAuth } from '../../../../test/setup'
@@ -34,7 +33,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
       (a, b) => a.name === b.name,
     ).map((domain) => domain.name)
     const [accessible, inaccessible] = partitionDomainsByScopeAccess(testCase)
-    let app: TestApp
+    let app = null
     let server: request.SuperTest<request.Test>
     let factory: FixtureFactory
     let domains: Domain[]
@@ -265,7 +264,7 @@ describe.each(Object.keys(accessOutgoingTestCases))(
         'DELETE /v1/me/delegations/:id works and removes scopes you have access to in $name',
         async (domain) => {
           // Arrange
-          const delegationScopeModel = await app.get<typeof DelegationScope>(
+          const delegationScopeModel = await app.get(
             getModelToken(DelegationScope),
           )
           const delegation = delegations.find(
