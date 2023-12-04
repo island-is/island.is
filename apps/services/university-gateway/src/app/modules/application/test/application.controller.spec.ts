@@ -11,6 +11,7 @@ import { AppModule } from '../../../app.module'
 
 const currentUser = createCurrentUser()
 
+// TODO add tests
 describe('ApplicationController', () => {
   let app: TestApp
   let server: SuperTest<Test>
