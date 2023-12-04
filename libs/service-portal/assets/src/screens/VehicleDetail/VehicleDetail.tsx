@@ -25,8 +25,8 @@ import {
   m,
   FootNote,
   IntroHeader,
-  LinkResolver,
   SAMGONGUSTOFA_SLUG,
+  LinkButton,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -203,27 +203,19 @@ const VehicleDetail = () => {
               >
                 {reqMileageReg && (
                   <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                    <Button
-                      colorScheme="default"
+                    <LinkButton
+                      to={
+                        id
+                          ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
+                              ':id',
+                              id.toString(),
+                            )
+                          : ''
+                      }
                       icon="pencil"
-                      iconType="outline"
-                      size="default"
-                      type="button"
-                      variant="utility"
-                    >
-                      <LinkResolver
-                        href={
-                          id
-                            ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
-                                ':id',
-                                id.toString(),
-                              )
-                            : ''
-                        }
-                      >
-                        {formatMessage(messages.vehicleMileageInputTitle)}
-                      </LinkResolver>
-                    </Button>
+                      variant="button"
+                      text={formatMessage(messages.vehicleMileageInputTitle)}
+                    />
                   </Box>
                 )}
                 {downloadServiceURL && (
