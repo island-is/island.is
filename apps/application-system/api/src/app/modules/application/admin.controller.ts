@@ -88,7 +88,7 @@ export class AdminController {
       typeId,
       status,
       nationalId,
-      true,
+      true, // Show pruned applications
     )
   }
 }
