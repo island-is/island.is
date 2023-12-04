@@ -26,6 +26,7 @@ test.describe('Custody Judge', () => {
     page.goto('/krofur')
     await page
       .getByText('007-2023-000001Jón JónssonGæsluvarðhald')
+      .getByText('Nýtt')
       .first()
       .click()
 
@@ -48,7 +49,9 @@ test.describe('Custody Judge', () => {
 
     // Hearing arrangements
     await expect(page).toHaveURL(/.*\/domur\/fyrirtokutimi\/.*/)
-    const today = new Date().toLocaleDateString('is-IS')
+    const date = new Date()
+    const today = date.toLocaleDateString('is-IS')
+
     await page.locator('input[id=courtDate]').fill(today)
     await page.keyboard.press('Escape')
     await page.locator('input[id=courtDate-time]').fill('09:00')
@@ -64,7 +67,13 @@ test.describe('Custody Judge', () => {
 
     // Ruling
     await expect(page).toHaveURL(/.*\/domur\/urskurdur\/.*/)
+    date.setDate(date.getDate() + 5)
+    const custodyEndDate = date.toLocaleDateString('is-IS')
     await page.getByText('Krafa um gæsluvarðhald samþykkt').click()
+    await page.locator('input[id=validToDate]').fill(custodyEndDate)
+    await page.keyboard.press('Escape')
+    await page.locator('input[id=validToDate-time]').fill('16:00')
+
     await page.getByTestId('continueButton').click()
 
     // Court record
@@ -85,8 +94,6 @@ test.describe('Custody Judge', () => {
     await page.keyboard.press('Escape')
     await page.locator('input[id=courtEndTime-time]').fill('10:00')
     await page.keyboard.press('Escape')
-    await page.getByTestId('courtEndTime-time').click()
-    await page.getByTestId('courtEndTime-time').fill('16:00')
     await page.getByTestId('continueButton').click()
 
     // Confirmation
