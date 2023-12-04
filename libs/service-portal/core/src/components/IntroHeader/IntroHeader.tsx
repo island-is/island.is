@@ -59,7 +59,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
         )}
         {props.children}
       </GridColumn>
-      {!isMobile && props.serviceProviderSlug && organization && (
+      {!isMobile && organization && props.serviceProviderSlug && (
         <GridColumn span={'2/8'} offset={'1/8'}>
           <InstitutionPanel
             loading={loading}
