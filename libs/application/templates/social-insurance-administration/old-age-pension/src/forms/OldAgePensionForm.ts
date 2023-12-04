@@ -282,6 +282,14 @@ export const OldAgePensionForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
                   title: '',
+                  condition: (formValue: FormValue, externalData) => {
+                    // Temporary until a new foreign bank account can be registered
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+                    const type = typeOfBankInfo(bankInfo, bankAccountType)
+                    return type === BankAccountType.FOREIGN
+                  },
                   defaultValue: (application: Application) => {
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,

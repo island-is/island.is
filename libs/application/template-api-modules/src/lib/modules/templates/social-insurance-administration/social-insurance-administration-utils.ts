@@ -58,15 +58,16 @@ export const transformApplicationToOldAgePensionDTO = (
     comment: comment,
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      ...(bankAccountType === BankAccountType.ICELANDIC && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
         domesticBankInfo: {
           bank: formatBank(bank),
         },
       }),
       ...(bankAccountType === BankAccountType.FOREIGN && {
         foreignBankInfo: {
-          iban: iban,
-          swift: swift,
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
           foreignBankName: bankName,
           foreignBankAddress: bankAddress,
           foreignCurrency: currency,

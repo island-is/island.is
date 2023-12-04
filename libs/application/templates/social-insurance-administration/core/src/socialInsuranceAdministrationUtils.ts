@@ -74,17 +74,17 @@ export const shouldNotUpdateBankAccount = (
     bankAddress,
     currency,
   } = paymentInfo
-  if (bankAccountType === BankAccountType.ICELANDIC) {
-    return getBankIsk(bankInfo) === bank ?? false
-  } else {
+  if (bankAccountType === BankAccountType.FOREIGN) {
     return (
       !isEmpty(bankInfo) &&
-      bankInfo.iban === iban &&
-      bankInfo.swift === swift &&
+      bankInfo.iban === iban?.replace(/[\s]+/g, '') &&
+      bankInfo.swift === swift?.replace(/[\s]+/g, '') &&
       bankInfo.foreignBankName === bankName &&
       bankInfo.foreignBankAddress === bankAddress &&
       bankInfo.currency === currency
     )
+  } else {
+    return getBankIsk(bankInfo) === bank ?? false
   }
 }
 
