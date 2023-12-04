@@ -1105,6 +1105,14 @@ export const m = defineMessages({
     id: 'service.portal:health-description',
     defaultMessage: 'Hér eru heilsugögn um þig',
   },
+  intellectualProperties: {
+    id: 'service.portal:intellectual-property',
+    defaultMessage: 'Hugverkaréttindi',
+  },
+  intellectualPropertiesTooltip: {
+    id: 'service.portal:intellectualProperty-tooltip',
+    defaultMessage: 'Hugverkastofan tooltip.',
+  },
   financeBreakdown: {
     id: 'service.portal:finance-detail-breakdown',
     defaultMessage: 'Sundurliðun',

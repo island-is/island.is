@@ -1,14 +1,8 @@
 import { FC, useState, Children, cloneElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Gallery.css'
-import {
-  Box,
-  FocusableBox,
-  Inline,
-  LoadingDots,
-  Text,
-} from '@island.is/island-ui/core'
-import { GalleryItemProps } from '../..'
+import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
+import { GalleryItemProps } from './GalleryItem'
 import { isDefined } from '@island.is/shared/utils'
 import { GalleryModal } from './GalleryModal'
 

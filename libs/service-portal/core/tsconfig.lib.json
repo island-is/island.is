@@ -14,6 +14,7 @@
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
   "files": [
     "../../../node_modules/@nx/react/typings/cssmodule.d.ts",
-    "../../../node_modules/@nx/react/typings/image.d.ts"
+    "../../../node_modules/@nx/react/typings/image.d.ts",
+    "./src/newFile.ts"
   ]
 }
