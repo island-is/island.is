@@ -175,6 +175,13 @@ export const TextFieldsRepeater: FC<
                   const value =
                     getValues(fieldIndex)?.faceValue?.replace('.', ',') ?? ''
 
+                  const errorMessage =
+                    errors && errors[id] && (errors[id] as any)[index]
+                      ? (errors[id] as any)[index][field.id]
+                      : undefined
+
+                  const hasError = !!errorMessage
+
                   return (
                     <GridColumn
                       span={['1/1', '1/2']}
@@ -195,11 +202,8 @@ export const TextFieldsRepeater: FC<
                         thousandSeparator="."
                         suffix=" kr."
                         autoComplete="off"
-                        hasError={
-                          !!errors && errors[id] && (errors[id] as any)[index]
-                            ? (errors[id] as any)[index][field.id]
-                            : undefined
-                        }
+                        hasError={hasError}
+                        errorMessage={errorMessage}
                         onChange={(e: { target: { value: string } }) => {
                           // now change it back to the right format (e.g.: "1.123.123,123 kr." -> "1123123.123")
                           const val =

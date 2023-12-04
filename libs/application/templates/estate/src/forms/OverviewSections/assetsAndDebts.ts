@@ -16,6 +16,7 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
+import { customCurrencyFormat } from '../../lib/utils'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -345,21 +346,26 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => ({
-          title: stock.organization,
-          description: [
-            `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
-              stock.nationalId ?? '',
-            )}`,
-            `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
-              stock.faceValue ?? 0,
-            )}`,
-            `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-            `${m.stocksValue.defaultMessage}: ${formatCurrency(
-              stock.value ?? '0',
-            )}`,
-          ],
-        })),
+        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
+          console.log(stock)
+          return {
+            title: stock.organization,
+            description: [
+              `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                stock.nationalId ?? '',
+              )}`,
+              `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
+                stock.faceValue ?? '0',
+              )}`,
+              `${m.stocksRateOfChange.defaultMessage}: ${
+                stock.rateOfExchange?.replace('.', ',') ?? '0'
+              }`,
+              `${m.stocksValue.defaultMessage}: ${customCurrencyFormat(
+                stock.value ?? '0',
+              )}`,
+            ],
+          }
+        }),
     },
   ),
   buildDescriptionField({
