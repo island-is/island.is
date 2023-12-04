@@ -26,7 +26,7 @@ export const userNotificationServiceSetup =
       .image('services-user-notification')
       .namespace('user-notification')
       .serviceAccount('user-notification')
-      .postgres(servicePostgresInfo)
+      .postgres(workerPostgresInfo) // TODO REVERT ME LATER servicePostgresInfo ?
       .command('node')
       .args('--no-experimental-fetch', 'main.js')
       .env({

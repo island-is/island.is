@@ -2410,7 +2410,7 @@ user-notification:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_user_notification'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
-    DB_USER: 'services_user_notification_read'
+    DB_USER: 'services_user_notification'
     DEAD_LETTER_QUEUE_NAME: 'user-notification-failure'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     MAIN_QUEUE_NAME: 'user-notification'
@@ -2467,7 +2467,7 @@ user-notification:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN'
-    DB_PASS: '/k8s/user-notification/readonly/DB_PASSWORD'
+    DB_PASS: '/k8s/user-notification/DB_PASSWORD'
     FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials'
   securityContext:
     allowPrivilegeEscalation: false
