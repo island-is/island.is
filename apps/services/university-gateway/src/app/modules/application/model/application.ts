@@ -1,4 +1,8 @@
-import { ApiHideProperty, ApiProperty } from '@nestjs/swagger'
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -39,15 +43,15 @@ export class Application extends Model<
   })
   id!: CreationOptional<string>
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'External ID for the application (from University)',
     example: 'ABC12345',
   })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  externalId!: string
+  externalId?: string
 
   @ApiProperty({
     description: 'Applicant national id',

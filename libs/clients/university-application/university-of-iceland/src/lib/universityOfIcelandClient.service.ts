@@ -174,13 +174,13 @@ export class UniversityOfIcelandApplicationClient {
     return ApplicationStatus.IN_REVIEW
   }
 
-  async createApplication(application: IApplication) {
+  async createApplication(application: IApplication): Promise<string> {
     // TODOx connect to HÍ API
-    return true
+    return '123'
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {
     // TODOx connect to HÍ API
-    return true
+    return
   }
 }
