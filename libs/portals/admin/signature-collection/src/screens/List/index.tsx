@@ -1,7 +1,7 @@
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { useLoaderData, useRevalidator } from 'react-router-dom'
 import { useEffect } from 'react'
-import { SignatureList } from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -21,7 +21,7 @@ import img from '../../../assets/img.jpg'
 import format from 'date-fns/format'
 
 const List = () => {
-  const { list } = useLoaderData() as { list: SignatureList }
+  const { list } = useLoaderData() as { list: SignatureCollectionList }
   const { revalidate } = useRevalidator()
   const { formatMessage } = useLocale()
 
@@ -61,7 +61,7 @@ const List = () => {
                     <Input
                       readOnly
                       name="endTime"
-                      value={format(new Date(list.endTime), 'dd.mm.yyyy') ?? ''}
+                      value={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm') ?? ''}
                       label={formatMessage(m.listEndTime)}
                       size="sm"
                     />

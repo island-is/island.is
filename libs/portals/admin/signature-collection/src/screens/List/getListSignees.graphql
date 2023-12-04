@@ -1,4 +1,4 @@
-query Signatures($input: IdInput!) {
+query Signatures($input: SignatureCollectionIdInput!) {
   signatureCollectionSignatures(input: $input) {
     id
     listId

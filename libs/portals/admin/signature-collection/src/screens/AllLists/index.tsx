@@ -18,7 +18,7 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { SignatureList } from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import img from '../../../assets/img.jpg'
@@ -28,7 +28,7 @@ const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const allLists = useLoaderData() as SignatureList[]
+  const allLists = useLoaderData() as SignatureCollectionList[]
   const [lists, setLists] = useState(allLists)
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState<Filters>({
@@ -171,7 +171,7 @@ const Lists = () => {
             <Stack space={5}>
               {lists
                 .slice(pageSize * (page - 1), pageSize * page)
-                .map((list: SignatureList) => {
+                .map((list: SignatureCollectionList) => {
                   return (
                     <ActionCard
                       key={list.id}

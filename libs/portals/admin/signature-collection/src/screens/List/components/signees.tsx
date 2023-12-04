@@ -14,7 +14,7 @@ import { useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
-import { Signature } from '@island.is/api/schema'
+import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {

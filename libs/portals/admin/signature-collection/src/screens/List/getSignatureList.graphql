@@ -1,4 +1,4 @@
-query listbyid($input: IdInput!) {
+query listbyid($input: SignatureCollectionIdInput!) {
   signatureCollectionList(input: $input) {
     id
     title
