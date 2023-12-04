@@ -3,11 +3,17 @@ import cn from 'classnames'
 
 import * as styles from './Swiper.css'
 
-const FALLBACK_WIDTH = 316
+const FALLBACK_WIDTH = 10
 
-export const Swiper: FC<React.PropsWithChildren<{ itemWidth?: number }>> = ({
+interface Props {
+  itemWidth?: number
+  className?: string
+}
+
+export const Swiper: FC<React.PropsWithChildren<Props>> = ({
   children,
   itemWidth,
+  className,
 }) => {
   const [width, setWidth] = useState<number>(itemWidth ?? FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
@@ -30,13 +36,17 @@ export const Swiper: FC<React.PropsWithChildren<{ itemWidth?: number }>> = ({
   return (
     <div className={styles.root}>
       <div className={cn(styles.container)} ref={ref}>
-        <div className={styles.slides}>
+        <div className={cn(styles.slides)}>
           {arr.map((child, i) => (
             <div
               key={i}
-              className={styles.slide}
+              className={cn(
+                styles.slide,
+                className,
+                i === 0 && styles.noMargin,
+              )}
               style={{
-                width,
+                width: itemWidth,
                 aspectRatio: '1/1',
               }}
             >
