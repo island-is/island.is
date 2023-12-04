@@ -1,48 +1,49 @@
-import {Button, Divider, TextField, Typography} from '@ui';
-import {useCallback, useMemo, useState} from 'react';
-import {FormattedDate, useIntl} from 'react-intl';
-import {Alert, FlatList, View} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import externalLinkIcon from '../../assets/icons/external-link.png';
+import { Button, Divider, TextField, Typography } from '@ui'
+import { useCallback, useMemo, useState } from 'react'
+import { FormattedDate, useIntl } from 'react-intl'
+import { Alert, FlatList, View } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import externalLinkIcon from '../../assets/icons/external-link.png'
 import {
+  GetVehicleDocument,
   GetVehicleMileageDocument,
   GetVehicleMileageQuery,
   useGetVehicleMileageQuery,
   useGetVehicleQuery,
   usePostVehicleMileageMutation,
   useUpdateVehicleMileageMutation,
-} from '../../graphql/types/schema';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {openBrowser} from '../../lib/rn-island';
-import {MileageCell} from './components/mileage-cell';
-const {getNavigationOptions, useNavigationOptions} =
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { openBrowser } from '../../lib/rn-island'
+import { MileageCell } from './components/mileage-cell'
+const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
       visible: false,
     },
-  }));
+  }))
 
 export const originCodes = {
   'ISLAND.IS': 'Ísland.is',
   SKODUN: 'Skoðun',
-};
+}
 
 type ListItem =
   | NonNullable<
       NonNullable<GetVehicleMileageQuery['vehicleMileageDetails']>['data']
     >[number]
   | {
-      __typename: 'Skeleton';
-      internalId: number;
-    };
+      __typename: 'Skeleton'
+      internalId: number
+    }
 
 export const VehicleMileageScreen: NavigationFunctionComponent<{
-  id: string;
-  title?: {type: string; year: string; color: string};
-}> = ({componentId, id, title}) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
-  const [input, setInput] = useState('');
+  id: string
+  title?: { type: string; year: string; color: string }
+}> = ({ componentId, id, title }) => {
+  useNavigationOptions(componentId)
+  const intl = useIntl()
+  const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
     variables: {
@@ -52,7 +53,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         vin: '',
       },
     },
-  });
+  })
   const res = useGetVehicleMileageQuery({
     fetchPolicy: 'cache-and-network',
     variables: {
@@ -60,21 +61,23 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         permno: id,
       },
     },
-  });
-  const [postMileage] = usePostVehicleMileageMutation();
+  })
+  const [postMileage] = usePostVehicleMileageMutation({
+    refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
+  })
   const [updateMileage] = useUpdateVehicleMileageMutation({
-    refetchQueries: [GetVehicleMileageDocument],
-  });
+    refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
+  })
 
   const data = useMemo<ListItem[]>(() => {
     if (res.loading && !res.data) {
-      return Array.from({length: 6}).map((_, index) => ({
+      return Array.from({ length: 6 }).map((_, index) => ({
         __typename: 'Skeleton',
         internalId: index,
-      }));
+      }))
     }
-    return res.data?.vehicleMileageDetails?.data ?? [];
-  }, [res.data, res.loading]);
+    return res.data?.vehicleMileageDetails?.data ?? []
+  }, [res.data, res.loading])
 
   // Calculate highest mileage
   const highestMileage = useMemo(() => {
@@ -83,19 +86,19 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         item.__typename === 'VehicleMileageDetail' &&
         typeof item.mileage === 'string'
       ) {
-        const m = parseInt(item.mileage, 10);
+        const m = parseInt(item.mileage, 10)
         if (m > acc) {
-          return m;
+          return m
         }
       }
-      return acc;
-    }, 0);
-  }, [data]);
+      return acc
+    }, 0)
+  }, [data])
 
   // Editable Flags
-  const isFormEditable = !!res.data?.vehicleMileageDetails?.editing;
+  const isFormEditable = !!res.data?.vehicleMileageDetails?.editing
   const canRegisterMileage =
-    !!res.data?.vehicleMileageDetails?.canRegisterMileage;
+    !!res.data?.vehicleMileageDetails?.canRegisterMileage
 
   const vehicle = useMemo(() => {
     return {
@@ -104,34 +107,36 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         `${info.data?.vehiclesDetail?.basicInfo?.model} ${info.data?.vehiclesDetail?.basicInfo?.subModel}`,
       year: title?.year ?? info.data?.vehiclesDetail?.basicInfo?.year,
       color: title?.color ?? info.data?.vehiclesDetail?.registrationInfo?.color,
-    };
-  }, [info.data, title]);
+    }
+  }, [info.data, title])
 
   const parseMileage = useCallback(
     (value?: string) => {
-      const mileage = Number(String(value ?? '').replace(/\D/g, ''));
+      const mileage = Number(String(value ?? '').replace(/\D/g, ''))
       if (mileage <= highestMileage) {
         Alert.alert(
-          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
-          intl.formatMessage({id: 'vehicle.mileage.errorMileageInputTooLow'}),
-        );
-        return false;
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.errorMileageInputTooLow' }),
+        )
+        return false
       } else if (mileage > 9999999) {
         Alert.alert(
-          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
-          intl.formatMessage({id: 'vehicle.mileage.errorMileageInputTooHigh'}),
-        );
-        return false;
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({
+            id: 'vehicle.mileage.errorMileageInputTooHigh',
+          }),
+        )
+        return false
       }
-      return String(mileage);
+      return String(mileage)
     },
     [highestMileage, intl],
-  );
+  )
 
   const onSubmit = useCallback(() => {
-    const mileage = parseMileage(input);
+    const mileage = parseMileage(input)
     if (!mileage) {
-      return;
+      return
     }
     return postMileage({
       variables: {
@@ -141,39 +146,41 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
           permno: id,
         },
       },
-    }).then(res => {
+    }).then((res) => {
       if (res.data?.vehicleMileagePost?.mileage !== String(mileage)) {
         Alert.alert(
-          intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
-          intl.formatMessage({id: 'vehicle.mileage.errorFailedToUpdate'}),
-        );
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.errorFailedToUpdate' }),
+        )
       } else {
         Alert.alert(
-          intl.formatMessage({id: 'vehicle.mileage.successTitle'}),
-          intl.formatMessage({id: 'vehicle.mileage.successMessage'}),
-        );
+          intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
+          intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+        )
       }
-    });
-  }, [id, input, parseMileage, postMileage, intl]);
+    })
+  }, [id, input, parseMileage, postMileage, intl])
 
   const onEdit = useCallback(() => {
     return Alert.prompt(
-      intl.formatMessage({id: 'vehicle.mileage.promptEditTitle'}),
+      intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
       undefined,
       [
         {
           isPreferred: true,
           onPress(value) {
-            const mileage = parseMileage(value);
-            const internalId = data[0].internalId;
+            const mileage = parseMileage(value)
+            const internalId = data[0].internalId
             if (!mileage) {
-              return;
+              return
             }
             if (!internalId) {
               return Alert.alert(
-                intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
-                intl.formatMessage({id: 'vehicle.mileage.errorFailedToUpdate'}),
-              );
+                intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+                intl.formatMessage({
+                  id: 'vehicle.mileage.errorFailedToUpdate',
+                }),
+              )
             }
             updateMileage({
               variables: {
@@ -183,40 +190,42 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   internalId: Number(internalId),
                 },
               },
-            }).then(res => {
+            }).then((res) => {
               if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
                 Alert.alert(
-                  intl.formatMessage({id: 'vehicle.mileage.errorTitle'}),
+                  intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
                   intl.formatMessage({
                     id: 'vehicle.mileage.errorFailedToUpdate',
                   }),
-                );
+                )
               } else {
                 Alert.alert(
-                  intl.formatMessage({id: 'vehicle.mileage.successTitle'}),
-                  intl.formatMessage({id: 'vehicle.mileage.successMessage'}),
-                );
+                  intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
+                  intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
+                )
               }
-            });
+            })
           },
-          text: intl.formatMessage({id: 'vehicle.mileage.promptEditButton'}),
+          text: intl.formatMessage({ id: 'vehicle.mileage.promptEditButton' }),
           style: 'default',
         },
         {
-          text: intl.formatMessage({id: 'vehicle.mileage.promptCancelButton'}),
+          text: intl.formatMessage({
+            id: 'vehicle.mileage.promptCancelButton',
+          }),
           style: 'cancel',
         },
       ],
       'plain-text',
       String(highestMileage),
       'number-pad',
-    );
-  }, [data, highestMileage, id, parseMileage, updateMileage, intl]);
+    )
+  }, [data, highestMileage, id, parseMileage, updateMileage, intl])
 
   return (
     <FlatList
       data={data}
-      renderItem={({item, index}) =>
+      renderItem={({ item, index }) =>
         item.__typename === 'Skeleton' ? (
           <MileageCell skeleton />
         ) : (
@@ -241,26 +250,27 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       keyExtractor={(item, index) => String(item.internalId ?? index)}
       ListHeaderComponent={
         <View
-          style={{backgroundColor: 'white', marginTop: 40}}
-          key="list-header">
-          <View style={{marginBottom: 24}}>
+          style={{ backgroundColor: 'white', marginTop: 40 }}
+          key="list-header"
+        >
+          <View style={{ marginBottom: 24 }}>
             <Typography variant="heading4">{vehicle.type}</Typography>
             <Typography variant="body">
               {vehicle.color} - {id}
             </Typography>
           </View>
-          <View style={{flexDirection: 'column', gap: 16}}>
+          <View style={{ flexDirection: 'column', gap: 16 }}>
             <TextField
               editable={canRegisterMileage}
               key="mileage-input"
               placeholder={intl.formatMessage({
                 id: 'vehicle.mileage.inputPlaceholder',
               })}
-              label={intl.formatMessage({id: 'vehicle.mileage.inputLabel'})}
+              label={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
               value={input}
               maxLength={9}
               keyboardType="decimal-pad"
-              onChange={value =>
+              onChange={(value) =>
                 setInput(
                   value.length
                     ? Intl.NumberFormat('is-IS').format(
@@ -286,7 +296,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
               <Typography
                 variant="body3"
                 textAlign="center"
-                style={{marginTop: 16}}>
+                style={{ marginTop: 16 }}
+              >
                 {intl.formatMessage({
                   id: 'vehicle.mileage.registerIntervalCopy',
                 })}
@@ -304,20 +315,21 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                 )
               }
               isTransparent
-              textStyle={{fontSize: 12, lineHeight: 16}}
+              textStyle={{ fontSize: 12, lineHeight: 16 }}
             />
           </View>
-          <Divider style={{marginLeft: 0, marginRight: 0}} />
+          <Divider style={{ marginLeft: 0, marginRight: 0 }} />
           <Typography
             variant="heading4"
-            style={{marginTop: 16, marginBottom: 16}}>
-            {intl.formatMessage({id: 'vehicle.mileage.historyTitle'})}
+            style={{ marginTop: 16, marginBottom: 16 }}
+          >
+            {intl.formatMessage({ id: 'vehicle.mileage.historyTitle' })}
           </Typography>
         </View>
       }
-      style={{flex: 1, margin: 16, marginTop: 0}}
+      style={{ flex: 1, margin: 16, marginTop: 0 }}
     />
-  );
-};
+  )
+}
 
-VehicleMileageScreen.options = getNavigationOptions();
+VehicleMileageScreen.options = getNavigationOptions()

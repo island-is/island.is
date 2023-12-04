@@ -3,38 +3,37 @@ import {
   Alert as InfoAlert,
   LicenceCard,
   LicenseCardType,
-} from '@ui';
-import React from 'react';
+} from '@ui'
+import * as FileSystem from 'expo-file-system'
+import React, { useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
+  Alert,
   Button,
+  Linking,
+  NativeModules,
   Platform,
   SafeAreaView,
   View,
-  ActivityIndicator,
-  NativeModules,
-  Linking,
-  Alert,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import PassKit, {AddPassButton} from 'react-native-passkit-wallet';
-import * as FileSystem from 'expo-file-system';
-import styled, {useTheme} from 'styled-components/native';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {LicenseStatus} from '../../types/license-type';
-import {useState} from 'react';
-import {useIntl} from 'react-intl';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
+import styled, { useTheme } from 'styled-components/native'
 import {
   GenericLicenseType,
   GenericUserLicense,
   GenericUserLicensePkPassStatus,
   useGeneratePkPassMutation,
   useGetLicenseQuery,
-} from '../../graphql/types/schema';
-import { FieldRender } from './components/field-render';
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { LicenseStatus } from '../../types/license-type'
+import { FieldRender } from './components/field-render'
 
 const Information = styled.ScrollView`
   flex: 1;
-  background-color: ${dynamicColor(({theme}) => ({
+  background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
     light: theme.color.blue100,
   }))};
@@ -43,7 +42,7 @@ const Information = styled.ScrollView`
   margin-top: -70px;
   padding-top: 70px;
   z-index: 10;
-`;
+`
 const LoadingOverlay = styled.View`
   flex: 1;
   justify-content: center;
@@ -59,18 +58,18 @@ const LoadingOverlay = styled.View`
   opacity: 0.25;
   width: 100%;
   height: 100%;
-`;
+`
 
 const Spacer = styled.View`
   height: 150px;
-`;
+`
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+          text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
         },
         noBorder: true,
       },
@@ -84,53 +83,53 @@ const {useNavigationOptions, getNavigationOptions} =
         drawBehind: true,
       },
     },
-  );
+  )
 
 export const WalletPassScreen: NavigationFunctionComponent<{
-  id: string;
-  item?: GenericUserLicense;
-  cardHeight?: number;
-}> = ({id, item, componentId, cardHeight = 140}) => {
-  useNavigationOptions(componentId);
-  const theme = useTheme();
-  const intl = useIntl();
+  id: string
+  item?: GenericUserLicense
+  cardHeight?: number
+}> = ({ id, item, componentId, cardHeight = 140 }) => {
+  useNavigationOptions(componentId)
+  const theme = useTheme()
+  const intl = useIntl()
   const res = useGetLicenseQuery({
     variables: {
       input: {
         licenseType: item?.license.type ?? '',
       },
     },
-  });
-  const [generatePkPass] = useGeneratePkPassMutation();
+  })
+  const [generatePkPass] = useGeneratePkPassMutation()
 
-  const [addingToWallet, setAddingToWallet] = useState(false);
-  const data = res.data?.genericLicense ?? item;
+  const [addingToWallet, setAddingToWallet] = useState(false)
+  const data = res.data?.genericLicense ?? item
 
   const onAddPkPass = async () => {
-    const {canAddPasses, addPass} = Platform.select({
+    const { canAddPasses, addPass } = Platform.select({
       ios: PassKit,
       android: NativeModules.IslandModule,
-    });
+    })
 
-    const canAddPass = await canAddPasses();
+    const canAddPass = await canAddPasses()
 
     if (canAddPass || Platform.OS === 'android') {
       try {
-        setAddingToWallet(true);
-        const {data} = await generatePkPass({
+        setAddingToWallet(true)
+        const { data } = await generatePkPass({
           variables: {
             input: {
               licenseType: item?.license?.type ?? '',
             },
           },
-        });
+        })
         if (!data?.generatePkPass.pkpassUrl) {
-          throw Error('Failed to generate pkpass');
+          throw Error('Failed to generate pkpass')
         }
         if (Platform.OS === 'android') {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            FileSystem.documentDirectory! + Date.now() + '.pkpass';
+            FileSystem.documentDirectory! + Date.now() + '.pkpass'
 
           await FileSystem.downloadAsync(
             data.generatePkPass.pkpassUrl,
@@ -141,48 +140,48 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                   'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
               },
             },
-          );
+          )
           const pkPassContentUri = await FileSystem.getContentUriAsync(
             pkPassUri,
-          );
+          )
 
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
               Alert.alert(
                 'Villa',
                 'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
-              );
+              )
             } else {
-              Alert.alert('Villa', 'Failed to fetch or add pass');
+              Alert.alert('Villa', 'Failed to fetch or add pass')
             }
-          });
-          setAddingToWallet(false);
-          return;
+          })
+          setAddingToWallet(false)
+          return
         }
         const res = await fetch(data.generatePkPass.pkpassUrl, {
           headers: {
             'User-Agent':
               'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
           },
-        });
-        const blob = await res.blob();
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
+        })
+        const blob = await res.blob()
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
         reader.onloadend = () => {
-          const passData = reader.result?.toString();
+          const passData = reader.result?.toString()
           if (passData) {
             if (passData.includes('text/html')) {
-              throw new Error('Pass has expired');
+              throw new Error('Pass has expired')
             }
-            addPass(passData.substring(41), 'com.snjallveskid');
+            addPass(passData.substring(41), 'com.snjallveskid')
           }
-          setAddingToWallet(false);
-        };
+          setAddingToWallet(false)
+        }
       } catch (err) {
         if (!canAddPass) {
           Alert.alert(
             'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
-          );
+          )
         } else {
           Alert.alert(
             intl.formatMessage({
@@ -211,31 +210,31 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                   },
                 ]
               : [],
-          );
+          )
         }
-        setAddingToWallet(false);
-        console.error(err);
+        setAddingToWallet(false)
+        console.error(err)
       }
     } else {
-      Alert.alert('You cannot add passes on this device');
+      Alert.alert('You cannot add passes on this device')
     }
-  };
+  }
 
-  const fields = data?.payload?.data ?? [];
-  const hasPkpass = data?.license?.pkpass;
+  const fields = data?.payload?.data ?? []
+  const hasPkpass = data?.license?.pkpass
   const hasValidPkpass =
-    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
+    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
   // this is coming soon.. disable add button if not true.
   // const hasValidatedPkpass = data?.license?.pkpassValidation;
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{height: cardHeight}} />
-      <Information contentInset={{bottom: 162}}>
-        <SafeAreaView style={{marginHorizontal: 16}}>
+    <View style={{ flex: 1 }}>
+      <View style={{ height: cardHeight }} />
+      <Information contentInset={{ bottom: 162 }}>
+        <SafeAreaView style={{ marginHorizontal: 16 }}>
           {/* Show info alert if PCard */}
           {data?.license?.type === GenericLicenseType.PCard && (
-            <View style={{paddingTop: 24}}>
+            <View style={{ paddingTop: 24 }}>
               <InfoAlert
                 title={intl.formatMessage({
                   id: 'licenseDetail.pcard.alert.title',
@@ -252,7 +251,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             <ActivityIndicator
               size="large"
               color="#0061FF"
-              style={{marginTop: 32}}
+              style={{ marginTop: 32 }}
             />
           ) : (
             <FieldRender data={fields} licenseType={data?.license?.type} />
@@ -269,7 +268,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           left: 0,
           right: 0,
           zIndex: 100,
-        }}>
+        }}
+      >
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
           type={data?.license?.type as LicenseCardType}
@@ -290,10 +290,11 @@ export const WalletPassScreen: NavigationFunctionComponent<{
             right: 0,
             marginHorizontal: 16,
             zIndex: 100,
-          }}>
+          }}
+        >
           {Platform.OS === 'ios' ? (
             <AddPassButton
-              style={{height: 52}}
+              style={{ height: 52 }}
               addPassButtonStyle={
                 theme.isDark
                   ? PassKit.AddPassButtonStyle.blackOutline
@@ -315,12 +316,12 @@ export const WalletPassScreen: NavigationFunctionComponent<{
           <ActivityIndicator
             size="large"
             color="#0061FF"
-            style={{marginTop: 32}}
+            style={{ marginTop: 32 }}
           />
         </LoadingOverlay>
       )}
     </View>
-  );
-};
+  )
+}
 
-WalletPassScreen.options = getNavigationOptions;
+WalletPassScreen.options = getNavigationOptions

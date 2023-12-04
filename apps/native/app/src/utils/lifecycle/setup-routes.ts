@@ -1,95 +1,93 @@
-// import { Base64 } from 'js-base64'
 import {
   Navigation,
   Options,
   OptionsModalPresentationStyle,
-} from 'react-native-navigation';
-import {addRoute, addScheme} from '../../lib/deep-linking';
-import {DocumentDetailScreen} from '../../screens/document-detail/document-detail';
-import {authStore} from '../../stores/auth-store';
-import {preferencesStore} from '../../stores/preferences-store';
-import {uiStore} from '../../stores/ui-store';
+} from 'react-native-navigation'
+import { bundleId } from '../../config'
+import { addRoute, addScheme } from '../../lib/deep-linking'
+import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
+import { preferencesStore } from '../../stores/preferences-store'
+import { uiStore } from '../../stores/ui-store'
 import {
   ComponentRegistry,
-  StackRegistry,
   MainBottomTabs,
-} from '../component-registry';
-import {bundleId} from '../../config';
+  StackRegistry,
+} from '../component-registry'
 
 const selectTab = (currentTabIndex: number) => {
   // Selected Tab navigation event wont fire for this. Need to manually set in ui store.
-  const {selectedTab} = uiStore.getState();
-  uiStore.setState({unselectedTab: selectedTab, selectedTab: currentTabIndex});
+  const { selectedTab } = uiStore.getState()
+  uiStore.setState({ unselectedTab: selectedTab, selectedTab: currentTabIndex })
   // switch tab
   Navigation.mergeOptions(MainBottomTabs, {
     bottomTabs: {
       currentTabIndex,
     },
-  });
-};
+  })
+}
 
 export function setupRoutes() {
   // Setup app scheme (is.island.app://)
-  addScheme(`${bundleId}://`);
+  addScheme(`${bundleId}://`)
 
   // Routes
   addRoute('/', () => {
-    Navigation.dismissAllModals();
-    selectTab(2);
-  });
+    Navigation.dismissAllModals()
+    selectTab(2)
+  })
 
   addRoute('/inbox', () => {
-    Navigation.dismissAllModals();
-    selectTab(0);
-  });
+    Navigation.dismissAllModals()
+    selectTab(0)
+  })
 
   addRoute('/wallet', () => {
-    Navigation.dismissAllModals();
-    selectTab(1);
-  });
+    Navigation.dismissAllModals()
+    selectTab(1)
+  })
 
   addRoute('/profile', () => {
-    Navigation.dismissAllModals();
-    selectTab(4);
-  });
+    Navigation.dismissAllModals()
+    selectTab(4)
+  })
 
   addRoute('/applications', () => {
-    Navigation.dismissAllModals();
-    selectTab(3);
-  });
+    Navigation.dismissAllModals()
+    selectTab(3)
+  })
 
   addRoute('/vehicles', async (passProps: any) => {
-    await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehiclesScreen,
         passProps,
       },
-    });
-  });
+    })
+  })
 
   addRoute('/assets', async (passProps: any) => {
-    await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.AssetsOverviewScreen,
         passProps,
       },
-    });
-  });
+    })
+  })
 
   addRoute('/family', async (passProps: any) => {
-    await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.MoreStack);
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.FamilyScreen,
         passProps,
       },
-    });
-  });
+    })
+  })
 
   addRoute('/personalinfo', async (passProps: any) => {
     Navigation.showModal({
@@ -103,8 +101,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/settings', async (passProps: any) => {
     Navigation.showModal({
@@ -118,8 +116,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/editemail', async (passProps: any) => {
     Navigation.showModal({
@@ -133,8 +131,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/editphone', async (passProps: any) => {
     Navigation.showModal({
@@ -148,8 +146,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/editbankinfo', async (passProps: any) => {
     Navigation.showModal({
@@ -163,8 +161,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/editconfirm/:type', async (passProps: any) => {
     Navigation.showModal({
@@ -178,8 +176,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/vehicle/:id', (passProps: any) => {
     Navigation.push(ComponentRegistry.MoreScreen, {
@@ -194,8 +192,8 @@ export function setupRoutes() {
           },
         },
       },
-    });
-  });
+    })
+  })
 
   addRoute('/vehicle-mileage/:id', (passProps: any) => {
     Navigation.showModal({
@@ -209,8 +207,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/asset/:id', (passProps: any) => {
     Navigation.showModal({
@@ -224,20 +222,20 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/finance', async (passProps: any) => {
-    await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.MoreStack);
-    selectTab(4);
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.MoreStack)
+    selectTab(4)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.FinanceScreen,
         passProps,
       },
-    });
-  });
+    })
+  })
 
   addRoute(
     '/finance/status/:orgId/:chargeTypeId/:index',
@@ -253,9 +251,9 @@ export function setupRoutes() {
             },
           ],
         },
-      });
+      })
     },
-  );
+  )
 
   addRoute('/family/:type/:nationalId', (passProps: any) => {
     Navigation.showModal({
@@ -269,8 +267,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/notification/:id', (passProps: any) => {
     Navigation.showModal({
@@ -284,14 +282,14 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute(
     '/wallet/:passId',
-    async ({passId, fromId, toId, item, ...rest}: any) => {
-      selectTab(1);
-      await Navigation.popToRoot(StackRegistry.WalletStack);
+    async ({ passId, fromId, toId, item, ...rest }: any) => {
+      selectTab(1)
+      await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
         component: {
           name: ComponentRegistry.WalletPassScreen,
@@ -307,22 +305,22 @@ export function setupRoutes() {
                   {
                     fromId,
                     toId,
-                    interpolation: {type: 'spring'},
+                    interpolation: { type: 'spring' },
                   },
                 ],
               },
             },
           },
         },
-      });
+      })
     },
-  );
+  )
 
   addRoute(
     '/walletpassport/:passId',
-    async ({passId, fromId, toId, ...rest}: any) => {
-      selectTab(1);
-      await Navigation.popToRoot(StackRegistry.WalletStack);
+    async ({ passId, fromId, toId, ...rest }: any) => {
+      selectTab(1)
+      await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
         component: {
           name: ComponentRegistry.WalletPassportScreen,
@@ -337,16 +335,16 @@ export function setupRoutes() {
                   {
                     fromId,
                     toId,
-                    interpolation: {type: 'spring'},
+                    interpolation: { type: 'spring' },
                   },
                 ],
               },
             },
           },
         },
-      });
+      })
     },
-  );
+  )
 
   addRoute('/license-scanner', async () => {
     Navigation.showModal({
@@ -363,34 +361,34 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
-  addRoute('/inbox/:docId', async passProps => {
-    selectTab(0);
+  addRoute('/inbox/:docId', async (passProps) => {
+    selectTab(0)
 
     // ensure INBOX_SCREEN doesn't already have same screen with same componentId etc.
-    await Navigation.dismissAllModals();
-    await Navigation.popToRoot(StackRegistry.InboxStack);
+    await Navigation.dismissAllModals()
+    await Navigation.popToRoot(StackRegistry.InboxStack)
     await Navigation.push(StackRegistry.InboxStack, {
       component: {
         name: ComponentRegistry.DocumentDetailScreen,
         passProps,
         options: DocumentDetailScreen.options as Options,
       },
-    });
-  });
+    })
+  })
 
-  addRoute('/inbox-filter', async passProps => {
-    selectTab(0);
-    await Navigation.popToRoot(StackRegistry.InboxStack);
+  addRoute('/inbox-filter', async (passProps) => {
+    selectTab(0)
+    await Navigation.popToRoot(StackRegistry.InboxStack)
     await Navigation.push(StackRegistry.InboxStack, {
       component: {
         name: ComponentRegistry.InboxFilterScreen,
         passProps,
       },
-    });
-  });
+    })
+  })
 
   addRoute('/user', () => {
     Navigation.showModal({
@@ -403,8 +401,8 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
   addRoute('/notifications', () => {
     Navigation.showModal({
@@ -417,10 +415,10 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
-  addRoute('/webview', passProps => {
+  addRoute('/webview', (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -432,15 +430,15 @@ export function setupRoutes() {
           },
         ],
       },
-    });
-  });
+    })
+  })
 
-  addRoute('/e2e/cookie/:cookie', ({cookie}: any) => {
+  addRoute('/e2e/cookie/:cookie', ({ cookie }: any) => {
     // const decodedCookie = Base64.decode(cookie)
     // authStore.setState({ cookies: decodedCookie })
-  });
+  })
 
   addRoute('/e2e/disable-applock', () => {
-    preferencesStore.setState({dev__useLockScreen: false});
-  });
+    preferencesStore.setState({ dev__useLockScreen: false })
+  })
 }

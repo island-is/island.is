@@ -1,16 +1,16 @@
-// import {useQuery} from '@apollo/client';
 import {
   Button,
   EmptyList,
   ListItem,
   ListItemSkeleton,
   SearchBar,
-  TopLine,
   Tag,
+  TopLine,
   useDynamicColor,
-} from '@ui';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
+} from '@ui'
+import { setBadgeCountAsync } from 'expo-notifications'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -18,52 +18,52 @@ import {
   ListRenderItemInfo,
   RefreshControl,
   View,
-} from 'react-native';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {useNavigationComponentDidAppear} from 'react-native-navigation-hooks/dist';
-import {useTheme} from 'styled-components/native';
-import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
-import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {PressableHighlight} from '../../components/pressable-highlight/pressable-highlight';
-// import {client} from '../../graphql/client';
-// import {LIST_DOCUMENTS_QUERY} from '../../graphql/queries/list-documents.graphql';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {navigateTo} from '../../lib/deep-linking';
-import {useOrganizationsStore} from '../../stores/organizations-store';
-import {useUiStore} from '../../stores/ui-store';
-import {ComponentRegistry} from '../../utils/component-registry';
-import {getRightButtons} from '../../utils/get-main-root';
-import {testIDs} from '../../utils/test-ids';
+} from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
+import { useTheme } from 'styled-components/native'
+import FilterIcon from '../../assets/icons/filter-icon.png'
+import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
+import { client } from '../../graphql/client'
 import {
   Document,
   ListDocumentsDocument,
   ListDocumentsQuery,
   ListDocumentsQueryVariables,
   useListDocumentsQuery,
-} from '../../graphql/types/schema';
-import {setBadgeCountAsync} from 'expo-notifications';
-import FilterIcon from '../../assets/icons/filter-icon.png';
-import {toggleAction} from '../../lib/post-mail-action';
-import {client} from '../../graphql/client';
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { navigateTo } from '../../lib/deep-linking'
+import { toggleAction } from '../../lib/post-mail-action'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import { useUiStore } from '../../stores/ui-store'
+import { ComponentRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
+import { testIDs } from '../../utils/test-ids'
 
 type ListItem =
-  | {id: string; type: 'skeleton' | 'empty'}
-  | (Document & {type: undefined});
+  | { id: string; type: 'skeleton' | 'empty' }
+  | (Document & { type: undefined })
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'inbox.screenTitle'}),
+          text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
         text: initialized
-          ? intl.formatMessage({id: 'inbox.bottomTabText'})
+          ? intl.formatMessage({ id: 'inbox.bottomTabText' })
           : '',
       },
     }),
@@ -87,13 +87,13 @@ const {useNavigationOptions, getNavigationOptions} =
         selectedIcon: require('../../assets/icons/tabbar-inbox-selected.png'),
       },
     },
-  );
+  )
 
 const PressableListItem = React.memo(
-  ({item, listParams}: {item: Document; listParams: any}) => {
-    const {getOrganizationLogoUrl} = useOrganizationsStore();
-    const [starred, setStarred] = useState<boolean>(!!item.bookmarked);
-    useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked]);
+  ({ item, listParams }: { item: Document; listParams: any }) => {
+    const { getOrganizationLogoUrl } = useOrganizationsStore()
+    const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
+    useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
     return (
       <PressableHighlight
         onPress={() =>
@@ -101,7 +101,8 @@ const PressableListItem = React.memo(
             title: item.senderName,
             listParams,
           })
-        }>
+        }
+      >
         <ListItem
           title={item.senderName}
           subtitle={item.subject}
@@ -109,32 +110,32 @@ const PressableListItem = React.memo(
           unread={!item.opened}
           starred={starred}
           onStarPress={() => {
-            toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id);
-            setStarred(!item.bookmarked);
+            toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
+            setStarred(!item.bookmarked)
           }}
           icon={
             <Image
               source={getOrganizationLogoUrl(item.senderName, 75)}
               resizeMode="contain"
-              style={{width: 25, height: 25}}
+              style={{ width: 25, height: 25 }}
             />
           }
         />
       </PressableHighlight>
-    );
+    )
   },
-);
+)
 
 function useThrottleState(state: string, delay = 500) {
-  const [throttledState, setThrottledState] = useState(state);
+  const [throttledState, setThrottledState] = useState(state)
   useEffect(() => {
     const timeout = setTimeout(
       () => setThrottledState(state),
       state === '' ? 0 : delay,
-    );
-    return () => clearTimeout(timeout);
-  }, [state, delay]);
-  return throttledState;
+    )
+    return () => clearTimeout(timeout)
+  }, [state, delay])
+  return throttledState
 }
 
 const useUnreadCount = () => {
@@ -147,19 +148,19 @@ const useUnreadCount = () => {
         opened: false,
       },
     },
-  });
+  })
   const unopened = res?.data?.listDocumentsV2?.data?.filter(
-    item => item.opened === false,
-  );
-  return unopened?.length ?? 0;
-};
+    (item) => item.opened === false,
+  )
+  return unopened?.length ?? 0
+}
 
 type Filters = {
-  opened?: boolean;
-  archived?: boolean;
-  bookmarked?: boolean;
-  subjectContains?: string;
-};
+  opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
+  subjectContains?: string
+}
 
 function applyFilters(filters?: Filters) {
   return {
@@ -167,43 +168,43 @@ function applyFilters(filters?: Filters) {
     bookmarked: filters?.bookmarked ? true : undefined,
     opened: filters?.opened ? false : undefined,
     subjectContains: filters?.subjectContains ?? '',
-  };
+  }
 }
 
 function useInboxQuery(incomingFilters?: Filters) {
-  const [filters, setFilters] = useState(applyFilters(incomingFilters));
-  const [page, setPage] = useState<number>(1);
-  const [data, setData] = useState<ListDocumentsQuery['listDocumentsV2']>();
-  const [refetching, setRefetching] = useState(true);
-  const [loading, setLoading] = useState(false);
-  const [refetcher, setRefetcher] = useState(0);
-  const pageSize = 50;
+  const [filters, setFilters] = useState(applyFilters(incomingFilters))
+  const [page, setPage] = useState<number>(1)
+  const [data, setData] = useState<ListDocumentsQuery['listDocumentsV2']>()
+  const [refetching, setRefetching] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [refetcher, setRefetcher] = useState(0)
+  const pageSize = 50
 
   useEffect(() => {
-    const appliedFilters = applyFilters(incomingFilters);
+    const appliedFilters = applyFilters(incomingFilters)
     // deep equal incoming filters
     if (
       JSON.stringify(appliedFilters) === JSON.stringify(filters) ||
       incomingFilters === undefined
     ) {
-      return;
+      return
     }
     // Reset page on filter changes
-    setFilters(appliedFilters);
-  }, [incomingFilters, filters]);
+    setFilters(appliedFilters)
+  }, [incomingFilters, filters])
 
   useEffect(() => {
     // Reset page on filter changes
-    setPage(1);
-    setRefetching(true);
-  }, [filters]);
+    setPage(1)
+    setRefetching(true)
+  }, [filters])
 
   useEffect(() => {
-    const numItems = data?.totalCount ?? pageSize;
+    const numItems = data?.totalCount ?? pageSize
     if (pageSize * (page - 1) > numItems) {
-      return;
+      return
     }
-    setLoading(true);
+    setLoading(true)
     // Fetch data
     client
       .query<ListDocumentsQuery, ListDocumentsQueryVariables>({
@@ -217,37 +218,37 @@ function useInboxQuery(incomingFilters?: Filters) {
           },
         },
       })
-      .then(res => {
+      .then((res) => {
         if (page > 1) {
-          setData(prevData => ({
+          setData((prevData) => ({
             data: [
               ...(prevData?.data ?? []),
               ...(res.data.listDocumentsV2?.data ?? []),
             ],
             totalCount: res.data.listDocumentsV2?.totalCount,
-          }));
+          }))
         } else {
-          setData(res.data.listDocumentsV2);
+          setData(res.data.listDocumentsV2)
         }
       })
       .finally(() => {
-        setRefetching(false);
-        setLoading(false);
-      });
-  }, [filters, page, refetcher]);
+        setRefetching(false)
+        setLoading(false)
+      })
+  }, [filters, page, refetcher])
 
   const loadMore = () => {
     if (loading) {
-      return;
+      return
     }
-    setPage(prevPage => prevPage + 1);
-  };
+    setPage((prevPage) => prevPage + 1)
+  }
 
   const refetch = () => {
-    setRefetching(true);
-    setPage(1);
-    setRefetcher(prev => prev + 1);
-  };
+    setRefetching(true)
+    setPage(1)
+    setRefetcher((prev) => prev + 1)
+  }
 
   return {
     data,
@@ -258,14 +259,14 @@ function useInboxQuery(incomingFilters?: Filters) {
     refetching,
     refetch,
     loadMore,
-  };
+  }
 }
 
 export const InboxScreen: NavigationFunctionComponent<{
-  opened?: boolean;
-  archived?: boolean;
-  bookmarked?: boolean;
-  refresh?: number;
+  opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
+  refresh?: number
 }> = ({
   componentId,
   opened = false,
@@ -273,51 +274,51 @@ export const InboxScreen: NavigationFunctionComponent<{
   bookmarked = false,
   refresh,
 }) => {
-  useNavigationOptions(componentId);
-  const ui = useUiStore();
-  const intl = useIntl();
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const flatListRef = useRef<FlatList>(null);
-  const keyboardRef = useRef(false);
-  const [query, setQuery] = useState('');
-  const queryString = useThrottleState(query);
-  const theme = useTheme();
-  const unreadCount = useUnreadCount();
-  const [visible, setVisible] = useState(false);
-  const [refetching, setRefetching] = useState(false);
-  const dynamicColor = useDynamicColor();
+  useNavigationOptions(componentId)
+  const ui = useUiStore()
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
+  const flatListRef = useRef<FlatList>(null)
+  const keyboardRef = useRef(false)
+  const [query, setQuery] = useState('')
+  const queryString = useThrottleState(query)
+  const theme = useTheme()
+  const unreadCount = useUnreadCount()
+  const [visible, setVisible] = useState(false)
+  const [refetching, setRefetching] = useState(false)
+  const dynamicColor = useDynamicColor()
 
   const res = useInboxQuery({
     opened,
     archived,
     bookmarked,
     subjectContains: queryString,
-  });
+  })
 
   useEffect(() => {
-    setRefetching(false);
-  }, [res.refetching]);
+    setRefetching(false)
+  }, [res.refetching])
 
   useEffect(() => {
-    res.refetch();
-  }, [refresh]);
+    res.refetch()
+  }, [refresh])
 
-  const items = res.data?.data ?? [];
-  const isSearch = ui.inboxQuery.length > 2;
+  const items = res.data?.data ?? []
+  const isSearch = ui.inboxQuery.length > 2
 
   useActiveTabItemPress(0, () => {
     flatListRef.current?.scrollToOffset({
       offset: -200,
       animated: true,
-    });
-  });
+    })
+  })
 
   useEffect(() => {
     Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
       bottomTab: {
         iconColor: theme.color.blue400,
         textColor: theme.shade.foreground,
-        text: intl.formatMessage({id: 'inbox.bottomTabText'}),
+        text: intl.formatMessage({ id: 'inbox.bottomTabText' }),
         testID: testIDs.TABBAR_TAB_INBOX,
         iconInsets: {
           bottom: -4,
@@ -327,37 +328,37 @@ export const InboxScreen: NavigationFunctionComponent<{
         badge: unreadCount > 0 ? unreadCount.toString() : (null as any),
         badgeColor: theme.color.red400,
       },
-    });
-    setBadgeCountAsync(unreadCount);
-  }, [intl, theme, unreadCount]);
+    })
+    setBadgeCountAsync(unreadCount)
+  }, [intl, theme, unreadCount])
 
   const keyExtractor = useCallback((item: ListItem) => {
-    return item.id;
-  }, []);
+    return item.id
+  }, [])
 
   const renderItem = useCallback(
-    ({item}: ListRenderItemInfo<ListItem>) => {
+    ({ item }: ListRenderItemInfo<ListItem>) => {
       if (item.type === 'skeleton') {
-        return <ListItemSkeleton />;
+        return <ListItemSkeleton />
       }
       if (item.type === 'empty') {
         return (
-          <View style={{marginTop: 80}}>
+          <View style={{ marginTop: 80 }}>
             <EmptyList
-              title={intl.formatMessage({id: 'inbox.emptyListTitle'})}
+              title={intl.formatMessage({ id: 'inbox.emptyListTitle' })}
               description={intl.formatMessage({
                 id: 'inbox.emptyListDescription',
               })}
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{width: 134, height: 176}}
+                  style={{ width: 134, height: 176 }}
                   resizeMode="contain"
                 />
               }
             />
           </View>
-        );
+        )
       }
       return (
         <PressableListItem
@@ -366,30 +367,30 @@ export const InboxScreen: NavigationFunctionComponent<{
             ...res.filters,
           }}
         />
-      );
+      )
     },
     [intl, res.filters],
-  );
+  )
 
   const data = useMemo(() => {
     if (res.refetching) {
-      return Array.from({length: 20}).map((_, id) => ({
+      return Array.from({ length: 20 }).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
-      }));
+      }))
     }
     if (items.length === 0) {
-      return [{id: '0', type: 'empty'}];
+      return [{ id: '0', type: 'empty' }]
     }
-    return items;
-  }, [res.refetching, items]) as ListItem[];
+    return items
+  }, [res.refetching, items]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
-    setVisible(true);
-  }, componentId);
+    setVisible(true)
+  }, componentId)
 
   if (!visible) {
-    return null;
+    return null
   }
 
   return (
@@ -399,12 +400,12 @@ export const InboxScreen: NavigationFunctionComponent<{
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
         )}
-        style={{marginHorizontal: 0, flex: 1}}
+        style={{ marginHorizontal: 0, flex: 1 }}
         data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -417,13 +418,14 @@ export const InboxScreen: NavigationFunctionComponent<{
                 padding: 16,
                 flexDirection: 'row',
                 gap: 15,
-              }}>
+              }}
+            >
               <SearchBar
                 placeholder={intl.formatMessage({
                   id: 'inbox.searchPlaceholder',
                 })}
                 value={query}
-                onChangeText={text => setQuery(text)}
+                onChangeText={(text) => setQuery(text)}
               />
               <Button
                 title={intl.formatMessage({
@@ -441,7 +443,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                   }),
                 }}
                 icon={FilterIcon}
-                iconStyle={{tintColor: theme.color.blue400}}
+                iconStyle={{ tintColor: theme.color.blue400 }}
                 textStyle={{
                   fontSize: 12,
                   color: dynamicColor({
@@ -454,7 +456,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                     opened,
                     archived,
                     bookmarked,
-                  });
+                  })
                 }}
               />
             </View>
@@ -466,7 +468,8 @@ export const InboxScreen: NavigationFunctionComponent<{
                   marginTop: -4,
                   flexDirection: 'row',
                   gap: 15,
-                }}>
+                }}
+              >
                 {opened && (
                   <Tag
                     title={intl.formatMessage({
@@ -474,7 +477,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                     })}
                     closable
                     onClose={() =>
-                      Navigation.updateProps(componentId, {opened: false})
+                      Navigation.updateProps(componentId, { opened: false })
                     }
                   />
                 )}
@@ -485,7 +488,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                     })}
                     closable
                     onClose={() =>
-                      Navigation.updateProps(componentId, {archived: false})
+                      Navigation.updateProps(componentId, { archived: false })
                     }
                   />
                 )}
@@ -496,7 +499,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                     })}
                     closable
                     onClose={() =>
-                      Navigation.updateProps(componentId, {bookmarked: false})
+                      Navigation.updateProps(componentId, { bookmarked: false })
                     }
                   />
                 )}
@@ -508,20 +511,20 @@ export const InboxScreen: NavigationFunctionComponent<{
           <RefreshControl
             refreshing={refetching}
             onRefresh={() => {
-              setRefetching(true);
-              res.refetch();
+              setRefetching(true)
+              res.refetch()
             }}
           />
         }
         onEndReached={() => {
-          res.loadMore();
+          res.loadMore()
         }}
         onEndReachedThreshold={0.5}
       />
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
     </>
-  );
-};
+  )
+}
 
-InboxScreen.options = getNavigationOptions;
+InboxScreen.options = getNavigationOptions

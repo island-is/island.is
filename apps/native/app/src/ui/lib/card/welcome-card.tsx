@@ -1,44 +1,44 @@
-import React from 'react';
+import React from 'react'
 import {
   DynamicColorIOS,
+  Image,
   ImageSourcePropType,
   Platform,
-  Image,
-} from 'react-native';
-import styled, {useTheme} from 'styled-components/native';
-import {dynamicColor} from '../../utils';
-import {font} from '../../utils/font';
-import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png';
-import {Link} from '../link/link';
+} from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png'
+import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
+import { Link } from '../link/link'
 
-const Host = styled.View<{color: any}>`
+const Host = styled.View<{ color: any }>`
   padding: 0 0 24px;
   margin-bottom: 30px;
-  margin-left: ${({theme}) => theme.spacing[2]}px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
   width: 283px;
   min-height: 406px;
-  background-color: ${dynamicColor(props => props.color)};
-  border-radius: ${({theme}) => theme.border.radius.large};
-`;
+  background-color: ${dynamicColor((props) => props.color)};
+  border-radius: ${({ theme }) => theme.border.radius.large};
+`
 
 const IllustrationImage = styled.Image`
   width: 100%;
   height: 262px;
-`;
+`
 
 const Content = styled.View`
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   padding: 0 24px 0;
-`;
+`
 
 const Description = styled.Text`
   ${font({
     fontWeight: '300',
     lineHeight: 24,
   })}
-`;
+`
 
 const DotGrid = styled.View`
   position: absolute;
@@ -47,18 +47,18 @@ const DotGrid = styled.View`
   right: 38px;
   padding: 16px;
   height: 262px;
-`;
+`
 
 interface CardProps {
-  description?: string;
-  backgroundColor: {light: string; dark: string};
-  imgSrc?: ImageSourcePropType;
-  style?: any;
-  grid?: boolean;
+  description?: string
+  backgroundColor: { light: string; dark: string }
+  imgSrc?: ImageSourcePropType
+  style?: any
+  grid?: boolean
   link?: {
-    url: string;
-    title: string;
-  };
+    url: string
+    title: string
+  }
 }
 
 export function WelcomeCard({
@@ -69,8 +69,8 @@ export function WelcomeCard({
   grid,
   link,
 }: CardProps) {
-  const theme = useTheme();
-  const color = backgroundColor;
+  const theme = useTheme()
+  const color = backgroundColor
 
   return (
     <Host color={color} style={style}>
@@ -99,5 +99,5 @@ export function WelcomeCard({
         {link && <Link url={link.url}>{link.title}</Link>}
       </Content>
     </Host>
-  );
+  )
 }

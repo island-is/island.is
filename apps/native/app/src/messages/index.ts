@@ -1,4 +1,4 @@
-import {is} from './is';
+import { is } from './is'
 
-export type TranslatedMessages = typeof is;
-export type TranslatedMessage = keyof TranslatedMessages;
+export type TranslatedMessages = typeof is
+export type TranslatedMessage = keyof TranslatedMessages

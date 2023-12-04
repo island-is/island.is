@@ -1,7 +1,6 @@
-// import {useQuery} from '@apollo/client';
-import {Alert, EmptyList, Skeleton, TopLine} from '@ui';
-import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
+import { Alert, EmptyList, Skeleton, TopLine } from '@ui'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -10,42 +9,42 @@ import {
   Platform,
   RefreshControl,
   View,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import SpotlightSearch from 'react-native-spotlight-search';
-import {useTheme} from 'styled-components/native';
-import illustrationSrc from '../../assets/illustrations/le-moving-s6.png';
-import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {useFeatureFlag} from '../../contexts/feature-flag-provider';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import SpotlightSearch from 'react-native-spotlight-search'
+import { useTheme } from 'styled-components/native'
+import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
   GenericUserLicense,
   IdentityDocumentModel,
   useGetIdentityDocumentQuery,
   useListLicensesQuery,
-} from '../../graphql/types/schema';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
-import {usePreferencesStore} from '../../stores/preferences-store';
-import {ButtonRegistry} from '../../utils/component-registry';
-import {getRightButtons} from '../../utils/get-main-root';
-import {testIDs} from '../../utils/test-ids';
-import {WalletItem} from './components/wallet-item';
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { usePreferencesStore } from '../../stores/preferences-store'
+import { ButtonRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
+import { testIDs } from '../../utils/test-ids'
+import { WalletItem } from './components/wallet-item'
 
 type FlatListItem =
   | GenericUserLicense
   | IdentityDocumentModel
-  | {__typename: 'Skeleton'; id: string}
-  | {__typename: 'Error'; id: string};
+  | { __typename: 'Skeleton'; id: string }
+  | { __typename: 'Error'; id: string }
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'wallet.screenTitle'}),
+          text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
         leftButtons: [
           {
             id: ButtonRegistry.ScanLicenseButton,
@@ -58,7 +57,7 @@ const {useNavigationOptions, getNavigationOptions} =
       bottomTab: {
         iconColor: theme.color.blue400,
         text: initialized
-          ? intl.formatMessage({id: 'wallet.bottomTabText'})
+          ? intl.formatMessage({ id: 'wallet.bottomTabText' })
           : '',
       },
     }),
@@ -81,23 +80,23 @@ const {useNavigationOptions, getNavigationOptions} =
         selectedIcon: require('../../assets/icons/tabbar-wallet-selected.png'),
       },
     },
-  );
+  )
 
-export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
-  useNavigationOptions(componentId);
+export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
 
-  const theme = useTheme();
-  const flatListRef = useRef<FlatList>(null);
-  const [loading, setLoading] = useState(false);
-  const loadingTimeout = useRef<NodeJS.Timeout>();
-  const intl = useIntl();
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const {dismiss, dismissed} = usePreferencesStore();
+  const theme = useTheme()
+  const flatListRef = useRef<FlatList>(null)
+  const [loading, setLoading] = useState(false)
+  const loadingTimeout = useRef<NodeJS.Timeout>()
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
+  const { dismiss, dismissed } = usePreferencesStore()
 
   // Feature flags
-  const showPassport = useFeatureFlag('isPassportEnabled', false);
-  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
-  const showPCard = useFeatureFlag('isPCardEnabled', false);
+  const showPassport = useFeatureFlag('isPassportEnabled', false)
+  const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false)
+  const showPCard = useFeatureFlag('isPCardEnabled', false)
 
   // Query list of licenses
   const res = useListLicensesQuery({
@@ -114,80 +113,80 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
         ].filter(Boolean) as GenericLicenseType[],
       },
     },
-  });
+  })
 
   // Additional licenses
   const resPassport = useGetIdentityDocumentQuery({
     fetchPolicy: 'network-only',
-  });
+  })
 
   useActiveTabItemPress(1, () => {
     flatListRef.current?.scrollToOffset({
       offset: -150,
       animated: true,
-    });
-  });
+    })
+  })
 
   // Filter licenses
   const licenseItems = useMemo(() => {
     if (!res.loading && !res.error) {
-      return (res.data?.genericLicenses ?? []).filter(({license}) => {
+      return (res.data?.genericLicenses ?? []).filter(({ license }) => {
         if (license.status === 'Unknown') {
-          return false;
+          return false
         }
         if (license.type === GenericLicenseType.DisabilityLicense) {
-          return showDisability;
+          return showDisability
         }
         if (license.type === GenericLicenseType.PCard) {
-          return showPCard;
+          return showPCard
         }
-        return true;
-      });
+        return true
+      })
     }
-    return [];
-  }, [res, showDisability, showPCard]);
+    return []
+  }, [res, showDisability, showPCard])
 
   // indexing list for spotlight search IOS
   useEffect(() => {
-    const indexItems = licenseItems.map(item => {
+    const indexItems = licenseItems.map((item) => {
       return {
         title: item.license.type,
         uniqueIdentifier: `/wallet/${item.license.type}`,
         contentDescription: item.license.provider.id,
         domain: 'licences',
-      };
-    });
+      }
+    })
     if (Platform.OS === 'ios') {
-      SpotlightSearch.indexItems(indexItems);
+      SpotlightSearch.indexItems(indexItems)
     }
-  }, [licenseItems]);
+  }, [licenseItems])
 
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current);
+        clearTimeout(loadingTimeout.current)
       }
-      setLoading(true);
+      setLoading(true)
       res
         .refetch()
         .then(() => {
-          (loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false);
-          }, 1331);
+          ;(loadingTimeout as any).current = setTimeout(() => {
+            setLoading(false)
+          }, 1331)
         })
         .catch(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     } catch (err) {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
   const renderItem = useCallback(
-    ({item}: ListRenderItemInfo<FlatListItem>) => {
+    ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
         return (
-          <View style={{paddingHorizontal: 16}}>
+          <View style={{ paddingHorizontal: 16 }}>
             <Skeleton
               active
               backgroundColor={theme.color.blue100}
@@ -200,43 +199,43 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
               }}
             />
           </View>
-        );
+        )
       }
 
       if (
         item.__typename === 'GenericUserLicense' ||
         item.__typename === 'IdentityDocumentModel'
       ) {
-        return <WalletItem item={item} />;
+        return <WalletItem item={item} />
       }
-      return null;
+      return null
     },
     [theme],
-  );
+  )
 
   const keyExtractor = useCallback((item: FlatListItem, index: number) => {
-    const fallback = String(index);
+    const fallback = String(index)
     if (item.__typename === 'GenericUserLicense') {
-      return item.license.type ?? fallback;
+      return item.license.type ?? fallback
     }
     if (item.__typename === 'IdentityDocumentModel') {
-      return item.number ?? fallback;
+      return item.number ?? fallback
     }
-    return (item as {id: string})?.id ?? fallback;
-  }, []);
+    return (item as { id: string })?.id ?? fallback
+  }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
     if (res.loading && !res.data) {
-      return Array.from({length: 5}).map((_, id) => ({
+      return Array.from({ length: 5 }).map((_, id) => ({
         id: String(id),
         __typename: 'Skeleton',
-      }));
+      }))
     }
     return [
       ...licenseItems,
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
-    ] as FlatListItem[];
-  }, [licenseItems, resPassport, showPassport, res.loading, res.data]);
+    ] as FlatListItem[]
+  }, [licenseItems, resPassport, showPassport, res.loading, res.data])
 
   return (
     <>
@@ -255,34 +254,34 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
         )}
         ListHeaderComponent={
           Platform.OS === 'ios' ? (
-            <View style={{marginBottom: 16}}>
+            <View style={{ marginBottom: 16 }}>
               <Alert
                 type="info"
                 visible={!dismissed.includes('howToUseLicence')}
-                message={intl.formatMessage({id: 'wallet.alertMessage'})}
+                message={intl.formatMessage({ id: 'wallet.alertMessage' })}
                 onClose={() => dismiss('howToUseLicence')}
               />
             </View>
           ) : null
         }
         ListEmptyComponent={
-          <View style={{marginTop: 80, paddingHorizontal: 16}}>
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
             <EmptyList
-              title={intl.formatMessage({id: 'wallet.emptyListTitle'})}
+              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
               description={intl.formatMessage({
                 id: 'wallet.emptyListDescription',
               })}
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{width: 146, height: 198}}
+                  style={{ width: 146, height: 198 }}
                   resizeMode="contain"
                 />
               }
@@ -296,7 +295,7 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={1} total={5} />
     </>
-  );
-};
+  )
+}
 
-WalletScreen.options = getNavigationOptions;
+WalletScreen.options = getNavigationOptions

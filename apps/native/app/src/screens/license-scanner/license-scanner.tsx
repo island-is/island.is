@@ -1,9 +1,9 @@
-import {Bubble, Button, theme} from '@ui';
-import {BarCodeEvent, Constants} from 'expo-barcode-scanner';
-import {Camera, FlashMode} from 'expo-camera';
-import {impactAsync, ImpactFeedbackStyle} from 'expo-haptics';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
+import { Bubble, Button, theme } from '@ui'
+import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
+import { Camera, FlashMode } from 'expo-camera'
+import { ImpactFeedbackStyle, impactAsync } from 'expo-haptics'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Alert,
   LayoutRectangle,
@@ -11,19 +11,22 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-} from 'react-native';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import styled from 'styled-components/native';
-import flashligth from '../../assets/icons/flashlight.png';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {ComponentRegistry} from '../../utils/component-registry';
-import DeviceInfo from 'react-native-device-info';
+} from 'react-native'
+import DeviceInfo from 'react-native-device-info'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import styled from 'styled-components/native'
+import flashligth from '../../assets/icons/flashlight.png'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { ComponentRegistry } from '../../utils/component-registry'
 
 const BottomRight = styled.View`
   position: absolute;
   right: 32px;
   bottom: 32px;
-`;
+`
 
 const FlashLight = styled.View`
   display: flex;
@@ -33,19 +36,19 @@ const FlashLight = styled.View`
   height: 64px;
   width: 64px;
   background: #000;
-`;
+`
 
 const FlashImg = styled.Image`
   height: 32px;
   width: 32px;
-`;
+`
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'licenseScanner.title'}),
+          text: intl.formatMessage({ id: 'licenseScanner.title' }),
         },
       },
     }),
@@ -60,123 +63,123 @@ const {useNavigationOptions, getNavigationOptions} =
         ],
       },
     },
-  );
+  )
 
-const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync();
+const isSimulator = Platform.OS === 'ios' && DeviceInfo.isEmulatorSync()
 
 export const LicenseScannerScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  useNavigationOptions(componentId);
-  const [hasPermission, setHasPermission] = useState<boolean>();
-  const [active, setActive] = useState(true);
-  const [invalid, setInvalid] = useState<boolean>(false);
-  const [torch, setTorch] = useState<boolean>(false);
+  useNavigationOptions(componentId)
+  const [hasPermission, setHasPermission] = useState<boolean>()
+  const [active, setActive] = useState(true)
+  const [invalid, setInvalid] = useState<boolean>(false)
+  const [torch, setTorch] = useState<boolean>(false)
 
-  const camera = useRef<Camera>();
-  const [layout, setLayout] = useState<LayoutRectangle>();
-  const [ratio, setRatio] = useState<string>();
-  const [padding, setPadding] = useState(0);
+  const camera = useRef<Camera>()
+  const [layout, setLayout] = useState<LayoutRectangle>()
+  const [ratio, setRatio] = useState<string>()
+  const [padding, setPadding] = useState(0)
 
-  const invalidTimeout = useRef<NodeJS.Timeout>();
-  const intl = useIntl();
-
-  useEffect(() => {
-    Camera.requestCameraPermissionsAsync().then(({status}) => {
-      setHasPermission(status === 'granted');
-    });
-  }, []);
+  const invalidTimeout = useRef<NodeJS.Timeout>()
+  const intl = useIntl()
 
   useEffect(() => {
-    Navigation.events().registerNavigationButtonPressedListener(e => {
+    Camera.requestCameraPermissionsAsync().then(({ status }) => {
+      setHasPermission(status === 'granted')
+    })
+  }, [])
+
+  useEffect(() => {
+    Navigation.events().registerNavigationButtonPressedListener((e) => {
       if (e.buttonId === 'LICENSE_SCANNER_DONE') {
-        Navigation.dismissModal(componentId);
+        Navigation.dismissModal(componentId)
       }
-    });
-    Navigation.events().registerComponentWillAppearListener(e => {
+    })
+    Navigation.events().registerComponentWillAppearListener((e) => {
       if (e.componentId === componentId) {
-        setActive(true);
+        setActive(true)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   const onFlashlightPress = useCallback(() => {
-    setTorch(v => !v);
-  }, []);
+    setTorch((v) => !v)
+  }, [])
 
-  const onBarCodeScanned = useCallback(({type, data}: BarCodeEvent) => {
-    let isExpired;
+  const onBarCodeScanned = useCallback(({ type, data }: BarCodeEvent) => {
+    let isExpired
     if (invalidTimeout.current) {
-      clearTimeout(invalidTimeout.current);
+      clearTimeout(invalidTimeout.current)
     }
 
     if (type === Constants.BarCodeType.pdf417) {
       if (!data.includes('TGLJZW') && !data.includes('passTemplateId')) {
         invalidTimeout.current = setTimeout(() => {
-          setInvalid(false);
-        }, 2000);
-        return setInvalid(true);
+          setInvalid(false)
+        }, 2000)
+        return setInvalid(true)
       }
 
       if (data.includes('expires') || data.includes('date')) {
         try {
-          const {expires, date} = JSON.parse(data);
-          const startDate = new Date(date ?? expires);
-          const seconds = (Date.now() - startDate.getTime()) / 1000;
-          isExpired = seconds > 0;
+          const { expires, date } = JSON.parse(data)
+          const startDate = new Date(date ?? expires)
+          const seconds = (Date.now() - startDate.getTime()) / 1000
+          isExpired = seconds > 0
         } catch (error) {
           // noop
         }
       }
     }
 
-    impactAsync(ImpactFeedbackStyle.Heavy);
-    setInvalid(false);
-    setActive(false);
+    impactAsync(ImpactFeedbackStyle.Heavy)
+    setInvalid(false)
+    setActive(false)
     Navigation.push(componentId, {
       component: {
         name: ComponentRegistry.LicenseScanDetailScreen,
-        passProps: {type, data, isExpired},
+        passProps: { type, data, isExpired },
         options: {
           topBar: {
             visible: true,
             title: {
-              text: intl.formatMessage({id: 'licenseScanner.title'}),
+              text: intl.formatMessage({ id: 'licenseScanner.title' }),
             },
           },
         },
       },
-    });
-  }, []);
+    })
+  }, [])
 
   const prepareRatio = async () => {
     if (Platform.OS === 'android') {
-      const screenRatio = layout!.height / layout!.width;
-      const ratios = await camera.current!.getSupportedRatiosAsync();
+      const screenRatio = layout!.height / layout!.width
+      const ratios = await camera.current!.getSupportedRatiosAsync()
       // find ratio closest to screen ratio
       const closest = ratios
-        .map(aspect => {
-          const [h, w] = aspect.split(':').map(parseFloat);
-          return {ratio: h / w, aspect};
+        .map((aspect) => {
+          const [h, w] = aspect.split(':').map(parseFloat)
+          return { ratio: h / w, aspect }
         })
         .sort((a, b) => {
           return Math.abs(a.ratio - screenRatio) >
             Math.abs(b.ratio - screenRatio)
             ? 1
-            : -1;
+            : -1
         })
-        .shift();
-      const cameraRatio = closest!.ratio;
+        .shift()
+      const cameraRatio = closest!.ratio
       const overlap =
-        layout!.width - (screenRatio / cameraRatio) * layout!.width;
-      setPadding(overlap / 2);
-      setRatio(closest!.aspect);
+        layout!.width - (screenRatio / cameraRatio) * layout!.width
+      setPadding(overlap / 2)
+      setRatio(closest!.aspect)
     }
-  };
+  }
 
   const onCameraReady = () => {
-    prepareRatio();
-  };
+    prepareRatio()
+  }
 
   if (isSimulator) {
     return (
@@ -186,42 +189,44 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           backgroundColor: theme.color.blue200,
           alignItems: 'center',
           justifyContent: 'center',
-        }}>
+        }}
+      >
         <Button
           title="Paste barcode"
           onPress={() => {
-            Alert.prompt('Paste barcode', '', text => {
-              console.log('oki', text);
+            Alert.prompt('Paste barcode', '', (text) => {
+              console.log('oki', text)
               void onBarCodeScanned({
                 type: Constants.BarCodeType.pdf417,
                 data: text,
-              } as any);
-            });
+              } as any)
+            })
           }}
         />
       </View>
-    );
+    )
   }
 
   return (
     <View
-      style={{flex: 1, backgroundColor: '#000'}}
-      onLayout={e => setLayout(e.nativeEvent.layout)}>
+      style={{ flex: 1, backgroundColor: '#000' }}
+      onLayout={(e) => setLayout(e.nativeEvent.layout)}
+    >
       {hasPermission === true && active && (
         <Camera
           onBarCodeScanned={active ? onBarCodeScanned : undefined}
           onMountError={() => {
-            Alert.alert('Camera error', 'Could not start camera preview');
+            Alert.alert('Camera error', 'Could not start camera preview')
           }}
           flashMode={torch ? FlashMode.torch : FlashMode.off}
-          ref={ref => {
+          ref={(ref) => {
             if (ref) {
-              camera.current = ref;
+              camera.current = ref
             }
           }}
           ratio={ratio}
           onCameraReady={onCameraReady}
-          style={[StyleSheet.absoluteFillObject, {marginHorizontal: padding}]}
+          style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}
         />
       )}
       <View
@@ -231,15 +236,16 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
           left: 0,
           right: 0,
           alignItems: 'center',
-        }}>
+        }}
+      >
         <Bubble>
           {typeof hasPermission === 'undefined' || hasPermission === null
-            ? intl.formatMessage({id: 'licenseScanner.awaitingPermission'})
+            ? intl.formatMessage({ id: 'licenseScanner.awaitingPermission' })
             : hasPermission === false
-            ? intl.formatMessage({id: 'licenseScanner.noCameraAccess'})
+            ? intl.formatMessage({ id: 'licenseScanner.noCameraAccess' })
             : invalid
-            ? intl.formatMessage({id: 'licenseScannerDetail.invalidBarcode'})
-            : intl.formatMessage({id: 'licenseScanner.helperMessage'})}
+            ? intl.formatMessage({ id: 'licenseScannerDetail.invalidBarcode' })
+            : intl.formatMessage({ id: 'licenseScanner.helperMessage' })}
         </Bubble>
       </View>
       <BottomRight>
@@ -250,7 +256,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
         </TouchableOpacity>
       </BottomRight>
     </View>
-  );
-};
+  )
+}
 
-LicenseScannerScreen.options = getNavigationOptions();
+LicenseScannerScreen.options = getNavigationOptions()

@@ -1,15 +1,18 @@
-import React, {useRef, useState} from 'react';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {useNavigationComponentDidDisappear} from 'react-native-navigation-hooks/dist';
-import {WebView, WebViewNavigation} from 'react-native-webview';
-import {authStore} from '../../stores/auth-store';
+import React, { useRef, useState } from 'react'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import { useNavigationComponentDidDisappear } from 'react-native-navigation-hooks/dist'
+import { WebView, WebViewNavigation } from 'react-native-webview'
+import { authStore } from '../../stores/auth-store'
 
 // @todo add dismiss button
 export const CognitoAuthScreen: NavigationFunctionComponent<{
-  url: string;
-}> = props => {
-  const ref = useRef<WebView>(null);
-  const [url, setUrl] = useState(props.url);
+  url: string
+}> = (props) => {
+  const ref = useRef<WebView>(null)
+  const [url, setUrl] = useState(props.url)
 
   const onNavigationStateChange = (navigationState: WebViewNavigation) => {
     if (
@@ -17,7 +20,7 @@ export const CognitoAuthScreen: NavigationFunctionComponent<{
         'https://auth.shared.devland.is/dev/oauth2/sign_in',
       ) === 0
     ) {
-      setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in');
+      setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in')
     }
 
     if (
@@ -25,31 +28,31 @@ export const CognitoAuthScreen: NavigationFunctionComponent<{
         'https://auth.shared.devland.is/dev/oauth2/callback',
       ) === 0
     ) {
-      setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in');
+      setUrl('https://auth.shared.devland.is/dev/oauth2/sign_in')
     }
 
     if (navigationState.url === 'https://auth.shared.devland.is/') {
       // Success
-      Navigation.dismissModal(props.componentId);
-      authStore.setState({isCogitoAuth: false});
+      Navigation.dismissModal(props.componentId)
+      authStore.setState({ isCogitoAuth: false })
     }
-  };
+  }
 
   useNavigationComponentDidDisappear(() => {
-    authStore.setState(prev => ({
+    authStore.setState((prev) => ({
       isCogitoAuth: false,
       cognitoDismissCount: prev.cognitoDismissCount + 1,
-    }));
-  });
+    }))
+  })
 
   return (
     <WebView
       ref={ref}
-      style={{flex: 1}}
-      source={{uri: url}}
+      style={{ flex: 1 }}
+      source={{ uri: url }}
       onNavigationStateChange={onNavigationStateChange}
       thirdPartyCookiesEnabled
       sharedCookiesEnabled
     />
-  );
-};
+  )
+}

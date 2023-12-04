@@ -1,6 +1,6 @@
-import {theme} from '@ui';
-import {Appearance, ColorSchemeName} from 'react-native';
-import {AppearanceMode, ThemeMode} from '../stores/preferences-store';
+import { theme } from '@ui'
+import { Appearance, ColorSchemeName } from 'react-native'
+import { AppearanceMode, ThemeMode } from '../stores/preferences-store'
 
 export const themes = {
   light: {
@@ -45,42 +45,42 @@ export const themes = {
       shade100: '#001900',
     },
   },
-};
+}
 
-const defaultTheme = 'light';
+const defaultTheme = 'light'
 
 export function getThemeWithPreferences(
-  {appearanceMode}: {appearanceMode: AppearanceMode},
+  { appearanceMode }: { appearanceMode: AppearanceMode },
   systemScheme: ColorSchemeName = Appearance.getColorScheme() ?? defaultTheme,
 ) {
   // get color scheme from system if "automatic"
   // otherwise from appearanceMode
   const colorScheme = (
     appearanceMode === 'automatic' ? systemScheme : appearanceMode
-  ) as ThemeMode;
+  ) as ThemeMode
 
   // find correct shades key
   const themeKey =
     typeof colorScheme === 'string' && themes[colorScheme]
       ? colorScheme
-      : defaultTheme;
+      : defaultTheme
 
   const themeObj = {
     ...theme,
-  };
+  }
 
   const shades = {
     dark: themes.dark.shade,
     light: themes.light.shade,
     efficient: themes.efficient.shade,
-  };
+  }
 
   if (themeKey === 'efficient') {
-    shades.dark = shades.efficient;
+    shades.dark = shades.efficient
     themeObj.color = {
       ...themeObj.color,
       blue400: shades.dark.foreground as any,
-    };
+    }
   }
 
   return {
@@ -88,5 +88,5 @@ export function getThemeWithPreferences(
     ...themeObj,
     ...themes[themeKey],
     shades,
-  };
+  }
 }

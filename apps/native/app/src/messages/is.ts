@@ -465,4 +465,4 @@ export const is = {
   'edit.confirm.inputlabel': 'Öryggisnúmer',
   'edit.cancel.button': 'Hætta við',
   'edit.confirm.button': 'Staðfesta',
-};
+}

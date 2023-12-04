@@ -1,35 +1,35 @@
-import {Button, CancelButton, Illustration, Onboarding} from '@ui';
-import messaging from '@react-native-firebase/messaging';
-import React from 'react';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import {FormattedMessage, useIntl} from 'react-intl';
-import {preferencesStore} from '../../stores/preferences-store';
-import {nextOnboardingStep} from '../../utils/onboarding';
-import {testIDs} from '../../utils/test-ids';
-import allow from '../../assets/icons/allow.png';
+import messaging from '@react-native-firebase/messaging'
+import { Button, CancelButton, Illustration, Onboarding } from '@ui'
+import React from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import allow from '../../assets/icons/allow.png'
+import { preferencesStore } from '../../stores/preferences-store'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
+  const authStatus = await messaging().requestPermission()
   return (
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  );
+  )
 }
 
 export const OnboardingNotificationsScreen: NavigationFunctionComponent =
   () => {
-    const intl = useIntl();
+    const intl = useIntl()
     const onAllowPress = () => {
       requestUserPermission().then(() => {
-        preferencesStore.setState(() => ({hasOnboardedNotifications: true}));
-        return nextOnboardingStep();
-      });
-    };
+        preferencesStore.setState(() => ({ hasOnboardedNotifications: true }))
+        return nextOnboardingStep()
+      })
+    }
 
     const onSkipPress = () => {
-      preferencesStore.setState(() => ({hasOnboardedNotifications: true}));
-      return nextOnboardingStep();
-    };
+      preferencesStore.setState(() => ({ hasOnboardedNotifications: true }))
+      return nextOnboardingStep()
+    }
 
     return (
       <Onboarding
@@ -56,8 +56,8 @@ export const OnboardingNotificationsScreen: NavigationFunctionComponent =
           />
         }
       />
-    );
-  };
+    )
+  }
 
 OnboardingNotificationsScreen.options = {
   popGesture: false,
@@ -67,4 +67,4 @@ OnboardingNotificationsScreen.options = {
   layout: {
     orientation: ['portrait'],
   },
-};
+}

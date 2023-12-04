@@ -1,66 +1,66 @@
-import {Keyboard} from 'react-native';
-import {Navigation} from 'react-native-navigation';
-import {authStore} from '../stores/auth-store';
-import {preferencesStore} from '../stores/preferences-store';
-import {uiStore} from '../stores/ui-store';
-import {ComponentRegistry} from './component-registry';
-import {isOnboarded} from './onboarding';
+import { Keyboard } from 'react-native'
+import { Navigation } from 'react-native-navigation'
+import { authStore } from '../stores/auth-store'
+import { preferencesStore } from '../stores/preferences-store'
+import { uiStore } from '../stores/ui-store'
+import { ComponentRegistry } from './component-registry'
+import { isOnboarded } from './onboarding'
 
 export function skipAppLock() {
-  const {authorizeResult} = authStore.getState();
-  const {dev__useLockScreen} = preferencesStore.getState();
+  const { authorizeResult } = authStore.getState()
+  const { dev__useLockScreen } = preferencesStore.getState()
 
-  const isNotOnboarded = !isOnboarded();
-  const isNotAuthorized = !authorizeResult;
-  const isDisabledByDev = dev__useLockScreen === false;
-  const skip = isNotOnboarded || isNotAuthorized || isDisabledByDev;
+  const isNotOnboarded = !isOnboarded()
+  const isNotAuthorized = !authorizeResult
+  const isDisabledByDev = dev__useLockScreen === false
+  const skip = isNotOnboarded || isNotAuthorized || isDisabledByDev
 
   if (skip) {
-    uiStore.setState({initializedApp: true});
+    uiStore.setState({ initializedApp: true })
   }
 
-  return skip;
+  return skip
 }
 
 export function showAppLockOverlay({
   enforceActivated = false,
   status = 'active',
 }: {
-  enforceActivated?: boolean;
-  status?: string;
+  enforceActivated?: boolean
+  status?: string
 }) {
   if (skipAppLock()) {
-    return Promise.resolve();
+    return Promise.resolve()
   }
 
   // dismiss keyboard
-  Keyboard.dismiss();
+  Keyboard.dismiss()
 
   // set now
-  let lockScreenActivatedAt = Date.now();
+  let lockScreenActivatedAt = Date.now()
   if (enforceActivated) {
     // set yesterday
-    lockScreenActivatedAt -= 86400 * 1000;
+    lockScreenActivatedAt -= 86400 * 1000
     authStore.setState({
       lockScreenActivatedAt,
-    });
+    })
   }
 
   return Navigation.showOverlay({
     component: {
       name: ComponentRegistry.AppLockScreen,
-      passProps: {status, lockScreenActivatedAt},
+      passProps: { status, lockScreenActivatedAt },
     },
-  });
+  })
 }
 
 export function hideAppLockOverlay() {
   // Dismiss all overlays
-  Navigation.dismissAllOverlays();
+  Navigation.dismissAllOverlays()
 
   // reset lockscreen parameters
   authStore.setState({
     lockScreenActivatedAt: undefined,
     lockScreenComponentId: undefined,
-  });
+  })
 }

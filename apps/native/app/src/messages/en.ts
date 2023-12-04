@@ -1,4 +1,4 @@
-import {TranslatedMessages} from './index';
+import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
   // login
@@ -465,4 +465,4 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
-};
+}

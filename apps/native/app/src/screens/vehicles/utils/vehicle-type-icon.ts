@@ -1,22 +1,22 @@
-import eftirvagn from '../../../assets/vehicles/eftirvagn.png';
-import folksbill from '../../../assets/vehicles/bill.png';
-import station from '../../../assets/vehicles/station.png';
-import smabill from '../../../assets/vehicles/smabill.png';
-import jeppi from '../../../assets/vehicles/jeppi.png';
-import letthjol from '../../../assets/vehicles/letthjol.png';
-import motorhjol from '../../../assets/vehicles/motorhjol.png';
-import trukkur from '../../../assets/vehicles/vorubill.png';
+import folksbill from '../../../assets/vehicles/bill.png'
+import eftirvagn from '../../../assets/vehicles/eftirvagn.png'
+import jeppi from '../../../assets/vehicles/jeppi.png'
+import letthjol from '../../../assets/vehicles/letthjol.png'
+import motorhjol from '../../../assets/vehicles/motorhjol.png'
+import smabill from '../../../assets/vehicles/smabill.png'
+import station from '../../../assets/vehicles/station.png'
+import trukkur from '../../../assets/vehicles/vorubill.png'
 
 export const icons = {
-  smabill: {source: smabill, style: {height: 34, width: 64}},
-  folksbill: {source: folksbill, style: {width: 33, height: 64}},
-  station: {source: station, style: {width: 33, height: 64}},
-  jeppi: {source: jeppi, style: {width: 40, height: 64}},
-  trukkur: {source: trukkur, style: {width: 45, height: 64}},
-  eftirvagn: {source: eftirvagn, style: {width: 43, height: 64}},
-  motorhjol: {source: motorhjol, style: {width: 41, height: 62}},
-  letthjol: {source: letthjol, style: {width: 40, height: 64}},
-};
+  smabill: { source: smabill, style: { height: 34, width: 64 } },
+  folksbill: { source: folksbill, style: { width: 33, height: 64 } },
+  station: { source: station, style: { width: 33, height: 64 } },
+  jeppi: { source: jeppi, style: { width: 40, height: 64 } },
+  trukkur: { source: trukkur, style: { width: 45, height: 64 } },
+  eftirvagn: { source: eftirvagn, style: { width: 43, height: 64 } },
+  motorhjol: { source: motorhjol, style: { width: 41, height: 62 } },
+  letthjol: { source: letthjol, style: { width: 40, height: 64 } },
+}
 
 export const typesIcon = {
   AB: icons.smabill,
@@ -56,8 +56,8 @@ export const typesIcon = {
   L7E: icons.motorhjol,
   L1e: icons.letthjol,
   L2e: icons.letthjol,
-};
+}
 
 export const getVehicleTypeIcon = (type: string) => {
-  return typesIcon[type as keyof typeof typesIcon] ?? icons.folksbill;
-};
+  return typesIcon[type as keyof typeof typesIcon] ?? icons.folksbill
+}

@@ -1,16 +1,16 @@
-import React from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
-import styled from 'styled-components/native';
-import {dynamicColor} from '../../utils';
-import {font} from '../../utils/font';
-import {Skeleton} from '../skeleton/skeleton';
-import CopyIcon from '../../assets/icons/copy.png';
-import Clipboard from '@react-native-clipboard/clipboard';
-const Host = styled.SafeAreaView<{noBorder: boolean; borderDark?: boolean}>`
+import Clipboard from '@react-native-clipboard/clipboard'
+import React from 'react'
+import { Image, TouchableOpacity, View } from 'react-native'
+import styled from 'styled-components/native'
+import CopyIcon from '../../assets/icons/copy.png'
+import { dynamicColor } from '../../utils'
+import { font } from '../../utils/font'
+import { Skeleton } from '../skeleton/skeleton'
+const Host = styled.SafeAreaView<{ noBorder: boolean; borderDark?: boolean }>`
   flex: 1;
-  border-bottom-width: ${({theme}) => theme.border.width.standard}px;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
   border-bottom-color: ${dynamicColor(
-    ({theme, noBorder, borderDark}) => ({
+    ({ theme, noBorder, borderDark }) => ({
       light: noBorder
         ? 'transparent'
         : borderDark
@@ -20,42 +20,43 @@ const Host = styled.SafeAreaView<{noBorder: boolean; borderDark?: boolean}>`
     }),
     true,
   )};
-  margin-left: ${({theme}) => theme.spacing[2]}px;
-  margin-right: ${({theme}) => theme.spacing[2]}px;
-`;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+`
 
-const Content = styled.View<{isCompact: boolean}>`
-  padding-top: ${({theme, isCompact}) => theme.spacing[isCompact ? 1 : 3]}px;
-  padding-bottom: ${({theme, isCompact}) => theme.spacing[isCompact ? 1 : 3]}px;
-`;
+const Content = styled.View<{ isCompact: boolean }>`
+  padding-top: ${({ theme, isCompact }) => theme.spacing[isCompact ? 1 : 3]}px;
+  padding-bottom: ${({ theme, isCompact }) =>
+    theme.spacing[isCompact ? 1 : 3]}px;
+`
 
 const Label = styled.Text`
-  margin-bottom: ${({theme}) => theme.spacing[1]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[1]}px;
 
   ${font({
     fontSize: 13,
     lineHeight: 17,
   })}
-`;
+`
 
-const Value = styled.Text<{size?: 'normal' | 'big'}>`
+const Value = styled.Text<{ size?: 'normal' | 'big' }>`
   ${font({
-    fontSize: ({size}) => (size === 'big' ? 20 : 16),
+    fontSize: ({ size }) => (size === 'big' ? 20 : 16),
     fontWeight: '600',
   })}
-`;
+`
 
 interface InputProps {
-  label: string;
-  value?: string | null;
-  loading?: boolean;
-  error?: boolean;
-  valueTestID?: string;
-  noBorder?: boolean;
-  size?: 'normal' | 'big';
-  isCompact?: boolean;
-  borderDark?: boolean;
-  copy?: boolean;
+  label: string
+  value?: string | null
+  loading?: boolean
+  error?: boolean
+  valueTestID?: string
+  noBorder?: boolean
+  size?: 'normal' | 'big'
+  isCompact?: boolean
+  borderDark?: boolean
+  copy?: boolean
 }
 
 export function Input({
@@ -71,7 +72,7 @@ export function Input({
   copy = false,
 }: InputProps) {
   const tvalue =
-    value !== undefined && typeof value === 'string' && value.trim();
+    value !== undefined && typeof value === 'string' && value.trim()
 
   return (
     <Host noBorder={noBorder} borderDark={borderDark}>
@@ -84,17 +85,18 @@ export function Input({
             height={size === 'big' ? 26 : undefined}
           />
         ) : (
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Value testID={valueTestID} selectable size={size}>
               {tvalue === '' || !value ? '-' : value}
             </Value>
             {copy && (
               <TouchableOpacity
                 onPress={() => Clipboard.setString(value ?? '')}
-                style={{marginLeft: 4}}>
+                style={{ marginLeft: 4 }}
+              >
                 <Image
                   source={CopyIcon}
-                  style={{width: 24, height: 24}}
+                  style={{ width: 24, height: 24 }}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
@@ -103,5 +105,5 @@ export function Input({
         )}
       </Content>
     </Host>
-  );
+  )
 }

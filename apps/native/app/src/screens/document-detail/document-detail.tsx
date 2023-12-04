@@ -1,58 +1,61 @@
-import {useFragment_experimental} from '@apollo/client';
-import {blue400, dynamicColor, Header, Loader, Typography} from '@ui';
-import React, {useEffect, useRef, useState} from 'react';
-import {FormattedDate, useIntl} from 'react-intl';
-import {Animated, Platform, StyleSheet, View} from 'react-native';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
+import { useFragment_experimental } from '@apollo/client'
+import { blue400, dynamicColor, Header, Loader, Typography } from '@ui'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormattedDate, useIntl } from 'react-intl'
+import { Animated, Platform, StyleSheet, View } from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
-} from 'react-native-navigation-hooks/dist';
-import Pdf, {Source} from 'react-native-pdf';
-import Share from 'react-native-share';
-import WebView from 'react-native-webview';
-import styled from 'styled-components/native';
-import {client} from '../../graphql/client';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {authStore} from '../../stores/auth-store';
-import {useOrganizationsStore} from '../../stores/organizations-store';
-import {
-  ButtonRegistry,
-  ComponentRegistry,
-} from '../../utils/component-registry';
+} from 'react-native-navigation-hooks/dist'
+import Pdf, { Source } from 'react-native-pdf'
+import Share from 'react-native-share'
+import WebView from 'react-native-webview'
+import styled from 'styled-components/native'
+import { client } from '../../graphql/client'
 import {
   Document,
   ListDocumentFragmentDoc,
   ListDocumentsDocument,
   useGetDocumentQuery,
-} from '../../graphql/types/schema';
-import {toggleAction} from '../../lib/post-mail-action';
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { toggleAction } from '../../lib/post-mail-action'
+import { authStore } from '../../stores/auth-store'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
   margin-right: 24px;
-`;
+`
 
 const Border = styled.View`
   height: 1px;
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     dark: props.theme.shades.dark.shade200,
     light: props.theme.color.blue100,
   }))};
-`;
+`
 
 const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 function getRightButtons({
   archived,
   bookmarked,
 }: {
-  archived?: boolean;
-  bookmarked?: boolean;
+  archived?: boolean
+  bookmarked?: boolean
 } = {}) {
   return [
     {
@@ -95,15 +98,15 @@ function getRightButtons({
         height: 32,
       },
     },
-  ];
+  ]
 }
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'documentDetail.screenTitle'}),
+          text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
         },
         noBorder: true,
       },
@@ -117,23 +120,23 @@ const {useNavigationOptions, getNavigationOptions} =
         rightButtons: getRightButtons(),
       },
     },
-  );
+  )
 
 interface PdfViewerProps {
-  url: string;
-  body: string;
-  onLoaded: (path: string) => void;
-  onError: (err: Error) => void;
+  url: string
+  body: string
+  onLoaded: (path: string) => void
+  onError: (err: Error) => void
 }
 
 const PdfViewer = React.memo(
-  ({url, body, onLoaded, onError}: PdfViewerProps) => {
+  ({ url, body, onLoaded, onError }: PdfViewerProps) => {
     const extraProps = {
       activityIndicatorProps: {
         color: '#0061ff',
         progressTintColor: '#ccdfff',
       },
-    };
+    }
 
     return (
       <Pdf
@@ -148,36 +151,36 @@ const PdfViewer = React.memo(
           } as Source
         }
         onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath);
+          onLoaded?.(filePath)
         }}
-        onError={err => {
-          onError?.(err as Error);
+        onError={(err) => {
+          onError?.(err as Error)
         }}
-        trustAllCerts={Platform.select({android: false, ios: undefined})}
+        trustAllCerts={Platform.select({ android: false, ios: undefined })}
         style={{
           flex: 1,
           backgroundColor: 'transparent',
         }}
         {...extraProps}
       />
-    );
+    )
   },
   (prevProps, nextProps) => {
     if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
-      return true;
+      return true
     }
-    return false;
+    return false
   },
-);
+)
 
 export const DocumentDetailScreen: NavigationFunctionComponent<{
-  docId: string;
-}> = ({componentId, docId}) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
-  const {getOrganizationLogoUrl} = useOrganizationsStore();
-  const [accessToken, setAccessToken] = useState<string>();
-  const [error, setError] = useState(false);
+  docId: string
+}> = ({ componentId, docId }) => {
+  useNavigationOptions(componentId)
+  const intl = useIntl()
+  const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const [accessToken, setAccessToken] = useState<string>()
+  const [error, setError] = useState(false)
 
   const doc = useFragment_experimental<Document>({
     fragment: ListDocumentFragmentDoc,
@@ -186,7 +189,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       id: docId,
     },
     returnPartialData: true,
-  });
+  })
 
   const docRes = useGetDocumentQuery({
     client,
@@ -195,12 +198,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         id: docId,
       },
     },
-  });
+  })
 
   const Document = {
     ...(docRes.data?.getDocument || {}),
     ...doc.data,
-  };
+  }
 
   useEffect(() => {
     if (doc.missing) {
@@ -212,16 +215,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             pageSize: 50,
           },
         },
-      });
+      })
     }
-  }, [doc]);
+  }, [doc])
 
-  const [visible, setVisible] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [pdfUrl, setPdfUrl] = useState('');
-  const [touched, setTouched] = useState(false);
-  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf';
-  const isHtml = typeof Document.html === 'string' && Document.html !== '';
+  const [visible, setVisible] = useState(false)
+  const [loaded, setLoaded] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState('')
+  const [touched, setTouched] = useState(false)
+  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
+  const isHtml = typeof Document.html === 'string' && Document.html !== ''
 
   useEffect(() => {
     Navigation.mergeOptions(componentId, {
@@ -231,29 +234,29 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           bookmarked: doc.data?.bookmarked ?? false,
         }),
       },
-    });
-  }, [componentId, doc.data]);
+    })
+  }, [componentId, doc.data])
 
-  useNavigationButtonPress(({buttonId}) => {
+  useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {
       toggleAction(
         Document.archived ? 'unarchive' : 'archive',
         Document.id!,
         // true,
-      );
-      setTouched(true);
+      )
+      setTouched(true)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
         Document.bookmarked ? 'unbookmark' : 'bookmark',
         Document.id!,
         // true,
-      );
-      setTouched(true);
+      )
+      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton) {
       if (Platform.OS === 'android') {
-        authStore.setState({noLockScreenUntilNextAppStateActive: true});
+        authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.open({
         title: Document.subject!,
@@ -261,25 +264,25 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         message: `${Document.senderName!} \n ${Document.subject!}`,
         type: hasPdf ? 'application/pdf' : undefined,
         url: hasPdf ? `file://${pdfUrl}` : Document.url!,
-      });
+      })
     }
-  }, componentId);
+  }, componentId)
 
   useNavigationComponentDidAppear(() => {
-    setVisible(true);
-  });
+    setVisible(true)
+  })
 
   useNavigationComponentDidDisappear(() => {
-    setVisible(false);
+    setVisible(false)
     if (hasPdf) {
-      setLoaded(false);
+      setLoaded(false)
     }
     if (touched) {
       Navigation.updateProps(ComponentRegistry.InboxScreen, {
         refresh: Math.random(),
-      });
+      })
     }
-  });
+  })
 
   useEffect(() => {
     // Lets mark the document as read
@@ -291,27 +294,27 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       fields: {
         opened: () => true,
       },
-    });
-  }, [Document.id]);
+    })
+  }, [Document.id])
 
   useEffect(() => {
-    const {authorizeResult, refresh} = authStore.getState();
+    const { authorizeResult, refresh } = authStore.getState()
     const isExpired =
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       new Date(authorizeResult!.accessTokenExpirationDate!).getTime() <
-      Date.now();
+      Date.now()
     if (isExpired) {
       refresh().then(() => {
-        setAccessToken(authStore.getState().authorizeResult?.accessToken);
-      });
+        setAccessToken(authStore.getState().authorizeResult?.accessToken)
+      })
     } else {
-      setAccessToken(authorizeResult?.accessToken);
+      setAccessToken(authorizeResult?.accessToken)
     }
-  }, []);
+  }, [])
 
-  const loading = docRes.loading || !accessToken;
+  const loading = docRes.loading || !accessToken
 
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
     if (loaded) {
@@ -319,9 +322,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         toValue: 1,
         duration: 500,
         useNativeDriver: true,
-      }).start();
+      }).start()
     }
-  }, [loaded]);
+  }, [loaded])
 
   return (
     <>
@@ -339,18 +342,20 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       <View
         style={{
           flex: 1,
-        }}>
+        }}
+      >
         <Animated.View
           style={{
             flex: 1,
             opacity: fadeAnim,
-          }}>
+          }}
+        >
           {isHtml ? (
             <WebView
-              source={{html: Document.html ?? ''}}
+              source={{ html: Document.html ?? '' }}
               scalesPageToFit
               onLoadEnd={() => {
-                setLoaded(true);
+                setLoaded(true)
               }}
             />
           ) : hasPdf ? (
@@ -360,21 +365,21 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   url={Document.url ?? ''}
                   body={`documentId=${Document.id}&__accessToken=${accessToken}`}
                   onLoaded={(filePath: any) => {
-                    setPdfUrl(filePath);
-                    setLoaded(true);
+                    setPdfUrl(filePath)
+                    setLoaded(true)
                   }}
                   onError={() => {
-                    setLoaded(true);
-                    setError(true);
+                    setLoaded(true)
+                    setError(true)
                   }}
                 />
               )}
             </PdfWrapper>
           ) : (
             <WebView
-              source={{uri: Document.url!}}
+              source={{ uri: Document.url! }}
               onLoadEnd={() => {
-                setLoaded(true);
+                setLoaded(true)
               }}
             />
           )}
@@ -389,21 +394,22 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                 justifyContent: 'center',
                 maxHeight: 300,
               },
-            ]}>
+            ]}
+          >
             {error ? (
               <Typography>
-                {intl.formatMessage({id: 'licenseScanDetail.errorUnknown'})}
+                {intl.formatMessage({ id: 'licenseScanDetail.errorUnknown' })}
               </Typography>
             ) : (
               <Loader
-                text={intl.formatMessage({id: 'documentDetail.loadingText'})}
+                text={intl.formatMessage({ id: 'documentDetail.loadingText' })}
               />
             )}
           </View>
         )}
       </View>
     </>
-  );
-};
+  )
+}
 
-DocumentDetailScreen.options = getNavigationOptions;
+DocumentDetailScreen.options = getNavigationOptions

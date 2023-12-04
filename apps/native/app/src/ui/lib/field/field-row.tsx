@@ -1,14 +1,14 @@
-import React from 'react';
-import styled from 'styled-components/native';
+import React from 'react'
+import styled from 'styled-components/native'
 
 const Host = styled.View`
   flex-flow: row wrap;
-`;
+`
 
 interface FieldRow {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
-export function FieldRow({children}: FieldRow) {
-  return <Host>{children}</Host>;
+export function FieldRow({ children }: FieldRow) {
+  return <Host>{children}</Host>
 }

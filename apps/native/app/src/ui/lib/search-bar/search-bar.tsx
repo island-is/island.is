@@ -1,4 +1,5 @@
-import React, {useRef, useState} from 'react';
+import { useDynamicColor } from '@ui/utils'
+import React, { useRef, useState } from 'react'
 import {
   Animated,
   Image,
@@ -9,67 +10,69 @@ import {
   TextInputFocusEventData,
   TextInputProps,
   View,
-} from 'react-native';
-import styled, {useTheme} from 'styled-components/native';
-import closeIcon from '../../assets/icons/close.png';
-import searchIcon from '../../assets/icons/search.png';
-import {font} from '../../utils/font';
-import {useDynamicColor} from '@ui/utils';
+} from 'react-native'
+import styled, { useTheme } from 'styled-components/native'
+import closeIcon from '../../assets/icons/close.png'
+import searchIcon from '../../assets/icons/search.png'
+import { font } from '../../utils/font'
 
-const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
-const Input = styled(AnimatedTextInput)<{pressed?: boolean; focused?: boolean}>`
+const Input = styled(AnimatedTextInput)<{
+  pressed?: boolean
+  focused?: boolean
+}>`
   flex: 1;
-  border-radius: ${({theme}) => theme.spacing[1]}px;
-  padding: ${({theme}) => theme.spacing[1]}px 30px;
+  border-radius: ${({ theme }) => theme.spacing[1]}px;
+  padding: ${({ theme }) => theme.spacing[1]}px 30px;
   min-height: 40px;
 
-  ${font({fontSize: 14})}
-`;
+  ${font({ fontSize: 14 })}
+`
 
 interface SearchBarProps extends TextInputProps {
-  onSearchPress?(): void;
-  onCancelPress?(): void;
+  onSearchPress?(): void
+  onCancelPress?(): void
 }
 
 export function SearchBar(props: SearchBarProps) {
-  const theme = useTheme();
-  const inputRef = useRef<TextInput>(null);
-  const [focus, setFocus] = useState(false);
-  const pressed = useRef(new Animated.Value(0));
-  const dynamicColor = useDynamicColor();
+  const theme = useTheme()
+  const inputRef = useRef<TextInput>(null)
+  const [focus, setFocus] = useState(false)
+  const pressed = useRef(new Animated.Value(0))
+  const dynamicColor = useDynamicColor()
 
   const onRightIconPress = () => {
-    props.onChangeText?.('');
-    Keyboard.dismiss();
-  };
+    props.onChangeText?.('')
+    Keyboard.dismiss()
+  }
 
   return (
-    <View style={{flex: 1, minHeight: 40}}>
+    <View style={{ flex: 1, minHeight: 40 }}>
       <Input
         ref={inputRef}
         {...(props as any)}
         pressed={pressed}
         focused={focus}
         onFocus={(e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-          setFocus(true);
-          return props?.onFocus?.(e);
+          setFocus(true)
+          return props?.onFocus?.(e)
         }}
         onBlur={(e: NativeSyntheticEvent<TextInputFocusEventData>) => {
-          setFocus(false);
-          return props?.onBlur?.(e);
+          setFocus(false)
+          return props?.onBlur?.(e)
         }}
         onPressIn={() => {
           Animated.spring(pressed.current, {
             toValue: 1,
             useNativeDriver: false,
-          }).start();
+          }).start()
         }}
         onPressOut={() => {
           Animated.spring(pressed.current, {
             toValue: 0,
             useNativeDriver: false,
-          }).start();
+          }).start()
         }}
         keyboardType="web-search"
         placeholderTextColor={dynamicColor({
@@ -126,7 +129,8 @@ export function SearchBar(props: SearchBarProps) {
             }),
             borderRadius: 16,
             padding: 1,
-          }}>
+          }}
+        >
           <Image
             source={closeIcon}
             style={{
@@ -142,5 +146,5 @@ export function SearchBar(props: SearchBarProps) {
         </Pressable>
       ) : null}
     </View>
-  );
+  )
 }

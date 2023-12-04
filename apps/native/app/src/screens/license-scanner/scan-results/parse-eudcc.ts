@@ -1,134 +1,134 @@
-import publicKeys from '../../../data/eudcc-public-keys.json';
-import base45 from 'base45-js';
-import pako from 'pako';
-import cbor from 'cbor';
-import cose from 'cose-js';
-import {Buffer} from 'buffer';
-import {Certificate} from '@fidm/x509';
+import { Certificate } from '@fidm/x509'
+import base45 from 'base45-js'
+import { Buffer } from 'buffer'
+import cbor from 'cbor'
+import cose from 'cose-js'
+import pako from 'pako'
+import publicKeys from '../../../data/eudcc-public-keys.json'
 
 export interface DecodedEudcc {
-  verify(): Promise<boolean>;
-  issuer: string | null;
-  issuedAt: Date;
-  expiresAt: Date;
-  version: string;
-  givenName: string;
-  familyName: string;
-  dateOfBirth: string;
+  verify(): Promise<boolean>
+  issuer: string | null
+  issuedAt: Date
+  expiresAt: Date
+  version: string
+  givenName: string
+  familyName: string
+  dateOfBirth: string
 
   vaccinations?: Array<{
-    disease: 'COVID-19' | string;
-    vaccineType: string;
-    vaccineProduct: string;
-    vaccineManufacturer: string;
-    doseNumber: number;
-    totalDoses: number;
-    date: Date;
-    country: string;
-    issuer: string;
-    certificateId: string;
-  }>;
+    disease: 'COVID-19' | string
+    vaccineType: string
+    vaccineProduct: string
+    vaccineManufacturer: string
+    doseNumber: number
+    totalDoses: number
+    date: Date
+    country: string
+    issuer: string
+    certificateId: string
+  }>
 
   tests?: Array<{
-    disease: 'COVID-19' | string;
-    testType: string;
-    testName: string;
-    testManufacturer: string;
-    testDate: Date;
-    testResult: string;
-    testCenter: string;
-    country: string;
-    issuer: string;
-    certificateId: string;
-  }>;
+    disease: 'COVID-19' | string
+    testType: string
+    testName: string
+    testManufacturer: string
+    testDate: Date
+    testResult: string
+    testCenter: string
+    country: string
+    issuer: string
+    certificateId: string
+  }>
 
   recoveries?: Array<{
-    disease: 'COVID-19' | string;
-    firstPositiveTest: Date;
-    country: string;
-    issuer: string;
-    validFrom: Date;
-    validUntil: Date;
-    certificateId: string;
-  }>;
+    disease: 'COVID-19' | string
+    firstPositiveTest: Date
+    country: string
+    issuer: string
+    validFrom: Date
+    validUntil: Date
+    certificateId: string
+  }>
 }
 
 export type RecoveryGroup = {
   /** Disease or agent from which the holder has recovered */
-  tg: string;
+  tg: string
   /** Date of the holder’s first positive NAAT test result */
-  fr: string;
+  fr: string
   /** Member State or third country in which test was carried out */
-  co: string;
+  co: string
   /** Certificate issuer */
-  is: string;
+  is: string
   /** Certificate valid from */
-  df: string;
+  df: string
   /** Certificate valid until */
-  du: string;
+  du: string
   /** Unique certificate identifier */
-  ci: string;
-};
+  ci: string
+}
 
 export type TestGroup = {
   /** Disease or Agent Targeted */
-  tg: string;
+  tg: string
   /** The type of test */
-  tt: string;
+  tt: string
   /** Test name (nucleic acid amplification tests only) */
-  nm: string;
+  nm: string
   /** Test device identifier (rapid antigen tests only) */
-  ma: string;
+  ma: string
   /** Date and time of the test sample collection */
-  sc: string;
+  sc: string
   /** Result of the test */
-  tr: string;
+  tr: string
   /** Testing centre or facility */
-  tc: string;
+  tc: string
   /** Member State or third country in which the test was carried out */
-  co: string;
+  co: string
   /** Certificate issuer */
-  is: string;
+  is: string
   /** Unique certificate identifier */
-  ci: string;
-};
+  ci: string
+}
 
 export type VaccinationGroup = {
   /** Disease or Agent Targeted */
-  tg: string;
+  tg: string
   /** Vaccine or Prophylaxis */
-  vp: string;
+  vp: string
   /** Vaccine Medicinal Product */
-  mp: string;
+  mp: string
   /** Marketing Authorization Holder */
-  ma: string;
+  ma: string
   /** Dose Number */
-  dn: string;
+  dn: string
   /** Total Series of Doses */
-  sd: string;
+  sd: string
   /** Date of Vaccination */
-  dt: string;
+  dt: string
   /** Country of Vaccination */
-  co: string;
+  co: string
   /** Certificate Issuer */
-  is: string;
+  is: string
   /** Unique Certificate Identifier */
-  ci: string;
-};
+  ci: string
+}
 
 export type CertificateContent = {
-  ver: string;
+  ver: string
   nam: {
-    fn: string;
-    gn: string;
-    fnt: string;
-    gnt: string;
-  };
-  dob: string;
-  v?: VaccinationGroup[];
-  t?: TestGroup[];
-  r?: RecoveryGroup[];
-};
+    fn: string
+    gn: string
+    fnt: string
+    gnt: string
+  }
+  dob: string
+  v?: VaccinationGroup[]
+  t?: TestGroup[]
+  r?: RecoveryGroup[]
+}
 
 export enum CBOR_STRUCTURE {
   PROTECTED_HEADER = 0,
@@ -155,15 +155,15 @@ export enum PAYLOAD_KEYS {
 }
 
 export type CertificateType = {
-  [PAYLOAD_KEYS.ISSUER]: string;
-  [PAYLOAD_KEYS.EXPIRES_AT]: number;
-  [PAYLOAD_KEYS.ISSUED_AT]: number;
+  [PAYLOAD_KEYS.ISSUER]: string
+  [PAYLOAD_KEYS.EXPIRES_AT]: number
+  [PAYLOAD_KEYS.ISSUED_AT]: number
   [PAYLOAD_KEYS.CONTENT]: {
-    1: CertificateContent;
-  };
-};
+    1: CertificateContent
+  }
+}
 
-const messages: {[key: string]: string} = {
+const messages: { [key: string]: string } = {
   // tt
   'LP6464-4': 'Nucleic acid amplification with probe detection',
   'LP217198-3': 'Rapid immunoassay',
@@ -285,76 +285,76 @@ const messages: {[key: string]: string} = {
   'ORG-100024420':
     'Sinopharm Zhijun (Shenzhen) Pharmaceutical Co. Ltd. - Shenzhen location',
   'ORG-100032020': 'Novavax CZ AS',
-};
+}
 
 function mapToJSON(map: Map<any, any>) {
   if (!(map instanceof Map)) {
-    return map;
+    return map
   }
 
-  const out = Object.create(null);
+  const out = Object.create(null)
 
   map.forEach((value, key) => {
     if (value instanceof Map) {
-      out[key] = mapToJSON(value);
+      out[key] = mapToJSON(value)
     } else {
-      out[key] = value;
+      out[key] = value
     }
-  });
+  })
 
-  return out;
+  return out
 }
 
 function getCountry(cert: CertificateContent, iss?: string): string | null {
   try {
-    return iss || (cert.v! || cert.t! || cert.r!)[0].co;
+    return iss || (cert.v! || cert.t! || cert.r!)[0].co
   } catch (e) {
-    return null;
+    return null
   }
 }
 
 function getKid(protectedHeader: any, unprotectedHeader: any): string | null {
   try {
     if (protectedHeader) {
-      return protectedHeader.get(HEADER_KEYS.KID).toString('base64');
+      return protectedHeader.get(HEADER_KEYS.KID).toString('base64')
     } else {
-      return unprotectedHeader.get(HEADER_KEYS.KID).toString('base64');
+      return unprotectedHeader.get(HEADER_KEYS.KID).toString('base64')
     }
   } catch {
-    return null;
+    return null
   }
 }
 
 function getAlgo(protectedHeader: any, unprotectedHeader: any): ALGOS | null {
   try {
     if (protectedHeader) {
-      return protectedHeader.get(HEADER_KEYS.ALGORITHM);
+      return protectedHeader.get(HEADER_KEYS.ALGORITHM)
     } else {
-      return unprotectedHeader.get(HEADER_KEYS.ALGORITHM);
+      return unprotectedHeader.get(HEADER_KEYS.ALGORITHM)
     }
   } catch {
-    return null;
+    return null
   }
 }
 
 function decodeCbor(qrCbor: any): {
-  kid: string | null;
-  country: string | null;
-  issuedAt: number;
-  expiresAt: number;
-  cert: CertificateContent;
-  algo: ALGOS | null;
+  kid: string | null
+  country: string | null
+  issuedAt: number
+  expiresAt: number
+  cert: CertificateContent
+  algo: ALGOS | null
 } {
-  const message = cbor.decodeFirstSync(Buffer.from(qrCbor));
+  const message = cbor.decodeFirstSync(Buffer.from(qrCbor))
   const protectedHeader = cbor.decodeFirstSync(
     message.value[CBOR_STRUCTURE.PROTECTED_HEADER],
-  );
-  const unprotectedHeader = message.value[CBOR_STRUCTURE.UNPROTECTED_HEADER];
-  const content = cbor.decodeFirstSync(message.value[CBOR_STRUCTURE.PAYLOAD]);
+  )
+  const unprotectedHeader = message.value[CBOR_STRUCTURE.UNPROTECTED_HEADER]
+  const content = cbor.decodeFirstSync(message.value[CBOR_STRUCTURE.PAYLOAD])
 
-  const kid = getKid(protectedHeader, unprotectedHeader);
-  const algo = getAlgo(protectedHeader, unprotectedHeader);
-  const cert = mapToJSON(content.get(PAYLOAD_KEYS.CONTENT).get(1));
+  const kid = getKid(protectedHeader, unprotectedHeader)
+  const algo = getAlgo(protectedHeader, unprotectedHeader)
+  const cert = mapToJSON(content.get(PAYLOAD_KEYS.CONTENT).get(1))
 
   return {
     kid,
@@ -363,64 +363,64 @@ function decodeCbor(qrCbor: any): {
     expiresAt: content.get(PAYLOAD_KEYS.EXPIRES_AT),
     cert,
     algo,
-  };
+  }
 }
 
 export function parseEudcc(data: string | any): DecodedEudcc {
   // remove header bytes
   if (data.startsWith('HC1')) {
-    data = data.substring(3);
+    data = data.substring(3)
     if (data.startsWith(':')) {
-      data = data.substring(1);
+      data = data.substring(1)
     }
   }
 
   // convert to raw data
-  let rawData = base45.decode(data);
+  let rawData = base45.decode(data)
 
   // possibly compressed with zlib
   if (rawData[0] === 0x78) {
-    rawData = pako.inflate(rawData);
+    rawData = pako.inflate(rawData)
   }
 
   // conver to cbor schema
-  const schema = cbor.decode(rawData);
+  const schema = cbor.decode(rawData)
 
-  const {kid, cert, country} = decodeCbor(rawData);
+  const { kid, cert, country } = decodeCbor(rawData)
 
-  const payload = cbor.decode(schema.value[2]);
+  const payload = cbor.decode(schema.value[2])
   const response: DecodedEudcc = {
     async verify() {
-      let verified = false;
+      let verified = false
       // find usable public key
-      const publicKey = publicKeys.find(pk => pk.kid === kid);
+      const publicKey = publicKeys.find((pk) => pk.kid === kid)
 
       // verify signature
       if (publicKey) {
         const c = Certificate.fromPEM(
           `-----BEGIN CERTIFICATE-----\n${publicKey.rawData}\n-----END CERTIFICATE-----` as unknown as Buffer,
-        );
-        const x = Buffer.from(c.publicKey.keyRaw.slice(1, 1 + 32));
-        const y = Buffer.from(c.publicKey.keyRaw.slice(33, 33 + 32));
+        )
+        const x = Buffer.from(c.publicKey.keyRaw.slice(1, 1 + 32))
+        const y = Buffer.from(c.publicKey.keyRaw.slice(33, 33 + 32))
         const verifyPayload = {
           key: {
             kid,
             x,
             y,
           },
-        };
+        }
 
-        const res = await cose.sign.verify(rawData, verifyPayload);
+        const res = await cose.sign.verify(rawData, verifyPayload)
         if (res.equals(schema.value[2])) {
-          verified = true;
+          verified = true
         } else {
-          throw new Error('Signature mismatch');
+          throw new Error('Signature mismatch')
         }
       } else {
-        throw new Error('No public key found');
+        throw new Error('No public key found')
       }
 
-      return verified;
+      return verified
     },
     issuer: country,
     issuedAt: new Date(payload.get(6) * 1000),
@@ -429,9 +429,9 @@ export function parseEudcc(data: string | any): DecodedEudcc {
     givenName: cert.nam.gn,
     familyName: cert.nam.fn,
     dateOfBirth: cert.dob?.split('T')[0],
-  };
+  }
 
-  response.vaccinations = cert.v?.map(v => ({
+  response.vaccinations = cert.v?.map((v) => ({
     disease: v.tg === '840539006' ? 'COVID-19' : v.tg,
     vaccineType: messages[v.vp] ?? v.vp,
     vaccineProduct: messages[v.mp] ?? v.mp,
@@ -442,9 +442,9 @@ export function parseEudcc(data: string | any): DecodedEudcc {
     country: v.co,
     issuer: v.is,
     certificateId: v.ci,
-  }));
+  }))
 
-  response.tests = cert.t?.map(t => ({
+  response.tests = cert.t?.map((t) => ({
     disease: t.tg === '840539006' ? 'COVID-19' : t.tg,
     testType: messages[t.tt] ?? t.tt,
     testName: t.nm ?? '',
@@ -455,9 +455,9 @@ export function parseEudcc(data: string | any): DecodedEudcc {
     country: t.co,
     issuer: t.is,
     certificateId: t.ci,
-  }));
+  }))
 
-  response.recoveries = cert.r?.map(r => ({
+  response.recoveries = cert.r?.map((r) => ({
     disease: r.tg === '840539006' ? 'COVID-19' : r.tg,
     firstPositiveTest: new Date(r.fr.split('T')[0]),
     country: r.co,
@@ -465,7 +465,7 @@ export function parseEudcc(data: string | any): DecodedEudcc {
     validFrom: new Date(r.df.split('T')[0]),
     validUntil: new Date(r.du.split('T')[0]),
     certificateId: r.ci,
-  }));
+  }))
 
-  return response;
+  return response
 }

@@ -1,9 +1,9 @@
-import { useTheme } from "styled-components/native";
-import { Button, blue400 } from "../../../ui";
-import { DynamicColorIOS, Platform } from "react-native";
+import { DynamicColorIOS, Platform } from 'react-native'
+import { useTheme } from 'styled-components/native'
+import { Button, blue400 } from '../../../ui'
 
 export const LightButton = (props: any) => {
-  const theme = useTheme();
+  const theme = useTheme()
   return (
     <Button
       {...props}
@@ -48,5 +48,5 @@ export const LightButton = (props: any) => {
         ...props.textStyle,
       }}
     />
-  );
-};
+  )
+}

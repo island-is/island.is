@@ -1,6 +1,6 @@
-import {bundleId, isTestingApp} from '../config';
+import { bundleId, isTestingApp } from '../config'
 
-const prefix = bundleId;
+const prefix = bundleId
 
 export const ComponentRegistry = {
   // dev screens
@@ -43,7 +43,7 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
-};
+}
 
 export const ButtonRegistry = {
   SettingsButton: `${prefix}.button.SettingsButton`,
@@ -55,7 +55,7 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
-};
+}
 
 export const StackRegistry = {
   LoginStack: `${prefix}.stack.LoginStack`,
@@ -65,6 +65,6 @@ export const StackRegistry = {
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
   MoreStack: `${prefix}.stack.MoreStack`,
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
-};
+}
 
-export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`;
+export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`

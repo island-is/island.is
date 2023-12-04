@@ -4,21 +4,24 @@ import {
   NavigationBarSheet,
   TextField,
   Typography,
-} from '@ui';
-import React from 'react';
-import {View, ScrollView, Alert} from 'react-native';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useIntl} from 'react-intl';
-import {testIDs} from '../../utils/test-ids';
-import {useUpdateUserProfile} from './profile-queries';
+} from '@ui'
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { Alert, ScrollView, View } from 'react-native'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { testIDs } from '../../utils/test-ids'
+import { useUpdateUserProfile } from './profile-queries'
 
-const {getNavigationOptions, useNavigationOptions} =
+const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
       visible: false,
     },
-  }));
+  }))
 
 export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   componentId,
@@ -27,58 +30,58 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   email,
   phone,
 }) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
-  const [text, onChangeText] = React.useState('');
-  const {updateUserProfile} = useUpdateUserProfile();
-  const disabled = text?.trim().length < 6;
-  const [loading, setLoading] = React.useState(false);
+  useNavigationOptions(componentId)
+  const intl = useIntl()
+  const [text, onChangeText] = React.useState('')
+  const { updateUserProfile } = useUpdateUserProfile()
+  const disabled = text?.trim().length < 6
+  const [loading, setLoading] = React.useState(false)
 
   const handleConfirm = async () => {
-    let input: any = {};
-    setLoading(true);
+    let input: any = {}
+    setLoading(true)
     if (type === 'email') {
-      input = {email: email, emailCode: text};
+      input = { email: email, emailCode: text }
     } else if (type === 'phone') {
-      input = {mobilePhoneNumber: phone, smsCode: text};
+      input = { mobilePhoneNumber: phone, smsCode: text }
     }
     try {
-      const res = await updateUserProfile(input);
+      const res = await updateUserProfile(input)
       if (res.data?.updateProfile) {
-        Navigation.dismissModal(componentId);
+        Navigation.dismissModal(componentId)
         if (parentComponentId) {
-          Navigation.dismissModal(parentComponentId);
+          Navigation.dismissModal(parentComponentId)
         }
       } else {
-        throw new Error('Failed');
+        throw new Error('Failed')
       }
     } catch (e) {
-      Alert.alert('Villa', 'Gat ekki uppfært upplýsingar');
+      Alert.alert('Villa', 'Gat ekki uppfært upplýsingar')
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   return (
-    <View style={{flex: 1}} testID={testIDs.SCREEN_EDIT_CONFIRM}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_EDIT_CONFIRM}>
       <NavigationBarSheet
         componentId={componentId}
-        title={intl.formatMessage({id: 'edit.confirm.screenTitle'})}
+        title={intl.formatMessage({ id: 'edit.confirm.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
-        style={{marginHorizontal: 16}}
+        style={{ marginHorizontal: 16 }}
       />
-      <ScrollView style={{flex: 1}} keyboardShouldPersistTaps="handled">
-        <View style={{paddingHorizontal: 16}}>
-          <View style={{marginBottom: 32, marginTop: 8}}>
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
+        <View style={{ paddingHorizontal: 16 }}>
+          <View style={{ marginBottom: 32, marginTop: 8 }}>
             <Typography>
               {intl.formatMessage(
-                {id: 'edit.confirm.description'},
-                {type: type},
+                { id: 'edit.confirm.description' },
+                { type: type },
               )}
             </Typography>
           </View>
-          <View style={{marginBottom: 16}}>
+          <View style={{ marginBottom: 16 }}>
             <TextField
-              label={intl.formatMessage({id: 'edit.confirm.inputlabel'})}
+              label={intl.formatMessage({ id: 'edit.confirm.inputlabel' })}
               value={text}
               onChange={onChangeText}
               placeholder="000000"
@@ -89,18 +92,18 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
             />
           </View>
           <Button
-            title={intl.formatMessage({id: 'edit.confirm.button'})}
+            title={intl.formatMessage({ id: 'edit.confirm.button' })}
             onPress={() => {
-              handleConfirm();
+              handleConfirm()
             }}
             style={{
               marginBottom: 24,
             }}
             disabled={disabled || loading}
           />
-          <View style={{alignItems: 'center'}}>
+          <View style={{ alignItems: 'center' }}>
             <CancelButton
-              title={intl.formatMessage({id: 'edit.cancel.button'})}
+              title={intl.formatMessage({ id: 'edit.cancel.button' })}
               onPress={() => Navigation.dismissModal(componentId)}
               isSmall
             />
@@ -108,7 +111,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-EditConfirmScreen.options = getNavigationOptions;
+EditConfirmScreen.options = getNavigationOptions

@@ -1,14 +1,14 @@
-import {Linking, NativeModules, Platform} from 'react-native';
-import {InAppBrowser} from 'react-native-inappbrowser-reborn';
-import {authStore} from '../stores/auth-store';
+import { Linking, NativeModules, Platform } from 'react-native'
+import { InAppBrowser } from 'react-native-inappbrowser-reborn'
+import { authStore } from '../stores/auth-store'
 
-const {RNIsland} = NativeModules;
+const { RNIsland } = NativeModules
 
 export function overrideUserInterfaceStyle(
   uiStyle: 'dark' | 'light' | 'automatic',
 ) {
   if (Platform.OS === 'ios') {
-    return RNIsland.overrideUserInterfaceStyle(uiStyle);
+    return RNIsland.overrideUserInterfaceStyle(uiStyle)
   }
 }
 
@@ -19,7 +19,7 @@ export async function openBrowser(url: string, componentId?: string) {
       preferredBarTintColor: undefined,
       preferredControlTintColor: undefined,
       dismissButtonStyle: 'done',
-    });
+    })
   }
 
   if (Platform.OS === 'android' && (await InAppBrowser.isAvailable())) {
@@ -34,15 +34,15 @@ export async function openBrowser(url: string, componentId?: string) {
       },
     })
       .then(() => null)
-      .catch(() => null);
+      .catch(() => null)
   }
 
   // Fallback to default openURL
-  Linking.canOpenURL(url).then(canOpen => {
+  Linking.canOpenURL(url).then((canOpen) => {
     if (canOpen) {
       return Linking.openURL(url)
         .then(() => null)
-        .catch(() => null);
+        .catch(() => null)
     }
-  });
+  })
 }

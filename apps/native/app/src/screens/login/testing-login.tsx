@@ -1,7 +1,9 @@
-import {Button, dynamicColor, font} from '@ui';
-import React, {useEffect, useState} from 'react';
+import { Button, dynamicColor, font } from '@ui'
+import React, { useEffect, useState } from 'react'
+import { FormattedMessage, useIntl } from 'react-intl'
 import {
   Alert,
+  AlertButton,
   Image,
   Linking,
   NativeEventEmitter,
@@ -11,101 +13,99 @@ import {
   Text,
   TouchableOpacity,
   View,
-  AlertButton,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import styled from 'styled-components/native';
-import logo from '../../assets/logo/logo-64w.png';
-import testinglogo from '../../assets/logo/testing-logo-64w.png';
-import {FormattedMessage, useIntl} from 'react-intl';
-import {openBrowser} from '../../lib/rn-island';
-import {useAuthStore} from '../../stores/auth-store';
-import {preferencesStore} from '../../stores/preferences-store';
-import {nextOnboardingStep} from '../../utils/onboarding';
-import {testIDs} from '../../utils/test-ids';
-import {environments, isTestingApp, useConfig} from '../../config';
-import {showPicker} from '../../lib/show-picker';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import styled from 'styled-components/native'
+import logo from '../../assets/logo/logo-64w.png'
+import testinglogo from '../../assets/logo/testing-logo-64w.png'
+import { environments, isTestingApp, useConfig } from '../../config'
+import { openBrowser } from '../../lib/rn-island'
+import { showPicker } from '../../lib/show-picker'
+import { useAuthStore } from '../../stores/auth-store'
 import {
   environmentStore,
   useEnvironmentStore,
-} from '../../stores/environment-store';
+} from '../../stores/environment-store'
+import { preferencesStore } from '../../stores/preferences-store'
+import { nextOnboardingStep } from '../../utils/onboarding'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
-`;
+`
 
 const Title = styled.Text`
   ${font({
     fontWeight: '600',
     fontSize: 26,
-    color: props => ({light: props.theme.color.dark400, dark: 'white'}),
+    color: (props) => ({ light: props.theme.color.dark400, dark: 'white' }),
   })}
   text-align: center;
   margin-top: 32px;
-`;
+`
 
 const BottomRow = styled.View`
   width: 100%;
   justify-content: space-between;
   flex-direction: row;
   padding: 32px;
-`;
+`
 
 const LightButtonText = styled.Text`
   ${font({
     fontWeight: '600',
-    color: props => props.theme.color.blue400,
+    color: (props) => props.theme.color.blue400,
   })}
-`;
+`
 
 function getChromeVersion(): Promise<number> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     NativeModules.IslandModule.getAppVersion(
       'com.android.chrome',
       (version: string) => {
         if (version) {
-          resolve(Number(version?.split('.')?.[0] || 0));
+          resolve(Number(version?.split('.')?.[0] || 0))
         } else {
-          resolve(0);
+          resolve(0)
         }
       },
-    );
-  });
+    )
+  })
 }
 
 export const TestingLoginScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  const authStore = useAuthStore();
-  const {environment = environments.prod, cognito} = useEnvironmentStore();
-  const intl = useIntl();
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const authStore = useAuthStore()
+  const { environment = environments.prod, cognito } = useEnvironmentStore()
+  const intl = useIntl()
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [authState, setAuthState] = useState<{
-    nonce: string;
-    codeChallenge: string;
-    state: string;
-  } | null>(null);
+    nonce: string
+    codeChallenge: string
+    state: string
+  } | null>(null)
 
   useEffect(() => {
     try {
-      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth);
-      const onAuthRequestInitiated = (event: any) => setAuthState(event);
+      const eventEmitter = new NativeEventEmitter(NativeModules.RNAppAuth)
+      const onAuthRequestInitiated = (event: any) => setAuthState(event)
       const subscription = eventEmitter.addListener(
         'onAuthRequestInitiated',
         onAuthRequestInitiated,
-      );
+      )
       return () => {
-        subscription.remove();
-      };
+        subscription.remove()
+      }
     } catch (err) {
       // noop
     }
-  }, []);
+  }, [])
 
   const onLoginPress = async () => {
     const isCognitoAuth =
-      cognito?.accessToken && cognito?.expiresAt > Date.now();
+      cognito?.accessToken && cognito?.expiresAt > Date.now()
     if (
       environment.idsIssuer !== 'https://innskra.island.is/' &&
       !isCognitoAuth
@@ -113,17 +113,17 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
       Alert.alert(
         'Cognito required',
         'Please authenticate with cognito before logging in.',
-      );
-      return;
+      )
+      return
     }
 
     if (Platform.OS === 'android') {
-      const chromeVersion = await getChromeVersion();
+      const chromeVersion = await getChromeVersion()
       if (chromeVersion < 55) {
         // Show dialog on how to update.
         Alert.alert(
-          intl.formatMessage({id: 'login.outdatedBrowserTitle'}),
-          intl.formatMessage({id: 'login.outdatedBrowserMessage'}),
+          intl.formatMessage({ id: 'login.outdatedBrowserTitle' }),
+          intl.formatMessage({ id: 'login.outdatedBrowserMessage' }),
           [
             {
               text: intl.formatMessage({
@@ -131,7 +131,7 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
               }),
               style: 'default',
               onPress() {
-                Linking.openURL('market://details?id=com.android.chrome');
+                Linking.openURL('market://details?id=com.android.chrome')
               },
             },
             {
@@ -141,50 +141,50 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
               }),
             },
           ],
-        );
-        return;
+        )
+        return
       }
     }
 
     if (isLoggingIn) {
-      return;
+      return
     }
 
-    setIsLoggingIn(true);
+    setIsLoggingIn(true)
     try {
-      const isAuth = await authStore.login();
+      const isAuth = await authStore.login()
       if (isAuth) {
-        const userInfo = await authStore.fetchUserInfo();
+        const userInfo = await authStore.fetchUserInfo()
         if (userInfo) {
-          await nextOnboardingStep();
+          await nextOnboardingStep()
         }
       }
     } catch (err) {
       if ((err as Error).message.indexOf('Connection error') >= 0) {
         Alert.alert(
-          intl.formatMessage({id: 'login.networkErrorTitle'}),
-          intl.formatMessage({id: 'login.networkErrorMessage'}),
-        );
+          intl.formatMessage({ id: 'login.networkErrorTitle' }),
+          intl.formatMessage({ id: 'login.networkErrorMessage' }),
+        )
       } else {
-        console.warn(err);
+        console.warn(err)
       }
     }
-    setIsLoggingIn(false);
-  };
+    setIsLoggingIn(false)
+  }
 
   const onLanguagePress = () => {
-    const {locale, setLocale} = preferencesStore.getState();
-    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US');
-  };
+    const { locale, setLocale } = preferencesStore.getState()
+    setLocale(locale === 'en-US' ? 'is-IS' : 'en-US')
+  }
 
   const onNeedHelpPress = () => {
-    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is';
-    openBrowser(helpDeskUrl, componentId);
-  };
+    const helpDeskUrl = 'https://island.is/flokkur/thjonusta-island-is'
+    openBrowser(helpDeskUrl, componentId)
+  }
 
   return (
     <Host testID={testIDs.SCREEN_LOGIN}>
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
             flex: 1,
@@ -192,18 +192,19 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
             justifyContent: 'center',
             paddingTop: 32,
             zIndex: 3,
-          }}>
+          }}
+        >
           <Image
             source={isTestingApp ? testinglogo : logo}
             resizeMode="contain"
-            style={{width: 48, height: 48}}
+            style={{ width: 48, height: 48 }}
           />
-          <View style={{maxWidth: 300, minHeight: 170}}>
+          <View style={{ maxWidth: 300, minHeight: 170 }}>
             <Title>
               <FormattedMessage id="login.welcomeMessage" />
             </Title>
           </View>
-          <View style={{position: 'absolute', opacity: 0, top: 0, left: 0}}>
+          <View style={{ position: 'absolute', opacity: 0, top: 0, left: 0 }}>
             <Text testID="auth_nonce">{authState?.nonce ?? 'noop1'}</Text>
             <Text testID="auth_code">
               {authState?.codeChallenge ?? 'noop2'}
@@ -211,10 +212,10 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
             <Text testID="auth_state">{authState?.state ?? 'noop3'}</Text>
           </View>
           <Button
-            title={intl.formatMessage({id: 'login.loginButtonText'})}
+            title={intl.formatMessage({ id: 'login.loginButtonText' })}
             testID={testIDs.LOGIN_BUTTON_AUTHENTICATE}
             onPress={onLoginPress}
-            style={{width: 213}}
+            style={{ width: 213 }}
           />
         </View>
         <BottomRow>
@@ -232,11 +233,11 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
       </SafeAreaView>
       <DebugInfo componentId={componentId} />
     </Host>
-  );
-};
+  )
+}
 
 const DebugHost = styled.SafeAreaView`
-  background-color: ${dynamicColor(props => ({
+  background-color: ${dynamicColor((props) => ({
     light: props.theme.color.blue100,
     dark: props.theme.shades.dark.background,
   }))};
@@ -244,13 +245,13 @@ const DebugHost = styled.SafeAreaView`
   max-height: 40%;
   align-items: center;
   justify-content: center;
-`;
+`
 
-function DebugRow({title, actions, value}: any) {
+function DebugRow({ title, actions, value }: any) {
   const textStyle = {
     lineHeight: 22,
     fontFamily: Platform.OS === 'ios' ? 'Menlo-Regular' : 'monospace',
-  };
+  }
   return (
     <View
       style={{
@@ -259,18 +260,20 @@ function DebugRow({title, actions, value}: any) {
         width: '100%',
         paddingHorizontal: 32,
         minHeight: 28,
-      }}>
+      }}
+    >
       <Text
         style={{
           ...textStyle,
           fontWeight: 'bold',
           paddingRight: 8,
           minWidth: 64,
-        }}>
+        }}
+      >
         {title}
         {value ? ':' : ''}
       </Text>
-      <Text selectable style={{...textStyle, flex: 1}}>
+      <Text selectable style={{ ...textStyle, flex: 1 }}>
         {value}
       </Text>
       {actions?.map((action: any, index: number) => (
@@ -293,26 +296,26 @@ function DebugRow({title, actions, value}: any) {
         />
       ))}
     </View>
-  );
+  )
 }
 
-function DebugInfo({componentId}: {componentId: string}) {
+function DebugInfo({ componentId }: { componentId: string }) {
   const {
     environment = environments.prod,
     cognito,
     actions,
     loading,
-  } = useEnvironmentStore();
-  const config = useConfig();
+  } = useEnvironmentStore()
+  const config = useConfig()
 
-  const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now();
+  const isCognitoAuth = cognito?.accessToken && cognito?.expiresAt > Date.now()
   const cognitoMinutes = Math.floor(
     (cognito?.expiresAt ? cognito.expiresAt - Date.now() : 0) / 1000 / 60,
-  );
+  )
 
   const onEnvironmentPress = () => {
     if (loading) {
-      return;
+      return
     }
     if (!isCognitoAuth) {
       return Alert.alert(
@@ -322,13 +325,13 @@ function DebugInfo({componentId}: {componentId: string}) {
           environment.id !== 'prod' && {
             text: 'Switch to Production',
             onPress: () => {
-              actions.setEnvironment(environments.prod);
+              actions.setEnvironment(environments.prod)
             },
           },
           {
             text: 'Login with cognito',
             onPress: () => {
-              onCognitoLoginPress();
+              onCognitoLoginPress()
             },
           },
           {
@@ -336,12 +339,12 @@ function DebugInfo({componentId}: {componentId: string}) {
             style: 'cancel',
           },
         ].filter(Boolean) as AlertButton[],
-      );
+      )
     }
     environmentStore
       .getState()
       .actions.loadEnvironments()
-      .then(res => {
+      .then((res) => {
         showPicker({
           type: 'radio',
           title: 'Select environment',
@@ -349,14 +352,14 @@ function DebugInfo({componentId}: {componentId: string}) {
           selectedId: environmentStore.getState().environment?.id,
           cancel: true,
         })
-          .then(({selectedItem}: any) => {
-            environmentStore.getState().actions.setEnvironment(selectedItem);
+          .then(({ selectedItem }: any) => {
+            environmentStore.getState().actions.setEnvironment(selectedItem)
           })
-          .catch(err => {
+          .catch((err) => {
             // noop
-          });
-      });
-  };
+          })
+      })
+  }
 
   const onCognitoLoginPress = () => {
     const params = {
@@ -366,10 +369,10 @@ function DebugInfo({componentId}: {componentId: string}) {
       response_type: 'token',
       scope: 'openid',
       state: 'state',
-    };
-    const url = `${config.cognitoUrl}?${new URLSearchParams(params)}`;
-    return openBrowser(url, componentId);
-  };
+    }
+    const url = `${config.cognitoUrl}?${new URLSearchParams(params)}`
+    return openBrowser(url, componentId)
+  }
 
   return (
     <DebugHost>
@@ -398,7 +401,7 @@ function DebugInfo({componentId}: {componentId: string}) {
         ]}
       />
     </DebugHost>
-  );
+  )
 }
 
 TestingLoginScreen.options = {
@@ -409,4 +412,4 @@ TestingLoginScreen.options = {
   layout: {
     orientation: ['portrait'],
   },
-};
+}

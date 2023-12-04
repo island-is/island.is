@@ -1,7 +1,6 @@
-import {useQuery} from '@apollo/client';
-import {EmptyList, Heading, ListButton, TopLine} from '@ui';
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {useIntl} from 'react-intl';
+import { EmptyList, Heading, ListButton, TopLine } from '@ui'
+import { useCallback, useMemo, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -9,45 +8,45 @@ import {
   RefreshControl,
   SafeAreaView,
   View,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import illustrationSrc from '../../assets/illustrations/le-company-s3.png';
-import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useActiveTabItemPress} from '../../hooks/use-active-tab-item-press';
-import {openBrowser} from '../../lib/rn-island';
-import {getRightButtons} from '../../utils/get-main-root';
-import {testIDs} from '../../utils/test-ids';
-import {ApplicationsModule} from '../home/applications-module';
-import {getApplicationOverviewUrl} from '../../utils/applications-utils';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   Application,
   SearchArticleFragmentFragment,
   SearchableContentTypes,
   useListApplicationsQuery,
   useListSearchQuery,
-} from '../../graphql/types/schema';
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { openBrowser } from '../../lib/rn-island'
+import { getApplicationOverviewUrl } from '../../utils/applications-utils'
+import { getRightButtons } from '../../utils/get-main-root'
+import { testIDs } from '../../utils/test-ids'
+import { ApplicationsModule } from '../home/applications-module'
 
 type ListItem =
-  | {id: string; __typename: 'Skeleton'}
-  | SearchArticleFragmentFragment;
+  | { id: string; __typename: 'Skeleton' }
+  | SearchArticleFragmentFragment
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'applications.title'}),
+          text: intl.formatMessage({ id: 'applications.title' }),
         },
         searchBar: {
           visible: false,
         },
-        rightButtons: initialized ? getRightButtons({theme} as any) : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
         text: initialized
-          ? intl.formatMessage({id: 'applications.bottomTabText'})
+          ? intl.formatMessage({ id: 'applications.bottomTabText' })
           : '',
       },
     }),
@@ -70,16 +69,16 @@ const {useNavigationOptions, getNavigationOptions} =
         selectedIcon: require('../../assets/icons/tabbar-applications-selected.png'),
       },
     },
-  );
+  )
 
 export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  useNavigationOptions(componentId);
-  const flatListRef = useRef<FlatList>(null);
-  const [loading, setLoading] = useState(false);
-  const intl = useIntl();
-  const scrollY = useRef(new Animated.Value(0)).current;
+  useNavigationOptions(componentId)
+  const flatListRef = useRef<FlatList>(null)
+  const [loading, setLoading] = useState(false)
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
 
   const res = useListSearchQuery({
     variables: {
@@ -91,53 +90,56 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         page: 1,
       },
     },
-  });
+  })
 
-  const applicationsRes = useListApplicationsQuery();
+  const applicationsRes = useListApplicationsQuery()
 
   const data = useMemo<ListItem[]>(() => {
     if (!res.data && res.loading) {
-      return Array.from({length: 8}).map((_, id) => ({
+      return Array.from({ length: 8 }).map((_, id) => ({
         __typename: 'Skeleton',
         id: id.toString(),
-      }));
+      }))
     }
 
     if (!res.loading && res.data) {
       const articles = [
         ...(res?.data?.searchResults?.items ?? []),
-      ] as SearchArticleFragmentFragment[];
-      return articles.sort((a, b) => a.title.localeCompare(b.title));
+      ] as SearchArticleFragmentFragment[]
+      return articles.sort((a, b) => a.title.localeCompare(b.title))
     }
-    return [];
-  }, [res.data, res.loading]);
+    return []
+  }, [res.data, res.loading])
 
-  const renderItem = useCallback(({item}: {item: ListItem; index: number}) => {
-    if (item.__typename === 'Skeleton') {
-      return <ListButton title="skeleton" isLoading />;
-    }
-    if (item.__typename === 'Article') {
-      return (
-        <ListButton
-          key={item.id}
-          title={item.title}
-          onPress={() =>
-            openBrowser(getApplicationOverviewUrl(item), componentId)
-          }
-        />
-      );
-    }
-    return null;
-  }, []);
+  const renderItem = useCallback(
+    ({ item }: { item: ListItem; index: number }) => {
+      if (item.__typename === 'Skeleton') {
+        return <ListButton title="skeleton" isLoading />
+      }
+      if (item.__typename === 'Article') {
+        return (
+          <ListButton
+            key={item.id}
+            title={item.title}
+            onPress={() =>
+              openBrowser(getApplicationOverviewUrl(item), componentId)
+            }
+          />
+        )
+      }
+      return null
+    },
+    [],
+  )
 
   useActiveTabItemPress(3, () => {
     flatListRef.current?.scrollToOffset({
       offset: -150,
       animated: true,
-    });
-  });
+    })
+  })
 
-  const keyExtractor = useCallback((item: ListItem) => item.id, []);
+  const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
   return (
     <>
@@ -147,7 +149,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
@@ -156,16 +158,16 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         keyboardDismissMode="on-drag"
         data={data}
         ListEmptyComponent={
-          <View style={{marginTop: 80, paddingHorizontal: 16}}>
+          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
             <EmptyList
-              title={intl.formatMessage({id: 'applications.emptyListTitle'})}
+              title={intl.formatMessage({ id: 'applications.emptyListTitle' })}
               description={intl.formatMessage({
                 id: 'applications.emptyListDescription',
               })}
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{height: 176, width: 134}}
+                  style={{ height: 176, width: 134 }}
                 />
               }
             />
@@ -173,7 +175,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         }
         renderItem={renderItem}
         ListHeaderComponent={
-          <View style={{flex: 1}}>
+          <View style={{ flex: 1 }}>
             <ApplicationsModule
               applications={
                 (applicationsRes.data?.applicationApplications ??
@@ -183,9 +185,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               componentId={componentId}
               hideAction={true}
             />
-            <SafeAreaView style={{marginHorizontal: 16}}>
+            <SafeAreaView style={{ marginHorizontal: 16 }}>
               <Heading>
-                {intl.formatMessage({id: 'home.allApplications'})}
+                {intl.formatMessage({ id: 'home.allApplications' })}
               </Heading>
             </SafeAreaView>
           </View>
@@ -194,19 +196,19 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           <RefreshControl
             refreshing={loading}
             onRefresh={() => {
-              setLoading(true);
+              setLoading(true)
               try {
                 res
                   ?.refetch?.()
                   ?.then(() => {
-                    setLoading(false);
+                    setLoading(false)
                   })
                   .catch(() => {
-                    setLoading(false);
-                  });
+                    setLoading(false)
+                  })
               } catch (err) {
                 // noop
-                setLoading(false);
+                setLoading(false)
               }
             }}
           />
@@ -215,7 +217,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       <BottomTabsIndicator index={3} total={5} />
       <TopLine scrollY={scrollY} />
     </>
-  );
-};
+  )
+}
 
-ApplicationsScreen.options = getNavigationOptions;
+ApplicationsScreen.options = getNavigationOptions

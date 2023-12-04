@@ -1,6 +1,6 @@
-import {useQuery} from '@apollo/client';
-import {AssetCard, EmptyList, Skeleton, TopLine} from '@ui';
-import React, {useCallback, useRef, useState} from 'react';
+import { AssetCard, EmptyList, Skeleton, TopLine } from '@ui'
+import React, { useCallback, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
   Animated,
   FlatList,
@@ -9,47 +9,45 @@ import {
   SafeAreaView,
   TouchableHighlight,
   View,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import {client} from '../../graphql/client';
-import {useIntl} from 'react-intl';
-import {useTheme} from 'styled-components/native';
-import {testIDs} from '../../utils/test-ids';
-import illustrationSrc from '../../assets/illustrations/le-moving-s1.png';
-import {BottomTabsIndicator} from '../../components/bottom-tabs-indicator/bottom-tabs-indicator';
-import {navigateTo} from '../../lib/deep-linking';
-// import {GET_REAL_ESTATE_QUREY} from '../../graphql/queries/get-real-estate.graphql';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {useListAssetsQuery} from '../../graphql/types/schema';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useTheme } from 'styled-components/native'
+import illustrationSrc from '../../assets/illustrations/le-moving-s1.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useListAssetsQuery } from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { navigateTo } from '../../lib/deep-linking'
+import { testIDs } from '../../utils/test-ids'
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({
     topBar: {
       title: {
-        text: intl.formatMessage({id: 'assetsOvervies.screenTitle'}),
+        text: intl.formatMessage({ id: 'assetsOvervies.screenTitle' }),
       },
     },
-  }));
+  }))
 
-const AssetItem = React.memo(({item}: {item: any}) => {
-  const theme = useTheme();
+const AssetItem = React.memo(({ item }: { item: any }) => {
+  const theme = useTheme()
   const postNumber =
     item?.defaultAddress?.postNumber !== null
       ? item?.defaultAddress?.postNumber
-      : '';
+      : ''
 
   return (
-    <View style={{paddingHorizontal: 16}}>
+    <View style={{ paddingHorizontal: 16 }}>
       <TouchableHighlight
         underlayColor={
           theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
         }
-        style={{marginBottom: 16, borderRadius: 16}}
+        style={{ marginBottom: 16, borderRadius: 16 }}
         onPress={() => {
           navigateTo(`/asset/${item.propertyNumber}`, {
             item,
-          });
-        }}>
+          })
+        }}
+      >
         <SafeAreaView>
           <AssetCard
             address={item?.defaultAddress?.displayShort}
@@ -59,19 +57,19 @@ const AssetItem = React.memo(({item}: {item: any}) => {
         </SafeAreaView>
       </TouchableHighlight>
     </View>
-  );
-});
+  )
+})
 
 export const AssetsOverviewScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
-  useNavigationOptions(componentId);
-  const flatListRef = useRef<FlatList>(null);
-  const [loading, setLoading] = useState(false);
-  const intl = useIntl();
-  const theme = useTheme();
-  const scrollY = useRef(new Animated.Value(0)).current;
-  const loadingTimeout = useRef<number>();
+  useNavigationOptions(componentId)
+  const flatListRef = useRef<FlatList>(null)
+  const [loading, setLoading] = useState(false)
+  const intl = useIntl()
+  const theme = useTheme()
+  const scrollY = useRef(new Animated.Value(0)).current
+  const loadingTimeout = useRef<number>()
 
   const assetsRes = useListAssetsQuery({
     fetchPolicy: 'cache-first',
@@ -80,43 +78,43 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
         cursor: '1',
       },
     },
-  });
+  })
 
-  const isSkeleton = assetsRes.loading && !assetsRes.data;
-  const assetsList = assetsRes?.data?.assetsOverview?.properties || [];
+  const isSkeleton = assetsRes.loading && !assetsRes.data
+  const assetsList = assetsRes?.data?.assetsOverview?.properties || []
 
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current);
+        clearTimeout(loadingTimeout.current)
       }
-      setLoading(true);
+      setLoading(true)
       assetsRes
         .refetch()
         .then(() => {
-          (loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false);
-          }, 1331);
+          ;(loadingTimeout as any).current = setTimeout(() => {
+            setLoading(false)
+          }, 1331)
         })
         .catch(() => {
-          setLoading(false);
-        });
+          setLoading(false)
+        })
     } catch (err) {
-      setLoading(false);
+      setLoading(false)
     }
-  }, []);
+  }, [])
 
   const paginate = () => {
     const newCursor = Math.ceil(
       assetsList.length /
         (assetsRes?.data?.assetsOverview?.paging?.pageSize ?? 0) +
         1,
-    );
+    )
 
     if (
       newCursor > (assetsRes?.data?.assetsOverview?.paging?.totalPages ?? 1)
     ) {
-      return;
+      return
     }
 
     if (assetsRes.fetchMore && assetsList.length > 0) {
@@ -126,8 +124,8 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
             cursor: newCursor,
           },
         },
-        updateQuery: (prevResult: any, {fetchMoreResult}) => {
-          if (!fetchMoreResult) return prevResult;
+        updateQuery: (prevResult: any, { fetchMoreResult }) => {
+          if (!fetchMoreResult) return prevResult
 
           if (
             fetchMoreResult?.assetsOverview?.properties &&
@@ -136,18 +134,18 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
             fetchMoreResult.assetsOverview.properties = [
               ...(prevResult.assetsOverview?.properties ?? []),
               ...(fetchMoreResult.assetsOverview?.properties ?? []),
-            ];
+            ]
           }
-          return fetchMoreResult;
+          return fetchMoreResult
         },
-      });
+      })
     }
-  };
+  }
 
-  const renderItem = ({item}: {item: any}) => {
+  const renderItem = ({ item }: { item: any }) => {
     if (item.type === 'skeleton') {
       return (
-        <View style={{paddingHorizontal: 16}}>
+        <View style={{ paddingHorizontal: 16 }}>
           <Skeleton
             active
             backgroundColor={{
@@ -166,44 +164,44 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
             }}
           />
         </View>
-      );
+      )
     }
 
     if (item.type === 'empty') {
       return (
-        <View style={{marginTop: 80, paddingHorizontal: 16}}>
+        <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
           <EmptyList
-            title={intl.formatMessage({id: 'assetsOverview.emptyListTitle'})}
+            title={intl.formatMessage({ id: 'assetsOverview.emptyListTitle' })}
             description={intl.formatMessage({
               id: 'assetsOverview.emptyListDescription',
             })}
             image={
               <Image
                 source={illustrationSrc}
-                style={{width: 145, height: 192}}
+                style={{ width: 145, height: 192 }}
                 resizeMode="contain"
               />
             }
           />
         </View>
-      );
+      )
     }
 
-    return <AssetItem item={item} />;
-  };
+    return <AssetItem item={item} />
+  }
 
   const keyExtractor = useCallback(
     (item: any) => item?.propertyNumber ?? item?.id,
     [],
-  );
+  )
 
-  const emptyItems = [{id: '0', type: 'empty'}];
-  const skeletonItems = Array.from({length: 5}).map((_, id) => ({
+  const emptyItems = [{ id: '0', type: 'empty' }]
+  const skeletonItems = Array.from({ length: 5 }).map((_, id) => ({
     id,
     type: 'skeleton',
-  }));
+  }))
 
-  const isEmpty = assetsList.length === 0;
+  const isEmpty = assetsList.length === 0
   return (
     <>
       <Animated.FlatList
@@ -225,7 +223,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}
         onScroll={Animated.event(
-          [{nativeEvent: {contentOffset: {y: scrollY}}}],
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
@@ -239,7 +237,7 @@ export const AssetsOverviewScreen: NavigationFunctionComponent = ({
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={2} total={3} />
     </>
-  );
-};
+  )
+}
 
-AssetsOverviewScreen.options = getNavigationOptions;
+AssetsOverviewScreen.options = getNavigationOptions

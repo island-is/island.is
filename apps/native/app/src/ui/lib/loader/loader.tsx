@@ -1,14 +1,14 @@
-import React, {useEffect, useRef} from 'react';
-import {Animated, View} from 'react-native';
-import styled from 'styled-components/native';
-import {dynamicColor, spacing} from '../../utils';
-import {font} from '../../utils/font';
+import React, { useEffect, useRef } from 'react'
+import { Animated, View } from 'react-native'
+import styled from 'styled-components/native'
+import { dynamicColor, spacing } from '../../utils'
+import { font } from '../../utils/font'
 
 const Host = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
+`
 
 const Text = styled.Text`
   margin-bottom: ${spacing(3)};
@@ -17,7 +17,7 @@ const Text = styled.Text`
     lineHeight: 24,
   })}
   text-align: center;
-`;
+`
 
 const Wrapper = styled.View`
   display: flex;
@@ -27,38 +27,38 @@ const Wrapper = styled.View`
 
   width: ${spacing(5)};
   height: ${spacing(2)};
-`;
+`
 
 const AnimatedCircle = styled(Animated.View)`
   height: ${spacing(1)};
   width: ${spacing(1)};
-  border-radius: ${({theme}) => theme.border.radius.large};
-  background-color: ${dynamicColor(({theme}) => ({
+  border-radius: ${({ theme }) => theme.border.radius.large};
+  background-color: ${dynamicColor(({ theme }) => ({
     light: theme.color.blue400,
     dark: theme.color.blue600,
   }))};
-`;
+`
 
 interface LoaderProps {
-  text?: string;
+  text?: string
 }
 
-export function Loader({text}: LoaderProps) {
-  const animRef = useRef<Animated.CompositeAnimation>();
+export function Loader({ text }: LoaderProps) {
+  const animRef = useRef<Animated.CompositeAnimation>()
   const scales = useRef<Animated.Value[]>([
     new Animated.Value(0),
     new Animated.Value(0),
     new Animated.Value(0),
-  ]).current;
+  ]).current
 
   const animation = () => {
     if (animRef.current) {
-      scales.forEach(scale => scale.setValue(0));
-      animRef.current.stop();
+      scales.forEach((scale) => scale.setValue(0))
+      animRef.current.stop()
     }
 
-    const duration = 1400;
-    const delay = 400;
+    const duration = 1400
+    const delay = 400
 
     function seq(i: number) {
       return Animated.loop(
@@ -74,20 +74,20 @@ export function Loader({text}: LoaderProps) {
             useNativeDriver: true,
           }),
         ]),
-      );
+      )
     }
-    animRef.current = Animated.stagger(delay, [seq(0), seq(1), seq(2)]);
-    animRef.current.start();
-  };
+    animRef.current = Animated.stagger(delay, [seq(0), seq(1), seq(2)])
+    animRef.current.start()
+  }
 
   useEffect(() => {
-    animation();
+    animation()
     return () => {
       if (animRef.current) {
-        animRef.current.reset();
+        animRef.current.reset()
       }
-    };
-  }, []);
+    }
+  }, [])
 
   const renderCircle = (i: number) => {
     return (
@@ -108,8 +108,8 @@ export function Loader({text}: LoaderProps) {
           ],
         }}
       />
-    );
-  };
+    )
+  }
 
   return (
     <Host>
@@ -120,5 +120,5 @@ export function Loader({text}: LoaderProps) {
         {renderCircle(2)}
       </Wrapper>
     </Host>
-  );
+  )
 }

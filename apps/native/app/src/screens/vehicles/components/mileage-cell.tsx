@@ -1,7 +1,7 @@
-import {Skeleton, Typography, useDynamicColor} from '@ui';
-import {Image, Pressable, View} from 'react-native';
-import clock from '../../../assets/icons/clock.png';
-import {useIntl} from 'react-intl';
+import { Skeleton, Typography, useDynamicColor } from '@ui'
+import { useIntl } from 'react-intl'
+import { Image, Pressable, View } from 'react-native'
+import clock from '../../../assets/icons/clock.png'
 
 export function MileageCell({
   title,
@@ -11,15 +11,15 @@ export function MileageCell({
   onPress,
   skeleton,
 }: {
-  title?: React.ReactNode;
-  subtitle?: React.ReactNode;
-  accessory?: React.ReactNode;
-  editable?: boolean;
-  onPress?(): void;
-  skeleton?: boolean;
+  title?: React.ReactNode
+  subtitle?: React.ReactNode
+  accessory?: React.ReactNode
+  editable?: boolean
+  onPress?(): void
+  skeleton?: boolean
 }) {
-  const intl = useIntl();
-  const dynamicColor = useDynamicColor();
+  const intl = useIntl()
+  const dynamicColor = useDynamicColor()
   if (skeleton) {
     return (
       <Skeleton
@@ -30,7 +30,7 @@ export function MileageCell({
           marginBottom: 8,
         }}
       />
-    );
+    )
   }
   return (
     <Pressable onPress={editable ? onPress : undefined}>
@@ -47,9 +47,10 @@ export function MileageCell({
           }),
           gap: 4,
           marginBottom: 8,
-        }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Typography weight="600" style={{flex: 1}}>
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Typography weight="600" style={{ flex: 1 }}>
             {title}
           </Typography>
           {editable && (
@@ -59,17 +60,18 @@ export function MileageCell({
                 dark: dynamicColor.theme.color.blue400,
               })}
               weight="600"
-              size={12}>
-              {intl.formatMessage({id: 'vehicle.mileage.editRecordButton'})}
+              size={12}
+            >
+              {intl.formatMessage({ id: 'vehicle.mileage.editRecordButton' })}
             </Typography>
           )}
-          {editable && <Image source={clock} style={{marginLeft: 4}} />}
+          {editable && <Image source={clock} style={{ marginLeft: 4 }} />}
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Typography>{subtitle}</Typography>
           <Typography weight="600">{accessory}</Typography>
         </View>
       </View>
     </Pressable>
-  );
+  )
 }

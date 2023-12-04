@@ -1,7 +1,7 @@
-import {Platform} from 'react-native';
-import {Options} from 'react-native-navigation';
-import {preferencesStore} from '../stores/preferences-store';
-import {getThemeWithPreferences} from './get-theme-with-preferences';
+import { Platform } from 'react-native'
+import { Options } from 'react-native-navigation'
+import { preferencesStore } from '../stores/preferences-store'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
   theme = getThemeWithPreferences(preferencesStore.getState()),
@@ -77,5 +77,5 @@ export function getDefaultOptions(
           }
         : {}),
     },
-  };
+  }
 }

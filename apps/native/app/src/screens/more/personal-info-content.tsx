@@ -1,43 +1,40 @@
-import {useQuery} from '@apollo/client';
-import {Alert, Button, Input, InputRow} from '@ui';
-import React from 'react';
-import {ScrollView, View} from 'react-native';
-// import {client} from '../../graphql/client';
-// import {NATION_REGISTRY_USER_QUERY} from '../../graphql/queries/national-registry-user.graphql';
-import {useIntl} from 'react-intl';
-import {usePreferencesStore} from '../../stores/preferences-store';
-import {testIDs} from '../../utils/test-ids';
-import {navigateTo} from '../../lib/deep-linking';
-import {useNationalRegistryUserQuery} from '../../graphql/types/schema';
+import { Alert, Button, Input, InputRow } from '@ui'
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { ScrollView, View } from 'react-native'
+import { useNationalRegistryUserQuery } from '../../graphql/types/schema'
+import { navigateTo } from '../../lib/deep-linking'
+import { usePreferencesStore } from '../../stores/preferences-store'
+import { testIDs } from '../../utils/test-ids'
 
 export function formatNationalId(str = '') {
-  return [str.substr(0, 6), str.substr(6, 4)].join('-');
+  return [str.substr(0, 6), str.substr(6, 4)].join('-')
 }
 
 export function PersonalInfoContent() {
-  const intl = useIntl();
-  const {dismiss, dismissed} = usePreferencesStore();
+  const intl = useIntl()
+  const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useNationalRegistryUserQuery({
     fetchPolicy: 'cache-and-network',
-  });
-  const natRegData = natRegRes?.data?.nationalRegistryUser;
-  const errorNatReg = !!natRegRes.error;
-  const loadingNatReg = natRegRes.loading;
+  })
+  const natRegData = natRegRes?.data?.nationalRegistryUser
+  const errorNatReg = !!natRegRes.error
+  const loadingNatReg = natRegRes.loading
 
   return (
-    <ScrollView style={{flex: 1}} testID={testIDs.USER_SCREEN_PROFILE_INFO}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_PROFILE_INFO}>
       <Alert
         type="info"
         visible={!dismissed.includes('userNatRegInformational')}
-        message={intl.formatMessage({id: 'user.natreg.infoBox'})}
+        message={intl.formatMessage({ id: 'user.natreg.infoBox' })}
         onClose={() => dismiss('userNatRegInformational')}
         hideIcon
       />
-      <View style={{height: 8}} />
+      <View style={{ height: 8 }} />
       <Input
         loading={loadingNatReg}
         error={errorNatReg}
-        label={intl.formatMessage({id: 'user.natreg.displayName'})}
+        label={intl.formatMessage({ id: 'user.natreg.displayName' })}
         value={natRegData?.fullName}
         valueTestID={testIDs.USER_PROFILE_INFO_DISPLAY_NAME_VALUE}
       />
@@ -45,7 +42,7 @@ export function PersonalInfoContent() {
         <Input
           loading={loadingNatReg}
           error={errorNatReg}
-          label={intl.formatMessage({id: 'user.natreg.nationalId'})}
+          label={intl.formatMessage({ id: 'user.natreg.nationalId' })}
           value={
             !loadingNatReg && !errorNatReg && natRegData?.nationalId
               ? formatNationalId(String(natRegData?.nationalId))
@@ -55,25 +52,25 @@ export function PersonalInfoContent() {
         <Input
           loading={loadingNatReg}
           error={errorNatReg}
-          label={intl.formatMessage({id: 'user.natreg.birthPlace'})}
+          label={intl.formatMessage({ id: 'user.natreg.birthPlace' })}
           value={natRegData?.birthPlace}
         />
       </InputRow>
       <Input
         loading={loadingNatReg}
         error={errorNatReg}
-        label={intl.formatMessage({id: 'user.natreg.legalResidence'})}
+        label={intl.formatMessage({ id: 'user.natreg.legalResidence' })}
         value={natRegData?.legalResidence}
       />
       <InputRow>
         <Input
           loading={loadingNatReg}
           error={errorNatReg}
-          label={intl.formatMessage({id: 'user.natreg.gender'})}
+          label={intl.formatMessage({ id: 'user.natreg.gender' })}
           value={
             !loadingNatReg && !errorNatReg
               ? intl.formatMessage(
-                  {id: 'user.natreg.genderValue'},
+                  { id: 'user.natreg.genderValue' },
                   {
                     gender: natRegData?.gender ?? '',
                   },
@@ -90,7 +87,7 @@ export function PersonalInfoContent() {
           value={
             !loadingNatReg && !errorNatReg
               ? intl.formatMessage(
-                  {id: 'user.natreg.maritalStatusValue'},
+                  { id: 'user.natreg.maritalStatusValue' },
                   {
                     gender: natRegData?.gender ?? '',
                     maritalStatus: natRegData?.maritalStatus ?? '',
@@ -103,17 +100,17 @@ export function PersonalInfoContent() {
       <Input
         loading={loadingNatReg}
         error={errorNatReg}
-        label={intl.formatMessage({id: 'user.natreg.citizenship'})}
+        label={intl.formatMessage({ id: 'user.natreg.citizenship' })}
         value={natRegData?.citizenship?.name}
       />
       <Input
         loading={loadingNatReg}
         error={errorNatReg}
-        label={intl.formatMessage({id: 'user.natreg.religion'})}
+        label={intl.formatMessage({ id: 'user.natreg.religion' })}
         value={natRegData?.religion}
       />
 
-      <View style={{paddingHorizontal: 16, paddingVertical: 32}}>
+      <View style={{ paddingHorizontal: 16, paddingVertical: 32 }}>
         <Button
           isOutlined
           title="Fara í stillingar"
@@ -121,5 +118,5 @@ export function PersonalInfoContent() {
         />
       </View>
     </ScrollView>
-  );
+  )
 }

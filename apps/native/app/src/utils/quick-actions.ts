@@ -1,6 +1,6 @@
-import QuickActions from 'react-native-quick-actions';
-import {navigateTo} from '../lib/deep-linking';
-import {bundleId} from '../config';
+import QuickActions from 'react-native-quick-actions'
+import { bundleId } from '../config'
+import { navigateTo } from '../lib/deep-linking'
 
 const shortcutItems = [
   {
@@ -30,20 +30,20 @@ const shortcutItems = [
       url: `${bundleId}://user`,
     },
   },
-];
+]
 
 export function setupQuickActions() {
-  QuickActions.setShortcutItems(shortcutItems);
+  QuickActions.setShortcutItems(shortcutItems)
   QuickActions.popInitialAction()
     .then(handleQuickAction)
     .catch(() => {
       // noop
-    });
+    })
 }
 
-export function handleQuickAction({type}: any) {
-  const shortcut = shortcutItems.find(s => s.type === type);
+export function handleQuickAction({ type }: any) {
+  const shortcut = shortcutItems.find((s) => s.type === type)
   if (shortcut) {
-    navigateTo(shortcut.userInfo.url.replace(`${bundleId}:/`, ''));
+    navigateTo(shortcut.userInfo.url.replace(`${bundleId}:/`, ''))
   }
 }

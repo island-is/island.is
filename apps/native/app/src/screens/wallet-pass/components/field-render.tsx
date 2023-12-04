@@ -1,29 +1,28 @@
-// import {useQuery} from '@apollo/client';
-import {Field, FieldCard, FieldGroup, FieldLabel, FieldRow} from '@ui';
-import React from 'react';
-import {View} from 'react-native';
+import { Field, FieldCard, FieldGroup, FieldLabel, FieldRow } from '@ui'
+import React from 'react'
+import { View } from 'react-native'
 import {
   GenericLicenseDataField,
   GenericLicenseType,
-} from '../../../graphql/types/schema';
+} from '../../../graphql/types/schema'
 
 export const FieldRender = ({
   data,
   level = 1,
   licenseType,
 }: {
-  data: GenericLicenseDataField[];
-  level?: number;
-  licenseType?: GenericLicenseType;
+  data: GenericLicenseDataField[]
+  level?: number
+  licenseType?: GenericLicenseType
 }) => {
   return (
     <>
       {(data || []).map(
         (
-          {type, name, label, value, fields}: GenericLicenseDataField,
+          { type, name, label, value, fields }: GenericLicenseDataField,
           i: number,
         ) => {
-          const key = `field-${type}-${i}`;
+          const key = `field-${type}-${i}`
 
           switch (type) {
             case 'Value':
@@ -38,15 +37,15 @@ export const FieldRender = ({
                       />
                     </FieldRow>
                   </FieldGroup>
-                );
+                )
               } else {
-                return <Field key={key} label={label} value={value} compact />;
+                return <Field key={key} label={label} value={value} compact />
               }
 
             case 'Group':
               if (label) {
                 return (
-                  <View key={key} style={{marginTop: 24, paddingBottom: 4}}>
+                  <View key={key} style={{ marginTop: 24, paddingBottom: 4 }}>
                     <FieldLabel>{label}</FieldLabel>
                     {FieldRender({
                       data: fields as GenericLicenseDataField[],
@@ -54,7 +53,7 @@ export const FieldRender = ({
                       licenseType: licenseType,
                     })}
                   </View>
-                );
+                )
               }
               return (
                 <FieldGroup key={key}>
@@ -66,7 +65,7 @@ export const FieldRender = ({
                     })}
                   </FieldRow>
                 </FieldGroup>
-              );
+              )
 
             case 'Category':
               return (
@@ -75,7 +74,8 @@ export const FieldRender = ({
                   code={name ?? undefined}
                   title={label ?? undefined}
                   type={licenseType}
-                  hasFields={!!fields}>
+                  hasFields={!!fields}
+                >
                   <FieldRow>
                     {FieldRender({
                       data: fields as GenericLicenseDataField[],
@@ -84,13 +84,13 @@ export const FieldRender = ({
                     })}
                   </FieldRow>
                 </FieldCard>
-              );
+              )
 
             default:
-              return <Field key={key} label={label} value={value} />;
+              return <Field key={key} label={label} value={value} />
           }
         },
       )}
     </>
-  );
-};
+  )
+}
