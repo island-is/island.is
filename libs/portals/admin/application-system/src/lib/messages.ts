@@ -98,6 +98,10 @@ export const m = defineMessages({
     id: 'admin-portal.application-system:copySuccessful',
     defaultMessage: 'Tengill afritaður',
   },
+  applicationPruned: {
+    id: 'admin-portal.application-system:applicationPruned',
+    defaultMessage: 'Persónugögnum hefur verið eytt úr þessari umsókn.',
+  },
 
   // Tags
   tagsInProgress: {

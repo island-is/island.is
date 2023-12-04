@@ -97,26 +97,16 @@ const buildHistoryItems = (
 
 interface Props {
   application: AdminApplication
-  organizations: Organization[]
   onCopyButtonClick: (application: AdminApplication) => void
   shouldShowCardButtons?: boolean
 }
 
 export const ApplicationDetails = ({
   application,
-  organizations,
   onCopyButtonClick,
   shouldShowCardButtons = true,
 }: Props) => {
   const { formatMessage } = useLocale()
-  const tag = statusMapper[application.status]
-  const logo = getLogo(application.typeId, organizations)
-  const actionCard = application.actionCard
-  const historyItems = buildHistoryItems(application, formatMessage)
-  const showHistory =
-    application.status !== ApplicationListAdminResponseDtoStatusEnum.draft &&
-    historyItems &&
-    historyItems.length > 0
 
   return (
     <Box>
@@ -166,14 +156,29 @@ export const ApplicationDetails = ({
             </Box>
           </Box>
         ))}
+      {application.pruned && (
+        <Box marginTop={[2, 2, 3]}>
+          <AlertMessage
+            type="warning"
+            message={formatMessage(m.applicationPruned)}
+          />
+        </Box>
+      )}
       <Box
         display="flex"
         justifyContent="spaceBetween"
         alignItems="center"
-        marginBottom={[2, 2, 3]}
-        marginTop={[5, 5, 6]}
+        marginY={[2, 2, 3]}
       >
-        <Text variant="h3">{formatMessage(m.application)}</Text>
+        <Box>
+          <Text variant="h3">{formatMessage(m.application)}</Text>
+          <Text variant="small">
+            <Text as="span" variant="small" fontWeight="semiBold">
+              ID:{' '}
+            </Text>
+            {application.id}
+          </Text>
+        </Box>
         <Tooltip
           text={formatMessage(m.copyLinkToApplication)}
           // We are already in a portal,
