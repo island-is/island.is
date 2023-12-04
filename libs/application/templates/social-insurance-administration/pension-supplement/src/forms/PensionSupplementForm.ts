@@ -91,38 +91,57 @@ export const PensionSupplementForm: Form = buildForm({
             }),
           ],
         }),
-        buildSubSection({
-          id: 'reason',
+      ],
+    }),
+    buildSection({
+      id: 'reason',
+      title: pensionSupplementFormMessage.applicationReason.title,
+      children: [
+        buildCheckboxField({
+          id: 'applicationReason',
           title: pensionSupplementFormMessage.applicationReason.title,
-          children: [
-            buildCheckboxField({
-              id: 'applicationReason',
-              title: pensionSupplementFormMessage.applicationReason.title,
-              description:
-                pensionSupplementFormMessage.applicationReason.description,
-              required: true,
-              options: getApplicationReasonOptions(),
-            }),
-          ],
+          description:
+            pensionSupplementFormMessage.applicationReason.description,
+          required: true,
+          options: getApplicationReasonOptions(),
         }),
-        buildSubSection({
-          id: 'periodSection',
+      ],
+    }),
+    buildSection({
+      id: 'periodSection',
+      title: pensionSupplementFormMessage.info.periodTitle,
+      children: [
+        buildMultiField({
+          id: 'periodField',
           title: pensionSupplementFormMessage.info.periodTitle,
+          description: pensionSupplementFormMessage.info.periodDescription,
           children: [
-            buildMultiField({
-              id: 'periodField',
+            buildCustomField({
+              id: 'period',
               title: pensionSupplementFormMessage.info.periodTitle,
-              description: pensionSupplementFormMessage.info.periodDescription,
-              children: [
-                buildCustomField({
-                  id: 'period',
-                  title: pensionSupplementFormMessage.info.periodTitle,
-                  component: 'Period',
-                }),
-              ],
+              component: 'Period',
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'fileUpload',
+      title: pensionSupplementFormMessage.fileUpload.title,
+      condition: (answers) => {
+        const { applicationReason } = getApplicationAnswers(answers)
+
+        const reasons = [
+          ApplicationReason.ASSISTED_CARE_AT_HOME,
+          ApplicationReason.PURCHASE_OF_HEARING_AIDS,
+          ApplicationReason.ASSISTED_LIVING,
+          ApplicationReason.HALFWAY_HOUSE,
+          ApplicationReason.HOUSE_RENT,
+        ]
+
+        return reasons.some((r) => applicationReason.includes(r))
+      },
+      children: [
         buildSubSection({
           id: 'fileUploadAssistedCareAtHome',
           title:

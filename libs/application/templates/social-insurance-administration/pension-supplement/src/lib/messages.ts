@@ -261,6 +261,11 @@ export const pensionSupplementFormMessage: MessageDir = {
   }),
 
   fileUpload: defineMessages({
+    title: {
+      id: 'ul.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
     attachmentButton: {
       id: 'ul.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
