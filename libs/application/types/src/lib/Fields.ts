@@ -118,6 +118,7 @@ export enum FieldTypes {
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
   PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
+  IMAGE = 'IMAGE',
   PDF_LINK_BUTTON = 'PDF_LINK_BUTTON',
 }
 
@@ -142,6 +143,7 @@ export enum FieldComponents {
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
   PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
+  IMAGE = 'ImageFormField',
   PDF_LINK_BUTTON = 'PdfLinkButtonFormField',
 }
 
@@ -357,6 +359,17 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+export interface ImageField extends BaseField {
+  readonly type: FieldTypes.IMAGE
+  component: FieldComponents.IMAGE
+  image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
+  alt?: string
+  imageWidth?: 'full' | 'auto'
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -394,4 +407,5 @@ export type Field =
   | AlertMessageField
   | LinkField
   | PaymentChargeOverviewField
+  | ImageField
   | PdfLinkButtonField

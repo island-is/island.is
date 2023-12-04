@@ -59,11 +59,10 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
 
     //if the user has answered YES previously and is returning to the step and has one valid parent from previous answers
     //set the valid parent and set the second as default wasRemoved=true
-    if (hasValidParents === YES && validParents.length === 1) {
-      setParents([...validParents, { ...defaultParents[1] }])
-    }
-
-    if (hasValidParents === NO) {
+    if (hasValidParents === YES) {
+      if (validParents.length === 1)
+        setParents([...validParents, { ...defaultParents[1] }])
+    } else {
       //set two parents with wasRemoved = true to pass validation but also to exist if user toggles to Yes
       setParents([defaultParents[1], defaultParents[1]])
     }
@@ -157,7 +156,7 @@ export const Parents: FC<FieldBaseProps> = ({ field, application, errors }) => {
                   : false
               }
               addParentToApplication={addParentToApplication}
-              isHidden={hasValidParents === NO}
+              isHidden={hasValidParents !== YES}
             />
           )
         })}
