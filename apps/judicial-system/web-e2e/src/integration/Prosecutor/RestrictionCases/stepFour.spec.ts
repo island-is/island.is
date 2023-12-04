@@ -2,7 +2,7 @@ import {
   RESTRICTION_CASE_CASE_FILES_ROUTE,
   RESTRICTION_CASE_POLICE_REPORT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import { intercept, mockCase } from '../../../utils'
 
@@ -10,6 +10,7 @@ describe(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(CaseType.CUSTODY)
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseData)
     cy.visit(`${RESTRICTION_CASE_POLICE_REPORT_ROUTE}/test_id`)

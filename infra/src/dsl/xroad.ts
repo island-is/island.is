@@ -197,6 +197,16 @@ export const Finance = new XroadConf({
       staging: 'IS-DEV/GOV/10021/FJS-Public/financeIsland',
       prod: 'IS/GOV/5402697509/FJS-Public/financeIsland',
     },
+    XROAD_FINANCES_V2_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2',
+      prod: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2',
+    },
+    XROAD_HMS_LOANS_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/libra-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/libra-v1',
+    },
   },
 })
 
@@ -504,6 +514,17 @@ export const Vehicles = new XroadConf({
   },
 })
 
+export const VehiclesMileage = new XroadConf({
+  env: {
+    XROAD_VEHICLES_MILEAGE_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      staging:
+        'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Vehicle-Mileagereading-V1',
+    },
+  },
+})
+
 export const ChargeFjsV2 = new XroadConf({
   env: {
     XROAD_CHARGE_FJS_V2_PATH: {
@@ -630,6 +651,16 @@ export const DirectorateOfImmigration = new XroadConf({
       dev: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
       staging: 'IS-DEV/GOV/10011/UTL-Protected/Utl-Umsokn-v1',
       prod: 'IS/GOV/6702696399/UTL-Protected/Utl-Umsokn-v1',
+    },
+  },
+})
+
+export const UniversityGatewayUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
     },
   },
 })

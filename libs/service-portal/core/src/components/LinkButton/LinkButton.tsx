@@ -1,42 +1,75 @@
-import { Button } from '@island.is/island-ui/core'
-import { useLocation } from 'react-router-dom'
-import { FC } from 'react'
-import { servicePortalOutboundLink } from '@island.is/plausible'
-import { formatPlausiblePathToParams } from '../../utils/formatPlausiblePathToParams'
+import { Button, ButtonProps } from '@island.is/island-ui/core'
+import { isExternalLink } from '../../utils/isExternalLink'
+import LinkResolver from '../LinkResolver/LinkResolver'
+import * as styles from './LinkButton.css'
 
-interface Props {
+interface SharedProps {
   to: string
-  text: Array<string> | string
-  skipIcon?: boolean
+  text: string
+  skipOutboundTrack?: boolean
 }
 
-export const LinkButton: FC<React.PropsWithChildren<Props>> = ({
+type Props =
+  | {
+      variant?: 'button'
+      icon?: ButtonProps['icon']
+    }
+  | {
+      /**
+       * default variant is "text"
+       */
+      variant?: 'text'
+      icon?: never
+    }
+
+type LinkButtonProps = SharedProps & Props
+
+export const LinkButton = ({
+  variant = 'text',
   to,
   text,
-  skipIcon = false,
-}) => {
-  const { pathname } = useLocation()
+  icon,
+  skipOutboundTrack,
+}: LinkButtonProps) => {
+  const isExternal = isExternalLink(to)
+  if (variant === 'text') {
+    return (
+      <LinkResolver
+        className={styles.link}
+        skipOutboundTrack={skipOutboundTrack}
+        href={to}
+      >
+        <Button
+          as="span"
+          size="small"
+          variant="text"
+          unfocusable
+          icon={isExternal ? 'open' : undefined}
+          iconType={isExternal ? 'outline' : undefined}
+        >
+          {text}
+        </Button>
+      </LinkResolver>
+    )
+  }
   return (
-    <a
+    <LinkResolver
+      skipOutboundTrack={skipOutboundTrack}
+      className={styles.link}
       href={to}
-      onClick={() =>
-        servicePortalOutboundLink({
-          url: formatPlausiblePathToParams(pathname).url,
-          outboundUrl: to,
-        })
-      }
-      target="_blank"
-      rel="noreferrer"
     >
-      {skipIcon ? (
-        <Button size="small" variant="text">
-          {text}
-        </Button>
-      ) : (
-        <Button size="small" variant="text" icon="open" iconType="outline">
-          {text}
-        </Button>
-      )}
-    </a>
+      <Button
+        colorScheme="default"
+        icon={icon}
+        iconType="outline"
+        size="default"
+        type="text"
+        as="span"
+        variant="utility"
+        unfocusable
+      >
+        {text}
+      </Button>
+    </LinkResolver>
   )
 }

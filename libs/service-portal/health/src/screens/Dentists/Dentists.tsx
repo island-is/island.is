@@ -6,7 +6,7 @@ import {
   EmptyState,
   UserInfoLine,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetDentistsQuery } from './Dentists.generated'
@@ -70,7 +70,7 @@ const Dentists = () => {
       <IntroHeader
         title={formatMessage(messages.dentistsTitle)}
         intro={formatMessage(messages.dentistsDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 

@@ -7,6 +7,7 @@ import TherapiesTabContent from '../../components/TherapiesTabContent/TherapiesT
 import { SPEECH_THERAPY } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
 import { TherapiesWrapper } from './wrapper/TherapiesWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 const Therapies = () => {
   useNamespaces('sp.health')
@@ -24,7 +25,7 @@ const Therapies = () => {
     <TherapiesWrapper
       loading={loading}
       error={!!error}
-      activeTherapies={therapiesData.length > 0}
+      pathname={HealthPaths.HealthTherapiesSpeech}
     >
       <TherapiesTabContent
         data={speechTherapyData}
