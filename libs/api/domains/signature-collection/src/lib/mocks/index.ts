@@ -1,20 +1,20 @@
-import { Area } from '../models/area.model'
-import { Collection } from '../models/collection.model'
-import { Owner } from '../models/owner.model'
-import { Signature } from '../models/signature.model'
-import { SignatureList } from '../models/signatureList.model'
-import { Signee } from '../models/signee.model'
+import { SignatureCollectionArea } from '../models/area.model'
+import { SignatureCollection } from '../models/collection.model'
+import { SignatureCollectionOwner } from '../models/owner.model'
+import { SignatureCollectionSignature } from '../models/signature.model'
+import { SignatureCollectionList } from '../models/signatureList.model'
+import { SignatureCollectionSignee } from '../models/signee.model'
 
 const currDate = new Date()
 
-export const Areas: Area[] = [
+export const Areas: SignatureCollectionArea[] = [
   { id: 'SF', name: 'Sunnlendingafjórðungur', min: 1224, max: 2448 },
   { id: 'VF', name: 'Vestfirðingafjórðungur', min: 59, max: 117 },
   { id: 'NF', name: 'Norðlendingafjórðungur', min: 160, max: 320 },
   { id: 'AF', name: 'Austfirðingafjórðungur', min: 57, max: 115 },
 ]
 
-export const CurrentCollection: Collection = {
+export const CurrentCollection: SignatureCollection = {
   id: '12345',
   name: 'Söfnun meðmæla forsetakosning 2024',
   areas: Areas,
@@ -35,7 +35,7 @@ const fakeSigners = [
   '0101302129',
 ]
 
-export const signee = (nationalId: string): Signee => ({
+export const signee = (nationalId: string): SignatureCollectionSignee => ({
   id: nationalId,
   nationalId,
   name: `Nafn ${nationalId}`,
@@ -43,7 +43,7 @@ export const signee = (nationalId: string): Signee => ({
   address: 'Home',
 })
 
-const Owners: Owner[] = [
+const Owners: SignatureCollectionOwner[] = [
   {
     nationalId: '0101307789',
     name: 'Gervimaður útlönd',
@@ -64,7 +64,7 @@ const Owners: Owner[] = [
   },
 ]
 
-export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
+export const Lists: SignatureCollectionList[] = Owners.flatMap((owner, i) =>
   Areas.map((area, index) => ({
     id: `${i + 1}${index + 1}`,
     title: `${owner.name} ${area.name}`,
@@ -82,7 +82,7 @@ export const Lists: SignatureList[] = Owners.flatMap((owner, i) =>
   })),
 )
 
-export const Signatures = (listId: string): Signature[] =>
+export const Signatures = (listId: string): SignatureCollectionSignature[] =>
   fakeSigners.map((fake, index) => ({
     id: `${index}0${index}`,
     listId: listId,

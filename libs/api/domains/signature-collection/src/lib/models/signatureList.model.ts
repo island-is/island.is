@@ -1,17 +1,17 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Owner } from './owner.model'
-import { Area } from './area.model'
+import { SignatureCollectionOwner } from './owner.model'
+import { SignatureCollectionArea } from './area.model'
 
 @ObjectType()
-export class SignatureList {
+export class SignatureCollectionList {
   @Field(() => ID)
   id!: string
 
   @Field()
   title!: string
 
-  @Field(() => Area)
-  area!: Area
+  @Field(() => SignatureCollectionArea)
+  area!: SignatureCollectionArea
 
   @Field(() => Date)
   endTime!: Date
@@ -19,11 +19,11 @@ export class SignatureList {
   @Field(() => Date)
   startTime!: Date
 
-  @Field(() => Owner)
-  owner!: Owner
+  @Field(() => SignatureCollectionOwner)
+  owner!: SignatureCollectionOwner
 
-  @Field(() => [Owner], { nullable: true })
-  collectors?: Owner[]
+  @Field(() => [SignatureCollectionOwner], { nullable: true })
+  collectors?: SignatureCollectionOwner[]
 
   @Field(() => Boolean, { nullable: true })
   active?: boolean

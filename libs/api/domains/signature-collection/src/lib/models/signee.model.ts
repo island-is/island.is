@@ -1,7 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class Signee {
+export class SignatureCollectionSignee {
   @Field(() => ID)
   id!: string
 

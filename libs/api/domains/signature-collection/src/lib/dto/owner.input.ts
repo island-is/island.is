@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
 @InputType()
-export class OwnerInput {
+export class SignatureCollectionOwnerInput {
   @Field()
   @IsString()
   nationalId!: string

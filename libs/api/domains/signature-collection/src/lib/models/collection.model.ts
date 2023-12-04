@@ -1,16 +1,16 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Area } from './area.model'
+import { SignatureCollectionArea } from './area.model'
 
 @ObjectType()
-export class Collection {
+export class SignatureCollection {
   @Field(() => ID)
   id!: string
 
   @Field()
   name!: string
 
-  @Field(() => [Area])
-  areas!: Area[]
+  @Field(() => [SignatureCollectionArea])
+  areas!: SignatureCollectionArea[]
 
   @Field(() => Date)
   endTime!: Date
