@@ -84,7 +84,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         )),
       )
     }
-    
+
     return attachments
   }
 
