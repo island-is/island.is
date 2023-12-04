@@ -103,7 +103,7 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.assetNumber.defaultMessage,
+                    title: m.vehicleNumberLabel.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
@@ -159,7 +159,7 @@ export const assets = buildSection({
               {
                 fields: [
                   {
-                    title: m.assetNumber.defaultMessage,
+                    title: m.gunNumber.defaultMessage,
                     id: 'assetNumber',
                   },
                   {
