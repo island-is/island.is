@@ -51,7 +51,11 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async createVehicle(auth: User, vehicle: VehicleMiniDto) {
     if (vehicle && vehicle.permno) {
-      return await this.carRecyclingService.createVehicle(auth, vehicle.permno)
+      return await this.carRecyclingService.createVehicle(
+        auth,
+        vehicle.permno,
+        '0',
+      )
     }
   }
 
