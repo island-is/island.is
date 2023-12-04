@@ -26,23 +26,5 @@ export const paymentInfo = (newAnswer: unknown) => {
     }
   }
 
-  if (obj.spouseAllowance === YES) {
-    const spouseAllow = (obj as { spouseAllowanceUsage: string })
-      .spouseAllowanceUsage
-    if (!spouseAllow) {
-      return buildError(
-        validatorErrorMessages.requireAnswer,
-        `${PAYMENTINFO}.spouseAllowanceUsage`,
-      )
-    }
-
-    if (+spouseAllow < 1 || +spouseAllow > 100) {
-      return buildError(
-        validatorErrorMessages.personalAllowance,
-        `${PAYMENTINFO}.spouseAllowanceUsage`,
-      )
-    }
-  }
-
   return undefined
 }
