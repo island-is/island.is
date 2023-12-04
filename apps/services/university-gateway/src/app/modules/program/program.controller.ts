@@ -1,9 +1,4 @@
-import { UseGuards } from '@nestjs/common'
-import {
-  BypassAuth,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { BypassAuth } from '@island.is/auth-nest-tools'
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ProgramService } from './program.service'
 import { ApiTags } from '@nestjs/swagger'
@@ -12,7 +7,6 @@ import { ProgramsResponse } from './dto/programsResponse'
 import { Program } from './model/program'
 import { DegreeType, Season } from '@island.is/university-gateway'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('Program')
 @Controller({
   version: ['1'],

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
 import {
+  CourseSeason,
   DegreeType,
   FieldType,
   ICourse,
@@ -126,24 +127,10 @@ export class UniversityOfIcelandApplicationClient {
           throw new Error(`Not able to map requirement: ${course.required}`)
         }
 
-        let semesterSeason: Season | undefined = undefined
-        switch (course.semesterSeason) {
-          case 'SPRING':
-            semesterSeason = Season.SPRING
-            break
-          case 'FALL':
-            semesterSeason = Season.FALL
-            break
-          case 'SUMMER':
-            semesterSeason = Season.SUMMER
-            break
-          case 'WHOLE-YEAR': // TODO what value should this map to ("heilsár")
-            semesterSeason = Season.FALL
-            break
-          case 'ANY': // TODO what value should this map to ("á ekki við")
-            semesterSeason = Season.FALL
-            break
-        }
+        const semesterSeason = mapStringToEnum(
+          course.semesterSeason?.toString(),
+          CourseSeason,
+        )
         if (!semesterSeason) {
           throw new Error(
             `Not able to map semester season: ${course.semesterSeason?.toString()}`,

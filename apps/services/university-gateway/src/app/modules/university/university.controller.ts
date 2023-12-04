@@ -1,16 +1,10 @@
-import { UseGuards } from '@nestjs/common'
-import {
-  BypassAuth,
-  IdsUserGuard,
-  ScopesGuard,
-} from '@island.is/auth-nest-tools'
+import { BypassAuth } from '@island.is/auth-nest-tools'
 import { Controller, Get } from '@nestjs/common'
 import { UniversityService } from './university.service'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { UniversitiesResponse } from './dto/universitiesResponse'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('University')
 @Controller({
   path: 'universities',

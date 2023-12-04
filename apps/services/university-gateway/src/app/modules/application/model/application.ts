@@ -12,12 +12,19 @@ import { Program } from '../../program/model/program'
 import { ProgramModeOfDelivery } from '../../program/model/programModeOfDelivery'
 import { University } from '../../university/model/university'
 import { ApplicationStatus } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'application',
 })
-export class Application extends Model {
+export class Application extends Model<
+  InferAttributes<Application>,
+  InferCreationAttributes<Application>
+> {
   @ApiProperty({
     description: 'Application ID',
     example: '00000000-0000-0000-0000-000000000000',

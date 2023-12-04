@@ -11,12 +11,19 @@ import {
 } from 'sequelize-typescript'
 import { Program } from './program'
 import { ModeOfDelivery } from '@island.is/university-gateway'
-import { CreationOptional } from 'sequelize'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'program_mode_of_delivery',
 })
-export class ProgramModeOfDelivery extends Model {
+export class ProgramModeOfDelivery extends Model<
+  InferAttributes<ProgramModeOfDelivery>,
+  InferCreationAttributes<ProgramModeOfDelivery>
+> {
   @ApiHideProperty()
   @Column({
     type: DataType.UUID,

@@ -226,33 +226,37 @@ const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
       }
     />
   ) : children ? (
-    <Box
-      paddingY={[0, 0, 3, 6]}
-      paddingX={[0, 0, 4]}
-      background="purple100"
-      className={styles.processContainer}
-    >
-      <GridContainer className={styles.container}>
-        <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
-          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
-            <Box
-              background="white"
-              borderColor="white"
-              paddingTop={[3, 3, 10, 10]}
-              className={styles.processContent}
-            >
-              {children}
-            </Box>
-          </GridColumn>
-          <SidePanel
-            user={user}
-            isValid={isValid}
-            onNavigationTo={onNavigationTo}
-            workingCase={workingCase}
-          />
-        </GridRow>
-      </GridContainer>
-    </Box>
+    <>
+      <Box
+        paddingY={[0, 0, 3, 6]}
+        paddingX={[0, 0, 4]}
+        background="purple100"
+        className={styles.processContainer}
+      >
+        <GridContainer className={styles.container}>
+          <GridRow direction={['columnReverse', 'columnReverse', 'row']}>
+            <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+              <Box
+                background="white"
+                borderColor="white"
+                paddingTop={[3, 3, 10, 10]}
+                className={styles.processContent}
+              >
+                {children}
+              </Box>
+            </GridColumn>
+            <SidePanel
+              user={user}
+              isValid={isValid}
+              onNavigationTo={onNavigationTo}
+              workingCase={workingCase}
+            />
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {/* Here we will mount our modal portal */}
+      <div id="modal" data-testid="modal" />
+    </>
   ) : null
 }
 

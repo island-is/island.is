@@ -1,5 +1,5 @@
 import { Requirement } from '../types/requirement'
-import { Season } from '../types/season'
+import { CourseSeason } from '../types/season'
 
 export interface ICourse {
   externalId: string
@@ -12,5 +12,5 @@ export interface ICourse {
   externalUrlEn?: string
   requirement: Requirement
   semesterYear?: number
-  semesterSeason: Season
+  semesterSeason: CourseSeason
 }
