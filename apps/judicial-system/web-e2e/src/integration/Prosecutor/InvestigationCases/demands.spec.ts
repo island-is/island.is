@@ -6,12 +6,13 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { mockCase, intercept } from '../../../utils'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 describe(`${INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/:id`, () => {
   beforeEach(() => {
     const caseData = mockCase(CaseType.INTERNET_USAGE)
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseData)
     cy.visit(`${INVESTIGATION_CASE_POLICE_DEMANDS_ROUTE}/test_id`)

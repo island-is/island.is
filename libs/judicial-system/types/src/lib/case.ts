@@ -288,6 +288,9 @@ export interface Case {
   appealRulingModifiedHistory?: string
   requestSharedWithDefender?: RequestSharedWithDefender
   eventLogs?: EventLog[]
+  appealValidToDate?: string
+  isAppealCustodyIsolation?: boolean
+  appealIsolationToDate?: string
 }
 
 export interface CaseListEntry
@@ -408,6 +411,9 @@ export interface UpdateCase
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   policeCaseNumbers?: string[]
@@ -475,7 +481,7 @@ export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
   CaseFileCategory.APPEAL_RULING,
 ]
 
-export const defenderAccessCaseFileCategoriesForIndictmentCases = [
+export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.COURT_RECORD,
   CaseFileCategory.RULING,
   CaseFileCategory.COVER_LETTER,
@@ -616,4 +622,18 @@ export function getAppealedDate(
   accusedPostponedAppealDate?: string,
 ): string | undefined {
   return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
+}
+
+export function prosecutorShouldSelectDefenderForInvestigationCase(
+  type: CaseType,
+) {
+  return [
+    CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+    CaseType.EXPULSION_FROM_HOME,
+    CaseType.PAROLE_REVOCATION,
+    CaseType.PSYCHIATRIC_EXAMINATION,
+    CaseType.RESTRAINING_ORDER,
+    CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+    CaseType.OTHER,
+  ].includes(type)
 }

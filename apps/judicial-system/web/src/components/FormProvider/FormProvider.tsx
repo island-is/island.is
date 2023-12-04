@@ -154,7 +154,10 @@ const FormProvider = ({ children }: Props) => {
   })
 
   useEffect(() => {
-    if (state === 'fetch' || state === 'refresh') {
+    if (
+      limitedAccess !== undefined && // Wait until limitedAccess is defined
+      (state === 'fetch' || state === 'refresh')
+    ) {
       if (limitedAccess) {
         getLimitedAccessCase({ variables: { input: { id } } })
       } else {

@@ -143,27 +143,32 @@ export class NotificationsController {
     // check counts
     if (!this.notificationsService.validateArgCounts(body, template)) {
       throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args.length +
-          ' arguments but ' +
-          body.args.length +
-          ' were provided',
+        `Number of arguments doesn't match - template requires ${template.args.length} arguments but ${body.args.length} were provided`,
       )
     }
-    // check keys/args/properties
+    const records: Record<string, string> = {}
     for (const arg of body.args) {
-      if (!template.args.includes(arg.key)) {
+      records[arg.key] = arg.value
+    }
+
+    // check keys/args/properties
+    for (const [key] of Object.entries(records)) {
+      if (!template.args.includes(key)) {
         throw new BadRequestException(
-          arg.key +
-            ' is not a valid argument for template: ' +
-            template.templateId,
+          `${key} is not a valid argument for template: ${template.templateId}`,
         )
       }
     }
 
     // add to queue
     const id = await this.queue.add(body)
-    this.logger.info('Message queued ... ...', { messageId: id, ...body })
+    const { templateId, recipient } = body
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...records,
+      templateId,
+      recipient,
+    })
     return { id }
   }
 }
