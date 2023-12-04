@@ -8,8 +8,14 @@ import { VehiclesService } from './api-domains-vehicles.service'
 import { VehicleMileageDetail } from '../models/getVehicleMileage.model'
 import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
 @Resolver(() => VehiclesDetail)
 @Audit({ namespace: '@island.is/api/vehicles' })
 export class VehiclesSharedResolver {

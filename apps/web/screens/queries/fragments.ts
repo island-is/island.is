@@ -584,6 +584,27 @@ export const slices = gql`
     }
   }
 
+  fragment AnchorPageListSliceFields on AnchorPageListSlice {
+    id
+    title
+    pages {
+      id
+      title
+      shortTitle
+      slug
+      pageType
+      tinyThumbnail {
+        url
+        title
+      }
+      thumbnail {
+        url
+        title
+      }
+      intro
+    }
+  }
+
   fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
     id
     title
@@ -832,6 +853,7 @@ export const slices = gql`
     ...FormFields
     ...StepperFields
     ...GraphCardFields
+    ...AnchorPageListSliceFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
