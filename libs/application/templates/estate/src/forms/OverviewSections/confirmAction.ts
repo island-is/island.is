@@ -22,13 +22,13 @@ export const overviewConfirmAction = [
         ? [
             {
               value: YES,
-              label: m.acceptNoAssets.defaultMessage,
+              label: m.acceptNoAssets,
             },
           ]
         : [
             {
               value: YES,
-              label: m.acceptAssets.defaultMessage,
+              label: m.acceptAssets,
             },
           ],
   }),
@@ -43,7 +43,7 @@ export const overviewConfirmAction = [
     options: () => [
       {
         value: YES,
-        label: m.acceptCorrectAssets.defaultMessage,
+        label: m.acceptCorrectAssets,
       },
     ],
   }),

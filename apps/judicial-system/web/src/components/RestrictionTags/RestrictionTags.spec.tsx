@@ -1,9 +1,9 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
 
-import { CaseDecision } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'

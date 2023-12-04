@@ -184,12 +184,16 @@ const DefenderInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     : defenderInfo.investigationCases.sections
                         .defenderRequestAccess.labelNoAccess,
                 )}
-                checked={workingCase.requestSharedWithDefender === null}
+                checked={
+                  workingCase.requestSharedWithDefender ===
+                  RequestSharedWithDefender.NOT_SHARED
+                }
                 onChange={() => {
                   setAndSendCaseToServer(
                     [
                       {
-                        requestSharedWithDefender: null,
+                        requestSharedWithDefender:
+                          RequestSharedWithDefender.NOT_SHARED,
                         force: true,
                       },
                     ],

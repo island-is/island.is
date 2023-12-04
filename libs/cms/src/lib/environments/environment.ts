@@ -4,6 +4,7 @@ export default {
     'article',
     'subArticle',
     'lifeEventPage',
+    'anchorPage',
     'articleCategory',
     'news',
     'page',
@@ -25,6 +26,7 @@ export default {
   ],
   nestedContentTypes: [
     'alertBanner',
+    'anchorPageList',
     'organizationPage',
     'organization',
     'subArticle',
@@ -55,6 +57,7 @@ export default {
     'twoColumnText',
     'accordionSlice',
     'lifeEventPage',
+    'anchorPage',
     'referenceLink',
     'featured',
     'frontpageSlider',
@@ -89,6 +92,8 @@ export default {
     'supportSubCategory',
     'lifeEventPageListSlice',
     'manualChapter',
+    'chart',
+    'chartComponent',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

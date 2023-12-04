@@ -175,6 +175,7 @@ export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
+export const COURT_OF_APPEAL_SUMMARY_ROUTE = '/landsrettur/samantekt'
 
 /* COURT OF APPEALS ROUTES END */
 
@@ -236,6 +237,7 @@ export const courtOfAppealRoutes = [
   COURT_OF_APPEAL_OVERVIEW_ROUTE,
   COURT_OF_APPEAL_CASE_ROUTE,
   COURT_OF_APPEAL_RULING_ROUTE,
+  COURT_OF_APPEAL_SUMMARY_ROUTE,
   COURT_OF_APPEAL_RESULT_ROUTE,
 ]
 

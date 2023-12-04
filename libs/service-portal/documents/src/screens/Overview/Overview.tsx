@@ -319,9 +319,14 @@ export const ServicePortalDocuments = () => {
                 marginX={1}
                 className={styles.bullet}
               ></Box>
-              <Button unfocusable size="small" variant="text" truncate as="h1">
+              <Text
+                as="h1"
+                variant="eyebrow"
+                color="blue400"
+                fontWeight="semiBold"
+              >
                 {formatMessage(m.documents)}
-              </Button>
+              </Text>
             </Box>
           </Box>
           <DocumentsFilter

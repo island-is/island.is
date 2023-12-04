@@ -8,9 +8,15 @@ interface Props {
   children?: ReactNode
   className?: string
   href: string
+  skipOutboundTrack?: boolean
 }
 
-export const LinkResolver = ({ href = '/', children, className }: Props) => {
+export const LinkResolver = ({
+  href = '/',
+  children,
+  className,
+  skipOutboundTrack,
+}: Props) => {
   const { pathname } = useLocation()
   if (isExternalLink(href)) {
     return (
@@ -18,12 +24,17 @@ export const LinkResolver = ({ href = '/', children, className }: Props) => {
         href={href}
         target="_blank"
         rel="noreferrer noopener"
-        className={styles.link}
-        onClick={() =>
-          servicePortalOutboundLink({
-            url: formatPlausiblePathToParams(pathname).url,
-            outboundUrl: href,
-          })
+        className={cn(styles.link, {
+          [`${className}`]: className,
+        })}
+        onClick={
+          skipOutboundTrack
+            ? undefined
+            : () =>
+                servicePortalOutboundLink({
+                  url: formatPlausiblePathToParams(pathname).url,
+                  outboundUrl: href,
+                })
         }
       >
         {children}

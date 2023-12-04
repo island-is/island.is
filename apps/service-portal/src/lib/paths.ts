@@ -1,4 +1,6 @@
+import { ProjectBasePath } from '@island.is/shared/constants'
+
 export enum ServicePortalPaths {
-  Base = '/minarsidur',
+  Base = ProjectBasePath.ServicePortal,
   Root = '/',
 }

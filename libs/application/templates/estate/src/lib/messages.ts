@@ -189,6 +189,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // General
+  total: {
+    id: 'es.application:total',
+    defaultMessage: 'Samtals',
+    description: '',
+  },
+
   // Applicant
   announcer: {
     id: 'es.application:announcer',
@@ -241,6 +248,11 @@ export const m = defineMessages({
     defaultMessage: 'Netfang',
     description: '',
   },
+  relationToDeceased: {
+    id: 'es.application:relationToDeceased',
+    defaultMessage: 'Tengsl við hinn látna',
+    description: 'Relation label',
+  },
 
   // Estate members, assets, vehicles
   estateMembersTitle: {
@@ -248,8 +260,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfingjar og erfðaskrá',
     description: '',
   },
-  estateMembersSubtitle: {
-    id: 'es.application:estateMembersSubtitle',
+  estateMembersDescriptionEstateWithoutAssets: {
+    id: 'es.application:estateMembersDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionOfficialDivision: {
+    id: 'es.application:estateMembersDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionUndividedEstate: {
+    id: 'es.application:estateMembersDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
+    description: '',
+  },
+  estateMembersDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:estateMembersDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast farðu yfir upplýsingarnar og athugaðu hvort þær séu réttar.',
     description: '',
@@ -279,8 +309,26 @@ export const m = defineMessages({
     defaultMessage: 'Erfðaskrá og kaupmáli',
     description: '',
   },
-  willsAndAgreementsDescription: {
-    id: 'es.application:willsAndAgreementsDescription',
+  willsAndAgreementsDescriptionEstateWithoutAssets: {
+    id: 'es.application:willsAndAgreementsDescriptionEstateWithoutAssets',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionOfficialDivision: {
+    id: 'es.application:willsAndAgreementsDescriptionOfficialDivision',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDescriptionUndividedEstate: {
+    id: 'es.application:willsAndAgreementsDescriptionDescriptionUndividedEstate',
+    defaultMessage:
+      'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
+    description: '',
+  },
+  willsAndAgreementsDescriptionDivisionOfEstateByHeirs: {
+    id: 'es.application:willsAndAgreementsDescriptionDivisionOfEstateByHeirs',
     defaultMessage:
       'Vinsamlegast tilgreindu um tilvist erfðaskráar eða kaupmála, og skráðu athugasemdir ef einhverjar eru.',
     description: '',
@@ -843,13 +891,6 @@ export const m = defineMessages({
     id: 'es.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
-  },
-
-  // Assets
-  errorNumberEmpty: {
-    id: 'es.application:error.errorNumberEmpty',
-    defaultMessage: 'Númer má ekki vera tómt',
-    description: 'Invalid general asset number error message',
   },
 
   // Inheritance step

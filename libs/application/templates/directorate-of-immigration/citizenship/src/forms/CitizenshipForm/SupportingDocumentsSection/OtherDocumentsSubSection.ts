@@ -67,7 +67,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildFileUploadField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.incomeConfirmation`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.subsistenceCertificate`,
           title: supportingDocuments.labels.otherDocuments.incomeConfirmation,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
@@ -80,7 +80,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildFileUploadField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.incomeConfirmationTown`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.subsistenceCertificateForTown`,
           title:
             supportingDocuments.labels.otherDocuments.incomeConfirmationTown,
           introduction: '',
@@ -94,7 +94,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildFileUploadField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.legalHome`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.certificateOfLegalResidenceHistory`,
           title: supportingDocuments.labels.otherDocuments.legalHome,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
@@ -106,7 +106,7 @@ export const OtherDocumentsSubSection = buildSubSection({
         }),
 
         buildFileUploadField({
-          id: `${Routes.SUPPORTINGDOCUMENTS}.icelandicTest`,
+          id: `${Routes.SUPPORTINGDOCUMENTS}.icelandicTestCertificate`,
           title: supportingDocuments.labels.otherDocuments.icelandicTest,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,

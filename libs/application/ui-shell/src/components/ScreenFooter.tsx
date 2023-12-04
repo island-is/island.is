@@ -10,6 +10,7 @@ import {
 } from '@island.is/application/types'
 
 import * as styles from './ScreenFooter.css'
+import { useAuth } from '@island.is/auth/react'
 
 interface FooterProps {
   application: Application
@@ -66,6 +67,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   submitButtonDisabled,
 }) => {
   const { formatMessage } = useLocale()
+  const { userInfo: user } = useAuth()
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack =
@@ -98,7 +100,7 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
     return submitField?.actions
       .filter(({ condition }) =>
         typeof condition === 'function'
-          ? condition(application.answers, application.externalData)
+          ? condition(application.answers, application.externalData, user)
           : true,
       )
       .map(({ event, type, name, dataTestId }, idx) => {

@@ -11,12 +11,12 @@ import {
   GroupedMenu,
   Html,
   Image,
-  LifeEventPage,
   Link,
   Menu,
   MenuLinkWithChildren,
   News,
   ReferenceLink,
+  AnchorPage,
   SectionWithImage,
   Slice,
   SubArticle,
@@ -96,7 +96,7 @@ export const article = factory<SystemMetadata<Article>>({
   subgroup: null,
 })
 
-export const lifeEvent = factory<LifeEventPage>({
+export const anchorPage = factory<AnchorPage>({
   id: () => faker.datatype.uuid(),
   shortTitle: () => '',
   tinyThumbnail: image(),
@@ -195,5 +195,5 @@ export const frontpage = factory<Frontpage>({
   title: () => title(),
   featured: () => featured.list(3),
   slides: () => frontPageSlider.list(2),
-  lifeEvents: () => lifeEvent.list(6),
+  lifeEvents: () => anchorPage.list(6),
 })

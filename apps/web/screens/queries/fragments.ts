@@ -584,6 +584,27 @@ export const slices = gql`
     }
   }
 
+  fragment AnchorPageListSliceFields on AnchorPageListSlice {
+    id
+    title
+    pages {
+      id
+      title
+      shortTitle
+      slug
+      pageType
+      tinyThumbnail {
+        url
+        title
+      }
+      thumbnail {
+        url
+        title
+      }
+      intro
+    }
+  }
+
   fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
     id
     title
@@ -758,6 +779,47 @@ export const slices = gql`
     }
   }
 
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
+  fragment ChartFields on Chart {
+    __typename
+    id
+    title
+    chartDescription
+    alternativeDescription
+    displayAsCard
+    startExpanded
+    dateFrom
+    dateTo
+    numberOfDataPoints
+    components {
+      __typename
+      label
+      type
+      sourceDataKey
+      interval
+      stackId
+    }
+    sourceData
+    xAxisKey
+    xAxisValueType
+  }
+
+  fragment ChartNumberBoxFields on ChartNumberBox {
+    __typename
+    title
+    numberBoxDescription
+    sourceDataKey
+    valueType
+    displayChangeMonthOverMonth
+    displayChangeYearOverYear
+    numberBoxDate
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
@@ -791,6 +853,7 @@ export const slices = gql`
     ...FormFields
     ...StepperFields
     ...GraphCardFields
+    ...AnchorPageListSliceFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
@@ -799,6 +862,8 @@ export const slices = gql`
     ...SliceDropdownFields
     ...EmbedFields
     ...LatestEventsSliceFields
+    ...ChartFields
+    ...ChartNumberBoxFields
   }
 
   fragment AllSlices on Slice {

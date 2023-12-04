@@ -158,5 +158,13 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: contentful-apps
+  - name: api-template
+    repository: file://libs/api-template
+    version: 0.0.1
+    alias: services-university-gateway
+  - name: api-template
+    repository: file://libs/api-template
+    version: 0.0.1
+    alias: services-university-gateway-worker
 type: application
 version: 0.0.9

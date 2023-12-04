@@ -307,8 +307,8 @@ export const icon = recipe({
         height: 21,
       },
       sm: {
-        width: 21,
-        height: 21,
+        width: 24,
+        height: 24,
       },
       md: {
         width: 28,

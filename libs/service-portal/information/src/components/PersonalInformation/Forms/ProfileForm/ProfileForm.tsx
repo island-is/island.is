@@ -1,7 +1,13 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Input,
+  PhoneInput,
+} from '@island.is/island-ui/core'
 import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
   useUserProfile,
@@ -92,8 +98,13 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
    * Creates a link to the IDS user profile page.
    * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
    */
-  const getIDSLink = (linkPath: IdsUserProfileLinks) =>
-    `${authority}${linkPath}?redirectUrl=${window.location}&continue_onboarding=false`
+  const getIDSLink = (linkPath: IdsUserProfileLinks) => {
+    const returnUrl = encodeURIComponent(
+      `${window.location}&continue_onboarding=false`,
+    )
+
+    return `${authority}${linkPath}?returnUrl=${returnUrl}`
+  }
 
   const isFlagEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
@@ -243,11 +254,25 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             {!userLoading &&
               (v2UserProfileEnabled ? (
                 <ReadOnlyWithLinks
-                  title={formatMessage(msg.saveEmail)}
-                  value={userProfile?.email || ''}
-                  verified={userProfile?.emailVerified || false}
-                  link={getIDSLink(IdsUserProfileLinks.EMAIL)}
-                  linkTitle={formatMessage(msg.changeEmail)}
+                  input={
+                    <Input
+                      name="email"
+                      placeholder={formatMessage(msg.email)}
+                      value={userProfile?.email || ''}
+                      size="xs"
+                      label={formatMessage(msg.email)}
+                      readOnly
+                      {...(userProfile?.emailVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
+                  }
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.EMAIL),
+                    title: formatMessage(
+                      userProfile?.email ? msg.change : msg.add,
+                    ),
+                  }}
                 />
               ) : (
                 <InputEmail
@@ -287,11 +312,25 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             {!userLoading &&
               (v2UserProfileEnabled ? (
                 <ReadOnlyWithLinks
-                  title={formatMessage(msg.saveTel)}
-                  value={userProfile?.mobilePhoneNumber || ''}
-                  verified={userProfile?.mobilePhoneNumberVerified || false}
-                  link={getIDSLink(IdsUserProfileLinks.PHONE_NUMBER)}
-                  linkTitle={formatMessage(msg.changeTel)}
+                  input={
+                    <PhoneInput
+                      name="phoneNumber"
+                      label={formatMessage(msg.tel)}
+                      placeholder="000-0000"
+                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      size="xs"
+                      readOnly
+                      {...(userProfile?.mobilePhoneNumberVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
+                  }
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
+                    title: formatMessage(
+                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                    ),
+                  }}
                 />
               ) : (
                 <InputPhone

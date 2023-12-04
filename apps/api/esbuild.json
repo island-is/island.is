@@ -61,7 +61,8 @@
     "decompress-response",
     "lowercase-keys",
     "mimic-response",
-    "pdfkit"
+    "pdfkit",
+    "path-scurry"
   ],
   "keepNames": true
 }

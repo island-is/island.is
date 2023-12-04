@@ -5,6 +5,7 @@ import {
   Section,
 } from '@island.is/application/types'
 import { FormScreen } from '../types'
+import { User } from 'user'
 
 export interface ApplicationUIState {
   application: Application
@@ -15,6 +16,7 @@ export interface ApplicationUIState {
   screens: FormScreen[]
   sections: Section[]
   historyReason: 'initial' | 'navigate' | 'pop'
+  user: User | null
 }
 
 export enum ActionTypes {

@@ -602,6 +602,14 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  chooseDoctorLabel: {
+    id: 'sp.health:choose-doctor-label',
+    defaultMessage: 'Viltu velja heimilislækni?',
+  },
+  chooseDoctorPlaceholder: {
+    id: 'sp.health:close-placeholder',
+    defaultMessage: 'Heimilislæknir',
+  },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
@@ -829,6 +837,18 @@ export const messages = defineMessages({
   medicineIsValidCertificate: {
     id: 'sp.health:medicine-is-valid-certificate',
     defaultMessage: 'Í gildi',
+  },
+  medicineIsRejectedCertificate: {
+    id: 'sp.health:medicine-is-rejected-certificate',
+    defaultMessage: 'Hafnað',
+  },
+  medicineIsExpiredCertificate: {
+    id: 'sp.health:medicine-is-expired-certificate',
+    defaultMessage: 'Útrunnið',
+  },
+  medicineIsProcessedCertificate: {
+    id: 'sp.health:medicine-is-processed-certificate',
+    defaultMessage: 'Í vinnslu',
   },
   medicineIsNotValidCertificate: {
     id: 'sp.health:medicine-is-not-valid-certificate',

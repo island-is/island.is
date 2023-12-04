@@ -12,10 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   closedCourt,
   core,
@@ -35,7 +32,10 @@ import {
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

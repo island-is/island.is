@@ -22,7 +22,6 @@ import {
 
 import { DefenderService } from '../defender/defender.service'
 import { authModuleConfig } from './auth.config'
-import { AuthUser } from './auth.types'
 
 @Injectable()
 export class AuthService {

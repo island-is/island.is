@@ -5,11 +5,7 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision as TCaseDecision,
-  CaseState,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
 import { TagAppealState } from '@island.is/judicial-system-web/src/components'
@@ -23,6 +19,7 @@ import {
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
 import {
+  CaseDecision,
   CaseListEntry,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -130,7 +127,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
             <td>
               <ColumnCaseType
                 type={column.type}
-                decision={column.decision as TCaseDecision}
+                decision={column.decision as CaseDecision}
                 parentCaseId={column.parentCaseId ?? ''}
               />
             </td>

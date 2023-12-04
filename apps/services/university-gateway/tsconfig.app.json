@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "../../../dist/out-tsc",
+    "types": ["node"],
+    "target": "es2021"
+  },
+  "exclude": ["**/*.spec.ts", "**/*.test.ts", "**/test/**", "jest.config.ts"],
+  "include": ["**/*.ts"]
+}

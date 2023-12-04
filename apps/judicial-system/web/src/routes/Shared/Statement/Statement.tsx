@@ -8,7 +8,6 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
   isDefenceUser,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -22,7 +21,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useS3Upload,

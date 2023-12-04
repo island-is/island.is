@@ -23,6 +23,7 @@ export const MedicineWrapper = ({
         title={formatMessage(m.medicineTitle)}
         intro={formatMessage(m.medicineTitleIntro)}
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
       <TabNavigation
         label={formatMessage(m.medicineTitle)}

@@ -1,7 +1,8 @@
 import { createIntl } from 'react-intl'
 
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { mapCaseStateToTagVariant } from './TagCaseState'
 import { tagCaseState as m } from './TagCaseState.strings'

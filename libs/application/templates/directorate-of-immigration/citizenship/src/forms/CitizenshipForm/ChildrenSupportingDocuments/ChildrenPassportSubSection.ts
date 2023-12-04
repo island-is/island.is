@@ -59,6 +59,7 @@ export const ChildrenPassportSubSection = (index: number) =>
             title: supportingDocuments.labels.passport.publishDate,
             placeholder: supportingDocuments.labels.passport.datePlaceholder,
             width: 'half',
+            maxDate: new Date(),
           }),
           buildDateField({
             id: `${Routes.CHILDRENPASSPORT}[${index}].expirationDate`,

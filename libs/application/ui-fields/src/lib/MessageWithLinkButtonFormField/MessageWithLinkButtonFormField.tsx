@@ -28,8 +28,9 @@ export const MessageWithLinkButtonFormField: FC<
       borderRadius="standard"
       padding={4}
       background="blue100"
-      display={['block', 'flex']}
+      display={['block', 'block', 'flex']}
       alignItems="center"
+      justifyContent="spaceBetween"
       flexDirection={['column', 'column', 'row']}
       marginY={2}
     >

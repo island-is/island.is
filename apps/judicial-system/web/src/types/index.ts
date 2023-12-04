@@ -10,10 +10,12 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseType,
   Defendant,
+  EventLog,
   IndictmentCount,
   Institution,
   RequestSharedWithDefender,
@@ -247,6 +249,8 @@ export interface TempCase
     | 'accusedAppealDecision'
     | 'prosecutorAppealDecision'
     | 'requestSharedWithDefender'
+    | 'eventLogs'
+    | 'decision'
   > {
   origin: CaseOrigin
   sharedWithProsecutorsOffice?: Institution
@@ -265,7 +269,9 @@ export interface TempCase
   legalProvisions?: CaseLegalProvisions[]
   accusedAppealDecision?: CaseAppealDecision
   prosecutorAppealDecision?: CaseAppealDecision
-  requestSharedWithDefender?: RequestSharedWithDefender | null
+  requestSharedWithDefender?: RequestSharedWithDefender
+  eventLogs?: EventLog[]
+  decision?: CaseDecision
 }
 
 export interface TempUpdateCase
@@ -285,13 +291,13 @@ export interface TempUpdateCase
   appealState?: CaseAppealState
   appealRulingDecision?: CaseAppealRulingDecision
   defendants?: Defendant[]
-  requestSharedWithDefender?: RequestSharedWithDefender | null
+  requestSharedWithDefender?: RequestSharedWithDefender
 }
 
 export interface TempCreateCase
   extends Omit<CreateCase, 'type' | 'requestSharedWithDefender'> {
   type: CaseType
-  requestSharedWithDefender?: RequestSharedWithDefender | null
+  requestSharedWithDefender?: RequestSharedWithDefender
 }
 
 export interface TempCaseListEntry

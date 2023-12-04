@@ -1,7 +1,7 @@
 import { useIntl } from 'react-intl'
 
-import { CaseAppealRulingDecision } from '@island.is/judicial-system/types'
 import { sections } from '@island.is/judicial-system-web/messages'
+import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useStringHelpersStrings as strings } from './useStringHelpers.strings'
 

@@ -5,7 +5,6 @@ import router from 'next/router'
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { enumerate, formatDOB } from '@island.is/judicial-system/formatters'
-import { CaseType } from '@island.is/judicial-system/types'
 import {
   core,
   icDemands,
@@ -19,6 +18,7 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,

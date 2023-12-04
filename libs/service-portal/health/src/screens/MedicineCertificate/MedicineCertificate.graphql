@@ -8,7 +8,11 @@ query getCertificateById($input: RightsPortalDrugCertificateInput!) {
     validFrom
     validTo
     doctor
+    processed
     approved
+    rejected
+    expired
+    valid
     comment
     documentId
     methylDoctors {

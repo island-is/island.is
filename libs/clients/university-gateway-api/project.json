@@ -1,0 +1,41 @@
+{
+  "name": "clients-university-gateway-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-gateway-api/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["libs/clients/university-gateway-api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/university-gateway-api/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-gateway-api/gen/fetch -i apps/services/university-gateway/src/openapi.yaml --additional-properties=enumPropertyNaming=original"
+        ],
+        "parallel": false
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "implicitDependencies": ["services-university-gateway"],
+  "tags": ["lib:client", "scope:client"]
+}

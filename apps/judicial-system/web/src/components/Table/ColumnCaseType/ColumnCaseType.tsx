@@ -2,8 +2,11 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { CaseDecision, CaseType } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
+import {
+  CaseDecision,
+  CaseType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {

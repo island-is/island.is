@@ -221,6 +221,223 @@
           }
         }
       }
+    },
+    "/api/v{version}/Libra/paymenthistorybyloanid": {
+      "post": {
+        "tags": ["Libra"],
+        "summary": "Returns a payment summary of loans for the relevant person that are in HMS's Libra system.",
+        "parameters": [
+          {
+            "name": "loanId",
+            "in": "query",
+            "description": "Loan number",
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentHistoryReturnModel"
+                  }
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v{version}/Libra/loanhistorypdf": {
+      "post": {
+        "tags": ["Libra"],
+        "summary": "Returns loan history as pdf.",
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileReturnModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileReturnModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileReturnModel"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoContent"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -250,7 +467,31 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Information about the co-payer of loan."
+      },
+      "FileReturnModel": {
+        "type": "object",
+        "properties": {
+          "mime": {
+            "type": "string",
+            "description": "Mime of document.",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "description": "Base64 encoded document.",
+            "format": "byte",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of document.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information about file returned."
       },
       "LoanHistoryReturnModel": {
         "type": "object",
@@ -330,9 +571,9 @@
             "nullable": true
           },
           "affiliateLoan": {
-            "type": "integer",
+            "type": "string",
             "description": "Number loan type. If empty then the loan is not type 48 which is (AffiliateLoan)Hlutdeildarlán.",
-            "format": "int32"
+            "nullable": true
           },
           "priceIndexType": {
             "type": "string",
@@ -496,9 +737,16 @@
             },
             "description": "List of co-payers that are registered on this loan.",
             "nullable": true
+          },
+          "creditor": {
+            "type": "string",
+            "description": "Name of creditor",
+            "nullable": true,
+            "readOnly": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": ""
       },
       "NoContent": {
         "type": "object",
@@ -617,7 +865,8 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Return model for property."
       }
     },
     "securitySchemes": {

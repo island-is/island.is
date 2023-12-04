@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
@@ -39,12 +39,11 @@ export const AdditionalRealEstate = ({
   const address = useWatch({ name: addressField, defaultValue: '' })
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
-  const shareField = `${fieldIndex}.share`
   const marketValueField = `${fieldIndex}.marketValue`
+  const shareField = `${fieldIndex}.share`
 
   const { control, setValue, clearErrors } = useFormContext()
   const { formatMessage } = useLocale()
-
   const [getProperty, { loading: queryLoading, error: _queryError }] =
     useLazyQuery<Query, { input: SearchForPropertyInput }>(
       SEARCH_FOR_PROPERTY_QUERY,
@@ -90,12 +89,6 @@ export const AdditionalRealEstate = ({
         defaultValue={field.enabled || false}
         render={() => <input type="hidden" />}
       />
-      <Controller
-        name={shareField}
-        control={control}
-        defaultValue={field.share || ''}
-        render={() => <input type="hidden" />}
-      />
       <Text variant="h4">{formatMessage(m.realEstateRepeaterHeader)}</Text>
       <Box position="absolute" className={styles.removeFieldButton}>
         <Button
@@ -132,11 +125,25 @@ export const AdditionalRealEstate = ({
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <InputController
+            id={shareField}
+            label={formatMessage(m.propertyShare)}
+            defaultValue={String(field.share)}
+            onChange={(e) => {
+              setValue(shareField, Number(e.target.value.replace('%', '')))
+            }}
+            error={error?.share}
+            type="number"
+            suffix="%"
+            required
+          />
+        </GridColumn>
+        <GridColumn span={['1/1', '1/2']}>
+          <InputController
             id={marketValueField}
             name={marketValueField}
             label={formatMessage(m.realEstateValueTitle)}
             defaultValue={field.marketValue}
-            placeholder={'0 kr.'}
+            placeholder="0 kr."
             error={error?.marketValue}
             currency
             size="sm"

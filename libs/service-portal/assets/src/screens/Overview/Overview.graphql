@@ -35,6 +35,9 @@ query GetUsersVehicles($input: GetVehiclesForUserInput!) {
       lastInspectionDate
       lastInspectionType
       nextInspectionDate
+      nextAvailableMileageReadDate
+      requiresMileageRegistration
+      canRegisterMileage
     }
     paging {
       pageNumber

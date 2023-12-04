@@ -5,13 +5,7 @@ import { useRouter } from 'next/router'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  CaseState,
-  EventLog,
-  EventType,
-  isRestrictionCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
 import {
@@ -20,7 +14,12 @@ import {
   MarkdownWrapper,
 } from '@island.is/judicial-system-web/src/components'
 import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/CaseTitleInfoAndTags/CaseTitleInfoAndTags'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseDecision,
+  EventLog,
+  EventType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
 

@@ -15,8 +15,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, caseTypes } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
-  CaseDecision,
   CaseState,
   CaseTransition,
   isDistrictCourtUser,
@@ -24,8 +22,6 @@ import {
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -60,7 +56,11 @@ import CaseTitleInfoAndTags from '@island.is/judicial-system-web/src/components/
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
 import {
   CaseAppealDecision,
+  CaseAppealState,
+  CaseDecision,
   InstitutionType,
+  RequestSignatureResponse,
+  SignatureConfirmationResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -216,12 +216,13 @@ export const SignedVerdictOverview: React.FC = () => {
     isSendingNotification,
     transitionCase,
   } = useCase()
-  const { title, description, child } = useAppealAlertBanner(
-    workingCase,
-    () => setModalVisible('ConfirmAppealAfterDeadline'),
-    () => setModalVisible('ConfirmStatementAfterDeadline'),
-    () => handleReceivedTransition(workingCase),
-  )
+  const { title, description, child, isLoadingAppealBanner } =
+    useAppealAlertBanner(
+      workingCase,
+      () => setModalVisible('ConfirmAppealAfterDeadline'),
+      () => setModalVisible('ConfirmStatementAfterDeadline'),
+      () => handleReceivedTransition(workingCase),
+    )
 
   /**
    * If the case is not rejected it must be accepted because
@@ -420,7 +421,7 @@ export const SignedVerdictOverview: React.FC = () => {
 
   return (
     <>
-      {shouldDisplayAlertBanner && (
+      {!isLoadingAppealBanner && shouldDisplayAlertBanner && (
         <AlertBanner variant="warning" title={title} description={description}>
           {child}
         </AlertBanner>

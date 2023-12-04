@@ -505,24 +505,25 @@ export class NotificationService {
       this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
     }
 
-    if (theCase.requestSharedWithDefender) {
+    if (
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT ||
+      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
+    ) {
       const hasDefenderBeenNotified = await this.hasReceivedNotification(
         theCase.id,
         [NotificationType.READY_FOR_COURT, NotificationType.COURT_DATE],
         theCase.defenderEmail,
       )
 
-      if (
-        theCase.defenderName &&
-        theCase.defenderEmail &&
-        hasDefenderBeenNotified
-      ) {
+      if (hasDefenderBeenNotified) {
         promises.push(
           this.sendResubmittedToCourtEmailNotificationToDefender(theCase),
         )
       } else if (
+        theCase.defenderEmail &&
         theCase.requestSharedWithDefender ===
-        RequestSharedWithDefender.READY_FOR_COURT
+          RequestSharedWithDefender.READY_FOR_COURT
       ) {
         promises.push(
           this.sendReadyForCourtEmailNotificationToDefender(theCase),
@@ -722,7 +723,11 @@ export class NotificationService {
     theCase: Case,
   ): Promise<Recipient> {
     const linkSubject = `${
-      theCase.requestSharedWithDefender ? 'Krafa í máli' : 'Yfirlit máls'
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT ||
+      theCase.requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE
+        ? 'Krafa í máli'
+        : 'Yfirlit máls'
     } ${theCase.courtCaseNumber}`
 
     const linkHtml = formatDefenderCourtDateLinkEmailNotification(
@@ -731,7 +736,10 @@ export class NotificationService {
         formatDefenderRoute(this.config.clientUrl, theCase.type, theCase.id),
       theCase.court?.name,
       theCase.courtCaseNumber,
-      Boolean(theCase.requestSharedWithDefender),
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.READY_FOR_COURT ||
+        theCase.requestSharedWithDefender ===
+          RequestSharedWithDefender.COURT_DATE,
     )
     return this.sendEmail(
       linkSubject,

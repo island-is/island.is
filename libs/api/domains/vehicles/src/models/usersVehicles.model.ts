@@ -108,6 +108,15 @@ export class VehiclesVehicle {
 
   @Field({ nullable: true, defaultValue: null })
   nextInspectionDate?: Date
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }
 
 @ObjectType()
@@ -154,6 +163,36 @@ export class VehiclesList {
   @Field({ nullable: true })
   paging?: VehiclePaging
 
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  postStation?: string
+
   @Field(() => String, { nullable: true })
   downloadServiceURL?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  persidno?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  name?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  address?: string
+
+  @Field({
+    nullable: true,
+    deprecationReason: 'New service does not include this field',
+  })
+  createdTimestamp?: string
 }

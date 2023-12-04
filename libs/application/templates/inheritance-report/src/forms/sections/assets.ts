@@ -333,6 +333,11 @@ export const assets = buildSection({
                     required: true,
                     currency: true,
                   },
+                  {
+                    title: m.nationalId.defaultMessage,
+                    id: 'nationalId',
+                    format: '######-####',
+                  },
                 ],
                 repeaterButtonText: m.claimsRepeaterButton.defaultMessage,
                 repeaterHeaderText: m.claimsTitle.defaultMessage,

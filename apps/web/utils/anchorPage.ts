@@ -10,7 +10,7 @@ export const extractAnchorPageLinkType = ({
 }: {
   pageType?: string | null
 }) => {
-  let linkType: LinkType = 'lifeeventpage'
+  let linkType: LinkType = 'anchorpage'
   if (pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE) {
     linkType = 'digitalicelandservicesdetailpage'
   } else if (pageType === AnchorPageType.DIGITAL_ICELAND_COMMUNITY_PAGE) {

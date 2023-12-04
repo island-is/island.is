@@ -83,6 +83,11 @@ export const serviceSetup = (services: {
         staging: 'https://cdn.contentful.com',
         prod: 'https://cdn.contentful.com',
       },
+      Application__AllowedRedirectUris: {
+        dev: 'https://beta.dev01.devland.is/minarsidur',
+        staging: 'https://beta.staging01.devland.is/minarsidur',
+        prod: 'https://island.is/minarsidur',
+      },
     })
     .secrets({
       IdentityServer__LicenseKey: '/k8s/identity-server/LicenseKey',

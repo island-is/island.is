@@ -3,11 +3,13 @@ import { ApolloClient, gql, InMemoryCache } from '@apollo/client'
 import {
   CaseTransition,
   CaseType,
-  RequestSharedWithDefender,
   UpdateCase,
 } from '@island.is/judicial-system/types'
 
-import { CreateCaseMutation } from '../graphql/schema'
+import {
+  CreateCaseMutation,
+  RequestSharedWithDefender,
+} from '../graphql/schema'
 
 const cache = new InMemoryCache()
 const client = new ApolloClient({

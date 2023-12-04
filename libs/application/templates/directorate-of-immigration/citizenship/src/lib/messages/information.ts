@@ -86,10 +86,15 @@ export const information = {
         defaultMessage: 'Maki þinn',
         description: 'Marital status title spouse',
       },
-      marritalStatusDate: {
-        id: 'doi.cs.application:information.labels.maritalStatus.marritalStatusDate',
+      marriedStatusDate: {
+        id: 'doi.cs.application:information.labels.maritalStatus.marriedStatusDate',
         defaultMessage: 'Dagsetning hjúskapar',
-        description: 'Marital status change date spouse',
+        description: 'Married status change date spouse',
+      },
+      cohabitationStatusDate: {
+        id: 'doi.cs.application:information.labels.maritalStatus.cohabitationStatusDate',
+        defaultMessage: 'Dagsetning sambúðar',
+        description: 'Cohabitation status change date spouse',
       },
       status: {
         id: 'doi.cs.application:information.labels.maritalStatus.status',
@@ -183,7 +188,7 @@ export const information = {
         description: 'Stays abroad sub section title',
       },
       pageSubTitle: {
-        id: 'doi.cs.application:information.labels.staysAbroad.subSectionTitle',
+        id: 'doi.cs.application:information.labels.staysAbroad.pageSubTitle',
         defaultMessage:
           'Gefðu upplýsingar um dvöl erlendis lengur en 3 mánuði frá lögheimilisskráningu, til þess dags þegar þessi umsókn er lögð fram.',
         description: 'Stays abroad sub section title',

@@ -47,7 +47,7 @@ const previewLinkHandler = {
     })
     return `${DEV_WEB_BASE_URL}/s/${organizationPage?.fields?.slug?.[DEFAULT_LOCALE]}/${entry.fields.slug[DEFAULT_LOCALE]}`
   },
-  lifeEventPage: (entry: EntryProps<KeyValueMap>) => {
+  anchorPage: (entry: EntryProps<KeyValueMap>) => {
     const middlePart =
       entry.fields.pageType?.[DEFAULT_LOCALE] === 'Digital Iceland Service'
         ? 's/stafraent-island/thjonustur'

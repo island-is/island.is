@@ -270,6 +270,10 @@ export const m = defineMessages({
     id: 'service.portal:my-vehicles',
     defaultMessage: 'Ökutækin mín',
   },
+  vehicleMileage: {
+    id: 'service.portal:my-vehicles-mileage',
+    defaultMessage: 'Kílómetrastaða',
+  },
   incoming: {
     id: 'service.portal:incoming',
     defaultMessage: 'Á döfinni',
@@ -432,7 +436,6 @@ export const m = defineMessages({
     id: 'service.portal:base-info',
     defaultMessage: 'Grunnupplýsingar',
   },
-
   family: {
     id: 'service.portal:family',
     defaultMessage: 'Fjölskyldan',
@@ -586,6 +589,10 @@ export const m = defineMessages({
   financeLocalTax: {
     id: 'service.portal:finance-local-tax',
     defaultMessage: 'Útsvar',
+  },
+  financeLoans: {
+    id: 'service.portal:finance-loans',
+    defaultMessage: 'Lán',
   },
   searchLabel: {
     id: 'service.portal:search-label',
@@ -903,6 +910,18 @@ export const m = defineMessages({
     id: 'service.portal:saveInfo',
     defaultMessage: 'Vista upplýsingar',
   },
+  save: {
+    id: 'service.portal:save',
+    defaultMessage: 'Vista',
+  },
+  register: {
+    id: 'service.portal:register',
+    defaultMessage: 'Skrá',
+  },
+  update: {
+    id: 'service.portal:update',
+    defaultMessage: 'Uppfæra',
+  },
   startPage: {
     id: 'service.portal:start-page',
     defaultMessage: 'upphafssíðu',
@@ -1194,5 +1213,25 @@ export const m = defineMessages({
   totalPrice: {
     id: 'service.portal:total-price',
     defaultMessage: 'Heildarverð',
+  },
+  replayAudio: {
+    id: 'service.portal:replay-audio',
+    defaultMessage: 'Spila aftur',
+  },
+  pauseAudio: {
+    id: 'service.portal:pause-audio',
+    defaultMessage: 'Gera hlé',
+  },
+  playAudio: {
+    id: 'service.portal:play-audio',
+    defaultMessage: 'Spila',
+  },
+  muteAudio: {
+    id: 'service.portal:mute-audio',
+    defaultMessage: 'Hljóð af',
+  },
+  unmuteAudio: {
+    id: 'service.portal:unmute-audio',
+    defaultMessage: 'Hljóð á',
   },
 })

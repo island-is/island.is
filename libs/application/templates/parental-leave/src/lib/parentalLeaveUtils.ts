@@ -958,6 +958,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     [],
   ) as EmployerRow[]
 
+  const language = getValueViaPath(answers, 'applicant.language') as string
+
   return {
     applicationType,
     noChildrenFoundTypeOfApplication,
@@ -1023,6 +1025,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     addPeriods,
     tempPeriods,
     tempEmployers,
+    language,
   }
 }
 

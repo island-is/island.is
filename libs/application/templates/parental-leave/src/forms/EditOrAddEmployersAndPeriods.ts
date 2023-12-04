@@ -69,7 +69,7 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
 
         return (
           (applicationType === PARENTAL_LEAVE &&
-            isReceivingUnemploymentBenefits === NO &&
+            isReceivingUnemploymentBenefits !== YES &&
             isNotSelfEmployed) ||
           ((applicationType === PARENTAL_GRANT ||
             applicationType === PARENTAL_GRANT_STUDENTS) &&

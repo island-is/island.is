@@ -12,17 +12,25 @@ import { MessageDescriptor } from 'react-intl'
 import { StaticText } from 'static-text'
 import { conclusion } from './messages'
 
-type props = {
-  alertTitle?: MessageDescriptor
-  alertMessage?: MessageDescriptor
-  expandableHeader?: MessageDescriptor
-  expandableIntro?: StaticText
-  expandableDescription?: StaticText
-  s3FileKey?: FormText
-  link?: string
-  buttonText?: MessageDescriptor
-  sectionTitle?: MessageDescriptor
-}
+type Props = Partial<{
+  alertTitle: MessageDescriptor
+  alertMessage: MessageDescriptor
+  alertType: 'success' | 'warning' | 'error' | 'info'
+  multiFieldTitle: MessageDescriptor
+  secondButtonLink: MessageDescriptor
+  secondButtonLabel: MessageDescriptor
+  secondButtonMessage: MessageDescriptor
+  expandableHeader: MessageDescriptor
+  expandableIntro: MessageDescriptor
+  expandableDescription: MessageDescriptor
+  conclusionLinkS3FileKey: FormText
+  conclusionLink: string
+  conclusionLinkLabel: MessageDescriptor
+  sectionTitle: MessageDescriptor
+  bottomButtonLink: string
+  bottomButtonLabel: MessageDescriptor
+  bottomButtonMessage: MessageDescriptor
+}>
 
 /**
  * Creates a form conclusion section for applications
@@ -30,59 +38,71 @@ type props = {
  *
  * @param  alertTitle  Title of the green alert message.
  * @param  alertMessage The message inside the green alert box.
+ * @param  alertType The type of alert, can be success, warning, error, info. * JUST ADDED *
+ * @param  multiFieldTitle Title of the conclusion section. * JUST ADDED *
  * @param  expandableHeader Header of the expandable description section.
  * @param  expandableIntro Intro text of the expandable description section.
  * @param  expandableDescription Markdown code for the expandable description section, most applications use bulletpoints.
- * @param  s3FileKey The key of file in s3.
- * @param  link Link that user can click on.
- * @param  buttonText The text of the button that links to a url
- * @param  secitonTitle The title for the section
+ * @param  conclusionLinkS3FileKey The key of file in s3 for the link on top.
+ * @param  conclusionLink Link that user can click on top.
+ * @param  conclusionLinkLabel The text of the button that links to a url on top.
+ * @param  sectionTitle The title for the section
+ * @param  bottomButtonLink The link for the bottom button
+ * @param  bottomButtonLabel The label for the bottom button
+ * @param  bottomButtonMessage The message for the bottom button
  */
-export const buildFormConclusionSection = (props: props) =>
+export const buildFormConclusionSection = ({
+  alertTitle = conclusion.alertMessageField.title,
+  alertMessage = conclusion.alertMessageField.message,
+  alertType = 'success',
+  multiFieldTitle = conclusion.information.formTitle,
+  expandableHeader = conclusion.expandableDescriptionField.title,
+  expandableIntro = conclusion.expandableDescriptionField.introText,
+  expandableDescription = conclusion.expandableDescriptionField.description,
+  conclusionLinkS3FileKey = '',
+  conclusionLink = '',
+  conclusionLinkLabel = undefined,
+  sectionTitle = conclusion.information.sectionTitle,
+  bottomButtonLink = '/minarsidur/umsoknir',
+  bottomButtonLabel = coreMessages.openServicePortalButtonTitle,
+  bottomButtonMessage = coreMessages.openServicePortalMessageText,
+}: Props) =>
   buildSection({
     id: 'uiForms.conclusionSection',
-    title: props.sectionTitle
-      ? props.sectionTitle
-      : conclusion.information.sectionTitle,
+    title: sectionTitle,
     children: [
       buildMultiField({
         id: 'uiForms.conclusionMultifield',
-        title: conclusion.information.formTitle,
+        title: multiFieldTitle,
         children: [
           buildLinkField({
-            id: 'uiForms.complaintLink',
-            title: props.buttonText ?? '',
-            s3key: props.s3FileKey ?? '',
-            link: props.link ?? '',
+            id: 'uiForms.conclusionLink',
+            title: conclusionLinkLabel || '',
+            s3key: conclusionLinkS3FileKey,
+            link: conclusionLink,
             condition: () => {
-              return props.buttonText !== undefined
+              return !!conclusionLinkLabel
             },
           }),
           buildAlertMessageField({
             id: 'uiForms.conclusionAlert',
-            title: props.alertTitle ?? conclusion.alertMessageField.title,
-            alertType: 'success',
-            message: props.alertMessage ?? conclusion.alertMessageField.message,
+            title: alertTitle,
+            alertType: alertType,
+            message: alertMessage,
           }),
           buildExpandableDescriptionField({
-            id: 'uiForms.conclusionBullet',
-            title:
-              props.expandableHeader ??
-              conclusion.expandableDescriptionField.title,
-            introText:
-              props.expandableIntro ??
-              conclusion.expandableDescriptionField.introText,
-            description:
-              props.expandableDescription ??
-              conclusion.expandableDescriptionField.description,
+            id: 'uiForms.conclusionExpandableDescription',
+            title: expandableHeader,
+            introText: expandableIntro,
+            description: expandableDescription,
             startExpanded: true,
           }),
           buildMessageWithLinkButtonField({
-            id: 'uiForms.conclusionGoToServicePortal',
+            id: 'uiForms.conclusionBottomLink',
             title: '',
-            url: '/minarsidur/umsoknir',
-            buttonTitle: coreMessages.openServicePortalButtonTitle,
-            message: coreMessages.openServicePortalMessageText,
+            url: bottomButtonLink,
+            buttonTitle: bottomButtonLabel,
+            message: bottomButtonMessage,
           }),
         ],
       }),

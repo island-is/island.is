@@ -5,11 +5,12 @@ import {
 } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  SYSLUMENN_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
   m,
+  downloadLink,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import {
@@ -66,10 +67,7 @@ export const HealthOverview = () => {
     const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
 
     if (downloadData?.data && downloadData.fileName) {
-      const downloadLink = document.createElement('a')
-      downloadLink.href = 'data:application/pdf;base64,' + downloadData?.data
-      downloadLink.download = downloadData.fileName
-      downloadLink.click()
+      downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
     }
   }
 
@@ -88,12 +86,13 @@ export const HealthOverview = () => {
   }
 
   return (
-    <Box paddingY={4}>
+    <Box>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           title={formatMessage(user.profile.name)}
           intro={formatMessage(messages.overviewIntro)}
-          serviceProviderSlug={SYSLUMENN_SLUG}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
       </Box>
       {loading ? (
@@ -103,10 +102,11 @@ export const HealthOverview = () => {
           height={24}
           borderRadius="standard"
         />
-      ) : !insurance ? (
+      ) : !insurance || !insurance.isInsured ? (
         <AlertMessage
           type="info"
-          message={formatMessage(messages.noHealthInsurance)}
+          title={formatMessage(messages.noHealthInsurance)}
+          message={insurance?.explanation}
         />
       ) : (
         <Box>

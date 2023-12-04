@@ -90,7 +90,7 @@ export class User extends Model {
   institutionId?: string
 
   @BelongsTo(() => Institution, 'institutionId')
-  @ApiPropertyOptional({ type: Institution })
+  @ApiPropertyOptional({ type: () => Institution })
   institution?: Institution
 
   @Column({

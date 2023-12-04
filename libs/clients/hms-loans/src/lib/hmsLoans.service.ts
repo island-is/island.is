@@ -9,15 +9,22 @@ export class HmsLoansClientService {
   private apiWithAuth = (user: User) =>
     this.loansApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getHmsLoansLoanhistory(user: User) {
+  async getHmsLoansHistory(user: User) {
     return this.apiWithAuth(user).apiVversionLibraLoanhistoryPost({
       version: '1',
     })
   }
 
-  async getHmsLoansPaymenthistory(user: User) {
-    return this.apiWithAuth(user).apiVversionLibraPaymenthistoryPost({
+  async getHmsLoansHistoryPdf(user: User) {
+    return this.apiWithAuth(user).apiVversionLibraLoanhistorypdfPost({
       version: '1',
+    })
+  }
+
+  async getHmsLoansPaymentHistory(user: User, loanId: number) {
+    return this.apiWithAuth(user).apiVversionLibraPaymenthistorybyloanidPost({
+      version: '1',
+      loanId,
     })
   }
 }

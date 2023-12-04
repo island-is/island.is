@@ -4,6 +4,7 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { personal } from '../../../lib/messages'
 import { Application, UserProfile } from '@island.is/api/schema'
@@ -108,12 +109,11 @@ export const UserInformationSubSection = buildSubSection({
             return userProfile?.email
           },
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'userInformation.phone',
           title: personal.labels.userInformation.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
+          backgroundColor: 'blue',
           required: true,
           defaultValue: (application: Application) => {
             const userProfile = getValueViaPath(
@@ -142,7 +142,7 @@ export const UserInformationSubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'userInformation.residenceInIcelandLastChangeDate',
+          id: 'userInformation.residenceInIcelandLastChangeDateStr',
           title:
             personal.labels.userInformation.residenceInIcelandLastChangeDate,
           backgroundColor: 'white',
@@ -157,7 +157,7 @@ export const UserInformationSubSection = buildSubSection({
 
             const date = residenceInIcelandLastChangeDate
 
-            return date ? formatDate(date) : ''
+            return date ? formatDate(new Date(date)) : ''
           },
         }),
         buildTextField({

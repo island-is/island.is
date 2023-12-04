@@ -1,7 +1,7 @@
 import {
   Article,
   Items,
-  LifeEventPage,
+  AnchorPage,
   News,
   SearcherInput,
   TagCount,
@@ -31,7 +31,7 @@ export function getTagCounts(filteredItems: Items[]) {
 }
 
 export function filterItem(
-  item: Article | LifeEventPage | News,
+  item: Article | AnchorPage | News,
   query: SearcherInput,
 ) {
   if (!item.title.includes(query.queryString)) {

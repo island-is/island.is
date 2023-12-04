@@ -28,7 +28,8 @@ export class RequestSharedWithDefenderGuard implements CanActivate {
     }
 
     if (
-      Boolean(theCase.requestSharedWithDefender) &&
+      theCase.requestSharedWithDefender ===
+        RequestSharedWithDefender.COURT_DATE &&
       Boolean(theCase.courtDate)
     ) {
       return true

@@ -20,6 +20,15 @@ export const slides = style({
   overflow: 'auto',
   display: 'flex',
   transform: 'translate3d(0,0,0)',
+  selectors: {
+    // First and last slides fake the horizontal grid margin
+    '&:last-child::after': {
+      content: "''",
+      display: 'block',
+      flex: 'none',
+      marginRight: theme.spacing[3],
+    },
+  },
 })
 
 export const slide = style({
@@ -33,13 +42,4 @@ export const slide = style({
   // Breathing space for box-shadow etc
   marginTop: theme.spacing[2],
   marginBottom: theme.spacing[2],
-  selectors: {
-    // First and last slides fake the horizontal grid margin
-    '&:last-child::after': {
-      content: "''",
-      display: 'block',
-      flex: 'none',
-      width: theme.spacing[3],
-    },
-  },
 })

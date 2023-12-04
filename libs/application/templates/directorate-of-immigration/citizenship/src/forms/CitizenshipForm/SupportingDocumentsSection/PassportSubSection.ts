@@ -53,6 +53,7 @@ export const PassportSubSection = buildSubSection({
           title: supportingDocuments.labels.passport.publishDate,
           placeholder: supportingDocuments.labels.passport.datePlaceholder,
           width: 'half',
+          maxDate: new Date(),
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
@@ -148,7 +149,7 @@ export const PassportSubSection = buildSubSection({
           },
         }),
         buildFileUploadField({
-          id: `${Routes.PASSPORT}.file`,
+          id: `${Routes.PASSPORT}.attachment`,
           title: supportingDocuments.labels.passport.fileUpload,
           introduction: '',
           maxSize: FILE_SIZE_LIMIT,
