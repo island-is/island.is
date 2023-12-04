@@ -301,7 +301,7 @@ api:
     SOFFIA_SOAP_URL: 'https://soffia2.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 'sogur@island.is'
-    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.university-gateway.svc.cluster.local'
+    UNIVERSITY_GATEWAY_API_URL: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local'
     XROAD_ADR_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
     XROAD_AIRCRAFT_REGISTRY_PATH: 'IS/GOV/5405131040/Samgongustofa-Protected/Loftfaraskra-V1'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
