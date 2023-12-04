@@ -153,13 +153,16 @@ export async function session({
   return context
 }
 
-export async function judicialSystemSession({ browser }: { browser: Browser }) {
+export async function judicialSystemSession(
+  { browser }: { browser: Browser },
+  homeUrl?: string,
+) {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
   await ensureCognitoSessionIfNeeded(
     page,
-    JUDICIAL_SYSTEM_HOME_URL,
+    homeUrl ?? JUDICIAL_SYSTEM_HOME_URL,
     authUrlPrefix,
   )
   await page.close()

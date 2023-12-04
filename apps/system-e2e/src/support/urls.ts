@@ -17,6 +17,8 @@ export enum AuthUrl {
 }
 
 export const JUDICIAL_SYSTEM_HOME_URL = '/api/auth/login?nationalId=9999999999'
+export const JUDICIAL_SYSTEM_JUDGE_HOME_URL =
+  '/api/auth/login?nationalId=0000000000'
 
 export const getEnvironmentBaseUrl = (authority: string) => {
   const baseurlPrefix = process.env.BASE_URL_PREFIX ?? ''
