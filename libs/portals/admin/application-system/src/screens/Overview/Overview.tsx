@@ -122,8 +122,8 @@ const Overview = () => {
 
   const clearFilters = (categoryId?: string) => {
     if (!categoryId) {
-      // Clear all filters
-      setFilters(defaultFilters)
+      // Clear all filters (except nationalId)
+      setFilters((prev) => ({ ...prev, period: {} }))
       setMultiChoiceFilters(defaultMultiChoiceFilters)
       setInstitutionFilters(undefined)
       return
