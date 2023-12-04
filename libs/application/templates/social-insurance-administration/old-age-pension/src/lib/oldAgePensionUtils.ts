@@ -16,8 +16,6 @@ import {
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
-  FormValue,
-  ExternalData,
   YES,
   NO,
 } from '@island.is/application/types'
@@ -37,9 +35,10 @@ import {
   Attachments,
 } from '../types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import isEmpty from 'lodash/isEmpty'
+import {
+  BankInfo,
+  PaymentInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
@@ -157,6 +156,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
+  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+
   return {
     pensionFundQuestion,
     applicationType,
@@ -187,6 +188,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankName,
     bankAddress,
     currency,
+    paymentInfo,
   }
 }
 
@@ -597,62 +599,4 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
-}
-
-// We should only send bank account to TR if applicant is registering
-// new one or changing.
-export const shouldNotUpdateBankAccount = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-) => {
-  const { bankInfo } = getApplicationExternalData(externalData)
-  const {
-    bankAccountType,
-    bank,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
-  } = getApplicationAnswers(answers)
-
-  if (bankAccountType === BankAccountType.ICELANDIC) {
-    return getBankIsk(bankInfo) === bank ?? false
-  } else {
-    return (
-      !isEmpty(bankInfo) &&
-      bankInfo.iban === iban &&
-      bankInfo.swift === swift &&
-      bankInfo.foreignBankName === bankName &&
-      bankInfo.foreignBankAddress === bankAddress &&
-      bankInfo.currency === currency
-    )
-  }
-}
-
-export const getCurrencies = (externalData: ExternalData) => {
-  const { currencies } = getApplicationExternalData(externalData)
-
-  return (
-    currencies.map((i) => ({
-      label: i,
-      value: i,
-    })) ?? []
-  )
-}
-
-export const typeOfBankInfo = (
-  answers: FormValue,
-  externalData: ExternalData,
-) => {
-  const { bankAccountType } = getApplicationAnswers(answers)
-  const { bankInfo } = getApplicationExternalData(externalData)
-
-  return bankAccountType
-    ? bankAccountType
-    : !isEmpty(bankInfo)
-    ? bankInfo.bank && bankInfo.ledger && bankInfo.accountNumber
-      ? BankAccountType.ICELANDIC
-      : BankAccountType.FOREIGN
-    : BankAccountType.ICELANDIC
 }

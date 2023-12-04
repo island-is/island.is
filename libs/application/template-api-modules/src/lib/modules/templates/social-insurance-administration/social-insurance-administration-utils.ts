@@ -7,11 +7,14 @@ import {
 import {
   ApplicationType,
   getApplicationAnswers,
-  shouldNotUpdateBankAccount,
+  getApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { formatBank } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import {
+  formatBank,
+  shouldNotUpdateBankAccount,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -35,7 +38,9 @@ export const transformApplicationToOldAgePensionDTO = (
     bankName,
     bankAddress,
     currency,
+    paymentInfo,
   } = getApplicationAnswers(application.answers)
+  const { bankInfo } = getApplicationExternalData(application.externalData)
 
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
@@ -51,10 +56,7 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(
-      application.answers,
-      application.externalData,
-    ) && {
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       ...(bankAccountType === BankAccountType.ICELANDIC && {
         domesticBankInfo: {
           bank: formatBank(bank),
