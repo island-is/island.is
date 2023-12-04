@@ -50,6 +50,7 @@ export const serviceSetup = (services: {
   airDiscountSchemeBackend: ServiceBuilder<'air-discount-scheme-backend'>
   sessionsApi: ServiceBuilder<'services-sessions'>
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
+  universityGatewayApi: ServiceBuilder<'services-university-gateway'>
 }): ServiceBuilder<'api'> => {
   return service('api')
     .namespace('islandis')
@@ -238,6 +239,9 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
+      UNIVERSITY_GATEWAY_API_URL: ref(
+        (h) => `http://${h.svc(services.universityGatewayApi)}`,
+      ),
     })
 
     .secrets({

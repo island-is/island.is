@@ -191,6 +191,9 @@
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
       ],
+      "@island.is/api/domains/signature-collection": [
+        "libs/api/domains/signature-collection/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
@@ -202,6 +205,9 @@
       ],
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
+      ],
+      "@island.is/api/domains/university-gateway": [
+        "libs/api/domains/university-gateway/src/index.ts"
       ],
       "@island.is/api/domains/university-of-iceland": [
         "libs/api/domains/university-of-iceland/src/index.ts"
@@ -635,6 +641,15 @@
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
       ],
+      "@island.is/clients/university-application/reykjavik-university": [
+        "libs/clients/university-application/reykjavik-university/src/index.ts"
+      ],
+      "@island.is/clients/university-application/university-of-iceland": [
+        "libs/clients/university-application/university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-gateway-api": [
+        "libs/clients/university-gateway-api/src/index.ts"
+      ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
       ],
@@ -907,6 +922,7 @@
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
