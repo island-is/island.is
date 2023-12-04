@@ -89,6 +89,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
     })
   }
 
+  private put<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
+    return this.callBackend<TResult>(route, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: this.headers,
+    })
+  }
+
   private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
     return this.callBackend<TResult>(route, {
       method: 'PATCH',
@@ -121,7 +129,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    return this.patch(`user/${id}`, updateUser)
+    return this.put(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<CaseListEntry[]> {

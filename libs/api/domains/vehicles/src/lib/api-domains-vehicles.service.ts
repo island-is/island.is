@@ -18,6 +18,7 @@ import {
   RootPostRequest,
   RootPutRequest,
 } from '@island.is/clients/vehicles-mileage'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
@@ -42,7 +43,7 @@ export class VehiclesService {
   constructor(
     private vehiclesApi: VehicleSearchApi,
     private mileageReadingApi: MileageReadingApi,
-    private vehiclesPDFApi: PdfApi,
+    private readonly featureFlagService: FeatureFlagService,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
   ) {}
@@ -151,6 +152,16 @@ export class VehiclesService {
     auth: User,
     input: GetMileageReadingRequest,
   ): Promise<VehicleMileageOverview | null> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return null
+    }
+
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
     })
@@ -193,6 +204,16 @@ export class VehiclesService {
     auth: User,
     input: CanregistermileagePermnoGetRequest,
   ): Promise<boolean> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
     const res = await this.getMileageWithAuth(auth).canregistermileagePermnoGet(
       {
         permno: input.permno,
@@ -209,6 +230,16 @@ export class VehiclesService {
     auth: User,
     input: RequiresmileageregistrationPermnoGetRequest,
   ): Promise<boolean> {
+    const featureFlagOn = await this.featureFlagService.getValue(
+      Features.servicePortalVehicleMileagePageEnabled,
+      false,
+      auth,
+    )
+
+    if (!featureFlagOn) {
+      return false
+    }
+
     const res = await this.getMileageWithAuth(
       auth,
     ).requiresmileageregistrationPermnoGet({
