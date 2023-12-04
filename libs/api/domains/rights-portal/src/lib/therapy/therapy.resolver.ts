@@ -16,6 +16,7 @@ import {
 } from '@island.is/nest/feature-flags'
 import { TherapyService } from './therapy.service'
 import { PaginatedTherapyResponse } from './models/therapy.model'
+import { PaginatedResponse } from '@island.is/nest/pagination'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
