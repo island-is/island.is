@@ -61,7 +61,7 @@ export const deceased = buildSection({
             },
           }) =>
             isEstateInfo(data)
-              ? format(new Date(data.estate.dateOfDeath), 'dd/MM/yyyy')
+              ? format(new Date(data.estate.dateOfDeath), 'dd.MM.yyyy')
               : m.deathDateNotRegistered,
           width: 'half',
         }),
