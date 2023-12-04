@@ -44,7 +44,11 @@ import { NotificationsInfraController } from './health.controller'
       },
     }),
   ],
-  controllers: [NotificationsController, MeNotificationsController,NotificationsInfraController],
+  controllers: [
+    NotificationsController,
+    MeNotificationsController,
+    NotificationsInfraController,
+  ],
   providers: [
     NotificationsService,
     NotificationDispatchService,
