@@ -5,8 +5,11 @@ import * as styles from './Swiper.css'
 
 const FALLBACK_WIDTH = 316
 
-export const Swiper: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  const [width, setWidth] = useState<number>(FALLBACK_WIDTH)
+export const Swiper: FC<React.PropsWithChildren<{ itemWidth?: number }>> = ({
+  children,
+  itemWidth,
+}) => {
+  const [width, setWidth] = useState<number>(itemWidth ?? FALLBACK_WIDTH)
   const ref = useRef<HTMLDivElement>(null)
 
   const onResize = useCallback(() => {

@@ -27,7 +27,7 @@ import chunk from 'lodash/chunk'
 import { AudioPlayer, VideoPlayer } from '@island.is/service-portal/core'
 import { TrademarkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
-import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarks.generated'
+import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
 
 type UseParams = {
   id: string

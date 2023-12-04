@@ -6,6 +6,27 @@ import { AssetsPaths } from './lib/paths'
 import { translationLoader } from './screens/Translation.loader'
 import { Navigate } from 'react-router-dom'
 
+const IPOverview = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesOverview/IntellectualPropertiesOverview'
+  ),
+)
+const IPDesignDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesDesignDetail/IntellectualPropertiesDesignDetail'
+  ),
+)
+const IPTrademarkDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesTrademarkDetail/IntellectualPropertiesTrademarkDetail'
+  ),
+)
+const IPPatentDetail = lazy(() =>
+  import(
+    './screens/IntellectualPropertiesPatentDetail/IntellectualPropertiesPatentDetail'
+  ),
+)
+
 const AssetsOverview = lazy(() =>
   import('./screens/AssetsOverview/AssetsOverview'),
 )
@@ -114,6 +135,30 @@ export const assetsModule: PortalModule = {
           userInfo.scopes.includes(ApiScope.internal) ||
           userInfo.scopes.includes(ApiScope.internalProcuring),
         element: <Lookup />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualProperties,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPOverview />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPDesignDetail />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPTrademarkDetail />,
+      },
+      {
+        name: m.intellectualProperties,
+        path: AssetsPaths.AssetsIntellectualPropertiesPatent,
+        enabled: userInfo.scopes.includes(ApiScope.internal),
+        element: <IPPatentDetail />,
       },
     ]
 
