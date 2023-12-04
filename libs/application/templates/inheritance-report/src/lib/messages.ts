@@ -367,7 +367,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráninganúmer ökutækis',
+    defaultMessage: 'Skráningarnúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -400,6 +400,11 @@ export const m = defineMessages({
   gunValuation: {
     id: 'ir.application:gunValuation',
     defaultMessage: 'Markaðsverðmæti á dánardegi',
+    description: '',
+  },
+  gunNumber: {
+    id: 'ir.application:gunValuation',
+    defaultMessage: 'Raðnúmer',
     description: '',
   },
 

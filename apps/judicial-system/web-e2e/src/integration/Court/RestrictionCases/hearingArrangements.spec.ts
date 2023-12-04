@@ -1,6 +1,11 @@
 import * as faker from 'faker'
 
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE,
   RESTRICTION_CASE_RULING_ROUTE,
@@ -22,6 +27,7 @@ describe(`${RESTRICTION_CASE_COURT_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
       state: CaseState.RECEIVED,
     }
 
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(

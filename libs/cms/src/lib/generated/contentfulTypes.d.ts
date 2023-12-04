@@ -3191,6 +3191,9 @@ export interface IProjectPageFields {
   /** Default Header Background Color */
   defaultHeaderBackgroundColor?: string | undefined
 
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
+
   /** Featured Description */
   featuredDescription?: string | undefined
 

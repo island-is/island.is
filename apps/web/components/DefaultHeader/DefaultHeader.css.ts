@@ -49,15 +49,14 @@ export const textInnerContainer = style({
       paddingRight: '16px',
       paddingBottom: '105px',
       zIndex: 1,
+      justifyContent: 'center',
     },
   }),
 })
 
 export const headerImage = style({
-  height: '100%',
   width: '100%',
-  objectFit: 'contain',
-  padding: '20px',
+  maxHeight: '100%',
   ...themeUtils.responsiveStyle({
     xs: {
       order: 0,
