@@ -347,7 +347,6 @@ export const overviewAssetsAndDebts = [
     {
       cards: ({ answers }: Application) =>
         ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
-          console.log(stock)
           return {
             title: stock.organization,
             description: [
