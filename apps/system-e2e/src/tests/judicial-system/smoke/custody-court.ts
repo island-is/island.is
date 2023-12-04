@@ -1,4 +1,4 @@
-import { BrowserContext, Page, expect, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@playwright/test'
 
 import { JUDICIAL_SYSTEM_JUDGE_HOME_URL, urls } from '../../../support/urls'
 import { judicialSystemSession } from '../../../support/session'
@@ -20,12 +20,11 @@ export function addTests() {
 
     test.afterAll(async () => await context.close())
 
-    test('should submit decision in court case', async ({ page }) => {
-      page = await context.newPage()
+    test('should submit decision in court case', async () => {
+      const page = await context.newPage()
 
       // Case list
       page.goto('/krofur')
-
       await page
         .getByText('007-2023-000001Jón JónssonGæsluvarðhald')
         .getByText('Nýtt')
@@ -53,7 +52,6 @@ export function addTests() {
       await expect(page).toHaveURL(/.*\/domur\/fyrirtokutimi\/.*/)
       const date = new Date()
       const today = date.toLocaleDateString('is-IS')
-
       await page.locator('input[id=courtDate]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtDate-time]').fill('09:00')
@@ -75,7 +73,6 @@ export function addTests() {
       await page.locator('input[id=validToDate]').fill(custodyEndDate)
       await page.keyboard.press('Escape')
       await page.locator('input[id=validToDate-time]').fill('16:00')
-
       await page.getByTestId('continueButton').click()
 
       // Court record
@@ -85,13 +82,11 @@ export function addTests() {
         .filter({ hasText: 'Varnaraðili tekur sér lögboðinn frest' })
         .first()
         .click()
-
       await page
         .locator('label')
         .filter({ hasText: 'Sækjandi unir úrskurðinum' })
         .first()
         .click()
-
       await page.locator('input[id=courtEndTime]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtEndTime-time]').fill('10:00')
