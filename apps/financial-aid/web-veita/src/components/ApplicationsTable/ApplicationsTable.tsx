@@ -53,10 +53,45 @@ const ApplicationsTable = ({
     sortBy: defaultHeaderSort,
     sortAscending: true,
   })
-
+  // console.log(sortByHeader)
   const changeApplicationTable = useAllApplications()
 
   const [isLoading, setIsLoading] = useState(false)
+
+  const getSortedArray = (array: Application[]) => {
+    return array
+    // if (sortB yHeader.sortBy === ApplicationHeaderSortByEnum.STAFF) {
+    //   if (sortByHeader.sortAscending) {
+    //     return [...array].sort((a, b) => {
+    //       if (a.staff?.name && b.staff?.name) {
+    //         return a.staff.name > b.staff.name ? 1 : -1
+    //       }
+    //       return 0
+    //     })
+    //   }
+    //   return [...array].sort((a, b) => {
+    //     if (a.staff?.name && b.staff?.name) {
+    //       return a.staff.name > b.staff.name ? -1 : 1
+    //     }
+    //     return 0
+    //   })
+    // } else {
+    //   if (sortByHeader.sortAscending) {
+    //     return [...array].sort((a, b) => {
+    //       if (a[sortByHeader.sortBy] && b[sortByHeader.sortBy]) {
+    //         return a[sortByHeader.sortBy] > b[sortByHeader.sortBy] ? 1 : -1
+    //       }
+    //       return 0
+    //     })
+    //   }
+    //   return [...array].sort((a, b) => {
+    //     if (a[sortByHeader.sortBy] && b[sortByHeader.sortBy]) {
+    //       return a[sortByHeader.sortBy] > b[sortByHeader.sortBy] ? -1 : 1
+    //     }
+    //     return 0
+    //   })
+    // }
+  }
 
   const updateApplicationAndTable = async (
     applicationId: string,
@@ -144,29 +179,31 @@ const ApplicationsTable = ({
               </thead>
 
               <tbody className={tableStyles.tableBody}>
-                {applications.map((item: Application, index) => (
-                  <TableBody
-                    items={[
-                      usePseudoName(item.nationalId, item.name),
-                      State(item.state),
-                      TextTableItem(
-                        'default',
-                        calcDifferenceInDate(item.modified),
-                      ),
-                      TextTableItem(
-                        'default',
-                        getMonth(new Date(item.created).getMonth()),
-                      ),
-                      assignButton(item),
-                    ]}
-                    identifier={item.id}
-                    index={index}
-                    key={item.id}
-                    onClick={() =>
-                      router.push(Routes.applicationProfile(item.id))
-                    }
-                  />
-                ))}
+                {getSortedArray(applications).map(
+                  (item: Application, index) => (
+                    <TableBody
+                      items={[
+                        usePseudoName(item.nationalId, item.name),
+                        State(item.state),
+                        TextTableItem(
+                          'default',
+                          calcDifferenceInDate(item.modified),
+                        ),
+                        TextTableItem(
+                          'default',
+                          getMonth(new Date(item.created).getMonth()),
+                        ),
+                        assignButton(item),
+                      ]}
+                      identifier={item.id}
+                      index={index}
+                      key={item.id}
+                      onClick={() =>
+                        router.push(Routes.applicationProfile(item.id))
+                      }
+                    />
+                  ),
+                )}
               </tbody>
             </table>
           </div>

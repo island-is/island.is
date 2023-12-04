@@ -9,7 +9,7 @@ import { SortableTableHeaderProps } from '@island.is/financial-aid/shared/lib'
 interface PageProps {
   header: SortableTableHeaderProps
   index: number
-  onClick: () => void
+  onClick: (el: SortableTableHeaderProps) => void
   sortAsc: boolean
   isSortActive: boolean
 }

@@ -46,6 +46,7 @@ export enum ApplicationHeaderSortByEnum {
   STATE = 'state',
   MODIFIED = 'modified',
   CREATED = 'created',
+  STAFF = 'staff',
 }
 
 export enum ApplicationStateUrl {
