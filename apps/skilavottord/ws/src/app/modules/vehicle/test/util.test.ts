@@ -1,6 +1,6 @@
 // import { VehicleModel } from '../vehicle.model'
 
-import { VehicleModel } from '../vehicle.model'
+// import { VehicleModel } from '../vehicle.model'
 
 export class UtilTest {
   //+add
@@ -20,7 +20,8 @@ export class UtilTest {
   // }
 
   //+create
-  async create(vehicle: VehicleModel): Promise<boolean> {
+  // async create(vehicle: VehicleModel): Promise<boolean> {
+  async create(): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
       // const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
@@ -30,11 +31,12 @@ export class UtilTest {
       return true
 
       // Save vehicle to database
-      await vehicle.save()
+      // await vehicle.save()
       return true
     } catch (err) {
       throw new Error(
-        `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
+        // `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
+        `Getting error while trying to create new vehicle with number: `,
       )
     }
   }

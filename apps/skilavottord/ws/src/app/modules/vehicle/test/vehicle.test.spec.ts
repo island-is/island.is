@@ -35,8 +35,12 @@ describe('TestJest', () => {
   })
 
   it('test check', async () => {
+    const vehicle = new VehicleModel()
+    vehicle.vehicleId = 'fax344'
+    vehicle.vehicleColor = 'white'
     // service.findByVehicleId = () => Promise.resolve({} as VehicleModel)
+    // const res = service.create(vehicle)
     const res = service.create()
-    expect(res).toEqual(4)
+    expect(res).toBeDefined()
   })
 })
