@@ -3,7 +3,7 @@ import { useLocale } from '@island.is/localization'
 import { messages } from '../../../lib/messages'
 import {
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
@@ -11,9 +11,10 @@ import { healthNavigation } from '../../../lib/navigation'
 
 type Props = {
   children: React.ReactNode
+  pathname?: string
 }
 
-export const PaymentsWrapper = ({ children }: Props) => {
+export const PaymentsWrapper = ({ children, pathname }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -22,7 +23,8 @@ export const PaymentsWrapper = ({ children }: Props) => {
         <IntroHeader
           title={formatMessage(messages.payments)}
           intro={formatMessage(messages.paymentsIntro)}
-          serviceProviderID={SJUKRATRYGGINGAR_ID}
+          serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+          serviceProviderTooltip={formatMessage(messages.healthTooltip)}
         />
         <LinkV2
           href={formatMessage(
@@ -35,6 +37,7 @@ export const PaymentsWrapper = ({ children }: Props) => {
             icon="open"
             iconType="outline"
             as="span"
+            unfocusable
           >
             {formatMessage(messages.readAboutPaymentParticipationSystems)}
           </Button>
@@ -42,7 +45,8 @@ export const PaymentsWrapper = ({ children }: Props) => {
       </Box>
 
       <TabNavigation
-        label="test"
+        label={formatMessage(messages.payments)}
+        pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.payments)
             ?.children ?? []

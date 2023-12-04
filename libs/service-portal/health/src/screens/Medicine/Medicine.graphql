@@ -89,7 +89,11 @@ query getDrugCertificates {
     validFrom
     validTo
     doctor
+    processed
     approved
+    rejected
+    expired
+    valid
     comment
     documentId
     methylDoctors {

@@ -1,11 +1,15 @@
 import {
+  DefaultHeader,
+  DefaultHeaderProps,
   DefaultProjectHeader,
   DirectorateOfHealthDashboardHeader,
   EntryProjectHeader,
   FiskistofaDashboardHeader,
+  GrindavikProjectHeader,
   UkraineProjectHeader,
 } from '@island.is/web/components'
 import { ProjectPage as ProjectPageSchema } from '@island.is/web/graphql/schema'
+import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 interface ProjectHeaderProps {
   projectPage: ProjectPageSchema
@@ -28,8 +32,51 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
       return <FiskistofaDashboardHeader projectPage={projectPage} />
     case 'directorate-of-health':
       return <DirectorateOfHealthDashboardHeader projectPage={projectPage} />
-    default:
-      return <DefaultProjectHeader projectPage={projectPage} />
+    case 'grindavik':
+      return <GrindavikProjectHeader projectPage={projectPage} />
+    case 'default-v2':
+      return (
+        <DefaultHeader
+          title={projectPage.title}
+          background={
+            projectPage.defaultHeaderBackgroundColor ||
+            getBackgroundStyle(projectPage.themeProperties)
+          }
+          titleColor={
+            (projectPage.themeProperties
+              ?.textColor as DefaultHeaderProps['titleColor']) || 'dark400'
+          }
+          fullWidth={projectPage.themeProperties?.fullWidth ?? false}
+          image={projectPage.defaultHeaderImage?.url}
+          imageIsFullHeight={
+            projectPage.themeProperties?.imageIsFullHeight ?? true
+          }
+          imagePadding={projectPage.themeProperties?.imagePadding || '20px'}
+          imageObjectFit={
+            projectPage.themeProperties?.imageObjectFit === 'cover'
+              ? 'cover'
+              : 'contain'
+          }
+        />
+      )
+    default: {
+      let objectFit: 'cover' | 'contain' =
+        projectPage.themeProperties?.imageObjectFit === 'cover'
+          ? 'cover'
+          : 'contain'
+
+      // Default should be 'cover' if nothing is defined
+      if (!projectPage.themeProperties?.imageObjectFit) {
+        objectFit = 'cover'
+      }
+
+      return (
+        <DefaultProjectHeader
+          projectPage={projectPage}
+          headerImageObjectFit={objectFit}
+        />
+      )
+    }
   }
 }
 

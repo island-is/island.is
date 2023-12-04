@@ -7,7 +7,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   CaseListEntry,
-  isExtendedCourtRole,
+  isDistrictCourtUser,
 } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
@@ -144,9 +144,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 <TagCaseState
                   caseState={column.state}
                   caseType={column.type}
-                  isCourtRole={
-                    user?.role ? isExtendedCourtRole(user.role) : false
-                  }
+                  isCourtRole={isDistrictCourtUser(user)}
                   isValidToDateInThePast={column.isValidToDateInThePast}
                 />
               </Box>

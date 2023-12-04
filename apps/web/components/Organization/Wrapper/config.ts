@@ -1,4 +1,5 @@
 import { Locale } from 'locale'
+
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
@@ -68,6 +69,23 @@ export const watsonConfig: Record<
   Record<string, WatsonChatPanelProps>
 > = {
   en: {
+    // Skatturinn - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      integrationID: '98ba51da-1677-4881-a133-7ea019ae7b87',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
+
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
@@ -91,6 +109,23 @@ export const watsonConfig: Record<
     },
   },
   is: {
+    // Skatturinn - Organization
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
+    '4yJlHgCMTqpgRSj4p6LuBQ': {
+      integrationID: '84f62b21-aa50-4d49-b413-597b6a959910',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'skatturinn',
+      onLoad(instance) {
+        instance.updateHomeScreenConfig({
+          bot_avatar_url:
+            'https://images.ctfassets.net/8k0h54kbe6bj/5m9muELNRJMRgsPHP1t28a/caa4d23d14738400f262373e5a9cb066/islandissseoakgf2.PNG?h=250',
+        })
+      },
+    },
+
     // District Commissioners (Sýslumenn) - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
     kENblMMMvZ3DlyXw1dwxQ: {

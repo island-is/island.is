@@ -38,6 +38,7 @@ import {
   EventType,
   isIndictmentCase,
   isRestrictionCase,
+  prosecutorShouldSelectDefenderForInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -140,6 +141,9 @@ export interface UpdateCase
     | 'appealRulingDecision'
     | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   state?: CaseState
@@ -1160,16 +1164,26 @@ export class CaseService {
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
+        const shouldCopyDefender =
+          isRestrictionCase(theCase.type) ||
+          prosecutorShouldSelectDefenderForInvestigationCase(theCase.type)
+
         const caseId = await this.createCase(
           {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderName: shouldCopyDefender ? theCase.defenderName : undefined,
+            defenderNationalId: shouldCopyDefender
+              ? theCase.defenderNationalId
+              : undefined,
+            defenderEmail: shouldCopyDefender
+              ? theCase.defenderEmail
+              : undefined,
+            defenderPhoneNumber: shouldCopyDefender
+              ? theCase.defenderPhoneNumber
+              : undefined,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.courtId,
             translator: theCase.translator,

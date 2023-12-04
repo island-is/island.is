@@ -30,9 +30,9 @@ const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
   const judges = (users ?? [])
     .filter(
       (user: User) =>
-        (user.role === UserRole.JUDGE ||
+        (user.role === UserRole.DISTRICT_COURT_JUDGE ||
           (workingCase.type === CaseType.INDICTMENT &&
-            user.role === UserRole.ASSISTANT)) &&
+            user.role === UserRole.DISTRICT_COURT_ASSISTANT)) &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((judge: User) => {
@@ -42,7 +42,7 @@ const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
   const registrars = (users ?? [])
     .filter(
       (user: User) =>
-        user.role === UserRole.REGISTRAR &&
+        user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
         user.institution?.id === workingCase.court?.id,
     )
     .map((registrar: User) => {

@@ -67,4 +67,13 @@ export class VehiclesVehicleSearch {
 
   @Field({ nullable: true })
   weightedco2Wltp?: number
+
+  @Field(() => Date, { nullable: true })
+  nextAvailableMileageReadDate?: Date | null
+
+  @Field(() => Boolean, { nullable: true })
+  requiresMileageRegistration?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  canRegisterMileage?: boolean | null
 }

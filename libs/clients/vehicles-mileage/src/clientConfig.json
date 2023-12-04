@@ -1,0 +1,591 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "SGS Rest API",
+    "description": "Mileage reading API developed in .Net6.0 - Release-5 : 20231122.2",
+    "contact": {
+      "name": "Samgöngustofa",
+      "email": "tolvuhjalp@samgongustofa.is"
+    },
+    "version": "1.0"
+  },
+  "servers": [{ "url": "/vehicle/mileagereading" }],
+  "paths": {
+    "/authenticate": {
+      "post": {
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "text/json": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "application/*+json": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "application/xml": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "text/xml": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            },
+            "application/*+xml": {
+              "schema": { "$ref": "#/components/schemas/AuthenticateModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              },
+              "application/xml": {
+                "schema": { "$ref": "#/components/schemas/User" }
+              },
+              "text/xml": { "schema": { "$ref": "#/components/schemas/User" } }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "application/xml": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              },
+              "text/xml": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "post": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PostMileageReadingModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PostMileageReadingModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "text/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            },
+            "application/*+xml": {
+              "schema": {
+                "$ref": "#/components/schemas/PutMileageReadingModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PutMileageReadingModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "operationId": "GetMileageReading",
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MileageReadingDto" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nextavailablemileageregistration/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          },
+          "204": { "description": "No Content" }
+        }
+      }
+    },
+    "/canregistermileage/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    },
+    "/requiresmileageregistration/{permno}": {
+      "get": {
+        "tags": ["MileageReading"],
+        "parameters": [
+          {
+            "name": "permno",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "schema": { "type": "string", "default": "1.0" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": { "schema": { "type": "boolean" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthenticateModel": {
+        "required": ["password", "username"],
+        "type": "object",
+        "properties": {
+          "username": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "MileageReadingDto": {
+        "type": "object",
+        "properties": {
+          "permno": {
+            "type": "string",
+            "description": "Vehicle permanent number",
+            "nullable": true
+          },
+          "internalId": {
+            "type": "integer",
+            "description": "Internal id",
+            "format": "int32"
+          },
+          "readDate": {
+            "type": "string",
+            "description": "Date of mileage reading",
+            "format": "date-time",
+            "nullable": true
+          },
+          "originCode": {
+            "type": "string",
+            "description": "Where does reading come from",
+            "nullable": true
+          },
+          "mileage": {
+            "type": "string",
+            "description": "Mileage reading",
+            "nullable": true
+          },
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D)",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Mileage data transfer object"
+      },
+      "PostMileageReadingModel": {
+        "required": ["mileage", "originCode", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "readDate": {
+            "type": "string",
+            "description": "Date of mileage reading, is always sysdate",
+            "format": "date-time",
+            "nullable": true,
+            "readOnly": true
+          },
+          "originCode": {
+            "maxLength": 10,
+            "minLength": 1,
+            "type": "string",
+            "description": "Where does reading come from"
+          },
+          "mileage": {
+            "maxLength": 7,
+            "minLength": 1,
+            "type": "string",
+            "description": "Mileage reading"
+          },
+          "operation": {
+            "type": "string",
+            "description": "Operation (I,U,D), is always I for Insert",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model to post mileage reading"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "PutMileageReadingModel": {
+        "required": ["internalId", "mileage", "permno"],
+        "type": "object",
+        "properties": {
+          "permno": {
+            "maxLength": 5,
+            "minLength": 5,
+            "type": "string",
+            "description": "Vehicle permanent number"
+          },
+          "internalId": {
+            "type": "integer",
+            "description": "Internal id",
+            "format": "int32"
+          },
+          "mileage": {
+            "maxLength": 7,
+            "minLength": 1,
+            "type": "string",
+            "description": "Mileage reading"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Model to post mileage reading"
+      },
+      "ReturnTypeMessage": {
+        "type": "object",
+        "properties": {
+          "lookupNo": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "warnSever": { "type": "string", "nullable": true },
+          "errorMess": { "type": "string", "nullable": true },
+          "permno": { "type": "string", "nullable": true },
+          "warningSerialNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "nullable": true },
+          "userName": { "type": "string", "nullable": true },
+          "normalizedUserName": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "normalizedEmail": { "type": "string", "nullable": true },
+          "emailConfirmed": { "type": "boolean" },
+          "passwordHash": { "type": "string", "nullable": true },
+          "securityStamp": { "type": "string", "nullable": true },
+          "concurrencyStamp": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "phoneNumberConfirmed": { "type": "boolean" },
+          "twoFactorEnabled": { "type": "boolean" },
+          "lockoutEnd": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lockoutEnabled": { "type": "boolean" },
+          "accessFailedCount": { "type": "integer", "format": "int32" },
+          "username": { "type": "string", "nullable": true },
+          "password": { "type": "string", "nullable": true },
+          "jwtToken": { "type": "string", "nullable": true },
+          "role": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

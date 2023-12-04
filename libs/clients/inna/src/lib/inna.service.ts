@@ -8,7 +8,7 @@ import {
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
-export class InnaService {
+export class InnaClientService {
   constructor(private readonly innaApi: DefaultApi) {}
 
   getPeriods = (user: User): Promise<InlineResponse2001 | null> =>

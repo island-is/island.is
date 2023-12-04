@@ -71,6 +71,7 @@ import {
 import { IcelandicGovernmentInstitutionVacanciesModule } from '@island.is/api/domains/icelandic-government-institution-vacancies'
 import { AircraftRegistryModule } from '@island.is/api/domains/aircraft-registry'
 import { ShipRegistryModule } from '@island.is/api/domains/ship-registry'
+import { StatisticsModule } from '@island.is/api/domains/statistics'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
 import { AirDiscountSchemeClientConfig } from '@island.is/clients/air-discount-scheme'
@@ -86,6 +87,8 @@ import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { ElectronicRegistrationsClientConfig } from '@island.is/clients/electronic-registration-statistics'
 import { FinanceClientConfig } from '@island.is/clients/finance'
+import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
+import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { FinancialStatementsInaoModule } from '@island.is/api/domains/financial-statements-inao'
 import { FinancialStatementsInaoClientConfig } from '@island.is/clients/financial-statements-inao'
 import { FirearmLicenseClientConfig } from '@island.is/clients/firearm-license'
@@ -119,6 +122,8 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
+import { AdministrationOfOccupationalSafetyAndHealthModule } from '@island.is/api/domains/administration-of-occupational-safety-and-health'
+import { UniversityGatewayApiModule } from '@island.is/api/domains/university-gateway'
 import { AuditModule } from '@island.is/nest/audit'
 import {
   ConfigModule,
@@ -138,6 +143,11 @@ import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationshi
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { PCardClientConfig } from '@island.is/clients/p-card'
+import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
+import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
+import { StatisticsClientConfig } from '@island.is/clients/statistics'
+import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
+import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 
 const environment = getConfig
 
@@ -247,6 +257,7 @@ const environment = getConfig
     IcelandicGovernmentInstitutionVacanciesModule,
     AircraftRegistryModule,
     ShipRegistryModule,
+    StatisticsModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -261,6 +272,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    HmsLoansModule,
     PassportModule,
     AirDiscountSchemeModule,
     NationalRegistryXRoadModule,
@@ -280,9 +292,12 @@ const environment = getConfig
     TransportAuthorityApiModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
+    AdministrationOfOccupationalSafetyAndHealthModule,
+    UniversityGatewayApiModule,
     SessionsModule,
     AuthAdminModule,
     HousingBenefitCalculatorModule,
+    SignatureCollectionModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -303,12 +318,15 @@ const environment = getConfig
         DrivingDigitalLicenseClientConfig,
         GraphQLConfig,
         VehiclesClientConfig,
+        VehiclesMileageClientConfig,
         RightsPortalClientConfig,
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
         FeatureFlagConfig,
+        HmsLoansClientConfig,
         FinanceClientConfig,
+        FinanceClientV2Config,
         RegulationsAdminClientConfig,
         RegulationsClientConfig,
         IdsClientConfig,
@@ -345,6 +363,8 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
+        StatisticsClientConfig,
+        UniversityGatewayApiClientConfig,
       ],
     }),
   ],

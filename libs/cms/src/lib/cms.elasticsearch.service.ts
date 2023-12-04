@@ -264,6 +264,13 @@ export class CmsElasticsearchService {
     return response ? JSON.parse(response) : null
   }
 
+  async getSingleDocumentById(index: string, id: string) {
+    // return a single document by id
+    const documentResponse = await this.elasticService.findById(index, id)
+    const response = documentResponse.body?._source?.response
+    return response ? JSON.parse(response) : null
+  }
+
   async getSingleOrganizationSubpage(
     index: string,
     { slug, organizationSlug }: GetOrganizationSubpageInput,
