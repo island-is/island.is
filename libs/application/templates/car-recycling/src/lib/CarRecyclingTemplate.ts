@@ -20,7 +20,6 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { Actions } from '../shared'
-import { answerValidators } from './answerValidators'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
@@ -198,7 +197,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default CarRecyclingTemplate
