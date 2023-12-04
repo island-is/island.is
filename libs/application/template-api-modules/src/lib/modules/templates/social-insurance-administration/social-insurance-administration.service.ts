@@ -27,7 +27,6 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { result } from 'lodash'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -46,7 +45,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   private async initAttachments(
     application: Application,
-    id: string,
     type: AttachmentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
@@ -66,24 +64,27 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
-  private async getAdditionalAttachments(application: Application): Promise<Array<Attachment>> {
-    const { additionalAttachmentsRequired } = getApplicationAnswers(application.answers)
-
-    console.log('additionalAttachmentsRequired ', additionalAttachmentsRequired)
-    
+  private async getAdditionalAttachments(
+    application: Application,
+  ): Promise<Array<Attachment>> {
+    const { additionalAttachmentsRequired } = getApplicationAnswers(
+      application.answers,
+    )
     const attachments: Array<Attachment> = []
 
-    if (additionalAttachmentsRequired && additionalAttachmentsRequired.length > 0) {
+    if (
+      additionalAttachmentsRequired &&
+      additionalAttachmentsRequired.length > 0
+    ) {
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUploadAdditionalFiles.additionalDocuments',
-          AttachmentTypeEnum.PDF,
+          AttachmentTypeEnum.Other,
           additionalAttachmentsRequired,
         )),
       )
     }
-
+    
     return attachments
   }
 
@@ -106,7 +107,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUploadAdditionalFiles.additionalDocuments',
           AttachmentTypeEnum.Other,
           additionalAttachments,
         )),
@@ -117,7 +117,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.pension',
           AttachmentTypeEnum.Pension,
           pensionAttachments,
         )),
@@ -132,7 +131,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.fishermen',
           AttachmentTypeEnum.Sailor,
           fishermenAttachments,
         )),
@@ -147,7 +145,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'employment.selfEmployedAttachment',
           AttachmentTypeEnum.SelfEmployed,
           selfEmployedAttachments,
         )),
@@ -162,7 +159,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.earlyRetirement',
           AttachmentTypeEnum.Retirement,
           earlyRetirementAttachments,
         )),
@@ -208,10 +204,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
     const attachments = await this.getAdditionalAttachments(application)
 
-    console.log('documentsDTO ', attachments)
-    const response = await this.siaClientService.sendAdditionalDocuments(auth, application.id, attachments)
-    return response
-    //throw Error()
+    await this.siaClientService.sendAdditionalDocuments(
+      auth,
+      application.id,
+      attachments,
+    )
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {

@@ -64,12 +64,14 @@ paths:
               $ref: '#/components/schemas/Documents'
         required: true
       responses:
-        '200':
+        '204':
           description: ''
+        '404':
+          description: Not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Response'
+                $ref: '#/components/schemas/ErrorResult'
         '500':
           description: internal Error
           content:
@@ -362,5 +364,15 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Attachment'
+    ErrorResult:
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: number
+        detail:
+          type: string
+
 security:
   - bearerAuth: []
