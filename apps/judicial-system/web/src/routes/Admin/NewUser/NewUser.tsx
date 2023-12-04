@@ -1,7 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import { useMutation } from '@apollo/client'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -13,9 +12,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { CreateUserMutation } from '@island.is/judicial-system-web/src/utils/mutations'
 
 import UserForm from '../UserForm/UserForm'
+import { useCreateUserMutation } from './createUser.generated'
 import * as styles from '../Users/Users.css'
 
 const user: User = {
@@ -43,10 +42,10 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
   const { formatMessage } = useIntl()
 
   const [createUserMutation, { loading: createLoading }] =
-    useMutation(CreateUserMutation)
+    useCreateUserMutation()
 
   const createUser = async (user: User): Promise<void> => {
-    if (createLoading === false && user) {
+    if (!createLoading && user && user.institution) {
       await createUserMutation({
         variables: {
           input: {

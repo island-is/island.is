@@ -66,26 +66,6 @@ export const AppealedCasesQuery = gql`
   }
 `
 
-export const CreateUserMutation = gql`
-  mutation CreateUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      id
-      name
-      nationalId
-      mobileNumber
-      role
-      title
-      email
-      institution {
-        id
-        type
-        name
-      }
-      active
-    }
-  }
-`
-
 export const UsersQuery = gql`
   query Users {
     users {
