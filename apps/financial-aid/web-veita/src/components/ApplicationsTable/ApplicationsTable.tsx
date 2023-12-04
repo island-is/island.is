@@ -6,7 +6,6 @@ import { useRouter } from 'next/router'
 import cn from 'classnames'
 
 import {
-  TableHeaders,
   TableBody,
   LoadingContainer,
   TableSkeleton,
@@ -16,22 +15,29 @@ import {
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
+  ApplicationHeaderSortByEnum,
   ApplicationState,
   getMonth,
   getStateUrlFromRoute,
   Routes,
-  TableHeadersProps,
+  SortableTableHeaderProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import SortableTableHeader from '../TableHeaders/SortableTableHeader'
 
+interface SortByHeaderProps {
+  sortBy: ApplicationHeaderSortByEnum
+  sortAscending: boolean
+}
 interface PageProps {
   applications: Application[]
   setApplications?: React.Dispatch<
     React.SetStateAction<Application[] | undefined>
   >
-  headers: TableHeadersProps[]
+  headers: SortableTableHeaderProps[]
+  defaultHeaderSort: ApplicationHeaderSortByEnum
   emptyText?: string
 }
 
@@ -40,8 +46,13 @@ const ApplicationsTable = ({
   headers,
   emptyText,
   setApplications,
+  defaultHeaderSort,
 }: PageProps) => {
   const router = useRouter()
+  const [sortByHeader, setSortByHeader] = useState<SortByHeaderProps>({
+    sortBy: defaultHeaderSort,
+    sortAscending: true,
+  })
 
   const changeApplicationTable = useAllApplications()
 
@@ -108,10 +119,25 @@ const ApplicationsTable = ({
               <thead className={`contentUp delay-50`}>
                 <tr>
                   {headers.map((item, index) => (
-                    <TableHeaders
-                      header={item}
+                    <SortableTableHeader
+                      key={index}
                       index={index}
-                      key={`tableHeaders-${index}`}
+                      header={item}
+                      sortAsc={sortByHeader.sortAscending}
+                      isSortActive={item.sortBy === sortByHeader.sortBy}
+                      onClick={() => {
+                        if (item.sortBy === sortByHeader.sortBy) {
+                          setSortByHeader({
+                            ...sortByHeader,
+                            sortAscending: !sortByHeader.sortAscending,
+                          })
+                        } else {
+                          setSortByHeader({
+                            sortAscending: true,
+                            sortBy: item.sortBy,
+                          })
+                        }
+                      }}
                     />
                   ))}
                 </tr>
