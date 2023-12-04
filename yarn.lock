@@ -33879,7 +33879,7 @@ __metadata:
     regenerator-runtime: 0.13.7
     remark-parse: 9.0.0
     rosetta: 1.0.0
-    rxjs: ^7.8.1
+    rxjs: 7.8.1
     sanitize-html: 2.10.0
     sequelize: 6.19.0
     sequelize-cli: 6.4.1
@@ -47082,7 +47082,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.1, rxjs@npm:^7.8.0, rxjs@npm:^7.8.1":
+"rxjs@npm:7.8.1, rxjs@npm:^7.8.0":
   version: 7.8.1
   resolution: "rxjs@npm:7.8.1"
   dependencies:
