@@ -2,7 +2,7 @@ import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { UserProfileApi, UserProfileLocaleEnum } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
@@ -60,27 +60,53 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         try {
-          this.logger.debug("attempt create", message)
+          
+          this.logger.info("worker attempt create", message)
           const res = await this.notificationModel.create(exampleNotificationData as any)
-          this.logger.debug("create result", res)
+          this.logger.info("worker create result", res)
         } catch (error) {
           this.logger.error(error)
         }
 
         try {
-          this.logger.debug("getting all rows")
+          this.logger.info("worker getting all rows")
           const allRows = await this.notificationModel.findAll()
-          this.logger.debug("length",allRows.length)
+          this.logger.info("worker length",allRows.length)
         } catch (error) {
           this.logger.error(error)
         }
 
        
 
-        const profile =
-          await this.userProfileApi.userTokenControllerFindOneByNationalId({
-            nationalId: message.recipient,
-          })
+        // const profile =
+        //   await this.userProfileApi.userTokenControllerFindOneByNationalId({
+        //     nationalId: message.recipient,
+        //   })
+
+       // temp Mocking user profile
+       const profile = <any>{
+        nationalId: message.recipient,
+        mobilePhoneNumber: '1234567',
+        email: 'rafnarnason@gmail.com',
+        name: 'Rafn Arnason',
+        locale: UserProfileLocaleEnum.Is,
+        notifications: {},
+        created: new Date(),
+        modified: new Date(),
+        documentNotifications: true,
+        emailNotifications: true,
+        smsNotifications: true,
+        pushNotifications: true,
+        id: '1234567',
+        emailVerified: true,
+        mobilePhoneNumberVerified: true,
+        profileImageUrl: '',
+        emailStatus: "yes",
+        mobileStatus: "yes",
+      }
+     
+
+      console.log(profile)
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -91,7 +117,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         }
 
         // don't send message unless user wants this type of notification
-        // TODO change to pushNotifications
         if (!profile.documentNotifications) {
           this.logger.info(
             'User does not have notifications enabled this message type',
