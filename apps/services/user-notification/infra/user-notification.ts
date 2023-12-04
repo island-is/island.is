@@ -3,6 +3,7 @@ import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 const serviceName = 'user-notification'
 const serviceWorkerName = `${serviceName}-worker`
 const dbName = `${serviceName.replace('-', '_')}`
+const imageName = `services-${serviceName}`
 const MAIN_QUEUE_NAME = serviceName
 const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
@@ -16,7 +17,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
   typeof serviceName
 > =>
   service(serviceName)
-    .image(`services-${serviceName}`)
+    .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceName)
     .postgres(postgresInfo)
