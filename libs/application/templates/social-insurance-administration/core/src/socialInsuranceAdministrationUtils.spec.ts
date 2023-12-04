@@ -6,8 +6,21 @@ import {
   validIBAN,
   validSWIFT,
   shouldNotUpdateBankAccount,
+  typeOfBankInfo,
+  formatBankInfo,
+  formatBank,
+  getCurrencies,
 } from './socialInsuranceAdministrationUtils'
 import { BankInfo, PaymentInfo } from './types'
+
+describe('formatBankInfo', () => {
+  it('format bank info', () => {
+    const bankInfo = '2222-00-123456'
+    const formattedBank = formatBankInfo(bankInfo)
+
+    expect('222200123456').toEqual(formattedBank)
+  })
+})
 
 describe('getBankIsk', () => {
   it('should return icelandic bank number if bank, ledger and account number is returned', () => {
@@ -102,6 +115,15 @@ describe('friendlyFormat & valid', () => {
   })
 })
 
+describe('formatBank', () => {
+  it('format bank', () => {
+    const bankInfo = '222200123456'
+    const formattedBank = formatBank(bankInfo)
+
+    expect('2222-00-123456').toEqual(formattedBank)
+  })
+})
+
 describe('shouldNotUpdateBankAccount', () => {
   it('should return true if bank account returned from TR is not changed', () => {
     const bankInfo: BankInfo = {
@@ -173,5 +195,69 @@ describe('shouldNotUpdateBankAccount', () => {
     const res = shouldNotUpdateBankAccount(bankInfo, paymentInfo)
 
     expect(false).toEqual(res)
+  })
+})
+
+describe('getCurrencies', () => {
+  it('format bank info', () => {
+    const currencies = ['EUR', 'ISK']
+    const currenciesOptions = getCurrencies(currencies)
+
+    expect([
+      { label: 'EUR', value: 'EUR' },
+      { label: 'ISK', value: 'ISK' },
+    ]).toEqual(currenciesOptions)
+  })
+})
+
+describe('typeOfBankInfo', () => {
+  it('should return icelandic bank account type', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const bankAccountType = BankAccountType.ICELANDIC
+    const res = typeOfBankInfo(bankInfo, bankAccountType)
+
+    expect('icelandic').toEqual(res)
+  })
+
+  it('should return foreign bank account type', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const bankAccountType = BankAccountType.FOREIGN
+    const res = typeOfBankInfo(bankInfo, bankAccountType)
+
+    expect('foreign').toEqual(res)
+  })
+
+  it('should return icelandic bank account type', () => {
+    const bankInfo: BankInfo = {
+      bank: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const bankAccountType = undefined as unknown as BankAccountType
+    const res = typeOfBankInfo(bankInfo, bankAccountType)
+
+    expect('icelandic').toEqual(res)
+  })
+
+  it('should return foreign bank account type', () => {
+    const bankInfo: BankInfo = {
+      iban: 'NL91ABNA0417164300',
+      swift: 'NEDSZAJJXXX',
+      foreignBankName: 'Heiti banka',
+      foreignBankAddress: 'Heimili banka',
+      currency: 'EUR',
+    }
+    const bankAccountType = undefined as unknown as BankAccountType
+    const res = typeOfBankInfo(bankInfo, bankAccountType)
+
+    expect('foreign').toEqual(res)
   })
 })
