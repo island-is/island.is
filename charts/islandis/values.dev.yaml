@@ -2581,7 +2581,7 @@ services-university-gateway:
       DB_USER: 'services_university_gateway'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
-      DB_PASS: '/k8s/services_university_gateway/DB_PASSWORD'
+      DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
   namespace: 'services-university-gateway'
   podSecurityContext:
     fsGroup: 65534
@@ -2599,7 +2599,7 @@ services-university-gateway:
       memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services_university_gateway/DB_PASSWORD'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
@@ -2830,7 +2830,7 @@ string:
   schedule: '0 * * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
-    DB_PASS: '/k8s/services_university_gateway/DB_PASSWORD'
+    DB_PASS: '/k8s/services-university-gateway/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-university-gateway/IDENTITY_SERVER_CLIENT_SECRET'
   securityContext:
     allowPrivilegeEscalation: false
