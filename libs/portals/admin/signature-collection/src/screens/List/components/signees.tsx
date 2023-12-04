@@ -15,7 +15,6 @@ import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
 import { Signature } from '@island.is/api/schema'
-import { mobileWidthBox } from '../../styles.css'
 import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
@@ -39,6 +38,31 @@ const Signees = () => {
             placeholder={formatMessage(m.searchInListPlaceholder)}
             backgroundColor="white"
           />
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '5/12']}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+          >
+            <Box
+              display="flex"
+              justifyContent="flexEnd"
+              alignItems="flexEnd"
+              style={{ minWidth: '150px' }}
+            >
+              {searchTerm.length > 0
+                ? signees.length > 0 && (
+                    <Text variant="eyebrow" textAlign="right">
+                      {formatMessage(m.uploadResultsHeader)}: {signees.length}
+                    </Text>
+                  )
+                : signees.length > 0 && (
+                    <Text variant="eyebrow" textAlign="right">
+                      {formatMessage(m.totalListResults)}: {signees.length}
+                    </Text>
+                  )}
+            </Box>
+          </Box>
         </GridColumn>
       </GridRow>
       {signees && signees.length > 0 && (
