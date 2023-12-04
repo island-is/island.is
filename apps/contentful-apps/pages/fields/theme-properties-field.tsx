@@ -191,7 +191,7 @@ const ThemePropertiesField = () => {
               updateState('imageObjectFit', 'contain')
             }}
           >
-            20px
+            contain
           </Radio>
           <Radio
             name="imageObjectFitRadio"
@@ -202,7 +202,7 @@ const ThemePropertiesField = () => {
               updateState('imageObjectFit', 'cover')
             }}
           >
-            0px
+            cover
           </Radio>
         </Stack>
       </Stack>
