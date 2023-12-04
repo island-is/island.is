@@ -184,9 +184,7 @@ const ThemePropertiesField = () => {
             name="imageObjectFitRadio"
             id="imageObjectFitContain"
             value="Yes"
-            isChecked={
-              !state.imageObjectFit || state.imageObjectFit === 'contain'
-            }
+            isChecked={state.imageObjectFit === 'contain'}
             onChange={() => {
               updateState('imageObjectFit', 'contain')
             }}

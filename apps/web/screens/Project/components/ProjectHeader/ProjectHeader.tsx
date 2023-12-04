@@ -59,17 +59,24 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
           }
         />
       )
-    default:
+    default: {
+      let objectFit: 'cover' | 'contain' =
+        projectPage.themeProperties?.imageObjectFit === 'cover'
+          ? 'cover'
+          : 'contain'
+
+      // Default should be 'cover' if nothing is defined
+      if (!projectPage.themeProperties?.imageObjectFit) {
+        objectFit = 'cover'
+      }
+
       return (
         <DefaultProjectHeader
           projectPage={projectPage}
-          headerImageObjectFit={
-            projectPage.themeProperties?.imageObjectFit === 'contain'
-              ? 'contain'
-              : 'cover'
-          }
+          headerImageObjectFit={objectFit}
         />
       )
+    }
   }
 }
 
