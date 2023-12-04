@@ -33,7 +33,7 @@ export type OpsEnvName =
   | 'staging01'
   | 'stagingIds'
   | 'prod'
-  | 'prod-ids'
+  | 'prodIds'
 
 export type EnvironmentServices = { [name in OpsEnv]: ServiceBuilder<any>[] }
 

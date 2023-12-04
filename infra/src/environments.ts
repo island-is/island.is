@@ -66,6 +66,38 @@ const staging01: EnvironmentConfig = {
   },
 }
 
+const prod01: EnvironmentConfig = {
+  auroraHost: 'postgres-applications.internal',
+  domain: 'island.is',
+  type: 'prod',
+  featuresOn: [FeatureNames.drivingLicense],
+  defaultMaxReplicas: 10,
+  defaultMinReplicas: 3,
+  releaseName: 'web',
+  redisHost: JSON.stringify([
+    'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
+  ]),
+  awsAccountId: '251502586493',
+  awsAccountRegion: 'eu-west-1',
+  global: {
+    global: {
+      env: {
+        AWS_REGION: 'eu-west-1',
+        PORT: '3333',
+        name: 'prod',
+        NPM_CONFIG_UPDATE_NOTIFIER: 'false',
+        AUDIT_GROUP_NAME: '/island-is/audit-log',
+      },
+      initContainer: {
+        env: {
+          AWS_REGION: 'eu-west-1',
+          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
+        },
+      },
+    },
+  },
+}
+
 export let Envs: EnvironmentConfigs = {
   dev01: dev01,
   devIds: merge({}, dev01, {
@@ -79,38 +111,8 @@ export let Envs: EnvironmentConfigs = {
     },
   }),
   staging01: staging01,
-  prod: {
-    auroraHost: 'postgres-applications.internal',
-    domain: 'island.is',
-    type: 'prod',
-    featuresOn: [FeatureNames.drivingLicense],
-    defaultMaxReplicas: 10,
-    defaultMinReplicas: 3,
-    releaseName: 'web',
-    redisHost: JSON.stringify([
-      'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
-    ]),
-    awsAccountId: '251502586493',
-    awsAccountRegion: 'eu-west-1',
-    global: {
-      global: {
-        env: {
-          AWS_REGION: 'eu-west-1',
-          PORT: '3333',
-          name: 'prod',
-          NPM_CONFIG_UPDATE_NOTIFIER: 'false',
-          AUDIT_GROUP_NAME: '/island-is/audit-log',
-        },
-        initContainer: {
-          env: {
-            AWS_REGION: 'eu-west-1',
-            NPM_CONFIG_UPDATE_NOTIFIER: 'false',
-          },
-        },
-      },
-    },
-  },
-  'prod-ids': {
+  prod: prod01,
+  prodIds: {
     auroraHost: 'postgres-ids.internal',
     domain: 'island.is',
     type: 'prod',

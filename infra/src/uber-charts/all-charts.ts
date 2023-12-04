@@ -22,5 +22,5 @@ export const Deployments: {
 } = {
   'judicial-system': { dev: 'dev01', staging: 'staging01', prod: 'prod' },
   islandis: { dev: 'dev01', staging: 'staging01', prod: 'prod' },
-  'identity-server': { dev: 'devIds', staging: 'stagingIds', prod: 'prod-ids' },
+  'identity-server': { dev: 'devIds', staging: 'stagingIds', prod: 'prodIds' },
 }
