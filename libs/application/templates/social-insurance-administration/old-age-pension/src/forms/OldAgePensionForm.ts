@@ -769,24 +769,26 @@ export const OldAgePensionForm: Form = buildForm({
               id: 'period.year',
               title: oldAgePensionFormMessage.period.periodTitle,
               width: 'half',
-              placeholder: oldAgePensionFormMessage.period.periodInputYearDefaultText,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputYearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
-            }),  
+            }),
             buildSelectField({
               id: 'period.month',
               title: oldAgePensionFormMessage.period.periodInputMonth,
               width: 'half',
-              placeholder: oldAgePensionFormMessage.period.periodInputMonthDefaultText,
+              placeholder:
+                oldAgePensionFormMessage.period.periodInputMonthDefaultText,
               options: (application: Application) => {
-                const { selectedYear: year} = getApplicationAnswers(
+                const { selectedYear: year } = getApplicationAnswers(
                   application.answers,
                 )
                 const rightYear = year ?? new Date().getFullYear().toString()
                 return getAvailableMonths(application, rightYear)
               },
-            }),  
+            }),
             buildAlertMessageField({
               id: 'period.alert',
               title: oldAgePensionFormMessage.shared.alertTitle,
