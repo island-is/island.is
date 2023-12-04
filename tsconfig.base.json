@@ -408,6 +408,9 @@
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
       ],
+      "@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly": [
+        "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
       ],

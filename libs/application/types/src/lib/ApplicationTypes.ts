@@ -51,6 +51,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
 }
 
 export const ApplicationConfigurations = {
@@ -261,5 +262,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: 'asfte.application',
   },
 }
