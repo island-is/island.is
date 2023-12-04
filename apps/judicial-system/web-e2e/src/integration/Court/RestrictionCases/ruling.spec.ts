@@ -1,4 +1,4 @@
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, UserRole } from '@island.is/judicial-system/types'
 import {
   RESTRICTION_CASE_COURT_RECORD_ROUTE,
   RESTRICTION_CASE_RULING_ROUTE,
@@ -18,6 +18,7 @@ describe(`${RESTRICTION_CASE_RULING_ROUTE}/:id`, () => {
       isCustodyIsolation: true,
     }
 
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${RESTRICTION_CASE_RULING_ROUTE}/test_id_stadfest`)
