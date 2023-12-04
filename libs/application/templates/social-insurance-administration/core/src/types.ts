@@ -1,4 +1,5 @@
 import { BankAccountType } from './constants'
+import { MessageDescriptor } from 'react-intl'
 
 export interface BankInfo {
   bank?: string
@@ -27,4 +28,14 @@ export interface PaymentInfo {
   bankName?: string
   bankAddress?: string
   currency?: string
+}
+
+export interface Attachments {
+  attachments: FileType[]
+  label: MessageDescriptor
+}
+
+export interface FileType {
+  key: string
+  name: string
 }

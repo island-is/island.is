@@ -29,14 +29,14 @@ import {
   CombinedResidenceHistory,
   Employer,
   IncompleteEmployer,
-  FileType,
   SelfEmployed,
   FileUpload,
-  Attachments,
 } from '../types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import {
+  Attachments,
   BankInfo,
+  FileType,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 
@@ -54,11 +54,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
-
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
 
   const applicantPhonenumber = getValueViaPath(
     answers,
@@ -163,7 +158,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicationType,
     selectedYear,
     selectedMonth,
-    applicantEmail,
     applicantPhonenumber,
     bank,
     residenceHistoryQuestion,
@@ -248,6 +242,11 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -274,6 +273,7 @@ export function getApplicationExternalData(
     spouseNationalId,
     maritalStatus,
     isEligible,
+    email,
     bankInfo,
     currencies,
   }
