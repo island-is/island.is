@@ -1708,7 +1708,7 @@ __metadata:
     "@types/jest": ^27.4.1
     debug: 4.3.4
     esbuild: 0.15.10
-    esbuild-runner: 2.2.1
+    esbuild-runner: 2.2.2
     jest: 27.5.1
     ts-jest: 27.1.3
     ts-node: ^9.1.1
@@ -2643,17 +2643,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild-runner@npm:2.2.1":
-  version: 2.2.1
-  resolution: "esbuild-runner@npm:2.2.1"
+"esbuild-runner@npm:2.2.2":
+  version: 2.2.2
+  resolution: "esbuild-runner@npm:2.2.2"
   dependencies:
-    source-map-support: 0.5.19
-    tslib: 2.3.1
+    source-map-support: 0.5.21
+    tslib: 2.4.0
   peerDependencies:
     esbuild: "*"
   bin:
     esr: bin/esr.js
-  checksum: 6818c1a0b7773ca6d688ceb8dc33f8077eabf1a3154c86b5e9006321c11a29a5544500f56456e804cdbdefae2281614e2e2b2bf1173316f80e36a2da496d3795
+  checksum: 9e5baf87e54b4f73c1ee45afb56435158d0ad35eb233ce6ad7a354f29746538e163f735d5b2739c737a6cf408283de14bbc86fdf726823047aa373d0e19a2e6b
   languageName: node
   linkType: hard
 
@@ -5029,7 +5029,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-support@npm:0.5.19, source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.6":
+"source-map-support@npm:0.5.21":
+  version: 0.5.21
+  resolution: "source-map-support@npm:0.5.21"
+  dependencies:
+    buffer-from: ^1.0.0
+    source-map: ^0.6.0
+  checksum: 43e98d700d79af1d36f859bdb7318e601dfc918c7ba2e98456118ebc4c4872b327773e5a1df09b0524e9e5063bb18f0934538eace60cca2710d1fa687645d137
+  languageName: node
+  linkType: hard
+
+"source-map-support@npm:^0.5.17, source-map-support@npm:^0.5.6":
   version: 0.5.19
   resolution: "source-map-support@npm:0.5.19"
   dependencies:
@@ -5379,14 +5389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.3.1":
-  version: 2.3.1
-  resolution: "tslib@npm:2.3.1"
-  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
-  languageName: node
-  linkType: hard
-
-"tslib@npm:^2.4.0":
+"tslib@npm:2.4.0, tslib@npm:^2.4.0":
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"
   checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
