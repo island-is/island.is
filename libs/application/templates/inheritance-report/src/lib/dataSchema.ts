@@ -1,5 +1,6 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
+import { YES } from './constants'
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -226,6 +227,9 @@ export const inheritanceReportSchema = z.object({
   heirsAdditionalInfo: z.string().optional(),
 
   totalDeduction: z.string(),
+
+  /* einkaskipti */
+  confirmAction: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>
