@@ -255,6 +255,12 @@ const HouseholdSupplementTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_DOCUMENTS,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

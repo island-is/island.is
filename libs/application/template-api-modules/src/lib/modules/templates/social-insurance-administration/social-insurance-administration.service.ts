@@ -11,10 +11,11 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationType,
   Employment,
-  getApplicationAnswers,
+  getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
   errorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -67,10 +68,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   private async getAdditionalAttachments(
     application: Application,
   ): Promise<Array<Attachment>> {
-    const { additionalAttachmentsRequired } = getApplicationAnswers(
-      application.answers,
-    )
     const attachments: Array<Attachment> = []
+    let additionalAttachmentsRequired: FileType[] = []
+
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      additionalAttachmentsRequired = getOAPApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
 
     if (
       additionalAttachmentsRequired &&
@@ -99,7 +109,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       earlyRetirementAttachments,
       applicationType,
       employmentStatus,
-    } = getApplicationAnswers(application.answers)
+    } = getOAPApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -252,7 +262,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     if (isRunningOnEnvironment('local')) {
-      return { isEligible: false }
+      return { isEligible: true }
     }
 
     const applicationType =
