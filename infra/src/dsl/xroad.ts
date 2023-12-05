@@ -514,6 +514,16 @@ export const ChargeFjsV2 = new XroadConf({
   },
 })
 
+export const EnergyFunds = new XroadConf({
+  env: {
+    XROAD_ENERGY_FUNDS_PATH: {
+      dev: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidySerivce_v1',
+      staging: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidySerivce_v1',
+      prod: 'IS/GOV/5402697509/FJS-Public/ElectricCarSubSidySerivce_v1',
+    },
+  },
+})
+
 export const VehicleServiceFjsV1 = new XroadConf({
   env: {
     XROAD_VEHICLE_SERVICE_FJS_V1_PATH: {

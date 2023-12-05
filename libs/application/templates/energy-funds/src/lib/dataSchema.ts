@@ -1,4 +1,4 @@
-import { string, z } from 'zod'
+import { z } from 'zod'
 import * as kennitala from 'kennitala'
 
 const UserSchemaBase = z.object({
@@ -30,10 +30,10 @@ export const EnergyFundsSchema = z.object({
         return parseInt(x) <= 10000000
       }),
     firstRegistrationDate: z.string().min(1),
-    // newRegistrationDate: z.string().min(1) // TODO: ætti þetta ekki að vera?
   }),
   grant: z.object({
     bankNumber: z.string().min(1),
+    grantAmount: z.string().optional(),
   }),
 })
 

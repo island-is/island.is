@@ -104,6 +104,9 @@
       "@island.is/api/domains/endorsement-system": [
         "libs/api/domains/endorsement-system/src/index.ts"
       ],
+      "@island.is/api/domains/energy-funds": [
+        "libs/api/domains/energy-funds/src/index.ts"
+      ],
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],

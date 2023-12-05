@@ -47,6 +47,10 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
+              title: externalData.financialManagementAuthority.title,
+              subTitle: externalData.financialManagementAuthority.subTitle,
+            }),
+            buildDataProviderItem({
               provider: CurrentVehiclesApi,
               title: externalData.transportAuthority.title,
               subTitle: externalData.transportAuthority.subTitle,
@@ -59,7 +63,7 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: UserProfileApi,
               title: externalData.userProfile.title,
-              subTitle: externalData.userProfile.subTitle,
+              subTitle: '',
             }),
           ],
         }),

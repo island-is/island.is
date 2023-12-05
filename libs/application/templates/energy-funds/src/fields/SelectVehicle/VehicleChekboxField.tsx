@@ -12,6 +12,7 @@ import { CheckboxFormField } from '@island.is/application/ui-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import format from 'date-fns/format'
+import { formatIsk } from '../../utils'
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
 }
@@ -20,7 +21,6 @@ export const VehicleCheckboxField: FC<
   React.PropsWithChildren<VehicleSearchFieldProps & FieldBaseProps>
 > = ({ currentVehicleList, application, field }) => {
   const { formatMessage } = useLocale()
-
   const { setValue } = useFormContext()
 
   const vehicleValue = getValueViaPath(
@@ -50,7 +50,7 @@ export const VehicleCheckboxField: FC<
 
   const vehicleCheckboxes = currentVehicleList.map(
     (vehicle: VehiclesCurrentVehicle) => {
-      const isCheckable = true //TOOD: CHECK IF VEHICLE HAS ALREADY RECEIVED A GRANT
+      const isCheckable = !vehicle.hasReceivedSubsidy
 
       return {
         value: vehicle.permno ?? '',
@@ -81,7 +81,9 @@ export const VehicleCheckboxField: FC<
               {formatMessage(
                 information.labels.pickVehicle.checkboxCheckableTag,
                 {
-                  amount: `${vehicle.vehicleGrant} þús`,
+                  amount: vehicle.vehicleGrant
+                    ? `${formatIsk(vehicle.vehicleGrant)}`
+                    : '',
                 },
               )}
             </Tag>

@@ -10,4 +10,6 @@ export type VehiclesCurrentVehicle = {
   vehicleRegistrationCode?: string
   vin?: string
   vehicleGrant?: number
+  hasReceivedSubsidy?: boolean
+  vehicleGrantItemCode?: string
 }

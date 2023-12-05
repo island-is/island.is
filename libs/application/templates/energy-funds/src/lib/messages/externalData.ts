@@ -43,14 +43,12 @@ export const externalData = {
   userProfile: defineMessages({
     title: {
       id: 'ef.application:externalData.userProfile.title',
-      defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikning úr þínum stillingum',
+      defaultMessage: 'Upplýsingar um bankareikning úr þínum stillingum',
       description: 'User profile title',
     },
     subTitle: {
       id: 'ef.application:externalData.userProfile.subTitle',
-      defaultMessage:
-        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+      defaultMessage: '',
       description: 'User profile sub title',
     },
   }),

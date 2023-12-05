@@ -11,6 +11,7 @@ import {
 import {
   Base,
   ChargeFjsV2,
+  EnergyFunds,
   Client,
   CriminalRecord,
   DataProtectionComplaint,
@@ -244,6 +245,7 @@ export const serviceSetup = (services: {
       FishingLicense,
       MunicipalitiesFinancialAid,
       ChargeFjsV2,
+      EnergyFunds,
       Finance,
       Properties,
       RskCompanyInfo,

@@ -4,21 +4,9 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { EnergyFundsService } from './energy-funds.service'
 import { ConfigModule } from '@nestjs/config'
 import {
-  ChargeFjsV2ClientConfig,
-  ChargeFjsV2ClientModule,
-} from '@island.is/clients/charge-fjs-v2'
-import {
-  VehicleOwnerChangeClientModule,
-  VehicleOwnerChangeClientConfig,
-} from '@island.is/clients/transport-authority/vehicle-owner-change'
-import {
-  VehicleCodetablesClientModule,
-  VehicleCodetablesClientConfig,
-} from '@island.is/clients/transport-authority/vehicle-codetables'
-import {
-  VehicleServiceFjsV1ClientModule,
-  VehicleServiceFjsV1ClientConfig,
-} from '@island.is/clients/vehicle-service-fjs-v1'
+  EnergyFundsClientConfig,
+  EnergyFundsClientModule,
+} from '@island.is/clients/energy-funds'
 import {
   VehiclesClientModule,
   VehiclesClientConfig,
@@ -30,20 +18,11 @@ export class EnergyFundsModule {
       module: EnergyFundsModule,
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
-        ChargeFjsV2ClientModule,
-        VehicleOwnerChangeClientModule,
-        VehicleCodetablesClientModule,
-        VehicleServiceFjsV1ClientModule,
+        EnergyFundsClientModule,
         VehiclesClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [
-            ChargeFjsV2ClientConfig,
-            VehicleOwnerChangeClientConfig,
-            VehicleCodetablesClientConfig,
-            VehicleServiceFjsV1ClientConfig,
-            VehiclesClientConfig,
-          ],
+          load: [EnergyFundsClientConfig, VehiclesClientConfig],
         }),
       ],
       providers: [EnergyFundsService],

@@ -5,20 +5,20 @@ import {
   IdsClientConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
-import { ChargeFjsV2ClientConfig } from './chargeFjsV2Client.config'
+import { EnergyFundsClientConfig } from './energyFundsClient.config'
 
 export const ApiConfiguration = {
-  provide: 'ChargeFjsV2ClientApiConfiguration',
+  provide: 'EnergyFundsClientApiConfiguration',
   useFactory: (
-    config: ConfigType<typeof ChargeFjsV2ClientConfig>,
+    config: ConfigType<typeof EnergyFundsClientConfig>,
     xroadConfig: ConfigType<typeof XRoadConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-charge-fjs-v2',
+        name: 'clients-energy-funds',
         organizationSlug: 'fjarsysla-rikisins',
-        timeout: config.fetchTimeout,
+        logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'auto',
@@ -26,9 +26,6 @@ export const ApiConfiguration = {
               clientId: idsClientConfig.clientId,
               clientSecret: idsClientConfig.clientSecret,
               scope: config.tokenExchangeScope,
-              tokenExchange: {
-                requestActorToken: config.requestActorToken,
-              },
             }
           : undefined,
       }),
@@ -38,5 +35,5 @@ export const ApiConfiguration = {
       },
     })
   },
-  inject: [ChargeFjsV2ClientConfig.KEY, XRoadConfig.KEY, IdsClientConfig.KEY],
+  inject: [EnergyFundsClientConfig.KEY, XRoadConfig.KEY, IdsClientConfig.KEY],
 }

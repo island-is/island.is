@@ -68,6 +68,7 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
+            console.log('application', application)
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
