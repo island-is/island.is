@@ -22,7 +22,7 @@ import { NotificationsService } from './notifications.service'
 import { MeNotificationsController } from './me-notifications.controller'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Notification } from './notification.model'
-import { NotificationsInfraController } from './health.controller'
+import { HealthController } from './health.controller'
 
 @Module({
   imports: [
@@ -47,7 +47,7 @@ import { NotificationsInfraController } from './health.controller'
   controllers: [
     NotificationsController,
     MeNotificationsController,
-    NotificationsInfraController,
+    HealthController,
   ],
   providers: [
     NotificationsService,
