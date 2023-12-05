@@ -26,6 +26,17 @@ Import and configure the AuthModule, example:
 
 where `issuer` is the IdS url.
 
+Some older APIs use `audience` for access control.Using `audience` is no longer recommended, instead use scopes to guard individual methods as shown in the sections below. Only use `audience` after consulting with the IDS team, in which case you can do it like this:
+
+```typescript
+@Module({
+  imports: [
+    AuthModule.register({
+      issuer: 'https://localhost:6001'
+      audience: '@island.is'
+    }),
+```
+
 ### Using in REST controller
 
 Decorate the controller with `@UseGuards`:
