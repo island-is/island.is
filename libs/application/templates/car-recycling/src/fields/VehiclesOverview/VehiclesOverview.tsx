@@ -19,7 +19,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../lib/carRecyclingUtils'
-import { carRecyclingMessages } from '../../lib/messages'
+import { carRecyclingMessages, errorMessages } from '../../lib/messages'
 
 import { useFormContext } from 'react-hook-form'
 
@@ -317,7 +317,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
 
       {error && selectedVehiclesList.length === 0 && (
         <Box marginTop={3}>
-          <AlertMessage type="error" title="" message={error} />
+          <AlertMessage
+            type="error"
+            title=""
+            message={formatMessage(errorMessages.mustSelectACar)}
+          />
         </Box>
       )}
     </Box>

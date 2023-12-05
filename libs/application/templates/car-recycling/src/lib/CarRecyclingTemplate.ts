@@ -10,6 +10,7 @@ import {
   ApplicationStateSchema,
   ApplicationTemplate,
   ApplicationTypes,
+  CurrentVehiclesApi,
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -18,15 +19,13 @@ import {
 
 import { ApiScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { CurrentVehiclesApi } from '../dataProviders'
 import { Actions } from '../shared'
-import { answerValidators } from './answerValidators'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
-import { assign } from 'xstate'
-import unset from 'lodash/unset'
 import { Features } from '@island.is/feature-flags'
+import unset from 'lodash/unset'
+import { assign } from 'xstate'
 
 const enum States {
   PREREQUISITES = 'prerequisites',
@@ -91,7 +90,13 @@ const CarRecyclingTemplate: ApplicationTemplate<
               api: [
                 UserProfileApi,
                 NationalRegistryUserApi,
-                CurrentVehiclesApi,
+                CurrentVehiclesApi.configure({
+                  params: {
+                    showOwned: true,
+                    showCoOwned: true,
+                    showOperated: true,
+                  },
+                }),
               ],
             },
           ],
@@ -192,7 +197,6 @@ const CarRecyclingTemplate: ApplicationTemplate<
     }
     return undefined
   },
-  answerValidators,
 }
 
 export default CarRecyclingTemplate

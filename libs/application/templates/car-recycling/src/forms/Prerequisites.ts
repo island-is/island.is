@@ -7,12 +7,13 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import {
+  CurrentVehiclesApi,
   Form,
   FormModes,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import Logo from '../assets/Logo'
-import { CurrentVehiclesApi } from '../dataProviders'
+
 import { carRecyclingMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
