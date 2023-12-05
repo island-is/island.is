@@ -452,6 +452,11 @@ export const pensionSupplementFormMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'phonenumber',
     },
+    cancelButton: {
+      id: 'ul.application:confirm.cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
   }),
 
   conclusionScreen: defineMessages({

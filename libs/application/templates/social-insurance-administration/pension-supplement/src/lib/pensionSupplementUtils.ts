@@ -64,6 +64,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   return {
     applicantPhonenumber,
     applicationReason,
@@ -79,6 +84,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankName,
     bankAddress,
     currency,
+    tempAnswers,
   }
 }
 

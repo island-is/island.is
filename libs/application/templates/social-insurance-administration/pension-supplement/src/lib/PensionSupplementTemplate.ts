@@ -1,6 +1,7 @@
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
+import cloneDeep from 'lodash/cloneDeep'
 import {
   ApplicationTemplate,
   ApplicationContext,
@@ -11,6 +12,7 @@ import {
   ApplicationRole,
   DefaultEvents,
   NationalRegistryUserApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -30,6 +32,7 @@ import {
   Events,
   Roles,
   States,
+  Actions,
 } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 const PensionSupplementTemplate: ApplicationTemplate<
@@ -83,7 +86,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearBankAccountInfo'],
+        exit: ['clearBankAccountInfo', 'clearTemp', 'restoreAnswersFromTemp'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -95,6 +98,12 @@ const PensionSupplementTemplate: ApplicationTemplate<
               logMessage: statesMessages.applicationSent,
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -116,9 +125,11 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        exit: ['createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
@@ -160,6 +171,9 @@ const PensionSupplementTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
@@ -210,7 +224,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.APPROVE,
+                onEvent: DefaultEvents.SUBMIT,
                 logMessage: statesMessages.additionalDocumentsAdded,
               },
             ],
@@ -229,9 +243,7 @@ const PensionSupplementTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.APPROVE]: {
-            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          },
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_IN_REVIEW }],
         },
       },
       [States.APPROVED]: {
@@ -287,6 +299,57 @@ const PensionSupplementTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Copy the current answers to temp. If the user cancels the edits,
+       * we will restore the answers to their original state from temp.
+       */
+      createTempAnswers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempAnswers', cloneDeep(answers))
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the answers to their original state from temp.
+       */
+      restoreAnswersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+        const { tempAnswers } = getApplicationAnswers(answers)
+
+        if (answers.tempAnswers) {
+          Object.assign(answers, tempAnswers)
+          unset(answers, 'tempAnswers')
+        }
+
+        return context
+      }),
+      /**
+       * The edits were submitted. Clear out temp.
+       */
+      clearTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        unset(answers, 'tempAnswers')
+
+        return context
+      }),
       clearBankAccountInfo: assign((context) => {
         const { application } = context
         const { bankAccountType } = getApplicationAnswers(application.answers)

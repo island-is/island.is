@@ -426,6 +426,15 @@ export const PensionSupplementForm: Form = buildForm({
               title: pensionSupplementFormMessage.confirm.title,
               actions: [
                 {
+                  event: DefaultEvents.ABORT,
+                  name: pensionSupplementFormMessage.confirm.cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
+                  },
+                },
+                {
                   event: DefaultEvents.SUBMIT,
                   name: pensionSupplementFormMessage.confirm.title,
                   type: 'primary',

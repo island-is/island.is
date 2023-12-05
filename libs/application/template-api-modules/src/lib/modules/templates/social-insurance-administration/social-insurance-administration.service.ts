@@ -181,6 +181,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
+
+    if (application.typeId === ApplicationTypes.PENSION_SUPPLEMENT) {
+      // TODO: Implement sendApplication for PENSION_SUPPLEMENT
+      console.log('Send pension supplement application (Not implemented)')
+    }
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {
