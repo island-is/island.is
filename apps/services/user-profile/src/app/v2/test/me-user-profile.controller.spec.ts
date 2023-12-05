@@ -635,6 +635,16 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.emailNotifications).toBe(false)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: testUserProfile.email,
+          mobile: testUserProfile.mobilePhoneNumber,
+          canNudge: false,
+        },
+      })
     })
 
     it('PATCH /v2/me should return 200 and update emailNotifications and email', async () => {
@@ -663,6 +673,16 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailNotifications).toBe(false)
       expect(userProfile.email).toBe(newEmail)
       expect(userProfile.emailVerified).toBe(true)
+
+      // Assert that islyklar api is called
+      expect(islyklarApi.islyklarPut).toBeCalledWith({
+        user: {
+          ssn: testUserProfile.nationalId,
+          email: newEmail,
+          mobile: testUserProfile.mobilePhoneNumber,
+          canNudge: false,
+        },
+      })
     })
   })
 

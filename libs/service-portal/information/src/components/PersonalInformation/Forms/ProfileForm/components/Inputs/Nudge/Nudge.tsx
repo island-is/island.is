@@ -1,4 +1,6 @@
 import React, { FC, useState, useEffect } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+
 import {
   Box,
   Columns,
@@ -11,12 +13,12 @@ import {
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
-import { msg } from '@island.is/service-portal/information/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { Controller, useForm } from 'react-hook-form'
+
 import { FormButton } from '../../FormButton'
 import * as styles from '../ProfileForms.css'
 import { useEmailNotificationMutation } from './Nudge.generated'
+import { msg } from '../../../../../../../lib/messages'
 
 interface Props {
   refuseMail: boolean
