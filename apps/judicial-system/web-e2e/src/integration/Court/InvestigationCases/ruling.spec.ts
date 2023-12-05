@@ -6,7 +6,7 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { mockCase, intercept } from '../../../utils'
-import { CaseType } from '@island.is/judicial-system/types'
+import { CaseType, UserRole } from '@island.is/judicial-system/types'
 
 describe(`${INVESTIGATION_CASE_RULING_ROUTE}/:id`, () => {
   const lorem = faker.lorem.sentence()
@@ -20,6 +20,7 @@ describe(`${INVESTIGATION_CASE_RULING_ROUTE}/:id`, () => {
       legalArguments: lorem,
     }
 
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_RULING_ROUTE}/test_id_stadfest`)
