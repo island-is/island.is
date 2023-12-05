@@ -103,7 +103,6 @@ export function addTests() {
         .click()
       await page.getByRole('button', { name: 'Loka glugga' }).click()
       await expect(page).toHaveURL(/.*\/krofur/)
-      
     })
   })
 }
