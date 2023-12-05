@@ -1,8 +1,7 @@
 import isNumber from 'lodash/isNumber'
 import { useParams } from 'react-router-dom'
-import { useQuery, gql } from '@apollo/client'
+import { useEffect, useState } from 'react'
 import {
-  Query,
   VehiclesCurrentOwnerInfo,
   VehiclesOperator,
 } from '@island.is/api/schema'
@@ -27,6 +26,7 @@ import {
   FootNote,
   IntroHeader,
   SAMGONGUSTOFA_SLUG,
+  LinkButton,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -45,122 +45,9 @@ import { displayWithUnit } from '../../utils/displayWithUnit'
 import AxleTable from '../../components/DetailTable/AxleTable'
 import Dropdown from '../../components/Dropdown/Dropdown'
 import { getDateLocale } from '../../utils/constants'
-
-export const GET_USERS_VEHICLE_DETAIL = gql`
-  query GetUsersVehiclesDetail($input: GetVehicleDetailInput!) {
-    vehiclesDetail(input: $input) {
-      mainInfo {
-        model
-        subModel
-        regno
-        year
-        co2
-        weightedCo2
-        co2Wltp
-        weightedCo2Wltp
-        cubicCapacity
-        trailerWithBrakesWeight
-        trailerWithoutBrakesWeight
-      }
-      basicInfo {
-        model
-        regno
-        subModel
-        permno
-        verno
-        year
-        country
-        preregDateYear
-        formerCountry
-        importStatus
-      }
-      registrationInfo {
-        firstRegistrationDate
-        preRegistrationDate
-        newRegistrationDate
-        vehicleGroup
-        color
-        reggroup
-        reggroupName
-        passengers
-        useGroup
-        driversPassengers
-        standingPassengers
-        plateLocation
-        specialName
-        plateStatus
-      }
-      currentOwnerInfo {
-        owner
-        nationalId
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      inspectionInfo {
-        type
-        date
-        result
-        odometer
-        nextInspectionDate
-        lastInspectionDate
-        insuranceStatus
-        mortages
-        carTax
-        inspectionFine
-      }
-      technicalInfo {
-        engine
-        totalWeight
-        cubicCapacity
-        capacityWeight
-        length
-        vehicleWeight
-        width
-        trailerWithoutBrakesWeight
-        horsepower
-        trailerWithBrakesWeight
-        carryingCapacity
-        axleTotalWeight
-        axles {
-          axleMaxWeight
-          wheelAxle
-        }
-        tyres {
-          axle1
-          axle2
-          axle3
-          axle4
-          axle5
-        }
-      }
-      ownersInfo {
-        name
-        address
-        dateOfPurchase
-      }
-      coOwners {
-        nationalId
-        owner
-        address
-        postalcode
-        city
-        dateOfPurchase
-      }
-      operators {
-        nationalId
-        name
-        address
-        postalcode
-        city
-        startDate
-        endDate
-      }
-      downloadServiceURL
-    }
-  }
-`
+import { useGetUsersVehiclesDetailQuery } from './VehicleDetail.generated'
+import { AssetsPaths } from '../../lib/paths'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 type UseParams = {
   id: string
@@ -171,7 +58,24 @@ const VehicleDetail = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, loading, error } = useQuery<Query>(GET_USERS_VEHICLE_DETAIL, {
+  // Remove flag functionality once feature goes live.
+  const [enabledMileageFlag, setEnabledMileageFlag] = useState<boolean>(false)
+  const featureFlagClient = useFeatureFlagClient()
+  useEffect(() => {
+    const isFlagEnabled = async () => {
+      const ffEnabled = await featureFlagClient.getValue(
+        `isServicePortalVehicleMileagePageEnabled`,
+        false,
+      )
+      if (ffEnabled) {
+        setEnabledMileageFlag(ffEnabled as boolean)
+      }
+    }
+    isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const { data, loading, error } = useGetUsersVehiclesDetailQuery({
     variables: {
       input: {
         regno: '',
@@ -258,6 +162,10 @@ const VehicleDetail = () => {
     })
   }
 
+  const reqMileageReg =
+    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration &&
+    enabledMileageFlag
+
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -284,23 +192,47 @@ const VehicleDetail = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {!loading && downloadServiceURL && (
+        {!loading && (downloadServiceURL || reqMileageReg) && (
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
-              <Box display="flex" justifyContent="flexStart" printHidden>
-                <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                  <Button
-                    colorScheme="default"
-                    icon="receipt"
-                    iconType="outline"
-                    size="default"
-                    type="button"
-                    variant="utility"
-                    onClick={() => formSubmit(`${downloadServiceURL}`)}
-                  >
-                    {formatMessage(messages.vehicleHistoryReport)}
-                  </Button>
-                </Box>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
+                {reqMileageReg && (
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <LinkButton
+                      to={
+                        id
+                          ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
+                              ':id',
+                              id.toString(),
+                            )
+                          : ''
+                      }
+                      icon="pencil"
+                      variant="button"
+                      text={formatMessage(messages.vehicleMileageInputTitle)}
+                    />
+                  </Box>
+                )}
+                {downloadServiceURL && (
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <Button
+                      colorScheme="default"
+                      icon="receipt"
+                      iconType="outline"
+                      size="default"
+                      type="button"
+                      variant="utility"
+                      onClick={() => formSubmit(`${downloadServiceURL}`)}
+                    >
+                      {formatMessage(messages.vehicleHistoryReport)}
+                    </Button>
+                  </Box>
+                )}
                 <Box paddingRight={2}>
                   <Dropdown
                     label={formatMessage(messages.actions)}
@@ -424,6 +356,35 @@ const VehicleDetail = () => {
                 'g/km',
               )}
               loading={loading}
+            />
+            <Divider />
+          </>
+        )}
+
+        {data?.vehiclesDetail?.inspectionInfo?.odometer && reqMileageReg && (
+          <>
+            <UserInfoLine
+              label={formatMessage(messages.lastKnownOdometerStatus)}
+              content={displayWithUnit(
+                data.vehiclesDetail.lastMileage?.mileage,
+                'km',
+                true,
+              )}
+              loading={loading}
+              editLink={
+                reqMileageReg
+                  ? {
+                      title: m.viewDetail,
+                      url: id
+                        ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
+                            ':id',
+                            id.toString(),
+                          )
+                        : '',
+                      external: false,
+                    }
+                  : undefined
+              }
             />
             <Divider />
           </>

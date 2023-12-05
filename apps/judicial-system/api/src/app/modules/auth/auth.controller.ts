@@ -209,9 +209,7 @@ export class AuthController {
     csrfToken: string | undefined,
     requestedRedirectRoute: string,
   ) {
-    const user =
-      (await this.authService.findUser(authUser.nationalId)) ??
-      (await this.authService.findDefender(authUser.nationalId))
+    const user = await this.authService.findUser(authUser.nationalId)
 
     if (user && this.authService.validateUser(user)) {
       return {
@@ -219,18 +217,29 @@ export class AuthController {
         userNationalId: user.nationalId,
         userRole: user.role,
         jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
-        redirectRoute: requestedRedirectRoute
-          ? requestedRedirectRoute
-          : user.role === UserRole.ADMIN
-          ? USERS_ROUTE
-          : user.role === UserRole.DEFENDER
-          ? DEFENDER_CASES_ROUTE
-          : user.institution?.type === InstitutionType.COURT_OF_APPEALS
-          ? COURT_OF_APPEAL_CASES_ROUTE
-          : CASES_ROUTE,
+        redirectRoute:
+          requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
+            ? requestedRedirectRoute
+            : user.role === UserRole.ADMIN
+            ? USERS_ROUTE
+            : user.role === UserRole.DEFENDER
+            ? DEFENDER_CASES_ROUTE
+            : user.institution?.type === InstitutionType.COURT_OF_APPEALS
+            ? COURT_OF_APPEAL_CASES_ROUTE
+            : CASES_ROUTE,
+      }
+    } else {
+      const defender = await this.authService.findDefender(authUser.nationalId)
+
+      if (defender && this.authService.validateUser(defender)) {
+        return {
+          userId: defender.id,
+          userNationalId: defender.nationalId,
+          jwtToken: this.sharedAuthService.signJwt(defender, csrfToken),
+          redirectRoute: requestedRedirectRoute ?? DEFENDER_CASES_ROUTE,
+        }
       }
     }
-
     return undefined
   }
 

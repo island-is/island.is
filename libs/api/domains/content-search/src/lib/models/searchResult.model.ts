@@ -2,6 +2,7 @@ import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
 
 import {
   Article,
+  AnchorPage,
   LifeEventPage,
   News,
   AdgerdirPage,
@@ -22,6 +23,7 @@ const Items = createUnionType({
   name: 'Items',
   types: () => [
     Article,
+    AnchorPage,
     LifeEventPage,
     News,
     AdgerdirPage,

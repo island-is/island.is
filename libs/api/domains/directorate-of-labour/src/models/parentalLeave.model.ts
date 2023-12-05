@@ -71,4 +71,7 @@ export class ParentalLeave {
   @Field(() => String, { nullable: true })
   @IsOptional()
   noOfChildren?: string
+
+  @Field(() => String)
+  language?: string
 }
