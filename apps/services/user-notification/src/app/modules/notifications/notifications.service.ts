@@ -46,7 +46,7 @@ export class NotificationsService {
     return await this.cacheManager.get(key)
   }
 
-  async mapLocale(locale: string | null | undefined): Promise<string> {
+  mapLocale(locale: string | null | undefined): string {
     if (locale === 'en') {
       return 'en'
     }
@@ -55,7 +55,7 @@ export class NotificationsService {
   async getTemplates(
     locale?: string | null | undefined,
   ): Promise<HnippTemplate[]> {
-    locale = await this.mapLocale(locale)
+    locale = this.mapLocale(locale)
 
     this.logger.info(
       'Fetching templates from Contentful GQL for locale: ' + locale,
@@ -106,7 +106,7 @@ export class NotificationsService {
     templateId: string,
     locale?: string | null | undefined,
   ): Promise<HnippTemplate> {
-    locale = await this.mapLocale(locale)
+    locale = this.mapLocale(locale)
     //check cache
     const cacheKey = templateId + '-' + locale
     const cachedTemplate = await this.getFromCache(cacheKey)
