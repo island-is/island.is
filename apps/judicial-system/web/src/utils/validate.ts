@@ -184,7 +184,6 @@ export const isDefendantStepValidIC = (
   caseType: CaseType | undefined,
   policeCaseNumbers: string[],
 ): boolean => {
-  console.log(workingCase.defenderName)
   return (
     policeCaseNumbers.length > 0 &&
     workingCase.type === caseType &&
