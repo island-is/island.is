@@ -34,13 +34,8 @@ export function addTests() {
       // Reception and assignment
       await expect(page).toHaveURL(/.*\/domur\/mottaka\/.*/)
       await page.getByTestId('courtCaseNumber').fill('R-63/2023')
-      await page
-        .locator('#judge div')
-        .filter({ hasText: 'Veldu dómara/aðstoðarmann *Veldu héraðsdómara' })
-        .locator('div')
-        .nth(2)
-        .click()
-      await page.locator('#react-select-judge-option-1').click()
+      await page.getByText('Veldu dómara/aðstoðarmann').click()
+      await page.getByTestId('select-judge').getByText('Test Dómari').click()
       await page.getByTestId('continueButton').click()
 
       // Overview
