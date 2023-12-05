@@ -84,29 +84,27 @@ export class HealthDirectorateClientService {
     auth: User,
     request: HealthcareLicenseCertificateRequest,
   ): Promise<HealthcareLicenseCertificate[]> {
-    const result: HealthcareLicenseCertificate[] = []
+    return Promise.all(
+      request.professionIdList.map(async (professionId) => {
+        const item = await this.vottordApiWithAuth(auth).vottordUtbuaSkjalPost({
+          utbuaSkjalRequest: {
+            name: request.fullName,
+            dateOfBirth: format(new Date(request.dateOfBirth), 'dd.MM.yyyy'),
+            email: request.email,
+            phoneNo: request.phone,
+            idProfession: professionId,
+          },
+        })
 
-    for (let i = 0; i < request.professionIdList.length; i++) {
-      const item = await this.vottordApiWithAuth(auth).vottordUtbuaSkjalPost({
-        utbuaSkjalRequest: {
-          name: request.fullName,
-          dateOfBirth: format(new Date(request.dateOfBirth), 'dd.MM.yyyy'),
-          email: request.email,
-          phoneNo: request.phone,
-          idProfession: request.professionIdList[i],
-        },
-      })
+        if (!item.base64String) {
+          throw new Error('Empty file')
+        }
 
-      if (!item.base64String) {
-        throw new Error('Empty file')
-      }
-
-      result.push({
-        professionId: request.professionIdList[i],
-        base64: item.base64String,
-      })
-    }
-
-    return result
+        return {
+          professionId: professionId,
+          base64: item.base64String,
+        }
+      }),
+    )
   }
 }
