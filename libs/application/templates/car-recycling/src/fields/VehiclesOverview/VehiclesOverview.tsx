@@ -320,7 +320,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
           <AlertMessage
             type="error"
             title=""
-            message={formatMessage(errorMessages.mustSelectACar)}
+            message={formatMessage(errorMessages.mustSelectAVehicle)}
           />
         </Box>
       )}
