@@ -1,32 +1,23 @@
 import ip3country from 'ip3country'
 import { NextApiRequest, NextApiResponse } from 'next'
+import requestIp from 'request-ip'
 
-async function getCountryCode(): Promise<{ countryCode: string }> {
-  const response = await fetch('https://api.ipify.org/?format=json', {
-    headers: {
-      Accept: 'application/json',
-    },
-  })
-
-  if (response.ok) {
-    const ip = await response.json()
-
+function getCountryCode(ip: string | null): { countryCode: string } {
+  if (!ip) {
+    return { countryCode: '' }
+  } else if (ip === '::1' || ip === '127.0.0.1') {
+    return { countryCode: 'IS' }
+  } else {
     ip3country.init()
-    const countryCode = ip3country.lookupStr(ip.ip)
+    const countryCode = ip3country.lookupStr(ip)
 
     return { countryCode: countryCode || '' }
   }
-
-  const reason = await response.text()
-  console.error('Failed to get country code:', reason)
-  throw new Error(reason)
 }
 
-export default async function handler(
-  _req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  const countryCode = await getCountryCode()
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const ip = requestIp.getClientIp(req)
+  const countryCode = getCountryCode(ip)
 
   /* Max age is 30 minutes, revalided if repeated within 30 sec*/
   res.setHeader(

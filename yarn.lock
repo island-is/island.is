@@ -17939,6 +17939,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/request-ip@npm:0.0.41":
+  version: 0.0.41
+  resolution: "@types/request-ip@npm:0.0.41"
+  dependencies:
+    "@types/node": "*"
+  checksum: d8579b7c9b739bd417eadc83d01fce52b10014733ab0f17f9e922c19013ebe5c745c9b267dc2adf48b26738dfb1a9c6b09184cb8b3e85fc490933966b005748c
+  languageName: node
+  linkType: hard
+
 "@types/request@npm:2.48.5":
   version: 2.48.5
   resolution: "@types/request@npm:2.48.5"
@@ -33685,6 +33694,7 @@ __metadata:
     "@types/react-pdf": 5.0.9
     "@types/react-table": 7.0.24
     "@types/request": 2.48.5
+    "@types/request-ip": 0.0.41
     "@types/resolve": ^1.20.2
     "@types/sanitize-html": 2.9.0
     "@types/smoothscroll-polyfill": 0.3.1
@@ -33879,6 +33889,7 @@ __metadata:
     reflect-metadata: 0.1.13
     regenerator-runtime: 0.13.7
     remark-parse: 9.0.0
+    request-ip: 3.3.0
     rosetta: 1.0.0
     rxjs: 7.8.1
     sanitize-html: 2.10.0
@@ -46409,6 +46420,13 @@ __metadata:
   dependencies:
     is-finite: ^1.0.0
   checksum: d2db0b69c5cb0c14dd750036e0abcd6b3c3f7b2da3ee179786b755cf737ca15fa0fff417ca72de33d6966056f4695440e680a352401fc02c95ade59899afbdd0
+  languageName: node
+  linkType: hard
+
+"request-ip@npm:3.3.0":
+  version: 3.3.0
+  resolution: "request-ip@npm:3.3.0"
+  checksum: 9ca26f814201da19cb6f1a18da4f036803b770665ec0e7c556ea975ba553321922a5f04909f6dfc2371f695ca8aaa3c66f02c00a5e902c76435029804cdc4964
   languageName: node
   linkType: hard
 
