@@ -2,6 +2,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { HouseholdSupplementHousing } from './constants'
 import { errorMessages, validatorErrorMessages } from './messages'
+import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import {
   formatBankInfo,
@@ -119,12 +120,13 @@ export const dataSchema = z.object({
     .refine(
       (p) => {
         const today = new Date()
-        const startDate = addYears(today, -2)
+        const startDate = addYears(today.setMonth(today.getMonth()+1), -2)
+        const endDate = addMonths(new Date(), 6)
         const selectedDate = new Date(p.year + p.month)
-        return startDate < selectedDate
+        return startDate < selectedDate && selectedDate < endDate
       },
-      { params: errorMessages.period },
-    ),
+      { params: errorMessages.period, path: ['month'] },
+    )
 })
 
 export type SchemaFormValues = z.infer<typeof dataSchema>

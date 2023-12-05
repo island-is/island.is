@@ -559,8 +559,8 @@ export const errorMessages = defineMessages({
   },
   period: {
     id: 'hs.application:error.period',
-    defaultMessage: 'Tímabil þarf að vera gilt.',
-    description: 'The period must be valid.',
+    defaultMessage: 'Ógildur mánuður.',
+    description: 'Invalid month.',
   },
   noEmailFound: {
     id: 'hs.application:error.no.email.found.title',
@@ -594,6 +594,7 @@ export const inReviewFormMessages = defineMessages({
 })
 
 export const validatorErrorMessages = defineMessages({
+
   requireAttachment: {
     id: 'hs.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',

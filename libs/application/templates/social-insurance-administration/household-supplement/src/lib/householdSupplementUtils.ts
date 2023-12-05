@@ -251,8 +251,8 @@ export function getAvailableYears(application: Application) {
   )
 
   if (!applicantNationalId) return []
-
-  const twoYearsBackInTime = subYears(new Date(), 2).getFullYear()
+  const today = new Date()
+  const twoYearsBackInTime = subYears(today.setMonth(today.getMonth()+1), 2).getFullYear()
   const sixMonthsInTheFuture = addMonths(new Date(), 6).getFullYear()
 
   return Array.from(

@@ -29,6 +29,8 @@ import {
   getApplicationExternalData,
   typeOfBankInfo,
   getCurrencies,
+  getAvailableYears,
+  getAvailableMonths,
 } from '../lib/householdSupplementUtils'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
@@ -336,14 +338,31 @@ export const HouseholdSupplementForm: Form = buildForm({
       title: householdSupplementFormMessage.info.periodTitle,
       children: [
         buildMultiField({
-          id: 'periodField',
+          id: 'period',
           title: householdSupplementFormMessage.info.periodTitle,
           description: householdSupplementFormMessage.info.periodDescription,
           children: [
-            buildCustomField({
-              id: 'period',
-              title: householdSupplementFormMessage.info.periodTitle,
-              component: 'Period',
+            buildSelectField({
+              id: 'period.year',
+              title: householdSupplementFormMessage.info.periodYear,
+              width: 'half',
+              placeholder: householdSupplementFormMessage.info.periodYearDefaultText,
+              options: (application: Application) => {
+                return getAvailableYears(application)
+              },
+            }),  
+            buildSelectField({
+              id: 'period.month',
+              title: householdSupplementFormMessage.info.periodMonth,
+              width: 'half',
+              placeholder: householdSupplementFormMessage.info.periodMonthDefaultText,
+              options: (application: Application) => {
+                const { selectedYear: year} = getApplicationAnswers(
+                  application.answers,
+                )
+                const rightYear = year ?? new Date().getFullYear().toString()
+                return getAvailableMonths(application, rightYear)
+              },
             }),
           ],
         }),
