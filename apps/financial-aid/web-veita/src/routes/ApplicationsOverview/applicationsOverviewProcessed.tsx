@@ -11,12 +11,11 @@ import {
   ApplicationState,
   ApplicationPagination,
   applicationPageSize,
-  getStateUrlFromRoute,
-  getStateFromUrl,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
+import useFilter from '../../utils/useFilter'
 
 interface Filters {
   selectedStates: ApplicationState[]
@@ -29,18 +28,12 @@ export const ApplicationsOverviewProcessed = () => {
   const [currentPage, setCurrentPage] = useState<number>(
     router?.query?.page ? parseInt(router.query.page as string) : 1,
   )
+
   const currentNavigationItem =
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
 
-  const [filters, setFilters] = useState<Filters>({
-    selectedStates: router?.query?.state
-      ? ((router?.query?.state as string).split(',') as ApplicationState[])
-      : [],
-    selectedMonths: router?.query?.month
-      ? (router?.query?.month as string).split(',').map(Number)
-      : [],
-  })
+  const { filters, setFilters } = useFilter(router)
 
   const onChecked = (item: ApplicationState | number, checked: boolean) => {
     const filtersCopy = { ...filters }
@@ -77,8 +70,10 @@ export const ApplicationsOverviewProcessed = () => {
     getApplications({
       variables: {
         input: {
+          defaultStates: currentNavigationItem?.filterStates ?? [],
           states: searchFilters.selectedStates,
-          months: searchFilters.selectedMonths,
+          months: [],
+          staff: [],
           page: page,
         },
       },
@@ -103,10 +98,11 @@ export const ApplicationsOverviewProcessed = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
+  console.log(data)
 
   useEffect(() => {
     filter(currentPage, filters)
-  }, [])
+  }, [currentNavigationItem])
 
   return (
     <Box
@@ -120,16 +116,18 @@ export const ApplicationsOverviewProcessed = () => {
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
+          <FilterPopover
+            stateOptions={currentNavigationItem?.filterStates}
+            selectedStaff={[]}
+            selectedStates={filters.selectedStates}
+            results={data?.filterApplications?.totalCount ?? 0}
+            onChecked={onChecked}
+            onFilterClear={onFilterClear}
+            onFilterSave={onFilterSave}
+            staffOptions={[]}
+          />
         </Box>
-        <FilterPopover
-          stateOptions={currentNavigationItem?.filterStates}
-          selectedMonths={filters.selectedMonths}
-          selectedStates={filters.selectedStates}
-          results={data?.filterApplications?.totalCount ?? 0}
-          onChecked={onChecked}
-          onFilterClear={onFilterClear}
-          onFilterSave={onFilterSave}
-        />
+
         {data?.filterApplications?.applications && (
           <ApplicationsTable
             headers={currentNavigationItem.headers}

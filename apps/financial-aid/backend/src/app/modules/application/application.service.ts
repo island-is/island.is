@@ -609,49 +609,72 @@ export class ApplicationService {
     const whereOptions = {
       state: {
         [Op.in]:
-          filters.states.length > 0
-            ? filters.states
-            : [ApplicationState.APPROVED, ApplicationState.REJECTED],
+          filters.states.length > 0 ? filters.states : filters.defaultStates,
       },
       municipalityCode: { [Op.in]: municipalityCodes },
     }
 
-    if (filters.months.length > 0) {
-      const date = new Date()
-      const currentYear = date.getFullYear()
-      const currentMonth = date.getMonth()
+    const staffOptions =
+      filters.staff.length > 0
+        ? {
+            model: StaffModel,
+            as: 'staff',
+            where: {
+              name: { [Op.in]: filters.staff },
+            },
+          }
+        : { model: StaffModel, as: 'staff' }
 
-      whereOptions[Op.or] = filters.months.map((month) =>
-        Sequelize.and(
-          Sequelize.where(
-            Sequelize.fn(
-              'date_part',
-              'month',
-              Sequelize.col('ApplicationModel.created'),
-            ),
-            (month + 1).toString(),
-          ),
-          Sequelize.where(
-            Sequelize.fn(
-              'date_part',
-              'year',
-              Sequelize.col('ApplicationModel.created'),
-            ),
-            (month > currentMonth ? currentYear - 1 : currentYear).toString(),
-          ),
-        ),
-      )
-    }
+    // if (filters.months.length > 0) {
+    //   const date = new Date()
+    //   const currentYear = date.getFullYear()
+    //   const currentMonth = date.getMonth()
+
+    //   whereOptions[Op.or] = filters.months.map((month) =>
+    //     Sequelize.and(
+    //       Sequelize.where(
+    //         Sequelize.fn(
+    //           'date_part',
+    //           'month',
+    //           Sequelize.col('ApplicationModel.created'),
+    //         ),
+    //         (month + 1).toString(),
+    //       ),
+    //       Sequelize.where(
+    //         Sequelize.fn(
+    //           'date_part',
+    //           'year',
+    //           Sequelize.col('ApplicationModel.created'),
+    //         ),
+    //         (month > currentMonth ? currentYear - 1 : currentYear).toString(),
+    //       ),
+    //     ),
+    //   )
+    // }
 
     const results = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],
-      include: [{ model: StaffModel, as: 'staff' }],
+      include: [staffOptions],
       offset: (filters.page - 1) * applicationPageSize,
       limit: applicationPageSize,
     })
 
-    return { applications: results.rows, totalCount: results.count }
+    const resultsStaff = await this.applicationModel.findAll({
+      where: whereOptions,
+      order: [['modified', 'DESC']],
+      include: [{ model: StaffModel, as: 'staff' }],
+    })
+
+    await Promise.all([resultsStaff, results])
+
+    const staffList = resultsStaff.map((row) => row.staff)
+
+    return {
+      applications: results.rows,
+      totalCount: results.count,
+      staffList: [...new Set(staffList)],
+    }
   }
 
   private async sendApplicationUpdateEmail(

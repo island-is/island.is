@@ -117,6 +117,10 @@ export const ApplicationFilterQuery = gql`
         }
       }
       totalCount
+      staffList {
+        name
+        nationalId
+      }
     }
   }
 `

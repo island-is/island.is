@@ -404,4 +404,5 @@ export interface ApplicationProfileInfo {
 export interface ApplicationPagination {
   applications: Application[]
   totalCount: number
+  staffList: any[]
 }

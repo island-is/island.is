@@ -17,22 +17,24 @@ import {
 
 interface Props {
   selectedStates: ApplicationState[]
-  selectedMonths: number[]
+  selectedStaff: string[]
   results: number
   onChecked: (item: ApplicationState | number, checked: boolean) => void
   onFilterClear: () => void
   onFilterSave: () => void
+  staffOptions: string[]
   stateOptions?: ApplicationState[]
 }
 
 const FilterPopover = ({
   stateOptions,
   selectedStates,
-  selectedMonths,
+  selectedStaff,
   results,
   onChecked,
   onFilterClear,
   onFilterSave,
+  staffOptions,
 }: Props) => {
   return (
     <Box
@@ -74,14 +76,14 @@ const FilterPopover = ({
 
               <Stack space={1}>
                 <Text fontWeight="semiBold" marginBottom={1}>
-                  Tímabil
+                  Starfsmenn
                 </Text>
-                {months.map((month, i) => (
+                {selectedStaff.map((staff) => (
                   <Checkbox
-                    name={capitalizeFirstLetter(month)}
-                    label={capitalizeFirstLetter(month)}
-                    checked={selectedMonths.includes(i)}
-                    onChange={(event) => onChecked(i, event.target.checked)}
+                    name={staff}
+                    label={staff}
+                    checked={false}
+                    onChange={(event) => console.log('helo')}
                   />
                 ))}
               </Stack>
