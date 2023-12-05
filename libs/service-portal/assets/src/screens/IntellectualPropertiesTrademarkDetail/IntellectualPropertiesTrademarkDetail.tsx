@@ -104,7 +104,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
         )}
         {ip?.type === TrademarkType.MULTIMEDIA && (
           <Box>
-            <Text variant="eyebrow" as="div" color="purple400">
+            <Text variant="eyebrow" as="div" color="purple400" marginBottom={2}>
               {formatMessage(ipMessages.video)}
             </Text>
             {ip.media?.mediaPath && (
@@ -187,7 +187,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                 minDate={new Date(ip.lifecycle.applicationDate)}
               >
                 {[
-                  <Stack space="smallGutter">
+                  <Stack key="list-item-application-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.applicationDate
                         ? formatDate(ip.lifecycle.applicationDate, 'dd.MM.yy')
@@ -195,7 +195,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                     </Text>
                     <Text>Umsókn</Text>
                   </Stack>,
-                  <Stack space="smallGutter">
+                  <Stack key="list-item-publish-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.publishDate
                         ? formatDate(ip.lifecycle.publishDate, 'dd.MM.yy')
@@ -203,7 +203,10 @@ const IntellectualPropertiesTrademarkDetail = () => {
                     </Text>
                     <Text>Birting</Text>
                   </Stack>,
-                  <Stack space="smallGutter">
+                  <Stack
+                    key="list-item-maxValidObjectionDate"
+                    space="smallGutter"
+                  >
                     <Text variant="h5">
                       {ip?.lifecycle.maxValidObjectionDate
                         ? formatDate(
@@ -214,7 +217,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                     </Text>
                     <Text>Andmælafrestur</Text>
                   </Stack>,
-                  <Stack space="smallGutter">
+                  <Stack key="list-item-registrationDate" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.registrationDate
                         ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
@@ -222,7 +225,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                     </Text>
                     <Text>Skráning</Text>
                   </Stack>,
-                  <Stack space="smallGutter">
+                  <Stack key="list-item-expiration-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.expiryDate
                         ? formatDate(ip?.lifecycle.expiryDate, 'dd.MM.yy')
