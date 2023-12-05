@@ -47,7 +47,7 @@ export class UserResolver {
           return users
         }
 
-        return users.filter((user) => user.role === input.role)
+        return users.filter((user) => input.role?.includes(user.role))
       }),
       (users: TUser[]) => users.map((user) => user.id),
     )

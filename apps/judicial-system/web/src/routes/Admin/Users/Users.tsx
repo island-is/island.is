@@ -37,15 +37,15 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     loaded: institutionsLoaded,
   } = useInstitution()
   const {
-    data,
-    error,
+    data: userData,
+    error: userError,
     loading: usersLoading,
   } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const users = data?.users?.filter((u) => {
+  const users = userData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -208,7 +208,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Loading />
         </Box>
       )}
-      {error && (
+      {userError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

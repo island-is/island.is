@@ -7,6 +7,6 @@ import { UserRole } from '@island.is/judicial-system/types'
 @InputType()
 export class UsersQueryInput {
   @Allow()
-  @Field(() => UserRole, { nullable: true })
-  readonly role?: UserRole
+  @Field(() => [UserRole], { nullable: true })
+  readonly role?: UserRole[]
 }
