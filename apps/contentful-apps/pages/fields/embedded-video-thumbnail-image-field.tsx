@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Button, Stack } from '@contentful/f36-components'
+import { Box, Button, Stack } from '@contentful/f36-components'
 import { CycleIcon } from '@contentful/f36-icons'
+import { SingleMediaEditor } from '@contentful/field-editor-reference'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
 
 import { CONTENTFUL_ENVIRONMENT, CONTENTFUL_SPACE } from '../../constants'
-import { ResponseData } from '../api/get-embedded-video-thumbnail-url'
+import type { ResponseData } from '../api/get-embedded-video-thumbnail-url'
 
 const fetchVideoThumbnailUrl = async (videoUrl: string) => {
   const response = await fetch(
@@ -23,91 +24,128 @@ const fetchVideoThumbnailUrl = async (videoUrl: string) => {
 const EmbeddedVideoThumbnailImageField = () => {
   const sdk = useSDK<FieldExtensionSDK>()
   const cma = useCMA()
-  const [assetId, setAssetId] = useState<string>(sdk.field.getValue()?.sys?.id)
-  const [assetUrl, setAssetUrl] = useState('')
-
-  const url = sdk.entry.fields.url.getValue()
+  const [assetId, setAssetId] = useState<string>(
+    sdk.field.getValue()?.sys?.id ?? '',
+  )
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     sdk.window.startAutoResizer()
   }, [sdk.window])
 
-  useEffect(() => {
-    if (!assetId) {
-      return
+  const fetchThumbnail = async () => {
+    const thumbnailUrl = await fetchVideoThumbnailUrl(
+      sdk.entry.fields.url.getValue(),
+    )
+
+    const locales = Object.keys(sdk.locales.names)
+
+    const config = {
+      environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
+      spaceId: CONTENTFUL_SPACE,
     }
-    cma.asset
-      .get({
-        environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
-        spaceId: CONTENTFUL_SPACE,
-        assetId,
-      })
-      .then((response) => {
-        setAssetUrl(response.fields.file[sdk.field.locale].url)
-      })
-  }, [assetId, cma.asset, sdk.field.locale])
+
+    const asset = await cma.asset.create(config, {
+      fields: {
+        title: locales.reduce(
+          (acc, locale) => ({
+            ...acc,
+            [locale]: sdk.entry.fields.title.getValue(locale) || thumbnailUrl,
+          }),
+          {},
+        ),
+        file: locales.reduce(
+          (acc, locale) => ({
+            ...acc,
+            [locale]: {
+              // Filename is the last 50 characters of the url
+              fileName: thumbnailUrl.slice(-50),
+              upload: thumbnailUrl,
+              contentType: '',
+            },
+          }),
+          {},
+        ),
+      },
+    })
+
+    const processedAsset = await cma.asset.processForAllLocales(config, asset)
+
+    await cma.asset.publish(
+      {
+        ...config,
+        assetId: processedAsset.sys.id,
+      },
+      processedAsset,
+    )
+
+    sdk.field.setValue({
+      sys: {
+        type: 'Link',
+        linkType: 'Asset',
+        id: processedAsset.sys.id,
+      },
+    })
+    setAssetId(processedAsset.sys.id)
+  }
 
   return (
-    <Stack flexDirection="column">
-      <Button
-        startIcon={<CycleIcon />}
-        onClick={async () => {
-          const thumbnailUrl = await fetchVideoThumbnailUrl(url)
+    <Stack
+      paddingBottom="spacing3Xl"
+      flexDirection={!assetId ? 'row' : 'column'}
+      justifyContent="flex-start"
+      alignItems="flex-start"
+      spacing="spacingXl"
+    >
+      {!assetId && (
+        <Box style={{ marginTop: '12px' }}>
+          <Button
+            startIcon={<CycleIcon />}
+            isLoading={loading}
+            size="small"
+            onClick={async () => {
+              setLoading(true)
+              try {
+                await fetchThumbnail()
+                sdk.notifier.success('Thumbnail image has been updated')
+              } catch (error) {
+                sdk.notifier.error('Thumbnail image could not be updated')
+                console.error(error)
+              }
+              setLoading(false)
+            }}
+          >
+            Fetch thumbnail
+          </Button>
+        </Box>
+      )}
 
-          const locales = Object.keys(sdk.locales.names)
-
-          const asset = await cma.asset.create(
-            {
-              environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
-              spaceId: CONTENTFUL_SPACE,
+      <Box paddingTop={assetId ? 'spacingS' : 'none'}>
+        <SingleMediaEditor
+          parameters={{
+            instance: {
+              bulkEditing: false,
+              showCreateEntityAction: true,
+              showLinkEntityAction: true,
             },
-            {
-              fields: {
-                title: locales.reduce(
-                  (acc, locale) => ({ ...acc, [locale]: thumbnailUrl }),
-                  {},
-                ),
-                file: locales.reduce(
-                  (acc, locale) => ({
-                    ...acc,
-                    [locale]: {
-                      fileName: thumbnailUrl,
-                      upload: thumbnailUrl,
-                      contentType: '',
-                    },
-                  }),
-                  {},
-                ),
-              },
-            },
-          )
-
-          const processedAsset = await cma.asset.processForAllLocales(
-            {
-              environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
-              spaceId: CONTENTFUL_SPACE,
-            },
-            asset,
-          )
-
-          await cma.asset.publish(
-            {
-              assetId: processedAsset.sys.id,
-              environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
-              spaceId: CONTENTFUL_SPACE,
-            },
-            processedAsset,
-          )
-
-          // TODO: debug why this isn't working
-          sdk.field.setValue(processedAsset.sys.id)
-          setAssetId(processedAsset.sys.id)
-        }}
-      >
-        Fetch thumbnail
-      </Button>
-      {JSON.stringify(sdk.field.getValue())}
-      <img src={assetUrl} alt="" />
+          }}
+          sdk={sdk}
+          viewType="card"
+          actionLabels={{
+            createNew: () => 'Create new asset',
+          }}
+          onAction={(action) => {
+            if (action.type === 'delete') {
+              setAssetId('')
+            } else if (
+              action.type === 'create_and_link' ||
+              action.type === 'select_and_link'
+            ) {
+              setAssetId(action.entityData.sys.id)
+            }
+          }}
+        />
+      </Box>
     </Stack>
   )
 }

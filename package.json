@@ -71,7 +71,7 @@
     "@azure/msal-node": "1.14.4",
     "@contentful/app-sdk": "4.16.0",
     "@contentful/field-editor-json": "3.1.4",
-    "@contentful/field-editor-reference": "5.8.3",
+    "@contentful/field-editor-reference": "5.20.0",
     "@contentful/field-editor-single-line": "1.1.8",
     "@contentful/forma-36-react-components": "3.78.4",
     "@contentful/forma-36-tokens": "0.10.1",
