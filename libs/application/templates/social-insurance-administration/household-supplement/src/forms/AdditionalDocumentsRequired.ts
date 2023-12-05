@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -19,25 +18,27 @@ export const AdditionalDocumentsRequired: Form = buildForm({
   title: inReviewFormMessages.formTitle,
   logo: Logo,
   mode: FormModes.IN_PROGRESS,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'reviewUpload',
-      title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
+      title:
+        householdSupplementFormMessage.fileUpload
+          .additionalDocumentRequiredTitle,
       children: [
         buildMultiField({
           id: 'additionalDocumentsScreen',
-          title: householdSupplementFormMessage.fileUpload.additionalFileTitle,
+          title:
+            householdSupplementFormMessage.fileUpload
+              .additionalDocumentRequiredTitle,
+          description:
+            householdSupplementFormMessage.fileUpload
+              .additionalDocumentRequiredDescription,
           children: [
             buildFileUploadField({
               id: 'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
-              title:
-                householdSupplementFormMessage.fileUpload.additionalFileTitle,
-              description:
-                householdSupplementFormMessage.fileUpload
-                  .additionalFileDescription,
-              introduction:
-                householdSupplementFormMessage.fileUpload
-                  .additionalFileDescription,
+              title: '',
               maxSize: FILE_SIZE_LIMIT,
               maxSizeErrorText:
                 householdSupplementFormMessage.fileUpload
@@ -68,11 +69,6 @@ export const AdditionalDocumentsRequired: Form = buildForm({
               ],
             }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'unused',
-          title: '',
-          description: '',
         }),
       ],
     }),

@@ -343,6 +343,18 @@ export const householdSupplementFormMessage: MessageDir = {
       defaultMessage: 'Senda inn',
       description: 'Submit',
     },
+    additionalDocumentRequiredTitle: {
+      id: 'hs.application:fileUpload.additionalDocumentRequired.title',
+      defaultMessage: 'Viðbótargagna krafist',
+      description: 'Additional documents required',
+    },
+    additionalDocumentRequiredDescription: {
+      id: 'hs.application:fileUpload.additionalDocumentRequired.description#markdown',
+      defaultMessage:
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í [stafræna pósthólfinu þínu](https://island.is/minarsidur/postholf). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Please submit additional documents for the Social Insurance Administration. If you are not sure which additional documents you should submit, you can see it in [your inbox on My Pages](https://island.is/minarsidur/postholf). Note that the document must be in .pdf format.',
+    },
   }),
 
   additionalInfo: defineMessages({
