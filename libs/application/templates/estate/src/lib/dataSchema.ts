@@ -17,7 +17,7 @@ const asset = z
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    share: z.number().optional(),
+    share: z.number(),
   })
   .refine(
     ({ enabled, marketValue }) => {
@@ -33,6 +33,14 @@ const asset = z
     },
     {
       path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share > 0 && share <= 100 : true
+    },
+    {
+      path: ['share'],
     },
   )
   .refine(
@@ -227,6 +235,7 @@ export const estateSchema = z.object({
     .object({
       accountNumber: z.string(),
       balance: z.string(),
+      total: z.number().optional(),
     })
     .refine(
       ({ accountNumber, balance }) => {
@@ -252,6 +261,7 @@ export const estateSchema = z.object({
     .object({
       publisher: z.string(),
       value: z.string(),
+      nationalId: z.string().optional(),
     })
     .refine(
       ({ publisher, value }) => {
@@ -267,6 +277,16 @@ export const estateSchema = z.object({
       },
       {
         path: ['publisher'],
+      },
+    )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId && nationalId !== ''
+          ? kennitala.isValid(nationalId)
+          : true
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .array()

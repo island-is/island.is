@@ -85,6 +85,7 @@
 /libs/portals/admin/petition                                                                             @island-is/juni
 /libs/application/templates/signature-collection                                                         @island-is/juni
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
+/libs/api/domains/signature-collection                                                                   @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -230,6 +231,8 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/housing-benefit-calculator/                                                                @island-is/stefna
 /libs/clients/ship-registry/                                                                             @island-is/stefna
 /libs/api/domains/ship-registry/                                                                         @island-is/stefna
+/libs/clients/administration-of-occupational-safety-and-health/                                          @island-is/stefna
+/libs/api/domains/administration-of-occupational-safety-and-health/                                      @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
@@ -263,16 +266,16 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/financial-statements-inao               @island-is/programm
 
 /libs/application/templates/criminal-record/                                                             @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission              @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/criminal-record-submission/             @island-is/origo
 /libs/api/domains/criminal-record/                                                                       @island-is/origo
 /libs/clients/criminal-record/                                                                           @island-is/origo
 
 /libs/application/templates/mortgage-certificate/                                                        @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission         @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/mortgage-certificate-submission/        @island-is/origo
 /libs/api/domains/mortgage-certificate/                                                                  @island-is/origo
 
 /libs/application/templates/no-debt-certificate/                                                         @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                    @island-is/origo
 
 /libs/clients/charge-fjs-v2/                                                                             @island-is/origo
 /libs/clients/vehicle-service-fjs-v1/                                                                    @island-is/origo
@@ -283,7 +286,13 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/transport-authority/                                                                       @island-is/origo
 
 /libs/application/templates/driving-license-book-update-instructor/                                      @island-is/origo
-/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor  @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/driving-license-book-update-instructor/ @island-is/origo
+
+/apps/services/university-gateway/                                                                       @island-is/origo
+/libs/clients/university-application/                                                                    @island-is/origo
+/libs/clients/university-gateway-api/                                                                    @island-is/origo
+/libs/api/domains/university-gateway/                                                                    @island-is/origo
+/libs/university-gateway/                                                                                @island-is/origo
 
 /libs/application/templates/directorate-of-immigration/                                                  @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
