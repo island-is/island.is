@@ -240,12 +240,16 @@ libs/clients/rsk/relationships/                                                 
 /apps/consultation-portal/                                                                               @island-is/advania
 /libs/clients/consultation-portal/                                                                       @island-is/advania
 /libs/api/domains/consultation-portal/                                                                   @island-is/advania
+
 /apps/skilavottord/                                                                                      @island-is/deloitte
 /libs/skilavottord/                                                                                      @island-is/deloitte
 /libs/application/templates/parental-leave/                                                              @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                         @island-is/deloitte
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
+/libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja
