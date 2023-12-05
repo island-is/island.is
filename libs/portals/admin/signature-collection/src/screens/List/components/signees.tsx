@@ -25,9 +25,7 @@ const Signees = () => {
 
   return (
     <Box marginTop={5}>
-      <Text variant="h3">
-        {formatMessage(m.listSigneesHeader) + ` (${signees.length})`}
-      </Text>
+      <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
       <GridRow marginBottom={5} marginTop={3}>
         <GridColumn span={['12/12', '12/12', '7/12']}>
@@ -39,7 +37,28 @@ const Signees = () => {
             backgroundColor="white"
           />
         </GridColumn>
+        <GridColumn span={['12/12', '12/12', '5/12']}>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            alignItems="flexEnd"
+            height="full"
+          >
+            {searchTerm.length > 0
+              ? signees.length > 0 && (
+                  <Text variant="eyebrow" textAlign="right">
+                    {formatMessage(m.uploadResultsHeader)}: {signees.length}
+                  </Text>
+                )
+              : signees.length > 0 && (
+                  <Text variant="eyebrow" textAlign="right">
+                    {formatMessage(m.totalListResults)}: {signees.length}
+                  </Text>
+                )}
+          </Box>
+        </GridColumn>
       </GridRow>
+
       {signees && signees.length > 0 && (
         <Box marginTop={5}>
           <T.Table>

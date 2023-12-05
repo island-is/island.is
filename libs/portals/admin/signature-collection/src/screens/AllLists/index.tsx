@@ -23,6 +23,7 @@ import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
+import CompareLists from './components/compareLists'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -231,6 +232,7 @@ const Lists = () => {
               )}
             />
           </Box>
+          <CompareLists />
         </GridColumn>
       </GridRow>
     </GridContainer>

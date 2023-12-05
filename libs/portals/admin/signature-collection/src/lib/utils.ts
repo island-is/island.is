@@ -11,3 +11,9 @@ export type Filters = {
   area: Array<string>
   input: string
 }
+
+export const resultsForComparison = {
+  nationalId: '010130-2989',
+  name: 'Guðmundur Guðmundsson',
+  list: 'Gervimaður Útlönd - Sunnlendingafjórðungur',
+}

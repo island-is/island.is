@@ -93,8 +93,8 @@ const List = () => {
                   </Box>
                 </Box>
                 <Signees />
-                <PaperUpload />
               </Stack>
+              <PaperUpload />
             </Box>
           )}
         </GridColumn>

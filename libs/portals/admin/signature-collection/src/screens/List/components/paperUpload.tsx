@@ -16,7 +16,7 @@ const PaperUpload = () => {
   const [uploadResults, setUploadResults] = useState(false)
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={10}>
       <Box
         background={withPaperUpload ? 'purple100' : 'white'}
         padding={withPaperUpload ? 5 : 0}
@@ -47,7 +47,7 @@ const PaperUpload = () => {
               description={formatMessage(m.uploadText)}
               buttonLabel={formatMessage(m.uploadButton)}
               onChange={() => setUploadResults(true)}
-              onRemove={() => console.log('todo')}
+              onRemove={() => setUploadResults(false)}
             />
             {uploadResults && (
               <Box marginTop={10} marginBottom={5}>

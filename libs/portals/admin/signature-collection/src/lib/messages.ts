@@ -15,7 +15,7 @@ export const m = defineMessages({
   signatureListsIntro: {
     id: 'admin-portal.signature-collection:signatureListsIntro',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur. Amet est turpis sem semper senectus tellus.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
     description: '',
   },
   searchInAllListsPlaceholder: {
@@ -82,7 +82,7 @@ export const m = defineMessages({
   },
   listSigneesHeader: {
     id: 'admin-portal.signature-collection:listSigneesHeader',
-    defaultMessage: 'Yfirlit meðmælenda',
+    defaultMessage: 'Yfirlit meðmæla',
     description: '',
   },
   searchInListPlaceholder: {
@@ -139,8 +139,7 @@ export const m = defineMessages({
   },
   uploadFileDescription: {
     id: 'admin-portal.signature-collection:uploadFileDescription#markdown',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin non felis augue. Integer erat sapien, auctor ac porttitor ut, lacinia quis erat. Vivamus quis sollicitudin turpis. Aliquam erat volutpat. Donec ut ante malesuada, varius erat ut, scelerisque sapien. Sed in eros at purus sollicitudin feugiat non non arcu. Nullam at sapien eu nisi tempor pulvinar ut sed nibh.',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     description: '',
   },
   uploadHeader: {
@@ -176,6 +175,35 @@ export const m = defineMessages({
   nationalIdsError: {
     id: 'admin-portal.signature-collection:nationalIdsError',
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
+    description: '',
+  },
+
+  // Compare lists
+  compareLists: {
+    id: 'admin-portal.signature-collection:compareLists',
+    defaultMessage: 'Bera saman',
+    description: '',
+  },
+  compareListsDescription: {
+    id: 'admin-portal.signature-collection:compareListsDescription#markdown',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur.',
+    description: '',
+  },
+  compareListsResultsHeader: {
+    id: 'admin-portal.signature-collection:compareListsResultsHeader',
+    defaultMessage: 'Niðurstöður',
+    description: '',
+  },
+  compareListsResultsDescription: {
+    id: 'admin-portal.signature-collection:compareListsResultsDescription',
+    defaultMessage:
+      'Eftirfarandi aðilar eru í yfirkjörstjórn eða landskjörstjórn og ættu ekki að vera skráðir á lista.',
+    description: '',
+  },
+  deleteFromList: {
+    id: 'admin-portal.signature-collection:deleteFromList',
+    defaultMessage: 'Taka af lista',
     description: '',
   },
 })
