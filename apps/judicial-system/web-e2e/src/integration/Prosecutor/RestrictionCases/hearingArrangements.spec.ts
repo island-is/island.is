@@ -2,7 +2,12 @@ import {
   RESTRICTION_CASE_POLICE_DEMANDS_ROUTE,
   RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { Case, CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseState,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -23,6 +28,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
 
   describe('Happy path', () => {
     beforeEach(() => {
+      cy.login(UserRole.PROSECUTOR)
       cy.stubAPIResponses()
       intercept(caseDataAddition)
       cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)
@@ -94,6 +100,7 @@ describe(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/:id`, () => {
   describe('Sending notification fails', () => {
     beforeEach(() => {
       const shouldFail = Operation.SendNotificationMutation
+      cy.login(UserRole.PROSECUTOR)
       cy.stubAPIResponses()
       intercept({ ...caseDataAddition, state: CaseState.DRAFT }, shouldFail)
       cy.visit(`${RESTRICTION_CASE_HEARING_ARRANGEMENTS_ROUTE}/test_id`)

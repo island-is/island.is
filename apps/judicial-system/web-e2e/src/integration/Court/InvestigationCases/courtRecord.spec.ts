@@ -5,6 +5,7 @@ import {
   CaseDecision,
   CaseType,
   SessionArrangements,
+  UserRole,
 } from '@island.is/judicial-system/types'
 import {
   INVESTIGATION_CASE_CONFIRMATION_ROUTE,
@@ -15,6 +16,7 @@ import { mockCase, makeProsecutor, intercept } from '../../../utils'
 
 describe(`${INVESTIGATION_CASE_COURT_RECORD_ROUTE}/:id`, () => {
   beforeEach(() => {
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
     cy.stubAPIResponses()
   })
 
