@@ -226,9 +226,13 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        useGradientColor
         backgroundColor
-        darkText
+        textColor
         fullWidth
+        imagePadding
+        imageIsFullHeight
+        imageObjectFit
       }
       externalLinks {
         text
