@@ -76,7 +76,7 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     let isError = false
     try {
-      selectedVehicles.forEach(async (vehicle) => {
+      const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
         if (!isError) {
           // Create vehicle
           const vechicleResponse = await this.createVehicle(auth, vehicle)
@@ -101,29 +101,25 @@ export class CarRecyclingService extends BaseTemplateApiService {
           }
         }
       })
-    } catch (error) {
-      isError = true
-      this.logger.error(error.messages)
-    }
-    try {
-      canceledVehicles.forEach(async (vehicle) => {
-        // Cancel recycling
+
+      // Cancel recycling
+      const canceledResponses = canceledVehicles.map(async (vehicle) => {
         this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
       })
+
+      // Wait for all promises to resolve or reject
+      await Promise.all(vehiclesResponses.concat(canceledResponses))
+
+      if (isError) {
+        return Promise.reject(
+          new Error('Error occurred when recycling the vehicle'),
+        )
+      }
+
+      return Promise.resolve(true)
     } catch (error) {
       isError = true
       this.logger.error(error.messages)
     }
-
-    return new Promise((resolve, reject) => {
-      // Simulate an asynchronous operation (e.g., fetching data)
-      setTimeout(() => {
-        if (isError) {
-          reject(new Error('Error occurred when recycling the vehicle'))
-        } else {
-          resolve(true)
-        }
-      }, 1000)
-    })
   }
 }
