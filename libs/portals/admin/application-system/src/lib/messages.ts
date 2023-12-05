@@ -108,7 +108,7 @@ export const m = defineMessages({
   },
   applicationPruned: {
     id: 'admin-portal.application-system:applicationPruned',
-    defaultMessage: 'Persónugögnum hefur verið eytt úr þessari umsókn.',
+    defaultMessage: 'Öllum gögnum úr þessari umsókn hefur verið eytt.',
   },
 
   // Tags
