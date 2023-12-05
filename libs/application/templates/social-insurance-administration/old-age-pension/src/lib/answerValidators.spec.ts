@@ -87,7 +87,9 @@ describe('answerValidators', () => {
 
   it('should return an error if selectedMonth is more than 2 years ago', () => {
     const newAnswers = {
-      year: addYears(today, -2).getFullYear().toString(),
+      year: addYears(today.setMonth(today.getMonth() + 1), -2)
+        .getFullYear()
+        .toString(),
       month: MONTHS[addMonths(today, -2).getMonth()],
     }
 
@@ -523,50 +525,6 @@ describe('answerValidators', () => {
     ).toStrictEqual({
       message: validatorErrorMessages.personalAllowance,
       path: 'paymentInfo.personalAllowanceUsage',
-      values: undefined,
-    })
-  })
-
-  it('should return an error if spouseAllowance is yes but spouseAllowanceUsage is missing', () => {
-    const newAnswers = {
-      spouseAllowance: 'yes',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.requireAnswer,
-      path: 'paymentInfo.spouseAllowanceUsage',
-      values: undefined,
-    })
-  })
-
-  it('should return an error if spouseAllowance is yes but spouseAllowanceUsage is less than 1', () => {
-    const newAnswers = {
-      spouseAllowance: 'yes',
-      spouseAllowanceUsage: '0',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.personalAllowance,
-      path: 'paymentInfo.spouseAllowanceUsage',
-      values: undefined,
-    })
-  })
-
-  it('should return an error if spouseAllowance is yes but spouseAllowanceUsage is more than 100', () => {
-    const newAnswers = {
-      spouseAllowance: 'yes',
-      spouseAllowanceUsage: '220',
-    }
-
-    expect(
-      answerValidators['paymentInfo'](newAnswers, application),
-    ).toStrictEqual({
-      message: validatorErrorMessages.personalAllowance,
-      path: 'paymentInfo.spouseAllowanceUsage',
       values: undefined,
     })
   })

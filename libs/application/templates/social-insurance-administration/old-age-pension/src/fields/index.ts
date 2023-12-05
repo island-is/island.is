@@ -1,4 +1,3 @@
-export { Period } from './Period'
 export { ResidenceHistory } from './ResidenceHistory'
 export { Review } from './Review'
 export { default as EmployersOverview } from './EmployersOverview'

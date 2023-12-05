@@ -45,7 +45,28 @@ describe('SocialInsuranceAdministrationService', () => {
   it('should send old age pension application', async () => {
     const auth = createCurrentUser()
     const application = createApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date('2021-06-10T11:31:02.641Z'),
+          status: 'success',
+        },
+      },
       answers: {
+        paymentInfo: {
+          bank: '222200123456',
+          iban: '',
+          swift: '',
+          taxLevel: '2',
+          bankAccountType: 'icelandic',
+          personalAllowance: 'no',
+        },
         'period.year': '2023',
         'fileUploadAdditionalFiles.additionalDocuments': [
           { key: 'key', name: 'name' },

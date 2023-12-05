@@ -1,3 +1,4 @@
+import { BankAccountType } from './constants'
 import { MessageDescriptor } from 'react-intl'
 
 export interface BankInfo {
@@ -15,6 +16,18 @@ export interface ApplicantInfo {
   bankAccount?: BankInfo
   phoneNumber?: string
   emailAddress?: string
+}
+
+export interface PaymentInfo {
+  bankAccountType: BankAccountType
+  bank?: string
+  ledger?: string
+  accountNumber?: string
+  iban?: string
+  swift?: string
+  bankName?: string
+  bankAddress?: string
+  currency?: string
 }
 
 export interface Attachments {

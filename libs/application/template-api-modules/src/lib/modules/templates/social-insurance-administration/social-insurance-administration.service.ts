@@ -11,10 +11,11 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationType,
   Employment,
-  getApplicationAnswers,
+  getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
   errorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -45,7 +46,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   private async initAttachments(
     application: Application,
-    id: string,
     type: AttachmentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
@@ -65,6 +65,39 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
+  private async getAdditionalAttachments(
+    application: Application,
+  ): Promise<Array<Attachment>> {
+    const attachments: Array<Attachment> = []
+    let additionalAttachmentsRequired: FileType[] = []
+
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      additionalAttachmentsRequired = getOAPApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+
+    if (
+      additionalAttachmentsRequired &&
+      additionalAttachmentsRequired.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachmentsRequired,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   private async getAttachments(
     application: Application,
   ): Promise<Attachment[]> {
@@ -76,7 +109,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       earlyRetirementAttachments,
       applicationType,
       employmentStatus,
-    } = getApplicationAnswers(application.answers)
+    } = getOAPApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -84,7 +117,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUploadAdditionalFiles.additionalDocuments',
           AttachmentTypeEnum.Other,
           additionalAttachments,
         )),
@@ -95,7 +127,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.pension',
           AttachmentTypeEnum.Pension,
           pensionAttachments,
         )),
@@ -110,7 +141,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.fishermen',
           AttachmentTypeEnum.Sailor,
           fishermenAttachments,
         )),
@@ -125,7 +155,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'employment.selfEmployedAttachment',
           AttachmentTypeEnum.SelfEmployed,
           selfEmployedAttachments,
         )),
@@ -140,7 +169,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.earlyRetirement',
           AttachmentTypeEnum.Retirement,
           earlyRetirementAttachments,
         )),
@@ -188,6 +216,16 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
   }
 
+  async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
+    const attachments = await this.getAdditionalAttachments(application)
+
+    await this.siaClientService.sendAdditionalDocuments(
+      auth,
+      application.id,
+      attachments,
+    )
+  }
+
   async getApplicant({ auth }: TemplateApiModuleActionProps) {
     const res = await this.siaClientService.getApplicant(auth)
 
@@ -224,7 +262,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
     if (isRunningOnEnvironment('local')) {
-      return { isEligible: false }
+      return { isEligible: true }
     }
 
     const applicationType =
