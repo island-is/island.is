@@ -1,0 +1,28 @@
+{
+  "name": "application-templates-social-insurance-administration-core",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/social-insurance-administration/core/src",
+  "projectType": "library",
+  "generators": {},
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/social-insurance-administration/core/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/core"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/social-insurance-administration/core/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
+}
