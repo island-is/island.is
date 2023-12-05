@@ -165,6 +165,7 @@ describe('MeUserProfileController', () => {
           documentNotifications: true,
           ...expectedTestValues,
           needsNudge: needsNudgeExpected,
+          emailNotifications: true,
         })
       },
     )
