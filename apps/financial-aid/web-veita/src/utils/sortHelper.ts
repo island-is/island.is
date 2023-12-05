@@ -1,14 +1,5 @@
 const icelandicAlphabetOrder = 'AÁBDÐEÉFGHIÍJKLMNOÓPRSTUÚVXYÝÞÆÖ'
 
-export const sortByIcelandicAlphabet = (arr: string[]): string[] => {
-  const maxLength = arr.reduce(
-    (max, str) => Math.max(max, (str || '').length),
-    0,
-  )
-
-  return arr.sort((a, b) => compareLocaleIS(a, b, maxLength))
-}
-
 export const compareLocaleIS = (
   a?: string,
   b?: string,
