@@ -485,4 +485,15 @@ export class SyslumennService {
       .map(mapMasterLicence)
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
+
+  async getDeparted(nationalId: string) {
+    const { id, api } = await this.createApi()
+    const res = await api.leitaAdKennitoluIThjodskraPost({
+      skeyti: {
+        audkenni: id,
+        kennitala: nationalId,
+      },
+    })
+    return res
+  }
 }
