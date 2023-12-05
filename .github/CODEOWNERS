@@ -162,7 +162,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/regulations/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
 /libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
-/libs/clients/health-directorate                                                                         @island-is/hugsmidjan
+/libs/clients/health-directorate                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/portals/admin/air-discount-scheme                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
