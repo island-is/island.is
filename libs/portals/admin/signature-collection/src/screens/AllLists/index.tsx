@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import img from '../../../assets/img.jpg'
+import header from '../../../assets/headerImage.svg'
 import { Filters, countryAreas, pageSize } from '../../lib/utils'
 
 const Lists = () => {
@@ -84,7 +84,7 @@ const Lists = () => {
           <IntroHeader
             title={formatMessage(m.signatureListsTitle)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={img}
+            img={header}
             imgPosition="right"
             imgHiddenBelow="sm"
           />

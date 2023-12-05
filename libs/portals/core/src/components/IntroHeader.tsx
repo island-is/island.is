@@ -54,10 +54,7 @@ export const IntroHeader = ({
       {img && (
         <GridColumn span={['8/8', '3/8']}>
           <Hidden print={hideImgPrint} below={imgHiddenBelow}>
-            <Box
-              textAlign={imgPosition === 'right' ? 'right' : 'center'}
-              padding={[6, 0]}
-            >
+            <Box textAlign={imgPosition} padding={[6, 0]}>
               <img src={img} alt="" />
             </Box>
           </Hidden>

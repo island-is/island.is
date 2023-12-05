@@ -17,7 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import Signees from './components/signees'
 import PaperUpload from './components/paperUpload'
-import img from '../../../assets/img.jpg'
+import header from '../../../assets/headerImage.svg'
 import format from 'date-fns/format'
 
 const List = () => {
@@ -51,7 +51,7 @@ const List = () => {
               <IntroHeader
                 title={list.owner.name + ' - ' + list.area.name}
                 intro={formatMessage(m.signatureListsIntro)}
-                img={img}
+                img={header}
                 imgPosition="right"
                 imgHiddenBelow="sm"
               />
