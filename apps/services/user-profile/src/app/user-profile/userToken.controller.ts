@@ -1,5 +1,6 @@
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
+import { Logger } from '@island.is/logging'
 import {
   Controller,
   Get,
@@ -22,7 +23,10 @@ import { UserProfile } from './userProfile.model'
 @ApiTags('User Profile')
 @Controller()
 export class UserTokenController {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    private readonly userProfileService: UserProfileService,
+    private readonly logger: Logger,
+  ) {}
   @ApiOperation({
     summary: 'admin access - returns a list of user device tokens',
   })
@@ -52,10 +56,10 @@ export class UserTokenController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
+      this.logger.info('User profile not found', { nationalId, status: 404 })
+      return
     }
+    this.logger.info('User profile found', { nationalId, status: 200 })
     return userProfile
   }
 }

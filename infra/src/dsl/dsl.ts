@@ -8,6 +8,7 @@ import {
   Ingress,
   InitContainers,
   MountedFile,
+  OpsEnvWithLocal,
   PersistentVolumeClaim,
   PostgresInfo,
   RedisInfo,
@@ -225,7 +226,9 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  replicaCount(replicaCount: ReplicaCount) {
+  replicaCount(
+    replicaCount: ReplicaCount | Record<OpsEnvWithLocal, ReplicaCount>,
+  ) {
     this.serviceDef.replicaCount = replicaCount
     return this
   }

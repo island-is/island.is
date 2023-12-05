@@ -1,8 +1,10 @@
 import {
   AccessModes,
   IngressForEnv,
+  OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
+  ReplicaCount,
   Resources,
   ServiceDefinition,
   ServiceDefinitionForEnv,
@@ -91,19 +93,32 @@ const serializeService: SerializeMethod<HelmService> = async (
   result.resources = serviceDef.resources
 
   // replicas
-  if (serviceDef.replicaCount) {
-    result.replicaCount = {
-      min: serviceDef.replicaCount.min,
-      max: serviceDef.replicaCount.max,
-      default: serviceDef.replicaCount.default,
-    }
-  } else {
-    result.replicaCount = {
+  function isRecordOfReplicaCount(
+    obj: any,
+  ): obj is Record<OpsEnvWithLocal, ReplicaCount> {
+    // Implement a logic that can determine if obj is a Record<OpsEnvWithLocal, ReplicaCount>
+    // For example, checking if it's an object and not an array could be a start
+    return typeof obj === 'object' && !Array.isArray(obj)
+  }
+
+  // Check if serviceDef.replicaCount is defined
+  if (!serviceDef.replicaCount) {
+    serviceDef.replicaCount = {
       min: env1.defaultMinReplicas,
       max: env1.defaultMaxReplicas,
       default: env1.defaultMinReplicas,
     }
   }
+  let replicaConfig: ReplicaCount
+  // Use the type guard to check if serviceDef.replicaCount is a mapping
+  if (isRecordOfReplicaCount(serviceDef.replicaCount)) {
+    replicaConfig = serviceDef.replicaCount[env1.type]
+  } else {
+    // If it's not a mapping, it should be a ReplicaCount object
+    replicaConfig = serviceDef.replicaCount
+  }
+
+  result.replicaCount = replicaConfig
 
   result.hpa = {
     scaling: {
@@ -117,7 +132,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     },
   }
   result.hpa.scaling.metric.nginxRequestsIrate =
-    serviceDef.replicaCount?.scalingMagicNumber || 5
+    replicaConfig.scalingMagicNumber || 5
 
   if (serviceDef.extraAttributes) {
     result.extra = serviceDef.extraAttributes

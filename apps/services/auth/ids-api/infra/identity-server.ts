@@ -9,6 +9,11 @@ export const serviceSetup = (services: {
   return service('identity-server')
     .namespace('identity-server')
     .image('identity-server')
+    .replicaCount({
+      min: 2,
+      default: 2,
+      max: 10,
+    })
     .env({
       AWS__CloudWatch__AuditLogGroup: '/identity-server/audit-log',
       ASPNETCORE_URLS: 'http://*:5000',

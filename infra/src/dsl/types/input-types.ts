@@ -96,7 +96,7 @@ export type ServiceDefinitionCore = {
   args?: string[]
   image?: string
   resources: Resources
-  replicaCount?: ReplicaCount
+  replicaCount?: ReplicaCount | Record<OpsEnvWithLocal, ReplicaCount>
   securityContext: {
     privileged: boolean
     allowPrivilegeEscalation: boolean
