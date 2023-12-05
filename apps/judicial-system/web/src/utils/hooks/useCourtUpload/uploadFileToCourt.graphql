@@ -1,0 +1,5 @@
+mutation UploadFileToCourt($input: UploadFileToCourtInput!) {
+  uploadFileToCourt(input: $input) {
+    success
+  }
+}
