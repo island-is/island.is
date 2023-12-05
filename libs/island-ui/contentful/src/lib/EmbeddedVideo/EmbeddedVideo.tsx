@@ -12,6 +12,7 @@ import {
   Icon,
   FocusableBox,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { getVideoEmbedProperties } from '@island.is/shared/utils'
 
 import * as styles from './EmbeddedVideo.css'
@@ -92,22 +93,17 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
       : TextsData['is']
 
   const onPlayButtonClick = () => {
-    // TODO: refactor
     if (itemKey) {
       const itemValue = localStorage.getItem(itemKey)
       if (itemValue === 'true') {
         setShowDisclaimer(false)
         setAllowed(true)
-      } else {
-        setShowDisclaimer(
-          (isDisclaimerBeingShown) => isDisclaimerBeingShown || !allowed,
-        )
+        return
       }
-    } else {
-      setShowDisclaimer(
-        (isDisclaimerBeingShown) => isDisclaimerBeingShown || !allowed,
-      )
     }
+    setShowDisclaimer(
+      (isDisclaimerBeingShown) => isDisclaimerBeingShown || !allowed,
+    )
   }
 
   return (
@@ -197,10 +193,12 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
           <Box
             position="relative"
             style={{
+              backgroundColor: thumbnailImageUrl
+                ? 'transparent'
+                : theme.color.blue100,
               backgroundImage: thumbnailImageUrl
                 ? `url(${thumbnailImageUrl})`
                 : '',
-              // TODO: create fallback thumbnail url
               width: '100%',
               height: '100%',
               backgroundRepeat: 'no-repeat',
@@ -208,6 +206,11 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
               backgroundPosition: 'center',
             }}
           >
+            {!thumbnailImageUrl && (
+              <Box padding="p2">
+                <Text>{title}</Text>
+              </Box>
+            )}
             <FocusableBox
               tabIndex={0}
               onKeyDown={(ev) => {
@@ -229,7 +232,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
         <iframe
           title={title}
           src={embedUrl}
-          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture"
+          allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; autoplay"
           frameBorder="0"
           allowFullScreen
           className={styles.content}

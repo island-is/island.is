@@ -270,23 +270,8 @@ export const OrganizationHeader: React.FC<
       )
     case 'hms':
       return <HmsHeader organizationPage={organizationPage} />
-
     case 'rikissaksoknari':
       return <RikissaksoknariHeader organizationPage={organizationPage} />
-    case 'vinnueftirlitid':
-      return <DefaultHeader
-      fullWidth={organizationPage.themeProperties.fullWidth ?? false}
-      image={organizationPage.defaultHeaderImage?.url}
-      background={getBackgroundStyle(organizationPage.themeProperties)}
-      title={organizationPage.title}
-      logo={organizationPage.organization?.logo?.url}
-      titleColor={
-        organizationPage.themeProperties.darkText ? 'dark400' : 'white'
-      }
-      slug={organizationPage.slug}
-      gridContainerClassName={styles.gridContainerClassName}
-    />
-  )
     default:
       return (
         <DefaultHeader

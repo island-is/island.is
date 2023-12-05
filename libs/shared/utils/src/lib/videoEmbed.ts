@@ -17,7 +17,7 @@ export const getVideoEmbedProperties = (
       const vimeoId = match[1]
       return {
         id: vimeoId,
-        embedUrl: `https://player.vimeo.com/video/${vimeoId}`,
+        embedUrl: `https://player.vimeo.com/video/${vimeoId}?autoplay=1`,
         termsUrl: 'https://vimeo.com/terms',
         type: 'VIMEO',
       }
@@ -40,7 +40,7 @@ export const getVideoEmbedProperties = (
     if (youtubeId) {
       return {
         id: youtubeId,
-        embedUrl: `https://www.youtube.com/embed/${youtubeId}`,
+        embedUrl: `https://www.youtube.com/embed/${youtubeId}?autoplay=1`,
         termsUrl: 'https://www.youtube.com/t/terms',
         type: 'YOUTUBE',
       }
