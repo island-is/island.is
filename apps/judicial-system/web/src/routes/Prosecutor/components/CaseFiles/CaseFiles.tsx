@@ -42,7 +42,7 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
-import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
+import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
 export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -52,7 +52,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useGetPoliceCaseFilesQuery({
+  } = usePoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',

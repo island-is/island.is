@@ -1,4 +1,4 @@
-query GetPoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
+query PoliceCaseInfo($input: PoliceCaseInfoQueryInput!) {
   policeCaseInfo(input: $input) {
     policeCaseNumber
     place
