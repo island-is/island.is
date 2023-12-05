@@ -24,7 +24,7 @@ export class NationalRegistryV3ClientService {
   ) {}
 
   getAddress(nationalId: string): Promise<EinstaklingurDTOHeimili | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdHeimilisfangGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdHeimilisfangGet({
       nationalId,
     })
   }
@@ -34,14 +34,14 @@ export class NationalRegistryV3ClientService {
     useFakeApi?: boolean,
   ): Promise<EinstaklingurDTOAllt | null> {
     return useFakeApi
-      ? this.fakeApi.midlunV02GerviEinstaklingarNationalIdGet({
+      ? this.fakeApi.midlunV1GerviEinstaklingarNationalIdGet({
           nationalId,
         })
-      : this.individualApi.midlunV02EinstaklingarNationalIdGet({ nationalId })
+      : this.individualApi.midlunV1EinstaklingarNationalIdGet({ nationalId })
   }
 
   getFamily(nationalId: string): Promise<EinstaklingurDTOLogforeldrar | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdLogforeldrarGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdLogforeldrarGet({
       nationalId,
     })
   }
@@ -50,7 +50,7 @@ export class NationalRegistryV3ClientService {
     nationalId: string,
   ): Promise<Array<EinstaklingurDTOForsjaItem> | null> {
     const child =
-      await this.individualApi.midlunV02EinstaklingarNationalIdForsjaGet({
+      await this.individualApi.midlunV1EinstaklingarNationalIdForsjaGet({
         nationalId,
       })
 
@@ -58,7 +58,7 @@ export class NationalRegistryV3ClientService {
   }
 
   getSpouse(nationalId: string): Promise<EinstaklingurDTOHju | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdHjuGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdHjuGet({
       nationalId,
     })
   }
@@ -66,13 +66,13 @@ export class NationalRegistryV3ClientService {
   getCitizenship(
     nationalId: string,
   ): Promise<EinstaklingurDTORikisfang | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdRikisfangGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdRikisfangGet({
       nationalId,
     })
   }
 
   getBirthplace(nationalId: string): Promise<EinstaklingurDTOFaeding | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdFaedingarstadurGet(
+    return this.individualApi.midlunV1EinstaklingarNationalIdFaedingarstadurGet(
       {
         nationalId,
       },
@@ -80,19 +80,19 @@ export class NationalRegistryV3ClientService {
   }
 
   getName(nationalId: string): Promise<EinstaklingurDTONafnAllt | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdNafnItarGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdNafnItarGet({
       nationalId,
     })
   }
 
   getReligion(nationalId: string): Promise<EinstaklingurDTOTru | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdTruGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdTruGet({
       nationalId,
     })
   }
 
   getHousing(nationalId: string): Promise<EinstaklingurDTOItarAuka | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdItarGet({
+    return this.individualApi.midlunV1EinstaklingarNationalIdItarGet({
       nationalId,
     })
   }
@@ -100,7 +100,7 @@ export class NationalRegistryV3ClientService {
   getDomicileData(
     nationalId: string,
   ): Promise<EinstaklingurDTOLoghTengsl | null> {
-    return this.individualApi.midlunV02EinstaklingarNationalIdLogheimilistengslGet(
+    return this.individualApi.midlunV1EinstaklingarNationalIdLogheimilistengslGet(
       {
         nationalId,
       },

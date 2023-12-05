@@ -27,6 +27,8 @@
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 1,
+                      "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -44,6 +46,8 @@
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 1,
+                      "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -166,6 +170,8 @@
                       "nafn": "Jens Larson",
                       "kennitala": "1122335000",
                       "tegundKennitolu": "Kerfiskennitala",
+                      "tegundEinstaklingsNr": 2,
+                      "tegundEinstaklingsLysing": "Kerfiskennitala",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -183,6 +189,8 @@
                       "nafn": "Jens Larson",
                       "kennitala": "1122335000",
                       "tegundKennitolu": "Kerfiskennitala",
+                      "tegundEinstaklingsNr": 2,
+                      "tegundEinstaklingsLysing": "Kerfiskennitala",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -199,7 +207,7 @@
                         "rikisfangLand": "Danmörk"
                       },
                       "nyskraningDagsetning": {
-                        "nyskraningDagur": "2023-11-23T09:12:17.6185525+00:00"
+                        "nyskraningDagur": "2023-12-05T16:21:19.5180577+00:00"
                       }
                     }
                   },
@@ -208,6 +216,8 @@
                       "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 3,
+                      "tegundEinstaklingsLysing": "Lést",
                       "bannmerking": null,
                       "afdrif": "LÉST",
                       "heimilisfang": null
@@ -218,6 +228,8 @@
                       "nafn": "Jóna Jónsdóttir",
                       "kennitala": "1122335678",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 3,
+                      "tegundEinstaklingsLysing": "Lést",
                       "bannmerking": null,
                       "afdrif": "LÉST",
                       "heimilisfang": null,
@@ -286,6 +298,8 @@
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 1,
+                      "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -1121,6 +1135,8 @@
                       "nafn": "Jón Jónsson",
                       "kennitala": "1234567890",
                       "tegundKennitolu": "Kennitala á Þjóðskrá",
+                      "tegundEinstaklingsNr": 1,
+                      "tegundEinstaklingsLysing": "Kennitala á Þjóðskrá",
                       "bannmerking": false,
                       "afdrif": null,
                       "heimilisfang": {
@@ -1171,6 +1187,8 @@
           "kennitala": { "type": "string", "nullable": true },
           "nafn": { "type": "string", "nullable": true },
           "tegundKennitolu": { "type": "string", "nullable": true },
+          "tegundEinstaklingsNr": { "type": "integer", "format": "int32" },
+          "tegundEinstaklingsLysing": { "type": "string", "nullable": true },
           "bannmerking": { "type": "boolean", "nullable": true },
           "afdrif": { "type": "string", "nullable": true },
           "heimilisfang": {
@@ -1274,6 +1292,8 @@
           "kennitala": { "type": "string", "nullable": true },
           "nafn": { "type": "string", "nullable": true },
           "tegundKennitolu": { "type": "string", "nullable": true },
+          "tegundEinstaklingsNr": { "type": "integer", "format": "int32" },
+          "tegundEinstaklingsLysing": { "type": "string", "nullable": true },
           "bannmerking": { "type": "boolean", "nullable": true },
           "afdrif": { "type": "string", "nullable": true },
           "heimilisfang": {
