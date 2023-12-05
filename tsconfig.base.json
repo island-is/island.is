@@ -161,6 +161,9 @@
       "@island.is/api/domains/national-registry-x-road": [
         "libs/api/domains/national-registry-x-road/src/index.ts"
       ],
+      "@island.is/api/domains/notifications": [
+        "libs/api/domains/notifications/src/index.ts"
+      ],
       "@island.is/api/domains/occupational-licenses": [
         "libs/api/domains/occupational-licenses/src/index.ts"
       ],

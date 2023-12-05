@@ -129,6 +129,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
+/libs/api/domains/notifications/                                                                         @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
 /libs/api/domains/vehicles/                                                                              @island-is/hugsmidjan
