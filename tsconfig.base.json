@@ -191,6 +191,9 @@
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
       ],
+      "@island.is/api/domains/signature-collection": [
+        "libs/api/domains/signature-collection/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
