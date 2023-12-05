@@ -51,6 +51,8 @@ export type Machine = {
   subType?: string
   type?: string
   category?: string
+  plate?: string
+  ownerNumber?: string
 }
 
 export type MachineLocation = {

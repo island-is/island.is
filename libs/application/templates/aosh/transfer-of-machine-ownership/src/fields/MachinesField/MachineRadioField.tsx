@@ -27,19 +27,22 @@ interface MachineSearchFieldProps {
 
 export const MachineRadioField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, errors }) => {
+> = ({ currentMachineList, application }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [machineId, setMachineId] = useState<string>(
     getValueViaPath(application.answers, 'pickMachine.id', '') as string,
   )
-
+  const [isSelected, setSelected] = useState<boolean>(false)
   const onRadioControllerSelect = (s: string) => {
     const currentMachine = currentMachineList[parseInt(s, 10)]
-    setIsLoading(true)
+    setSelected(true)
     setValue('pickMachine.id', currentMachine.id)
+    setValue(
+      'pickMachine.isValid',
+      isCurrentMachineDisabled(currentMachine) ? undefined : true,
+    )
     setValue('machine.id', currentMachine.id)
     setValue('machine.category', currentMachine.category)
     setValue('machine.regNumber', currentMachine.registrationNumber)
@@ -48,35 +51,19 @@ export const MachineRadioField: FC<
     setValue('machine.type', type || '')
     setValue('machine.subType', subType.join() || '')
     setValue('machine.date', new Date().toISOString())
-    setValue('machine.test', 'testing')
+    setValue('machine.ownerNumber', currentMachine.ownerNumber || '')
+    setValue('machine.plate', currentMachine.licensePlateNumber || '')
     setMachineId(currentMachine.id || '')
-    setIsLoading(false)
   }
 
-  function isCurrentMachineDisabled(status?: string | null): boolean {
-    const disabledStatuses = [
-      'Læst',
-      'Í skráningarferli',
-      'Eigandaskipti í gangi',
-      'Umráðamannaskipti í gangi',
-      'Afskráð tímabundið',
-      'Afskráð endanlega',
-    ]
-    if (status === undefined || status == null) return true
-    if (
-      disabledStatuses.includes(status) ||
-      status.startsWith(disabledStatuses[0])
-    ) {
-      return true
-    } else {
-      return false
-    }
+  function isCurrentMachineDisabled(machine: MachineHateoasDto): boolean {
+    return !machine.links?.some((link) => link?.rel === 'ownerChange')
   }
 
   const machineOptions = (machines: MachineHateoasDto[]) => {
     const options = [] as Option[]
     for (const [index, machine] of machines.entries()) {
-      const disabled = isCurrentMachineDisabled(machine.status)
+      const disabled = isCurrentMachineDisabled(machine)
       options.push({
         value: `${index}`,
         label: (
@@ -130,9 +117,9 @@ export const MachineRadioField: FC<
         onSelect={onRadioControllerSelect}
         options={machineOptions(currentMachineList as MachineHateoasDto[])}
       />
-      {machineId.length === 0 && (errors as any)?.machine && (
+      {machineId.length === 0 && isSelected ? (
         <InputError errorMessage={formatMessage(error.requiredValidMachine)} />
-      )}
+      ) : null}
     </div>
   )
 }

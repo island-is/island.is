@@ -11,6 +11,7 @@ export const StatusStep: FC<
   title,
   description,
   tagVariant = 'blue',
+  tagText = 'Í bið',
   visible = true,
   reviewer = [],
   reviewerNationalId = '',
@@ -36,7 +37,7 @@ export const StatusStep: FC<
               })}
             </Text>
             <Tag variant={tagVariant} disabled>
-              {formatMessage(review.tags.text)}
+              {formatMessage(tagText)}
             </Tag>
           </Box>
           <Box

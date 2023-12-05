@@ -7,6 +7,7 @@ import {
   GridColumn,
   GridRow,
   Text,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
@@ -35,7 +36,9 @@ export const Location: FC<
     postCode: savedSelectedValue?.postCode || 0,
     moreInfo: savedSelectedValue?.moreInfo || '',
   })
-  const [, setErrorMessage] = useState<string | undefined>(undefined)
+  const [genericErrorMessage, setErrorMessage] = useState<string | undefined>(
+    undefined,
+  )
 
   const onBackButtonClick = () => {
     setErrorMessage(undefined)
@@ -138,6 +141,14 @@ export const Location: FC<
           />
         </GridColumn>
       </GridRow>
+      {genericErrorMessage && (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="error"
+            title={formatMessage(genericErrorMessage)}
+          />
+        </Box>
+      )}
       <Box style={{ marginTop: '40vh' }}>
         <Divider />
         <Box display="flex" justifyContent="spaceBetween" paddingY={5}>

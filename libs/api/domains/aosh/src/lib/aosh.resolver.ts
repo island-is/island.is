@@ -1,4 +1,4 @@
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
+import { Query, Resolver, Args } from '@nestjs/graphql'
 import { AoshMachineDetails } from './graphql/machineDetails'
 import {
   CurrentUser,

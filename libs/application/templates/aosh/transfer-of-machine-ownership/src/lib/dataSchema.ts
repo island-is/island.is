@@ -82,7 +82,7 @@ export const MachineAnswersSchema = z.object({
   buyer: UserInformationSchema,
   seller: UserInformationSchema,
   machine: z.object({
-    id: z.string(),
+    id: z.string().optional(),
     date: z.string().optional(),
     type: z.string().optional(),
     plate: z.string().optional(),
@@ -94,6 +94,7 @@ export const MachineAnswersSchema = z.object({
   pickMachine: z.object({
     index: z.string().optional(),
     id: z.string().min(1),
+    isValid: z.boolean(),
   }),
   location: z.object({
     address: z.string(),

@@ -82,12 +82,6 @@ export const review = {
         defaultMessage: 'Samþykki kaupanda',
         description: 'Buyer title in status step part of review process',
       },
-      buyerOperator: {
-        id: 'aosh.tmo.application:review.step.title.buyerOperator',
-        defaultMessage: 'Samþykki umráðarmanns kaupanda',
-        description:
-          'Buyer operator title in status step part of review process',
-      },
     }),
     description: defineMessages({
       transferOfMachine: {
@@ -108,13 +102,6 @@ export const review = {
         defaultMessage:
           'Beðið er eftir að nýr eigandi staðfesti eigendaskiptin',
         description: 'Buyer description in status step part of review process',
-      },
-      buyerOperator: {
-        id: 'aosh.tmo.application:review.step.description.buyerOperator',
-        defaultMessage:
-          'Beðið er eftir að umráðamaður kaupanda staðfesti eigendaskiptin',
-        description:
-          'Buyer operator description in status step part of review process',
       },
     }),
   },

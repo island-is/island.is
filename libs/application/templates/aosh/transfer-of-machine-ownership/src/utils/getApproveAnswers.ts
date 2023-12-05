@@ -1,24 +1,5 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import { Operator } from '../shared'
-
-export type ApproveAnswersProps = {
-  buyer: {
-    nationalId: string
-    name: string
-    email: string
-    phone: string
-    approved: boolean
-  }
-  buyerOperator: {
-    nationalId: string
-    name: string
-    email: string
-    phone: string
-    wasRemoved: string
-    approved: boolean
-  }[]
-}
 
 export const getApproveAnswers = (
   reviewerNationalId: string,

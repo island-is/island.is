@@ -3,6 +3,7 @@ import {
   buildTextField,
   buildSubSection,
   buildDescriptionField,
+  buildPhoneField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
@@ -49,12 +50,10 @@ export const sellerSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'seller.phone',
           title: information.labels.seller.phone,
           width: 'half',
-          variant: 'tel',
-          format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.phone,

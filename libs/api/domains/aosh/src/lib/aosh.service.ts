@@ -14,15 +14,12 @@ export class AoshApi {
     return this.transferOfMachineOwnershipClient.getMachineDetail(auth, id)
   }
 
-  async isPaymentRequired(
-    auth: User,
-    regNumber: string,
-  ): Promise<boolean | undefined> {
+  async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
     return (
-      this.transferOfMachineOwnershipClient.isPaymentRequired(
+      (await this.transferOfMachineOwnershipClient.isPaymentRequired(
         auth,
         regNumber,
-      ) || false
+      )) || false
     )
   }
 }

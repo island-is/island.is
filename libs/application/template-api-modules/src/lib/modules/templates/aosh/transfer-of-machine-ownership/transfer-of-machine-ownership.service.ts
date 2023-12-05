@@ -71,7 +71,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
-
+    console.log('submit Appliocation')
     // Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
       await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
@@ -92,25 +92,27 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-
+    if (!answers.machine.id) {
+      throw new Error('Ekki er búið að velja vél')
+    }
     await this.transferOfMachineOwnershipClient.confirmOwnerChange(auth, {
       applicationId: application.id,
       machineId: answers.machine.id,
       machineMoreInfo: answers.location.moreInfo,
       machinePostalCode: answers.location.postCode,
       buyerNationalId: answers.buyer.nationalId,
-      delegateNationalId:
-        auth.nationalId != '' ? auth.nationalId : answers.buyer.nationalId,
+      delegateNationalId: auth.nationalId || answers.buyer.nationalId,
       supervisorNationalId: answers.buyerOperator?.nationalId,
       supervisorEmail: answers.buyerOperator?.email,
       supervisorPhoneNumber: answers.buyerOperator?.phone,
       machineAddress: answers.location.address,
     })
-
+    console.log('confirmOwnerChange done')
     // send email/sms to all recipients
     const recipientList = getRecipients(answers, [
       EmailRole.buyer,
       EmailRole.seller,
+      EmailRole.buyerOperator,
     ])
     // 2b. Send email/sms individually to each recipient
     for (let i = 0; i < recipientList.length; i++) {
@@ -123,7 +125,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
+              `Error sending email about submit application to ${recipientList[i].email}`,
             )
           })
       }
@@ -137,7 +139,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
           )
           .catch(() => {
             this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
+              `Error sending sms about submit application to ${recipientList[i].phone}`,
             )
           })
       }
@@ -180,7 +182,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       machineId: answers.machine.id,
       buyerNationalId: answers.buyer.nationalId,
       sellerNationalId: answers.seller.nationalId,
-      delegateNationalId: answers.seller.nationalId,
+      delegateNationalId: auth.nationalId || answers.seller.nationalId,
       dateOfOwnerChange: new Date(),
       paymentId: paymentId,
       phoneNumber: answers.buyer.phone,
@@ -239,7 +241,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     // 2a. Get list of users that need to be notified
     const answers = application.answers as TransferOfMachineOwnershipAnswers
-    const recipientList = getRecipients(answers, [EmailRole.seller])
+    const recipientList = getRecipients(answers, [
+      EmailRole.seller,
+      EmailRole.buyer,
+    ])
 
     // 2b. Send email/sms individually to each recipient about success of withdrawing application
     const rejectedByRecipient = getRecipientBySsn(answers, auth.nationalId)

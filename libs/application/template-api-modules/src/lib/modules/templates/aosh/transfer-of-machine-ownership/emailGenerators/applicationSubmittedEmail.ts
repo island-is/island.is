@@ -22,7 +22,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
   const regNumber = answers?.machine.regNumber
 
   if (!recipient.email) throw new Error('Recipient email was undefined')
-  if (!regNumber) throw new Error('Permno was undefined')
+  if (!regNumber) throw new Error('Registration number was undefined')
 
   const subject = 'Tilkynning um eigendaskipti - Búið er að skrá beiðni'
 
@@ -67,7 +67,7 @@ export const generateApplicationSubmittedEmail: ApplicationSubmittedEmail = (
           component: 'Button',
           context: {
             copy: 'Skoða umsókn',
-            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfVehicleOwnership.slug}/${application.id}`,
+            href: `${clientLocationOrigin}/${ApplicationConfigurations.TransferOfMachineOwnership.slug}/${application.id}`,
           },
         },
       ],

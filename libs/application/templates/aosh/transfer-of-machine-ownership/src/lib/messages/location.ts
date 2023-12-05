@@ -35,20 +35,10 @@ export const location = {
       defaultMessage: 'Nánari lýsing',
       description: 'Location more info label',
     },
-    selectPlaceholder: {
-      id: 'aosh.tmo.application:location.labels.selectPlaceholder',
-      defaultMessage: 'Veldu tryggingafélag',
-      description: 'Location select description',
-    },
     approveButton: {
       id: 'aosh.tmo.application:location.labels.approveButton',
       defaultMessage: 'Staðfesta',
       description: 'Location approve button text',
-    },
-    outOfCommission: {
-      id: 'aosh.tmo.application:location.labels.outOfCommission',
-      defaultMessage: 'Úr umferð, á ekki að tryggja.',
-      description: 'Car is out of commission',
     },
   }),
 }

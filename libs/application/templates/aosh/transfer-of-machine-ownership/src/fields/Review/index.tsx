@@ -26,7 +26,7 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const reviewerNationalId = userInfo?.profile.nationalId || null
 
   const filteredBuyerOperator =
-    buyerOperator.wasRemoved !== 'true' ? buyerOperator : null
+    buyerOperator?.wasRemoved !== 'true' ? buyerOperator : null
 
   const displayScreen = (
     displayStep: ReviewState,

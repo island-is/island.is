@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID, InputType } from '@nestjs/graphql'
+import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType()
 export class AoshMachineDetails {
@@ -38,8 +38,8 @@ export class AoshMachineDetails {
   @Field(() => String, { nullable: true })
   licensePlateNumber?: string | null
 
-  @Field(() => AoshMachineLinks, { nullable: true })
-  _links?: AoshMachineLinks | null
+  @Field(() => [AoshMachineLinks], { nullable: true })
+  links?: [AoshMachineLinks] | null
 }
 
 @ObjectType()

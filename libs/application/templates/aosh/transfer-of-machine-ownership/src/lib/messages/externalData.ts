@@ -74,7 +74,7 @@ export const externalData = {
     subTitle: {
       id: 'aosh.tmo.application:externalData.myMachines.subTitle',
       defaultMessage:
-        'Upplýsingar úr ökutækjaskrá  - Upplýsingar um þínar vélar, tæki og stöðu þeirra.',
+        'Upplýsingar úr vinnuvélaskrá  - Upplýsingar um þínar vélar, tæki og stöðu þeirra.',
       description: 'To make stuff easier',
     },
   }),

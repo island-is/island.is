@@ -63,7 +63,7 @@ export class TransferOfMachineOwnershipClient {
       auth,
     ).apiMachineCategoryGet({ registrationNumber: regNumber })
 
-    return result.paymentRequiredForOwnerChange
+    return result.paymentRequiredForOwnerChange || false
   }
 
   public async initiateOwnerChangeProcess(
@@ -76,7 +76,7 @@ export class TransferOfMachineOwnershipClient {
       input,
     )
   }
-  // TODO : call this in the submitApplication method in the template service
+
   public async confirmOwnerChange(
     auth: Auth,
     confirmChange: ConfirmOwnerChange,

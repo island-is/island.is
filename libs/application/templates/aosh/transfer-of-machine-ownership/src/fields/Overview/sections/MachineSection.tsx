@@ -29,17 +29,17 @@ export const MachineSection: FC<
   const type = getValueViaPath(answers, 'machine.type', '') as string
   const subType = getValueViaPath(answers, 'machine.subType', '') as string
   const category = getValueViaPath(answers, 'machine.category', '') as string
-  const buyerOperator = getValueViaPath(
+  const buyerOperatorValue = getValueViaPath(
     answers,
     'buyerOperator',
-    [],
-  ) as Operator[]
-  const isSeller =
-    (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
-    reviewerNationalId
-  const isOperator = buyerOperator
-    .filter(({ wasRemoved }) => wasRemoved !== 'true')
-    .find((reviewerItems) => reviewerItems.nationalId === reviewerNationalId)
+    null, // Initialize as null
+  ) as Operator | null
+
+  let isOperator = false
+
+  if (buyerOperatorValue && buyerOperatorValue.wasRemoved !== 'true') {
+    isOperator = buyerOperatorValue.nationalId === reviewerNationalId
+  }
 
   return (
     <ReviewGroup isLast>
@@ -58,9 +58,7 @@ export const MachineSection: FC<
           </Text>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-          {(!isOperator || isSeller) && category.length > 0 && (
-            <Text>{category}</Text>
-          )}
+          {!isOperator && category.length > 0 && <Text>{category}</Text>}
           <Text>{`${formatMessage(
             overview.labels.agreementDate,
           )} ${dateOfContract}`}</Text>

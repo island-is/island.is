@@ -16,7 +16,7 @@ export const generateApplicationSubmittedSms: ApplicationSubmittedSms = (
   const regNumber = answers?.machine.regNumber
 
   if (!recipient.phone) throw new Error('Recipient phone was undefined')
-  if (!regNumber) throw new Error('Permno was undefined')
+  if (!regNumber) throw new Error('Registration number was undefined')
 
   return {
     phoneNumber: recipient.phone || '',

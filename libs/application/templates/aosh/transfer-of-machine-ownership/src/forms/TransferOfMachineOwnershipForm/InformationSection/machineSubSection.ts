@@ -75,10 +75,33 @@ export const machineSubSection = buildSubSection({
             return machine?.subType || ''
           },
         }),
-        buildCustomField({
-          id: 'machineSubSection',
-          title: '',
-          component: 'AdditionalMachineSubSection',
+        buildTextField({
+          id: 'machine.ownerNumber',
+          title: information.labels.machine.ownerNumber,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedMachine(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine?.ownerNumber || ''
+          },
+        }),
+        buildTextField({
+          id: 'machine.plate',
+          title: information.labels.machine.plate,
+          backgroundColor: 'white',
+          width: 'half',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const machine = getSelectedMachine(
+              application.externalData,
+              application.answers,
+            ) as Machine
+            return machine?.plate || ''
+          },
         }),
         buildDateField({
           id: 'machine.date',

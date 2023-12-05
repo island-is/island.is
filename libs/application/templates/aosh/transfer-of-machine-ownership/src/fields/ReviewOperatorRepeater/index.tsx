@@ -1,58 +1,77 @@
-import { FieldBaseProps } from '@island.is/application/types'
+import React, { FC, useState } from 'react'
 import {
-  AlertMessage,
   Box,
   Button,
   Divider,
+  GridColumn,
+  GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
+import debounce from 'lodash/debounce'
+import { InputController } from '@island.is/shared/form-fields'
+import { ReviewScreenProps } from '../../shared'
+import { NationalIdWithName } from '../NationalIdWithName'
 import { error, information, review } from '../../lib/messages'
-import { Operator, ReviewScreenProps } from '../../shared'
-import { ReviewOperatorRepeaterItem } from './ReviewOperatorRepeaterItem'
-import { repeaterButtons } from './ReviewOperatorRepeater.css'
-import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { getValueViaPath } from '@island.is/application/core'
+import { useMutation } from '@apollo/client'
 
 export const ReviewOperatorRepeater: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({ setStep, setBuyerOperator, buyerOperator = {}, ...props }) => {
   const { application } = props
-
   const { locale, formatMessage } = useLocale()
-
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
-
   const [errorMessage, setErrorMessage] = useState<string | undefined>(
     undefined,
   )
-
   const [genericErrorMessage, setGenericErrorMessage] = useState<
     string | undefined
   >(undefined)
+  const [name, setName] = useState<string | null>(buyerOperator?.name || null)
+  const [nationalId, setNationalId] = useState<string | null>(
+    buyerOperator?.nationalId || null,
+  )
+  const [email, setEmail] = useState<string | null>(
+    buyerOperator?.email || null,
+  )
+  const [phone, setPhone] = useState<string | null>(
+    buyerOperator?.phone || null,
+  )
 
-  const [tempBuyerOperator, setTempBuyerOperator] = useState<
-    Operator | undefined
-  >(buyerOperator || undefined)
-
-  const operator =
-    tempBuyerOperator?.wasRemoved !== 'true' ? tempBuyerOperator : undefined
-
-  const handleAdd = () =>
-    setTempBuyerOperator({
-      name: '',
-      nationalId: '',
-      email: '',
-      phone: '',
+  const handleClear = async () => {
+    setName(null)
+    setNationalId(null)
+    setEmail('')
+    setPhone('')
+    setBuyerOperator && setBuyerOperator({})
+    buyerOperator = {}
+    const res = await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            buyerOperator: {
+              name,
+              nationalId,
+              email,
+              phone,
+              wasRemoved: 'true',
+            },
+          },
+        },
+        locale,
+      },
     })
 
-  const handleRemove = () => {
-    setTempBuyerOperator({
-      ...tempBuyerOperator,
-      wasRemoved: 'true',
-    })
+    if (!res.data) {
+      setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
+    } else {
+      setGenericErrorMessage(undefined)
+      setErrorMessage(undefined)
+      setStep && setStep('overview')
+    }
   }
 
   const onBackButtonClick = () => {
@@ -62,84 +81,111 @@ export const ReviewOperatorRepeater: FC<
   }
 
   const onForwardButtonClick = async () => {
-    if (tempBuyerOperator && setBuyerOperator) {
-      const notValid =
-        !(tempBuyerOperator.email && tempBuyerOperator.email.length > 0) ||
-        !(tempBuyerOperator.name && tempBuyerOperator.name.length > 0) ||
-        !(
-          tempBuyerOperator.nationalId &&
-          tempBuyerOperator.nationalId.length > 0
-        ) ||
-        !(tempBuyerOperator.phone && tempBuyerOperator.phone.length > 0)
-
-      if (notValid) {
-        setGenericErrorMessage(undefined)
-        setErrorMessage(formatMessage(error.fillInValidInput))
-      } else {
-        const res = await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: {
-                buyerOperator: tempBuyerOperator,
+    if (name && nationalId && email && phone && setBuyerOperator) {
+      setBuyerOperator({ name, nationalId, email, phone })
+      const res = await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              buyerOperator: {
+                name,
+                nationalId,
+                email,
+                phone,
               },
             },
-            locale,
           },
-        })
+          locale,
+        },
+      })
 
-        if (!res.data) {
-          setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
-        } else {
-          setBuyerOperator(tempBuyerOperator)
-          setGenericErrorMessage(undefined)
-          setErrorMessage(undefined)
-          setStep && setStep('overview')
-        }
+      if (!res.data) {
+        setGenericErrorMessage(formatMessage(error.couldNotUpdateApplication))
+      } else {
+        setGenericErrorMessage(undefined)
+        setErrorMessage(undefined)
+        setStep && setStep('overview')
       }
+    } else {
+      setGenericErrorMessage(undefined)
+      setErrorMessage(formatMessage(error.fillInValidInput))
     }
   }
+
+  const DEBOUNCE_INTERVAL = 300
 
   return (
     <Box>
       <Text variant="h2" marginBottom={1}>
-        {formatMessage(information.labels.buyerOperators.title)}
+        {formatMessage(information.labels.operator.title)}
       </Text>
       <Text marginBottom={5}>
-        {formatMessage(information.labels.buyerOperators.description)}
+        {formatMessage(information.labels.operator.description)}
       </Text>
-      <Box>
-        <ReviewOperatorRepeaterItem
-          id="buyerOperator"
-          repeaterField={tempBuyerOperator || {}}
-          index={0} // Assuming it's the first (or only) buyerOperator
-          key={`0-buyerOperator`}
-          handleRemove={handleRemove}
-          setBuyerOperator={setTempBuyerOperator}
-          buyerOperator={tempBuyerOperator}
-          errorMessage={errorMessage}
+      <Box position="relative" marginTop={3}>
+        <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
+          <Text variant="h5">
+            {formatMessage(information.labels.operator.title)}
+          </Text>
+          {buyerOperator?.nationalId &&
+            buyerOperator?.nationalId?.trim() !== '' && (
+              <Button variant="text" onClick={handleClear}>
+                {formatMessage(information.labels.operator.remove)}
+              </Button>
+            )}
+        </Box>
+        <NationalIdWithName
           {...props}
+          customNameLabel={formatMessage(information.labels.operator.name)}
+          customNationalIdLabel={formatMessage(
+            information.labels.operator.nationalId,
+          )}
+          onNationalIdChange={setNationalId}
+          nationalIdDefaultValue={nationalId || ''}
+          onNameChange={setName}
+          nameDefaultValue={name || ''}
         />
-        {!tempBuyerOperator || Object.keys(tempBuyerOperator).length === 0 ? (
-          <Box
-            display="flex"
-            alignItems="stretch"
-            flexDirection="row"
-            className={repeaterButtons}
-            marginTop={3}
-          >
-            <Button
-              variant="ghost"
-              icon="add"
-              iconType="outline"
-              onClick={handleAdd}
-            >
-              {formatMessage(information.labels.operator.add)}
-            </Button>
-          </Box>
-        ) : null}
+        <GridRow>
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <InputController
+              id={'email'}
+              name={'email'}
+              type="email"
+              label={formatMessage(information.labels.operator.email)}
+              error={
+                errorMessage && email?.length === 0 ? errorMessage : undefined
+              }
+              backgroundColor="blue"
+              required
+              defaultValue={email || ''}
+              onChange={debounce(
+                (event) => setEmail(event.target.value),
+                DEBOUNCE_INTERVAL,
+              )}
+            />
+          </GridColumn>
+          <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
+            <InputController
+              id={'phone'}
+              name={'phone'}
+              type="tel"
+              format="###-####"
+              label={formatMessage(information.labels.operator.phone)}
+              error={
+                errorMessage && phone?.length === 0 ? errorMessage : undefined
+              }
+              backgroundColor="blue"
+              required
+              defaultValue={phone || ''}
+              onChange={debounce(
+                (event) => setPhone(event.target.value),
+                DEBOUNCE_INTERVAL,
+              )}
+            />
+          </GridColumn>
+        </GridRow>
       </Box>
-
       {genericErrorMessage && (
         <Text variant="eyebrow" color="red600">
           {genericErrorMessage}
@@ -159,3 +205,5 @@ export const ReviewOperatorRepeater: FC<
     </Box>
   )
 }
+
+export default ReviewOperatorRepeater

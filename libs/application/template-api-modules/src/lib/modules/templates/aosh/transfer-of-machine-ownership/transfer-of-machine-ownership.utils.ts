@@ -72,14 +72,13 @@ export const getRecipientBySsn = (
   answers: TransferOfMachineOwnershipAnswers,
   ssn: string,
 ): EmailRecipient | undefined => {
-  // Seller
-  if (answers.seller?.nationalId === ssn) {
+  if (answers.buyer?.nationalId === ssn) {
     return {
-      ssn: answers.seller.nationalId,
-      name: answers.seller.name,
-      email: answers.seller.email,
-      phone: answers.seller.phone,
-      role: EmailRole.seller,
+      ssn: answers.buyer.nationalId,
+      name: answers.buyer.name,
+      email: answers.buyer.email,
+      phone: answers.buyer.phone,
+      role: EmailRole.buyer,
       approved: true,
     }
   }

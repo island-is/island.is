@@ -49,7 +49,7 @@ export const information = {
       },
       hasErrorTitle: {
         id: 'aosh.tmo.application:information.labels.pickMachine.hasErrorTitle',
-        defaultMessage: 'Ekki er hægt að selja þessa bifreið vegna:',
+        defaultMessage: 'Ekki er hægt að selja þetta tæki vegna:',
         description: 'Pick machine has an error title',
       },
     }),

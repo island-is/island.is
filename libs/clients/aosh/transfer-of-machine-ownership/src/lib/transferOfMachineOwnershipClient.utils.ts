@@ -18,9 +18,7 @@ export const confirmChangeToApiRequest = (
     machineId: confirmChange.machineId,
     buyerNationalId: confirmChange.buyerNationalId,
     delegateNationalId:
-      currentPersonsNationalId != ''
-        ? currentPersonsNationalId
-        : confirmChange.delegateNationalId,
+      currentPersonsNationalId || confirmChange.delegateNationalId,
     supervisorNationalId: confirmChange.supervisorNationalId,
     supervisorEmail: confirmChange.supervisorEmail,
     supervisorPhoneNumber: confirmChange.supervisorPhoneNumber,

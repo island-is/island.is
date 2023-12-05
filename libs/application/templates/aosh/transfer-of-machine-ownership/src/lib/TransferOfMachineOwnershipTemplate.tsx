@@ -198,7 +198,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
+                answers: ['buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
               delete: true,
@@ -210,18 +210,7 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.ReviewForm),
                 ),
               write: {
-                answers: ['buyer', 'buyerOperator', 'location', 'rejecter'],
-              },
-              read: 'all',
-            },
-            {
-              id: Roles.REVIEWER,
-              formLoader: () =>
-                import('../forms/Review').then((module) =>
-                  Promise.resolve(module.ReviewForm),
-                ),
-              write: {
-                answers: ['buyerOperator', 'rejecter'],
+                answers: ['buyerOperator', 'location', 'rejecter'],
               },
               read: 'all',
             },
@@ -259,14 +248,6 @@ const template: ApplicationTemplate<
             },
             {
               id: Roles.BUYER,
-              formLoader: () =>
-                import('../forms/Rejected').then((module) =>
-                  Promise.resolve(module.Rejected),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.REVIEWER,
               formLoader: () =>
                 import('../forms/Rejected').then((module) =>
                   Promise.resolve(module.Rejected),
@@ -312,14 +293,6 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
             },
-            {
-              id: Roles.REVIEWER,
-              formLoader: () =>
-                import('../forms/Approved').then((module) =>
-                  Promise.resolve(module.Approved),
-                ),
-              read: 'all',
-            },
           ],
         },
       },
@@ -330,9 +303,9 @@ const template: ApplicationTemplate<
       assignUsers: assign((context) => {
         const { application } = context
 
-        const assigneeNationalIds = getNationalIdListOfReviewers(application)
-        if (assigneeNationalIds.length > 0) {
-          set(application, 'assignees', assigneeNationalIds)
+        const buyerNationalId = getBuyerNationalId(application)
+        if (buyerNationalId !== null && buyerNationalId !== '') {
+          set(application, 'assignees', [buyerNationalId])
         }
         return context
       }),
@@ -347,59 +320,30 @@ const template: ApplicationTemplate<
       'buyer.nationalId',
       '',
     ) as string
-    const reviewerNationalIdList = [] as string[]
-    const buyerOperator = getValueViaPath(
-      application.answers,
-      'buyerOperator',
-      [],
-    ) as Operator[]
-    buyerOperator
-      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId || '')
-        return nationalId
-      })
+
     if (id === application.applicant) {
       return Roles.APPLICANT
     }
     if (id === buyerNationalId && application.assignees.includes(id)) {
       return Roles.BUYER
     }
-    if (
-      reviewerNationalIdList.includes(id) &&
-      application.assignees.includes(id)
-    ) {
-      return Roles.REVIEWER
-    }
+
     return undefined
   },
 }
 
 export default template
 
-const getNationalIdListOfReviewers = (application: Application) => {
+const getBuyerNationalId = (application: Application) => {
   try {
-    const reviewerNationalIdList = [] as string[]
     const buyerNationalId = getValueViaPath(
       application.answers,
       'buyer.nationalId',
       '',
     ) as string
-    reviewerNationalIdList.push(buyerNationalId)
-    const buyerOperator = getValueViaPath(
-      application.answers,
-      'buyerOperator',
-      [],
-    ) as Operator[]
-    buyerOperator
-      ?.filter(({ wasRemoved }) => wasRemoved !== 'true')
-      .map(({ nationalId }) => {
-        reviewerNationalIdList.push(nationalId || '')
-        return nationalId
-      })
-    return reviewerNationalIdList
+    return buyerNationalId
   } catch (error) {
     console.error(error)
-    return []
+    return ''
   }
 }

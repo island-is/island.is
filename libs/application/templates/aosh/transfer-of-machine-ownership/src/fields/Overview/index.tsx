@@ -12,7 +12,7 @@ import { useLocale } from '@island.is/localization'
 import { overview, review, error as errorMsg } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import {
-  VehicleSection,
+  MachineSection,
   SellerSection,
   BuyerSection,
   OperatorSection,
@@ -20,11 +20,8 @@ import {
 } from './sections'
 import { getApproveAnswers, hasReviewerApproved } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
-import {
-  APPLICATION_APPLICATION,
-  SUBMIT_APPLICATION,
-} from '@island.is/application/graphql'
-import { useLazyQuery, useMutation } from '@apollo/client'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
@@ -40,13 +37,6 @@ export const Overview: FC<
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
 
-  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
-    onError: (e) => {
-      console.error(e, e.message)
-      return
-    },
-  })
-
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
       console.error(e, e.message)
@@ -57,38 +47,22 @@ export const Overview: FC<
   const [loading, setLoading] = useState(false)
 
   const doApproveAndSubmit = async () => {
-    const applicationInfo = await getApplicationInfo({
+    const approveAnswers = getApproveAnswers(
+      reviewerNationalId,
+      application.answers,
+    )
+    console.log('approveAnswers', approveAnswers)
+    await submitApplication({
       variables: {
         input: {
           id: application.id,
+          event: DefaultEvents.SUBMIT,
+          answers: approveAnswers,
         },
-        locale: 'is',
       },
-      fetchPolicy: 'no-cache',
     })
-    const updatedApplication = applicationInfo?.data?.applicationApplication
-
-    if (updatedApplication) {
-      const currentAnswers = updatedApplication.answers
-
-      const approveAnswers = getApproveAnswers(
-        reviewerNationalId,
-        currentAnswers,
-      )
-
-      // First approve application only (event=APPROVE)
-      await submitApplication({
-        variables: {
-          input: {
-            id: application.id,
-            event: DefaultEvents.APPROVE,
-            answers: approveAnswers,
-          },
-        },
-      })
-      setLoading(false)
-      setStep && setStep('conclusion')
-    }
+    setLoading(false)
+    setStep && setStep('conclusion')
   }
 
   const onBackButtonClick = () => {
@@ -114,7 +88,7 @@ export const Overview: FC<
         <Text marginBottom={4}>
           {formatMessage(overview.general.description)}
         </Text>
-        <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
+        <MachineSection {...props} reviewerNationalId={reviewerNationalId} />
         <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
         <BuyerSection
           setStep={setStep}
