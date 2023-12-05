@@ -165,7 +165,7 @@ export const DocumentLine: FC<Props> = ({
   const isArchived = archived || archiveSuccess
 
   return (
-    <Box className={styles.wrapper} ref={wrapperRef}>
+    <Box className={styles.wrapper}>
       <Box
         display="flex"
         position="relative"
@@ -179,38 +179,40 @@ export const DocumentLine: FC<Props> = ({
           [styles.unread]: unread,
         })}
       >
-        <AvatarImage
-          img={img}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (documentLine.id && setSelectLine) {
-              setSelectLine(documentLine.id)
+        <div ref={wrapperRef}>
+          <AvatarImage
+            img={img}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (documentLine.id && setSelectLine) {
+                setSelectLine(documentLine.id)
+              }
+            }}
+            avatar={
+              (avatarCheckmark || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
             }
-          }}
-          avatar={
-            (avatarCheckmark || selected) && !asFrame ? (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                background={selected ? 'blue400' : 'blue300'}
-                borderRadius="circle"
-                className={styles.checkCircle}
-              >
-                <Icon icon="checkmark" color="white" type="filled" />
-              </Box>
-            ) : undefined
-          }
-          background={
-            avatarCheckmark
-              ? asFrame
-                ? 'white'
-                : 'blue200'
-              : documentLine.opened
-              ? 'blue100'
-              : 'white'
-          }
-        />
+            background={
+              avatarCheckmark
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
+                : documentLine.opened
+                ? 'blue100'
+                : 'white'
+            }
+          />
+        </div>
         <Box
           width="full"
           display="flex"
