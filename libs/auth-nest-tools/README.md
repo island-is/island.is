@@ -10,7 +10,7 @@ There are a couple of guards available.
 - `IdsAuthGuard`: same as `IdsUserGuard` but does not verify the `nationalId` claim. Information from the JWT can be accessed using the CurrentAuth parameter decorator.
 - `ScopesGuard`: checks if the access token has required scopes. These can be configured using the Scopes decorator.
 
-You should generally add `IdsUserGuard` and `ScopesGuard` to endpoints that return user resources for the authenticated user. You can use `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials.
+You should generally add `IdsUserGuard` to endpoints that return user resources for the authenticated user and `IdsAuthGuard` for endpoints that need to be available for clients authenticating with client credentials. You should always use `ScopesGuard` to protect endpoints that contain sensitive information, without `ScopesGuard` the endpoint will be available to all authenticated users.
 
 ### Configuration
 
