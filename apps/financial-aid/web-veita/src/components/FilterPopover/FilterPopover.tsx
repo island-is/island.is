@@ -22,9 +22,11 @@ interface Props {
   onChecked: (item: ApplicationState | number, checked: boolean) => void
   onFilterClear: () => void
   onFilterSave: () => void
+  stateOptions?: ApplicationState[]
 }
 
 const FilterPopover = ({
+  stateOptions,
   selectedStates,
   selectedMonths,
   results,
@@ -53,22 +55,17 @@ const FilterPopover = ({
                 <Text fontWeight="semiBold" marginBottom={1}>
                   Staða
                 </Text>
-                <Checkbox
-                  name={getState[ApplicationState.APPROVED]}
-                  label={getState[ApplicationState.APPROVED]}
-                  checked={selectedStates.includes(ApplicationState.APPROVED)}
-                  onChange={(event) =>
-                    onChecked(ApplicationState.APPROVED, event.target.checked)
-                  }
-                />
-                <Checkbox
-                  name={getState[ApplicationState.REJECTED]}
-                  label={getState[ApplicationState.REJECTED]}
-                  checked={selectedStates.includes(ApplicationState.REJECTED)}
-                  onChange={(event) =>
-                    onChecked(ApplicationState.REJECTED, event.target.checked)
-                  }
-                />
+                {stateOptions &&
+                  stateOptions.map((state) => (
+                    <Checkbox
+                      name={getState[state]}
+                      label={getState[state]}
+                      checked={selectedStates.includes(state)}
+                      onChange={(event) =>
+                        onChecked(state, event.target.checked)
+                      }
+                    />
+                  ))}
               </Stack>
 
               <Box paddingY={3}>

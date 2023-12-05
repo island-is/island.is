@@ -11,6 +11,8 @@ import {
   ApplicationState,
   ApplicationPagination,
   applicationPageSize,
+  getStateUrlFromRoute,
+  getStateFromUrl,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
@@ -27,6 +29,10 @@ export const ApplicationsOverviewProcessed = () => {
   const [currentPage, setCurrentPage] = useState<number>(
     router?.query?.page ? parseInt(router.query.page as string) : 1,
   )
+  const currentNavigationItem =
+    navigationItems.find((i) => i.link === router.pathname) ||
+    navigationItems[0]
+
   const [filters, setFilters] = useState<Filters>({
     selectedStates: router?.query?.state
       ? ((router?.query?.state as string).split(',') as ApplicationState[])
@@ -67,7 +73,6 @@ export const ApplicationsOverviewProcessed = () => {
     setCurrentPage(page)
     filter(page, filters)
   }
-
   const filter = (page: number, searchFilters: Filters) => {
     getApplications({
       variables: {
@@ -99,10 +104,6 @@ export const ApplicationsOverviewProcessed = () => {
     errorPolicy: 'all',
   })
 
-  const currentNavigationItem =
-    navigationItems.find((i) => i.link === router.pathname) ||
-    navigationItems[0]
-
   useEffect(() => {
     filter(currentPage, filters)
   }, [])
@@ -121,6 +122,7 @@ export const ApplicationsOverviewProcessed = () => {
           </Text>
         </Box>
         <FilterPopover
+          stateOptions={currentNavigationItem?.filterStates}
           selectedMonths={filters.selectedMonths}
           selectedStates={filters.selectedStates}
           results={data?.filterApplications?.totalCount ?? 0}
