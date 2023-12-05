@@ -37,7 +37,7 @@ export const userNotificationServiceSetup = (): ServiceBuilder<
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
     .liveness('/liveness')
-    .readiness('/readiness') // change to readiness - when ready ;)
+    .readiness('/liveness') // change to readiness - when ready ;)
     .ingress({
       primary: {
         host: {
@@ -123,4 +123,4 @@ export const userNotificationWorkerSetup = (services: {
       CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
     .liveness('/liveness')
-    .readiness('/readiness') // change to readiness - when ready ;)
+    .readiness('/liveness') // change to readiness - when ready ;)

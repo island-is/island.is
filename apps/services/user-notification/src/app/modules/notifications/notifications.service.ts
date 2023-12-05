@@ -13,9 +13,7 @@ import { Cache } from 'cache-manager'
 import axios from 'axios'
 import { Notification } from './notification.model'
 import { InjectModel } from '@nestjs/sequelize'
-
 import { paginate } from '@island.is/nest/pagination'
-
 import { User } from '@island.is/auth-nest-tools'
 import {
   PaginatedNotificationDto,
@@ -246,7 +244,7 @@ export class NotificationsService {
     const notification = await this.notificationModel.findOne({
       where: {
         id: id,
-        recipient: user.nationalId, // Check if the recipient matches the nationalId
+        recipient: user.nationalId,
       },
     })
 
@@ -256,7 +254,7 @@ export class NotificationsService {
       )
     } else {
       notification.status = updateNotificationDto.status
-      const res = await notification.save()
+      await notification.save()
       const template = await this.getTemplate(notification.templateId)
       const formattedTemplate = this.formatArguments(notification, template)
       return {
@@ -294,7 +292,7 @@ export class NotificationsService {
     }
 
     try {
-      return this.notificationModel.create(exampleNotificationData as any)
+      return await this.notificationModel.create(exampleNotificationData as any)
     } catch (error) {
       this.logger.debug(error)
       return Error
