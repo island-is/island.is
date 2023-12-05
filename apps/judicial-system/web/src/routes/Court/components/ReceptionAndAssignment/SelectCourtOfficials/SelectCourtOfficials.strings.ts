@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const selectCourtOfficials = defineMessages({
+export const strings = defineMessages({
   title: {
     id: 'judicial.system.core:select_court_officials.title',
     defaultMessage: 'Hver tekur við málinu?',

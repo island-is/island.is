@@ -24,7 +24,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useUsersQuery } from './getUsers.generated'
+import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
 export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
@@ -37,15 +37,15 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     loaded: institutionsLoaded,
   } = useInstitution()
   const {
-    data: userData,
-    error: userError,
+    data: usersData,
+    error: usersError,
     loading: usersLoading,
   } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const users = userData?.users?.filter((u) => {
+  const users = usersData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -208,7 +208,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Loading />
         </Box>
       )}
-      {userError && (
+      {usersError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

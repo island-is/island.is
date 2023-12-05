@@ -1,4 +1,4 @@
-query GetCourtRecordSignatureConfirmation(
+query CourtRecordSignatureConfirmation(
   $input: SignatureConfirmationQueryInput!
 ) {
   courtRecordSignatureConfirmation(input: $input) {

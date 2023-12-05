@@ -48,7 +48,7 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
-import { useGetIndictmentPoliceCaseFilesQuery } from './getIndictmentPoliceCaseFiles.generated'
+import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
 const UploadFilesToPoliceCase: React.FC<
@@ -75,7 +75,7 @@ const UploadFilesToPoliceCase: React.FC<
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useGetIndictmentPoliceCaseFilesQuery({
+  } = useIndictmentPoliceCaseFilesQuery({
     variables: { input: { caseId } },
     skip: caseOrigin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',

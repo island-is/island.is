@@ -77,7 +77,7 @@ import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/util
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
 import ShareCase from './Components/ShareCase/ShareCase'
-import { useGetCourtRecordSignatureConfirmationLazyQuery } from './getCourtRecordSignatureConfirmation.generated'
+import { useCourtRecordSignatureConfirmationLazyQuery } from './courtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
 
@@ -243,7 +243,7 @@ export const SignedVerdictOverview: React.FC = () => {
   }, [workingCase.type, user])
 
   const [getCourtRecordSignatureConfirmation] =
-    useGetCourtRecordSignatureConfirmationLazyQuery({
+    useCourtRecordSignatureConfirmationLazyQuery({
       fetchPolicy: 'no-cache',
       errorPolicy: 'all',
       onCompleted: (courtRecordSignatureConfirmationData) => {

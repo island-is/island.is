@@ -11,8 +11,8 @@ import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import UserForm from '../UserForm/UserForm'
-import { useUserQuery } from './getUser.generated'
 import { useUpdateUserMutation } from './updateUser.generated'
+import { useUserQuery } from './user.generated'
 import { adminStrings as strings } from '../Admin.strings'
 import * as styles from '../Users/Users.css'
 

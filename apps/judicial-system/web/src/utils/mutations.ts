@@ -65,25 +65,3 @@ export const AppealedCasesQuery = gql`
     }
   }
 `
-
-export const UsersQuery = gql`
-  query SomeUsers {
-    users {
-      id
-      name
-      nationalId
-      mobileNumber
-      role
-      title
-      email
-      institution {
-        id
-        type
-        name
-      }
-      active
-      latestLogin
-      loginCount
-    }
-  }
-`

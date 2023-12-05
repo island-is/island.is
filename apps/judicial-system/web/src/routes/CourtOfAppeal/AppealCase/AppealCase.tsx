@@ -35,7 +35,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { useAppealCaseUsersQuery } from './getUsers.generated'
+import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
 type JudgeSelectOption = ReactSelectOption & { judge: User }
@@ -60,18 +60,18 @@ const AppealCase = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
 
-  const { data: userData } = useAppealCaseUsersQuery({
+  const { data: usersData } = useAppealCaseUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const assistants = (userData?.users ?? [])
+  const assistants = (usersData?.users ?? [])
     .filter((user: User) => user.role === UserRole.COURT_OF_APPEALS_ASSISTANT)
     .map((assistant: User) => {
       return { label: assistant.name, value: assistant.id, assistant }
     })
 
-  const judges = (userData?.users ?? [])
+  const judges = (usersData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.COURT_OF_APPEALS_JUDGE &&

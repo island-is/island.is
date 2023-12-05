@@ -1,33 +1,57 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
 
 import { Box, Select, Tooltip } from '@island.is/island-ui/core'
+import {
+  BlueBox,
+  FormContext,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseType,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
+import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { ReactSelectOption, TempCase as Case } from '../../types'
-import BlueBox from '../BlueBox/BlueBox'
-import SectionHeading from '../SectionHeading/SectionHeading'
-import { selectCourtOfficials as strings } from './SelectCourtOfficials.strings'
+import { useSelectCourtOfficialsUsersQuery } from './selectCourtOfficialsUsers.generated'
+import { strings } from './SelectCourtOfficials.strings'
 
-interface Props {
-  workingCase: Case
-  handleJudgeChange(value: SingleValue<ReactSelectOption>): void
-  handleRegistrarChange(value?: ReactSelectOption): void
-  users?: User[]
-}
+type JudgeSelectOption = ReactSelectOption & { judge: User }
+type RegistrarSelectOption = ReactSelectOption & { registrar: User }
 
-const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const { workingCase, handleJudgeChange, handleRegistrarChange, users } = props
+const SelectCourtOfficials = () => {
+  const { workingCase, setWorkingCase } = useContext(FormContext)
+  const { setAndSendCaseToServer } = useCase()
+  const { data: usersData, loading: usersLoading } =
+    useSelectCourtOfficialsUsersQuery({
+      fetchPolicy: 'no-cache',
+      errorPolicy: 'all',
+    })
+
+  const setJudge = (judge: User) => {
+    if (workingCase) {
+      setAndSendCaseToServer(
+        [{ judgeId: judge.id, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }
+
+  const setRegistrar = (registrar?: User) => {
+    if (workingCase) {
+      setAndSendCaseToServer(
+        [{ registrarId: registrar?.id ?? null, force: true }],
+        workingCase,
+        setWorkingCase,
+      )
+    }
+  }
   const { formatMessage } = useIntl()
 
-  const judges = (users ?? [])
+  const judges = (usersData?.users ?? [])
     .filter(
       (user: User) =>
         (user.role === UserRole.DISTRICT_COURT_JUDGE ||
@@ -39,7 +63,7 @@ const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
       return { label: judge.name, value: judge.id, judge }
     })
 
-  const registrars = (users ?? [])
+  const registrars = (usersData?.users ?? [])
     .filter(
       (user: User) =>
         user.role === UserRole.DISTRICT_COURT_REGISTRAR &&
@@ -73,8 +97,11 @@ const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
             placeholder={formatMessage(strings.setJudgePlaceholder)}
             value={defaultJudge}
             options={judges}
-            onChange={handleJudgeChange}
+            onChange={(selectedOption) =>
+              setJudge((selectedOption as JudgeSelectOption).judge)
+            }
             required
+            isDisabled={usersLoading}
           />
         </Box>
         <Select
@@ -83,14 +110,11 @@ const SelectCourtOfficials: React.FC<React.PropsWithChildren<Props>> = (
           placeholder={formatMessage(strings.setRegistrarPlaceholder)}
           value={defaultRegistrar}
           options={registrars}
-          onChange={(selectedOption) => {
-            if (selectedOption) {
-              handleRegistrarChange(selectedOption)
-            } else {
-              handleRegistrarChange(undefined)
-            }
-          }}
+          onChange={(selectedOption) =>
+            setRegistrar((selectedOption as RegistrarSelectOption)?.registrar)
+          }
           isClearable
+          isDisabled={usersLoading}
         />
       </BlueBox>
     </>
