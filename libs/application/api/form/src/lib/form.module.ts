@@ -7,6 +7,7 @@ import { MultiFieldFactory } from './formFactory/formItems/multifieldFactory'
 import { ExternalDataProviderFactory } from './formFactory/formItems/externalDataProviderFactory'
 import { DescriptionFieldFactory } from './formFactory/fields/descriptionFieldFactory'
 import { TextFieldFactory } from './formFactory/fields/textFieldFactory'
+import { SubmitFieldFactory } from './formFactory/fields/submitFieldFactory'
 
 @Module({
   imports: [ApplicationApiCoreModule],
@@ -18,6 +19,7 @@ import { TextFieldFactory } from './formFactory/fields/textFieldFactory'
     ExternalDataProviderFactory,
     DescriptionFieldFactory,
     TextFieldFactory,
+    SubmitFieldFactory,
   ],
   exports: [FormService],
 })

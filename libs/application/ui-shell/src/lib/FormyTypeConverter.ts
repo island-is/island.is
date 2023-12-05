@@ -61,8 +61,21 @@ export class FormTypeConverter {
         } as CheckboxField
       case FieldTypes.SUBMIT:
         return {
-          //Figure out how to handle this
-          // dynamic actions on conditions.
+          //Figure out how to handle this.
+          //dynamic actions on conditions might be a way to go.
+          id: sourceField.id,
+          type: FieldTypes.SUBMIT,
+          component: FieldComponents.SUBMIT,
+          title: sourceField.title,
+          actions: [
+            {
+              name: sourceField.specifics?.name,
+              type: sourceField.specifics?.type,
+              event: sourceField.specifics?.event,
+            },
+          ],
+          placement: sourceField.specifics?.placement,
+          refetchApplicationAfterSubmit: true,
         } as SubmitField
       case FieldTypes.DATE:
         return {
