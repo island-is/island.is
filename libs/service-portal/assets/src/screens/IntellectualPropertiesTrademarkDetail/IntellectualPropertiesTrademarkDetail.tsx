@@ -104,12 +104,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
         )}
         {ip?.type === TrademarkType.MULTIMEDIA && (
           <Box>
-            <Text
-              variant="eyebrow"
-              as="div"
-              paddingBottom={2}
-              color="purple400"
-            >
+            <Text variant="eyebrow" as="div" color="purple400">
               {formatMessage(ipMessages.video)}
             </Text>
             {ip.media?.mediaPath && (
@@ -119,12 +114,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
         )}
         {ip?.type === TrademarkType.ANIMATION && (
           <Box>
-            <Text
-              variant="eyebrow"
-              as="div"
-              paddingBottom={2}
-              color="purple400"
-            >
+            <Text variant="eyebrow" as="div" color="purple400">
               {formatMessage(ipMessages.animation)}
             </Text>
             {ip.media?.mediaPath && (
@@ -139,7 +129,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           </Box>
         )}
         {ip?.type === TrademarkType.AUDIO && (
-          <>
+          <Box>
             <Text
               variant="eyebrow"
               as="div"
@@ -151,7 +141,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
             {ip.media?.mediaPath && (
               <AudioPlayer url={ip.media?.mediaPath} title={ip.text ?? ''} />
             )}
-          </>
+          </Box>
         )}
         <Stack space="p2">
           <UserInfoLine
