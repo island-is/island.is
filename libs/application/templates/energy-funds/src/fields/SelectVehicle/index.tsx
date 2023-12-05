@@ -16,9 +16,6 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const vehicles = currentVehicles
     ? (currentVehicles.data as VehiclesCurrentVehicle[])
     : []
-
-  console.log('application', application)
-
   return (
     <Box paddingTop={2}>
       {vehicles.length > 4 ? (
