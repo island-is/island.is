@@ -270,6 +270,7 @@ export const OrganizationHeader: React.FC<
       )
     case 'hms':
       return <HmsHeader organizationPage={organizationPage} />
+
     case 'rikissaksoknari':
       return <RikissaksoknariHeader organizationPage={organizationPage} />
     default:

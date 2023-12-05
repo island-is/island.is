@@ -16,6 +16,14 @@ export const content = style({
   left: 0,
 })
 
+export const innerContent = style({
+  width: '100%',
+  height: '100%',
+  backgroundRepeat: 'no-repeat',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+})
+
 export const link = style({
   textDecoration: 'underline',
 })
@@ -33,7 +41,9 @@ export const playIconContainer = style({
 })
 
 export const modal = style({
-  background: theme.color.blue100,
+  position: 'absolute',
+  top: 0,
+  left: 0,
   zIndex: 2,
 })
 

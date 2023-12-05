@@ -109,7 +109,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   return (
     <Box className={styles.container}>
       {showDisclaimer && (
-        <Box className={cn(styles.content, styles.modal)}>
+        <Box className={styles.modal} background="blue100" borderRadius="large">
           <FocusableBox
             tabIndex={0}
             className={styles.closeButton}
@@ -140,38 +140,40 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
               ),
             }}
           >
-            <Stack space={3}>
+            <Stack space={3} align="center">
               <Box>{texts.message}</Box>
-              <Box>
-                <Controller
-                  name="contentAllowed"
-                  defaultValue={false}
-                  control={control}
-                  rules={{ required: false }}
-                  render={({ field: { onChange, value } }) => (
-                    <Checkbox
-                      label={texts.remember}
-                      checked={value}
-                      onChange={(e) => {
-                        onChange(e.target.checked)
-                        localStorage.setItem(itemKey, 'true')
-                      }}
-                    />
-                  )}
-                />
-              </Box>
-              <Box>
-                <Button
-                  colorScheme="default"
-                  size="small"
-                  onClick={() => {
-                    setShowDisclaimer(false)
-                    setAllowed(true)
-                  }}
-                >
-                  {texts.view}
-                </Button>
-              </Box>
+
+              <Controller
+                name="contentAllowed"
+                defaultValue={false}
+                control={control}
+                rules={{ required: false }}
+                render={({ field: { onChange, value } }) => (
+                  <Checkbox
+                    label={texts.remember}
+                    checked={value}
+                    onChange={(e) => {
+                      onChange(e.target.checked)
+                      localStorage.setItem(
+                        itemKey,
+                        e.target.checked ? 'true' : 'false',
+                      )
+                    }}
+                  />
+                )}
+              />
+
+              <Button
+                colorScheme="default"
+                size="small"
+                onClick={() => {
+                  setShowDisclaimer(false)
+                  setAllowed(true)
+                }}
+              >
+                {texts.view}
+              </Button>
+
               <Box>
                 <Button
                   variant="ghost"
@@ -192,6 +194,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
         <Box className={styles.content}>
           <Box
             position="relative"
+            className={styles.innerContent}
             style={{
               backgroundColor: thumbnailImageUrl
                 ? 'transparent'
@@ -199,11 +202,6 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
               backgroundImage: thumbnailImageUrl
                 ? `url(${thumbnailImageUrl})`
                 : '',
-              width: '100%',
-              height: '100%',
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
             }}
           >
             {!thumbnailImageUrl && (
