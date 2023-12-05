@@ -176,11 +176,16 @@ export class UserProfileService {
         { transaction },
       )
 
-      if (isEmailDefined || isMobilePhoneNumberDefined) {
+      if (
+        isEmailDefined ||
+        isMobilePhoneNumberDefined ||
+        isDefined(userProfile.emailNotifications)
+      ) {
         await this.islykillService.upsertIslykillSettings({
           nationalId,
           phoneNumber: formattedPhoneNumber,
           email: userProfile.email,
+          canNudge: userProfile.emailNotifications,
         })
       }
     })

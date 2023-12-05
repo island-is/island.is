@@ -20,7 +20,7 @@ import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
-import { Nudge } from './components/Inputs/Nudge'
+import { Nudge } from './components/Inputs/Nudge/Nudge'
 import { msg } from '../../../../lib/messages'
 import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
@@ -291,6 +291,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             >
               {!userLoading && (
                 <Nudge
+                  isV2UserProfileEnabled={v2UserProfileEnabled}
                   refuseMail={
                     /**
                      * This checkbox block is being displayed as the opposite of canNudge.

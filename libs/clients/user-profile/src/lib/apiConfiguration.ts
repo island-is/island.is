@@ -1,12 +1,12 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType } from '@island.is/nest/config'
-import { UserProfileApi, Configuration } from '../../gen/fetch'
+import { Configuration } from '../../gen/fetch'
 
 import { UserProfileClientConfig } from './userProfileClient.config'
 import { createRedisCacheManager } from '@island.is/cache'
 
-export const UserProfileApiProvider = {
-  provide: UserProfileApi,
+export const ApiConfiguration = {
+  provide: 'UserProfileCLientApiConfiguration',
   // Necessary because of cache-manager.
   // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (config: ConfigType<typeof UserProfileClientConfig>) => {
@@ -25,16 +25,14 @@ export const UserProfileApiProvider = {
             overrideCacheControl: config.cacheControl,
           }
 
-    return new UserProfileApi(
-      new Configuration({
-        fetchApi: createEnhancedFetch({
-          name: 'clients-user-profile',
-          organizationSlug: 'stafraent-island',
-          cache,
-        }),
-        basePath: config.basePath,
+    return new Configuration({
+      fetchApi: createEnhancedFetch({
+        name: 'clients-user-profile',
+        organizationSlug: 'stafraent-island',
+        cache,
       }),
-    )
+      basePath: config.basePath,
+    })
   },
   inject: [UserProfileClientConfig.KEY],
 }

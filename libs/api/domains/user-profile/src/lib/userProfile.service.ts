@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError, ForbiddenError } from 'apollo-server-express'
+
 import {
   ActorLocaleLocaleEnum,
   ConfirmationDtoResponse,
@@ -9,7 +10,10 @@ import {
   UserProfileApi,
   UserProfileControllerCreateRequest,
   UserProfileControllerUpdateRequest,
+  V2MeApi,
 } from '@island.is/clients/user-profile'
+import { handle204, handle404 } from '@island.is/clients/middlewares'
+
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
@@ -17,13 +21,13 @@ import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { ConfirmSmsVerificationInput } from './dto/confirmSmsVerificationInput'
 import { ConfirmEmailVerificationInput } from './dto/confirmEmailVerificationInput'
+import { UpdateEmailNotificationsInput } from './dto/updateEmailNotificationsInput'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { UserProfile } from './userProfile.model'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslykillService } from './islykill.service'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DataStatus } from './types/dataStatus.enum'
-import { handle404, handle204 } from '@island.is/clients/middlewares'
 
 export const MAX_OUT_OF_DATE_MONTHS = 6
 
@@ -43,11 +47,16 @@ const handleError = (error: any, details?: string) => {
 export class UserProfileService {
   constructor(
     private userProfileApi: UserProfileApi,
+    private v2MeApi: V2MeApi,
     private readonly islyklarService: IslykillService,
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2UserProfileApiWithAuth(auth: Auth) {
+    return this.v2MeApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getIslykillProfile(user: User) {
@@ -394,5 +403,18 @@ export class UserProfileService {
         deviceTokenDto: input,
       })
       .catch((e) => handleError(e, `deleteDeviceToken error`))
+  }
+
+  async updateEmailNotifications(
+    input: UpdateEmailNotificationsInput,
+    user: User,
+  ) {
+    return await this.v2UserProfileApiWithAuth(user)
+      .meUserProfileControllerPatchUserProfile({
+        patchUserProfileDto: {
+          emailNotifications: input.emailNotifications,
+        },
+      })
+      .catch((e) => handleError(e, `updateEmailNotifications error`))
   }
 }
