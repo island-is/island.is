@@ -1,12 +1,10 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useCallback, useState } from 'react'
 import {
+  ActionCard,
   AlertMessage,
   Box,
-  Bullet,
-  BulletList,
-  CategoryCard,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 
@@ -16,6 +14,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { information } from '../../lib/messages/information'
 import { VehiclesCurrentVehicle } from '../../shared/types'
 import { useLazyVehicleDetails } from '../../hooks/useLazyVehicleQuery'
+import format from 'date-fns/format'
 
 interface VehicleSearchFieldProps {
   currentVehicleList: VehiclesCurrentVehicle[]
@@ -43,45 +42,55 @@ export const VehicleSelectField: FC<
       : undefined,
   )
 
+  const resetValues = () => {
+    setValue('selectVehicle.vin', '')
+    setValue('selectVehicle.plate', '')
+    setValue('selectVehicle.grantAmount', '')
+  }
+
   const onChange = (option: Option) => {
-    const currentVehicle = currentVehicleList.find(
+    const chosenVehicle = currentVehicleList.find(
       (x) => x.permno === option.value,
     )
     setIsLoading(true)
-    if (currentVehicle && currentVehicle.vin) {
+    if (chosenVehicle && chosenVehicle.vin) {
       getVehicleDetailsCallback({
-        vin: currentVehicle.vin,
+        vin: chosenVehicle.vin,
       })
         .then((response) => {
+          const hasReceivedSubsidy =
+            response.vehicleDetailsByVin.hasReceivedSubsidy
           setCurrentVehicle({
-            permno: currentVehicle.permno,
-            make: currentVehicle?.make || '',
-            color: currentVehicle?.color || '',
-            role: currentVehicle?.role,
-            vin: currentVehicle?.vin,
+            ...chosenVehicle,
             vehicleGrant: response.vehicleDetailsByVin.vehicleGrant || 0,
-            hasReceivedSubsidy:
-              response.vehicleDetailsByVin.hasReceivedSubsidy || true,
+            hasReceivedSubsidy: hasReceivedSubsidy || true,
             vehicleGrantItemCode:
               response.vehicleDetailsByVin.vehicleGrantItemCode || '',
           })
 
-          setCurrentVehicleDisabled(currentVehicle.hasReceivedSubsidy ?? true)
+          setCurrentVehicleDisabled(hasReceivedSubsidy ?? true)
+
+          if (!hasReceivedSubsidy) {
+            setValue('selectVehicle.vin', chosenVehicle.vin || '')
+            setValue(
+              'selectVehicle.plate',
+              hasReceivedSubsidy ? '' : chosenVehicle.permno || '',
+            )
+            setValue(
+              'selectVehicle.grantAmount',
+              response.vehicleDetailsByVin.vehicleGrant,
+            )
+          } else {
+            resetValues()
+          }
           setIsLoading(false)
         })
-        .catch((error) => console.error(error))
+        .catch((error) => {
+          console.error(error)
+          resetValues()
+        })
     }
   }
-
-  useEffect(() => {
-    if (currentVehicle) {
-      setValue('selectVehicle.vin', currentVehicle.vin || '')
-      setValue(
-        'selectVehicle.plate',
-        currentVehicleDisabled ? '' : currentVehicle.permno || '',
-      )
-    }
-  }, [currentVehicle])
 
   const getVehicleDetails = useLazyVehicleDetails()
   const getVehicleDetailsCallback = useCallback(
@@ -112,14 +121,23 @@ export const VehicleSelectField: FC<
       />
       <Box paddingTop={3}>
         {isLoading ? (
-          <SkeletonLoader />
+          <SkeletonLoader background="purple200" />
         ) : (
           <Box>
             {currentVehicle && (
-              <CategoryCard
-                colorScheme={currentVehicleDisabled ? 'red' : 'blue'}
-                heading={currentVehicle.make || ''}
-                text={`${currentVehicle.color} - ${currentVehicle.permno}`}
+              <ActionCard
+                heading={`${currentVehicle.make ?? ''} - ${
+                  currentVehicle.permno
+                }`}
+                text={`${currentVehicle.color} - ${formatMessage(
+                  information.labels.pickVehicle.registrationDate,
+                )}: ${
+                  currentVehicle.firstRegistrationDate &&
+                  format(
+                    new Date(currentVehicle.firstRegistrationDate),
+                    'dd.MM.yyyy',
+                  )
+                }`}
               />
             )}
             {currentVehicle && currentVehicleDisabled && (

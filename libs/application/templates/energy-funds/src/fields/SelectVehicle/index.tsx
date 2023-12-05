@@ -10,7 +10,6 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
-  console.log('application', application)
   const {
     externalData: { currentVehicles },
   } = application
@@ -18,16 +17,15 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
     ? (currentVehicles.data as VehiclesCurrentVehicle[])
     : []
 
+  console.log('application', application)
+
   return (
     <Box paddingTop={2}>
-      {vehicles.length > 0 ? (
+      {vehicles.length > 4 ? (
         <VehicleSelectField currentVehicleList={vehicles} {...props} />
       ) : (
         <VehicleCheckboxField currentVehicleList={vehicles} {...props} />
       )}
-      {/* {(errors as any)?.pickVehicle && (
-        <InputError errorMessage={formatMessage(error.requiredValidVehicle)} />
-      )} */}
     </Box>
   )
 }

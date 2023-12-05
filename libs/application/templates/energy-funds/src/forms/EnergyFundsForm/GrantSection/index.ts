@@ -11,8 +11,6 @@ import { information } from '../../../lib/messages/information'
 import { Application } from '@island.is/api/schema'
 import { grant } from '../../../lib/messages/grant'
 import { DefaultEvents } from '@island.is/application/types'
-import { VehiclesCurrentVehicle } from '../../../shared/types'
-import { EnergyFundsAnswers } from '../../..'
 
 export const GrantSection = buildSection({
   id: 'grant',
@@ -28,24 +26,12 @@ export const GrantSection = buildSection({
           variant: 'currency',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const vehicles = getValueViaPath(
-              application.externalData,
-              'currentVehicles.data',
-              undefined,
-            ) as Array<VehiclesCurrentVehicle> | undefined
-
-            const selectedPlate = getValueViaPath(
+            const vehicleGrantAmount = getValueViaPath(
               application.answers,
-              'vehicleDetails.plate',
-              undefined,
-            ) as string | undefined
+              'selectedVehicle.grantAmount',
+            ) as number | undefined
 
-            const chosenVehicle: VehiclesCurrentVehicle | undefined = vehicles
-              ? vehicles.filter(
-                  (x: VehiclesCurrentVehicle) => x.permno === selectedPlate,
-                )[0]
-              : undefined
-            return chosenVehicle ? chosenVehicle.vehicleGrant?.toString() : ''
+            return vehicleGrantAmount
           },
         }),
         buildDescriptionField({

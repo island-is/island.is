@@ -22,7 +22,7 @@ import { ApiActions } from '../shared'
 import { EnergyFundsSchema } from './dataSchema'
 import {
   UserProfileApi,
-  NationalRegistryIndividualApi,
+  NationalRegistryUserApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
 
@@ -75,7 +75,7 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryIndividualApi,
+                NationalRegistryUserApi,
                 UserProfileApi,
                 CurrentVehiclesApi,
               ],

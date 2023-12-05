@@ -18,7 +18,7 @@ export enum Features {
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   citizenship = 'isCitizenshipEnabled',
-  energyFunds = 'energyFunds',
+  energyFunds = 'isEnergyFundsEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

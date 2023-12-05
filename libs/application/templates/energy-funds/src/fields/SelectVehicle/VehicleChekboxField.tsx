@@ -45,6 +45,7 @@ export const VehicleCheckboxField: FC<
     if (currentVehicle) {
       setValue('selectVehicle.plate', currentVehicle.permno || '')
       setValue('selectVehicle.vin', currentVehicle.vin || '')
+      setValue('selectedVehicle.grantAmount', currentVehicle.vehicleGrant)
     }
   }, [currentVehicle])
 
@@ -64,29 +65,26 @@ export const VehicleCheckboxField: FC<
         }`,
         rightContent: (
           <div style={{ display: 'flex' }}>
-            {!isCheckable && (
-              <div style={{ paddingRight: 15 }}>
+            <div style={{ paddingRight: 15 }}>
+              {!isCheckable ? (
                 <Tag disabled variant="red">
                   {formatMessage(
                     information.labels.pickVehicle.checkboxNotCheckable,
                   )}
                 </Tag>
-              </div>
-            )}
-            <Tag
-              outlined={!isCheckable ? false : true}
-              disabled
-              variant={!isCheckable ? 'red' : 'blue'}
-            >
-              {formatMessage(
-                information.labels.pickVehicle.checkboxCheckableTag,
-                {
-                  amount: vehicle.vehicleGrant
-                    ? `${formatIsk(vehicle.vehicleGrant)}`
-                    : '',
-                },
+              ) : (
+                <Tag outlined={true} disabled variant={'blue'}>
+                  {formatMessage(
+                    information.labels.pickVehicle.checkboxCheckableTag,
+                    {
+                      amount: vehicle.vehicleGrant
+                        ? `${formatIsk(vehicle.vehicleGrant)}`
+                        : '',
+                    },
+                  )}
+                </Tag>
               )}
-            </Tag>
+            </div>
           </div>
         ),
         disabled: !isCheckable,
@@ -102,7 +100,7 @@ export const VehicleCheckboxField: FC<
           application={application}
           field={{
             id: `${field.id}.plate`,
-            title: 'Vehicles',
+            title: '',
             large: true,
             backgroundColor: 'blue',
             width: 'full',

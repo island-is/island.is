@@ -9,16 +9,18 @@ import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { externalData } from '../../lib/messages'
 import {
   CurrentVehiclesApi,
-  NationalRegistryIndividualApi,
+  NationalRegistryUserApi,
   UserProfileApi,
 } from '../../dataProviders'
 import { confirmation } from '../../lib/messages/confirmation'
 import { information } from '../../lib/messages/information'
 import { grant } from '../../lib/messages/grant'
+import { Logo } from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
   title: '',
+  logo: Logo,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
@@ -56,7 +58,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.transportAuthority.subTitle,
             }),
             buildDataProviderItem({
-              provider: NationalRegistryIndividualApi,
+              provider: NationalRegistryUserApi,
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

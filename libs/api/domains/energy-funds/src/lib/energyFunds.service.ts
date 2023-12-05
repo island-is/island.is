@@ -14,53 +14,11 @@ export class EnergyFundsApi {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private async getCatalogItems(auth: User) {
-    return await this.energyFundsClientService.getCatalogItems(auth)
-  }
-
   private getVehicleGrant = async (auth: User, vehicle: VehicleMiniDto) => {
-    const catalogCodes = await this.getCatalogItems(auth)
-    console.log('catalogCodes', catalogCodes)
-    const importCode = vehicle.importCode
-    const vehicleRegistrationCode = vehicle.vehicleRegistrationCode
-    const newRegistrationDate = vehicle.newRegistrationDate
-      ? new Date(vehicle.newRegistrationDate)
-      : ''
-    const firstRegistrationDate = vehicle.firstRegistrationDate
-      ? new Date(vehicle.firstRegistrationDate)
-      : ''
-
-    const oneYearAgo = new Date(
-      new Date().setFullYear(new Date().getFullYear() - 1),
+    return await this.energyFundsClientService.getCatalogValueForVehicle(
+      auth,
+      vehicle,
     )
-
-    if (vehicleRegistrationCode === 'M1') {
-      if (
-        (importCode === '2' || importCode === '4') &&
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1NEW')
-      } else if (
-        importCode === '1' &&
-        firstRegistrationDate >= oneYearAgo &&
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1USE')
-      }
-    } else if (vehicleRegistrationCode === 'N1') {
-      if (
-        (importCode === '2' || importCode === '4') &&
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1NEW')
-      } else if (
-        importCode === '1' &&
-        firstRegistrationDate >= oneYearAgo &&
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1USE')
-      }
-    }
   }
 
   async getVehicleDetails(auth: User, vin: string) {
@@ -77,18 +35,15 @@ export class EnergyFundsApi {
 
     if (!currentVehicle) {
       throw Error(
-        'Did not find the vehicle with for that vin, or you are neither owner nor co-owner of the vehicle',
+        'Did not find the vehicle with for that vin number, or you are not the owner of the vehicle',
       )
     }
 
-    let vehicleGrant
-    let vehicleGrantItemCode
+    const vehicleGrantItem =
+      currentVehicle && (await this.getVehicleGrant(auth, currentVehicle))
 
-    if (currentVehicle) {
-      const vehicleGrantItem = await this.getVehicleGrant(auth, currentVehicle)
-      vehicleGrant = vehicleGrantItem?.priceAmount
-      vehicleGrantItemCode = vehicleGrantItem?.itemCode
-    }
+    if (!vehicleGrantItem)
+      throw new Error('Could not get available grants for this vehicle')
 
     const hasReceivedSubsidy =
       await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -97,8 +52,8 @@ export class EnergyFundsApi {
       )
 
     return {
-      vehicleGrant,
-      vehicleGrantItemCode,
+      vehicleGrant: vehicleGrantItem.priceAmount,
+      vehicleGrantItemCode: vehicleGrantItem.itemCode,
       hasReceivedSubsidy,
     }
   }

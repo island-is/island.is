@@ -566,7 +566,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Copy link error toast',
   },
   electricVehicleListEmptyOwner: {
-    id: 'application.system:copyLink.electricVehicleListEmptyOwner',
+    id: 'application.system:core.fetch.data.electricVehicleListEmptyOwner',
     defaultMessage:
       'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
     description:

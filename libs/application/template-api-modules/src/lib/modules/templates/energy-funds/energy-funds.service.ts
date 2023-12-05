@@ -27,56 +27,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private async getCatalogItems(auth: User) {
-    return await this.energyFundsClientService.getCatalogItems(auth)
-  }
-
   private getVehicleGrant = async (auth: User, vehicle: VehicleMiniDto) => {
-    const catalogCodes = await this.getCatalogItems(auth)
-    const importCode = vehicle.importCode
-    const vehicleRegistrationCode = vehicle.vehicleRegistrationCode
-    const newRegistrationDate = vehicle.newRegistrationDate
-      ? new Date(vehicle.newRegistrationDate)
-      : ''
-    const firstRegistrationDate = vehicle.firstRegistrationDate
-      ? new Date(vehicle.firstRegistrationDate)
-      : ''
-
-    const oneYearAgo = new Date(
-      new Date().setFullYear(new Date().getFullYear() - 1),
+    return await this.energyFundsClientService.getCatalogValueForVehicle(
+      auth,
+      vehicle,
     )
-
-    if (vehicleRegistrationCode === 'M1') {
-      if (
-        (importCode === '2' || importCode === '4') &&
-        //TODO change year to 2024
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1NEW')
-      } else if (
-        importCode === '1' &&
-        firstRegistrationDate >= oneYearAgo &&
-        //TODO change year to 2024
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'M1USE')
-      }
-    } else if (vehicleRegistrationCode === 'N1') {
-      if (
-        (importCode === '2' || importCode === '4') &&
-        //TODO change year to 2024
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1NEW')
-      } else if (
-        importCode === '1' &&
-        firstRegistrationDate >= oneYearAgo &&
-        //TODO change year to 2024
-        newRegistrationDate >= new Date(2021, 0, 1)
-      ) {
-        return catalogCodes.find((x) => x.itemCode === 'N1USE')
-      }
-    }
   }
 
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
@@ -87,12 +42,12 @@ export class EnergyFundsService extends BaseTemplateApiService {
       showOperated: false,
     })
 
-    const onlyElectricVehiclesAndOwner = results.filter(
-      (x) => x.fuelCode && parseInt(x.fuelCode) === 3 && x.role === 'Eigandi',
+    const onlyElectricVehicles = results.filter(
+      (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
-    // Validate that user has at least 1 vehicle
-    if (!onlyElectricVehiclesAndOwner || !onlyElectricVehiclesAndOwner.length) {
+    // Validate that user has at least 1 vehicle that fulfills requirements
+    if (!onlyElectricVehicles || !onlyElectricVehicles.length) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.electricVehicleListEmptyOwner,
@@ -102,28 +57,18 @@ export class EnergyFundsService extends BaseTemplateApiService {
       )
     }
 
-    let onlyElectricVehiclesAndOwnerWithGrant =
-      onlyElectricVehiclesAndOwner as Array<VehiclesCurrentVehicle>
-
-    if (onlyElectricVehiclesAndOwner.length < 5) {
-      onlyElectricVehiclesAndOwnerWithGrant = await Promise.all(
-        onlyElectricVehiclesAndOwner.map(async (x) => {
-          const vehicleGrant = await this.getVehicleGrant(auth, x)
-          return {
-            ...x,
-            vehicleGrant: vehicleGrant?.priceAmount,
-            vehicleGrantItemCode: vehicleGrant?.itemCode,
-          }
-        }),
-      )
-    }
-
     return await Promise.all(
-      onlyElectricVehiclesAndOwnerWithGrant?.map(async (vehicle) => {
+      onlyElectricVehicles?.map(async (vehicle) => {
+        let vehicleGrantPriceAmount: number | undefined
+        let vehicleGrantItemCode: string | undefined
         let hasReceivedSubsidy: boolean | undefined
 
         // Only validate if fewer than 5 items
-        if (onlyElectricVehiclesAndOwner.length < 5) {
+        if (onlyElectricVehicles.length < 5) {
+          const vehicleGrant = await this.getVehicleGrant(auth, vehicle)
+          vehicleGrantPriceAmount = vehicleGrant?.priceAmount
+          vehicleGrantItemCode = vehicleGrant?.itemCode
+
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(
@@ -143,8 +88,8 @@ export class EnergyFundsService extends BaseTemplateApiService {
           fuelCode: vehicle.fuelCode,
           vehicleRegistrationCode: vehicle.vehicleRegistrationCode,
           importCode: vehicle.importCode,
-          vehicleGrant: vehicle.vehicleGrant || '',
-          vehicleGrantItemCode: vehicle.vehicleGrantItemCode || '',
+          vehicleGrant: vehicleGrantPriceAmount,
+          vehicleGrantItemCode: vehicleGrantItemCode,
           hasReceivedSubsidy: hasReceivedSubsidy,
         }
       }),
@@ -158,7 +103,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
     const applicationAnswers = application.answers as EnergyFundsAnswers
     const currentVehicleList = application.externalData?.currentVehicles
       ?.data as Array<VehiclesCurrentVehicle>
-    const currentVechicleDetails = currentVehicleList.filter(
+    const currentvehicleDetails = currentVehicleList.filter(
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
     )[0]
 
@@ -166,18 +111,16 @@ export class EnergyFundsService extends BaseTemplateApiService {
       nationalId: auth.nationalId,
       vIN: applicationAnswers?.selectVehicle.vin,
       carNumber: applicationAnswers?.selectVehicle.plate,
-      carType: currentVechicleDetails.make || '',
-      itemcode: currentVechicleDetails.vehicleGrantItemCode || '',
+      carType: currentvehicleDetails.make || '',
+      itemcode: currentvehicleDetails.vehicleGrantItemCode || '',
       purchasePrice: applicationAnswers?.vehicleDetails.price
         ? parseInt(applicationAnswers?.vehicleDetails.price)
         : 0,
       registrationDate: format(
-        new Date(currentVechicleDetails.firstRegistrationDate ?? ''),
+        new Date(currentvehicleDetails.firstRegistrationDate ?? ''),
         'yyyy-MM-dd',
       ),
-      subsidyAmount: applicationAnswers?.grant.grantAmount
-        ? parseInt(applicationAnswers?.grant.grantAmount)
-        : 0,
+      subsidyAmount: currentvehicleDetails.vehicleGrant ?? 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {

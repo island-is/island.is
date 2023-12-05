@@ -21,6 +21,7 @@ export const EnergyFundsSchema = z.object({
   selectVehicle: z.object({
     plate: z.string().min(1),
     vin: z.string().min(1),
+    grantAmount: z.string().optional(),
   }),
   vehicleDetails: z.object({
     price: z

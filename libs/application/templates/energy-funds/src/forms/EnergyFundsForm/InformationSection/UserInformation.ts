@@ -68,7 +68,6 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) => {
-            console.log('application', application)
             const vehicle = getSelectedVehicle(
               application.externalData,
               application.answers,
@@ -92,7 +91,7 @@ export const userInformationSubSection = buildSubSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            `${application.externalData?.individual?.data?.givenName} ${application.externalData?.individual?.data?.familyName}`,
+            application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
           id: 'applicant.nationalId',
@@ -102,7 +101,7 @@ export const userInformationSubSection = buildSubSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.individual?.data?.nationalId,
+            application.externalData?.nationalRegistry?.data?.nationalId,
         }),
       ],
     }),
