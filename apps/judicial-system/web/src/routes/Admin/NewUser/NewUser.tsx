@@ -36,16 +36,16 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const {
     allInstitutions,
-    loading: institutionLoading,
-    loaded: institutionLoaded,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
   } = useInstitution()
   const { formatMessage } = useIntl()
 
-  const [createUserMutation, { loading: createLoading }] =
+  const [createUserMutation, { loading: userCreating }] =
     useCreateUserMutation()
 
   const createUser = async (user: User): Promise<void> => {
-    if (!createLoading && user && user.institution) {
+    if (!userCreating && user && user.institution) {
       await createUserMutation({
         variables: {
           input: {
@@ -65,9 +65,9 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(constants.USERS_ROUTE)
   }
 
-  return institutionLoading ? (
+  return institutionsLoading ? (
     <Skeleton />
-  ) : institutionLoaded ? (
+  ) : institutionsLoaded ? (
     <Box background="purple100">
       <div className={styles.userManagementContainer}>
         <PageHeader title={formatMessage(titles.admin.newUser)} />
@@ -75,7 +75,7 @@ export const NewUser: React.FC<React.PropsWithChildren<unknown>> = () => {
           user={user}
           institutions={allInstitutions}
           onSave={createUser}
-          loading={createLoading}
+          loading={userCreating}
         />
       </div>
     </Box>

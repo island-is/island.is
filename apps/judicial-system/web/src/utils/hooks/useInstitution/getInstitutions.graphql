@@ -1,0 +1,10 @@
+query Institutions {
+  institutions {
+    id
+    created
+    modified
+    type
+    name
+    active
+  }
+}
