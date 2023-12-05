@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, forwardRef } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { paginate } from '@island.is/nest/pagination'
+// import { paginate } from '@island.is/nest/pagination'
 
 import {
   RecyclingRequestModel,
@@ -12,9 +12,11 @@ import { VehicleModel } from './vehicle.model'
 @Injectable()
 export class VehicleService {
   constructor(
-    @InjectModel(VehicleModel)
+    @Inject(forwardRef(() => VehicleModel))
     private vehicleModel: VehicleModel,
   ) {}
+
+  /*
 
   async findAllByFilter(
     first: number,
@@ -47,6 +49,7 @@ export class VehicleService {
       ],
     })
   }
+  */
 
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
     try {
@@ -58,8 +61,7 @@ export class VehicleService {
     }
   }
 
-  // async create(vehicle: VehicleModel): Promise<boolean> {
-  async create(): Promise<boolean> {
+  async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
