@@ -153,7 +153,7 @@ export const ApplicationDetails = ({
                 // We are already in a portal,
                 // and tooltip renders below the drawer if we render tooltip also in portal
                 renderInPortal={false}
-                placement="right"
+                placement="top"
               >
                 <button onClick={handleCopyApplicationId}>
                   <Icon
