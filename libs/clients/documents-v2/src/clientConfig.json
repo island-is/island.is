@@ -832,8 +832,5 @@
         "wantsPaper": { "type": "boolean" }
       }
     }
-  },
-  "components": {
-    "schemas": { "ProblemDetails": { "additionalProperties": false } }
   }
 }
