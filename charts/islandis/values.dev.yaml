@@ -2867,7 +2867,7 @@ user-notification:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
@@ -2949,7 +2949,7 @@ user-notification-worker:
       timeoutSeconds: 3
     readiness:
       initialDelaySeconds: 3
-      path: '/readiness'
+      path: '/liveness'
       timeoutSeconds: 3
   hpa:
     scaling:
