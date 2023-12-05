@@ -12,6 +12,7 @@ import {
   TextTableItem,
   usePseudoName,
   State,
+  SortableTableHeader,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
@@ -25,8 +26,7 @@ import {
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
-import SortableTableHeader from '../TableHeaders/SortableTableHeader'
-import useSortedApplications from '../../utils/useSortedApplications'
+import useSortedApplications from '@island.is/financial-aid-web/veita/src/utils/useSortedApplications'
 
 interface PageProps {
   applications: Application[]
