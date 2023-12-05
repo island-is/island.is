@@ -2,7 +2,7 @@ import {
   CASES_ROUTE,
   INDICTMENTS_OVERVIEW_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, UserRole } from '@island.is/judicial-system/types'
 
 import {
   makeCourt,
@@ -22,6 +22,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id`, () => {
       court: makeCourt(),
     }
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_OVERVIEW_ROUTE}/test_id`)
@@ -46,6 +47,7 @@ describe(`${INDICTMENTS_OVERVIEW_ROUTE}/:id submitted`, () => {
       court: makeCourt(),
     }
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INDICTMENTS_OVERVIEW_ROUTE}/test_id`)

@@ -94,6 +94,8 @@ import { CitizenshipService } from './directorate-of-immigration/citizenship/cit
 
 import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/driving-license-duplicate.module'
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
+import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
 import { CarRecyclingService } from './car-recycling/car-recycling.service'
 
@@ -146,6 +148,7 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
+  SocialInsuranceAdministrationModule,
   CarRecyclingModule,
   CitizenshipModule,
 ]
@@ -199,6 +202,7 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
+  SocialInsuranceAdministrationService,
   CarRecyclingService,
   CitizenshipService,
 ]
