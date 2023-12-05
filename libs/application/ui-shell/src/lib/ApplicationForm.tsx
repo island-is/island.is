@@ -2,6 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { APPLICATION_APPLICATION } from '@island.is/application/graphql'
+
 import {
   ApplicationTemplateHelper,
   coreMessages,
@@ -34,6 +35,7 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 import { generateZodSchema } from './jsonStuff/jsonToDataSchema'
+import { FormTypeConverter } from './FormyTypeConverter'
 
 const ApplicationLoader: FC<
   React.PropsWithChildren<{
@@ -136,18 +138,21 @@ const ShellWrapper: FC<ShellWrapperProps> = ({
 
   useEffect(() => {
     async function populateForm() {
-      console.log('populateForm')
       if (dataSchema === undefined && form === undefined) {
-        if (config.formType === ApplicationFormTypes.DYNAMIC) {
-          console.log('Formtype DYnamic')
+        if (
+          config.formType === ApplicationFormTypes.DYNAMIC &&
+          application.form
+        ) {
+          const converter = new FormTypeConverter()
           const formFromJSON = JSON.parse(
-            application.form as string,
+            JSON.stringify(application.form),
           ) as unknown as Form
+          const ffooorm = converter.convertIForm(application.form)
+          console.log('ffooorm', ffooorm)
           const dataSchemaFromJSON = generateZodSchema(formFromJSON)
-          setForm(formFromJSON)
+          setForm(ffooorm)
           setDataSchema(dataSchemaFromJSON)
         } else {
-          console.log('Formtype Static')
           const template = await getApplicationTemplateByTypeId(
             application.typeId,
           )

@@ -5,6 +5,7 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  Form,
   HistoryEventMessage,
   PendingAction,
   StateLifeCycle,
@@ -55,12 +56,12 @@ export class ApplicationStateBuilder {
   constructor(
     name: string,
     status: ApplicationStateMachineStatus,
-    form?: string,
+    form?: Form,
     transition?: Transition,
   ) {
     this.stateDefinition = {
       name: name,
-      form: form ?? '',
+      // form: form ?? undefined,
       transitions: transition ? [transition] : [],
       status,
       lifecycle: {
@@ -77,7 +78,7 @@ export class ApplicationStateBuilder {
     return this.stateDefinition.name
   }
 
-  setForm(form: string) {
+  setForm(form: Form) {
     this.stateDefinition.form = form
     return this
   }
@@ -187,7 +188,7 @@ export function applicationBuilder<
 export const state = (
   name: string,
   status: ApplicationStateMachineStatus,
-  form?: string,
+  form?: Form,
   transition?: Transition,
 ): ApplicationStateBuilder => {
   return new ApplicationStateBuilder(name, status, form, transition)

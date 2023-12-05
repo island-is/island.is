@@ -7,7 +7,7 @@ import {
 } from 'xstate'
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
-import { FormLoader, FormText, StaticText } from './Form'
+import { Form, FormLoader, FormText, StaticText } from './Form'
 import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
@@ -40,7 +40,7 @@ export interface RoleInState<
   write?: ReadWriteValues
   delete?: boolean
   formLoader?: FormLoader
-  form?: string
+  form?: Form
   actions?: CallToAction<T>[]
   shouldBeListedForRole?: boolean
   api?: TemplateApi<R>[]

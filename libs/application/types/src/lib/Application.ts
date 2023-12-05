@@ -1,6 +1,7 @@
 import { PendingActionDisplayType } from './StateMachine'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderResult } from './DataProviderResult'
+import { IForm } from './Form'
 
 export enum ApplicationStatus {
   NOT_STARTED = 'notstarted',
@@ -69,7 +70,7 @@ export interface Application<TAnswers = FormValue> {
   status: ApplicationStatus
   draftTotalSteps?: number
   draftFinishedSteps?: number
-  form?: string
+  form?: IForm
 }
 
 export interface ApplicationWithAttachments extends Application {

@@ -2,6 +2,7 @@ import {
   ApplicationStateMachineStatus,
   ApplicationTypes,
   DefaultEvents,
+  Form,
   HistoryEventMessage,
   PendingAction,
   StateLifeCycle,
@@ -31,7 +32,7 @@ export interface Transition {
 
 export interface StateBlueprint {
   name: string
-  form: string
+  form?: Form
   transitions: Transition[]
   status: ApplicationStateMachineStatus
   lifecycle: StateLifeCycle

@@ -1,5 +1,3 @@
-import { buildCertificateTemplate } from '@island.is/application/utils'
-
 import {
   ApplicationTypes,
   InstitutionNationalIds,
@@ -7,6 +5,7 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { buildCertificateTemplate } from '../templates'
 
 const pdfApi = defineTemplateApi({
   action: 'getCriminalRecordPDF',

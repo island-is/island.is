@@ -14,7 +14,7 @@ export function paymentState(data: {
   abortTarget: string
 }) {
   return state('payment', 'draft')
-    .setForm(JSON.stringify(paymentForm()))
+    .setForm(paymentForm())
     .addOnExit(
       DeletePaymentApi.configure({
         triggerEvent: DefaultEvents.ABORT,

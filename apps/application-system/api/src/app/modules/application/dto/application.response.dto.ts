@@ -1,3 +1,4 @@
+import { FormDto } from '@island.is/application/api/form'
 import {
   ApplicationStatus,
   ApplicationTypes,
@@ -181,8 +182,8 @@ export class BaseApplicationResponseDto {
 
   @ApiProperty()
   @Expose()
-  @IsString()
-  form?: string
+  @IsObject()
+  form?: FormDto
 
   constructor(partial: Partial<BaseApplicationResponseDto>) {
     Object.assign(this, partial)

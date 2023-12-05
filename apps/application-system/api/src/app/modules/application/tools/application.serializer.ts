@@ -24,6 +24,7 @@ import {
   History,
   HistoryBuilder,
 } from '@island.is/application/api/history'
+import { FormService } from '@island.is/application/api/form'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { getApplicationNameTranslationString } from '../utils/application'
 
@@ -37,6 +38,7 @@ export class ApplicationSerializer
     private historyBuilder: HistoryBuilder,
     private featureFlagService: FeatureFlagService,
     private readonly templateService: TemplateService,
+    private readonly formService: FormService,
   ) {}
 
   intercept(
@@ -125,7 +127,10 @@ export class ApplicationSerializer
         )
       : undefined
 
-    const form = helper.getRoleInState(userRole)?.form
+    const form = await this.formService.getFormByApplicationId(
+      nationalId,
+      application,
+    )
 
     const dto = plainToInstance(ApplicationResponseDto, {
       ...application,

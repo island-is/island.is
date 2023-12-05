@@ -25,6 +25,7 @@ import { ApplicationFilesModule } from '@island.is/application/api/files'
 import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
+import { ApplicationFormModule } from '@island.is/application/api/form'
 import { ApplicationActionService } from './application-action.service'
 
 @Module({
@@ -47,6 +48,7 @@ import { ApplicationActionService } from './application-action.service'
     LoggingModule,
     ApplicationChargeModule,
     AuthPublicApiClientModule,
+    ApplicationFormModule,
   ],
   controllers: [ApplicationController, AdminController],
   providers: [

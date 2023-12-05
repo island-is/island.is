@@ -4,20 +4,24 @@ import {
   InstitutionNationalIds,
   PaymentCatalogApi,
   TemplateApi,
-  TemplateApiProviderBuilderItem,
+  DataProviderBuilderItem,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
-import { applicationBuilder, state } from '../../template/applicationBuilder'
+import {
+  applicationBuilder,
+  fields,
+  paymentState,
+  prerequisitesState,
+  startForm,
+  state,
+} from '@island.is/application/utils'
 
-import dataProviders from './providers'
-import { generateCompleted } from './forms/'
-
-import { fields, startForm } from '../../form/formBuilder'
-import { paymentState } from '../../state/payment'
-import { prerequisitesState } from '../../state/prerequisites'
+import { generateCompleted } from './forms'
 
 export function buildCertificateTemplate(data: {
   name: string
-  additionalProvider: TemplateApiProviderBuilderItem
+  additionalProvider: DataProviderBuilderItem
   getPdfApi: TemplateApi<unknown>
   templateId: ApplicationTypes
   title: string
@@ -74,6 +78,25 @@ export function buildCertificateTemplate(data: {
     abortTarget: draft.name,
   })
 
+  const dataProviders = [
+    {
+      provider: NationalRegistryUserApi,
+      title: 'Persónuupplýsingar úr Þjóðskrá',
+      subTitle:
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
+    },
+    {
+      provider: UserProfileApi,
+      title: 'Netfang og símanúmer úr þínum stillingum',
+      subTitle:
+        'Til þess að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
+    },
+  ] as {
+    provider: TemplateApi
+    title: string
+    subTitle?: string
+  }[]
+
   const providers = [
     ...dataProviders,
     additionalProvider,
@@ -85,19 +108,26 @@ export function buildCertificateTemplate(data: {
       }),
       title: '',
     },
-  ]
+  ] as {
+    provider: TemplateApi
+    title: string
+    subTitle?: string
+  }[]
+
+  const s = providers.map((provider) => provider.provider)
 
   const application = applicationBuilder(name, templateId)
     .addState(
       prerequisitesState({
         name,
         providers,
+        templateApis: s,
         targetState: draft.name,
       }),
     )
     .addState(
       draft
-        .setForm(JSON.stringify(draftForm))
+        .setForm(draftForm)
         .addTransition(DefaultEvents.SUBMIT, payment.name),
     )
     .addState(payment)

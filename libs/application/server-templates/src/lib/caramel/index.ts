@@ -4,8 +4,9 @@ import {
   ValidateCriminalRecordApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { buildCertificateTemplate } from '@island.is/application/utils'
+
 import { ChargeItemCode } from '@island.is/shared/constants'
+import { buildCertificateTemplate } from '../templates'
 
 const caramelPdfApi = defineTemplateApi({
   action: 'getCaramelPDF',
