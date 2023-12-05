@@ -72,16 +72,8 @@ export function addTests() {
 
       // Court record
       await expect(page).toHaveURL(/.*\/domur\/thingbok\/.*/)
-      await page
-        .locator('label')
-        .filter({ hasText: 'Varnaraðili tekur sér lögboðinn frest' })
-        .first()
-        .click()
-      await page
-        .locator('label')
-        .filter({ hasText: 'Sækjandi unir úrskurðinum' })
-        .first()
-        .click()
+      await page.getByText('Varnaraðili tekur sér lögboðinn frest').click()
+      await page.getByText('Sækjandi unir úrskurðinum').click()
       await page.locator('input[id=courtEndTime]').fill(today)
       await page.keyboard.press('Escape')
       await page.locator('input[id=courtEndTime-time]').fill('10:00')
