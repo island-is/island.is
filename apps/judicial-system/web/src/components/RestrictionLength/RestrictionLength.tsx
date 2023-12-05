@@ -1,14 +1,18 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
+import {
+  isAcceptingCaseDecision,
+  isCourtOfAppealsUser,
+} from '@island.is/judicial-system/types'
 
 import { CaseDecision, CaseType } from '../../graphql/schema'
 import { TempCase as Case } from '../../types'
 import BlueBox from '../BlueBox/BlueBox'
 import DateTime from '../DateTime/DateTime'
+import { UserContext } from '../UserProvider/UserProvider'
 import { restrictionLength as strings } from './RestrictionLength.strings'
 
 interface Props {
@@ -26,6 +30,8 @@ const RestrictionLength: React.FC<Props> = (props) => {
     handleValidToDateChange,
   } = props
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+  const isCOAUser = isCourtOfAppealsUser(user)
 
   return (
     <Box component="section" marginBottom={5} data-testid="caseDecisionSection">
@@ -54,7 +60,9 @@ const RestrictionLength: React.FC<Props> = (props) => {
               }),
             ),
           })}
-          selectedDate={workingCase.validToDate}
+          selectedDate={
+            isCOAUser ? workingCase.appealValidToDate : workingCase.validToDate
+          }
           minDate={new Date()}
           onChange={(date: Date | undefined, valid: boolean) => {
             handleValidToDateChange(date, valid)
@@ -80,7 +88,11 @@ const RestrictionLength: React.FC<Props> = (props) => {
                 <Checkbox
                   name="isCustodyIsolation"
                   label={formatMessage(strings.isolation)}
-                  checked={workingCase.isCustodyIsolation}
+                  checked={
+                    isCOAUser
+                      ? workingCase.isAppealCustodyIsolation
+                      : workingCase.isCustodyIsolation
+                  }
                   onChange={handleIsolationChange}
                   filled
                   large
@@ -89,12 +101,24 @@ const RestrictionLength: React.FC<Props> = (props) => {
               <DateTime
                 name="isolationToDate"
                 datepickerLabel={formatMessage(strings.isolationDateLable)}
-                disabled={!workingCase.isCustodyIsolation}
-                selectedDate={workingCase.isolationToDate}
+                disabled={
+                  (isCOAUser &&
+                    workingCase.isAppealCustodyIsolation === false) ||
+                  (!isCOAUser && workingCase.isCustodyIsolation === false)
+                }
+                selectedDate={
+                  isCOAUser
+                    ? workingCase.appealIsolationToDate
+                    : workingCase.isolationToDate
+                }
                 // Isolation can never be set in the past.
                 minDate={new Date()}
                 maxDate={
-                  workingCase.validToDate
+                  isCOAUser
+                    ? workingCase.appealValidToDate
+                      ? new Date(workingCase.appealValidToDate)
+                      : undefined
+                    : workingCase.validToDate
                     ? new Date(workingCase.validToDate)
                     : undefined
                 }
@@ -103,7 +127,10 @@ const RestrictionLength: React.FC<Props> = (props) => {
                 }
                 blueBox={false}
                 backgroundColor={
-                  workingCase.isCustodyIsolation ? 'white' : 'blue'
+                  (isCOAUser && workingCase.isAppealCustodyIsolation) ||
+                  workingCase.isCustodyIsolation
+                    ? 'white'
+                    : 'blue'
                 }
               />
             </BlueBox>

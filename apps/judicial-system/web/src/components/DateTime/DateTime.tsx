@@ -182,7 +182,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
           icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
           minDate={minDate}
           maxDate={maxDate}
-          selected={selectedDate ? new Date(selectedDate) : undefined}
+          selected={currentDate ? new Date(currentDate) : undefined}
           disabled={disabled || locked}
           handleCloseCalendar={onCalendarClose}
           required={required}

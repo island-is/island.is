@@ -33,6 +33,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
@@ -222,22 +223,53 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
           CaseAppealRulingDecision.CHANGED && (
           <RestrictionLength
             workingCase={workingCase}
-            handleIsolationChange={function (
+            handleIsolationChange={(
               event: React.ChangeEvent<HTMLInputElement>,
-            ): void {
-              throw new Error('Function not implemented.')
+            ): void => {
+              setAndSendCaseToServer(
+                [
+                  {
+                    isAppealCustodyIsolation: event.target.checked,
+                    force: true,
+                  },
+                ],
+                workingCase,
+                setWorkingCase,
+              )
             }}
-            handleIsolationDateChange={function (
+            handleIsolationDateChange={(
               date: Date | undefined,
               valid: boolean,
-            ): void {
-              throw new Error('Function not implemented.')
+            ): void => {
+              if (date && valid) {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      appealIsolationToDate: formatDateForServer(date),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
             }}
-            handleValidToDateChange={function (
+            handleValidToDateChange={(
               date: Date | undefined,
               valid: boolean,
-            ): void {
-              throw new Error('Function not implemented.')
+            ): void => {
+              if (date && valid) {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      appealValidToDate: formatDateForServer(date),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
             }}
           />
         )}
