@@ -6,7 +6,7 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { Form, FormModes, DefaultEvents } from '@island.is/application/types'
 import {
   inReviewFormMessages,
   pensionSupplementFormMessage,
@@ -62,7 +62,7 @@ export const AdditionalDocumentsRequired: Form = buildForm({
                   name: pensionSupplementFormMessage.fileUpload
                     .additionalDocumentsEditSubmit,
                   type: 'primary',
-                  event: 'APPROVE',
+                  event: DefaultEvents.SUBMIT,
                 },
               ],
             }),
