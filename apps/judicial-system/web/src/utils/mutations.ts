@@ -87,7 +87,7 @@ export const CreateUserMutation = gql`
 `
 
 export const UsersQuery = gql`
-  query Users {
+  query SomeUsers {
     users {
       id
       name

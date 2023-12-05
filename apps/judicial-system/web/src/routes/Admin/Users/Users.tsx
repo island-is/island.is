@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -24,13 +23,9 @@ import {
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
-import { UsersQuery } from '@island.is/judicial-system-web/src/utils/mutations'
 
+import { useUsersQuery } from './getUsers.generated'
 import * as styles from './Users.css'
-
-interface UserData {
-  users: User[]
-}
 
 export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
@@ -45,12 +40,12 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     data,
     error,
     loading: usersLoading,
-  } = useQuery<UserData>(UsersQuery, {
+  } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const users = data?.users.filter((u) => {
+  const users = data?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
