@@ -259,6 +259,12 @@ const OldAgePensionTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_DOCUMENTS,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           lifecycle: pruneAfterDays(90),
           roles: [
             {

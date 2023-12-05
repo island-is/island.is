@@ -3,6 +3,7 @@ import {
   GetApplicantInfoApi,
   GetCurrenciesApi,
   GetIsApplicantEligibleApi,
+  SendAdditionalDocumentsApi,
   SendApplicationApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
@@ -12,6 +13,7 @@ export const exportedApis = [
   SendApplicationApi,
   GetIsApplicantEligibleApi,
   GetCurrenciesApi,
+  SendAdditionalDocumentsApi,
 ].map((Api) => ({
   provide: Api,
   useFactory: (configuration: Configuration) => {

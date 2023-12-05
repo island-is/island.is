@@ -45,7 +45,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   private async initAttachments(
     application: Application,
-    id: string,
     type: AttachmentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
@@ -63,6 +62,30 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     return result
+  }
+
+  private async getAdditionalAttachments(
+    application: Application,
+  ): Promise<Array<Attachment>> {
+    const { additionalAttachmentsRequired } = getApplicationAnswers(
+      application.answers,
+    )
+    const attachments: Array<Attachment> = []
+
+    if (
+      additionalAttachmentsRequired &&
+      additionalAttachmentsRequired.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachmentsRequired,
+        )),
+      )
+    }
+
+    return attachments
   }
 
   private async getAttachments(
@@ -84,7 +107,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUploadAdditionalFiles.additionalDocuments',
           AttachmentTypeEnum.Other,
           additionalAttachments,
         )),
@@ -95,7 +117,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.pension',
           AttachmentTypeEnum.Pension,
           pensionAttachments,
         )),
@@ -110,7 +131,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.fishermen',
           AttachmentTypeEnum.Sailor,
           fishermenAttachments,
         )),
@@ -125,7 +145,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'employment.selfEmployedAttachment',
           AttachmentTypeEnum.SelfEmployed,
           selfEmployedAttachments,
         )),
@@ -140,7 +159,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.earlyRetirement',
           AttachmentTypeEnum.Retirement,
           earlyRetirementAttachments,
         )),
@@ -186,6 +204,16 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       // TODO: Implement sendApplication for HOUSEHOLD_SUPPLEMENT
       console.log('Send household supplement application (Not implemented)')
     }
+  }
+
+  async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
+    const attachments = await this.getAdditionalAttachments(application)
+
+    await this.siaClientService.sendAdditionalDocuments(
+      auth,
+      application.id,
+      attachments,
+    )
   }
 
   async getApplicant({ auth }: TemplateApiModuleActionProps) {

@@ -8,11 +8,13 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
-  shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath } from '@island.is/application/core'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
-import { formatBank } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import {
+  formatBank,
+  shouldNotUpdateBankAccount,
+} from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -35,8 +37,12 @@ export const transformApplicationToOldAgePensionDTO = (
     bankName,
     bankAddress,
     currency,
+    paymentInfo,
   } = getApplicationAnswers(application.answers)
-  const { email } = getApplicationExternalData(application.externalData)
+  const { bankInfo, email } = getApplicationExternalData(
+    application.externalData,
+  )
+
   // If foreign residence is found then this is always true
   const residenceHistoryQuestion = getValueViaPath(
     application.answers,
@@ -51,19 +57,17 @@ export const transformApplicationToOldAgePensionDTO = (
     },
     comment: comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(
-      application.answers,
-      application.externalData,
-    ) && {
-      ...(bankAccountType === BankAccountType.ICELANDIC && {
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
         domesticBankInfo: {
           bank: formatBank(bank),
         },
       }),
       ...(bankAccountType === BankAccountType.FOREIGN && {
         foreignBankInfo: {
-          iban: iban,
-          swift: swift,
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
           foreignBankName: bankName,
           foreignBankAddress: bankAddress,
           foreignCurrency: currency,
