@@ -22,6 +22,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
+  DefaultHeaderProps,
   Footer as WebFooter,
   HeadWithSocialSharing,
   LiveChatIncChatPanel,
@@ -30,7 +31,7 @@ import {
   Sticky,
   Webreader,
 } from '@island.is/web/components'
-import { WatsonChatPanel } from '@island.is/web/components'
+import { DefaultHeader, WatsonChatPanel } from '@island.is/web/components'
 import { STICKY_NAV_MAX_WIDTH } from '@island.is/web/constants'
 import {
   Image,
@@ -38,13 +39,17 @@ import {
   OrganizationPage,
   OrganizationTheme,
 } from '@island.is/web/graphql/schema'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
+import {
+  useLinkResolver,
+  useNamespace,
+  usePlausiblePageview,
+} from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { LayoutProps } from '@island.is/web/layouts/main'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
+import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 import { LatestNewsCardConnectedComponent } from '../LatestNewsCardConnectedComponent'
-import { DefaultHeader } from './Themes/DefaultTheme'
 import { DigitalIcelandHeader } from './Themes/DigitalIcelandTheme'
 import { FiskistofaHeader } from './Themes/FiskistofaTheme'
 import { FiskistofaFooter } from './Themes/FiskistofaTheme'
@@ -147,14 +152,6 @@ const lightThemes = [
   'rettindagaesla-fatlads-folks',
 ]
 
-const getBackgroundStyle = (background: OrganizationTheme) => {
-  if (background.gradientStartColor && background.gradientEndColor)
-    return `linear-gradient(99.09deg, ${background.gradientStartColor} 23.68%,
-      ${background.gradientEndColor} 123.07%),
-      linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
-  return background.backgroundColor ?? ''
-}
-
 export const getThemeConfig = (
   theme?: string,
   organization?: Organization | null,
@@ -199,6 +196,8 @@ export const getThemeConfig = (
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
 > = ({ organizationPage }) => {
+  const { linkResolver } = useLinkResolver()
+
   switch (organizationPage.theme) {
     case 'syslumenn':
       return <SyslumennHeader organizationPage={organizationPage} />
@@ -281,10 +280,22 @@ export const OrganizationHeader: React.FC<
           background={getBackgroundStyle(organizationPage.themeProperties)}
           title={organizationPage.title}
           logo={organizationPage.organization?.logo?.url}
-          titleColor={
-            organizationPage.themeProperties.darkText ? 'dark400' : 'white'
+          logoHref={
+            linkResolver('organizationpage', [organizationPage.slug]).href
           }
-          slug={organizationPage.slug}
+          titleColor={
+            (organizationPage.themeProperties
+              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
+          }
+          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
+          imageIsFullHeight={
+            organizationPage.themeProperties.imageIsFullHeight ?? true
+          }
+          imageObjectFit={
+            organizationPage.themeProperties.imageObjectFit === 'cover'
+              ? 'cover'
+              : 'contain'
+          }
         />
       )
   }
@@ -570,8 +581,11 @@ export const OrganizationFooter: React.FC<
             imageUrl={organization.logo?.url}
             heading={organization.title}
             columns={organization.footerItems}
-            background={organization?.footerConfig?.background}
-            color={organization?.footerConfig?.color}
+            background={organization.footerConfig?.background}
+            color={
+              organization.footerConfig?.color ||
+              organization.footerConfig?.textColor
+            }
           />
           <Divider />
         </>

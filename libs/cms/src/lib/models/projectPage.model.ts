@@ -16,6 +16,18 @@ import { LinkGroup, mapLinkGroup } from './linkGroup.model'
 import { FooterItem, mapFooterItem } from './footerItem.model'
 import { Link, mapLink } from './link.model'
 import { mapNamespace, Namespace } from './namespace.model'
+import {
+  mapOrganizationTheme,
+  OrganizationTheme,
+} from './organizationTheme.model'
+
+@ObjectType()
+class ProjectPageThemeProperties extends OrganizationTheme {}
+
+const mapProjectPageThemeProperties = (
+  fields: IProjectPage['fields'],
+): ProjectPageThemeProperties =>
+  mapOrganizationTheme(fields.themeProperties ?? {})
 
 @ObjectType()
 export class ProjectPage {
@@ -73,6 +85,9 @@ export class ProjectPage {
   @Field()
   defaultHeaderBackgroundColor!: string
 
+  @CacheField(() => ProjectPageThemeProperties, { nullable: true })
+  themeProperties?: ProjectPageThemeProperties
+
   @Field()
   featuredDescription!: string
 
@@ -129,4 +144,5 @@ export const mapProjectPage = ({ sys, fields }: IProjectPage): ProjectPage => ({
   backLink: fields.backLink ? mapLink(fields.backLink) : null,
   contentIsFullWidth: fields.contentIsFullWidth ?? false,
   namespace: fields.namespace ? mapNamespace(fields.namespace) : null,
+  themeProperties: mapProjectPageThemeProperties(fields),
 })

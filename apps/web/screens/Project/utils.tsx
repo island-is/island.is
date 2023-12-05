@@ -15,6 +15,7 @@ const lightThemes = [
   'default',
   'opinbernyskopun',
   'grindavik',
+  'default-v2',
 ]
 
 export const getThemeConfig = (

@@ -404,4 +404,19 @@ export class UpdateCaseDto {
   @IsEnum(CaseAppealRulingDecision)
   @ApiPropertyOptional({ enum: CaseAppealRulingDecision })
   readonly appealRulingDecision?: CaseAppealRulingDecision
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealValidToDate?: Date
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional()
+  readonly isAppealCustodyIsolation?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly appealIsolationToDate?: Date
 }
