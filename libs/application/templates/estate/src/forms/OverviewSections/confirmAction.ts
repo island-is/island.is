@@ -27,14 +27,14 @@ export const overviewConfirmAction = [
           'estateWithoutAssets.estateDebtsExist',
         ) === YES
 
-        if (hasAssets && hasDebt) {
-          return [
-            {
-              value: YES,
-              label: m.acceptNoAssets,
-            },
-          ]
-        } else return []
+      if (hasAssets && hasDebt) {
+        return [
+          {
+            value: YES,
+            label: m.acceptNoAssets,
+          },
+        ]
+      } else return []
     },
   }),
   buildCheckboxField({
@@ -57,7 +57,7 @@ export const overviewConfirmAction = [
           'estateWithoutAssets.estateDebtsExist',
         ) === YES
 
-      if (hasAssets && hasDebt || hasAssets && !hasDebt) {
+      if ((hasAssets && hasDebt) || (hasAssets && !hasDebt)) {
         return [
           {
             value: YES,
