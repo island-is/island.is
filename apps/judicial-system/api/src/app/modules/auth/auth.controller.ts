@@ -217,15 +217,16 @@ export class AuthController {
         userNationalId: user.nationalId,
         userRole: user.role,
         jwtToken: this.sharedAuthService.signJwt(user, csrfToken),
-        redirectRoute: requestedRedirectRoute
-          ? requestedRedirectRoute
-          : user.role === UserRole.ADMIN
-          ? USERS_ROUTE
-          : user.role === UserRole.DEFENDER
-          ? DEFENDER_CASES_ROUTE
-          : user.institution?.type === InstitutionType.COURT_OF_APPEALS
-          ? COURT_OF_APPEAL_CASES_ROUTE
-          : CASES_ROUTE,
+        redirectRoute:
+          requestedRedirectRoute && requestedRedirectRoute.startsWith('/') // Guard against invalid redirects
+            ? requestedRedirectRoute
+            : user.role === UserRole.ADMIN
+            ? USERS_ROUTE
+            : user.role === UserRole.DEFENDER
+            ? DEFENDER_CASES_ROUTE
+            : user.institution?.type === InstitutionType.COURT_OF_APPEALS
+            ? COURT_OF_APPEAL_CASES_ROUTE
+            : CASES_ROUTE,
       }
     } else {
       const defender = await this.authService.findDefender(authUser.nationalId)

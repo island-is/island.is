@@ -1,4 +1,4 @@
-import { Case, CaseType } from '@island.is/judicial-system/types'
+import { Case, CaseType, UserRole } from '@island.is/judicial-system/types'
 import { INVESTIGATION_CASE_CASE_FILES_ROUTE } from '@island.is/judicial-system/consts'
 
 import { makeCourt, intercept, makeCaseFile, mockCase } from '../../../utils'
@@ -14,6 +14,7 @@ describe(`${INVESTIGATION_CASE_CASE_FILES_ROUTE}/:id`, () => {
       parentCase: { ...mockCase(CaseType.CUSTODY), caseFiles: [file1, file2] },
     }
 
+    cy.login(UserRole.PROSECUTOR)
     cy.stubAPIResponses()
     intercept(caseDataAddition)
     cy.visit(`${INVESTIGATION_CASE_CASE_FILES_ROUTE}/test_id`)
