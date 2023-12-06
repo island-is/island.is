@@ -20,6 +20,7 @@ export enum Features {
   householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
+  carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
 
   // Application System Delegations active
