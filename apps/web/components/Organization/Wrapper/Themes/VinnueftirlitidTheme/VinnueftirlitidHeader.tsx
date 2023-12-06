@@ -14,7 +14,7 @@ interface HeaderProps {
 const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
   organizationPage,
 }) => {
-    const { linkResolver } = useLinkResolver()
+  const { linkResolver } = useLinkResolver()
   const themeProp = organizationPage.themeProperties
   return (
     <div
@@ -34,7 +34,9 @@ const VinnueftilitidHeader: React.FC<React.PropsWithChildren<HeaderProps>> = ({
           themeProp?.imageObjectFit === 'cover' ? 'cover' : 'contain'
         }
         logo={organizationPage.organization?.logo?.url}
-        logoHref={linkResolver('organizationpage', [organizationPage.slug]).href}
+        logoHref={
+          linkResolver('organizationpage', [organizationPage.slug]).href
+        }
         className={styles.gridContainer}
       />
     </div>
