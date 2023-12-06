@@ -25,12 +25,7 @@ import { useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({
-  setStep,
-  reviewerNationalId = '',
-  buyerOperator: buyerOperators = {},
-  ...props
-}) => {
+> = ({ setStep, reviewerNationalId = '', buyerOperator = {}, ...props }) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
@@ -51,13 +46,24 @@ export const Overview: FC<
       reviewerNationalId,
       application.answers,
     )
-    console.log('approveAnswers', approveAnswers)
+    const resApprove = await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: DefaultEvents.APPROVE,
+          answers: approveAnswers,
+        },
+      },
+    })
+
+    const updatedApplication = resApprove?.data?.submitApplication
+
     await submitApplication({
       variables: {
         input: {
           id: application.id,
           event: DefaultEvents.SUBMIT,
-          answers: approveAnswers,
+          answers: updatedApplication,
         },
       },
     })
@@ -97,7 +103,7 @@ export const Overview: FC<
         />
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
-          buyerOperator={buyerOperators}
+          buyerOperator={buyerOperator}
           {...props}
         />
 

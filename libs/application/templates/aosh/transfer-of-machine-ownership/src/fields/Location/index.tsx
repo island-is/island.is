@@ -92,7 +92,6 @@ export const Location: FC<
             type="text"
             label={formatMessage(location.labels.addressLabel)}
             backgroundColor="blue"
-            required
             onChange={(event) => {
               setSelectedValue({
                 ...selectedValue,
@@ -110,16 +109,15 @@ export const Location: FC<
             format="###"
             label={formatMessage(location.labels.postCodeLabel)}
             backgroundColor="blue"
-            required
             onChange={(event) => {
               setSelectedValue({
                 ...selectedValue,
-                postCode: parseInt(event.target.value),
+                postCode: parseInt(event.target.value) || undefined,
               })
             }}
             defaultValue={
               selectedValue.postCode === 0
-                ? ''
+                ? undefined
                 : selectedValue.postCode?.toString()
             }
           />

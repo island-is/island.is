@@ -104,7 +104,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       delegateNationalId: auth.nationalId || answers.buyer.nationalId,
       supervisorNationalId: answers.buyerOperator?.nationalId,
       supervisorEmail: answers.buyerOperator?.email,
-      supervisorPhoneNumber: answers.buyerOperator?.phone,
+      supervisorPhoneNumber: answers.buyerOperator?.phone?.replace(/-/g, ''),
       machineAddress: answers.location.address,
     })
     console.log('confirmOwnerChange done')

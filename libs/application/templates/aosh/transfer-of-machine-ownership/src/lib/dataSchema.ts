@@ -98,7 +98,7 @@ export const MachineAnswersSchema = z.object({
   }),
   location: z.object({
     address: z.string(),
-    postCode: z.number(),
+    postCode: z.number().optional(),
     moreInfo: z.string(),
   }),
   buyerOperator: OperatorSchema.optional(),

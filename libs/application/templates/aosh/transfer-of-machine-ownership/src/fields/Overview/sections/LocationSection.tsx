@@ -1,12 +1,12 @@
 // Location with button - only visible to buyer
 import { FieldBaseProps } from '@island.is/application/types'
-import { FC, useState, useEffect } from 'react'
+import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../../lib/messages'
 import { States } from '../../../lib/constants'
 import { ReviewGroup } from '../../ReviewGroup'
-import { ReviewScreenProps, MachineLocation } from '../../../shared'
+import { ReviewScreenProps } from '../../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { hasReviewerApproved } from '../../../utils'
 
@@ -19,30 +19,6 @@ export const LocationSection: FC<
   const onButtonClick = () => {
     setStep && setStep('location')
   }
-  const initialMachineLocation = getValueViaPath(
-    application.answers,
-    'location',
-    undefined,
-  ) as MachineLocation | undefined
-
-  const [machineLocation, setMachineLocation] = useState<
-    MachineLocation | undefined
-  >(
-    getValueViaPath(application.answers, 'location', undefined) as
-      | MachineLocation
-      | undefined,
-  )
-
-  // Use an effect to update machineLocation when initialMachineLocation changes.
-  useEffect(() => {
-    setMachineLocation(initialMachineLocation)
-
-    // If location prop has a value, update machineLocation
-    if (location) {
-      setMachineLocation(location)
-    }
-  }, [initialMachineLocation, location])
-
   const isBuyer =
     (getValueViaPath(answers, 'buyer.nationalId', '') as string) ===
     reviewerNationalId
@@ -64,8 +40,8 @@ export const LocationSection: FC<
             {formatMessage(overview.labels.locationTitle)}
           </Text>
           <Text color="dark400">
-            {machineLocation?.address && machineLocation?.postCode
-              ? `${machineLocation.address} - ${machineLocation.postCode}`
+            {location?.address && location?.postCode
+              ? `${location.address} - ${location.postCode}`
               : formatMessage(overview.labels.noLocation)}
           </Text>
         </GridColumn>

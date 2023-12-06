@@ -16,13 +16,5 @@ export const hasReviewerApproved = (
     if (!hasApproved) return false
   }
 
-  // Check if reviewer is seller and everyone else has approved
-  if (
-    (getValueViaPath(answers, 'seller.nationalId', '') as string) ===
-    reviewerNationalId
-  ) {
-    return false
-  }
-
   return true
 }
