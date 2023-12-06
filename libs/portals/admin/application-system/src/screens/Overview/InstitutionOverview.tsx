@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   SkeletonLoader,
@@ -11,16 +11,13 @@ import {
   useGetOrganizationsQuery,
 } from '../../queries/overview.generated'
 import invertBy from 'lodash/invertBy'
-import flatten from 'lodash/flatten'
-import uniq from 'lodash/uniq'
-import { Filters } from '../../components/Filters/Filters'
+import { InstitutionFilters } from '../../components/Filters/InstitutionFilters'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { ApplicationsTable } from '../../components/ApplicationsTable/ApplicationsTable'
 import { ApplicationFilters, MultiChoiceFilter } from '../../types/filters'
 import { Organization } from '@island.is/shared/types'
 import { institutionMapper } from '@island.is/application/types'
-import { getFilteredApplications } from '../../shared/utils'
 import { AdminApplication } from '../../types/adminApplication'
 import { useUserInfo } from '@island.is/auth/react'
 
@@ -47,8 +44,6 @@ const InstitutionOverview = () => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [filters, setFilters] = useState(defaultFilters)
-  const [availableApplications, setAvailableApplications] = useState<string[]>()
-  const [institutionFilters, setInstitutionFilters] = useState<string[]>()
   const [multiChoiceFilters, setMultiChoiceFilters] = useState(
     defaultMultiChoiceFilters,
   )
@@ -58,32 +53,33 @@ const InstitutionOverview = () => {
     ssr: false,
   })
 
-  const { data: response, loading: queryLoading } =
-    useGetInstitutionApplicationsQuery({
-      ssr: false,
-      variables: {
-        input: {
-          nationalId: userInfo.profile.nationalId,
-          page: page,
-          count: pageSize,
-          applicantNationalId: filters.nationalId
-            ? filters.nationalId.replace('-', '')
-            : '',
-          from: filters.period.from?.toISOString(),
-          to: filters.period.to?.toISOString(),
-        },
+  const {
+    data: response,
+    loading: queryLoading,
+    refetch,
+  } = useGetInstitutionApplicationsQuery({
+    ssr: false,
+    variables: {
+      input: {
+        nationalId: userInfo.profile.nationalId,
+        page: page,
+        count: pageSize,
+        applicantNationalId: filters.nationalId
+          ? filters.nationalId.replace('-', '')
+          : '',
+        from: filters.period.from?.toISOString(),
+        to: filters.period.to?.toISOString(),
+        status: multiChoiceFilters?.status,
       },
-      onCompleted: (q) => {
-        // Initialize available applications from the initial response
-        // So that we can use them to filter by
-        const names = q.applicationApplicationsInstitutionAdmin?.rows
-          ?.filter((x) => !!x.name)
-          .map((x) => x.name ?? '')
-        if (names) {
-          setAvailableApplications(uniq(names))
-        }
-      },
-    })
+    },
+    onCompleted: (q) => {
+      // Initialize available applications from the initial response
+      // So that we can use them to filter by
+      const names = q.applicationApplicationsInstitutionAdmin?.rows
+        ?.filter((x) => !!x.name)
+        .map((x) => x.name ?? '')
+    },
+  })
 
   const isLoading = queryLoading || orgsLoading
   const applicationApplicationsInstitutionAdmin =
@@ -115,12 +111,6 @@ const InstitutionOverview = () => {
     categoryId,
     selected,
   }) => {
-    if (categoryId === MultiChoiceFilter.INSTITUTION) {
-      // Special case for institutions, because we need to map institution slugs to application typeIds
-      const typeIds = flatten(selected.map((x) => institutionApplications[x]))
-      setInstitutionFilters(typeIds.length > 0 ? typeIds : undefined)
-    }
-
     setMultiChoiceFilters((prev) => ({
       ...prev,
       [categoryId]: selected.length > 0 ? selected : undefined,
@@ -140,12 +130,7 @@ const InstitutionOverview = () => {
       // Clear all filters
       setFilters(defaultFilters)
       setMultiChoiceFilters(defaultMultiChoiceFilters)
-      setInstitutionFilters(undefined)
       return
-    }
-
-    if (categoryId === MultiChoiceFilter.INSTITUTION) {
-      setInstitutionFilters(undefined)
     }
 
     setMultiChoiceFilters((prev) => ({
@@ -155,12 +140,11 @@ const InstitutionOverview = () => {
   }
 
   // Reset the page on filter change
-  useEffect(() => setPage(1), [filters, multiChoiceFilters])
+  useEffect(() => {
+    setPage(1)
+    refetch()
+  }, [filters, multiChoiceFilters])
 
-  const filteredApplicationList = getFilteredApplications(
-    applicationAdminList ?? [],
-    { multiChoiceFilters, institutionFilters },
-  )
   return (
     <Box>
       <Breadcrumbs
@@ -172,15 +156,13 @@ const InstitutionOverview = () => {
       <Text variant="h3" as="h1" marginBottom={[3, 3, 6]} marginTop={3}>
         {formatMessage(m.applicationSystemApplications)}
       </Text>
-      <Filters
+      <InstitutionFilters
         onSearchChange={handleSearchChange}
         onFilterChange={handleMultiChoiceFilterChange}
         onDateChange={handleDateChange}
         onFilterClear={clearFilters}
         multiChoiceFilters={multiChoiceFilters}
         filters={filters}
-        applications={availableApplications ?? []}
-        organizations={availableOrganizations ?? []}
         numberOfDocuments={numberOfItems}
       />
       {isLoading && filters.nationalId?.length === 11 ? (
@@ -192,7 +174,7 @@ const InstitutionOverview = () => {
         />
       ) : (
         <ApplicationsTable
-          applications={filteredApplicationList ?? []}
+          applications={applicationAdminList ?? []}
           organizations={organizations}
           page={page}
           setPage={setPage}
