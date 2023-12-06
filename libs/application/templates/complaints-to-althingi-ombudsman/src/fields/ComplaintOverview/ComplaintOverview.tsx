@@ -27,7 +27,6 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   const answers = application.answers as ComplaintsToAlthingiOmbudsman
   const { isEditable } = field.props
   const {
-    appeals,
     complaintType,
     applicant: { name, phoneNumber, email, address },
     complaintDescription: { decisionDate },
