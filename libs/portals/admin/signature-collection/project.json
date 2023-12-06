@@ -27,7 +27,6 @@
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "output": "libs/portals/admin/signature-collection/src/**/**/*.codegen.ts",
         "command": "graphql-codegen --config libs/portals/admin/signature-collection/codegen.yml"
       }
     }
