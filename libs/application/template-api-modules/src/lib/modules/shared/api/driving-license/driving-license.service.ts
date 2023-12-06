@@ -172,7 +172,7 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     }
 
     return {
-      currentLicense: categoryB ? categoryB.name : null,
+      currentLicense: categoryB ? categoryB.nr || categoryB.name : null,
       remarks: drivingLicense?.remarks ?? [],
       categories: drivingLicense?.categories,
       id: drivingLicense?.id,
