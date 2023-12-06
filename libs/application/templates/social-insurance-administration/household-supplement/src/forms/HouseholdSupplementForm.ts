@@ -27,8 +27,6 @@ import {
   isExistsCohabitantOlderThan25,
   getApplicationAnswers,
   getApplicationExternalData,
-  typeOfBankInfo,
-  getCurrencies,
   getAvailableYears,
   getAvailableMonths,
 } from '../lib/householdSupplementUtils'
@@ -43,6 +41,8 @@ import {
   friendlyFormatIBAN,
   friendlyFormatSWIFT,
   getBankIsk,
+  typeOfBankInfo,
+  getCurrencies,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 
@@ -116,12 +116,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     const { bankAccountType } = getApplicationAnswers(
                       application.answers,
                     )
+                    const { bankInfo } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
                     const type =
                       bankAccountType ??
-                      typeOfBankInfo(
-                        application.answers,
-                        application.externalData,
-                      )
+                      typeOfBankInfo(bankInfo, bankAccountType)
 
                     return type === BankAccountType.ICELANDIC
                       ? householdSupplementFormMessage.payment.alertMessage
@@ -134,11 +135,16 @@ export const HouseholdSupplementForm: Form = buildForm({
                 buildRadioField({
                   id: 'paymentInfo.bankAccountType',
                   title: '',
-                  defaultValue: (application: Application) =>
-                    typeOfBankInfo(
+                  defaultValue: (application: Application) => {
+                    const { bankAccountType } = getApplicationAnswers(
                       application.answers,
+                    )
+                    const { bankInfo } = getApplicationExternalData(
                       application.externalData,
-                    ),
+                    )
+
+                    return typeOfBankInfo(bankInfo, bankAccountType)
+                  },
                   options: [
                     {
                       label:
@@ -168,9 +174,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return getBankIsk(bankInfo)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.ICELANDIC
                   },
                 }),
@@ -185,9 +195,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return friendlyFormatIBAN(bankInfo.iban)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -196,11 +210,6 @@ export const HouseholdSupplementForm: Form = buildForm({
                   title: householdSupplementFormMessage.payment.swift,
                   placeholder: 'AAAA BB CC XXX',
                   width: 'half',
-                  onChange: (e) => {
-                    console.log('e ', e)
-                    const formattedSWIFT = friendlyFormatSWIFT(e.target.value)
-                    console.log('formatted ', formattedSWIFT)
-                  },
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
@@ -208,9 +217,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return friendlyFormatSWIFT(bankInfo.swift)
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -220,8 +233,11 @@ export const HouseholdSupplementForm: Form = buildForm({
                   width: 'half',
                   placeholder:
                     householdSupplementFormMessage.payment.selectCurrency,
-                  options: ({ externalData }: Application) =>
-                    getCurrencies(externalData),
+                  options: ({ externalData }: Application) => {
+                    const { currencies } =
+                      getApplicationExternalData(externalData)
+                    return getCurrencies(currencies)
+                  },
                   defaultValue: (application: Application) => {
                     const { bankInfo } = getApplicationExternalData(
                       application.externalData,
@@ -229,9 +245,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.currency : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -246,9 +266,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankName : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -263,9 +287,13 @@ export const HouseholdSupplementForm: Form = buildForm({
                     return !isEmpty(bankInfo) ? bankInfo.foreignBankAddress : ''
                   },
                   condition: (formValue: FormValue, externalData) => {
+                    const { bankAccountType } = getApplicationAnswers(formValue)
+                    const { bankInfo } =
+                      getApplicationExternalData(externalData)
+
                     const radio =
-                      (formValue.paymentInfo as FormValue)?.bankAccountType ??
-                      typeOfBankInfo(formValue, externalData)
+                      bankAccountType ??
+                      typeOfBankInfo(bankInfo, bankAccountType)
                     return radio === BankAccountType.FOREIGN
                   },
                 }),
@@ -338,7 +366,7 @@ export const HouseholdSupplementForm: Form = buildForm({
       title: householdSupplementFormMessage.info.periodTitle,
       children: [
         buildMultiField({
-          id: 'period',
+          id: 'periodField',
           title: householdSupplementFormMessage.info.periodTitle,
           description: householdSupplementFormMessage.info.periodDescription,
           children: [
