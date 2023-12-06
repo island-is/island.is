@@ -4,54 +4,80 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const valueWrapper = style({
   display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'flex-start',
   justifyContent: 'space-between',
   borderTop: `1px solid ${theme.color.blue200}`,
   padding: `${theme.spacing[2]}px 0`,
-})
 
-export const dropdownContainer = style({
-  marginRight: `${theme.spacing[2]}px`,
-})
-
-export const control = style({
-  background: 'transparent',
-  border: 'none',
-  cursor: 'pointer',
-  boxShadow: 'none',
-})
-
-export const option = style({
-  cursor: 'pointer',
-  position: 'relative',
-  padding: `${theme.spacing[1]}px`,
-
-  selectors: {
-    '&:hover': {
-      background: theme.color.blue100,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      alignItems: 'center',
     },
   },
 })
 
-export const menu = style({
-  marginTop: -3,
-  borderTopLeftRadius: 0,
-  borderTopRightRadius: 0,
-  boxShadow: 'none',
-  borderTop: `none`,
-  borderRight: `3px solid ${theme.color.mint400}`,
-  borderLeft: `3px solid ${theme.color.mint400}`,
-  borderBottom: `3px solid ${theme.color.mint400}`,
-  borderBottomLeftRadius: 8,
-  borderBottomRightRadius: 8,
-  boxSizing: 'border-box',
+export const courtDocumentInfo = style({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      flexDirection: 'row',
+    },
+  },
 })
 
-export const submittedByMenuIsOpen = style({
-  boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
-  borderTopLeftRadius: 8,
-  borderTopRightRadius: 8,
-  borderBottomLeftRadius: 0,
-  borderBottomRightRadius: 0,
+export const nameContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  flex: 1,
+  minHeight: '34px',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      minHeight: 'auto',
+    },
+  },
+})
+
+export const dropdownContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  minWidth: theme.spacing[28],
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[1],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      marginRight: theme.spacing[2],
+      marginLeft: theme.spacing[2],
+      marginTop: theme.spacing[0],
+      marginBottom: theme.spacing[0],
+    },
+  },
+})
+
+export const firstCourtDocument = style({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing[2],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+    },
+  },
+})
+
+export const removeButton = style({
+  background: theme.color.blue200,
+  padding: theme.spacing[1],
+  borderRadius: '8px',
+  width: '34px',
 })
 
 globalStyle('.court-documents-select__option--is-selected', {

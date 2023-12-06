@@ -27460,13 +27460,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fuse.js@npm:6.6.2":
-  version: 6.6.2
-  resolution: "fuse.js@npm:6.6.2"
-  checksum: 17ae758ce205276ebd88bd9c9f088a100be0b4896abac9f6b09847151269d1690f41d7f98ff5813d4a58973162dbd99d0072ce807020fee6f9de60170f6b08eb
-  languageName: node
-  linkType: hard
-
 "futoin-hkdf@npm:^1.3.2":
   version: 1.5.3
   resolution: "futoin-hkdf@npm:1.5.3"
@@ -30808,7 +30801,6 @@ __metadata:
     formik: 2.2.9
     framer-motion: 6.5.1
     fridagar: ^3.2.0
-    fuse.js: 6.6.2
     geoip-lite: 1.4.7
     glob: 10.3.3
     graphql: 16.6.0
