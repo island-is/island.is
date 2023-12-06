@@ -2,6 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { ActivityIndicator } from 'react-native'
 import styled from 'styled-components/native'
+import { formatNationalId } from '../../../lib/format-national-id'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
 import success from '../../assets/card/checkmark.png'
@@ -174,7 +175,7 @@ interface ScanResultCardProps {
   name?: string
   licenseNumber?: string
   photo?: string
-  data?: Array<{ key: string; value: any }>
+  data?: Array<{ key: string; value: string }>
   hasNoData?: boolean
   type: ScanResultCardType
 }
@@ -225,7 +226,6 @@ export function ScanResultCard(props: ScanResultCardProps) {
     error,
     errorMessage,
     title,
-    valid,
     isExpired,
     loading,
     nationalId,
@@ -347,11 +347,7 @@ export function ScanResultCard(props: ScanResultCardProps) {
                 {loading ? (
                   <Placeholder style={{ width: 120 }} />
                 ) : (
-                  <Value>
-                    {nationalId
-                      ? `${nationalId?.substr(0, 6)}-${nationalId?.substr(-4)}`
-                      : `---`}
-                  </Value>
+                  <Value>{formatNationalId(nationalId)}</Value>
                 )}
               </LabelGroup>
               {data?.map(({ key, value }) => {

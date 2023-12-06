@@ -110,7 +110,7 @@ const Bar = styled.View`
 
 const Progress = styled.View<{ width?: number }>`
   flex: 1;
-  width: ${(props: any) => props.width ?? 0}%;
+  width: ${(props) => props.width ?? 0}%;
   border-radius: 6px;
 
   background-color: ${dynamicColor(({ theme }) => theme.color.roseTinted400)};
@@ -136,7 +136,7 @@ export function StatusCard({
   style,
 }: StatusCardProps) {
   return (
-    <Host style={style as any}>
+    <Host style={style}>
       <Row>
         <Date>
           <Image

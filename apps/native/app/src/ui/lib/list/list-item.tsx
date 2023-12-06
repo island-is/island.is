@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FormattedDate } from 'react-intl'
 import { Pressable, StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
@@ -167,7 +167,6 @@ export function ListItem({
   starred = false,
   unread = false,
 }: ListItemProps) {
-  const [active, setActive] = useState(false)
   return (
     <Cell>
       <Host>

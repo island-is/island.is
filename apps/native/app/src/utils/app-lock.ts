@@ -8,6 +8,7 @@ import { isOnboarded } from './onboarding'
 
 export function skipAppLock() {
   const { authorizeResult } = authStore.getState()
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   const { dev__useLockScreen } = preferencesStore.getState()
 
   const isNotOnboarded = !isOnboarded()

@@ -17,8 +17,8 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
+import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
-import { formatNationalId } from '../more/personal-info-content'
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks((theme, intl) => ({

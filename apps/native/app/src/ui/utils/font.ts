@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TextStyle } from 'react-native'
 import { css, DefaultTheme } from 'styled-components/native'
 import { dynamicColor, DynamicColorProps } from './dynamic-color'

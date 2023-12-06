@@ -3,6 +3,7 @@ import {
   ImageSourcePropType,
   Platform,
   SafeAreaView,
+  ViewStyle,
   useWindowDimensions,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -59,14 +60,13 @@ const CloseIcon = styled.Image`
 
 export function NavigationBarSheet({
   title,
-  componentId,
   onClosePress,
   style,
 }: {
   title: string
   componentId: string
   onClosePress(): void
-  style?: any
+  style?: ViewStyle
 }) {
   const wd = useWindowDimensions()
   const theme = useTheme()

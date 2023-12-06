@@ -48,7 +48,13 @@ const FooterText = styled.Text`
 `
 
 export const TableViewGroup = React.memo((props: TableViewGroupProps) => {
-  const { header, footer, children, type = TableViewGroupType.PLAIN } = props
+  const {
+    header,
+    footer,
+    children,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    type = TableViewGroupType.PLAIN,
+  } = props
 
   return (
     <Host>

@@ -8,8 +8,8 @@ import {
 } from 'react-native-navigation'
 import { useNationalRegistryChildrenQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { formatNationalId } from '../../lib/format-national-id'
 import { testIDs } from '../../utils/test-ids'
-import { formatNationalId } from '../more/personal-info-content'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import AsyncStorage from '@react-native-community/async-storage'
 import { ActionSheetIOS, DevSettings, Platform } from 'react-native'
 import DialogAndroid from 'react-native-dialogs'
@@ -39,7 +40,7 @@ async function loginCognito() {
   Navigation.showModal({
     component: {
       name: ComponentRegistry.DevtoolsCognitoAuthScreen,
-      passProps: { url: authStore.getState().cognitoAuthUrl! },
+      passProps: { url: authStore.getState().cognitoAuthUrl ?? '' },
     },
   })
 }
@@ -125,7 +126,7 @@ export function setupDevMenu() {
           label: entry[1],
           id: entry[0],
         })),
-      }).then(({ selectedItem }: any) => {
+      }).then(({ selectedItem }: { selectedItem?: { id: string } }) => {
         if (selectedItem?.id) {
           handleOption(selectedItem.id)
         }

@@ -1,10 +1,10 @@
-import { client } from '../../graphql/client'
+import { client } from '../../../graphql/client'
 import {
   GetProfileDocument,
   GetProfileQuery,
   GetProfileQueryVariables,
   useUpdateProfileMutation,
-} from '../../graphql/types/schema'
+} from '../../../graphql/types/schema'
 
 export const useUpdateUserProfile = () => {
   const [updateUserProfileMutation, { loading, error }] =

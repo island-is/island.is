@@ -2,9 +2,9 @@ import React from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType, StyleProp, ViewStyle } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
+import { GenericLicenseType } from '../../../graphql/types/schema'
 import BackgroundADR from '../../assets/card/adr-bg.png'
 import LogoCoatOfArms from '../../assets/card/agency-logo.png'
-import BackgroundCovidCertificate from '../../assets/card/covid.png'
 import IconStatusNonVerified from '../../assets/card/danger.png'
 import IconStatusVerified from '../../assets/card/is-verified.png'
 import CoatOfArms from '../../assets/card/logo-coat-of-arms.png'
@@ -84,15 +84,27 @@ const ImgWrap = styled.View`
   align-content: center;
   justify-content: center;
 `
-type CardStatus = 'NOT_VALID' | 'VALID'
+
+export enum CustomLicenseType {
+  Passport = 'Passport',
+}
+
+type LicenseType = GenericLicenseType | CustomLicenseType
+
+type CardPreset = {
+  title: string
+  logo: ImageSourcePropType
+  backgroundImage: ImageSourcePropType
+  backgroundColor: string
+}
 
 interface LicenceCardProps {
-  status: CardStatus
+  status: 'VALID' | 'NOT_VALID'
   title?: string
   date?: Date | string
   nativeID?: string
   style?: StyleProp<ViewStyle>
-  type?: LicenseCardType
+  type?: LicenseType
   logo?: ImageSourcePropType
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
@@ -119,7 +131,7 @@ const statusIcon: StatusStyles = {
   },
 }
 
-const LicenseCardPresets = {
+const LicenseCardPresets: Record<LicenseType, CardPreset> = {
   DriversLicense: {
     title: 'Ökuskírteini (IS)',
     logo: LogoCoatOfArms,
@@ -138,7 +150,7 @@ const LicenseCardPresets = {
     backgroundImage: BackgroundVinnuvelar,
     backgroundColor: '#C5E6AF',
   },
-  PASSPORT: {
+  Passport: {
     title: 'Almennt vegabréf',
     logo: LogoRegistersIceland,
     backgroundImage: BackgroundPassport,
@@ -150,17 +162,17 @@ const LicenseCardPresets = {
     backgroundImage: BackgroundWeaponLicense,
     backgroundColor: '#EBEBF2',
   },
-  HuntingCard: {
+  HuntingLicense: {
     title: 'Veiðikort',
     logo: LogoEnvironmentAgency,
     backgroundImage: BackgroundHuntingCard,
     backgroundColor: '#E2EDFF',
   },
-  CovidCertificate: {
-    title: 'Bólusetningarvottorð',
+  Ehic: {
+    title: 'Evrópukort',
     logo: LogoCoatOfArms,
-    backgroundImage: BackgroundCovidCertificate,
-    backgroundColor: '#D6CFD6',
+    backgroundImage: BackgroundPassport,
+    backgroundColor: '#E2EDFF',
   },
   DisabilityLicense: {
     title: 'Örorkuskírteini',
@@ -176,7 +188,7 @@ const LicenseCardPresets = {
   },
 }
 
-export type LicenseCardType = keyof typeof LicenseCardPresets
+// export type LicenseCardType = keyof typeof LicenseCardPresets
 
 export function LicenceCard({
   nativeID,
@@ -221,11 +233,11 @@ export function LicenceCard({
         )}
         {date && (
           <TimeStamp color={textColor}>
-            {type === 'PASSPORT'
+            {type === CustomLicenseType.Passport
               ? intl.formatMessage({ id: 'walletPass.expirationDate' })
               : intl.formatMessage({ id: 'walletPass.lastUpdate' })}
             {': '}
-            {type === 'PASSPORT' ? (
+            {type === CustomLicenseType.Passport ? (
               <FormattedDate value={date} {...{ dateStyle: 'short' }} />
             ) : (
               <FormattedDate

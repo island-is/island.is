@@ -84,7 +84,6 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
               label={intl.formatMessage({ id: 'edit.phone.inputlabel' })}
               value={text}
               onChange={updatePhone}
-              maxLength={8}
               keyboardType="phone-pad"
               textContentType="telephoneNumber"
             />

@@ -5,8 +5,10 @@ import { dynamicColor } from '../../utils'
 
 const Host = styled.View<{ spacing: number }>`
   flex: 1;
-  margin-top: ${({ spacing, theme }) => (theme.spacing as any)[spacing]}px;
-  margin-bottom: ${({ spacing, theme }) => (theme.spacing as any)[spacing]}px;
+  margin-top: ${({ spacing, theme }) =>
+    theme.spacing[spacing as keyof typeof theme.spacing]}px;
+  margin-bottom: ${({ spacing, theme }) =>
+    theme.spacing[spacing as keyof typeof theme.spacing]}px;
   margin-left: ${({ theme }) => theme.spacing[2]}px;
   margin-right: ${({ theme }) => theme.spacing[2]}px;
   border-bottom-width: ${({ theme }) => theme.border.width.standard}px;

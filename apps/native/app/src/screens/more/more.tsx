@@ -12,10 +12,10 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
+import { formatNationalId } from '../../lib/format-national-id'
 import { useAuthStore } from '../../stores/auth-store'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import { formatNationalId } from './personal-info-content'
 
 const Row = styled.View`
   margin-top: 16px;
@@ -74,7 +74,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
         <SafeAreaView>
           <UserCard
             name={authStore.userInfo?.name}
-            ssn={formatNationalId(String(authStore.userInfo?.nationalId))}
+            ssn={formatNationalId(authStore.userInfo?.nationalId)}
             actions={[
               {
                 text: intl.formatMessage({ id: 'profile.seeInfo' }),

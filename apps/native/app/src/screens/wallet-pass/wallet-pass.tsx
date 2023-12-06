@@ -1,9 +1,4 @@
-import {
-  dynamicColor,
-  Alert as InfoAlert,
-  LicenceCard,
-  LicenseCardType,
-} from '@ui'
+import { dynamicColor, Alert as InfoAlert, LicenceCard } from '@ui'
 import * as FileSystem from 'expo-file-system'
 import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -28,7 +23,6 @@ import {
   useGetLicenseQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { LicenseStatus } from '../../types/license-type'
 import { FieldRender } from './components/field-render'
 
 const Information = styled.ScrollView`
@@ -272,13 +266,9 @@ export const WalletPassScreen: NavigationFunctionComponent<{
       >
         <LicenceCard
           nativeID={`license-${data?.license?.type}_destination`}
-          type={data?.license?.type as LicenseCardType}
+          type={data?.license?.type}
           date={new Date(Number(data?.fetch?.updated))}
-          status={
-            !data?.payload?.metadata?.expired
-              ? LicenseStatus.VALID
-              : LicenseStatus.NOT_VALID
-          }
+          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
         />
       </SafeAreaView>
       {hasPkpass && hasValidPkpass && (

@@ -5,10 +5,6 @@ import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-function differenceInMonths(a: Date, b: Date) {
-  return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear())
-}
-
 const Host = styled.View`
   display: flex;
   flex-direction: row;
@@ -52,68 +48,6 @@ const Text = styled.Text`
     lineHeight: 24,
     fontSize: 16,
   })}
-`
-const LabelWrap = styled.View<{ color: 'primary' | 'danger' | 'warning' }>`
-  padding: ${({ theme }) => theme.spacing[1]}px;
-  flex-direction: row;
-  align-items: center;
-  border-width: ${({ theme }) => theme.border.width.standard}px;
-  border-style: solid;
-  border-radius: ${({ theme }) => theme.border.radius.large};
-  border-color: ${dynamicColor(
-    ({ theme, color }) => ({
-      light:
-        color === 'primary'
-          ? theme.color.blue200
-          : color === 'danger'
-          ? theme.color.red200
-          : theme.color.yellow400,
-      dark:
-        color === 'primary'
-          ? theme.shades.dark.shade300
-          : color === 'danger'
-          ? theme.color.red400
-          : theme.color.yellow400,
-    }),
-    true,
-  )};
-
-  background-color: ${(props) =>
-    props.color === 'primary'
-      ? 'transparent'
-      : dynamicColor({
-          light:
-            props.color === 'danger'
-              ? props.theme.color.red100
-              : props.theme.color.yellow200,
-          dark: 'transparent',
-        })};
-`
-
-const Label = styled.Text<{ color: 'primary' | 'danger' | 'warning' }>`
-  ${font({
-    fontWeight: '600',
-    lineHeight: 16,
-    fontSize: 12,
-  })}
-
-  color: ${dynamicColor(
-    ({ theme, color }) => ({
-      light:
-        color === 'primary'
-          ? theme.color.blue400
-          : color === 'danger'
-          ? theme.color.red600
-          : theme.shade.foreground,
-      dark:
-        color === 'primary'
-          ? theme.shades.dark.shade700
-          : color === 'danger'
-          ? theme.color.red400
-          : theme.shade.foreground,
-    }),
-    true,
-  )};
 `
 
 const Icon = styled.View`

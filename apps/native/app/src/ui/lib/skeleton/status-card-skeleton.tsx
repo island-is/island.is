@@ -60,7 +60,7 @@ const Bar = styled.View`
 
 const Progress = styled.View<{ width?: number }>`
   flex: 1;
-  width: ${(props: any) => props.width ?? 0}%;
+  width: ${(props) => props.width ?? 0}%;
   border-radius: 6px;
   width: 30%;
   background-color: ${dynamicColor(({ theme }) => ({

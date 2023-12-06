@@ -76,7 +76,7 @@ function mapRemoteMessage(
   remoteMessage: FirebaseMessagingTypes.RemoteMessage,
 ): Notification {
   return {
-    date: remoteMessage.sentTime!,
+    date: remoteMessage.sentTime ?? 0,
     request: {
       content: {
         title: remoteMessage.notification?.title || null,
@@ -88,7 +88,7 @@ function mapRemoteMessage(
         },
         sound: 'default',
       },
-      identifier: remoteMessage.messageId!,
+      identifier: remoteMessage.messageId ?? '',
       trigger: {
         type: 'push',
       },
@@ -100,7 +100,7 @@ export async function setupNotifications() {
   // set notification groups
   Promise.all(
     notificationCategories.map(({ categoryIdentifier, actions }) => {
-      setNotificationCategoryAsync(categoryIdentifier, actions)
+      return setNotificationCategoryAsync(categoryIdentifier, actions)
     }),
   )
 

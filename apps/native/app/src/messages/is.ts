@@ -136,6 +136,7 @@ export const is = {
   }`,
   'user.natreg.citizenship': 'Ríkisfang',
   'user.natreg.religion': 'Trú- eða lífsskoðunarfélag',
+  'user.natreg.settingsButton': 'Fara í stillingar',
 
   // home
   'home.screenTitle': 'Yfirlit',

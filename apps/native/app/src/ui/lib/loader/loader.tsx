@@ -87,6 +87,7 @@ export function Loader({ text }: LoaderProps) {
         animRef.current.reset()
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const renderCircle = (i: number) => {

@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView } from 'react-native'
+import { SafeAreaView, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
@@ -34,7 +34,7 @@ interface TableViewCellProps {
    */
   bottom?: React.ReactNode
 
-  style?: any
+  style?: ViewStyle
   disabled?: boolean
 }
 

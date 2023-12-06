@@ -46,6 +46,7 @@ export function Skeleton(props: SkeletonProps) {
   const av = useRef(new Animated.Value(0))
   const mounted = useRef(true)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const baseDynamicColor = ({ dark, light }: any) => {
     if (Platform.OS === 'android') {
       return theme.isDark ? dark : light
@@ -96,6 +97,7 @@ export function Skeleton(props: SkeletonProps) {
       av.current.setValue(-(aw.current + offset))
       animate()
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ar.current, props.active])
 
   const onLayout = (e: LayoutChangeEvent) => {
@@ -109,6 +111,7 @@ export function Skeleton(props: SkeletonProps) {
       ar.current.stop()
       av.current.setValue(-(aw.current + offset))
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active])
 
   useEffect(() => {
@@ -123,7 +126,7 @@ export function Skeleton(props: SkeletonProps) {
     <Host
       onLayout={onLayout}
       error={error}
-      style={[style as any, { height, backgroundColor }]}
+      style={[style, { height, backgroundColor }]}
     >
       <Swoosh
         style={{

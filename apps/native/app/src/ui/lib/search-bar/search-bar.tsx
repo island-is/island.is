@@ -19,7 +19,7 @@ import { font } from '../../utils/font'
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput)
 
 const Input = styled(AnimatedTextInput)<{
-  pressed?: boolean
+  pressed?: React.MutableRefObject<Animated.Value>
   focused?: boolean
 }>`
   flex: 1;
@@ -51,7 +51,7 @@ export function SearchBar(props: SearchBarProps) {
     <View style={{ flex: 1, minHeight: 40 }}>
       <Input
         ref={inputRef}
-        {...(props as any)}
+        {...(props as TextInputProps)}
         pressed={pressed}
         focused={focus}
         onFocus={(e: NativeSyntheticEvent<TextInputFocusEventData>) => {

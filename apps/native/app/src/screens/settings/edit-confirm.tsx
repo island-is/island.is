@@ -14,7 +14,7 @@ import {
 } from 'react-native-navigation'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { testIDs } from '../../utils/test-ids'
-import { useUpdateUserProfile } from './profile-queries'
+import { useUpdateUserProfile } from './utils/profile-queries'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({

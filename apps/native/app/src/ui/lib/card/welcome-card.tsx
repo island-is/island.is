@@ -4,6 +4,7 @@ import {
   Image,
   ImageSourcePropType,
   Platform,
+  ViewStyle,
 } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 import gridDotSmallSrc from '../../assets/illustrations/grid-dot-small.png'
@@ -11,6 +12,7 @@ import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 import { Link } from '../link/link'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Host = styled.View<{ color: any }>`
   padding: 0 0 24px;
   margin-bottom: 30px;
@@ -53,7 +55,7 @@ interface CardProps {
   description?: string
   backgroundColor: { light: string; dark: string }
   imgSrc?: ImageSourcePropType
-  style?: any
+  style?: ViewStyle
   grid?: boolean
   link?: {
     url: string

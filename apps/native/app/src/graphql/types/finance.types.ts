@@ -5,7 +5,7 @@ export interface GetFinanceStatus {
   costTotals: number
   statusTotals: number
   message: string
-  organizations: Organization[]
+  organizations?: Organization[]
   downloadServiceURL: string
 }
 
@@ -21,7 +21,7 @@ export interface Organization {
   costTotals: number
   statusTotals: number
   dueStatusTotals: number
-  chargeTypes: ChargeType[]
+  chargeTypes?: ChargeType[]
 }
 
 export interface ChargeType {
@@ -34,17 +34,17 @@ export interface ChargeType {
   dueTotals: number
 }
 export interface GetDebtStatus {
-  myDebtStatus: MyDebtStatus[]
+  myDebtStatus?: MyDebtStatus[]
 }
 
 export interface MyDebtStatus {
-  approvedSchedule: number
-  possibleToSchedule: number
+  approvedSchedule?: number
+  possibleToSchedule?: number
 }
 
 export interface GetFinanceStatusDetails {
-  timestamp: string
-  chargeItemSubjects: ChargeItemSubject[]
+  timestamp?: string
+  chargeItemSubjects?: ChargeItemSubject[]
 }
 
 export interface ChargeItemSubject {

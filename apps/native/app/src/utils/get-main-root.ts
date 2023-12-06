@@ -12,6 +12,7 @@ import { testIDs } from './test-ids'
 
 export const getRightButtons = ({
   unreadCount = notificationsStore.getState().unreadCount,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   theme = getThemeWithPreferences(preferencesStore.getState()),
 } = {}): OptionsTopBarButton[] => {
   return [

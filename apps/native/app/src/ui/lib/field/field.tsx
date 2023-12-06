@@ -1,11 +1,12 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
+import { ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import { font } from '../../utils/font'
 import { Skeleton } from '../skeleton/skeleton'
 
 const Host = styled.View<{ compact?: boolean }>`
-  ${(props: any) => (props.compact ? 'width: 50%;' : 'flex: 1;')}
+  ${(props) => (props.compact ? 'width: 50%;' : 'flex: 1;')}
 `
 
 const Content = styled.View`
@@ -34,7 +35,7 @@ interface FieldProps {
   loading?: boolean
   compact?: boolean
   size?: 'large' | 'small'
-  style?: any | null
+  style?: ViewStyle | null
 }
 
 const isJSONDate = (str: string) =>
@@ -51,7 +52,7 @@ export function Field({
   const intl = useIntl()
 
   if (value === '') {
-    return <></>
+    return null
   }
 
   const val = String(value ?? '')

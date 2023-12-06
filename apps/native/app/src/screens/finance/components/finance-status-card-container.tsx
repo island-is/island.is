@@ -82,12 +82,14 @@ export function FinanceStatusCardContainer({
     },
     skip: !open,
   })
-  const financeStatusDetails: GetFinanceStatusDetails =
+  const financeStatusDetails: GetFinanceStatusDetails | undefined =
     res.data?.getFinanceStatusDetails
 
   const chargeItemSubjects = [
     ...new Set(
-      financeStatusDetails.chargeItemSubjects.map((i) => i.chargeItemSubject),
+      (financeStatusDetails?.chargeItemSubjects ?? []).map(
+        (i) => i.chargeItemSubject,
+      ),
     ),
   ]
   const [selectedChargeItemSubject, setSelectedChargeItemSubject] = useState(0)

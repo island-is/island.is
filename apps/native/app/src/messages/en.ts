@@ -137,6 +137,7 @@ export const en: TranslatedMessages = {
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
+  'user.natreg.settingsButton': 'Go to settings',
 
   // Home
   'home.screenTitle': 'Overview',

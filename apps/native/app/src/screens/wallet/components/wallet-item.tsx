@@ -1,4 +1,4 @@
-import { LicenceCard, LicenseCardType } from '@ui'
+import { CustomLicenseType, LicenceCard } from '@ui'
 import React from 'react'
 import { SafeAreaView, TouchableHighlight, View } from 'react-native'
 import {
@@ -6,7 +6,6 @@ import {
   IdentityDocumentModel,
 } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
-import { LicenseStatus, LicenseType } from '../../../types/license-type'
 
 export const WalletItem = React.memo(
   ({ item }: { item: GenericUserLicense | IdentityDocumentModel }) => {
@@ -26,20 +25,18 @@ export const WalletItem = React.memo(
             style={{ marginBottom: 16, borderRadius: 16 }}
             onPress={() => {
               navigateTo(`/walletpassport/${item?.number}`, {
-                fromId: `license-${LicenseType.PASSPORT}_source`,
-                toId: `license-${LicenseType.PASSPORT}_destination`,
+                fromId: `license-${CustomLicenseType.Passport}_source`,
+                toId: `license-${CustomLicenseType.Passport}_destination`,
                 cardHeight: cardHeight,
               })
             }}
           >
             <SafeAreaView>
               <LicenceCard
-                nativeID={`license-${LicenseType.PASSPORT}_source`}
-                type={LicenseType.PASSPORT}
+                nativeID={`license-${CustomLicenseType.Passport}_source`}
+                type={CustomLicenseType.Passport}
                 date={new Date(item?.expirationDate)}
-                status={
-                  isInvalid ? LicenseStatus.NOT_VALID : LicenseStatus.VALID
-                }
+                status={isInvalid ? 'NOT_VALID' : 'VALID'}
               />
             </SafeAreaView>
           </TouchableHighlight>
@@ -68,12 +65,10 @@ export const WalletItem = React.memo(
             <SafeAreaView>
               <LicenceCard
                 nativeID={`license-${item?.license?.type}_source`}
-                type={item?.license?.type as LicenseCardType}
+                type={item?.license?.type}
                 date={new Date(Number(item.fetch.updated))}
                 status={
-                  !item?.payload?.metadata?.expired
-                    ? LicenseStatus.VALID
-                    : LicenseStatus.NOT_VALID
+                  !item?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'
                 }
               />
             </SafeAreaView>

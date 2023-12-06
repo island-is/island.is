@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import messaging from '@react-native-firebase/messaging'
 import perf from '@react-native-firebase/perf'
 import {
@@ -15,6 +16,11 @@ import { performanceMetrics } from '../performance-metrics'
 
 // uncomment polyfills that are needed.
 // make sure to add locales that are needed as well
+import {
+  DdRum,
+  DdSdkReactNative,
+  DdSdkReactNativeConfiguration,
+} from '@datadog/mobile-react-native'
 import '@formatjs/intl-datetimeformat/add-golden-tz'
 import '@formatjs/intl-datetimeformat/locale-data/en'
 import '@formatjs/intl-datetimeformat/locale-data/is'
@@ -27,17 +33,12 @@ import '@formatjs/intl-numberformat/polyfill'
 import '@formatjs/intl-pluralrules/locale-data/en'
 import '@formatjs/intl-pluralrules/locale-data/is'
 import '@formatjs/intl-pluralrules/polyfill'
-import 'intl'
-import 'intl/locale-data/jsonp/en'
-import 'intl/locale-data/jsonp/is'
-import {
-  DdRum,
-  DdSdkReactNative,
-  DdSdkReactNativeConfiguration,
-} from '@datadog/mobile-react-native'
 import '@formatjs/intl-relativetimeformat/locale-data/en'
 import '@formatjs/intl-relativetimeformat/locale-data/is'
 import '@formatjs/intl-relativetimeformat/polyfill'
+import 'intl'
+import 'intl/locale-data/jsonp/en'
+import 'intl/locale-data/jsonp/is'
 import { StyleSheet } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
@@ -140,7 +141,7 @@ LogBox.ignoreLogs([
 ])
 
 // set default timezone
-if ((global as any).HermesInternal) {
+if ((global as { HermesInternal: unknown }).HermesInternal) {
   if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
     ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('UTC')
   }

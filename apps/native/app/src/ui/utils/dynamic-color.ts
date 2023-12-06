@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DynamicColorIOS, DynamicColorIOSTuple, Platform } from 'react-native'
 import { Shade, StyledProps, useTheme } from 'styled-components'
 
 type DynamicShade = keyof Shade
+// eslint-disable-next-line @typescript-eslint/ban-types
 type DynamicColorValue = DynamicShade | (string & {})
 type DynamicColorFn<T> = (
   props: StyledProps<T & { [key: string]: any }>,

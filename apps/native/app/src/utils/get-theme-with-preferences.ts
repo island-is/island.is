@@ -79,7 +79,7 @@ export function getThemeWithPreferences(
     shades.dark = shades.efficient
     themeObj.color = {
       ...themeObj.color,
-      blue400: shades.dark.foreground as any,
+      blue400: shades.dark.foreground as '#0061ff',
     }
   }
 

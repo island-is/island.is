@@ -2,6 +2,7 @@ import {
   Accordion,
   AccordionItem,
   Alert,
+  CustomLicenseType,
   dynamicColor,
   font,
   Input,
@@ -26,7 +27,6 @@ import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { openBrowser } from '../../lib/rn-island'
-import { LicenseStatus, LicenseType } from '../../types/license-type'
 
 const Information = styled.ScrollView`
   flex: 1;
@@ -366,10 +366,10 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
         }}
       >
         <LicenceCard
-          nativeID={`license-${LicenseType.PASSPORT}_destination`}
-          type={LicenseType.PASSPORT}
+          nativeID={`license-${CustomLicenseType.Passport}_destination`}
+          type={CustomLicenseType.Passport}
           date={new Date(item?.expirationDate)}
-          status={isInvalid ? LicenseStatus.NOT_VALID : LicenseStatus.VALID}
+          status={isInvalid ? 'NOT_VALID' : 'VALID'}
         />
       </SafeAreaView>
     </View>

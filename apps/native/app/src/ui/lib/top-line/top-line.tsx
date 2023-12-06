@@ -25,6 +25,7 @@ export function TopLine({ scrollY }: TopLineProps) {
         ref.current?.measureInWindow((x, y, w, h) => offset.setValue(h))
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scrollY])
 
   return (

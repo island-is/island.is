@@ -56,19 +56,21 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
       debtStatus[0]?.possibleToSchedule > 0
   }
 
+  const organizations = financeStatusData?.organizations ?? []
+
   // Can we not use this instead financeStatusData.statusTotals ?
   function getChargeTypeTotal() {
-    const organizationChargeTypes = financeStatusData?.organizations?.map(
-      (org) => org.chargeTypes,
-    )
-    const allChargeTypes = organizationChargeTypes?.flat() ?? []
+    const organizationChargeTypes = organizations.map((org) => org.chargeTypes)
+    const allChargeTypes = (organizationChargeTypes?.flat() ?? []) as Array<{
+      totals: number
+    }>
 
     const chargeTypeTotal =
       allChargeTypes.length > 0
         ? allChargeTypes.reduce((a, b) => a + b.totals, 0)
         : 0
 
-    return chargeTypeTotal // @todo amountFormat
+    return chargeTypeTotal
   }
 
   const financeStatusZero = financeStatusData?.statusTotals === 0
@@ -168,9 +170,9 @@ export const FinanceScreen: NavigationFunctionComponent = ({ componentId }) => {
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         {res.loading
           ? skeletonItems
-          : financeStatusData?.organizations?.length > 0 || financeStatusZero
-          ? financeStatusData?.organizations?.map((org, i) =>
-              org.chargeTypes.map((chargeType, ii: number) => (
+          : organizations.length > 0 || financeStatusZero
+          ? organizations.map((org, i) =>
+              (org.chargeTypes ?? []).map((chargeType, ii: number) => (
                 <FinanceStatusCardContainer
                   key={`${org.id}-${chargeType.id}-${i}-${ii}`}
                   chargeType={chargeType}

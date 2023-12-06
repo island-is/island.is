@@ -56,7 +56,7 @@ export function setupRoutes() {
     selectTab(3)
   })
 
-  addRoute('/vehicles', async (passProps: any) => {
+  addRoute('/vehicles', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
@@ -67,7 +67,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/assets', async (passProps: any) => {
+  addRoute('/assets', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
@@ -78,7 +78,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/family', async (passProps: any) => {
+  addRoute('/family', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
@@ -89,7 +89,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/personalinfo', async (passProps: any) => {
+  addRoute('/personalinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -104,7 +104,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/settings', async (passProps: any) => {
+  addRoute('/settings', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -119,7 +119,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/editemail', async (passProps: any) => {
+  addRoute('/editemail', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -134,7 +134,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/editphone', async (passProps: any) => {
+  addRoute('/editphone', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -149,7 +149,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/editbankinfo', async (passProps: any) => {
+  addRoute('/editbankinfo', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -164,7 +164,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/editconfirm/:type', async (passProps: any) => {
+  addRoute('/editconfirm/:type', async (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -195,7 +195,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/vehicle-mileage/:id', (passProps: any) => {
+  addRoute('/vehicle-mileage/:id', (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -210,7 +210,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/asset/:id', (passProps: any) => {
+  addRoute('/asset/:id', (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -225,7 +225,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/finance', async (passProps: any) => {
+  addRoute('/finance', async (passProps) => {
     await Navigation.dismissAllModals()
     await Navigation.popToRoot(StackRegistry.MoreStack)
     selectTab(4)
@@ -237,25 +237,22 @@ export function setupRoutes() {
     })
   })
 
-  addRoute(
-    '/finance/status/:orgId/:chargeTypeId/:index',
-    async (passProps: any) => {
-      Navigation.showModal({
-        stack: {
-          children: [
-            {
-              component: {
-                name: ComponentRegistry.FinanceStatusDetailScreen,
-                passProps,
-              },
+  addRoute('/finance/status/:orgId/:chargeTypeId/:index', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.FinanceStatusDetailScreen,
+              passProps,
             },
-          ],
-        },
-      })
-    },
-  )
+          },
+        ],
+      },
+    })
+  })
 
-  addRoute('/family/:type/:nationalId', (passProps: any) => {
+  addRoute('/family/:type/:nationalId', (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -270,7 +267,7 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/notification/:id', (passProps: any) => {
+  addRoute('/notification/:id', (passProps) => {
     Navigation.showModal({
       stack: {
         children: [
@@ -431,11 +428,6 @@ export function setupRoutes() {
         ],
       },
     })
-  })
-
-  addRoute('/e2e/cookie/:cookie', ({ cookie }: any) => {
-    // const decodedCookie = Base64.decode(cookie)
-    // authStore.setState({ cookies: decodedCookie })
   })
 
   addRoute('/e2e/disable-applock', () => {

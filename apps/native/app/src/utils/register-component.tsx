@@ -12,6 +12,7 @@ import { client } from '../graphql/client'
 
 export function registerComponent(
   name: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Component: NavigationFunctionComponent<any>,
 ) {
   Navigation.registerComponent(
