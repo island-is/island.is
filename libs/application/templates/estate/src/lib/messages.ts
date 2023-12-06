@@ -751,6 +751,11 @@ export const m = defineMessages({
     defaultMessage: 'Eru eignir til staðar?',
     description: '',
   },
+  doAssetsExistSelect: {
+    id: 'es.application:doAssetsExistSelect',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
   doDebtsExist: {
     id: 'es.application:doDebtsExist',
     defaultMessage: 'Eru skuldir til staðar?',
