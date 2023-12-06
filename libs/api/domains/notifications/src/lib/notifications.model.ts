@@ -79,8 +79,8 @@ export class Notification {
   message!: NotificationMessage
 }
 
-@ObjectType('MessageCounts')
-export class MessageCounts {
+@ObjectType('NotificationMessageCounts')
+export class NotificationMessageCounts {
   @Field()
   totalCount!: number
 
@@ -104,8 +104,8 @@ export class NotificationsResponse {
   @Field(() => [Notification])
   data!: Notification[]
 
-  @Field(() => MessageCounts)
-  messageCounts!: MessageCounts
+  @Field(() => NotificationMessageCounts)
+  messageCounts!: NotificationMessageCounts
 
   @Field()
   totalCount!: number

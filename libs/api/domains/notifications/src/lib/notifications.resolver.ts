@@ -40,6 +40,7 @@ export class NotificationsResolver {
       this.logger.error('failed to get notifications', {
         locale,
         category: LOG_CATEGORY,
+        error: e,
       })
       throw e
     }
@@ -70,6 +71,7 @@ export class NotificationsResolver {
         notificationId,
         locale,
         category: LOG_CATEGORY,
+        error: e,
       })
       throw e
     }
@@ -110,6 +112,7 @@ export class NotificationsResolver {
         notificationId,
         locale,
         category: LOG_CATEGORY,
+        error: e,
       })
       throw e
     }
