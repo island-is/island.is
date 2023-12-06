@@ -10,8 +10,9 @@ import { documentProviderNavigation } from '@island.is/portals/admin/document-pr
 import { delegationsNavigation } from '@island.is/portals/shared-modules/delegations'
 import { AdminPortalPaths } from './paths'
 import { idsAdminNavigation } from '@island.is/portals/admin/ids-admin'
-import { petitionNavigation } from '@island.is/portals/admin/petition'
+import { signatureCollectionNavigation } from '@island.is/portals/admin/signature-collection'
 import { serviceDeskNavigation } from '@island.is/portals/admin/service-desk'
+import { petitionNavigation } from '@island.is/portals/admin/petition'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: coreMessages.overview,
@@ -40,6 +41,8 @@ export const TOP_NAVIGATION: PortalNavigationItem = {
     petitionNavigation,
     // Þjónustuborð
     serviceDeskNavigation,
+    // Meðmælalistar
+    signatureCollectionNavigation,
   ],
 }
 export const BOTTOM_NAVIGATION: PortalNavigationItem = {
