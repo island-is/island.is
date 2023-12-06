@@ -139,9 +139,23 @@ export class NotificationsService {
 
   async addToQueue(body: CreateHnippNotificationDto): Promise<{ id: string }> {
     const id = await this.queue.add(body)
-    this.logger.info('Message queued ... ...', { messageId: id, ...body })
 
-    return { id }
+    const records: Record<string, string> = {}
+
+    for (const arg of body.args) {
+      records[arg.key] = arg.value
+    }
+
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...records,
+      templateId: body.templateId,
+      recipient: body.recipient,
+    })
+
+    return {
+      id,
+    }
   }
 
   /**
