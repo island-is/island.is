@@ -1,7 +1,6 @@
 import {
   ApplicationFiltersEnum,
   ApplicationHeaderSortByEnum,
-  ApplicationState,
 } from '@island.is/financial-aid/shared/lib'
 
 export const navigationItems = [
