@@ -99,6 +99,7 @@ import {
   UtlendingastofnunFooter,
   UtlendingastofnunHeader,
 } from './Themes/UtlendingastofnunTheme'
+import { VinnueftilitidHeader } from './Themes/VinnueftirlitidTheme'
 import { liveChatIncConfig, watsonConfig } from './config'
 import * as styles from './OrganizationWrapper.css'
 
@@ -150,6 +151,7 @@ const lightThemes = [
   'nti',
   'samgongustofa',
   'rettindagaesla-fatlads-folks',
+  'vinnueftirlitid',
 ]
 
 export const getThemeConfig = (
@@ -272,6 +274,8 @@ export const OrganizationHeader: React.FC<
 
     case 'rikissaksoknari':
       return <RikissaksoknariHeader organizationPage={organizationPage} />
+    case 'vinnueftirlitid':
+      return <VinnueftilitidHeader organizationPage={organizationPage} />
     default:
       return (
         <DefaultHeader
