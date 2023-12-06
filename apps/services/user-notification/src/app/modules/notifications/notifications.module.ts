@@ -84,6 +84,26 @@ import { HealthController } from './health.controller'
         ),
     },
     {
+      provide: userProfile.V2UsersApi,
+      useFactory: () =>
+        new userProfile.V2UsersApi(
+          new userProfile.Configuration({
+            basePath: environment.userProfileServiceBasePath,
+            fetchApi: createEnhancedFetch({
+              name: 'services-user-notification',
+              circuitBreaker: true,
+              autoAuth: {
+                issuer: environment.identityServerPath,
+                clientId: environment.notificationsClientId,
+                clientSecret: environment.notificationsClientSecret,
+                scope: ['@island.is/user-profile:admin'],
+                mode: 'auto',
+              },
+            }),
+          }),
+        ),
+    },
+    {
       provide: IS_RUNNING_AS_WORKER,
       useValue: environment.isWorker,
     },

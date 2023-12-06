@@ -14,13 +14,14 @@ import axios from 'axios'
 import { Notification } from './notification.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { paginate } from '@island.is/nest/pagination'
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import {
   PaginatedNotificationDto,
   UpdateNotificationDto,
-  NotificationStatus,
   RenderedNotificationDto,
 } from './dto/notification.dto'
+
+
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
@@ -272,32 +273,34 @@ export class NotificationsService {
     }
   }
 
-  // Just a test function for easy creating WHILE DEVELOPING
-  async create(user: any): Promise<any> {
-    //user: User temp change for db bypassauth testing
-    const exampleNotificationData = {
-      recipient: '0101302989', // temp hardfix // user.nationalId,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: 'Hnipp Test Crew',
-        },
-        {
-          key: 'documentId',
-          value: 'abcd-abcd-abcd-abcd',
-        },
-      ],
-      status: NotificationStatus.UNREAD,
-    }
+  // // Just a test function for easy creating WHILE DEVELOPING
+  // async create(user: User): Promise<any> {
+  //   //user: User temp change for db bypassauth testing
+  //   const exampleNotificationData = {
+  //     recipient: user.nationalId,
+  //     templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+  //     args: [
+  //       {
+  //         key: 'organization',
+  //         value: 'Hnipp Test Crew',
+  //       },
+  //       {
+  //         key: 'documentId',
+  //         value: 'abcd-abcd-abcd-abcd',
+  //       },
+  //     ],
+  //     // status: NotificationStatus.UNREAD,
+  //   }
 
-    try {
-      return await this.notificationModel.create(exampleNotificationData as any)
-    } catch (error) {
-      this.logger.debug(error)
-      return Error
-    }
-  }
+  //   try {
+  //     return await this.notificationModel.create(exampleNotificationData as any)
+  //   } catch (error) {
+  //     this.logger.info(error)
+  //     throw new BadRequestException(
+  //       error.message
+  //     )
+  //   }
+  // }
 
   async getAll(): Promise<Notification[]> {
     return await this.notificationModel.findAll()

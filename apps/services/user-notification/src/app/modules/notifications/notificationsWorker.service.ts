@@ -4,13 +4,13 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UserProfileApi,
-  UserProfileLocaleEnum,
+  // UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { InjectModel } from '@nestjs/sequelize'
-import { NotificationStatus } from './dto/notification.dto'
+// import { NotificationStatus } from './dto/notification.dto'
 import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
@@ -41,73 +41,67 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        // FIRST THING IS TO WRITE TO DB
-        this.logger.info('messsage', message)
-        this.logger.info('job', job)
-        this.logger.info('Message received by worker ... ...', { messageId })
-        const exampleNotificationData = {
-          recipient: '0101302989', // temp hardfix // user.nationalId,
-          messageId,
-          templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-          args: [
-            {
-              key: 'organization',
-              value: 'Hnipp Test Crew',
-            },
-            {
-              key: 'documentId',
-              value: 'abcd-abcd-abcd-abcd',
-            },
-          ],
-          status: NotificationStatus.UNREAD,
-        }
 
+
+
+        // const exampleNotificationData = {
+        //   recipient: '0101302989', // temp hardfix // user.nationalId,
+        //   messageId,
+        //   templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        //   args: [
+        //     {
+        //       key: 'organization',
+        //       value: 'Hnipp Test Crew',
+        //     },
+        //     {
+        //       key: 'documentId',
+        //       value: 'abcd-abcd-abcd-abcd',
+        //     },
+        //   ],
+        //   status: NotificationStatus.UNREAD,
+        // }
+
+        const notification = {messageId, ...message}
+
+        // write to db
         try {
-          this.logger.info('worker attempt create', message)
-          const res = await this.notificationModel.create(
-            exampleNotificationData as any,
+          this.logger.info('writing notification to db', notification, messageId)
+          await this.notificationModel.create(
+            notification as any,
           )
-          this.logger.info('worker create result', res)
         } catch (error) {
-          this.logger.error(error)
+          this.logger.error('error writing notification to db', error)
         }
 
-        try {
-          this.logger.info('worker getting all rows')
-          const allRows = await this.notificationModel.findAll()
-          this.logger.info('worker length', allRows.length)
-        } catch (error) {
-          this.logger.error(error)
-        }
+       
 
-        // const profile =
-        //   await this.userProfileApi.userTokenControllerFindOneByNationalId({
-        //     nationalId: message.recipient,
-        //   })
+        const profile =
+          await this.userProfileApi.userTokenControllerFindOneByNationalId({
+            nationalId: message.recipient,
+          })
 
-        // temp Mocking user profile
-        const profile = <any>{
-          nationalId: message.recipient,
-          mobilePhoneNumber: '1234567',
-          email: 'rafnarnason@gmail.com',
-          name: 'Rafn Arnason',
-          locale: UserProfileLocaleEnum.Is,
-          notifications: {},
-          created: new Date(),
-          modified: new Date(),
-          documentNotifications: true,
-          emailNotifications: true,
-          smsNotifications: true,
-          pushNotifications: true,
-          id: '1234567',
-          emailVerified: true,
-          mobilePhoneNumberVerified: true,
-          profileImageUrl: '',
-          emailStatus: 'yes',
-          mobileStatus: 'yes',
-        }
+        // // temp Mocking user profile
+        // const profile = <any>{
+        //   nationalId: message.recipient,
+        //   mobilePhoneNumber: '1234567',
+        //   email: 'rafnarnason@gmail.com',
+        //   name: 'Rafn Arnason',
+        //   locale: UserProfileLocaleEnum.Is,
+        //   notifications: {},
+        //   created: new Date(),
+        //   modified: new Date(),
+        //   documentNotifications: true,
+        //   emailNotifications: true,
+        //   smsNotifications: true,
+        //   pushNotifications: true,
+        //   id: '1234567',
+        //   emailVerified: true,
+        //   mobilePhoneNumberVerified: true,
+        //   profileImageUrl: '',
+        //   emailStatus: 'yes',
+        //   mobileStatus: 'yes',
+        // }
 
-        console.log(profile)
 
         // can't send message if user has no user profile
         if (!profile) {
@@ -144,7 +138,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             'User does not have notifications enabled this message type',
             { messageId },
           )
-          return
+          // return
         }
       },
     )

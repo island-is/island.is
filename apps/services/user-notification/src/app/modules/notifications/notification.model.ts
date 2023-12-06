@@ -35,7 +35,6 @@ export class Notification extends Model<Notification> {
 
   @Column({
     type: DataType.UUID,
-    defaultValue: DataType.UUIDV4,
     unique: true, // Adding the unique constraint
     field: 'message_id',
   })

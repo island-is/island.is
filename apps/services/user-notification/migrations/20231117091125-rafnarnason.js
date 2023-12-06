@@ -11,7 +11,7 @@ module.exports = {
       },
       message_id: {
         type: Sequelize.UUID,
-        defaultValue: Sequelize.UUIDV4,
+        unique: true,
         allowNull: false,
       },
       recipient: {

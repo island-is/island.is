@@ -22,13 +22,11 @@ import { SequelizeConfigService } from './app/sequelizeConfig.service'
       useClass: SequelizeConfigService,
     }),
   ],
-  // controllers: [NotificationsController],
-  // providers: [NotificationsService],
 })
 class BuildModule {}
 
 buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
-  appModule: BuildModule, //BUILD_MODULE, TODO ADD A NOTE ABOUT THIS APPMODULE BUILDMODULE SETUP
+  appModule: BuildModule,
   openApi,
 })

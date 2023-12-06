@@ -7,8 +7,8 @@ import {
   UseGuards,
   Patch,
   HttpStatus,
+  Controller, Post, HttpCode
 } from '@nestjs/common'
-import { Controller, Post, HttpCode } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
