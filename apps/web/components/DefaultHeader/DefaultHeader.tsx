@@ -16,6 +16,7 @@ export interface DefaultHeaderProps {
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
+  className?: string
 }
 
 export const DefaultHeader: React.FC<
@@ -31,6 +32,7 @@ export const DefaultHeader: React.FC<
   imagePadding = '20px',
   imageIsFullHeight = true,
   imageObjectFit = 'contain',
+  className,
 }) => {
   const imageProvided = !!image
   const logoProvided = !!logo
@@ -62,7 +64,14 @@ export const DefaultHeader: React.FC<
           background: background,
         }}
       >
-        <div className={styles.gridContainer}>
+        <div
+          className={cn(
+            {
+              [styles.gridContainer]: !className,
+            },
+            className,
+          )}
+        >
           <div
             className={styles.textContainer}
             style={
@@ -89,9 +98,11 @@ export const DefaultHeader: React.FC<
                   </LinkWrapper>
                 </Hidden>
               )}
-              <Text variant="h1" as="h1" color={titleColor}>
-                {title}
-              </Text>
+              <div className={styles.title}>
+                <Text variant="h1" as="h1" color={titleColor}>
+                  {title}
+                </Text>
+              </div>
             </div>
           </div>
           {imageProvided && (
