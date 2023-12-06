@@ -21,9 +21,10 @@ export class MessageProcessorService {
       message.templateId,
       profile.locale,
     )
-    const notification = this.notificationsService.formatArguments(message, {
-      ...template,
-    })
+    const notification = this.notificationsService.formatArguments(
+      message.args,
+      template,
+    )
 
     return {
       title: notification.notificationTitle,

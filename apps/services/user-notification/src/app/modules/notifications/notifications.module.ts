@@ -1,3 +1,13 @@
+import {
+  NationalRegistryV3ClientConfig,
+  NationalRegistryV3ClientModule,
+} from '@island.is/clients/national-registry-v3'
+import { EmailModule } from '@island.is/email-service'
+import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import {
+  FeatureFlagConfig,
+  FeatureFlagModule,
+} from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 import * as firebaseAdmin from 'firebase-admin'
 import { CacheModule } from '@nestjs/cache-manager'
@@ -37,6 +47,13 @@ import { NotificationsService } from './notifications.service'
           queueName: environment.deadLetterQueueName,
         },
       },
+    }),
+    EmailModule.register(environment.emailOptions),
+    FeatureFlagModule,
+    NationalRegistryV3ClientModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [XRoadConfig, NationalRegistryV3ClientConfig, FeatureFlagConfig],
     }),
   ],
   controllers: [NotificationsController],

@@ -1,3 +1,4 @@
+import { Base, Client, NationalRegistry } from '../../../../infra/src/dsl/xroad'
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const MAIN_QUEUE_NAME = 'user-notification'
@@ -20,6 +21,7 @@ export const userNotificationServiceSetup =
         CONTENTFUL_ACCESS_TOKEN:
           '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
       })
+      .xroad(Base, Client, NationalRegistry)
       .liveness('/liveness')
       .readiness('/liveness')
       .ingress({
@@ -71,6 +73,7 @@ export const userNotificationWorkerSetup = (services: {
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
+      EMAIL_REGION: 'eu-west-1',
       IDENTITY_SERVER_PATH: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',

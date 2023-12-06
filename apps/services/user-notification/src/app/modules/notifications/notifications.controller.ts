@@ -6,7 +6,6 @@ import {
   Param,
   Query,
   UseInterceptors,
-  BadRequestException,
   Version,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
@@ -21,7 +20,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateNotificationDto } from './dto/createNotification.dto'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CreateNotificationResponse } from './dto/createNotification.response'
 
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
@@ -36,7 +34,6 @@ import { NotificationsService } from './notifications.service'
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    @InjectQueue('notifications') private queue: QueueService,
     private readonly notificationsService: NotificationsService,
   ) {}
 
@@ -52,7 +49,7 @@ export class NotificationsController {
   @HttpCode(201)
   @Post()
   @Version(VERSION_NEUTRAL)
-  async createNotification(
+  async createDeprecatedNotification(
     @Body() body: CreateNotificationDto,
   ): Promise<CreateNotificationResponse> {
     return this.createHnippNotification({
@@ -137,33 +134,24 @@ export class NotificationsController {
   async createHnippNotification(
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
-    const template = await this.notificationsService.getTemplate(
-      body.templateId,
-    )
-    // check counts
-    if (!this.notificationsService.validateArgCounts(body, template)) {
-      throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args.length +
-          ' arguments but ' +
-          body.args.length +
-          ' were provided',
-      )
-    }
-    // check keys/args/properties
-    for (const arg of body.args) {
-      if (!template.args.includes(arg.key)) {
-        throw new BadRequestException(
-          arg.key +
-            ' is not a valid argument for template: ' +
-            template.templateId,
-        )
-      }
-    }
+    await this.notificationsService.validate(body.templateId, body.args)
 
-    // add to queue
-    const id = await this.queue.add(body)
-    this.logger.info('Message queued ... ...', { messageId: id, ...body })
-    return { id }
+    return this.notificationsService.addToQueue(body)
+  }
+
+  @Documentation({
+    description: 'Creates a new notification and adds to queue',
+    summary: 'Creates a new notification and adds to queue',
+    includeNoContentResponse: true,
+    response: { status: 201, type: CreateNotificationResponse },
+  })
+  @Post('/')
+  @Version('1')
+  async createNotification(
+    @Body() body: CreateHnippNotificationDto,
+  ): Promise<CreateNotificationResponse> {
+    await this.notificationsService.validate(body.templateId, body.args)
+
+    return this.notificationsService.addToQueue(body)
   }
 }

@@ -54,6 +54,9 @@ export enum Features {
 
   // Userprofile Collection
   isIASSpaPagesEnabled = 'isiasspapagesenabled',
+
+  // Notifications
+  isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
 }
 
 export enum ServerSideFeature {

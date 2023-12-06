@@ -10,6 +10,8 @@ import type {
 
 import { FEATURE_FLAG_CLIENT } from './feature-flag.client'
 
+export type UserWithAttributes = User & { attributes?: Record<string, string> }
+
 export class FeatureFlagService {
   constructor(
     @Inject(FEATURE_FLAG_CLIENT)
@@ -19,7 +21,7 @@ export class FeatureFlagService {
   async getValue<T extends SettingValue>(
     feature: Features,
     defaultValue: T,
-    user?: User,
+    user?: FeatureFlagUser,
   ): Promise<SettingTypeOf<T>> {
     return this.client.getValue(
       feature,
@@ -28,14 +30,19 @@ export class FeatureFlagService {
     )
   }
 
-  private getFeatureFlagUser(user: User): FeatureFlagUser {
-    const attributes: Record<string, string> = {}
-    if (user.nationalId) {
-      attributes.subjectType = kennitala.isCompany(user.nationalId)
-        ? 'legalEntity'
-        : 'person'
+  private getFeatureFlagUser(user: FeatureFlagUser): FeatureFlagUser {
+    return {
+      id: user.id,
+      attributes: {
+        ...user?.attributes,
+        ...(user.id
+          ? {
+              subjectType: kennitala.isCompany(user.id)
+                ? 'legalEntity'
+                : 'person',
+            }
+          : {}),
+      },
     }
-
-    return { id: user.nationalId, attributes }
   }
 }
