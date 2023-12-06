@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { VehicleDto } from './types'
+import { VehicleDto } from '../shared/types'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const selectedVehicles = getValueViaPath(

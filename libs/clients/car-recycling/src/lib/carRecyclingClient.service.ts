@@ -73,7 +73,6 @@ export class CarRecyclingClientService {
         variables: {
           input: {
             permno,
-            milage,
           },
         } as SkilavottordVehicleMutationVariables,
       })
@@ -91,6 +90,7 @@ export class CarRecyclingClientService {
   async recycleVehicle(
     user: User,
     permno: string,
+    mileage: string,
     requestType: RecyclingRequestTypes,
   ) {
     const response = await this.gqlRequestWithAuth(user, {
@@ -98,6 +98,7 @@ export class CarRecyclingClientService {
       variables: {
         input: {
           permno,
+          mileage,
           requestType,
         },
       } as SkilavottordRecyclingRequestMutationVariables,

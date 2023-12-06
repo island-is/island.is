@@ -49,12 +49,13 @@ export const Vehicles = ({
               <Label>{formatMessage(vehicle.permno || '')}</Label>
               {vehicle.make}, {vehicle.color}
             </Box>
-            {vehicle.odometer && isNumber(+vehicle.odometer) && (
+
+            {vehicle.mileage && isNumber(+vehicle.mileage) && (
               <Box>
                 <Label>
-                  {formatMessage(carRecyclingMessages.review.odometer)}
+                  {formatMessage(carRecyclingMessages.review.milage)}
                 </Label>
-                {formatNumber(+vehicle.odometer)} km
+                {vehicle.mileage} km
               </Box>
             )}
           </Box>

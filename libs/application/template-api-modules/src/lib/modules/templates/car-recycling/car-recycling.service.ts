@@ -18,6 +18,7 @@ import { VehicleMiniDto } from '@island.is/clients/vehicles'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { VehicleDto } from '@island.is/application/templates/car-recycling'
 
 @Injectable()
 export class CarRecyclingService extends BaseTemplateApiService {
@@ -61,13 +62,14 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
   async recycleVehicles(
     auth: User,
-    vehicle: VehicleMiniDto,
+    vehicle: VehicleDto,
     recyclingRequestType: RecyclingRequestTypes,
   ) {
     if (vehicle && vehicle.permno) {
       return await this.carRecyclingService.recycleVehicle(
         auth,
         vehicle.permno,
+        vehicle.mileage.trim().replace('.', ''),
         recyclingRequestType,
       )
     }

@@ -281,6 +281,11 @@ export const errorMessages = defineMessages({
       'Ekki tókst að afskrá bifreið í endurvinnslu hjá Úrvinnslusjóði',
     description: 'Unable to deregister vehicle at the Icelandic Recycling Fund',
   },
+  milagesMissing: {
+    id: 'rf.cr.application:error.milage.missing',
+    defaultMessage: 'Það verður að setja inn kílómetrastöðu',
+    description: 'Milage as a mandatory',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({

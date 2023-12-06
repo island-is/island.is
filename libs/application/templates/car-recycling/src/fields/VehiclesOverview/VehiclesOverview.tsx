@@ -23,7 +23,7 @@ import { carRecyclingMessages, errorMessages } from '../../lib/messages'
 
 import { useFormContext } from 'react-hook-form'
 
-import { VehicleDto } from '../../lib/types'
+import { VehicleDto } from '../../shared/types'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
   const { formatMessage } = useLocale()
@@ -204,6 +204,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
                 </Text>
 
                 <InputController
+                  required={true}
                   id={vehicle.permno + 'input'}
                   label={formatText(
                     carRecyclingMessages.cars.odometer,
@@ -214,14 +215,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
                   placeholder="0"
                   size="sm"
                   type="number"
-                  defaultValue={vehicle.odometer}
+                  defaultValue={vehicle.mileage}
                   suffix=" "
                   thousandSeparator
                   rightAlign={true}
                   onChange={(e) => {
                     const list = selectedVehiclesList.map((prevVehicle) =>
                       vehicle.permno === prevVehicle.permno
-                        ? { ...vehicle, odometer: e.target.value }
+                        ? { ...vehicle, mileage: e.target.value }
                         : prevVehicle,
                     )
 
