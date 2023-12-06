@@ -26,6 +26,7 @@ import * as styles from './Medicine.css'
 import { EmptyTable } from './components/EmptyTable/EmptyTable'
 import { DrugRow } from './components/DrugRow/DrugRow'
 import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 const DEFAULT_PAGE_NUMBER = 1
 const DEFAULT_PAGE_SIZE = 8
@@ -123,7 +124,7 @@ export const MedicineCalulator = () => {
   }
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading

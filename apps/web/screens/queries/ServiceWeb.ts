@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
-import { slices } from './fragments'
+
+import { htmlFields, slices } from './fragments'
 
 export const GET_SERVICE_WEB_PAGE_QUERY = gql`
   query GetServiceWebPage($input: GetServiceWebPageInput!) {
@@ -183,12 +184,7 @@ export const GET_SUPPORT_SEARCH_RESULTS_QUERY = gql`
 `
 
 export const GET_SERVICE_WEB_ORGANIZATION = gql`
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
-
+  ${htmlFields}
   query GetServiceWebOrganization($input: GetOrganizationInput!) {
     getOrganization(input: $input) {
       id

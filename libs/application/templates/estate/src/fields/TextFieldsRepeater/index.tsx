@@ -1,7 +1,8 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
+import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import {
   Box,
   GridColumn,
@@ -9,13 +10,17 @@ import {
   Button,
   Text,
   InputBackgroundColor,
+  Input,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
+import { m } from '../../lib/messages'
 import * as styles from '../styles.css'
+import { MessageDescriptor } from 'react-intl'
+import { useLocale } from '@island.is/localization'
 
 type Field = {
   id: string
-  title: string
+  title: MessageDescriptor | string
   placeholder?: string
   format?: string
   backgroundColor?: InputBackgroundColor
@@ -30,25 +35,48 @@ type Props = {
       fields: Field[]
       repeaterButtonText: string
       repeaterHeaderText: string
+      sumField: string
+      currency: boolean
     }
   }
 }
 
+const valueKeys = ['rateOfExchange', 'faceValue']
+
 export const TextFieldsRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & Props>
-> = ({ field, errors }) => {
+> = ({ application, field, errors }) => {
   const { id, props } = field
   const { fields, append, remove, replace } = useFieldArray({
     name: id,
   })
 
-  const [rateOfExchange, setRateOfExchange] = useState('')
-  const [faceValue, setFaceValue] = useState('')
-  const [index, setIndex] = useState('0')
+  const { setValue, getValues, clearErrors } = useFormContext()
+  const { formatMessage } = useLocale()
 
-  const { setValue, clearErrors } = useFormContext()
+  const [total, setTotal] = useState(0)
 
-  const handleAddRepeaterFields = () => {
+  const calculateTotal = useCallback(() => {
+    const values = getValues(id)
+
+    if (!values) {
+      return
+    }
+
+    const total = values.reduce(
+      (acc: number, current: any) =>
+        Number(acc) + Number(current[props.sumField]),
+      0,
+    )
+
+    setTotal(total)
+  }, [getValues, id, props.sumField])
+
+  useEffect(() => {
+    calculateTotal()
+  }, [calculateTotal])
+
+  const handleAddRepeaterFields = useCallback(() => {
     const values = props.fields.map((field: Field) => {
       return Object.values(field)[1]
     })
@@ -66,26 +94,36 @@ export const TextFieldsRepeater: FC<
     } else {
       append(repeaterFields)
     }
-  }
+  }, [append, fields.length, props.fields, replace])
 
   useEffect(() => {
     if (fields.length === 0) {
       handleAddRepeaterFields()
     }
+  }, [fields.length, handleAddRepeaterFields])
 
-    const formattedFaceValue = Number(faceValue.replace(',', '.')) || 0
-    const formattedRateOfExchange =
-      Number(rateOfExchange.replace(',', '.')) || 0
+  const updateValue = (fieldIndex: string) => {
+    const stockValues: { faceValue?: string; rateOfExchange?: string } =
+      getValues(fieldIndex)
 
-    setValue(
-      `${index}.value`,
-      String(formattedFaceValue * formattedRateOfExchange),
-    )
+    let total
 
-    if (formattedRateOfExchange * formattedRateOfExchange > 0) {
-      clearErrors(`${index}.value`)
+    const faceValue = stockValues?.faceValue
+    const rateOfExchange = stockValues?.rateOfExchange
+
+    if (faceValue && rateOfExchange) {
+      const a = faceValue.replace(/[^\d]/g, '')
+      const b = rateOfExchange.replace(/[^\d.,]/g, '').replace(',', '.')
+
+      total = Math.round(parseFloat(a) * parseFloat(b))
+
+      setValue(`${fieldIndex}.value`, String(total))
+
+      if (total > 0) {
+        clearErrors(`${fieldIndex}.value`)
+      }
     }
-  }, [fields, faceValue, rateOfExchange, setValue])
+  }
 
   return (
     <Box>
@@ -102,7 +140,7 @@ export const TextFieldsRepeater: FC<
             {index > 0 && (
               <>
                 <Text variant="h4" marginBottom={2}>
-                  {props.repeaterHeaderText}
+                  {formatMessage(props.repeaterHeaderText)}
                 </Text>
                 <Box position="absolute" className={styles.removeFieldButton}>
                   <Button
@@ -110,14 +148,17 @@ export const TextFieldsRepeater: FC<
                     size="small"
                     circle
                     icon="remove"
-                    onClick={() => remove(index)}
+                    onClick={() => {
+                      remove(index)
+                      calculateTotal()
+                    }}
                   />
                 </Box>
               </>
             )}
 
             <GridRow>
-              {props.fields.map((field: Field) => {
+              {props.fields.map((field: Field, idx) => {
                 return (
                   <GridColumn
                     span={['1/1', '1/2']}
@@ -129,7 +170,7 @@ export const TextFieldsRepeater: FC<
                       name={`${fieldIndex}.${field.id}`}
                       defaultValue={repeaterField[field.id] || ''}
                       format={field.format}
-                      label={field.title}
+                      label={formatMessage(field.title)}
                       placeholder={field.placeholder}
                       backgroundColor={
                         field.backgroundColor ? field.backgroundColor : 'blue'
@@ -143,11 +184,11 @@ export const TextFieldsRepeater: FC<
                           : undefined
                       }
                       onChange={(e) => {
-                        setIndex(fieldIndex)
-                        if (field.id === 'rateOfExchange') {
-                          setRateOfExchange(e.target.value)
-                        } else if (field.id === 'faceValue') {
-                          setFaceValue(e.target.value)
+                        if (valueKeys.includes(field.id)) {
+                          updateValue(fieldIndex)
+                        }
+                        if (props.sumField === field.id) {
+                          calculateTotal()
                         }
                       }}
                     />
@@ -158,6 +199,37 @@ export const TextFieldsRepeater: FC<
           </Box>
         )
       })}
+      {!!fields.length && props.sumField && (
+        <Box marginTop={5} marginBottom={3}>
+          <GridRow>
+            <GridColumn span={['1/1', '1/2']}>
+              {props.currency ? (
+                <NumberFormat
+                  customInput={Input}
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  label={formatMessage(m.total)}
+                  type="text"
+                  decimalSeparator=","
+                  thousandSeparator="."
+                  suffix=" kr."
+                  value={String(total)}
+                  readOnly={true}
+                />
+              ) : (
+                <Input
+                  id={`${id}.total`}
+                  name={`${id}.total`}
+                  label={formatMessage(m.total)}
+                  type="text"
+                  value={String(total)}
+                  readOnly={true}
+                />
+              )}
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
       <Box marginTop={1}>
         <Button
           variant="text"
@@ -166,7 +238,7 @@ export const TextFieldsRepeater: FC<
           onClick={handleAddRepeaterFields}
           size="small"
         >
-          {props.repeaterButtonText}
+          {formatMessage(props.repeaterButtonText)}
         </Button>
       </Box>
     </Box>

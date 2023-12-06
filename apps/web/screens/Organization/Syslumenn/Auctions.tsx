@@ -1,22 +1,27 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
+
+import type { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  Button,
+  DatePicker,
+  DialogPrompt,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  LinkContext,
+  LoadingDots,
   NavigationItem,
   Select,
   Tag,
   Text,
-  DialogPrompt,
-  Input,
-  LinkContext,
-  Button,
-  DatePicker,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  LoadingDots,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import { OrganizationWrapper, Webreader } from '@island.is/web/components'
 import {
   ContentLanguage,
   Query,
@@ -25,24 +30,21 @@ import {
   QueryGetOrganizationSubpageArgs,
   SyslumennAuction,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
   GET_SYSLUMENN_AUCTIONS_QUERY,
 } from '../../queries'
-import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { OrganizationWrapper, Webreader } from '@island.is/web/components'
-import { useQuery } from '@apollo/client'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { useRouter } from 'next/router'
-import { theme } from '@island.is/island-ui/theme'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
-import { webRichText } from '@island.is/web/utils/richText'
-import type { SliceType } from '@island.is/island-ui/contentful'
 
 interface AuctionsProps {
   organizationPage: Query['getOrganizationPage']
@@ -797,6 +799,10 @@ const Auctions: Screen<AuctionsProps> = ({
             const auctionPetitioners = auction.petitioners?.split(',')
             const auctionRespondents = auction.respondent?.split(',')
 
+            const displayCustomCardMessage =
+              auction.lotType === LOT_TYPES.VEHICLE ||
+              auction.lotType === LOT_TYPES.LIQUID_ASSETS
+
             return (
               <Box
                 key={`auction-${index}`}
@@ -863,7 +869,6 @@ const Auctions: Screen<AuctionsProps> = ({
                       ).replace('{{ID}}', auction.lotId)}
                     />
                   )}
-
                   {/* Aircraft link */}
                   {auction.lotId && auction.lotType === LOT_TYPES.AIRCRAFT && (
                     <LotLink
@@ -955,10 +960,43 @@ const Auctions: Screen<AuctionsProps> = ({
                         />
                       )}
                     </Box>
-                    <Text variant="small">
-                      {auction.lotType}{' '}
-                      {auction.auctionType && ' - ' + auction.auctionType}
-                    </Text>
+
+                    {!displayCustomCardMessage && (
+                      <Text variant="small">
+                        {auction.lotType}{' '}
+                        {auction.auctionType && ' - ' + auction.auctionType}
+                      </Text>
+                    )}
+
+                    {displayCustomCardMessage && (
+                      <GridContainer>
+                        <GridRow marginTop={3} alignItems="flexEnd">
+                          <GridColumn span="1/2">
+                            <Text variant="small">
+                              <i>
+                                {n(
+                                  'auctionVehicleAndLiquidAssetCustomCardMessage',
+                                  'Í tilviki lausafjáruppboða fer uppboð ekki fram nema gerðarbeiðandi komi andlagi á uppboðsstað',
+                                )}
+                              </i>
+                            </Text>
+                          </GridColumn>
+                          <GridColumn span="1/2">
+                            <Box
+                              display="flex"
+                              justifyContent="flexEnd"
+                              alignItems="flexEnd"
+                            >
+                              <Text variant="small">
+                                {auction.lotType}{' '}
+                                {auction.auctionType &&
+                                  ' - ' + auction.auctionType}
+                              </Text>
+                            </Box>
+                          </GridColumn>
+                        </GridRow>
+                      </GridContainer>
+                    )}
                   </Box>
                 </Box>
               </Box>

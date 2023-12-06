@@ -25,7 +25,6 @@ import {
 } from '../../gen/schema'
 import { Inject } from '@nestjs/common'
 import { SMART_SOLUTIONS_API_CONFIG } from './smartSolutions.config'
-import { mapErrorMessageToActionStatusCode } from './typeMapper'
 import {
   DELETE_PASS,
   LIST_TEMPLATES,
@@ -35,6 +34,7 @@ import {
   VERIFY_PKPASS,
   VOID_PASS,
 } from './graphql/queries'
+import { mapErrorToActionStatusCode } from './typeMapper'
 
 export interface SmartSolutionsConfig {
   apiKey: string
@@ -141,7 +141,7 @@ export class SmartSolutionsApi {
     if (apiRes) {
       if (apiRes.errors) {
         const resError = apiRes.errors[0]
-        const code = mapErrorMessageToActionStatusCode(resError.message)
+        const code = mapErrorToActionStatusCode(resError.extensions.type)
         const error = {
           code,
           message: resError.message,

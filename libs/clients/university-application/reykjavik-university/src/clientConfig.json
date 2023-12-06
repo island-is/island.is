@@ -1,0 +1,681 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "Version 1 of Custom API.RU.IS",
+    "description": "This is an API managed by Reykjavik University",
+    "termsOfService": "The API is owned by Reykjavik University and therefore any suspicious activities will not be taken lightly",
+    "contact": {
+      "name": "Reykjavik University",
+      "url": "https://www.ru.is",
+      "email": "help@ru.is"
+    }
+  },
+  "host": "api.test.ru.is",
+  "basePath": "/custom",
+  "schemes": ["https"],
+  "paths": {
+    "/v{version}/hvin/active-programs": {
+      "get": {
+        "tags": ["Hvin"],
+        "summary": "Returns all active programs in RU",
+        "operationId": "Hvin_ActivePrograms",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.ActiveProgram"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v{version}/hvin/semesters/{semesterYear}/{semesterSeason}/applications": {
+      "get": {
+        "tags": ["Hvin"],
+        "summary": "Finds and returns all the applications on a specific semester",
+        "operationId": "Hvin_GetApplicationsBySemesterCode",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "semesterYear",
+            "in": "path",
+            "description": "Semester year",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "semesterSeason",
+            "in": "path",
+            "description": "Semester season",
+            "required": true,
+            "type": "string",
+            "enum": ["NOTSET", "SPRING", "SUMMER", "FALL"]
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Application"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v{version}/hvin/applications/{id}": {
+      "get": {
+        "tags": ["Hvin"],
+        "summary": "Finds and returns the application by RU id",
+        "operationId": "Hvin_GetApplicationById",
+        "consumes": [],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Application Id from RU application system",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Application"
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Hvin"],
+        "summary": "Updates an application value. For example the status",
+        "operationId": "Hvin_UpdateApplicationById",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Application Id from RU application system",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "update",
+            "in": "body",
+            "description": "Update Application object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.UpdateApplication"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.UpdateApplicationResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v{version}/hvin/applications": {
+      "post": {
+        "tags": ["Hvin"],
+        "summary": "Creates an applicant and application in RU application system",
+        "operationId": "Hvin_CreateApplication",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml",
+          "application/x-www-form-urlencoded"
+        ],
+        "produces": [
+          "application/json",
+          "text/json",
+          "application/xml",
+          "text/xml"
+        ],
+        "parameters": [
+          {
+            "name": "application",
+            "in": "body",
+            "description": "Application object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.NewApplication"
+            }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "format": "int32", "type": "integer" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "RekUni.IT.API.Custom.Models.Hvin.ActiveProgram": {
+      "type": "object",
+      "properties": {
+        "externalId": {
+          "description": "External ID for the program(from University)",
+          "type": "string"
+        },
+        "nameIs": {
+          "description": "Program name (Icelandic)",
+          "type": "string"
+        },
+        "nameEn": { "description": "Program name (English)", "type": "string" },
+        "departmentNameIs": {
+          "description": "Name of the department that the program belongs to (Icelandic)",
+          "type": "string"
+        },
+        "departmentNameEn": {
+          "description": "Name of the department that the program belongs to (English)",
+          "type": "string"
+        },
+        "startingSemesterYear": {
+          "format": "int32",
+          "description": "Which year the program starts on",
+          "type": "integer"
+        },
+        "startingSemesterSeason": {
+          "description": "Which season this program starts on",
+          "enum": ["NOTSET", "SPRING", "SUMMER", "FALL"],
+          "type": "string"
+        },
+        "applicationStartDate": {
+          "format": "date-time",
+          "description": "When the application period for this program starts",
+          "type": "string"
+        },
+        "applicationEndDate": {
+          "format": "date-time",
+          "description": "When the application period for this program ends",
+          "type": "string"
+        },
+        "degreeType": {
+          "description": "Degree type",
+          "enum": [
+            "UNDERGRADUATE",
+            "POSTGRADUATE",
+            "DOCTORAL",
+            "DIPLOMA",
+            "PRELIMINARY",
+            "UNKNOWN"
+          ],
+          "type": "string"
+        },
+        "degreeAbbreviation": {
+          "description": "Degree abbreviation",
+          "type": "string"
+        },
+        "credits": {
+          "format": "double",
+          "description": "Number of course credits (in ECTS)",
+          "type": "number"
+        },
+        "descriptionIs": {
+          "description": "Program description (Icelandic)",
+          "type": "string"
+        },
+        "descriptionEn": {
+          "description": "Program description (English)",
+          "type": "string"
+        },
+        "durationInYears": {
+          "format": "double",
+          "description": "Total duration for this program (in years)",
+          "type": "number"
+        },
+        "costPerYear": {
+          "format": "int32",
+          "description": "Cost for program (per year)",
+          "type": "integer"
+        },
+        "iscedCode": {
+          "description": "ISCED code for program",
+          "type": "string"
+        },
+        "externalUrlIs": {
+          "description": "External url  for the program from the university web page (Icelandic)",
+          "type": "string"
+        },
+        "externalUrlEn": {
+          "description": "External url  for the program from the university web page (English)",
+          "type": "string"
+        },
+        "modeOfDelivery": {
+          "description": "Modes of deliveries available for the program",
+          "type": "array",
+          "items": {
+            "enum": ["NOTSET", "ON_SITE", "ONLINE", "ONLINE_WITH_SESSION"],
+            "type": "string"
+          }
+        },
+        "interestTags": {
+          "description": "Interest tag for the program (to be able to categorize programs after interest)\r\n=&gt; This will be removed when Hagstofan is ready with there tags.",
+          "type": "array",
+          "items": {
+            "enum": ["NOTSET", "POLITICS", "LANGUAGE", "ENGINEER", "HISTORY"],
+            "type": "string"
+          }
+        },
+        "admissionRequirementsIs": {
+          "description": "Admission requirements for program (Icelandic)",
+          "type": "string"
+        },
+        "admissionRequirementsEn": {
+          "description": "Admission requirements for program (English)",
+          "type": "string"
+        },
+        "studyRequirementsIs": {
+          "description": "Study requirements for program (Icelandic)",
+          "type": "string"
+        },
+        "studyRequirementsEn": {
+          "description": "Study requirements for program (English)",
+          "type": "string"
+        },
+        "costInformationIs": {
+          "description": "Cost information for program (Icelandic)",
+          "type": "string"
+        },
+        "costInformationEn": {
+          "description": "Cost information for program (English)",
+          "type": "string"
+        },
+        "courses": {
+          "description": "Array/list of course info for the active program",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.CourseInfo"
+          }
+        },
+        "extraApplicationFields": {
+          "description": "Other fields that should be displayed in the application for the program",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.ApplicationExtraFieldDisplayInfo"
+          }
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.CourseInfo": {
+      "type": "object",
+      "properties": {
+        "externalId": {
+          "description": "External ID for the course (from University)",
+          "type": "string"
+        },
+        "nameIs": {
+          "description": "Course name (Icelandic)",
+          "type": "string"
+        },
+        "nameEn": { "description": "Course name (English)", "type": "string" },
+        "required": {
+          "description": "Whether the course is required to take within the program",
+          "type": "boolean"
+        },
+        "credits": {
+          "format": "int32",
+          "description": "Number of course credits (in ECTS)",
+          "type": "integer"
+        },
+        "semesterYear": {
+          "format": "int32",
+          "description": "Which year this course is taught on",
+          "type": "integer"
+        },
+        "semesterSeason": {
+          "description": "Which season this course is taught on",
+          "enum": ["NOTSET", "SPRING", "SUMMER", "FALL"],
+          "type": "string"
+        },
+        "descriptionIs": {
+          "description": "Course description (Icelandic)",
+          "type": "string"
+        },
+        "descriptionEn": {
+          "description": "Course description (English)",
+          "type": "string"
+        },
+        "externalUrlIs": {
+          "description": "External url  for the course from the university web page (Icelandic)",
+          "type": "string"
+        },
+        "externalUrlEn": {
+          "description": "External url  for the course from the university web page (English)",
+          "type": "string"
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.ApplicationExtraFieldDisplayInfo": {
+      "type": "object",
+      "properties": {
+        "nameIs": { "description": "Field name (Icelandic)", "type": "string" },
+        "nameEn": { "description": "Field name (English)", "type": "string" },
+        "descriptionIs": {
+          "description": "Field description (Icelandic)",
+          "type": "string"
+        },
+        "descriptionEn": {
+          "description": "Field description (English)",
+          "type": "string"
+        },
+        "fieldKey": {
+          "description": "Field key for processing when sent",
+          "type": "string"
+        },
+        "fieldType": {
+          "description": "What type of field should be displayed in the application form",
+          "enum": ["NOTSET", "UPLOAD", "CHECKBOX", "TEXT_INPUT", "TEXT_AREA"],
+          "type": "string"
+        },
+        "uploadAcceptedFileType": {
+          "description": "If field type is UPLOAD, then this field is required and should list up all file types that should be accepted",
+          "type": "string"
+        },
+        "required": {
+          "description": "Is this field required?",
+          "type": "boolean"
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.Application": {
+      "type": "object",
+      "properties": {
+        "applicationId": {
+          "description": "Unique identifier for the application in the university's system",
+          "type": "string"
+        },
+        "programId": {
+          "description": "Same as External Id from the Active programs endpoint",
+          "type": "string"
+        },
+        "startingSemesterYear": {
+          "format": "int32",
+          "description": "Which year the program starts on",
+          "type": "integer"
+        },
+        "startingSemesterSeason": {
+          "description": "Which season this program started on",
+          "enum": ["NOTSET", "SPRING", "SUMMER", "FALL"],
+          "type": "string"
+        },
+        "status": {
+          "description": "Application status.",
+          "enum": [
+            "NOTSET",
+            "IN_REVIEW",
+            "IN_PROGRESS",
+            "ACCEPTED_BY_UNIVERSITY",
+            "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
+            "REJECTED_BY_STUDENT_REASON_CANCELLED",
+            "REJECTED_BY_STUDENT_REASON_OTHER_ACCEPTED",
+            "REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT",
+            "REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY",
+            "CANCELLED_BY_STUDENT"
+          ],
+          "type": "string"
+        },
+        "applicantInfo": {
+          "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Applicant",
+          "description": "Applicant info."
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.Applicant": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "description": "Personal email used to contact the applicant and allow for access to the application system of the school",
+          "type": "string"
+        },
+        "firstName": {
+          "description": "Applicant's first name",
+          "type": "string"
+        },
+        "middleName": {
+          "description": "Applicant's middle name",
+          "type": "string"
+        },
+        "lastName": {
+          "description": "Applicant's last name",
+          "type": "string"
+        },
+        "gender": {
+          "description": "Applicant's gender",
+          "enum": ["MALE", "FEMALE", "NONBINARYOROTHER", "NOTSET"],
+          "type": "string"
+        },
+        "kennitala": {
+          "description": "Applicant's kennitala",
+          "type": "string"
+        },
+        "dateOfBirth": { "format": "date-time", "type": "string" },
+        "nationalityCode": {
+          "description": "Applicant's two letter nationality code",
+          "type": "string"
+        },
+        "streetNameAndHouseNumber": {
+          "description": "Applicant's address",
+          "type": "string"
+        },
+        "postcode": {
+          "description": "Applicant's post code",
+          "type": "string"
+        },
+        "city": { "description": "Applicant's city", "type": "string" },
+        "residenceState": {
+          "description": "Applicant's residence state",
+          "type": "string"
+        },
+        "countryCode": {
+          "description": "Applicant's residence two letter country code",
+          "type": "string"
+        },
+        "mobilePhone": { "type": "string" },
+        "preferredLanguage": { "type": "string" },
+        "educations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Education"
+          }
+        },
+        "jobs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Job"
+          }
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.Education": {
+      "type": "object",
+      "properties": {
+        "School": { "type": "string" },
+        "Degree": { "type": "string" }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.Job": {
+      "type": "object",
+      "properties": {
+        "Company": { "type": "string" },
+        "JobTitle": { "type": "string" }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.UpdateApplication": {
+      "type": "object",
+      "properties": {
+        "statusUpdate": {
+          "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.UpdateApplicationStatus",
+          "description": "Object to update the status of an application"
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.UpdateApplicationStatus": {
+      "type": "object",
+      "properties": {
+        "newStatusValue": {
+          "description": "New status.",
+          "enum": [
+            "NOTSET",
+            "IN_REVIEW",
+            "IN_PROGRESS",
+            "ACCEPTED_BY_UNIVERSITY",
+            "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
+            "REJECTED_BY_STUDENT_REASON_CANCELLED",
+            "REJECTED_BY_STUDENT_REASON_OTHER_ACCEPTED",
+            "REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT",
+            "REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY",
+            "CANCELLED_BY_STUDENT"
+          ],
+          "type": "string"
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.UpdateApplicationResponse": {
+      "type": "object",
+      "properties": {
+        "updateObject": { "description": "Update object", "type": "object" },
+        "hasError": {
+          "description": "If the update was unsuccessful the hasError property will be set to true",
+          "type": "boolean"
+        },
+        "errorText": {
+          "description": "Description of the error if an error occured",
+          "type": "string"
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.NewApplication": {
+      "required": [
+        "programId",
+        "modeOfDelivery",
+        "startingSemesterYear",
+        "startingSemesterSeason",
+        "applicantInfo"
+      ],
+      "type": "object",
+      "properties": {
+        "programId": {
+          "description": "External Id from the Active programs endpoint",
+          "type": "string"
+        },
+        "modeOfDelivery": {
+          "description": "Mode of delivery from the Active programs endpoint",
+          "enum": ["NOTSET", "ON_SITE", "ONLINE", "ONLINE_WITH_SESSION"],
+          "type": "string"
+        },
+        "startingSemesterYear": {
+          "format": "int32",
+          "description": "Which year the program starts on",
+          "type": "integer"
+        },
+        "startingSemesterSeason": {
+          "description": "Which season this program started on",
+          "enum": ["NOTSET", "SPRING", "SUMMER", "FALL"],
+          "type": "string"
+        },
+        "applicantInfo": {
+          "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.Applicant",
+          "description": "Applicant info."
+        },
+        "extraApplicationFields": {
+          "description": "Extra fields sent with the application",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/RekUni.IT.API.Custom.Models.Hvin.ApplicationExtraFieldValue[System.Object]"
+          }
+        }
+      }
+    },
+    "RekUni.IT.API.Custom.Models.Hvin.ApplicationExtraFieldValue[System.Object]": {
+      "type": "object",
+      "properties": {
+        "value": { "description": "Field value", "type": "object" }
+      }
+    }
+  }
+}

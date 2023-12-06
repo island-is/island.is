@@ -28,6 +28,7 @@ import sub from 'date-fns/sub'
 import { isDefined } from '@island.is/shared/utils'
 import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 export const PaymentOverview = () => {
   const { formatMessage, formatDateFns } = useLocale()
@@ -91,7 +92,7 @@ export const PaymentOverview = () => {
   }, [])
 
   return (
-    <PaymentsWrapper>
+    <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
         <AlertMessage
           type="error"

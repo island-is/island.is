@@ -24,13 +24,13 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
-  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
-  GetLifeEventsInCategoryQuery,
+  GetAnchorPagesInCategoryQuery,
   GetNamespaceQuery,
   GetArticlesQuery,
   QueryGetArticlesArgs,
@@ -38,7 +38,7 @@ import {
   QueryGetNamespaceArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
-  QueryGetLifeEventsInCategoryArgs,
+  QueryGetAnchorPagesInCategoryArgs,
   Image,
   ArticleGroup,
   Article,
@@ -55,7 +55,7 @@ import {
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
 type Articles = GetArticlesQuery['getArticles']
-type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
+type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
   articles: Articles
@@ -570,7 +570,7 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles: articles },
     },
     {
-      data: { getLifeEventsInCategory: lifeEvents },
+      data: { getAnchorPagesInCategory: lifeEvents },
     },
     {
       data: { getArticleCategories },
@@ -588,10 +588,10 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<
-      GetLifeEventsInCategoryQuery,
-      QueryGetLifeEventsInCategoryArgs
+      GetAnchorPagesInCategoryQuery,
+      QueryGetAnchorPagesInCategoryArgs
     >({
-      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+      query: GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
       variables: {
         input: {
           slug,

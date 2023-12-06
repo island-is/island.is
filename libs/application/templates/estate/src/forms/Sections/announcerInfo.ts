@@ -3,6 +3,7 @@ import {
   buildMultiField,
   buildPhoneField,
   buildSection,
+  buildSelectField,
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
@@ -85,6 +86,27 @@ export const announcerInfo = buildSection({
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
+          },
+        }),
+        buildSelectField({
+          id: 'applicant.relationToDeceased',
+          title: m.relationToDeceased,
+          required: true,
+          condition: (answers) =>
+            answers.selectedEstate === EstateTypes.estateWithoutAssets,
+          width: 'half',
+          options: ({
+            externalData: {
+              syslumennOnEntry: { data },
+            },
+          }) => {
+            return (data as { relationOptions: string[] }).relationOptions.map(
+              (option) =>
+                ({
+                  value: option,
+                  label: option,
+                } || []),
+            )
           },
         }),
       ],

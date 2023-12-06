@@ -1,11 +1,6 @@
-import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useUserInfo } from '@island.is/auth/react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import {
   formatNationalId,
   NotFound,
@@ -14,6 +9,7 @@ import {
   ErrorScreen,
   IntroHeader,
   THJODSKRA_SLUG,
+  FootNote,
 } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
 import {
@@ -30,7 +26,7 @@ import ChildRegistrationModal from './ChildRegistrationModal'
 import { TwoColumnUserInfoLine } from '../../components/TwoColumnUserInfoLine/TwoColumnUserInfoLine'
 import { formatNameBreaks } from '../../helpers/formatting'
 import { spmm } from '../../lib/messages'
-import { useNationalRegistryChildCustodyLazyQuery } from './Child.generated'
+import { useNationalRegistryChildCustodyQuery } from './Child.generated'
 import { natRegGenderMessageDescriptorRecord } from '../../helpers/localizationHelpers'
 import { ChildView } from '../../components/ChildView/ChildView'
 
@@ -41,30 +37,15 @@ type UseParams = {
 const Child = () => {
   useNamespaces('sp.family')
   const { formatMessage } = useLocale()
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const userInfo = useUserInfo()
   const { nationalId } = useParams() as UseParams
 
-  const [getNationalRegistryChildCustodyQuery, { data, loading, error }] =
-    useNationalRegistryChildCustodyLazyQuery()
-
-  /* Should show name breakdown tooltip? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      getNationalRegistryChildCustodyQuery({
-        variables: {
-          api: ffEnabled ? 'v3' : undefined,
-          childNationalId: nationalId,
-        },
-      })
-    }
-    isFlagEnabled()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const { data, loading, error } = useNationalRegistryChildCustodyQuery({
+    variables: {
+      api: 'v3',
+      childNationalId: nationalId,
+    },
+  })
 
   const dataNotFoundMessage = defineMessage({
     id: 'sp.family:data-not-found',
@@ -76,7 +57,7 @@ const Child = () => {
     defaultMessage: 'Breyta hjá Þjóðskrá',
   })
 
-  const child = data?.nationalRegistryPerson?.childCustody?.[0]
+  const child = data?.nationalRegistryPerson?.childCustody?.[0].details
 
   const parent1 = child?.birthParents ? child.birthParents[0] : undefined
   const parent2 = child?.birthParents ? child.birthParents[1] : undefined

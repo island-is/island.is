@@ -69,6 +69,10 @@ export const variants = styleVariants({
     backgroundColor: theme.color.dark100,
     color: theme.color.dark200,
   },
+  warn: {
+    backgroundColor: theme.color.yellow200,
+    color: theme.color.dark400,
+  },
   label: {},
 })
 

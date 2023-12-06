@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
@@ -50,5 +52,32 @@ export class EventLogService {
     } catch (error) {
       this.logger.error('Failed to create event log', error)
     }
+  }
+
+  async loginMap(
+    nationalIds: string[],
+  ): Promise<Map<string, { latest: Date; count: number }>> {
+    return this.eventLogModel
+      .count({
+        group: ['nationalId'],
+        attributes: [
+          'nationalId',
+          [Sequelize.fn('max', Sequelize.col('created')), 'latest'],
+          [Sequelize.fn('count', Sequelize.col('national_id')), 'count'],
+        ],
+        where: {
+          eventType: ['LOGIN', 'LOGIN_BYPASS'],
+          nationalId: nationalIds,
+        },
+      })
+      .then(
+        (logs) =>
+          new Map(
+            logs.map((log) => [
+              log.nationalId as string,
+              { latest: log.latest as Date, count: log.count },
+            ]),
+          ),
+      )
   }
 }
