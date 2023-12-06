@@ -434,7 +434,11 @@ export class InternalCaseService {
         .findByNationalId(caseToCreate.prosecutorNationalId)
         .catch(() => undefined) // Tolerate failure
 
-      if (!prosecutor || prosecutor.role !== UserRole.PROSECUTOR) {
+      if (
+        !prosecutor ||
+        (prosecutor.role !== UserRole.PROSECUTOR &&
+          prosecutor.role !== UserRole.PROSECUTOR_REPRESENTATIVE)
+      ) {
         // Tolerate failure, but log error
         this.logger.error(
           `User ${
