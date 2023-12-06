@@ -155,7 +155,9 @@ export class VehiclesService {
     const featureFlagOn = await this.featureFlagService.getValue(
       Features.servicePortalVehicleMileagePageEnabled,
       false,
-      auth,
+      {
+        id: auth.nationalId,
+      },
     )
 
     if (!featureFlagOn) {
@@ -207,7 +209,7 @@ export class VehiclesService {
     const featureFlagOn = await this.featureFlagService.getValue(
       Features.servicePortalVehicleMileagePageEnabled,
       false,
-      auth,
+      { id: auth.nationalId },
     )
 
     if (!featureFlagOn) {
@@ -233,7 +235,7 @@ export class VehiclesService {
     const featureFlagOn = await this.featureFlagService.getValue(
       Features.servicePortalVehicleMileagePageEnabled,
       false,
-      auth,
+      { id: auth.nationalId },
     )
 
     if (!featureFlagOn) {

@@ -138,20 +138,4 @@ export class NotificationsController {
 
     return this.notificationsService.addToQueue(body)
   }
-
-  @Documentation({
-    description: 'Creates a new notification and adds to queue',
-    summary: 'Creates a new notification and adds to queue',
-    includeNoContentResponse: true,
-    response: { status: 201, type: CreateNotificationResponse },
-  })
-  @Post('/')
-  @Version('1')
-  async createNotification(
-    @Body() body: CreateHnippNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    await this.notificationsService.validate(body.templateId, body.args)
-
-    return this.notificationsService.addToQueue(body)
-  }
 }
