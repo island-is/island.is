@@ -6,9 +6,6 @@ export class CreateRecyclingRequestInput {
   @Field()
   permno!: string
 
-  @Field()
-  mileage!: string
-
   @Field(() => RecyclingRequestTypes)
   requestType!: RecyclingRequestTypes
 }

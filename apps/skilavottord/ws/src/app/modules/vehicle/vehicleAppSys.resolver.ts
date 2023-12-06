@@ -4,17 +4,17 @@ import {
   UseGuards,
   forwardRef,
 } from '@nestjs/common'
-import { Query, Resolver, Mutation, Args, Int } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import parse from 'date-fns/parse'
 
-import { RecyclingRequestTypes } from '../recyclingRequest'
-import { Authorize, CurrentUser, User, Role } from '../auth'
+import { CurrentUser, User } from '../auth'
 
-import { VehicleModel, VehicleConnection } from './vehicle.model'
-import { VehicleService } from './vehicle.service'
-import { SamgongustofaService } from '../samgongustofa'
 import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { SamgongustofaService } from '../samgongustofa'
 import { CreateVehicleInput } from './dto/createVehicle.input'
+import { VehicleModel } from './vehicle.model'
+import { VehicleService } from './vehicle.service'
+import { logger } from '@island.is/logging'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => VehicleModel)
@@ -35,7 +35,13 @@ export class VehicleAppSysResolver {
       input.permno,
     )
     if (!vehicle) {
-      throw new NotFoundException(`User does not have this vehicle`)
+      logger.error(
+        'User ' +
+          user.nationalId +
+          ' does not own this vehicle ' +
+          input.permno,
+      )
+      throw new NotFoundException(`User does not own this vehicle`)
     }
     const newVehicle = new VehicleModel()
     newVehicle.vinNumber = vehicle.vinNumber
@@ -48,6 +54,7 @@ export class VehicleAppSysResolver {
     newVehicle.vehicleType = vehicle.type
     newVehicle.ownerNationalId = user.nationalId
     newVehicle.vehicleId = vehicle.permno
+    newVehicle.mileage = input.mileage
     return await this.vehicleService.create(newVehicle)
   }
 }
