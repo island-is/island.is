@@ -18,7 +18,6 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles } from './constants'
 import { application } from './messages'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { DigitalTachographDriversCardSchema } from './dataSchema'
 import {
@@ -45,7 +44,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.DigitalTachographDriversCard.translation,
   ],
   dataSchema: DigitalTachographDriversCardSchema,
-  featureFlag: Features.transportAuthorityDigitalTachographDriversCard,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
