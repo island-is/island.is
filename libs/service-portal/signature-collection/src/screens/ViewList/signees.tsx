@@ -88,7 +88,7 @@ const Signees = () => {
                       box={{ background: boxColor }}
                       text={{ variant: 'medium' }}
                     >
-                      {formatMessage(m.tempMessage)}
+                      {s.signee.address}
                     </T.Data>
                     <T.Data></T.Data>
                     {/*<T.Data box={{ background: boxColor }}>

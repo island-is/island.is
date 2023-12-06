@@ -4,7 +4,7 @@ import {
   GetListById,
   GetListSignatures,
   GetListsBySigneeArea,
-  GetOwnerLists,
+  GetListsForUser,
   GetSignedList,
 } from './queries'
 import {
@@ -21,12 +21,11 @@ interface ListSignees {
   signatureCollectionSignatures?: SignatureCollectionSignature[]
 }
 
-interface OwnerLists {
-  signatureCollectionListsByOwner?: SignatureCollectionList[]
-}
-
 interface ListsByArea {
   signatureCollectionListsByArea?: SignatureCollectionList[]
+}
+interface ListsForUser{
+  signatureCollectionListsForUser?: SignatureCollectionList[]
 }
 
 interface IsOwner {
@@ -49,7 +48,7 @@ export const useGetSignatureList = (listId: string) => {
       },
     },
   })
-
+  console.log('signatureList', signatureList)
   const listInfo =
     (signatureList?.signatureCollectionList as SignatureCollectionList) ?? {}
   return { listInfo, refetchSignatureList, loadingList }
@@ -67,7 +66,6 @@ export const useGetListSignees = (listId: string, pageNumber?: number) => {
       },
     },
   })
-
   const listSignees =
     (listSignatures?.signatureCollectionSignatures as SignatureCollectionSignature[]) ??
     []
@@ -80,21 +78,33 @@ export const useGetSignedList = () => {
     loading: loadingSignedList,
     refetch: refetchSignedList,
   } = useQuery<SignedList>(GetSignedList)
-
   const signedList =
     (getSignedList?.signatureCollectionSignedList as SignatureCollectionList) ??
-    {}
+    null
   return { signedList, loadingSignedList, refetchSignedList }
 }
 
 export const useGetOwnerLists = () => {
-  const { data: getOwnerLists, loading: loadingLists } =
-    useQuery<OwnerLists>(GetOwnerLists)
+  const { data: getListsForUser, loading: loadingLists } =
+    useQuery<ListsForUser>(GetListsForUser)
 
   const ownerLists =
-    (getOwnerLists?.signatureCollectionListsByOwner as SignatureCollectionList[]) ??
+    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
     []
   return { ownerLists, loadingLists }
+}
+
+export const useGetListsForUser = () => {
+  const {
+    data: getListsForUser,
+    loading: loadingUserLists,
+    refetch: refetchListsForUser,
+  } = useQuery<ListsForUser>(GetListsForUser)
+
+  const listsForUser =
+    (getListsForUser?.signatureCollectionListsForUser as SignatureCollectionList[]) ??
+    []
+  return { listsForUser, loadingUserLists, refetchListsForUser }
 }
 
 export const useGetListsBySigneeArea = (area: string) => {
@@ -115,6 +125,8 @@ export const useGetListsBySigneeArea = (area: string) => {
     []
   return { listsBySigneeArea, loadingAreaLists, refetchListsBySigneeArea }
 }
+
+
 
 export const useIsOwner = () => {
   const { data: getIsOwner, loading: loadingIsOwner } =

@@ -63,10 +63,10 @@ export class SignatureCollectionResolver {
 
   //   TODO: Can take in owner parameter?
   @Query(() => [SignatureCollectionList])
-  async signatureCollectionListsByOwner(
+  async signatureCollectionListsForUser(
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
-    return this.signatureCollectionService.listsByOwner(user.nationalId)
+    return this.signatureCollectionService.listsForUser(user.nationalId)
   }
 
   @Query(() => [SignatureCollectionList])

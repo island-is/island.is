@@ -41,13 +41,11 @@ export const GetListSignatures = gql`
       signee {
         name
         nationalId
-        areaId
         address
       }
       signatureType
       active
       created
-      modified
     }
   }
 `
@@ -80,39 +78,6 @@ export const GetSignedList = gql`
       active
       collectionId
       link
-    }
-  }
-`
-
-export const GetOwnerLists = gql`
-  query listsByOwner {
-    signatureCollectionListsByOwner {
-      id
-      title
-      area {
-        id
-        name
-        min
-        max
-      }
-      endTime
-      startTime
-      owner {
-        nationalId
-        name
-        phone
-        email
-      }
-      collectors {
-        nationalId
-        name
-        phone
-        email
-      }
-      active
-      collectionId
-      link
-      numberOfSignatures
     }
   }
 `
@@ -155,3 +120,37 @@ export const GetListsBySigneeArea = gql`
     }
   }
 `
+
+export const GetListsForUser = gql`
+  query listsForUser {
+    signatureCollectionListsForUser {
+      id
+      title
+      area {
+        id
+        name
+        min
+        max
+      }
+      endTime
+      startTime
+      owner {
+        nationalId
+        name
+        phone
+        email
+      }
+      collectors {
+        nationalId
+        name
+        phone
+        email
+      }
+      active
+      collectionId
+      link
+      numberOfSignatures
+    }
+  }
+`
+

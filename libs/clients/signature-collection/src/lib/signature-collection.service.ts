@@ -63,27 +63,29 @@ export class SignatureCollectionClientService {
     }
   }
 
-  // - Get Lists:
-  //   - AllLists
-  //   - AllOpenLists
-  //   - ListsByArea
-  //   - ListsByOwner
-
-  async getLists({ areaId, nationalId }: AreaInput): Promise<List[]> {
-    // TODO: owner will be added as optional param add when ready
+  async getListsParams({ areaId, nationalId }: AreaInput) {
     const id = await this.currentCollectionId()
-    const params = areaId
-      ? { sofnunID: id, svaediID: parseInt(areaId), frambodKennitala: nationalId }
-      : { sofnunID: id, frambodKennitala: nationalId }
+    if (nationalId) {
+      const { isOwner, area } = await this.getSignee(nationalId)
+      if (isOwner) {
+        // TODO: check if actor and if type collection not presidentional send in area of actor
+        return { sofnunID: id, frambodKennitala: nationalId }
+      } else if (area) {
+        return { sofnunID: id, svaediID: parseInt(area?.id) }
+      }
+    }
+    return {
+      sofnunID: id,
+      svaediID: areaId ? parseInt(areaId) : undefined,
+    }
+  }
 
+  async getLists(input: AreaInput): Promise<List[]> {
+    const params = await this.getListsParams(input)
     const lists = await this.listsApi.medmaelalistarGet(params)
-    // if (nationalId) {
-    //   lists = lists.filter((list) => list.frambod?.kennitala === nationalId)
-    // }
     return lists.map((list) => mapList(list))
   }
 
-  //   List
   async getList(listId: string): Promise<List> {
     const list = await this.listsApi.medmaelalistarIDGet({
       iD: parseInt(listId),
@@ -91,12 +93,10 @@ export class SignatureCollectionClientService {
     return mapList(list)
   }
 
-  //   Get Signatures
   async getSignatures(listId: string): Promise<Signature[]> {
     const signatures = await this.listsApi.medmaelalistarIDMedmaeliGet({
       iD: parseInt(listId),
     })
-    // console.log(signatures)missing name, active
     return signatures.map((signature) => mapSignature(signature))
   }
 
@@ -111,7 +111,6 @@ export class SignatureCollectionClientService {
     }))
   }
 
-  //   Create
   async createLists(nationalId: string): Promise<List[]> {
     // TODO: get areas if forseta otherwise input areas
     // TODO: is missing phone and email fields
@@ -131,7 +130,6 @@ export class SignatureCollectionClientService {
     return lists.map((list) => mapList(list))
   }
 
-  //   Sign
   async signList(listId: string, nationalId: string): Promise<Signature> {
     const signature = await this.listsApi.medmaelalistarIDAddMedmaeliPost({
       kennitala: nationalId,
@@ -139,7 +137,6 @@ export class SignatureCollectionClientService {
     })
     return mapSignature(signature)
   }
-  //   Unsign
   async unsignList(signatureId: string): Promise<Signature> {
     // TODO: chagne to simple success if signature returned
     const signature = await this.signatureApi.medmaeliIDRemoveMedmaeliUserPost({
@@ -149,7 +146,6 @@ export class SignatureCollectionClientService {
   }
   //   Cancel - Delete all lists
 
-  // EinsInfo
   async getUser(nationalId: string): Promise<EinstaklingurKosningInfoDTO> {
     const id = await this.currentCollectionId()
     return await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet({
@@ -158,7 +154,6 @@ export class SignatureCollectionClientService {
     })
   }
 
-  //   SignedList
   async getSignedList(nationalId: string): Promise<List | null> {
     const { signature } = await this.getSignee(nationalId)
     if (!signature || signature.length === 0) {
@@ -168,23 +163,21 @@ export class SignatureCollectionClientService {
     return this.getList(signature[0].listId)
   }
 
-  //   CanSign
   async canSign(nationalId: string): Promise<{ success: boolean }> {
     const { canSign } = await this.getSignee(nationalId)
-    //  TODO: map errors
+    //  TODO: map errors like in bulk 
     return { success: canSign }
   }
-  //   Signee
+
   async getSignee(nationalId: string): Promise<Signee> {
     const id = await this.currentCollectionId()
-    console.log({
-      kennitala: nationalId,
-      sofnunID: id,
-    })
-    const user = await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet({
-      kennitala: nationalId,
-      iD: id,
-    })
+    const user = await this.collectionsApi.medmaelasofnunIDEinsInfoKennitalaGet(
+      {
+        kennitala: nationalId,
+        iD: id,
+      },
+    )
+
     // TODO: Look into active signature
     return {
       nationalId: user.kennitala ?? '',
@@ -200,7 +193,10 @@ export class SignatureCollectionClientService {
       },
       signature:
         user.medmaeli?.map((singature) => mapSignature(singature)) ?? [],
-      ownedLists: user.medmaelalistar?.map((list) => mapList(list)) ?? [],
+      ownedLists: user.medmaelalistar
+        ? user.medmaelalistar?.map((list) => mapList(list))
+        : [],
+      isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
     }
   }
 
@@ -212,8 +208,8 @@ export class SignatureCollectionClientService {
   }
   //   IsOwner
   async isOwner(nationalId: string): Promise<{ success: boolean }> {
-    const { ownedLists } = await this.getSignee(nationalId)
-    return { success: ownedLists.length > 0 }
+    const { isOwner } = await this.getSignee(nationalId)
+    return { success: isOwner }
   }
 
   //   FindSignature
@@ -225,13 +221,14 @@ export class SignatureCollectionClientService {
   // TODO: check if owner
   //   - UndelegateList
   // TODO: check if owner
-  //   - ExtendDeadline
+
+  
   async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
-  // TODO: scope admin
+    // TODO: scope admin
 
     const list = await this.listsApi.medmaelalistarIDExtendTimePatch({
       iD: parseInt(listId),
-      newEndDate: new Date(),
+      newEndDate: newEndDate,
     })
     return mapList(list)
   }
@@ -240,19 +237,33 @@ export class SignatureCollectionClientService {
     listId: string,
     nationalIds: string[],
   ): Promise<BulkUpload> {
-  // TODO: scope admin
-  
-      const signatures = await this.listsApi.medmaelalistarIDAddMedmaeliBulkPost({
-        iD: parseInt(listId),
-        requestBody: nationalIds
-      })
-      console.log(signatures)
-      return {
-        success: signatures?.medmaeli?.map((signature) => mapSignature(signature)) ?? [],
-        failed: [...signatures.notFound?.map((nationalId) => ({ nationalId, reason: 'Kennitala fannst ekki' })) ?? [],
-        ...signatures.undirAldri?.map((nationalId) => ({ nationalId, reason: 'Undir Aldri' })) ?? [],
-        ...signatures.ekkiASvaedi?.map((nationalId) => ({ nationalId, reason: 'Ekki á svæði' })) ?? [],
-        ...signatures.ekkiIsRik?.map((nationalId) => ({ nationalId, reason: 'ekkiIsRik' })) ?? [],],
-      }
+    // TODO: scope admin
+
+    const signatures = await this.listsApi.medmaelalistarIDAddMedmaeliBulkPost({
+      iD: parseInt(listId),
+      requestBody: nationalIds,
+    })
+    return {
+      success:
+        signatures?.medmaeli?.map((signature) => mapSignature(signature)) ?? [],
+      failed: [
+        ...(signatures.notFound?.map((nationalId) => ({
+          nationalId,
+          reason: 'Kennitala fannst ekki',
+        })) ?? []),
+        ...(signatures.undirAldri?.map((nationalId) => ({
+          nationalId,
+          reason: 'Undir Aldri',
+        })) ?? []),
+        ...(signatures.ekkiASvaedi?.map((nationalId) => ({
+          nationalId,
+          reason: 'Ekki á svæði',
+        })) ?? []),
+        ...(signatures.ekkiIsRik?.map((nationalId) => ({
+          nationalId,
+          reason: 'ekkiIsRik',
+        })) ?? []),
+      ],
     }
+  }
 }

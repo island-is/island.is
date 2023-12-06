@@ -33,12 +33,7 @@ export class SignatureCollectionService {
   }
 
   async isOwner(nationalId: string): Promise<SignatureCollectionSuccess> {
-    const hasList = !!Lists.find((list) => list.owner.nationalId === nationalId)
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: hasList })
-      }, 300)
-    })
+    return  await this.signatureCollectionClientService.isOwner(nationalId)
   }
 
   async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
@@ -59,7 +54,7 @@ export class SignatureCollectionService {
     return await this.signatureCollectionClientService.getLists({})
   }
 
-  async listsByOwner(nationalId: string): Promise<SignatureCollectionList[]> {
+  async listsForUser(nationalId: string): Promise<SignatureCollectionList[]> {
     return await this.signatureCollectionClientService.getLists({ nationalId })
   }
 

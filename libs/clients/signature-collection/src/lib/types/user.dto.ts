@@ -11,6 +11,7 @@ export interface Signee extends UserBase {
   electionName: string
   canSign: boolean
   canCreate: boolean
+  isOwner: boolean
   area?: Area
   signature: Signature[]
   ownedLists: List[]
