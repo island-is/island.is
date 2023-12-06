@@ -12,7 +12,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import { Loading } from '@island.is/judicial-system-web/src/components'
 import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
@@ -66,11 +69,14 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Saksóknari'
       case UserRole.PROSECUTOR_REPRESENTATIVE:
         return 'Fulltrúi'
-      case UserRole.JUDGE:
+      case UserRole.DISTRICT_COURT_JUDGE:
+      case UserRole.COURT_OF_APPEALS_JUDGE:
         return 'Dómari'
-      case UserRole.REGISTRAR:
+      case UserRole.DISTRICT_COURT_REGISTRAR:
+      case UserRole.COURT_OF_APPEALS_REGISTRAR:
         return 'Dómritari'
-      case UserRole.ASSISTANT:
+      case UserRole.DISTRICT_COURT_ASSISTANT:
+      case UserRole.COURT_OF_APPEALS_ASSISTANT:
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
@@ -148,6 +154,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                   Virkur
                 </Text>
               </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
+                <Text as="span" fontWeight="regular">
+                  Innskráningar
+                </Text>
+              </Box>
             </tr>
           </thead>
           <tbody>
@@ -175,6 +186,15 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">{user.active ? 'Já' : 'Nei'}</Text>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
+                  <Text as="span">
+                    {user.latestLogin
+                      ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
+                          user.loginCount
+                        }`
+                      : ''}
+                  </Text>
                 </Box>
               </tr>
             ))}

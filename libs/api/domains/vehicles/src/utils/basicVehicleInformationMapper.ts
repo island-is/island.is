@@ -20,7 +20,6 @@ export const basicVehicleInformationMapper = (
   const numberOfAxles = data.technical?.axle?.axleno ?? 0
 
   const axles: VehiclesAxle[] = []
-  console.log(data.technical)
   if (data && data.technical && data.technical.axle && data.technical.mass) {
     for (let i = 1; i <= numberOfAxles; i++) {
       axles.push({
@@ -58,6 +57,9 @@ export const basicVehicleInformationMapper = (
       cubicCapacity: data.technical?.capacity,
       trailerWithBrakesWeight: data.technical?.tMassoftrbr,
       trailerWithoutBrakesWeight: data.technical?.tMassoftrunbr,
+      nextAvailableMileageReadDate: data.nextAvailableMileageReadDate,
+      requiresMileageRegistration: data.requiresMileageRegistration,
+      canRegisterMileage: data.canRegisterMileage,
     },
     basicInfo: {
       model: data.make,

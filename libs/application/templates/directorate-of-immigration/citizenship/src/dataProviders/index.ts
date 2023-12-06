@@ -4,6 +4,7 @@ import {
   defineTemplateApi,
 } from '@island.is/application/types'
 import { ApiActions } from '../shared'
+import { error } from '../lib/messages'
 
 export {
   UserProfileApi,
@@ -62,6 +63,12 @@ export const NationalRegistryIndividualApi = defineTemplateApi({
   namespace: 'NationalRegistry',
   params: {
     validateAlreadyHasIcelandicCitizenship: true,
+    legalDomicileIceland: true,
+    ageToValidate: 18,
+    ageToValidateError: {
+      title: error.notOldEnough,
+      summary: error.notOldEnough,
+    },
   },
 })
 

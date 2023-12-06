@@ -17,3 +17,5 @@ export { MessageWithLinkButtonFormField } from './MessageWithLinkButtonFormField
 export { AlertMessageFormField } from './AlertMessageFormField/AlertMessageFormField'
 export { ExpandableDescriptionFormField } from './ExpandableDescriptionFormField/ExpandableDescriptionFormField'
 export { LinkFormField } from './LinkFormField/LinkFormField'
+export { PaymentChargeOverviewFormField } from './PaymentChargeOverviewFormField/PaymentChargeOverviewFormField'
+export { ImageFormField } from './ImageFormField/ImageFormField'

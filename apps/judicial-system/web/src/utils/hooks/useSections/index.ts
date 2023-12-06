@@ -13,11 +13,10 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealState,
   CaseState,
   completedCaseStates,
-  isCourtRole,
-  isExtendedCourtRole,
+  isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -26,6 +25,7 @@ import { core, sections } from '@island.is/judicial-system-web/messages'
 import { RouteSection } from '@island.is/judicial-system-web/src/components/PageLayout/PageLayout'
 import { formatCaseResult } from '@island.is/judicial-system-web/src/components/PageLayout/utils'
 import {
+  CaseAppealState,
   CaseType,
   Gender,
   InstitutionType,
@@ -595,7 +595,7 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type, parentCase } = workingCase
+    const { id, parentCase } = workingCase
     const routeIndex = courtRestrictionCasesRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -606,8 +606,7 @@ const useSections = (
     return {
       name: formatMessage(sections.courtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
-        isRestrictionCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
@@ -737,7 +736,7 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ): RouteSection => {
-    const { id, type, parentCase } = workingCase
+    const { id, parentCase } = workingCase
     const routeIndex = courtInvestigationCasesRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -749,8 +748,7 @@ const useSections = (
     return {
       name: formatMessage(sections.investigationCaseCourtSection.title),
       isActive:
-        isCourtRole(user?.role) &&
-        isInvestigationCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state) &&
         !parentCase,
       children:
@@ -889,7 +887,7 @@ const useSections = (
   }
 
   const getIndictmentsCourtSections = (workingCase: Case, user?: User) => {
-    const { id, type } = workingCase
+    const { id } = workingCase
     const routeIndex = courtIndictmentRoutes.findIndex(
       /**
        * We do .slice here because router.pathname is /something/[:id]
@@ -901,13 +899,12 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        isExtendedCourtRole(user?.role) &&
-        isIndictmentCase(type) &&
+        isDistrictCourtUser(user) &&
         !completedCaseStates.includes(workingCase.state),
       children: [
         {
           name: formatMessage(sections.indictmentsCourtSection.overview),
-          isActive: user?.role === UserRole.DEFENDER ? false : routeIndex === 0,
+          isActive: isDefenceUser(user) ? false : routeIndex === 0,
           href: `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`,
         },
         {
@@ -1198,6 +1195,7 @@ const useSections = (
        */
       (route) => route === router.pathname.slice(0, -5),
     )
+
     return [
       {
         name: formatMessage(sections.courtOfAppealSection.appealed),
@@ -1211,7 +1209,7 @@ const useSections = (
         name: formatMessage(sections.courtOfAppealSection.result),
         isActive:
           user?.institution?.type === InstitutionType.COURT_OF_APPEALS &&
-          routeIndex !== 3,
+          routeIndex !== 4,
         children: [
           {
             name: formatMessage(sections.courtOfAppealSection.overview),
@@ -1253,6 +1251,28 @@ const useSections = (
                     await onNavigationTo(constants.COURT_OF_APPEAL_RULING_ROUTE)
                 : undefined,
           },
+          {
+            name: formatMessage(sections.courtOfAppealSection.summary),
+            isActive: routeIndex === 3,
+            href: `${constants.COURT_OF_APPEAL_SUMMARY_ROUTE}/${workingCase.id}`,
+            onClick:
+              routeIndex !== 3 &&
+              validateFormStepper(
+                isValid,
+                [
+                  constants.COURT_OF_APPEAL_OVERVIEW_ROUTE,
+                  constants.COURT_OF_APPEAL_CASE_ROUTE,
+                  constants.COURT_OF_APPEAL_RULING_ROUTE,
+                ],
+                workingCase,
+              ) &&
+              onNavigationTo
+                ? async () =>
+                    await onNavigationTo(
+                      constants.COURT_OF_APPEAL_SUMMARY_ROUTE,
+                    )
+                : undefined,
+          },
         ],
       },
       {
@@ -1261,7 +1281,7 @@ const useSections = (
             ? getAppealResultText(appealRulingDecision)
             : formatMessage(sections.caseResults.result),
         isActive:
-          routeIndex === 3 ||
+          routeIndex === 4 ||
           workingCase.appealState === CaseAppealState.COMPLETED,
         children: [],
       },
@@ -1272,14 +1292,11 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ) => {
-    const { type } = workingCase
-
     return {
       ...getRestrictionCaseCourtSections(workingCase, user),
       isActive:
         !completedCaseStates.includes(workingCase.state) &&
-        isRestrictionCase(type) &&
-        isCourtRole(user?.role),
+        isDistrictCourtUser(user),
     }
   }
 
@@ -1287,14 +1304,11 @@ const useSections = (
     workingCase: Case,
     user?: User,
   ) => {
-    const { type } = workingCase
-
     return {
       ...getInvestigationCaseCourtSections(workingCase, user),
       isActive:
         !completedCaseStates.includes(workingCase.state) &&
-        isInvestigationCase(type) &&
-        isCourtRole(user?.role),
+        isDistrictCourtUser(user),
     }
   }
 

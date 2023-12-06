@@ -367,7 +367,7 @@ export const m = defineMessages({
   },
   vehicleNumberLabel: {
     id: 'ir.application:vehicleNumberLabel',
-    defaultMessage: 'Skráninganúmer ökutækis',
+    defaultMessage: 'Skráningarnúmer ökutækis',
     description: 'Vehicle number label',
   },
   vehicleTypeLabel: {
@@ -400,6 +400,11 @@ export const m = defineMessages({
   gunValuation: {
     id: 'ir.application:gunValuation',
     defaultMessage: 'Markaðsverðmæti á dánardegi',
+    description: '',
+  },
+  gunNumber: {
+    id: 'ir.application:gunValuation',
+    defaultMessage: 'Raðnúmer',
     description: '',
   },
 
@@ -594,6 +599,11 @@ export const m = defineMessages({
   assetOverview: {
     id: 'ir.application:assetOverview',
     defaultMessage: 'Yfirlit eigna',
+    description: '',
+  },
+  debtsOverview: {
+    id: 'ir.application:debtsOverview',
+    defaultMessage: 'Yfirlit skulda',
     description: '',
   },
   assetOverviewDescription: {
@@ -968,6 +978,22 @@ export const m = defineMessages({
   },
 
   // Done
+  beforeSubmitStatement: {
+    id: 'ir.application:beforeSubmitStatement#markdown',
+    defaultMessage:
+      'Undirritaðir erfingjar eða umboðsmenn þeirra lýsa því yfir með undirskrift sinni og leggja við drengskap sinn:\n\n1. Að á erfðafjárskýrslu þessari séu tilgreindir allir erfingjar búsins, sem þeim er kunnugt um.\n2. Að á erfðafjárskýrslu þessari komi fram tæmandi talning á eignum og skuldum búsins og að réttilega sé frá verðmæti þeirra eða matsverði greint í öllum atriðum.\n3. Að þeir taki sér á hendur einn fyrir alla og allir fyrir einn greiðslu allra skulda búsins, jafnt þeirra sem fram koma í þessari skýrslu, sem þeirra er óþekktar eru en síðar kunna að koma í ljós, svo og með sama skilorði greiðslu erfðafjárskatts.\n4. Ef við á, að gagnvart erfingjum sem eru ófjárráða eða málsvarar koma annars fram fyrir við skiptin, takast erfingjar á hendur ábyrgð á því að þeir fyrrnefndu muni ekki gjalda fyrir ábyrgð sína á skuldum búsins og gjöldum, umfram arfshluta sinn.',
+    description: '',
+  },
+  readyToSubmit: {
+    id: 'ir.application:readyToSubmit',
+    defaultMessage: 'Skila inn erfðafjárskýrslu',
+    description: '',
+  },
+  inheritanceReportSubmissionCheckbox: {
+    id: 'ir.application:inheritanceReportSubmissionCheckbox',
+    defaultMessage: 'Ég samþykki ofangreinda yfirlýsingu',
+    description: '',
+  },
   submitReport: {
     id: 'ir.application:submitReport',
     defaultMessage: 'Senda inn skýrslu',

@@ -7,8 +7,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   CaseFileCategory,
-  isProsecutionRole,
-  UserRole,
+  isDefenceUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -22,7 +21,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
-import { CaseAppealDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseAppealDecision,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useS3Upload,
@@ -33,7 +35,7 @@ import { statement as strings } from './Statement.strings'
 
 const Statement = () => {
   const { workingCase } = useContext(FormContext)
-  const { limitedAccess, user } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { isUpdatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -50,16 +52,16 @@ const Statement = () => {
     workingCase.id,
   )
 
-  const appealStatementType = isProsecutionRole(user?.role)
+  const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
     : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT
 
-  const appealCaseFilesType = isProsecutionRole(user?.role)
+  const appealCaseFilesType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE
     : CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE
 
   const previousUrl = `${
-    limitedAccess
+    isDefenceUser(user)
       ? constants.DEFENDER_ROUTE
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
@@ -172,7 +174,7 @@ const Statement = () => {
         <FormFooter
           previousUrl={previousUrl}
           onNextButtonClick={async () => {
-            const update = limitedAccess
+            const update = isDefenceUser(user)
               ? { defendantStatementDate: new Date().toISOString() }
               : { prosecutorStatementDate: new Date().toISOString() }
             await updateCase(workingCase.id, update)
@@ -187,7 +189,7 @@ const Statement = () => {
         <Modal
           title={formatMessage(strings.statementSentModalTitle)}
           text={formatMessage(strings.statementSentModalText, {
-            isDefender: limitedAccess,
+            isDefender: isDefenceUser(user),
           })}
           secondaryButtonText={formatMessage(core.closeModal)}
           onSecondaryButtonClick={() => router.push(previousUrl)}

@@ -1,4 +1,6 @@
 import * as z from 'zod'
+import * as kennitala from 'kennitala'
+import { YES } from './constants'
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -79,8 +81,19 @@ export const inheritanceReportSchema = z.object({
         data: z
           .object({
             issuer: z.string(),
+            nationalId: z.string(),
             value: z.string().refine((v) => v),
           })
+          .refine(
+            ({ nationalId }) => {
+              return nationalId && nationalId !== ''
+                ? kennitala.isValid(nationalId)
+                : true
+            },
+            {
+              path: ['nationalId'],
+            },
+          )
           .array()
           .optional(),
         total: z.number().optional(),
@@ -207,13 +220,16 @@ export const inheritanceReportSchema = z.object({
       .optional(),
     total: z
       .number()
-      .refine((v) => v === 100)
+      //.refine((v) => v === 100)
       .optional(),
   }),
 
   heirsAdditionalInfo: z.string().optional(),
 
   totalDeduction: z.string(),
+
+  /* einkaskipti */
+  confirmAction: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

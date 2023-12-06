@@ -117,6 +117,8 @@ export enum FieldTypes {
   EXPANDABLE_DESCRIPTION = 'EXPANDABLE_DESCRIPTION',
   ALERT_MESSAGE = 'ALERT_MESSAGE',
   LINK = 'LINK',
+  PAYMENT_CHARGE_OVERVIEW = 'PAYMENT_CHARGE_OVERVIEW',
+  IMAGE = 'IMAGE',
 }
 
 export enum FieldComponents {
@@ -139,6 +141,8 @@ export enum FieldComponents {
   EXPANDABLE_DESCRIPTION = 'ExpandableDescriptionFormField',
   ALERT_MESSAGE = 'AlertMessageFormField',
   LINK = 'LinkFormField',
+  PAYMENT_CHARGE_OVERVIEW = 'PaymentChargeOverviewFormField',
+  IMAGE = 'ImageFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -343,6 +347,27 @@ export interface LinkField extends BaseField {
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
+export interface PaymentChargeOverviewField extends BaseField {
+  readonly type: FieldTypes.PAYMENT_CHARGE_OVERVIEW
+  component: FieldComponents.PAYMENT_CHARGE_OVERVIEW
+  forPaymentLabel: StaticText
+  totalLabel: StaticText
+  getSelectedChargeItems: (
+    application: Application,
+  ) => { chargeItemCode: string; extraLabel?: StaticText }[]
+}
+
+export interface ImageField extends BaseField {
+  readonly type: FieldTypes.IMAGE
+  component: FieldComponents.IMAGE
+  image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
+  alt?: string
+  imageWidth?: 'full' | 'auto'
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -364,3 +389,5 @@ export type Field =
   | ExpandableDescriptionField
   | AlertMessageField
   | LinkField
+  | PaymentChargeOverviewField
+  | ImageField

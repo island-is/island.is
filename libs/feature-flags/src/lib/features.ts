@@ -12,13 +12,15 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
-  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  oldAgePensionApplication = 'isOldAgePensionEnable',
+  signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   energyFunds = 'isEnergyFundsEnabled',
+  complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -33,6 +35,8 @@ export enum Features {
   servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
+  servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
+  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
@@ -49,6 +53,9 @@ export enum Features {
 
   // Search indexer
   shouldSearchIndexerResolveNestedEntries = 'shouldSearchIndexerResolveNestedEntries',
+
+  // Userprofile Collection
+  isIASSpaPagesEnabled = 'isiasspapagesenabled',
 }
 
 export enum ServerSideFeature {

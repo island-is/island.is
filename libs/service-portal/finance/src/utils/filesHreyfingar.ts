@@ -3,6 +3,7 @@ import { CustomerRecordsDetails } from '../screens/FinanceTransactions/FinanceTr
 import { hreyfingarHeaders } from './dataHeaders'
 const name = 'Hreyfingar'
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getDataArray = (data: Array<any>) =>
   data.map((record: CustomerRecordsDetails) => [
     record.createDate,
