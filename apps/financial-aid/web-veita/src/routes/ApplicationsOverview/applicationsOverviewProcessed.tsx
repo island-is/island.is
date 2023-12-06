@@ -4,76 +4,75 @@ import { useLazyQuery } from '@apollo/client'
 
 import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
+  ApplicationOverviewSkeleton,
   ApplicationsTable,
   FilterPopover,
+  LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
-  ApplicationState,
   ApplicationPagination,
   applicationPageSize,
+  getStateFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
-import useFilter from '../../utils/useFilter'
-
-interface Filters {
-  selectedStates: ApplicationState[]
-  selectedMonths: number[]
-}
+import useFilter, { Filters } from '../../utils/useFilter'
 
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
-
-  const [currentPage, setCurrentPage] = useState<number>(
-    router?.query?.page ? parseInt(router.query.page as string) : 1,
-  )
 
   const currentNavigationItem =
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
 
-  const { filters, setFilters } = useFilter(router)
+  const statesOnRoute = getStateFromRoute[router.pathname]
 
-  const onChecked = (item: ApplicationState | number, checked: boolean) => {
-    const filtersCopy = { ...filters }
+  const {
+    currentPage,
+    setCurrentPage,
+    activeFilters,
+    onChecked,
+    onClearFilter,
+  } = useFilter(router)
 
-    if (typeof item === 'number') {
-      checked
-        ? filters.selectedMonths.push(item)
-        : filters.selectedMonths.splice(filters.selectedMonths.indexOf(item), 1)
-    } else {
-      checked
-        ? filters.selectedStates.push(item)
-        : filters.selectedStates.splice(filters.selectedStates.indexOf(item), 1)
-    }
+  const [getApplications, { data, error }] = useLazyQuery<{
+    filterApplications: ApplicationPagination
+  }>(ApplicationFilterQuery, {
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
-    setFilters(filtersCopy)
-  }
+  const { applications, staffList } = data?.filterApplications ?? {}
 
   const onFilterClear = () => {
-    setFilters({ selectedMonths: [], selectedStates: [] })
-    setCurrentPage(1)
-    filter(1, { selectedMonths: [], selectedStates: [] })
+    onClearFilter()
+    filter(1, activeFilters)
   }
+
+  useEffect(() => {
+    onFilterClear()
+  }, [router.pathname])
 
   const onFilterSave = () => {
     setCurrentPage(1)
-    filter(1, filters)
+    filter(1, activeFilters)
   }
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
-    filter(page, filters)
+    filter(page, activeFilters)
   }
+
   const filter = (page: number, searchFilters: Filters) => {
+    const { applicationState, staff } = searchFilters
     getApplications({
       variables: {
         input: {
-          defaultStates: currentNavigationItem?.filterStates ?? [],
-          states: searchFilters.selectedStates,
+          defaultStates: statesOnRoute,
+          states: applicationState,
           months: [],
-          staff: [],
+          staff: staff,
           page: page,
         },
       },
@@ -82,29 +81,23 @@ export const ApplicationsOverviewProcessed = () => {
     const query = new URLSearchParams()
     query.append('page', page.toString())
 
-    if (searchFilters.selectedMonths.length > 0) {
-      query.append('month', filters.selectedMonths.join(','))
+    if (applicationState.length > 0) {
+      query.append('state', activeFilters.applicationState.join(','))
     }
-    if (searchFilters.selectedStates.length > 0) {
-      query.append('state', filters.selectedStates.join(','))
+
+    if (staff.length > 0) {
+      query.append('staff', activeFilters.staff.join(','))
     }
 
     router.push({ search: query.toString() })
   }
 
-  const [getApplications, { data, error }] = useLazyQuery<{
-    filterApplications: ApplicationPagination
-  }>(ApplicationFilterQuery, {
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-  console.log(data)
-
-  useEffect(() => {
-    filter(currentPage, filters)
-  }, [currentNavigationItem])
-
   return (
+    // TODO
+    // <LoadingContainer
+    //   isLoading={loading}
+    //   loader={<ApplicationOverviewSkeleton />}
+    // >
     <Box
       className={container}
       display="flex"
@@ -116,22 +109,21 @@ export const ApplicationsOverviewProcessed = () => {
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
             {currentNavigationItem.label}
           </Text>
-          <FilterPopover
-            stateOptions={currentNavigationItem?.filterStates}
-            selectedStaff={[]}
-            selectedStates={filters.selectedStates}
-            results={data?.filterApplications?.totalCount ?? 0}
-            onChecked={onChecked}
-            onFilterClear={onFilterClear}
-            onFilterSave={onFilterSave}
-            staffOptions={[]}
-          />
         </Box>
+        {staffList && (
+          <FilterPopover
+            stateOptions={statesOnRoute}
+            staffOptions={staffList}
+            activeFilters={activeFilters}
+            onChecked={onChecked}
+            onFilterSave={onFilterSave}
+          />
+        )}
 
-        {data?.filterApplications?.applications && (
+        {applications && (
           <ApplicationsTable
             headers={currentNavigationItem.headers}
-            applications={data?.filterApplications?.applications}
+            applications={applications}
             emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
             defaultHeaderSort={currentNavigationItem.defaultHeaderSort}
           />
@@ -166,6 +158,7 @@ export const ApplicationsOverviewProcessed = () => {
         />
       </Box>
     </Box>
+    // </LoadingContainer>
   )
 }
 

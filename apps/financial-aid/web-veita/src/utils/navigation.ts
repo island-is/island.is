@@ -41,7 +41,6 @@ export const navigationItems = [
       ApplicationFiltersEnum.INPROGRESS,
       ApplicationFiltersEnum.DATANEEDED,
     ],
-    filterStates: [ApplicationState.INPROGRESS, ApplicationState.DATANEEDED],
     headers: [
       { title: 'Nafn', sortBy: ApplicationHeaderSortByEnum.NAME },
       { title: 'Staða', sortBy: ApplicationHeaderSortByEnum.STATE },
@@ -58,7 +57,6 @@ export const navigationItems = [
       ApplicationFiltersEnum.APPROVED,
       ApplicationFiltersEnum.REJECTED,
     ],
-    filterStates: [ApplicationState.APPROVED, ApplicationState.REJECTED],
     headers: [
       { title: 'Nafn', sortBy: ApplicationHeaderSortByEnum.NAME },
       { title: 'Staða', sortBy: ApplicationHeaderSortByEnum.STATE },

@@ -10,32 +10,48 @@ import {
 } from '@island.is/island-ui/core'
 import {
   ApplicationState,
+  FilterType,
+  StaffList,
   capitalizeFirstLetter,
   getState,
   months,
 } from '@island.is/financial-aid/shared/lib'
+import { NextRouter } from 'next/router'
+import useFilter, { Filters } from '../../utils/useFilter'
 
 interface Props {
-  selectedStates: ApplicationState[]
-  selectedStaff: string[]
-  results: number
-  onChecked: (item: ApplicationState | number, checked: boolean) => void
-  onFilterClear: () => void
+  stateOptions: ApplicationState[]
+  staffOptions: StaffList[]
+  activeFilters: Filters
+  onChecked: (
+    filter: ApplicationState | string,
+    checked: boolean,
+    filterType: FilterType,
+  ) => void
+  // results: number
+  // onChecked: (item: ApplicationState | number, checked: boolean) => void
+  // onFilterClear: () => void
   onFilterSave: () => void
-  staffOptions: string[]
-  stateOptions?: ApplicationState[]
+  // staffOptions: string[]
+  // stateOptions?: ApplicationState[]
 }
 
 const FilterPopover = ({
   stateOptions,
-  selectedStates,
-  selectedStaff,
-  results,
-  onChecked,
-  onFilterClear,
-  onFilterSave,
   staffOptions,
-}: Props) => {
+  activeFilters,
+  onChecked,
+  onFilterSave,
+}: // selectedStates,
+// selectedStaff,
+// results,
+// onChecked,
+// onFilterClear,
+// onFilterSave,
+// staffOptions,
+Props) => {
+  console.log(activeFilters)
+  const { applicationState, staff } = activeFilters
   return (
     <Box
       display="flex"
@@ -49,7 +65,7 @@ const FilterPopover = ({
           labelClearAll="Hreinsa val"
           labelOpen="Sía niðurstöður"
           variant="popover"
-          onFilterClear={onFilterClear}
+          onFilterClear={() => console.log('clear')}
         >
           <>
             <Box margin={3} marginBottom={0}>
@@ -58,16 +74,23 @@ const FilterPopover = ({
                   Staða
                 </Text>
                 {stateOptions &&
-                  stateOptions.map((state) => (
-                    <Checkbox
-                      name={getState[state]}
-                      label={getState[state]}
-                      checked={selectedStates.includes(state)}
-                      onChange={(event) =>
-                        onChecked(state, event.target.checked)
-                      }
-                    />
-                  ))}
+                  stateOptions.map((state) => {
+                    const stateName = getState[state]
+                    return (
+                      <Checkbox
+                        name={stateName}
+                        label={stateName}
+                        checked={applicationState.includes(state)}
+                        onChange={(event) =>
+                          onChecked(
+                            state,
+                            event.target.checked,
+                            FilterType.APPLICATIONSTATE,
+                          )
+                        }
+                      />
+                    )
+                  })}
               </Stack>
 
               <Box paddingY={3}>
@@ -78,12 +101,18 @@ const FilterPopover = ({
                 <Text fontWeight="semiBold" marginBottom={1}>
                   Starfsmenn
                 </Text>
-                {selectedStaff.map((staff) => (
+                {staffOptions.map((staffMember) => (
                   <Checkbox
-                    name={staff}
-                    label={staff}
-                    checked={false}
-                    onChange={(event) => console.log('helo')}
+                    name={staffMember.name}
+                    label={staffMember.name}
+                    checked={staff.includes(staffMember.nationalId)}
+                    onChange={(event) =>
+                      onChecked(
+                        staffMember.nationalId,
+                        event.target.checked,
+                        FilterType.STAFF,
+                      )
+                    }
                   />
                 ))}
               </Stack>
@@ -112,7 +141,7 @@ const FilterPopover = ({
       </Box>
 
       <Text fontWeight="semiBold" whiteSpace="nowrap">
-        {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`}
+        {/* {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`} */}
       </Text>
     </Box>
   )

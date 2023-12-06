@@ -1,21 +1,60 @@
 import { useState } from 'react'
-import { ApplicationState } from '@island.is/financial-aid/shared/lib'
+import {
+  ApplicationState,
+  FilterType,
+} from '@island.is/financial-aid/shared/lib'
 import { NextRouter } from 'next/router'
-interface Filters {
-  selectedStates: ApplicationState[]
-  selectedMonths: number[]
+export interface Filters {
+  applicationState: ApplicationState[]
+  staff: string[]
 }
 
 const useFilter = (router: NextRouter) => {
-  const [filters, setFilters] = useState<Filters>({
-    selectedStates: router?.query?.state
+  const [currentPage, setCurrentPage] = useState<number>(
+    router?.query?.page ? parseInt(router.query.page as string) : 1,
+  )
+
+  const [activeFilters, setActiveFilters] = useState<Filters>({
+    applicationState: router?.query?.state
       ? ((router?.query?.state as string).split(',') as ApplicationState[])
       : [],
-    selectedMonths: router?.query?.month
-      ? (router?.query?.month as string).split(',').map(Number)
-      : [],
+    staff: [],
   })
 
-  return { filters, setFilters }
+  const onClearFilter = () => {
+    setActiveFilters({ applicationState: [], staff: [] })
+    setCurrentPage(1)
+  }
+
+  const onChecked = (
+    filter: ApplicationState | string,
+    checked: boolean,
+    filterType: FilterType,
+  ) => {
+    if (checked) {
+      // If checked, add the filter to the specified array
+      setActiveFilters({
+        ...activeFilters,
+        [filterType]: [...activeFilters[filterType], filter],
+      })
+    } else {
+      // If unchecked, filter out the filter from the specified array
+      setActiveFilters({
+        ...activeFilters,
+        [filterType]: activeFilters[filterType].filter(
+          (state) => state !== filter,
+        ),
+      })
+    }
+  }
+
+  return {
+    currentPage,
+    setCurrentPage,
+    activeFilters,
+    setActiveFilters,
+    onChecked,
+    onClearFilter,
+  }
 }
 export default useFilter

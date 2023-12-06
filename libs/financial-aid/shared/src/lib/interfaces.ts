@@ -401,8 +401,12 @@ export interface ApplicationProfileInfo {
   fullWidth?: boolean
 }
 
+export interface StaffList {
+  name: string
+  nationalId: string
+}
 export interface ApplicationPagination {
   applications: Application[]
   totalCount: number
-  staffList: any[]
+  staffList: StaffList[]
 }

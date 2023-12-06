@@ -620,7 +620,7 @@ export class ApplicationService {
             model: StaffModel,
             as: 'staff',
             where: {
-              name: { [Op.in]: filters.staff },
+              nationalId: { [Op.in]: filters.staff },
             },
           }
         : { model: StaffModel, as: 'staff' }
@@ -660,20 +660,26 @@ export class ApplicationService {
       limit: applicationPageSize,
     })
 
-    const resultsStaff = await this.applicationModel.findAll({
-      where: whereOptions,
+    const resultsStaffWithApplications = await this.applicationModel.findAll({
+      where: {
+        state: {
+          [Op.in]: filters.defaultStates,
+        },
+        municipalityCode: { [Op.in]: municipalityCodes },
+      },
       order: [['modified', 'DESC']],
       include: [{ model: StaffModel, as: 'staff' }],
     })
 
-    await Promise.all([resultsStaff, results])
+    await Promise.all([resultsStaffWithApplications, results])
 
-    const staffList = resultsStaff.map((row) => row.staff)
+    const staffList = resultsStaffWithApplications.map((row) => row.staff)
+    const staffListUniq = [...new Map(staffList.map((v) => [v.id, v])).values()]
 
     return {
       applications: results.rows,
       totalCount: results.count,
-      staffList: [...new Set(staffList)],
+      staffList: staffListUniq,
     }
   }
 
