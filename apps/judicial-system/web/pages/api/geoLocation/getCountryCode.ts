@@ -1,11 +1,10 @@
 import ip3country from 'ip3country'
 import { NextApiRequest, NextApiResponse } from 'next'
-import requestIp from 'request-ip'
 
-function getCountryCode(ip: string | null): { countryCode: string } {
+function getCountryCode(ip?: string): { countryCode: string } {
   if (!ip) {
     return { countryCode: '' }
-  } else if (ip === '::1' || ip === '127.0.0.1') {
+  } else if (ip.includes('127.0.0.1')) {
     return { countryCode: 'IS' }
   } else {
     ip3country.init()
@@ -16,7 +15,13 @@ function getCountryCode(ip: string | null): { countryCode: string } {
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  const ip = requestIp.getClientIp(req)
+  const forwarded = req.headers['x-forwarded-for']
+
+  const ip =
+    typeof forwarded === 'string'
+      ? forwarded.split(/, /)[0]
+      : req.socket.remoteAddress
+
   const countryCode = getCountryCode(ip)
 
   /* Max age is 30 minutes, revalided if repeated within 30 sec*/
