@@ -273,34 +273,36 @@ export class NotificationsService {
     }
   }
 
-  // // Just a test function for easy creating WHILE DEVELOPING
-  // async create(user: User): Promise<any> {
-  //   //user: User temp change for db bypassauth testing
-  //   const exampleNotificationData = {
-  //     recipient: user.nationalId,
-  //     templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-  //     args: [
-  //       {
-  //         key: 'organization',
-  //         value: 'Hnipp Test Crew',
-  //       },
-  //       {
-  //         key: 'documentId',
-  //         value: 'abcd-abcd-abcd-abcd',
-  //       },
-  //     ],
-  //     // status: NotificationStatus.UNREAD,
-  //   }
+  // Just a test function for easy creating WHILE DEVELOPING
+  async create(user: User): Promise<any> {
+    //user: User temp change for db bypassauth testing
+    const data = {
+      messageId: "ff535c9e-68ff-de4c-d3fd-fe5b328b704",
+      recipient: user.nationalId,
+      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+      args: [
+        {
+          key: 'organization',
+          value: 'Hnipp Test Crew',
+        },
+        {
+          key: 'documentId',
+          value: 'abcd-abcd-abcd-abcd',
+        },
+      ],
+      // status: NotificationStatus.UNREAD,
+    }
 
-  //   try {
-  //     return await this.notificationModel.create(exampleNotificationData as any)
-  //   } catch (error) {
-  //     this.logger.info(error)
-  //     throw new BadRequestException(
-  //       error.message
-  //     )
-  //   }
-  // }
+    try {
+      return await this.notificationModel.create(data as any)
+
+    } catch (error) {
+      this.logger.info(error)
+      throw new BadRequestException(
+        error.message
+      )
+    }
+  }
 
   async getAll(): Promise<Notification[]> {
     return await this.notificationModel.findAll()

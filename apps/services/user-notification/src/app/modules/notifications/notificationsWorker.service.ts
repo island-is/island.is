@@ -65,12 +65,17 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         // write to db
         try {
-          this.logger.info('writing notification to db', notification, messageId)
-          await this.notificationModel.create(
+          const res = await this.notificationModel.create(
             notification as any,
           )
-        } catch (error) {
-          this.logger.error('error writing notification to db', error)
+          if(res){
+            this.logger.info('notification written to db', {notification, messageId})
+          }
+        } catch (e) {
+          this.logger.error('error writing notification to db', {
+            e,
+            messageId,
+          })
         }
 
        
@@ -138,7 +143,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             'User does not have notifications enabled this message type',
             { messageId },
           )
-          // return
+          return
         }
       },
     )

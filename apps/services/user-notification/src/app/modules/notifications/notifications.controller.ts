@@ -9,8 +9,8 @@ import {
   BadRequestException,
   Version,
   VERSION_NEUTRAL,
+  Controller, Post, HttpCode
 } from '@nestjs/common'
-import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiBody,
