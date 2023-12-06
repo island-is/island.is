@@ -111,18 +111,17 @@ export class EnergyFundsService extends BaseTemplateApiService {
       nationalId: auth.nationalId,
       vIN: applicationAnswers?.selectVehicle.vin,
       carNumber: applicationAnswers?.selectVehicle.plate,
-      carType: currentvehicleDetails.make,
-      itemcode: currentvehicleDetails.vehicleGrantItemCode,
+      carType: currentvehicleDetails.make || '',
+      itemcode: currentvehicleDetails.vehicleGrantItemCode || '',
       purchasePrice:
-        applicationAnswers?.vehicleDetails.price &&
-        parseInt(applicationAnswers?.vehicleDetails.price),
-      registrationDate:
-        currentvehicleDetails.firstRegistrationDate &&
-        format(
-          new Date(currentvehicleDetails.firstRegistrationDate),
-          'yyyy-MM-dd',
-        ),
-      subsidyAmount: currentvehicleDetails.vehicleGrant,
+        (applicationAnswers?.vehicleDetails.price &&
+          parseInt(applicationAnswers?.vehicleDetails.price)) ||
+        0,
+      registrationDate: format(
+        new Date(currentvehicleDetails.firstRegistrationDate || new Date()),
+        'yyyy-MM-dd',
+      ),
+      subsidyAmount: currentvehicleDetails.vehicleGrant || 0,
     }
 
     await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
