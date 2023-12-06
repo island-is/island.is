@@ -113,8 +113,6 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsinga Texti fyrir einkaskipti',
     description: 'Upplýsingar skjár titill fyrir Einkaskipti',
   },
-  
-
 
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
