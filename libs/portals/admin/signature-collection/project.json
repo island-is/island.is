@@ -25,13 +25,10 @@
       }
     },
     "codegen/frontend-client": {
-      "dependsOn": ["codegen/backend-schema"],
-      "inputs": ["graphql-files"],
-      "outputs": [
-        "{projectRoot}/**/schema.{ts,tsx}",
-        "{projectRoot}/**/fragmentTypes.json",
-        "{projectRoot}/**/*.generated.ts"
-      ]
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/portals/admin/signature-collection/codegen.yml"
+      }
     }
   },
   "tags": ["scope:portals-admin", "lib:portals-admin"]

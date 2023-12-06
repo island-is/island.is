@@ -21,10 +21,12 @@ export const courtDocumentInfo = style({
   display: 'flex',
   flexDirection: 'column',
   flex: 1,
+  marginRight: theme.spacing[2],
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       flexDirection: 'row',
+      marginRight: 0,
     },
   },
 })
@@ -34,6 +36,7 @@ export const nameContainer = style({
   alignItems: 'center',
   flex: 1,
   minHeight: '34px',
+  wordBreak: 'break-all',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
