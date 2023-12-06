@@ -191,6 +191,8 @@ export class DiscountService {
     comment: string,
     numberOfDaysUntilExpiration: number,
     unConnectedFlights: Flight[],
+    isExplicit = false,
+    flightLegs = 1,
   ): Promise<Discount | null> {
     const user = await this.userService.getUserInfoByNationalId(
       nationalId,
@@ -200,7 +202,20 @@ export class DiscountService {
       return null
     }
     // overwrite credit since validation may return 0 depending on what the problem is
-    user.fund.credit = user.fund.total - user.fund.used
+    if (user.fund.total === 0 && isExplicit) {
+      const allExplicit = await this.explicitModel.findAll({
+        where: { customerId: nationalId },
+      })
+      if (allExplicit.length <= 5) {
+        user.fund.credit = flightLegs
+      } else {
+        return null
+      }
+      // need to query explicit code to count how many explicit codes user has received,
+      // add one or two credits?
+    } else {
+      user.fund.credit = user.fund.total - user.fund.used
+    }
 
     const discount = await this.createDiscountCode(
       {

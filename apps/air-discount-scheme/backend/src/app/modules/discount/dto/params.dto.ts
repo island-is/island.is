@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Length } from 'class-validator'
+import { IsBoolean, IsNumber, IsString, Length } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateDiscountCodeParams {
@@ -28,4 +28,10 @@ export class CreateExplicitDiscountCodeParams {
 
   @IsNumber()
   readonly numberOfDaysUntilExpiration!: number
+
+  @IsBoolean()
+  readonly isExplicit!: boolean
+
+  @IsNumber()
+  readonly flightLegs!: number
 }

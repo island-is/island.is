@@ -157,6 +157,8 @@ export class PrivateDiscountAdminController {
       body.comment,
       body.numberOfDaysUntilExpiration,
       unConnectedFlights,
+      body.isExplicit,
+      body.flightLegs,
     )
 
     if (!discount) {

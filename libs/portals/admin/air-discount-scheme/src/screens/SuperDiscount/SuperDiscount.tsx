@@ -12,10 +12,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
-import {
-  CreateExplicitDiscountCodeMutation,
-  useCreateExplicitDiscountCodeMutation,
-} from './CreateDiscount.generated'
+
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 
@@ -126,6 +123,7 @@ const AdminCreateDiscount = () => {
                       setPostalcode('')
                       setComment('')
                       setDiscountCode(null)
+                      setFlightLegs(possibleFlightLegs[0])
                     }}
                   >
                     Búa til nýjan kóða
@@ -231,7 +229,7 @@ const AdminCreateDiscount = () => {
                 postalcode: parseInt(postalcode, 10),
                 comment,
                 numberOfDaysUntilExpiration: parseInt(length.value, 10),
-                isExplicit: false,
+                isExplicit: true,
                 flightLegs: flightLegs,
               },
             },

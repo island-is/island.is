@@ -1,0 +1,13 @@
+mutation CreateExplicitDiscountCode(
+  $input: AirDiscountSchemeCreateExplicitDiscountCodeInput!
+) {
+  createAirDiscountSchemeExplicitDiscountCode(input: $input) {
+    discountCode
+    connectionDiscountCodes {
+      code
+      flightId
+      flightDesc
+      validUntil
+    }
+  }
+}

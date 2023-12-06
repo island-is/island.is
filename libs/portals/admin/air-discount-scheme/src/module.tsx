@@ -9,6 +9,9 @@ const OverviewScreen = lazy(() => import('./screens/Overview/Overview'))
 const CreateDiscount = lazy(() =>
   import('./screens/CreateDiscount/CreateDiscount'),
 )
+const SuperDiscount = lazy(() =>
+  import('./screens/SuperDiscount/SuperDiscount'),
+)
 
 export const airDiscountSchemeAdminModule: PortalModule = {
   name: m.airDiscountScheme,
@@ -26,6 +29,14 @@ export const airDiscountSchemeAdminModule: PortalModule = {
       name: m.createDiscount,
       path: AirDiscountSchemePaths.CreateDiscount,
       element: <CreateDiscount />,
+    },
+    {
+      name: m.superDiscount,
+      path: AirDiscountSchemePaths.SuperDiscount,
+      element: <SuperDiscount />,
+      enabled: props.userInfo.scopes.includes(
+        AdminPortalScope.superAirDiscountScheme,
+      ),
     },
   ],
 }
