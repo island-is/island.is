@@ -1,10 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
+import { SignatureCollectionArea } from './area.model'
+import { SignatureCollectionSignature } from './signature.model'
+import { SignatureCollectionList } from './signatureList.model'
+
 
 @ObjectType()
-export class SignatureCollectionSignee {
-  @Field(() => ID)
-  id!: string
-
+export class SignatureCollectionSigneeBase {
   @Field()
   nationalId!: string
 
@@ -12,8 +13,21 @@ export class SignatureCollectionSignee {
   name!: string
 
   @Field({ nullable: true })
-  areaId?: string
-
-  @Field({ nullable: true })
   address?: string
+}
+
+@ObjectType()
+export class SignatureCollectionSignee extends SignatureCollectionSigneeBase {
+  @Field()
+  canSign!: boolean
+
+  @Field(() => SignatureCollectionArea, { nullable: true })
+  area?: SignatureCollectionArea
+
+  @Field(() => [SignatureCollectionSignature], { nullable: true })
+  singature?: SignatureCollectionSignature[]
+
+  @Field(() => [SignatureCollectionList], { nullable: true })
+  ownedLists?: SignatureCollectionList[]
+
 }

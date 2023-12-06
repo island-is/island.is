@@ -11,11 +11,11 @@ export class SignatureCollectionOwnerInput {
   @IsString()
   name!: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   phone?: string
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   email?: string
 }

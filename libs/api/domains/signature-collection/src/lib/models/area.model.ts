@@ -11,6 +11,6 @@ export class SignatureCollectionArea {
   @Field()
   min!: number
 
-  @Field()
-  max!: number
+  @Field({ nullable: true})
+  max?: number
 }

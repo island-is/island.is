@@ -1,0 +1,37 @@
+import { Area } from './area.dto'
+import { UserBase } from './user.dto'
+import { MedmaelalistiDTO } from '../../../gen/fetch'
+
+export interface List {
+  id: string
+  title: string
+  owner: UserBase
+  area: Area
+  active: boolean
+  startTime: Date
+  endTime: Date
+  collectionId?: string
+  collectors?: UserBase[]
+}
+
+export function mapList(list: MedmaelalistiDTO): List {
+  // TODO: Aggregate owners
+  // TODO: Status of open list, closed, extended
+  return {
+    id: list.id?.toString() ?? '',
+    collectionId: list.medmaelasofnun?.id?.toString() ?? '',
+    title: list.listiNafn ?? '',
+    startTime: list.medmaelasofnun?.sofnunStart ?? new Date(),
+    endTime: list.medmaelasofnun?.sofnunEnd ?? new Date(),
+    area: {
+      id: list.svaedi?.id?.toString() ?? '',
+      name: list.svaedi?.nafn?.toString() ?? '',
+      min: list.svaedi?.fjoldi ?? 999,
+    },
+    owner: {
+      nationalId: list.frambod?.kennitala ?? '',
+      name: list.frambod?.nafn ?? '',
+    },
+    active: true,
+  }
+}

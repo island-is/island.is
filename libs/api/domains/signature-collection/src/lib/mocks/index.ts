@@ -36,11 +36,15 @@ const fakeSigners = [
 ]
 
 export const signee = (nationalId: string): SignatureCollectionSignee => ({
-  id: nationalId,
   nationalId,
   name: `Nafn ${nationalId}`,
-  areaId: 'SF',
-  address: 'Home',
+  canSign: true,
+  address: 'Hús',
+  area: {
+    id: 'SF',
+    name: 'Sunnlendingafjórðungur',
+    min: 1224,
+  },
 })
 
 const Owners: SignatureCollectionOwner[] = [

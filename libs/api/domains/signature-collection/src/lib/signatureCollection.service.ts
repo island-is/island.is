@@ -11,21 +11,16 @@ import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
 import { SignatureCollectionFindSignatureInput } from './dto/findSignature.input'
+import { SignatureCollectionClientService } from '@island.is/clients/signature-collection'
+import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadlineInput'
 
 @Injectable()
 export class SignatureCollectionService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
+    private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
-
-  async test(): Promise<SignatureCollectionSuccess> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
-  }
 
   async canCreate(nationalId: string): Promise<SignatureCollectionSuccess> {
     return new Promise((resolve) => {
@@ -49,78 +44,41 @@ export class SignatureCollectionService {
   async canSign(nationalId: string): Promise<SignatureCollectionSuccess> {
     // TODO: return list person is signed on
     // TODO: take in list user is trying to sign
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+    return this.signatureCollectionClientService.canSign(nationalId)
   }
 
   async current(): Promise<SignatureCollection> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(CurrentCollection)
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getCurrentCollection()
   }
 
   async allLists(): Promise<SignatureCollectionList[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Lists)
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getLists({})
   }
 
   async allOpenLists(): Promise<SignatureCollectionList[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Lists.filter((list) => list.active))
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getLists({})
   }
 
   async listsByOwner(nationalId: string): Promise<SignatureCollectionList[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Lists.filter((list) => list.owner.nationalId === nationalId))
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getLists({ nationalId })
   }
 
   async listsByArea(areaId: string): Promise<SignatureCollectionList[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Lists.filter((list) => list.area.id === areaId))
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getLists({ areaId })
   }
 
   async list(listId: string): Promise<SignatureCollectionList> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const list = Lists.find((list) => list.id === listId)
-        list ? resolve(list) : reject(404)
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getList(listId)
   }
 
   async signedList(
     nationalId: string,
   ): Promise<SignatureCollectionList | null> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Lists[0])
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getSignedList(nationalId)
   }
 
   async signatures(listId: string): Promise<SignatureCollectionSignature[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(Signatures(listId).filter((sign) => sign.listId === listId))
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getSignatures(listId)
   }
 
   async findSignature({
@@ -165,17 +123,15 @@ export class SignatureCollectionService {
   }
 
   async signee(nationalId: string): Promise<SignatureCollectionSignee> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(signee(nationalId))
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.getSignee(nationalId)
   }
 
   async create(
     input: SignatureCollectionListInput,
   ): Promise<SignatureCollectionSuccess> {
-    console.log(input)
+    await this.signatureCollectionClientService.createLists(
+      input.owner.nationalId,
+    )
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ success: true })
@@ -183,22 +139,18 @@ export class SignatureCollectionService {
     })
   }
 
-  async sign(listId: string): Promise<SignatureCollectionSuccess> {
-    console.log('sign ', listId)
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+  async sign(
+    listId: string,
+    nationalId: string,
+  ): Promise<SignatureCollectionSignature> {
+    return await this.signatureCollectionClientService.signList(
+      listId,
+      nationalId,
+    )
   }
 
-  async unsign(listId: string): Promise<SignatureCollectionSuccess> {
-    console.log('unsign ', listId)
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+  async unsign(signatureId: string): Promise<SignatureCollectionSignature> {
+    return await this.signatureCollectionClientService.unsignList(signatureId)
   }
 
   async cancel(nationalId: string): Promise<SignatureCollectionSuccess> {
@@ -232,36 +184,23 @@ export class SignatureCollectionService {
     })
   }
 
-  async extendDeadline(): Promise<SignatureCollectionSuccess> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ success: true })
-      }, 300)
-    })
+  async extendDeadline({
+    id,
+    newEndDate,
+  }: SignatureCollectionExtendDeadlineInput): Promise<SignatureCollectionList> {
+    return await this.signatureCollectionClientService.extendDeadline(
+      id,
+      newEndDate,
+    )
   }
 
   async bulkUploadSignatures({
     nationalIds,
     listId,
   }: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionBulk> {
-    const notFound: SignatureCollectionSignature[] = []
-
-    Signatures(listId).map((signature) => {
-      const nationalIdIndex = nationalIds.findIndex(
-        (id) => signature.signee.nationalId === id,
-      )
-      if (nationalIdIndex > 0 && signature.listId === listId) {
-        notFound.push(signature)
-        nationalIds.splice(nationalIdIndex, 1)
-      }
-    })
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: notFound,
-          failed: nationalIds.map((nationalId) => ({ nationalId })),
-        })
-      }, 300)
-    })
+    return await this.signatureCollectionClientService.bulkUploadSignatures(
+      listId,
+      nationalIds,
+    )
   }
 }
