@@ -42,6 +42,9 @@
       "@island.is/api-catalogue/types": [
         "libs/api-catalogue/types/src/index.ts"
       ],
+      "@island.is/api/domains/administration-of-occupational-safety-and-health": [
+        "libs/api/domains/administration-of-occupational-safety-and-health/src/index.ts"
+      ],
       "@island.is/api/domains/air-discount-scheme": [
         "libs/api/domains/air-discount-scheme/src/index.ts"
       ],
@@ -188,6 +191,9 @@
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
       ],
+      "@island.is/api/domains/signature-collection": [
+        "libs/api/domains/signature-collection/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
@@ -199,6 +205,9 @@
       ],
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
+      ],
+      "@island.is/api/domains/university-gateway": [
+        "libs/api/domains/university-gateway/src/index.ts"
       ],
       "@island.is/api/domains/university-of-iceland": [
         "libs/api/domains/university-of-iceland/src/index.ts"
@@ -402,6 +411,12 @@
       "@island.is/application/templates/signature-collection/signature-list-signing": [
         "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration-core/*": [
+        "libs/application/templates/social-insurance-administration/core/src/*"
+      ],
+      "@island.is/application/templates/social-insurance-administration/old-age-pension": [
+        "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -457,6 +472,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
+      ],
+      "@island.is/clients/administration-of-occupational-safety-and-health": [
+        "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
       ],
       "@island.is/clients/adr-and-machine-license": [
         "libs/clients/adr-and-machine-license/src/index.ts"
@@ -594,6 +612,9 @@
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
       ],
+      "@island.is/clients/social-insurance-administration": [
+        "libs/clients/social-insurance-administration/src/index.ts"
+      ],
       "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
@@ -619,6 +640,15 @@
       ],
       "@island.is/clients/transport-authority/vehicle-printing": [
         "libs/clients/transport-authority/vehicle-printing/src/index.ts"
+      ],
+      "@island.is/clients/university-application/reykjavik-university": [
+        "libs/clients/university-application/reykjavik-university/src/index.ts"
+      ],
+      "@island.is/clients/university-application/university-of-iceland": [
+        "libs/clients/university-application/university-of-iceland/src/index.ts"
+      ],
+      "@island.is/clients/university-gateway-api": [
+        "libs/clients/university-gateway-api/src/index.ts"
       ],
       "@island.is/clients/university-of-iceland": [
         "libs/clients/university-of-iceland/src/index.ts"
@@ -892,6 +922,7 @@
       "@island.is/testing/containers": ["libs/testing/containers/src/index.ts"],
       "@island.is/testing/fixtures": ["libs/testing/fixtures/src/index.ts"],
       "@island.is/testing/nest": ["libs/testing/nest/src/index.ts"],
+      "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]

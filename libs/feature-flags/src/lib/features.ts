@@ -12,11 +12,11 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
-  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  oldAgePensionApplication = 'isOldAgePensionEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
@@ -35,6 +35,7 @@ export enum Features {
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
+  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',

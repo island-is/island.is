@@ -523,7 +523,6 @@ export const getLicenseDetailHeading = (
             {formatMessage(m.ehicDescription2, {
               link: (str: any) => (
                 <LinkButton
-                  skipIcon
                   to={formatMessage(m.ehicDescriptionLink)}
                   text={str ?? ''}
                 />

@@ -276,8 +276,16 @@ export const watsonConfig: Record<
           'cba41fa0-12fb-4cb5-bd98-66a57cee42e0',
         ),
     },
+
+    // Kílómetragjald
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
+    '4ydMzxTVny5W9nTn6abfZm': defaultWatsonConfig.en,
   },
   is: {
+    // Kílómetragjald
+    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
+    '4ydMzxTVny5W9nTn6abfZm': defaultWatsonConfig.is,
+
     // Rafræn skilríki
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
     '4lkmXszsB5q5kJkXqhW5Ex': {

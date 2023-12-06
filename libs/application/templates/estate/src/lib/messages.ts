@@ -745,6 +745,11 @@ export const m = defineMessages({
     defaultMessage: 'Eru eignir til staðar?',
     description: '',
   },
+  doAssetsExistSelect: {
+    id: 'es.application:doAssetsExistSelect',
+    defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
   doDebtsExist: {
     id: 'es.application:doDebtsExist',
     defaultMessage: 'Eru skuldir til staðar?',
@@ -891,13 +896,6 @@ export const m = defineMessages({
     id: 'es.application:error.nationalIdIncorrect',
     defaultMessage: 'Þessi kennitala virðist ekki vera rétt',
     description: 'National id is invalid',
-  },
-
-  // Assets
-  errorNumberEmpty: {
-    id: 'es.application:error.errorNumberEmpty',
-    defaultMessage: 'Númer má ekki vera tómt',
-    description: 'Invalid general asset number error message',
   },
 
   // Inheritance step
