@@ -42,14 +42,10 @@ export const playIconContainer = style({
 
 export const modal = style({
   position: 'absolute',
-  top: 0,
-  left: 0,
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
   zIndex: 2,
-})
-
-export const closeButton = style({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  background: theme.color.blue100,
-  cursor: 'pointer',
+  width: '400px',
+  maxWidth: '100%',
 })

@@ -27,8 +27,7 @@ const Texts = ({ termsUrl = '#' }) => ({
   is: {
     message: (
       <Text variant="default">
-        Þetta efni er hýst af þriðja aðila. Með því að birta efnið samþykkir þú
-        {` `}
+        Þetta efni er hýst af þriðja aðila. Með því að birta efnið samþykkir þú{' '}
         <a href={termsUrl}>skilmála</a> þeirra.
       </Text>
     ),
@@ -38,9 +37,8 @@ const Texts = ({ termsUrl = '#' }) => ({
   },
   en: {
     message: (
-      <Text variant="intro">
-        This content is hosted by a third party. By viewing it you accept their
-        {` `}
+      <Text variant="default">
+        This content is hosted by a third party. By viewing it you accept their{' '}
         <a href={termsUrl}>terms and conditions</a>.
       </Text>
     ),
@@ -108,85 +106,97 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   return (
     <Box className={styles.container}>
       {showDisclaimer && (
-        <Box className={styles.modal} background="blue100" borderRadius="large">
-          <FocusableBox
-            tabIndex={0}
-            className={styles.closeButton}
-            aria-label={texts.cancel}
-            onKeyDown={(ev) => {
-              if (ev.key === 'Enter' || ev.key === ' ') {
-                setShowDisclaimer(false)
-                ev.preventDefault()
-              }
-            }}
-            onClick={() => {
-              setShowDisclaimer(false)
-            }}
-          >
-            <Icon icon="close" size="medium" />
-          </FocusableBox>
-          <LinkContext.Provider
-            value={{
-              linkRenderer: (href, children) => (
-                <a
-                  className={styles.link}
-                  href={href}
-                  rel="noopener noreferrer"
-                  target="_blank"
-                >
-                  {children}
-                </a>
-              ),
-            }}
-          >
-            <Stack space={3} align="center">
-              <Box>{texts.message}</Box>
-
-              <Controller
-                name="contentAllowed"
-                defaultValue={false}
-                control={control}
-                rules={{ required: false }}
-                render={({ field: { onChange, value } }) => (
-                  <Checkbox
-                    label={texts.remember}
-                    checked={value}
-                    onChange={(e) => {
-                      onChange(e.target.checked)
-                      localStorage.setItem(
-                        itemKey,
-                        e.target.checked ? 'true' : 'false',
-                      )
-                    }}
-                  />
-                )}
-              />
-
-              <Button
-                colorScheme="default"
-                size="small"
+        <Box
+          className={styles.modal}
+          background="blue100"
+          borderRadius="large"
+          padding="gutter"
+        >
+          <Stack space={1}>
+            <Box display="flex" justifyContent="spaceBetween">
+              <Box />
+              <FocusableBox
+                tabIndex={0}
+                aria-label={texts.cancel}
+                onKeyDown={(ev) => {
+                  if (ev.key === 'Enter' || ev.key === ' ') {
+                    setShowDisclaimer(false)
+                    ev.preventDefault()
+                  }
+                }}
                 onClick={() => {
                   setShowDisclaimer(false)
-                  setAllowed(true)
                 }}
               >
-                {texts.view}
-              </Button>
-
-              <Box>
-                <Button
-                  variant="ghost"
-                  colorScheme="default"
-                  size="small"
-                  onClick={() => {
-                    setShowDisclaimer(false)
-                  }}
-                >
-                  {texts.cancel}
-                </Button>
-              </Box>
-            </Stack>
-          </LinkContext.Provider>
+                <Icon icon="close" size="medium" />
+              </FocusableBox>
+            </Box>
+            <Box padding="p1">
+              <LinkContext.Provider
+                value={{
+                  linkRenderer: (href, children) => (
+                    <a
+                      className={styles.link}
+                      href={href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                <Stack space={3}>
+                  <Stack space={2} align="center">
+                    <Box>{texts.message}</Box>
+                    <Controller
+                      name="contentAllowed"
+                      defaultValue={false}
+                      control={control}
+                      rules={{ required: false }}
+                      render={({ field: { onChange, value } }) => (
+                        <Checkbox
+                          label={texts.remember}
+                          checked={value}
+                          onChange={(e) => {
+                            onChange(e.target.checked)
+                            localStorage.setItem(
+                              itemKey,
+                              e.target.checked ? 'true' : 'false',
+                            )
+                          }}
+                        />
+                      )}
+                    />
+                  </Stack>
+                  <Stack space={2} align="center">
+                    <Button
+                      fluid={true}
+                      colorScheme="default"
+                      size="small"
+                      onClick={() => {
+                        setShowDisclaimer(false)
+                        setAllowed(true)
+                      }}
+                    >
+                      {texts.view}
+                    </Button>
+                    <Button
+                      fluid={true}
+                      variant="ghost"
+                      colorScheme="default"
+                      size="small"
+                      onClick={() => {
+                        setShowDisclaimer(false)
+                      }}
+                    >
+                      {texts.cancel}
+                    </Button>
+                  </Stack>
+                </Stack>
+              </LinkContext.Provider>
+            </Box>
+          </Stack>
         </Box>
       )}
       {!allowed && (
@@ -195,9 +205,10 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
             position="relative"
             className={styles.innerContent}
             style={{
-              backgroundColor: thumbnailImageUrl
-                ? 'transparent'
-                : theme.color.blue100,
+              // backgroundColor: thumbnailImageUrl
+              //   ? 'transparent'
+              //   : theme.color.blue100,
+              border: '1px solid black',
               backgroundImage: thumbnailImageUrl
                 ? `url(${thumbnailImageUrl})`
                 : '',
