@@ -1,7 +1,9 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -18,14 +20,15 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { getApplicationExternalData } from '../lib/householdSupplementUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'HousholdSupplementPrerequisites',
   title: householdSupplementFormMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'externalData',
@@ -79,39 +82,31 @@ export const PrerequisitesForm: Form = buildForm({
             }),
           ],
         }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: householdSupplementFormMessage.pre.isNotEligibleLabel,
+          condition: (FormValue, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is not eligible
+            return !isEligible
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible',
+              title: '',
+              description:
+                householdSupplementFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
+            }),
+          ],
+        }),
       ],
     }),
-    // buildSection({
-    //   id: 'eligible',
-    //   title: '',
-    //   condition: (_, externalData) => {
-    //     const { isEligible } = getApplicationExternalData(externalData)
-    //     // Show if applicant is not eligible
-    //     return !isEligible
-    //   },
-    //   children: [
-    //     buildMultiField({
-    //       id: 'isNotEligible',
-    //       title: householdSupplementFormMessage.pre.isNotEligibleLabel,
-
-    //       children: [
-    //         buildDescriptionField({
-    //           id: 'isNotEligible',
-    //           title: '',
-    //           description:
-    //             householdSupplementFormMessage.pre.isNotEligibleDescription,
-    //         }),
-    //         // Empty submit field to hide all buttons in the footer
-    //         buildSubmitField({
-    //           id: '',
-    //           title: '',
-    //           actions: [],
-    //         }),
-    //       ],
-    //     }),
-    //   ]
-    // }),
-
     buildSection({
       id: 'infoSection',
       title: householdSupplementFormMessage.info.section,

@@ -51,8 +51,8 @@ export const HouseholdSupplementForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: householdSupplementFormMessage.pre.prerequisitesSection,
+      id: 'externalData',
+      title: householdSupplementFormMessage.pre.externalDataSection,
       children: [],
     }),
     buildSection({
