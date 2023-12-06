@@ -9,9 +9,3 @@ export interface PlateType {
   plateHeight?: number | null
   plateWidth?: number | null
 }
-
-export interface FuelType {
-  code?: string | null
-  name?: string | null
-  valid?: number | null
-}
