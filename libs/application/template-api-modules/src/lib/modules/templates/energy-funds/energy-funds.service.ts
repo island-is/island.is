@@ -118,7 +118,7 @@ export class EnergyFundsService extends BaseTemplateApiService {
           parseInt(applicationAnswers?.vehicleDetails.price)) ||
         0,
       registrationDate: format(
-        new Date(currentvehicleDetails.firstRegistrationDate || new Date()),
+        new Date(currentvehicleDetails.firstRegistrationDate || ''),
         'yyyy-MM-dd',
       ),
       subsidyAmount: currentvehicleDetails.vehicleGrant || 0,
