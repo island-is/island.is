@@ -78,8 +78,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           })
         }
 
-       
-
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({
             nationalId: message.recipient,
@@ -106,7 +104,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         //   emailStatus: 'yes',
         //   mobileStatus: 'yes',
         // }
-
 
         // can't send message if user has no user profile
         if (!profile) {
