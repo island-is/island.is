@@ -51,7 +51,8 @@ describe('getAvailableYears', () => {
         },
       },
     })
-    const startDateYear = subYears(new Date(), 2).getFullYear()
+    const today = new Date()
+    const startDateYear = subYears(today.setMonth(today.getMonth() + 1), 2).getFullYear()
     const endDateYear = addMonths(new Date(), 6).getFullYear()
     const res = getAvailableYears(application)
 
