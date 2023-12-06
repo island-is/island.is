@@ -1,1 +1,1 @@
-export * from './getVehicleDetails.model'
+export * from './getVehicleGrant.model'

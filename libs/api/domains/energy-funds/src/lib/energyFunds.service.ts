@@ -4,7 +4,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { VehicleMiniDto, VehicleSearchApi } from '@island.is/clients/vehicles'
 
 @Injectable()
-export class EnergyFundsApi {
+export class EnergyFundsService {
   constructor(
     private readonly energyFundsClientService: EnergyFundsClientService,
     private readonly vehiclesApi: VehicleSearchApi,

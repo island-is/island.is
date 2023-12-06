@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 import { VehicleDetailsByVin } from '@island.is/api/schema'
-import { GET_VEHICLE_DETAILS_BY_VIN } from '../graphql/queries'
+import { GET_VEHICLE_GRANT_BY_VIN } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyVehicleDetails = () => {
@@ -13,7 +13,7 @@ export const useLazyVehicleDetails = () => {
     }
   >(
     gql`
-      ${GET_VEHICLE_DETAILS_BY_VIN}
+      ${GET_VEHICLE_GRANT_BY_VIN}
     `,
   )
 }

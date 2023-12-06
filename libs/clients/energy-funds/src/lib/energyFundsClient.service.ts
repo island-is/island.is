@@ -14,14 +14,14 @@ const importCodeList = {
 
 @Injectable()
 export class EnergyFundsClientService {
-  constructor(private api: DefaultApi) {}
+  constructor(private defaultApi: DefaultApi) {}
 
-  private applicationApiWithAuth(auth: Auth) {
-    return this.api.withMiddleware(new AuthMiddleware(auth))
+  private defaultApiWithAuth(auth: Auth) {
+    return this.defaultApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getCatalogItems(auth: User): Promise<Array<CatalogItem>> {
-    const response = await this.applicationApiWithAuth(auth).catalogGET1({
+    const response = await this.defaultApiWithAuth(auth).catalogGET1({
       registrationDate: new Date().toISOString(),
     })
 
@@ -32,7 +32,7 @@ export class EnergyFundsClientService {
     auth: User,
     vinNumber: string,
   ): Promise<boolean> {
-    const response = await this.applicationApiWithAuth(
+    const response = await this.defaultApiWithAuth(
       auth,
     ).gotElectricCarSubsidyvinNumberGET2({
       vinNumber: vinNumber,
@@ -97,7 +97,7 @@ export class EnergyFundsClientService {
     auth: User,
     requestParameters: ElectricCarSubsidyPOST3Request,
   ) {
-    await this.applicationApiWithAuth(auth).electricCarSubsidyPOST3(
+    await this.defaultApiWithAuth(auth).electricCarSubsidyPOST3(
       requestParameters,
     )
   }

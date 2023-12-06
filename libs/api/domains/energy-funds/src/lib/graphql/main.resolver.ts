@@ -8,27 +8,27 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { EnergyFundsApi } from '../energyFunds.service'
-import { VehicleDetailsByVin } from './models'
+import { EnergyFundsService } from '../energyFunds.service'
+import { VehicleGrant } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
 export class MainResolver {
-  constructor(private readonly energyFundsApi: EnergyFundsApi) {}
+  constructor(private readonly energyFundsService: EnergyFundsService) {}
 
   @Scopes(
     ApiScope.internal,
     ApiScope.internalProcuring,
     ApiScope.samgongustofaVehicles,
   )
-  @Query(() => VehicleDetailsByVin, {
-    name: 'vehicleDetailsByVin',
+  @Query(() => VehicleGrant, {
+    name: 'energyFundVehicleGrant',
     nullable: true,
   })
-  async getVehicleDetailsByVin(
+  async getVehicleGrantByVin(
     @Args('vin', { type: () => String }) vin: string,
     @CurrentUser() user: User,
   ) {
-    return await this.energyFundsApi.getVehicleDetails(user, vin)
+    return await this.energyFundsService.getVehicleDetails(user, vin)
   }
 }

@@ -1,28 +1,14 @@
-import { ConfigModule } from '@nestjs/config'
 import { Module } from '@nestjs/common'
 import { MainResolver } from './graphql/main.resolver'
-import { EnergyFundsApi } from './energyFunds.service'
+import { EnergyFundsService } from './energyFunds.service'
 
-import {
-  EnergyFundsClientModule,
-  EnergyFundsClientConfig,
-} from '@island.is/clients/energy-funds'
+import { EnergyFundsClientModule } from '@island.is/clients/energy-funds'
 
-import {
-  VehiclesClientModule,
-  VehiclesClientConfig,
-} from '@island.is/clients/vehicles'
+import { VehiclesClientModule } from '@island.is/clients/vehicles'
 
 @Module({
-  imports: [
-    EnergyFundsClientModule,
-    VehiclesClientModule,
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [EnergyFundsClientConfig, VehiclesClientConfig],
-    }),
-  ],
-  providers: [MainResolver, EnergyFundsApi],
-  exports: [EnergyFundsApi],
+  imports: [EnergyFundsClientModule, VehiclesClientModule],
+  providers: [MainResolver, EnergyFundsService],
+  exports: [EnergyFundsService],
 })
-export class EnergyFundsApiModule {}
+export class EnergyFundsServiceModule {}

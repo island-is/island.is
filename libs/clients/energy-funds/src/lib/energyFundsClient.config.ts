@@ -17,8 +17,6 @@ export const EnergyFundsClientConfig = defineConfig({
       ),
       tokenExchangeScope: env.optionalJSON('XROAD_ENERGY_FUNDS_SCOPE') ?? [
         '@fjs.is/finance',
-        // TODO: Remove when fjs has migrated to the scope above.
-        'api_resource.scope',
       ],
     }
   },
