@@ -199,7 +199,7 @@ export const estateSchema = z.object({
     })
     .refine(
       ({ selection, spouse }) => {
-        return selection === YES ? !!spouse?.nationalId : true
+        return selection === YES ? spouse?.nationalId && kennitala.isValid(spouse?.nationalId) : true
       },
       {
         path: ['spouse', 'nationalId'],
