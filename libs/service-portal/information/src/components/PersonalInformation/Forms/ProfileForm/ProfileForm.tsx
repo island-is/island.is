@@ -1,18 +1,17 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '@island.is/service-portal/core'
+import { LoadModal, m, parseNumber } from '@island.is/service-portal/core'
 import {
-  GridRow,
   GridColumn,
   GridContainer,
+  GridRow,
   Input,
   PhoneInput,
 } from '@island.is/island-ui/core'
-import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
-  useUserProfile,
-  useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
+  useUpdateOrCreateUserProfile,
+  useUserProfile,
 } from '@island.is/service-portal/graphql'
 import { OnboardingIntro } from './components/Intro'
 import { InputSection } from './components/InputSection'
@@ -22,7 +21,7 @@ import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
 import { Nudge } from './components/Inputs/Nudge/Nudge'
 import { msg } from '../../../../lib/messages'
-import { DropModalType, DataStatus } from './types/form'
+import { DataStatus, DropModalType } from './types/form'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { diffModifiedOverMaxDate } from '../../../../utils/showUserOnboardingModal'
 import { PaperMail } from './components/Inputs/PaperMail'
@@ -34,6 +33,7 @@ import {
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
+import { useGetUserProfileV2LazyQuery } from './ProfileForm.generated'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -77,6 +77,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
 
+  const [
+    getUserProfileV2,
+    { data: userProfileV2Data, loading: userV2Loading },
+  ] = useGetUserProfileV2LazyQuery()
+
   const isV2UserProfileEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
       Features.isIASSpaPagesEnabled,
@@ -85,6 +90,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
 
     if (ffEnabled) {
       setV2UserProfileEnabled(ffEnabled as boolean)
+      await getUserProfileV2()
     }
   }
 
@@ -258,11 +264,12 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                     <Input
                       name="email"
                       placeholder={formatMessage(msg.email)}
-                      value={userProfile?.email || ''}
+                      value={userProfileV2Data?.getUserProfileV2?.email || ''}
                       size="xs"
                       label={formatMessage(msg.email)}
                       readOnly
-                      {...(userProfile?.emailVerified && {
+                      {...(userProfileV2Data?.getUserProfileV2
+                        .emailVerified && {
                         icon: { name: 'checkmark' },
                       })}
                     />
@@ -270,7 +277,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   link={{
                     href: getIDSLink(IdsUserProfileLinks.EMAIL),
                     title: formatMessage(
-                      userProfile?.email ? msg.change : msg.add,
+                      userProfileV2Data?.getUserProfileV2?.email
+                        ? msg.change
+                        : msg.add,
                     ),
                   }}
                 />
@@ -289,20 +298,32 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
               loading={userLoading}
               text={formatMessage(msg.editNudgeText)}
             >
-              {!userLoading && (
-                <Nudge
-                  isV2UserProfileEnabled={v2UserProfileEnabled}
-                  refuseMail={
-                    /**
-                     * This checkbox block is being displayed as the opposite of canNudge.
-                     * Details inside <Nudge />
-                     */
-                    typeof userProfile?.canNudge === 'boolean'
-                      ? !userProfile.canNudge
-                      : true
-                  }
-                />
-              )}
+              {v2UserProfileEnabled
+                ? !userV2Loading && (
+                    <Nudge
+                      isV2UserProfileEnabled={v2UserProfileEnabled}
+                      refuseMail={
+                        userProfileV2Data?.getUserProfileV2
+                          ?.emailNotifications === null ||
+                        userProfileV2Data?.getUserProfileV2
+                          .emailNotifications !== true
+                      }
+                    />
+                  )
+                : !userLoading && (
+                    <Nudge
+                      isV2UserProfileEnabled={v2UserProfileEnabled}
+                      refuseMail={
+                        /**
+                         * This checkbox block is being displayed as the opposite of canNudge.
+                         * Details inside <Nudge />
+                         */
+                        typeof userProfile?.canNudge === 'boolean'
+                          ? !userProfile.canNudge
+                          : true
+                      }
+                    />
+                  )}
             </InputSection>
           )}
           <InputSection
@@ -318,7 +339,10 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       name="phoneNumber"
                       label={formatMessage(msg.tel)}
                       placeholder="000-0000"
-                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      value={parseNumber(
+                        userProfileV2Data?.getUserProfileV2.mobilePhoneNumber ||
+                          '',
+                      )}
                       size="xs"
                       readOnly
                       {...(userProfile?.mobilePhoneNumberVerified && {
@@ -329,7 +353,9 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   link={{
                     href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
                     title: formatMessage(
-                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                      userProfileV2Data?.getUserProfileV2.mobilePhoneNumber
+                        ? msg.change
+                        : msg.add,
                     ),
                   }}
                 />

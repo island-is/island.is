@@ -133,4 +133,11 @@ export class UserProfileResolver {
       user,
     )
   }
+
+  @Query(() => V2UserProfile, { name: 'getUserProfileV2' })
+  async getUserProfileV2(
+    @CurrentUser() user: User,
+  ): Promise<V2UserProfile | null | undefined> {
+    return this.userUserProfileService.getUserProfileV2(user)
+  }
 }

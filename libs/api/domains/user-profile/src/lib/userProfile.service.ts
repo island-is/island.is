@@ -417,4 +417,10 @@ export class UserProfileService {
       })
       .catch((e) => handleError(e, `updateEmailNotifications error`))
   }
+
+  async getUserProfileV2(user: User) {
+    return await this.v2UserProfileApiWithAuth(user)
+      .meUserProfileControllerFindUserProfile()
+      .catch((e) => handleError(e, `getUserProfileV2 error`))
+  }
 }

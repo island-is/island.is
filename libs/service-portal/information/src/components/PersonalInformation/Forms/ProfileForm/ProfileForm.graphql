@@ -1,0 +1,10 @@
+query GetUserProfileV2 {
+  getUserProfileV2 {
+    nationalId
+    emailNotifications
+    email
+    mobilePhoneNumber
+    emailVerified
+    mobilePhoneNumberVerified
+    }
+}

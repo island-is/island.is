@@ -1,15 +1,14 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 
 import {
   Box,
-  Columns,
-  Column,
-  Icon,
   Checkbox,
+  Column,
+  Columns,
   Hidden,
+  Icon,
   LoadingDots,
-  Text,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'

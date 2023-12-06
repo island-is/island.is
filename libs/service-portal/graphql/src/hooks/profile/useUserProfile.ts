@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client'
+import { ApolloError, useLazyQuery, useQuery } from '@apollo/client'
 import { Query } from '@island.is/api/schema'
 import { USER_PROFILE } from '../../lib/queries/getUserProfile'
 
