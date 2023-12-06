@@ -1,6 +1,5 @@
 import React, { FC, useEffect, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import cn from 'classnames'
 
 import {
   Button,
