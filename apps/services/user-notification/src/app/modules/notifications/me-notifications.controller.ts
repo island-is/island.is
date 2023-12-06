@@ -42,7 +42,7 @@ export class MeNotificationsController {
   ) {}
 
   /// REMOVE ME BEFORE MERGING
-  @Post() /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
+  @Post(":messageId") /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
   @Documentation({
     summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
   })
@@ -50,8 +50,8 @@ export class MeNotificationsController {
   @ApiTags('user-notification')
   @ApiSecurity('oauth2', [NotificationsScope.read])
   @HttpCode(HttpStatus.CREATED)
-  async create(@CurrentUser() user: User): Promise<any> {
-    return this.notificationService.create(user)
+  async create(@CurrentUser() user: User, @Param("messageId") messageId: string): Promise<any> {
+    return this.notificationService.create(user,messageId)
   } /// REMOVE ME BEFORE MERGING
 
   @Get()

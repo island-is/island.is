@@ -274,10 +274,10 @@ export class NotificationsService {
   }
 
   // Just a test function for easy creating WHILE DEVELOPING
-  async create(user: User): Promise<any> {
+  async create(user: User, messageId: string): Promise<any> {
     //user: User temp change for db bypassauth testing
     const data = {
-      messageId: "ff535c9e-68ff-de4c-d3fd-fe5b328b704",
+      messageId,
       recipient: user.nationalId,
       templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
       args: [
