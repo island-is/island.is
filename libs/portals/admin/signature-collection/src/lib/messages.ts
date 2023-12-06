@@ -75,6 +75,16 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælalisti',
     description: '',
   },
+  noSignees: {
+    id: 'admin-portal.signature-collection:noLists',
+    defaultMessage: 'Engin meðmæli',
+    description: '',
+  },
+  noSigneesFoundBySearch: {
+    id: 'admin-portal.signature-collection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
+    description: '',
+  },
   listSigneesNumberHeader: {
     id: 'admin-portal.signature-collection:listSigneesNumberHeader',
     defaultMessage: 'Fjöldi meðmæla',

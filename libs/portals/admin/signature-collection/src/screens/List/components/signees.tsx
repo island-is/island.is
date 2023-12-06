@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import format from 'date-fns/format'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLoaderData } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../../lib/messages'
@@ -19,9 +19,28 @@ import { pageSize } from '../../../lib/utils'
 
 const Signees = () => {
   const { formatMessage } = useLocale()
+  const { allSignees } = useLoaderData() as { allSignees: Signature[] }
+  const [signees, setSignees] = useState(allSignees)
   const [searchTerm, setSearchTerm] = useState('')
   const [page, setPage] = useState(1)
-  const { signees } = useLoaderData() as { signees: Signature[] }
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      let filteredSignees = []
+
+      filteredSignees = signees.filter((s) => {
+        return (
+          s.signee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          s.signee.nationalId.includes(searchTerm)
+        )
+      })
+
+      setPage(1)
+      setSignees(filteredSignees)
+    } else {
+      setSignees(allSignees)
+    }
+  }, [searchTerm])
 
   return (
     <Box marginTop={5}>
@@ -44,7 +63,7 @@ const Signees = () => {
             alignItems="flexEnd"
             height="full"
           >
-            {searchTerm.length > 0
+            {searchTerm.length > 0 && signees.length > 0
               ? signees.length > 0 && (
                   <Text variant="eyebrow" textAlign="right">
                     {formatMessage(m.uploadResultsHeader)}: {signees.length}
@@ -59,7 +78,7 @@ const Signees = () => {
         </GridColumn>
       </GridRow>
 
-      {signees && signees.length > 0 && (
+      {signees && signees.length > 0 ? (
         <Box marginTop={5}>
           <T.Table>
             <T.Head>
@@ -137,6 +156,15 @@ const Signees = () => {
             />
           </Box>
         </Box>
+      ) : searchTerm.length > 0 ? (
+        <Box display="flex">
+          <Text>{formatMessage(m.noSigneesFoundBySearch)}</Text>
+          <Box marginLeft={1}>
+            <Text variant="h5">{searchTerm}</Text>
+          </Box>
+        </Box>
+      ) : (
+        <Text>{formatMessage(m.noSignees)}</Text>
       )}
     </Box>
   )
