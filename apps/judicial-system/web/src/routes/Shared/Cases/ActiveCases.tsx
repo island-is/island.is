@@ -65,6 +65,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
+  const { width } = useViewport()
 
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     column: 'createdAt',
@@ -73,6 +74,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   // The index of requset that's about to be removed
   const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>()
+
+  // The id of the case that's about to be opened
+  const [isOpeningCaseId, setIsOpeningCaseId] = useState<string>()
 
   useMemo(() => {
     if (cases && sortConfig) {
@@ -122,14 +126,16 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
     return sortConfig.column === name ? sortConfig.direction : undefined
   }
 
-  const { width } = useViewport()
+  const handleRowClick = (id: string) => {
+    onRowClick(id)
+  }
 
   return width < theme.breakpoints.md ? (
     <>
       {cases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => onRowClick(theCase.id)}
+            onClick={() => handleRowClick(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
           >
@@ -218,7 +224,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 role="button"
                 aria-label="Opna kröfu"
                 onClick={() => {
-                  user?.role && onRowClick(c.id)
+                  user?.role && handleRowClick(c.id)
                 }}
               >
                 <td className={styles.td}>
@@ -334,7 +340,6 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     </>
                   )}
                 </td>
-
                 <td className={cn(styles.td, 'secondLast')}>
                   {isProsecutionUser(user) &&
                     (c.state === CaseState.NEW ||

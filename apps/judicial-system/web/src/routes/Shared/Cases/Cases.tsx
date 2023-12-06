@@ -108,6 +108,7 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     isTransitioningCase,
     isSendingNotification,
     getCaseToOpen,
+    isOpeningCase,
   } = useCase()
 
   const { data, error, loading, refetch } = useQuery<{
@@ -183,7 +184,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           <CreateCaseButton user={user} />
         ) : null}
       </div>
-
       <Box marginBottom={[2, 5, 5]} className={styles.filterContainer}>
         <Select
           name="filter-cases"
@@ -196,7 +196,6 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
           value={filter}
         />
       </Box>
-
       {error ? (
         <div
           className={styles.infoContainer}
