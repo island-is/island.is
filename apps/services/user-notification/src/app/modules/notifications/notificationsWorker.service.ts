@@ -41,7 +41,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-
+        this.logger.info('Message received by worker 1.1', { messageId })
 
 
         // const exampleNotificationData = {
@@ -62,17 +62,17 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         // }
 
         const notification = {messageId, ...message}
-
+        this.logger.info('notification setup for db 1.1', {notification, messageId})
         // write to db
         try {
           const res = await this.notificationModel.create(
             notification as any,
           )
           if(res){
-            this.logger.info('notification written to db', {notification, messageId})
+            this.logger.info('notification written to db 1.1', {notification, messageId})
           }
         } catch (e) {
-          this.logger.error('error writing notification to db', {
+          this.logger.error('error writing notification to db 1.1', {
             e,
             messageId,
           })

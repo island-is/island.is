@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing'
 import { NotificationsService } from './notifications.service'
-import { LoggingModule } from '@island.is/logging'
-import { logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LoggingModule, logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
@@ -27,6 +26,23 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
     { key: 'arg2', value: 'world' },
   ],
 }
+// const mockNotification = {
+//   id: 1,
+//   recipient: '1234567890',
+//   templateId: 'HNIPP.DEMO.ID',
+//   args: [
+//     { key: 'arg1', value: 'hello' },
+//     { key: 'arg2', value: 'world' },
+//   ],
+//   notificationTitle: 'Demo title ',
+//   notificationBody: 'Demo body {{arg1}}',
+//   notificationDataCopy: 'Demo data copy',
+//   clickAction: 'Demo click action {{arg2}}',
+//   category: 'Demo category',
+//   status: 'UNREAD',
+//   created: new Date(),
+//   modified: new Date(),
+// }
 
 describe('NotificationsService', () => {
   let service: NotificationsService
@@ -127,38 +143,27 @@ describe('NotificationsService', () => {
     expect(template.clickAction).toEqual('Demo click action world')
   })
 
-  // it('should add an item to the cache', async () => {
-  //   const key = 'testKey'
-  //   const item = { data: 'testData' }
-  //   const cacheManagerMock = {
-  //     set: jest.fn().mockResolvedValue(undefined),
-  //   }
-  //   service['cacheManager'] = cacheManagerMock
-
-  //   await service.addToCache(key, item)
-  //   expect(cacheManagerMock.set).toHaveBeenCalledWith(key, item)
-  // })
 
   it('should return the correct locale mapping', async () => {
-    expect(await service.mapLocale('en')).toBe('en')
-    expect(await service.mapLocale('is')).toBe('is-IS')
-    expect(await service.mapLocale(null)).toBe('is-IS')
-    expect(await service.mapLocale(undefined)).toBe('is-IS')
+    expect(service.mapLocale('en')).toBe('en')
+    expect(service.mapLocale('is')).toBe('is-IS')
+    expect(service.mapLocale(null)).toBe('is-IS')
+    expect(service.mapLocale(undefined)).toBe('is-IS')
   })
 
   // it('should find and return a specific notification', async () => {
-  //   const user = { nationalId: '12345' }
+  //   const user: User = { nationalId: '12345' }
   //   const id = 1
   //   const locale = 'en'
-  //   const mockNotification = { /* your mock notification object */ }
-  //   const mockTemplate = { /* your mock template object */ }
+  //   // const mockNotification = { /* your mock notification object */ }
+  //   // const mockTemplate = { /* your mock template object */ }
 
-  //   jest.spyOn(service, 'getTemplate').mockResolvedValue(mockTemplate)
-  //   jest.spyOn(service, 'formatArguments').mockReturnValue(mockTemplate)
+  //   jest.spyOn(service, 'getTemplate').mockResolvedValue(mockHnippTemplate)
+  //   jest.spyOn(service, 'formatArguments').mockReturnValue(mockHnippTemplate)
   //   service['notificationModel'].findOne = jest.fn().mockResolvedValue(mockNotification)
 
   //   const result = await service.findOne(user, id, locale)
-  //   expect(result).toEqual(/* expected result based on your mock data */)
+  //   expect(result).toEqual(mockNotification)
   // })
 
   // it('should return a paginated list of formatted notifications', async () => {

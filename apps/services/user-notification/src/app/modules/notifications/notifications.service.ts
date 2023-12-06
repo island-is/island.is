@@ -187,7 +187,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: 'Hnipp Stofnun',
+        sender: 'Hnipp Stofnun', // TODO: get sender from template
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -248,6 +248,7 @@ export class NotificationsService {
         recipient: user.nationalId,
       },
     })
+    
 
     if (!notification) {
       throw new NotFoundException(
@@ -261,7 +262,7 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: 'Hnipp Stofnun',
+        sender: 'Hnipp Stofnun', // TODO get sender from template
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,

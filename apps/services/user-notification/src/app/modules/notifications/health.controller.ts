@@ -11,11 +11,12 @@ export class HealthController extends InfraController {
   }
 
   @Get('/readiness')
-  //   @ApiOkResponse({ type: {ok:boolean} }) // TODO HOOOK THIS UP
-  async readiness(): Promise<{ ok: boolean }> {
+  readiness(): { ok: boolean } {
     const result = true
     return { ok: result }
   }
+
+ 
 }
 
 // import { LOGGER_PROVIDER } from '@island.is/logging';
