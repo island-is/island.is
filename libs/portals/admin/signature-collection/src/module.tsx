@@ -9,7 +9,7 @@ import { listLoader } from './screens/List/List.loader'
 const AllLists = lazy(() => import('./screens/AllLists'))
 const List = lazy(() => import('./screens/List'))
 
-const allowedScopes: string[] = [AdminPortalScope.petitionsAdmin]
+const allowedScopes: string[] = [AdminPortalScope.signatureCollection]
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
