@@ -210,7 +210,7 @@
     "mobx": "6.3.7",
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
-    "next": "13.3.0",
+    "next": "14.0.3",
     "next-auth": "3.29.10",
     "next-cookies": "2.0.3",
     "next-usequerystate": "1.8.4",
