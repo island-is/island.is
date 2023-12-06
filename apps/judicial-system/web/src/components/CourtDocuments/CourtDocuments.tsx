@@ -101,10 +101,14 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
     )
   }
 
-  const handleRemoveDocument = (name: string) => {
-    const updatedCourtDocuments = workingCase.courtDocuments?.filter((doc) => {
-      return doc.name !== name
-    })
+  const handleRemoveDocument = (index: number) => {
+    const updatedCourtDocuments = workingCase.courtDocuments?.filter(
+      (_doc, i) => {
+        return index !== i
+      },
+    )
+
+    setUpdateIndex(index)
 
     setAndSendCaseToServer(
       [{ courtDocuments: updatedCourtDocuments, force: true }],
@@ -116,7 +120,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
   const handleAddDocument = (document: string) => {
     const updatedCourtDocuments = [
       ...(workingCase.courtDocuments || []),
-      { name: document } as CourtDocument,
+      { name: document, submittedBy: undefined },
     ]
 
     setUpdateIndex(undefined)
@@ -178,7 +182,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
           {workingCase.courtDocuments?.map((courtDocument, index) => {
             return (
               <div
-                key={`${courtDocument.name}-${courtDocument.submittedBy}`}
+                key={`${courtDocument.name}-${index}`}
                 className={styles.valueWrapper}
               >
                 <div className={styles.courtDocumentInfo}>
@@ -251,9 +255,14 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
                           width: '100%',
                         }),
                       }}
-                      value={whoFiledOptions.find(
-                        (option) => option.value === courtDocument.submittedBy,
-                      )}
+                      value={
+                        courtDocument.submittedBy
+                          ? whoFiledOptions.find(
+                              (option) =>
+                                option.value === courtDocument.submittedBy,
+                            )
+                          : null
+                      }
                       onChange={(option) => {
                         handleSubmittedBy(
                           index,
@@ -284,7 +293,7 @@ const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
                   </Box>
                 </div>
                 <button
-                  onClick={() => handleRemoveDocument(courtDocument.name)}
+                  onClick={() => handleRemoveDocument(index)}
                   className={styles.removeButton}
                 >
                   <Trash width={14} height={14} color={theme.color.blue400} />
