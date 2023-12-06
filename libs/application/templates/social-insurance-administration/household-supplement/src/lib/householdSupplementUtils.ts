@@ -23,6 +23,7 @@ import {
   Attachments,
   BankInfo,
   FileType,
+  PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
@@ -43,6 +44,16 @@ export function getApplicationAnswers(answers: Application['answers']) {
     answers,
     'householdSupplement.children',
   ) as YesOrNo
+
+  const schoolConfirmationAttachments = getValueViaPath(
+    answers,
+    'fileUpload.schoolConfirmation',
+  ) as FileType[]
+
+  const leaseAgreementAttachments = getValueViaPath(
+    answers,
+    'fileUpload.leaseAgreement',
+  ) as FileType[]
 
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
@@ -80,6 +91,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
 
+  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -89,6 +102,8 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantPhonenumber,
     householdSupplementHousing,
     householdSupplementChildren,
+    schoolConfirmationAttachments,
+    leaseAgreementAttachments,
     selectedYear,
     selectedMonth,
     additionalAttachments,
@@ -101,6 +116,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankName,
     bankAddress,
     currency,
+    paymentInfo,
     tempAnswers,
   }
 }

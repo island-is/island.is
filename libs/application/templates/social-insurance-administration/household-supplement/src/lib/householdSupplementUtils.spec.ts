@@ -12,9 +12,11 @@ import {
   getAvailableYears,
   getAvailableMonths,
   shouldNotUpdateBankAccount,
+  typeOfBankInfo,
 } from './householdSupplementUtils'
 import { MONTHS } from './constants'
 import { isExistsCohabitantOlderThan25 } from './householdSupplementUtils'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 
 function buildApplication(data?: {
   answers?: FormValue
@@ -341,5 +343,39 @@ describe('shouldNotUpdateBankAccount', () => {
     )
 
     expect(false).toEqual(res)
+  })
+
+  it('should return the type of bank account from what is returned from TR', () => {
+    const application = buildApplication({
+      // answers: {
+      //   paymentInfo: {
+      //     bankAccountType: 'foreign',
+      //     iban: 'NL91ABNA0417164300',
+      //     swift: 'NEDSZAJJXXX',
+      //     bankName: 'Heiti banka',
+      //     bankAddress: 'Heimili banka',
+      //     currency: 'EUR',
+      //   },
+      // },
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              iban: 'NLLLABNA0417164300',
+              swift: 'NEDSZAJJXXX',
+              foreignBankName: 'Heiti banka',
+              foreignBankAddress: 'Heimili banka',
+              currency: 'EUR',
+            },
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = typeOfBankInfo(application.answers, application.externalData)
+
+    expect(BankAccountType.FOREIGN).toEqual(res)
   })
 })
