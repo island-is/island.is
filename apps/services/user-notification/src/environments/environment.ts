@@ -22,7 +22,7 @@ const job = processJob()
 
 export const environment = {
   identityServerPath: required('IDENTITY_SERVER_PATH'),
-  userProfileServiceBasePath: "http://localhost:3366/",//required('SERVICE_USER_PROFILE_BASEPATH'),
+  userProfileServiceBasePath: 'http://localhost:3366/', //required('SERVICE_USER_PROFILE_BASEPATH'),
   notificationsClientId: required('USER_NOTIFICATION_CLIENT_ID'), // machine client ?
   notificationsClientSecret: required('USER_NOTIFICATION_CLIENT_SECRET'), // machine client ?
 

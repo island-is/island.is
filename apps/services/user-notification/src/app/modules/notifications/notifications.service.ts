@@ -21,8 +21,6 @@ import {
   RenderedNotificationDto,
 } from './dto/notification.dto'
 
-
-
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
   'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
@@ -295,12 +293,9 @@ export class NotificationsService {
 
     try {
       return await this.notificationModel.create(data as any)
-
     } catch (error) {
       this.logger.info(error)
-      throw new BadRequestException(
-        error.message
-      )
+      throw new BadRequestException(error.message)
     }
   }
 

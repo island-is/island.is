@@ -9,7 +9,9 @@ import {
   BadRequestException,
   Version,
   VERSION_NEUTRAL,
-  Controller, Post, HttpCode
+  Controller,
+  Post,
+  HttpCode,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -172,7 +174,7 @@ export class NotificationsController {
   @Get('/')
   @Version('1')
   async getAll(): Promise<any> {
-    console.log("*****")
+    console.log('*****')
     return await this.notificationsService.getAll()
   }
 }

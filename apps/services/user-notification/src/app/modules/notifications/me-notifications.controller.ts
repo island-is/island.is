@@ -7,7 +7,9 @@ import {
   UseGuards,
   Patch,
   HttpStatus,
-  Controller, Post, HttpCode
+  Controller,
+  Post,
+  HttpCode,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
@@ -42,7 +44,7 @@ export class MeNotificationsController {
   ) {}
 
   /// REMOVE ME BEFORE MERGING
-  @Post(":messageId") /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
+  @Post(':messageId') /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
   @Documentation({
     summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
   })
@@ -50,8 +52,11 @@ export class MeNotificationsController {
   @ApiTags('user-notification')
   @ApiSecurity('oauth2', [NotificationsScope.read])
   @HttpCode(HttpStatus.CREATED)
-  async create(@CurrentUser() user: User, @Param("messageId") messageId: string): Promise<any> {
-    return this.notificationService.create(user,messageId)
+  async create(
+    @CurrentUser() user: User,
+    @Param('messageId') messageId: string,
+  ): Promise<any> {
+    return this.notificationService.create(user, messageId)
   } /// REMOVE ME BEFORE MERGING
 
   @Get()

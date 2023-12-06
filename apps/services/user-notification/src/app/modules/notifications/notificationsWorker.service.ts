@@ -42,8 +42,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       async (message, job): Promise<void> => {
         const messageId = job.id
 
-
-
         // const exampleNotificationData = {
         //   recipient: '0101302989', // temp hardfix // user.nationalId,
         //   messageId,
@@ -61,15 +59,16 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         //   status: NotificationStatus.UNREAD,
         // }
 
-        const notification = {messageId, ...message}
+        const notification = { messageId, ...message }
 
         // write to db
         try {
-          const res = await this.notificationModel.create(
-            notification as any,
-          )
-          if(res){
-            this.logger.info('notification written to db', {notification, messageId})
+          const res = await this.notificationModel.create(notification as any)
+          if (res) {
+            this.logger.info('notification written to db', {
+              notification,
+              messageId,
+            })
           }
         } catch (e) {
           this.logger.error('error writing notification to db', {
@@ -77,8 +76,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             messageId,
           })
         }
-
-       
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({
@@ -106,7 +103,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         //   emailStatus: 'yes',
         //   mobileStatus: 'yes',
         // }
-
 
         // can't send message if user has no user profile
         if (!profile) {
