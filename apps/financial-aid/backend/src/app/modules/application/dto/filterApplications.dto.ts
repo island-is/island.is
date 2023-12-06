@@ -13,10 +13,6 @@ export class FilterApplicationsDto {
 
   @IsArray()
   @ApiProperty()
-  readonly months: number[]
-
-  @IsArray()
-  @ApiProperty()
   readonly staff: string[]
 
   @IsOptional()

@@ -31,7 +31,6 @@ interface Props {
   // results: number
   // onChecked: (item: ApplicationState | number, checked: boolean) => void
   // onFilterClear: () => void
-  onFilterSave: () => void
   // staffOptions: string[]
   // stateOptions?: ApplicationState[]
 }
@@ -41,7 +40,6 @@ const FilterPopover = ({
   staffOptions,
   activeFilters,
   onChecked,
-  onFilterSave,
 }: // selectedStates,
 // selectedStaff,
 // results,
@@ -50,8 +48,8 @@ const FilterPopover = ({
 // onFilterSave,
 // staffOptions,
 Props) => {
-  console.log(activeFilters)
   const { applicationState, staff } = activeFilters
+
   return (
     <Box
       display="flex"
@@ -116,25 +114,6 @@ Props) => {
                   />
                 ))}
               </Stack>
-            </Box>
-
-            <Box
-              display="flex"
-              width="full"
-              paddingX={3}
-              paddingY={2}
-              justifyContent="center"
-              border="standard"
-              borderColor="blue400"
-            >
-              <Button
-                icon="checkmark"
-                size="small"
-                variant="text"
-                onClick={onFilterSave}
-              >
-                Uppfæra lista með síum
-              </Button>
             </Box>
           </>
         </Filter>

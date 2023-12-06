@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
+import { useLazyQuery, useQuery } from '@apollo/client'
 
 import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
@@ -10,7 +10,9 @@ import {
   LoadingContainer,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
+  Application,
   ApplicationPagination,
+  StaffList,
   applicationPageSize,
   getStateFromRoute,
 } from '@island.is/financial-aid/shared/lib'
@@ -18,6 +20,7 @@ import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graph
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
 import useFilter, { Filters } from '../../utils/useFilter'
+import useApplicationFilter from '../../utils/useApplicationFilter'
 
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
@@ -27,6 +30,8 @@ export const ApplicationsOverviewProcessed = () => {
     navigationItems[0]
 
   const statesOnRoute = getStateFromRoute[router.pathname]
+  const [applications, setApplications] = useState<Application[]>()
+  const [staffList, setStaffList] = useState<StaffList[]>()
 
   const {
     currentPage,
@@ -34,62 +39,58 @@ export const ApplicationsOverviewProcessed = () => {
     activeFilters,
     onChecked,
     onClearFilter,
-  } = useFilter(router)
+  } = useFilter()
 
-  const [getApplications, { data, error }] = useLazyQuery<{
+  const { filterTable } = useApplicationFilter(
+    statesOnRoute,
+    setApplications,
+    setStaffList,
+  )
+
+  const { data, error } = useQuery<{
     filterApplications: ApplicationPagination
   }>(ApplicationFilterQuery, {
+    variables: {
+      input: {
+        defaultStates: statesOnRoute,
+        states: [],
+        staff: [],
+        page: 1,
+      },
+    },
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const { applications, staffList } = data?.filterApplications ?? {}
+  // useEffect(() => {
+  //   console.log('kemuru hér?')
+  //   if (data?.filterApplications) {
+  //     setApplications(data?.filterApplications.applications)
+  //     setStaffList(data?.filterApplications.staffList)
+  //   }
+  // }, [data])
+
+  useEffect(() => {
+    filterTable(activeFilters, 1)
+  }, [activeFilters, router])
+
+  console.log(applications, staffList)
+
+  // console.log(router, 'router', activeFilters, 'activeFilters')
 
   const onFilterClear = () => {
     onClearFilter()
-    filter(1, activeFilters)
+    // filter(1, activeFilters)
   }
-
-  useEffect(() => {
-    onFilterClear()
-  }, [router.pathname])
 
   const onFilterSave = () => {
     setCurrentPage(1)
-    filter(1, activeFilters)
+    // filter(1, activeFilters)
   }
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
-    filter(page, activeFilters)
-  }
-
-  const filter = (page: number, searchFilters: Filters) => {
-    const { applicationState, staff } = searchFilters
-    getApplications({
-      variables: {
-        input: {
-          defaultStates: statesOnRoute,
-          states: applicationState,
-          months: [],
-          staff: staff,
-          page: page,
-        },
-      },
-    })
-
-    const query = new URLSearchParams()
-    query.append('page', page.toString())
-
-    if (applicationState.length > 0) {
-      query.append('state', activeFilters.applicationState.join(','))
-    }
-
-    if (staff.length > 0) {
-      query.append('staff', activeFilters.staff.join(','))
-    }
-
-    router.push({ search: query.toString() })
+    // filter(page, activeFilters)
   }
 
   return (
@@ -116,7 +117,6 @@ export const ApplicationsOverviewProcessed = () => {
             staffOptions={staffList}
             activeFilters={activeFilters}
             onChecked={onChecked}
-            onFilterSave={onFilterSave}
           />
         )}
 
@@ -163,3 +163,18 @@ export const ApplicationsOverviewProcessed = () => {
 }
 
 export default ApplicationsOverviewProcessed
+
+// const { data, error } = useQuery<{
+//   filterApplications: ApplicationPagination
+// }>(ApplicationFilterQuery, {
+//   variables: {
+//     input: {
+//       defaultStates: statesOnRoute,
+//       states: [],
+//       staff: [],
+//       page: 1,
+//     },
+//   },
+//   fetchPolicy: 'no-cache',
+//   errorPolicy: 'all',
+// })

@@ -13,10 +13,6 @@ export class FilterApplicationsInput {
   readonly states!: ApplicationState[]
 
   @Allow()
-  @Field(() => [Number])
-  readonly months!: number[]
-
-  @Allow()
   @Field(() => [String])
   readonly staff!: string[]
 
