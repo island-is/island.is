@@ -479,7 +479,9 @@ export const estateSchema = z.object({
     .refine(
       ({ name, nationalId, phone, email }) => {
         return name !== '' || phone !== '' || email !== ''
-          ? nationalId && kennitala.isPerson(nationalId)
+          ? nationalId &&
+              kennitala.isPerson(nationalId) &&
+              kennitala.info(nationalId).age >= 18
           : true
       },
       {

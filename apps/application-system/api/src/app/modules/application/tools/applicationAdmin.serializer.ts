@@ -35,6 +35,7 @@ import {
   getApplicationNameTranslationString,
   getPaymentStatusForAdmin,
 } from '../utils/application'
+import { ApplicationListAdminResponseDto } from '../dto/applicationAdmin.response.dto'
 
 @Injectable()
 export class ApplicationAdminSerializer
@@ -135,7 +136,7 @@ export class ApplicationAdminSerializer
       application.id,
     )
 
-    const dto = plainToInstance(ApplicationResponseDto, {
+    const dto = plainToInstance(ApplicationListAdminResponseDto, {
       ...application,
       ...helper.getReadableAnswersAndExternalData(userRole),
       applicationActors: actors,
