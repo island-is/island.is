@@ -428,6 +428,7 @@ export class InternalCaseService {
   async create(caseToCreate: InternalCreateCaseDto): Promise<Case> {
     let prosecutorId: string | undefined
     let courtId: string | undefined
+    let userRole: UserRole | undefined
 
     if (caseToCreate.prosecutorNationalId) {
       const prosecutor = await this.userService
@@ -448,6 +449,7 @@ export class InternalCaseService {
       } else {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
+        userRole = prosecutor.role
       }
     }
 
@@ -472,7 +474,8 @@ export class InternalCaseService {
               : undefined,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: prosecutorId,
-            prosecutorId,
+            prosecutorId:
+              userRole === UserRole.PROSECUTOR ? prosecutorId : undefined,
             courtId,
           },
           { transaction },
