@@ -114,7 +114,7 @@ describe('NotificationsService', () => {
       { key: 'arg2', value: 'world' },
     ]
     const template = service.formatArguments(
-      mockCreateHnippNotificationDto,
+      mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
     expect(template.notificationBody).toEqual('Demo body hello')
