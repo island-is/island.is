@@ -151,13 +151,12 @@ export class VehiclesService {
   private async hasVehicleServiceAuth(
     auth: User,
     permno: string,
-  ): Promise<boolean> {
+  ): Promise<void> {
     try {
-      const res = await this.getVehicleDetail(auth, {
+      await this.getVehicleDetail(auth, {
         clientPersidno: auth.nationalId,
         permno,
       })
-      return !!res
     } catch (e) {
       this.logger.error(UNAUTHORIZED_LOG, {
         category: LOG_CATEGORY,
