@@ -346,18 +346,20 @@ export const HouseholdSupplementForm: Form = buildForm({
               id: 'period.year',
               title: householdSupplementFormMessage.info.periodYear,
               width: 'half',
-              placeholder: householdSupplementFormMessage.info.periodYearDefaultText,
+              placeholder:
+                householdSupplementFormMessage.info.periodYearDefaultText,
               options: (application: Application) => {
                 return getAvailableYears(application)
               },
-            }),  
+            }),
             buildSelectField({
               id: 'period.month',
               title: householdSupplementFormMessage.info.periodMonth,
               width: 'half',
-              placeholder: householdSupplementFormMessage.info.periodMonthDefaultText,
+              placeholder:
+                householdSupplementFormMessage.info.periodMonthDefaultText,
               options: (application: Application) => {
-                const { selectedYear: year} = getApplicationAnswers(
+                const { selectedYear: year } = getApplicationAnswers(
                   application.answers,
                 )
                 const rightYear = year ?? new Date().getFullYear().toString()

@@ -17,11 +17,12 @@ import {
   Employment,
   getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
-  errorMessages,
+  errorMessages as OAPErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import {
   HouseholdSupplementHousing,
   getApplicationAnswers as getHSApplicationAnswers,
+  errorMessages as HSErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   Attachment,
@@ -298,7 +299,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getApplicant({ auth }: TemplateApiModuleActionProps) {
+  async getApplicant({ application, auth }: TemplateApiModuleActionProps) {
     const res = await this.siaClientService.getApplicant(auth)
 
     // mock data since gervimenn don't have bank account registered at TR,
@@ -322,8 +323,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title: errorMessages.noEmailFound,
-          summary: errorMessages.noEmailFoundDescription,
+          title:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFound
+              : HSErrorMessages.noEmailFound,
+          summary:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFoundDescription
+              : HSErrorMessages.noEmailFoundDescription,
         },
         500,
       )

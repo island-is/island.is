@@ -580,9 +580,9 @@ export const errorMessages = defineMessages({
     description: 'english translation',
   },
   noEmailFoundDescription: {
-    id: 'hs.application:error.no.email.found.description',
+    id: 'hs.application:error.no.email.found.description#markdown',
     defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það inná mínum síðum á tr.is og komdu svo aftur til að sækja um ellilífeyri.',
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um ellilífeyri.',
     description: 'english translation',
   },
   iban: {
@@ -606,7 +606,6 @@ export const inReviewFormMessages = defineMessages({
 })
 
 export const validatorErrorMessages = defineMessages({
-
   requireAttachment: {
     id: 'hs.application:fileUpload.required.attachment',
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
