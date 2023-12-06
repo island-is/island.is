@@ -112,6 +112,10 @@ export const workerSetup =
         staging: { schedule: '*/30 * * * *' },
         prod: { schedule: '*/30 * * * *' },
       })
+      .resources({
+        limits: { cpu: '400m', memory: '768Mi' },
+        requests: { cpu: '100m', memory: '384Mi' },
+      })
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
