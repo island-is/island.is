@@ -78,6 +78,12 @@ export class CarRecyclingService extends BaseTemplateApiService {
 
     let isError = false
     try {
+      // Canceled recycling
+      const canceledResponses = canceledVehicles.map(async (vehicle) => {
+        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
+      })
+
+      // Recycle
       const vehiclesResponses = selectedVehicles.map(async (vehicle) => {
         if (!isError) {
           // Create vehicle
@@ -102,11 +108,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
             }
           }
         }
-      })
-
-      // Cancel recycling
-      const canceledResponses = canceledVehicles.map(async (vehicle) => {
-        this.recycleVehicles(auth, vehicle, RecyclingRequestTypes.cancelled)
       })
 
       // Wait for all promises to resolve or reject
