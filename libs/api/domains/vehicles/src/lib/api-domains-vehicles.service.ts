@@ -35,7 +35,7 @@ import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
 const LOG_CATEGORY = 'vehicle-service'
-const UNAUTHORIZED_LOG = 'Current user is not authorized on this vehicles'
+const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
 
 const isReadDateToday = (d?: Date) => {
   if (!d) {
@@ -158,11 +158,14 @@ export class VehiclesService {
         permno,
       })
     } catch (e) {
-      this.logger.error(UNAUTHORIZED_LOG, {
-        category: LOG_CATEGORY,
-        error: e,
-      })
-      throw new InternalServerErrorException(UNAUTHORIZED_LOG)
+      if (e.status === 401 || e.status === 403) {
+        this.logger.error(UNAUTHORIZED_LOG, {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      }
+      throw e as Error
     }
   }
 
