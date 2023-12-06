@@ -7,6 +7,7 @@ import {
   AccordionItem,
   UploadFile,
   Button,
+  fileToObject,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
@@ -14,6 +15,7 @@ import { useState } from 'react'
 import XLSX from 'xlsx'
 import { format as formatNationalId } from 'kennitala'
 import { downloadFile } from '../../../lib/utils'
+import { uuid } from 'uuidv4'
 
 const PaperUpload = () => {
   const { formatMessage } = useLocale()
@@ -21,8 +23,19 @@ const PaperUpload = () => {
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
   const [uploadResults, setUploadResults] = useState([])
 
-  const readFile = async (newFile: File[]) => {
-    setFileList(newFile)
+  const createFileList = (files: File[]) => {
+    const uploadFiles = files.map((file) => fileToObject(file))
+    const uploadFilesWithKey = uploadFiles.map((f) => ({
+      ...f,
+      key: uuid(),
+    }))
+    const newFileList = [...fileList, ...uploadFilesWithKey]
+    setFileList(newFileList)
+  }
+
+  const onChange = async (newFile: File[]) => {
+    createFileList(newFile)
+
     const buffer = await newFile[0].arrayBuffer()
     const file = XLSX.read(buffer, { type: 'buffer' })
 
@@ -36,7 +49,6 @@ const PaperUpload = () => {
       })
     }
 
-    console.log(data)
     setUploadResults(data)
   }
 
@@ -83,15 +95,13 @@ const PaperUpload = () => {
               header={formatMessage(m.uploadHeader)}
               description={formatMessage(m.uploadText)}
               buttonLabel={formatMessage(m.uploadButton)}
-              onChange={(files) => readFile(files)}
+              onChange={onChange}
               onRemove={() => setFileList([])}
               accept=".xlsx"
             />
             {uploadResults.length > 0 && (
-              <Box marginTop={10} marginBottom={5}>
-                <Text variant="h4" marginBottom={1}>
-                  {formatMessage(m.uploadResultsHeader)}
-                </Text>
+              <Box marginY={5}>
+                <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
                 <Accordion dividerOnTop={false}>
                   <AccordionItem
                     id="uploadSuccess"
@@ -105,20 +115,32 @@ const PaperUpload = () => {
                   >
                     {uploadResults.map((res: any, index: number) => {
                       return (
-                        <Text key={index}>
+                        <Text key={index} marginBottom={1}>
                           {formatNationalId(res.Kennitala)}
                         </Text>
                       )
                     })}
                   </AccordionItem>
-                  {/*<AccordionItem
+                  <AccordionItem
                     id="uploadError"
                     labelVariant="default"
                     labelColor="red600"
                     label={formatMessage(m.nationalIdsError)}
                   >
-                    <Text>{formatMessage(m.tempMessage)}</Text>
-                  </AccordionItem>*/}
+                    {/* Temp harðkóðuð uppsetning */}
+                    <Box
+                      display="flex"
+                      justifyContent="spaceBetween"
+                      marginBottom={1}
+                    >
+                      <Text>010130-3019</Text>
+                      <Text>á röngu formatti</Text>
+                    </Box>
+                    <Box display="flex" justifyContent="spaceBetween">
+                      <Text>010130-2399</Text>
+                      <Text>ekki í réttu kjördæmi</Text>
+                    </Box>
+                  </AccordionItem>
                 </Accordion>
               </Box>
             )}
