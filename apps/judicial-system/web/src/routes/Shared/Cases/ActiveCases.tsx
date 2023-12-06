@@ -127,7 +127,8 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const handleRowClick = (id: string) => {
-    onRowClick(id)
+    setIsOpeningCaseId(id)
+    // onRowClick(id)
   }
 
   return width < theme.breakpoints.md ? (
@@ -341,33 +342,46 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}
                 </td>
                 <td className={cn(styles.td, 'secondLast')}>
-                  {isProsecutionUser(user) &&
-                    (c.state === CaseState.NEW ||
-                      c.state === CaseState.DRAFT ||
-                      c.state === CaseState.SUBMITTED ||
-                      c.state === CaseState.RECEIVED) && (
-                      <Box
-                        data-testid="deleteCase"
-                        component="button"
-                        aria-label="Viltu afturkalla kröfu?"
-                        className={styles.deleteButton}
-                        onClick={async (evt) => {
-                          evt.stopPropagation()
+                  <LayoutGroup>
+                    {isOpeningCaseId !== c.id ? (
+                      isProsecutionUser(user) &&
+                      (c.state === CaseState.NEW ||
+                        c.state === CaseState.DRAFT ||
+                        c.state === CaseState.SUBMITTED ||
+                        c.state === CaseState.RECEIVED) && (
+                        <motion.button
+                          key="deleteCase"
+                          // exit={{ opacity: 0, x: 10 }}
+                          data-testid="deleteCase"
+                          aria-label="Viltu afturkalla kröfu?"
+                          className={styles.deleteButton}
+                          onClick={async (evt) => {
+                            evt.stopPropagation()
 
-                          await new Promise((resolve) => {
-                            setRequestToRemoveIndex(
-                              requestToRemoveIndex === i ? undefined : i,
-                            )
+                            await new Promise((resolve) => {
+                              setRequestToRemoveIndex(
+                                requestToRemoveIndex === i ? undefined : i,
+                              )
 
-                            resolve(true)
-                          })
+                              resolve(true)
+                            })
 
-                          await controls.start('isDeleting')
-                        }}
+                            await controls.start('isDeleting')
+                          }}
+                        >
+                          <Icon icon="close" color="blue400" />
+                        </motion.button>
+                      )
+                    ) : (
+                      <motion.div
+                        key="asdasd"
+                        // initial={{ opacity: 0, x: 10 }}
+                        // animate={{ opacity: 1, x: 0 }}
                       >
-                        <Icon icon="close" color="blue400" />
-                      </Box>
+                        asd
+                      </motion.div>
                     )}
+                  </LayoutGroup>
                 </td>
                 <td className={cn(styles.deleteButtonContainer, styles.td)}>
                   <Button
