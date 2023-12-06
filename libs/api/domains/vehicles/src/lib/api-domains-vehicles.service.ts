@@ -1,13 +1,7 @@
-import {
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
-  PdfApi,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
