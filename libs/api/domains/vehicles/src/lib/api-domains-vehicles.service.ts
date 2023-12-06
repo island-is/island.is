@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
@@ -30,8 +35,7 @@ import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
 
 const LOG_CATEGORY = 'vehicle-service'
-const UNAUTHORIZED_LOG =
-  'Current user is not authorized for lookup on this vehicles'
+const UNAUTHORIZED_LOG = 'Current user is not authorized on this vehicles'
 
 const isReadDateToday = (d?: Date) => {
   if (!d) {
@@ -153,14 +157,13 @@ export class VehiclesService {
         clientPersidno: auth.nationalId,
         permno,
       })
-      if (!res) return false
       return !!res
     } catch (e) {
       this.logger.error(UNAUTHORIZED_LOG, {
         category: LOG_CATEGORY,
-        ...e,
+        error: e,
       })
-      throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      throw new InternalServerErrorException(UNAUTHORIZED_LOG)
     }
   }
 
@@ -190,10 +193,7 @@ export class VehiclesService {
       return null
     }
 
-    const hasAuth = this.hasVehicleServiceAuth(auth, input.permno)
-    if (!hasAuth) {
-      return null
-    }
+    await this.hasVehicleServiceAuth(auth, input.permno)
 
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
@@ -214,10 +214,7 @@ export class VehiclesService {
   ): Promise<PostMileageReadingModel | null> {
     if (!input) return null
 
-    const hasAuth = this.hasVehicleServiceAuth(auth, input.permno)
-    if (!hasAuth) {
-      return null
-    }
+    await this.hasVehicleServiceAuth(auth, input.permno)
 
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
@@ -232,10 +229,7 @@ export class VehiclesService {
   ): Promise<PutMileageReadingModel | null> {
     if (!input) return null
 
-    const hasAuth = this.hasVehicleServiceAuth(auth, input.permno)
-    if (!hasAuth) {
-      return null
-    }
+    await this.hasVehicleServiceAuth(auth, input.permno)
 
     const res = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
