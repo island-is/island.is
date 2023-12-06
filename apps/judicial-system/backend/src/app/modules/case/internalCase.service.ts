@@ -446,6 +446,14 @@ export class InternalCaseService {
             prosecutor?.id ?? 'unknown'
           } is not registered as a prosecutor`,
         )
+      } else if (
+        prosecutor.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+        !isIndictmentCase(caseToCreate.type)
+      ) {
+        // Tolerate failure, but log error
+        this.logger.error(
+          `User ${prosecutor.id} is not authorized to create ${caseToCreate.type} cases`,
+        )
       } else {
         prosecutorId = prosecutor.id
         courtId = prosecutor.institution?.defaultCourtId
