@@ -158,7 +158,7 @@ export class VehiclesService {
     } catch (e) {
       this.logger.error(UNAUTHORIZED_LOG, {
         category: LOG_CATEGORY,
-        ...e,
+        error: e,
       })
       throw new UnauthorizedException(UNAUTHORIZED_LOG)
     }
