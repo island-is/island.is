@@ -3,7 +3,7 @@ import {
   CaseState,
   CaseTransition,
 } from '@island.is/judicial-system/types'
-import { GetCurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/getCurrentUser.generated'
+import { CurrentUserDocument } from '@island.is/judicial-system-web/src/components/UserProvider/currentUser.generated'
 import {
   CaseOrigin,
   CaseType,
@@ -72,7 +72,7 @@ export const mockPrisonUser = {
 export const mockJudgeQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -85,7 +85,7 @@ export const mockJudgeQuery = [
 export const mockCourtOfAppealsQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -98,7 +98,7 @@ export const mockCourtOfAppealsQuery = [
 export const mockPrisonUserQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
@@ -111,7 +111,7 @@ export const mockPrisonUserQuery = [
 export const mockProsecutorQuery = [
   {
     request: {
-      query: GetCurrentUserDocument,
+      query: CurrentUserDocument,
     },
     result: {
       data: {
