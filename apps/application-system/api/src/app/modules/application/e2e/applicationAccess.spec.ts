@@ -1,3 +1,4 @@
+import { FeatureFlagUser } from '@island.is/feature-flags'
 import { ApplicationAccessService } from '../tools/applicationAccess.service'
 import { Test } from '@nestjs/testing'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -6,7 +7,6 @@ import {
   createApplication,
 } from '@island.is/application/testing'
 import * as faker from 'faker'
-import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -86,15 +86,15 @@ describe('ApplicationAccesService', () => {
             getValue(
               feature: Features,
               defaultValue: boolean | string,
-              user?: User,
+              user?: FeatureFlagUser,
             ) {
-              if (user?.nationalId === procurationHolderUser.nationalId) {
+              if (user?.id === procurationHolderUser.nationalId) {
                 if (feature === Features.testing) {
                   return true
                 }
               }
 
-              if (user?.nationalId === legalGuardianUser.nationalId) {
+              if (user?.id === legalGuardianUser.nationalId) {
                 if (feature === Features.testing) {
                   return false
                 }
