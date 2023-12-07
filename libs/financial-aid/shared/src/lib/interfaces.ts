@@ -409,4 +409,5 @@ export interface ApplicationPagination {
   applications: Application[]
   totalCount: number
   staffList: StaffList[]
+  minDateCreated: string
 }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Text, Box, Pagination } from '@island.is/island-ui/core'
+import { Text, Box, Pagination, DatePicker } from '@island.is/island-ui/core'
 import {
   ApplicationsTable,
+  FilterDates,
   FilterPopover,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
@@ -29,7 +30,9 @@ export const ApplicationsOverviewProcessed = () => {
   const [filterApplications, setFilterApplications] =
     useState<ApplicationPagination>()
 
-  const { applications, staffList, totalCount } = filterApplications || {}
+  const { applications, staffList, totalCount, minDateCreated } =
+    filterApplications || {}
+
   const {
     currentPage,
     setCurrentPage,
@@ -81,6 +84,8 @@ export const ApplicationsOverviewProcessed = () => {
             results={totalCount ?? 0}
           />
         )}
+
+        {minDateCreated && <FilterDates minDateCreated={minDateCreated} />}
 
         {applications && !loading && (
           <ApplicationsTable
