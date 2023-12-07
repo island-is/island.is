@@ -14,26 +14,23 @@ export const Comment = ({
   const { formatMessage } = useLocale()
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {comment && (
-        <ReviewGroup
-          isLast
-          isEditable={editable}
-          editAction={() => goToScreen?.('comment')}
-        >
-          <GridRow>
-            <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
-              <DataValue
-                label={formatMessage(
-                  householdSupplementFormMessage.comment.commentSection,
-                )}
-                value={comment}
-              />
-            </GridColumn>
-          </GridRow>
-        </ReviewGroup>
-      )}
-    </>
+    comment && (
+      <ReviewGroup
+        isLast
+        isEditable={editable}
+        editAction={() => goToScreen?.('comment')}
+      >
+        <GridRow>
+          <GridColumn span={['10/12', '10/12', '10/12', '10/12']}>
+            <DataValue
+              label={formatMessage(
+                householdSupplementFormMessage.comment.commentSection,
+              )}
+              value={comment}
+            />
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+    )
   )
 }
