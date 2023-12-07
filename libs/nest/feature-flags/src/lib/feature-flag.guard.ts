@@ -26,11 +26,7 @@ export class FeatureFlagGuard implements CanActivate {
     const value = await this.featureFlagService.getValue(
       featureFlag,
       false,
-      request.user?.nationalId
-        ? {
-            id: request.user.nationalId,
-          }
-        : undefined,
+      request.user,
     )
     return !!value
   }
