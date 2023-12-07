@@ -48,7 +48,6 @@ export const ProjectFooter = ({
           <Footer
             columns={footerItems}
             heading={projectPage.title}
-            imageUrl={projectPage.defaultHeaderImage?.url}
             background={projectPage.footerConfig?.background}
             color={projectPage.footerConfig?.textColor}
           />
