@@ -28,7 +28,5 @@ export const mapSectionWithImage = ({
   id: sys.id,
   title: fields.title ?? '',
   image: fields.image?.fields?.file ? mapImage(fields.image) : null,
-  content: fields.body
-    ? mapDocument(fields.body, sys.id + ':content')
-    : [],
+  content: fields.body ? mapDocument(fields.body, sys.id + ':content') : [],
 })

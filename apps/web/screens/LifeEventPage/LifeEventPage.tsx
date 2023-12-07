@@ -3,7 +3,10 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import slugify from '@sindresorhus/slugify'
 import NextLink from 'next/link'
-import { SectionWithImage, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
+  SectionWithImage,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import {
   GridRow,
   GridColumn,
@@ -68,7 +71,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
   const { activeLocale } = useI18n()
-  const sectionCountRef = useRef<number>(0);
+  const sectionCountRef = useRef<number>(0)
 
   const breadcrumbItems = useMemo(() => {
     const items: BreadCrumbItem[] = [
@@ -149,9 +152,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
         <GridRow>
           <GridColumn span={['12/12']}>
             <GridRow>
-              <GridColumn
-                span={['12/12']}
-              >
+              <GridColumn span={['12/12']}>
                 <Box paddingBottom={[2, 2, 4]}>
                   <Breadcrumbs
                     items={breadcrumbItems}
@@ -212,7 +213,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                               contain
                             />
                           )
-                        }
+                        },
                       },
                     },
                     activeLocale,

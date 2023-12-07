@@ -26,7 +26,6 @@ export const SectionWithImage: FC<
   contain = false,
   reverse = false,
 }) => {
-
   if (!image && content.length) {
     return (
       <>
@@ -54,13 +53,27 @@ export const SectionWithImage: FC<
     >
       <GridRow direction={reverse ? 'rowReverse' : 'row'}>
         {!!image && (
-          <GridColumn span={['12/12', '12/12', '12/12', variant === 'even' ? '6/12' : '3/9']}>
+          <GridColumn
+            span={[
+              '12/12',
+              '12/12',
+              '12/12',
+              variant === 'even' ? '6/12' : '3/9',
+            ]}
+          >
             <Box className={styles.imageContainer}>
               <img className={styles.image} src={image.url + '?w=600'} alt="" />
             </Box>
           </GridColumn>
         )}
-        <GridColumn span={['12/12', '12/12', '12/12', variant === 'even' ? '6/12' : '6/9']}>
+        <GridColumn
+          span={[
+            '12/12',
+            '12/12',
+            '12/12',
+            variant === 'even' ? '6/12' : '6/9',
+          ]}
+        >
           {title && (
             <Text id={slugify(title)} variant="h2" as="h2" paddingBottom={2}>
               {title}
