@@ -35,7 +35,10 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            type: entry.fields?.pageType === 'Digital Iceland Community Page' ? 'webDigitalIcelandCommunityPage' : 'webDigitalIcelandService',
+            type:
+              entry.fields?.pageType === 'Digital Iceland Community Page'
+                ? 'webDigitalIcelandCommunityPage'
+                : 'webDigitalIcelandService',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
             tags: [],
