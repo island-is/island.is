@@ -185,7 +185,6 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: 'Hnipp Stofnun', // TODO: get sender from template
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -219,7 +218,6 @@ export class NotificationsService {
           return {
             id: notification.id,
             messageId: notification.messageId,
-            sender: 'Hnipp Stofnun',
             title: formattedTemplate.notificationTitle,
             body: formattedTemplate.notificationBody,
             dataCopy: formattedTemplate.notificationDataCopy,
@@ -259,7 +257,6 @@ export class NotificationsService {
       return {
         id: notification.id,
         messageId: notification.messageId,
-        sender: 'Hnipp Stofnun', // TODO get sender from template
         title: formattedTemplate.notificationTitle,
         body: formattedTemplate.notificationBody,
         dataCopy: formattedTemplate.notificationDataCopy,
@@ -271,35 +268,35 @@ export class NotificationsService {
     }
   }
 
-  // Just a test function for easy creating WHILE DEVELOPING
-  async create(user: User, messageId: string): Promise<any> {
-    //user: User temp change for db bypassauth testing
-    const data = {
-      messageId,
-      recipient: user.nationalId,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: 'Hnipp Test Crew',
-        },
-        {
-          key: 'documentId',
-          value: 'abcd-abcd-abcd-abcd',
-        },
-      ],
-      // status: NotificationStatus.UNREAD,
-    }
+  // // Just a test function for easy creating WHILE DEVELOPING
+  // async create(user: User, messageId: string): Promise<any> {
+  //   //user: User temp change for db bypassauth testing
+  //   const data = {
+  //     messageId,
+  //     recipient: user.nationalId,
+  //     templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+  //     args: [
+  //       {
+  //         key: 'organization',
+  //         value: 'Hnipp Test Crew',
+  //       },
+  //       {
+  //         key: 'documentId',
+  //         value: 'abcd-abcd-abcd-abcd',
+  //       },
+  //     ],
+  //     // status: NotificationStatus.UNREAD,
+  //   }
 
-    try {
-      return await this.notificationModel.create(data as any)
-    } catch (error) {
-      this.logger.info(error)
-      throw new BadRequestException(error.message)
-    }
-  }
+  //   try {
+  //     return await this.notificationModel.create(data as any)
+  //   } catch (error) {
+  //     this.logger.info(error)
+  //     throw new BadRequestException(error.message)
+  //   }
+  // }
 
-  async getAll(): Promise<Notification[]> {
-    return await this.notificationModel.findAll()
-  }
+  // async getAll(): Promise<Notification[]> {
+  //   return await this.notificationModel.findAll()
+  // }
 }

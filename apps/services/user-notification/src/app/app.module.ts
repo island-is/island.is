@@ -4,14 +4,14 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
+import { environment } from '../environments/environment'
 
 @Module({
   imports: [
     AuthModule.register({
-      issuer: 'https://identity-server.dev01.devland.is',
-      // audience: ['@island.is', '@admin.island.is'], // REMOVE THIS ... WE ARE NOT USING THIS ... THAT IS THE PLAN
-    } as AuthConfig), // TODO: get from env
-
+      issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+      // audience: intentionally left out
+    } as AuthConfig),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),

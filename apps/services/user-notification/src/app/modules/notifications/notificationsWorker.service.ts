@@ -4,13 +4,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   UserProfileApi,
-  // UserProfileLocaleEnum,
 } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { InjectModel } from '@nestjs/sequelize'
-// import { NotificationStatus } from './dto/notification.dto'
 import { Notification } from './notification.model'
 
 export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
@@ -43,22 +41,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         const messageId = job.id
         this.logger.info('Message received by worker 1.1', { messageId })
 
-        // const exampleNotificationData = {
-        //   recipient: '0101302989', // temp hardfix // user.nationalId,
-        //   messageId,
-        //   templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        //   args: [
-        //     {
-        //       key: 'organization',
-        //       value: 'Hnipp Test Crew',
-        //     },
-        //     {
-        //       key: 'documentId',
-        //       value: 'abcd-abcd-abcd-abcd',
-        //     },
-        //   ],
-        //   status: NotificationStatus.UNREAD,
-        // }
         const notification = { messageId, ...message }
         const messageIdExists = await this.notificationModel.count({
           where: { messageId },
@@ -88,36 +70,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
             }
         }
 
-        
-
-        
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({
             nationalId: message.recipient,
           })
 
-        // // temp Mocking user profile
-        // const profile = <any>{
-        //   nationalId: message.recipient,
-        //   mobilePhoneNumber: '1234567',
-        //   email: 'rafnarnason@gmail.com',
-        //   name: 'Rafn Arnason',
-        //   locale: UserProfileLocaleEnum.Is,
-        //   notifications: {},
-        //   created: new Date(),
-        //   modified: new Date(),
-        //   documentNotifications: true,
-        //   emailNotifications: true,
-        //   smsNotifications: true,
-        //   pushNotifications: true,
-        //   id: '1234567',
-        //   emailVerified: true,
-        //   mobilePhoneNumberVerified: true,
-        //   profileImageUrl: '',
-        //   emailStatus: 'yes',
-        //   mobileStatus: 'yes',
-        // }
 
         // can't send message if user has no user profile
         if (!profile) {

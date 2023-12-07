@@ -82,12 +82,18 @@ export class RenderedNotificationDto {
   @IsString()
   messageId!: string
 
-  @ApiProperty({ example: 'hnipp stofnun' })
+
+  @ApiProperty({ example: 'hnipp' })
   @IsString()
-  sender!: string
   title!: string
+  @ApiProperty({ example: 'hnipp' })
+  @IsString()
   body!: string
+  @ApiProperty({ example: 'hnipp' })
+  @IsString()
   dataCopy!: string | null | undefined
+  @ApiProperty({ example: 'hnipp' })
+  @IsString()
   clickAction!: string | null | undefined
 
   @ApiProperty({ example: new Date().toISOString() })

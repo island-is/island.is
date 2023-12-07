@@ -43,21 +43,21 @@ export class MeNotificationsController {
     private readonly notificationService: NotificationsService,
   ) {}
 
-  /// REMOVE ME BEFORE MERGING
-  @Post(':messageId') /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
-  @Documentation({
-    summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
-  })
-  @Scopes(NotificationsScope.read)
-  @ApiTags('user-notification')
-  @ApiSecurity('oauth2', [NotificationsScope.read])
-  @HttpCode(HttpStatus.CREATED)
-  async create(
-    @CurrentUser() user: User,
-    @Param('messageId') messageId: string,
-  ): Promise<any> {
-    return this.notificationService.create(user, messageId)
-  } /// REMOVE ME BEFORE MERGING
+  // /// REMOVE ME BEFORE MERGING
+  // @Post(':messageId') /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
+  // @Documentation({
+  //   summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
+  // })
+  // @Scopes(NotificationsScope.read)
+  // @ApiTags('user-notification')
+  // @ApiSecurity('oauth2', [NotificationsScope.read])
+  // @HttpCode(HttpStatus.CREATED)
+  // async create(
+  //   @CurrentUser() user: User,
+  //   @Param('messageId') messageId: string,
+  // ): Promise<any> {
+  //   return this.notificationService.create(user, messageId)
+  // } /// REMOVE ME BEFORE MERGING
 
   @Get()
   @Documentation({
