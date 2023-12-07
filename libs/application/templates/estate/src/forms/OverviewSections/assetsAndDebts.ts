@@ -343,10 +343,10 @@ export const overviewAssetsAndDebts = [
       component: 'Cards',
       doesNotRequireAnswer: true,
       condition: (answers) =>
-      getValueViaPath(answers, 'selectedEstate') ===
-      EstateTypes.estateWithoutAssets
-        ? false
-        : true,
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
     },
     {
       cards: ({ answers }: Application) =>
@@ -455,7 +455,7 @@ export const overviewAssetsAndDebts = [
     component: 'NotFilledOut',
     condition: (answers) => {
       return getValueViaPath<string>(answers, 'moneyAndDeposit.value') === ''
-    }
+    },
   }),
   buildDividerField({}),
   buildDescriptionField({
