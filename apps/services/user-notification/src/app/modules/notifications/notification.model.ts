@@ -33,6 +33,7 @@ export class Notification extends Model<Notification> {
   })
   id!: number
 
+  @Index // Adding an index
   @Column({
     type: DataType.UUID,
     unique: true, // Adding the unique constraint
