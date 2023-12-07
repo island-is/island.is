@@ -1,1 +1,1059 @@
-{"openapi":"3.0.1","info":{"title":"MedmaeliRestAPI","version":"1.0"},"paths":{"/Kosning":{"get":{"tags":["Kosning"],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/KosningDTO"}}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Kosning/{ID}":{"get":{"tags":["Kosning"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/KosningDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Kosning/{ID}/Sofnun":{"get":{"tags":["Kosning"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelasofnunBaseDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Kosning/{ID}/Sofnun/New":{"post":{"tags":["Kosning"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}},{"name":"startDate","in":"query","style":"form","schema":{"type":"string","format":"date-time"}},{"name":"endDate","in":"query","style":"form","schema":{"type":"string","format":"date-time"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelasofnunDTO"}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar":{"get":{"tags":["Medmaelalistar"],"parameters":[{"name":"sofnunID","in":"query","style":"form","schema":{"type":"integer","format":"int32"}},{"name":"frambodKennitala","in":"query","style":"form","schema":{"type":"string"}},{"name":"svaediID","in":"query","style":"form","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/AddListar":{"post":{"tags":["Medmaelalistar"],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelalistiRequestDTO"}}}},"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}":{"get":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/Medmaeli":{"get":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/AddMedmaeli":{"post":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}},{"name":"kennitala","in":"query","style":"form","schema":{"type":"string"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/AddMedmaeliBulk":{"post":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}}}}},"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaeliBulkResponseDTO"}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/AddUmbod":{"post":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}},{"name":"kennitala","in":"query","style":"form","schema":{"type":"string"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/RemoveUmbod":{"post":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}},{"name":"kennitala","in":"query","style":"form","schema":{"type":"string"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/ExtendTime":{"patch":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}},{"name":"newEndDate","in":"query","style":"form","schema":{"type":"string","format":"date-time"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelalistiDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelalistar/{ID}/Compare":{"post":{"tags":["Medmaelalistar"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}}}}},"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun":{"get":{"tags":["Medmaelasofnun"],"parameters":[{"name":"includeInactive","in":"query","style":"form","schema":{"type":"boolean","default":false}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelasofnunDTO"}}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}":{"get":{"tags":["Medmaelasofnun"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaelasofnunExtendedDTO"}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}/Svaedi":{"get":{"tags":["Medmaelasofnun"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/SvaediDTO"}}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}/Medmaelalistar":{"get":{"tags":["Medmaelasofnun"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelalistiBaseDTO"}}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}":{"get":{"tags":["Medmaelasofnun"],"parameters":[{"name":"Kennitala","in":"path","required":true,"style":"simple","schema":{"type":"string"}},{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/EinstaklingurKosningInfoDTO"}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}/Compare":{"post":{"tags":["Medmaelasofnun"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"requestBody":{"content":{"application/json":{"schema":{"type":"array","items":{"type":"string"}}}}},"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}}},"204":{"description":"No Content"},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaelasofnun/{ID}/Delete":{"delete":{"tags":["Medmaelasofnun"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success"}}}},"/Medmaeli/{Kennitala}/Medmaeli":{"get":{"tags":["Medmaeli"],"parameters":[{"name":"Kennitala","in":"path","required":true,"style":"simple","schema":{"type":"string"}},{"name":"sofnunID","in":"query","style":"form","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}},"/Medmaeli/{ID}/RemoveMedmaeliUser":{"post":{"tags":["Medmaeli"],"parameters":[{"name":"ID","in":"path","required":true,"style":"simple","schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"Success","content":{"application/json":{"schema":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}}},"400":{"description":"Bad Request","content":{"application/json":{"schema":{"type":"string"}}}}}}}},"components":{"schemas":{"EinstaklingurBaseDTO":{"type":"object","properties":{"kennitala":{"type":"string"},"nafn":{"type":"string"}},"additionalProperties":false},"EinstaklingurKosningInfoDTO":{"type":"object","properties":{"kennitala":{"type":"string"},"nafn":{"type":"string"},"kosningNafn":{"type":"string"},"maKjosa":{"type":"boolean"},"maKjosaInfo":{"$ref":"#/components/schemas/EinstaklingurMaKjosaInfo"},"maFrambod":{"type":"boolean"},"maFrambodInfo":{"$ref":"#/components/schemas/EinstaklingurMaFrambodInfo"},"svaedi":{"$ref":"#/components/schemas/SvaediDTO"},"medmaeli":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}},"medmaelalistar":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelalistiBaseDTO"}}},"additionalProperties":false},"EinstaklingurMaFrambodInfo":{"type":"object","properties":{"medAldur":{"type":"boolean"},"medIsRikisfang":{"type":"boolean"}},"additionalProperties":false},"EinstaklingurMaKjosaInfo":{"type":"object","properties":{"kennitala":{"type":"string"},"medAldur":{"type":"boolean"},"medIsRikisfang":{"type":"boolean"},"byrAIsl":{"type":"boolean"},"bjoAIslNylega":{"type":"boolean"},"bjoAIslUmsokn":{"type":"boolean"}},"additionalProperties":false},"KosningBaseDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"nafn":{"type":"string"},"kosningTegund":{"type":"string"},"kosningTegundNr":{"type":"integer","format":"int32"},"erMedmaelakosning":{"type":"boolean"},"vidmidunardags":{"type":"string","format":"date-time","nullable":true},"kjordagur":{"type":"string","format":"date-time","nullable":true}},"additionalProperties":false},"KosningDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"nafn":{"type":"string"},"kosningTegund":{"type":"string"},"kosningTegundNr":{"type":"integer","format":"int32"},"erMedmaelakosning":{"type":"boolean"},"vidmidunardags":{"type":"string","format":"date-time","nullable":true},"kjordagur":{"type":"string","format":"date-time","nullable":true},"medmaelasofnun":{"$ref":"#/components/schemas/MedmaelasofnunBaseDTO"}},"additionalProperties":false},"MedmaelalistiBaseDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"frambodNafn":{"type":"string"},"listiNafn":{"type":"string"},"frambodSimi":{"type":"string","nullable":true},"frambodNetfang":{"type":"string","nullable":true},"dagsetningLokar":{"type":"string","format":"date-time"},"lokadHandvirkt":{"type":"boolean"},"listaLokad":{"type":"boolean"},"fjoldiMedmaela":{"type":"integer","format":"int32"},"svaedi":{"$ref":"#/components/schemas/SvaediDTO"}},"additionalProperties":false},"MedmaelalistiDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"frambodNafn":{"type":"string"},"listiNafn":{"type":"string"},"frambodSimi":{"type":"string","nullable":true},"frambodNetfang":{"type":"string","nullable":true},"dagsetningLokar":{"type":"string","format":"date-time"},"lokadHandvirkt":{"type":"boolean"},"listaLokad":{"type":"boolean"},"fjoldiMedmaela":{"type":"integer","format":"int32"},"svaedi":{"$ref":"#/components/schemas/SvaediDTO"},"frambod":{"$ref":"#/components/schemas/EinstaklingurBaseDTO"},"umbodList":{"type":"array","items":{"$ref":"#/components/schemas/EinstaklingurBaseDTO"}},"medmaelasofnun":{"$ref":"#/components/schemas/MedmaelasofnunBaseDTO"}},"additionalProperties":false},"MedmaelalistiRequestDTO":{"type":"object","properties":{"sofnunID":{"type":"integer","format":"int32"},"kennitala":{"type":"string"},"simi":{"type":"string"},"netfang":{"type":"string"},"medmaelalistar":{"type":"array","items":{"$ref":"#/components/schemas/MedmaelalistiSvaediRequestDTO"}},"umbodKennitolur":{"type":"array","items":{"type":"string"}}},"additionalProperties":false},"MedmaelalistiSvaediRequestDTO":{"type":"object","properties":{"svaediID":{"type":"integer","format":"int32"},"listiNafn":{"type":"string"}},"additionalProperties":false},"MedmaelasofnunBaseDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"kosningID":{"type":"integer","format":"int32"},"kosningNafn":{"type":"string"},"kosningTegund":{"type":"string"},"kosningKjordagur":{"type":"string","format":"date-time"},"sofnunStart":{"type":"string","format":"date-time"},"sofnunEnd":{"type":"string","format":"date-time"}},"additionalProperties":false},"MedmaelasofnunDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"kosningID":{"type":"integer","format":"int32"},"kosningNafn":{"type":"string"},"kosningTegund":{"type":"string"},"kosningKjordagur":{"type":"string","format":"date-time"},"sofnunStart":{"type":"string","format":"date-time"},"sofnunEnd":{"type":"string","format":"date-time"},"kosning":{"$ref":"#/components/schemas/KosningBaseDTO"}},"additionalProperties":false},"MedmaelasofnunExtendedDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"kosningID":{"type":"integer","format":"int32"},"kosningNafn":{"type":"string"},"kosningTegund":{"type":"string"},"kosningKjordagur":{"type":"string","format":"date-time"},"sofnunStart":{"type":"string","format":"date-time"},"sofnunEnd":{"type":"string","format":"date-time"},"kosning":{"$ref":"#/components/schemas/KosningBaseDTO"},"frambodList":{"type":"array","items":{"$ref":"#/components/schemas/EinstaklingurBaseDTO"}},"svaedi":{"type":"array","items":{"$ref":"#/components/schemas/SvaediDTO"}}},"additionalProperties":false},"MedmaeliBaseDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"medmaelalistiID":{"type":"integer","format":"int32"},"kennitala":{"type":"string"},"nafn":{"type":"string","nullable":true},"heimilisfang":{"type":"string","nullable":true},"medmaeliTegund":{"type":"integer","format":"int32"},"dagsetning":{"type":"string","format":"date-time"}},"additionalProperties":false},"MedmaeliBulkResponseDTO":{"type":"object","properties":{"notFound":{"type":"array","items":{"type":"string"}},"undirAldri":{"type":"array","items":{"type":"string"}},"ekkiIsRik":{"type":"array","items":{"type":"string"}},"ekkiASvaedi":{"type":"array","items":{"type":"string"}},"medmaeli":{"type":"array","items":{"$ref":"#/components/schemas/MedmaeliBaseDTO"}}},"additionalProperties":false},"SvaediDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"nafn":{"type":"string"},"svaediTegund":{"type":"integer","format":"int32"},"svaediTegundLysing":{"type":"string"},"fjoldi":{"type":"integer","format":"int32"}},"additionalProperties":false}}}}
+{
+  "openapi": "3.0.1",
+  "info": { "title": "MedmaeliRestAPI", "version": "1.0" },
+  "paths": {
+    "/Kosning": {
+      "get": {
+        "tags": ["Kosning"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/KosningDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Kosning/{ID}": {
+      "get": {
+        "tags": ["Kosning"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/KosningDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Kosning/{ID}/Sofnun": {
+      "get": {
+        "tags": ["Kosning"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Kosning/{ID}/Sofnun/New": {
+      "post": {
+        "tags": ["Kosning"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "endDate",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "sofnunID",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "frambodKennitala",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "svaediID",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/AddListar": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MedmaelalistiRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/Medmaeli": {
+      "get": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/AddMedmaeli": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "kennitala",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/AddMedmaeliBulk": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaeliBulkResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/AddUmbod": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "kennitala",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/RemoveUmbod": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "kennitala",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/ExtendTime": {
+      "patch": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "newEndDate",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "string", "format": "date-time" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelalistar/{ID}/Compare": {
+      "post": {
+        "tags": ["Medmaelalistar"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "boolean", "default": false }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelasofnunExtendedDTO"
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}/Svaedi": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SvaediDTO" }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}/Medmaelalistar": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}/EinsInfo/{Kennitala}": {
+      "get": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EinstaklingurKosningInfoDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}/Compare": {
+      "post": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaelasofnun/{ID}/Delete": {
+      "delete": {
+        "tags": ["Medmaelasofnun"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": { "200": { "description": "Success" } }
+      }
+    },
+    "/Medmaeli/{Kennitala}/Medmaeli": {
+      "get": {
+        "tags": ["Medmaeli"],
+        "parameters": [
+          {
+            "name": "Kennitala",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sofnunID",
+            "in": "query",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/Medmaeli/{ID}/RemoveMedmaeliUser": {
+      "post": {
+        "tags": ["Medmaeli"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "EinstaklingurBaseDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "nafn": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurKosningInfoDTO": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "nafn": { "type": "string" },
+          "kosningNafn": { "type": "string" },
+          "maKjosa": { "type": "boolean" },
+          "maKjosaInfo": {
+            "$ref": "#/components/schemas/EinstaklingurMaKjosaInfo"
+          },
+          "maFrambod": { "type": "boolean" },
+          "maFrambodInfo": {
+            "$ref": "#/components/schemas/EinstaklingurMaFrambodInfo"
+          },
+          "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
+          "medmaeli": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+          },
+          "medmaelalistar": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaelalistiBaseDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurMaFrambodInfo": {
+        "type": "object",
+        "properties": {
+          "medAldur": { "type": "boolean" },
+          "medIsRikisfang": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "EinstaklingurMaKjosaInfo": {
+        "type": "object",
+        "properties": {
+          "kennitala": { "type": "string" },
+          "medAldur": { "type": "boolean" },
+          "medIsRikisfang": { "type": "boolean" },
+          "byrAIsl": { "type": "boolean" },
+          "bjoAIslNylega": { "type": "boolean" },
+          "bjoAIslUmsokn": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "KosningBaseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "kosningTegund": { "type": "string" },
+          "kosningTegundNr": { "type": "integer", "format": "int32" },
+          "erMedmaelakosning": { "type": "boolean" },
+          "vidmidunardags": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "kjordagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KosningDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "kosningTegund": { "type": "string" },
+          "kosningTegundNr": { "type": "integer", "format": "int32" },
+          "erMedmaelakosning": { "type": "boolean" },
+          "vidmidunardags": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "kjordagur": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "medmaelasofnun": {
+            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelalistiBaseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "frambodNafn": { "type": "string" },
+          "listiNafn": { "type": "string" },
+          "frambodSimi": { "type": "string", "nullable": true },
+          "frambodNetfang": { "type": "string", "nullable": true },
+          "dagsetningLokar": { "type": "string", "format": "date-time" },
+          "lokadHandvirkt": { "type": "boolean" },
+          "listaLokad": { "type": "boolean" },
+          "fjoldiMedmaela": { "type": "integer", "format": "int32" },
+          "svaedi": { "$ref": "#/components/schemas/SvaediDTO" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelalistiDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "frambodNafn": { "type": "string" },
+          "listiNafn": { "type": "string" },
+          "frambodSimi": { "type": "string", "nullable": true },
+          "frambodNetfang": { "type": "string", "nullable": true },
+          "dagsetningLokar": { "type": "string", "format": "date-time" },
+          "lokadHandvirkt": { "type": "boolean" },
+          "listaLokad": { "type": "boolean" },
+          "fjoldiMedmaela": { "type": "integer", "format": "int32" },
+          "svaedi": { "$ref": "#/components/schemas/SvaediDTO" },
+          "frambod": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" },
+          "umbodList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" }
+          },
+          "medmaelasofnun": {
+            "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelalistiRequestDTO": {
+        "type": "object",
+        "properties": {
+          "sofnunID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "simi": { "type": "string" },
+          "netfang": { "type": "string" },
+          "medmaelalistar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MedmaelalistiSvaediRequestDTO"
+            }
+          },
+          "umbodKennitolur": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelalistiSvaediRequestDTO": {
+        "type": "object",
+        "properties": {
+          "svaediID": { "type": "integer", "format": "int32" },
+          "listiNafn": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelasofnunBaseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "kosningID": { "type": "integer", "format": "int32" },
+          "kosningNafn": { "type": "string" },
+          "kosningTegund": { "type": "string" },
+          "kosningKjordagur": { "type": "string", "format": "date-time" },
+          "sofnunStart": { "type": "string", "format": "date-time" },
+          "sofnunEnd": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelasofnunDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "kosningID": { "type": "integer", "format": "int32" },
+          "kosningNafn": { "type": "string" },
+          "kosningTegund": { "type": "string" },
+          "kosningKjordagur": { "type": "string", "format": "date-time" },
+          "sofnunStart": { "type": "string", "format": "date-time" },
+          "sofnunEnd": { "type": "string", "format": "date-time" },
+          "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaelasofnunExtendedDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "kosningID": { "type": "integer", "format": "int32" },
+          "kosningNafn": { "type": "string" },
+          "kosningTegund": { "type": "string" },
+          "kosningKjordagur": { "type": "string", "format": "date-time" },
+          "sofnunStart": { "type": "string", "format": "date-time" },
+          "sofnunEnd": { "type": "string", "format": "date-time" },
+          "kosning": { "$ref": "#/components/schemas/KosningBaseDTO" },
+          "frambodList": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/EinstaklingurBaseDTO" }
+          },
+          "svaedi": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/SvaediDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MedmaeliBaseDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "medmaelalistiID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "nafn": { "type": "string", "nullable": true },
+          "heimilisfang": { "type": "string", "nullable": true },
+          "medmaeliTegund": { "type": "integer", "format": "int32" },
+          "dagsetning": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "MedmaeliBulkResponseDTO": {
+        "type": "object",
+        "properties": {
+          "notFound": { "type": "array", "items": { "type": "string" } },
+          "undirAldri": { "type": "array", "items": { "type": "string" } },
+          "ekkiIsRik": { "type": "array", "items": { "type": "string" } },
+          "ekkiASvaedi": { "type": "array", "items": { "type": "string" } },
+          "medmaeli": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MedmaeliBaseDTO" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SvaediDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "nafn": { "type": "string" },
+          "svaediTegund": { "type": "integer", "format": "int32" },
+          "svaediTegundLysing": { "type": "string" },
+          "fjoldi": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
