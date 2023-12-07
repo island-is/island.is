@@ -53,7 +53,7 @@ export const Vehicles = ({
             {vehicle.mileage && isNumber(+vehicle.mileage) && (
               <Box>
                 <Label>
-                  {formatMessage(carRecyclingMessages.review.milage)}
+                  {formatMessage(carRecyclingMessages.review.mileage)}
                 </Label>
                 {vehicle.mileage} km
               </Box>

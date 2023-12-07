@@ -207,7 +207,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
                   required={true}
                   id={vehicle.permno + 'input'}
                   label={formatText(
-                    carRecyclingMessages.cars.odometer,
+                    carRecyclingMessages.cars.mileage,
                     application,
                     formatMessage,
                   )}

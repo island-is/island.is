@@ -139,10 +139,10 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Ökutæki valin til endurvinnslu',
       description: 'Vehicles selected for recycling',
     },
-    odometer: {
-      id: 'rf.cr.application:odometer',
+    mileage: {
+      id: 'rf.cr.application:mileage',
       defaultMessage: 'Kílómetrastaða',
-      description: 'Vehicles milage status',
+      description: 'Vehicles mileage status',
     },
   }),
   review: defineMessages({
@@ -187,10 +187,10 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Breyta umsókn',
       description: 'Edit application',
     },
-    odometer: {
-      id: 'rf.cr.application:odometer',
+    mileage: {
+      id: 'rf.cr.application:mileage',
       defaultMessage: 'Kílómetrastaða',
-      description: 'Vehicles milage status',
+      description: 'Vehicles mileage status',
     },
   }),
   conclusionScreen: defineMessages({
@@ -281,10 +281,10 @@ export const errorMessages = defineMessages({
       'Ekki tókst að afskrá bifreið í endurvinnslu hjá Úrvinnslusjóði',
     description: 'Unable to deregister vehicle at the Icelandic Recycling Fund',
   },
-  milagesMissing: {
-    id: 'rf.cr.application:error.milage.missing',
+  mileageMissing: {
+    id: 'rf.cr.application:error.mileage.missing',
     defaultMessage: 'Það verður að setja inn kílómetrastöðu',
-    description: 'Milage as a mandatory',
+    description: 'Mileage as a mandatory',
   },
 })
 
