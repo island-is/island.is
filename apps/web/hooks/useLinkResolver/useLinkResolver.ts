@@ -21,10 +21,7 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType =
-  | keyof typeof routesTemplate
-  | 'linkurl'
-  | 'link'
+export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
