@@ -1,4 +1,3 @@
-import { User } from '@island.is/auth-nest-tools'
 import { ApplicationAccessService } from '../tools/applicationAccess.service'
 import { Test } from '@nestjs/testing'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -7,6 +6,7 @@ import {
   createApplication,
 } from '@island.is/application/testing'
 import * as faker from 'faker'
+import { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
 import { AuthDelegationType } from '@island.is/shared/types'
