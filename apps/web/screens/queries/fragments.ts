@@ -226,8 +226,9 @@ export const slices = gql`
     image {
       ...ImageFields
     }
-    html {
+    content {
       ...HtmlFields
+      ...FaqListFields
     }
   }
 
@@ -613,7 +614,6 @@ export const slices = gql`
       title
       shortTitle
       slug
-      pageType
       tinyThumbnail {
         url
         title
@@ -835,7 +835,6 @@ export const slices = gql`
     ...ImageFields
     ...AssetFields
     ...EmbeddedVideoFields
-    ...SectionWithImageFields
     ...SectionWithVideoFields
     ...TabSectionFields
     ...TeamListFields
@@ -869,6 +868,7 @@ export const slices = gql`
   fragment AllSlices on Slice {
     ...BaseSlices
     ...FaqListFields
+    ...SectionWithImageFields
     ...FeaturedSupportQNAsFields
   }
   ${processEntryFields}

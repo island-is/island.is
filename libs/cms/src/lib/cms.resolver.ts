@@ -102,6 +102,10 @@ import { Manual } from './models/manual.model'
 import { GetSingleManualInput } from './dto/getSingleManual.input'
 import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
 import { EntryTitle } from './models/entryTitle.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
+import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
+import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -345,6 +349,33 @@ export class CmsResolver {
     @Args('input') input: GetAnchorPagesInCategoryInput,
   ): Promise<AnchorPage[]> {
     return this.cmsContentfulService.getAnchorPagesInCategory(
+      input.lang,
+      input.slug,
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => LifeEventPage, { nullable: true })
+  getLifeEventPage(
+    @Args('input') input: GetLifeEventPageInput,
+  ): Promise<LifeEventPage | null> {
+    return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEvents(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEvents(input.lang)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEventsInCategory(
       input.lang,
       input.slug,
     )

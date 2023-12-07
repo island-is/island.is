@@ -1,4 +1,5 @@
 export * from './AnchorPage'
+export * from './LifeEventPage'
 export * from './Applications'
 export * from './Article'
 export * from './Namespace'
