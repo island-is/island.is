@@ -376,6 +376,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
   },
+  applicationSubmitFailed: {
+    id: 'application.system:core.application.SubmitFailed',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission of application failed',
+  },
   paymentSubmitRetryButtonCaption: {
     id: 'application.system:core.payment.retryCaption',
     defaultMessage: 'Reyna aftur',

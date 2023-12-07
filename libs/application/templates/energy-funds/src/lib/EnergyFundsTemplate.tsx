@@ -20,11 +20,14 @@ import { application as applicationMessage } from './messages'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../shared'
 import { EnergyFundsSchema } from './dataSchema'
+import { ApiScope } from '@island.is/auth/scopes'
+
 import {
   UserProfileApi,
   NationalRegistryUserApi,
   CurrentVehiclesApi,
 } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -37,6 +40,15 @@ const template: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.EnergyFunds.translation],
   dataSchema: EnergyFundsSchema,
   featureFlag: Features.energyFunds,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.samgongustofaVehicles],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -56,7 +68,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -96,7 +107,6 @@ const template: ApplicationTemplate<
               variant: 'blue',
             },
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(1),
           onExit: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -121,7 +131,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {

@@ -103,29 +103,39 @@ export class EnergyFundsService extends BaseTemplateApiService {
     const applicationAnswers = application.answers as EnergyFundsAnswers
     const currentVehicleList = application.externalData?.currentVehicles
       ?.data as Array<VehiclesCurrentVehicle>
-    const currentvehicleDetails = currentVehicleList.filter(
+    const currentvehicleDetails = currentVehicleList.find(
       (x) => x.permno === applicationAnswers.selectVehicle.plate,
-    )[0]
+    )
 
-    const answers = {
-      nationalId: auth.nationalId,
-      vIN: applicationAnswers?.selectVehicle.vin,
-      carNumber: applicationAnswers?.selectVehicle.plate,
-      carType: currentvehicleDetails.make || '',
-      itemcode: currentvehicleDetails.vehicleGrantItemCode || '',
-      purchasePrice:
-        (applicationAnswers?.vehicleDetails.price &&
-          parseInt(applicationAnswers?.vehicleDetails.price)) ||
-        0,
-      registrationDate: format(
-        new Date(currentvehicleDetails.firstRegistrationDate || ''),
-        'yyyy-MM-dd',
-      ),
-      subsidyAmount: currentvehicleDetails.vehicleGrant || 0,
+    if (currentvehicleDetails) {
+      const answers = {
+        nationalId: auth.nationalId,
+        vIN: applicationAnswers?.selectVehicle.vin,
+        carNumber: applicationAnswers?.selectVehicle.plate,
+        carType: currentvehicleDetails.make || '',
+        itemcode: currentvehicleDetails.vehicleGrantItemCode || '',
+        purchasePrice:
+          (applicationAnswers?.vehicleDetails.price &&
+            parseInt(applicationAnswers?.vehicleDetails.price)) ||
+          0,
+        registrationDate: format(
+          new Date(currentvehicleDetails.firstRegistrationDate || ''),
+          'yyyy-MM-dd',
+        ),
+        subsidyAmount: currentvehicleDetails.vehicleGrant || 0,
+      }
+
+      await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
+        subsidyInput: answers,
+      })
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.applicationSubmitFailed,
+          summary: coreErrorMessages.applicationSubmitFailed,
+        },
+        400,
+      )
     }
-
-    await this.energyFundsClientService.submitEnergyFundsApplication(auth, {
-      subsidyInput: answers,
-    })
   }
 }

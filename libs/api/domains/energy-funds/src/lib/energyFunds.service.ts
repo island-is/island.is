@@ -39,8 +39,7 @@ export class EnergyFundsService {
       )
     }
 
-    const vehicleGrantItem =
-      currentVehicle && (await this.getVehicleGrant(auth, currentVehicle))
+    const vehicleGrantItem = await this.getVehicleGrant(auth, currentVehicle)
 
     if (!vehicleGrantItem)
       throw new Error('Could not get available grants for this vehicle')
