@@ -123,6 +123,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/social-insurance-administration/old-age-pension'
     ),
+  [ApplicationTypes.CAR_RECYCLING]: () =>
+    import('@island.is/application/templates/car-recycling'),
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
     import(
       '@island.is/application/templates/signature-collection/signature-list-creation'
