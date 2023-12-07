@@ -31,6 +31,7 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   DirectorateOfImmigration,
+  SocialInsuranceAdministration,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -257,6 +258,7 @@ export const serviceSetup = (services: {
       Passports,
       EHIC,
       DirectorateOfImmigration,
+      SocialInsuranceAdministration,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -298,6 +300,7 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
+      TR_XROAD_PATH: '/k8s/api/TR_XROAD_PATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
