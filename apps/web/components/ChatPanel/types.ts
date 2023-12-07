@@ -70,6 +70,12 @@ export type WatsonIntegration =
   // Skatturinn - english
   | '98ba51da-1677-4881-a133-7ea019ae7b87'
 
+  // Samgöngustofa
+  | 'fe12e960-329c-46d5-9ae1-8bd8b8219f43'
+
+  // Samgöngustofa - english
+  | '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+
 export type WatsonServiceInstance =
   // Askur
   'bc3d8312-d862-4750-b8bf-529db282050a'
