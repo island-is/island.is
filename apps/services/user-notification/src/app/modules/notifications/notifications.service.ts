@@ -175,18 +175,18 @@ export class NotificationsService {
         id: id,
         recipient: user.nationalId,
       },
-    });
-  
+    })
+
     if (!notification) {
       throw new NotFoundException(
         'Notification not found or does not belong to the user',
-      );
+      )
     }
-  
+
     // Process and format the notification
     try {
-      const template = await this.getTemplate(notification.templateId, locale);
-      const formattedTemplate = this.formatArguments(notification, template);
+      const template = await this.getTemplate(notification.templateId, locale)
+      const formattedTemplate = this.formatArguments(notification, template)
       return {
         id: notification.id,
         messageId: notification.messageId,
@@ -197,10 +197,10 @@ export class NotificationsService {
         created: notification.created,
         updated: notification.updated,
         status: notification.status,
-      };
+      }
     } catch (error) {
-      this.logger.error('Error formatting notification:', error);
-      throw new InternalServerErrorException('Error processing notification');
+      this.logger.error('Error formatting notification:', error)
+      throw new InternalServerErrorException('Error processing notification')
     }
   }
 
@@ -222,7 +222,10 @@ export class NotificationsService {
         )
         if (template) {
           try {
-            const formattedTemplate = this.formatArguments(notification, template);
+            const formattedTemplate = this.formatArguments(
+              notification,
+              template,
+            )
             return {
               id: notification.id,
               messageId: notification.messageId,
@@ -233,14 +236,17 @@ export class NotificationsService {
               created: notification.created,
               updated: notification.updated,
               status: notification.status,
-            };
+            }
           } catch (error) {
-            this.logger.error('Error formatting notification:', error);
-            throw new InternalServerErrorException('Error processing notification');
+            this.logger.error('Error formatting notification:', error)
+            throw new InternalServerErrorException(
+              'Error processing notification',
+            )
           }
-
         } else {
-          this.logger.warn("Template not found for notification: " + notification.id)
+          this.logger.warn(
+            'Template not found for notification: ' + notification.id,
+          )
         }
       },
     )
@@ -254,11 +260,12 @@ export class NotificationsService {
     updateNotificationDto: UpdateNotificationDto,
     locale: string,
   ): Promise<RenderedNotificationDto> {
-    const [numberOfAffectedRows, [notification]] = await this.notificationModel.update(
-      updateNotificationDto, 
-      { where: {
-        id: id,
-        recipient: user.nationalId},
+    const [numberOfAffectedRows, [notification]] =
+      await this.notificationModel.update(updateNotificationDto, {
+        where: {
+          id: id,
+          recipient: user.nationalId,
+        },
         returning: true,
       })
     if (numberOfAffectedRows === 0) {
@@ -268,8 +275,8 @@ export class NotificationsService {
     } else {
       // Process and format the notification
       try {
-        const template = await this.getTemplate(notification.templateId, locale);
-        const formattedTemplate = this.formatArguments(notification, template);
+        const template = await this.getTemplate(notification.templateId, locale)
+        const formattedTemplate = this.formatArguments(notification, template)
         return {
           id: notification.id,
           messageId: notification.messageId,
@@ -280,15 +287,11 @@ export class NotificationsService {
           created: notification.created,
           updated: notification.updated,
           status: notification.status,
-        };
+        }
       } catch (error) {
-        this.logger.error('Error formatting notification:', error);
-        throw new InternalServerErrorException('Error processing notification');
+        this.logger.error('Error formatting notification:', error)
+        throw new InternalServerErrorException('Error processing notification')
       }
-
-     
     }
   }
-
- 
 }
