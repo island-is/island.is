@@ -55,9 +55,9 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   thumbnailImageUrl,
 }) => {
   const [allowed, setAllowed] = useState<boolean>(false)
-  const [embedUrl, setEmbedUrl] = useState<string | null>(null)
+  const [embedUrl, setEmbedUrl] = useState<string>('')
   const [showDisclaimer, setShowDisclaimer] = useState<boolean>(false)
-  const [termsUrl, setTermsUrl] = useState<string | null>(null)
+  const [termsUrl, setTermsUrl] = useState<string>('')
   const [itemKey, setItemKey] = useState<string>('')
   const [type, setType] = useState<'YOUTUBE' | 'VIMEO' | ''>('')
   const methods = useForm()
