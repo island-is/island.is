@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
-import { IsString } from 'class-validator'
+import { IsBoolean, IsString, IsDate } from 'class-validator'
 import { BaseApplicationResponseDto } from './application.response.dto'
 
 export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto {
@@ -13,6 +13,16 @@ export class ApplicationListAdminResponseDto extends BaseApplicationResponseDto 
   @Expose()
   @IsString()
   paymentStatus?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsDate()
+  pruneAt?: Date
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsBoolean()
+  pruned?: boolean
 
   constructor(partial: Partial<ApplicationListAdminResponseDto>) {
     super(partial)
