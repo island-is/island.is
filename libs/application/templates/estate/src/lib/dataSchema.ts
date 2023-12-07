@@ -29,7 +29,9 @@ const asset = z
   )
   .refine(
     ({ enabled, assetNumber }) => {
-      return enabled ? isValidString(assetNumber) && PROPERTY_REGEX.test(assetNumber) : true
+      return enabled
+        ? isValidString(assetNumber) && PROPERTY_REGEX.test(assetNumber)
+        : true
     },
     {
       path: ['assetNumber'],

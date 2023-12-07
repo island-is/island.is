@@ -49,4 +49,3 @@ export const relationWithApplicant = [
   'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
   'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
 ]
-
