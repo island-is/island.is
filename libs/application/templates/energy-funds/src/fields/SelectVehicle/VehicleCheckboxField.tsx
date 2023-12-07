@@ -99,7 +99,7 @@ export const VehicleCheckboxField: FC<
         <CheckboxFormField
           application={application}
           field={{
-            id: `${field.id}.plate`,
+            id: `${field.id}.vehicle`,
             title: '',
             large: true,
             backgroundColor: 'blue',

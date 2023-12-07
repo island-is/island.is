@@ -59,13 +59,13 @@ export const VehicleSelectField: FC<
       })
         .then((response) => {
           const hasReceivedSubsidy =
-            response.vehicleDetailsByVin.hasReceivedSubsidy
+            response.energyFundVehicleGrant.hasReceivedSubsidy
           setCurrentVehicle({
             ...chosenVehicle,
-            vehicleGrant: response.vehicleDetailsByVin.vehicleGrant || 0,
+            vehicleGrant: response.energyFundVehicleGrant.vehicleGrant || 0,
             hasReceivedSubsidy: hasReceivedSubsidy || true,
             vehicleGrantItemCode:
-              response.vehicleDetailsByVin.vehicleGrantItemCode || '',
+              response.energyFundVehicleGrant.vehicleGrantItemCode || '',
           })
 
           setCurrentVehicleDisabled(hasReceivedSubsidy ?? true)
@@ -78,7 +78,7 @@ export const VehicleSelectField: FC<
             )
             setValue(
               'selectVehicle.grantAmount',
-              response.vehicleDetailsByVin.vehicleGrant,
+              response.energyFundVehicleGrant.vehicleGrant,
             )
           } else {
             resetValues()

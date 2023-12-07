@@ -4,7 +4,7 @@ import {} from '@island.is/localization'
 import { FC } from 'react'
 import { VehiclesCurrentVehicle } from '../../shared/types'
 import { VehicleSelectField } from './VehicleSelectField'
-import { VehicleCheckboxField } from './VehicleChekboxField'
+import { VehicleCheckboxField } from './VehicleCheckboxField'
 
 export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
@@ -18,7 +18,7 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
     : []
   return (
     <Box paddingTop={2}>
-      {vehicles.length > 4 ? (
+      {vehicles.length > 0 ? (
         <VehicleSelectField currentVehicleList={vehicles} {...props} />
       ) : (
         <VehicleCheckboxField currentVehicleList={vehicles} {...props} />

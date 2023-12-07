@@ -42,12 +42,31 @@ export class EnergyFundsService extends BaseTemplateApiService {
       showOperated: false,
     })
 
-    const onlyElectricVehicles = results.filter(
+    let onlyElectricVehicles: Array<VehiclesCurrentVehicle> = []
+    onlyElectricVehicles = results.filter(
       (x) => x.fuelCode && parseInt(x.fuelCode) === 3,
     )
 
+    if (onlyElectricVehicles.length < 5) {
+      onlyElectricVehicles = await Promise.all(
+        onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
+          const vehicleGrant = await this.getVehicleGrant(auth, vehicle)
+          return {
+            ...vehicle,
+            vehicleGrant: vehicleGrant?.priceAmount,
+            vehicleGrantItemCode: vehicleGrant?.itemCode,
+          }
+        }),
+      )
+    }
+
     // Validate that user has at least 1 vehicle that fulfills requirements
-    if (!onlyElectricVehicles || !onlyElectricVehicles.length) {
+    if (
+      !onlyElectricVehicles ||
+      !onlyElectricVehicles.length ||
+      onlyElectricVehicles.filter((x) => x.vehicleGrant !== undefined)
+        .length === 0
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.electricVehicleListEmptyOwner,
@@ -65,10 +84,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
 
         // Only validate if fewer than 5 items
         if (onlyElectricVehicles.length < 5) {
-          const vehicleGrant = await this.getVehicleGrant(auth, vehicle)
-          vehicleGrantPriceAmount = vehicleGrant?.priceAmount
-          vehicleGrantItemCode = vehicleGrant?.itemCode
-
           // Get subsidy status
           hasReceivedSubsidy =
             await this.energyFundsClientService.checkVehicleSubsidyAvilability(

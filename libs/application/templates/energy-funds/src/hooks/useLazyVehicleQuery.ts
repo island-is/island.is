@@ -1,12 +1,12 @@
 import { gql } from '@apollo/client'
-import { VehicleDetailsByVin } from '@island.is/api/schema'
+import { EnergyFundVehicleGrant } from '@island.is/api/schema'
 import { GET_VEHICLE_GRANT_BY_VIN } from '../graphql/queries'
 import { useLazyQuery } from './useLazyQuery'
 
 export const useLazyVehicleDetails = () => {
   return useLazyQuery<
     {
-      vehicleDetailsByVin: VehicleDetailsByVin
+      energyFundVehicleGrant: EnergyFundVehicleGrant
     },
     {
       vin: string

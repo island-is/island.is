@@ -13,7 +13,7 @@ export const EnergyFundsClientConfig = defineConfig({
     return {
       xRoadServicePath: env.required(
         'XROAD_ENERGY_FUNDS_PATH',
-        'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidySerivce_v1',
+        'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1',
       ),
       tokenExchangeScope: env.optionalJSON('XROAD_ENERGY_FUNDS_SCOPE') ?? [
         '@fjs.is/finance',
