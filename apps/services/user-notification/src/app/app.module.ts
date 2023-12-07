@@ -9,7 +9,7 @@ import { environment } from '../environments/environment'
 @Module({
   imports: [
     AuthModule.register({
-      issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+      issuer: environment.auth.issuer,
       // audience: intentionally left out
     } as AuthConfig),
     SequelizeModule.forRootAsync({
