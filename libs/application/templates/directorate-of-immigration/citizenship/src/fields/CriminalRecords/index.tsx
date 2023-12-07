@@ -7,8 +7,11 @@ import { getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 
 export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
+  const { setValue } = useFormContext()
+
   const answers = application.answers as Citizenship
   const countryList = answers?.countriesOfResidence?.selectedAbroadCountries
 
@@ -24,27 +27,33 @@ export const CriminalRecords: FC<FieldBaseProps> = ({ field, application }) => {
 
   const { formatMessage } = useLocale()
 
+  const setCountryId = (countryId: string, index: number) => {
+    setValue(`${field.id}[${index}].countryId`, countryId)
+  }
+
   return (
     <Box paddingTop={2}>
       {filteredCountryList &&
-        filteredCountryList.map((x) => {
+        filteredCountryList.map((x, index) => {
+          setCountryId(x.countryId, index)
           return (
-            <FileUploadController
-              key={x.countryId}
-              application={application}
-              id={`${field.id}.${x.countryId}`}
-              header={`Sakavottorð - ${
-                countryOptions.filter(
-                  (z) => z.id?.toString() === x.countryId,
-                )[0]?.name
-              }`}
-              description={formatMessage(
-                supportingDocuments.labels.otherDocuments.acceptedFileTypes,
-              )}
-              buttonLabel={formatMessage(
-                supportingDocuments.labels.otherDocuments.buttonText,
-              )}
-            />
+            <Box paddingBottom={2}>
+              <FileUploadController
+                key={x.countryId}
+                application={application}
+                id={`${field.id}[${index}].attachment`}
+                header={`Sakavottorð - ${
+                  countryOptions.find((z) => z.id?.toString() === x.countryId)
+                    ?.name
+                }`}
+                description={formatMessage(
+                  supportingDocuments.labels.otherDocuments.acceptedFileTypes,
+                )}
+                buttonLabel={formatMessage(
+                  supportingDocuments.labels.otherDocuments.buttonText,
+                )}
+              />
+            </Box>
           )
         })}
     </Box>

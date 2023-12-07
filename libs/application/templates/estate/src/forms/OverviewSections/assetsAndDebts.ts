@@ -2,10 +2,11 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application } from '@island.is/application/types'
-import { EstateInfo } from '@island.is/clients/syslumenn'
+import { Application, RecordObject } from '@island.is/application/types'
+import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
 import {
@@ -15,6 +16,7 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
+import { customCurrencyFormat } from '../../lib/utils'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -45,10 +47,36 @@ export const overviewAssetsAndDebts = [
             m.overviewMarketValue.defaultMessage +
               ': ' +
               (asset.marketValue ? formatCurrency(asset.marketValue) : '0 kr.'),
+            m.propertyShare.defaultMessage +
+              ': ' +
+              (asset.share
+                ? asset.share > 1
+                  ? asset.share + '%'
+                  : asset.share * 100 + '%'
+                : ''),
           ],
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateAssetsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.assets',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.assets',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewInventoryHeader',
@@ -122,6 +150,25 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateVehicleTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.vehicles',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.vehicles',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewGuns',
@@ -154,6 +201,25 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'estateGunsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.guns',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateAsset>(
+        answers,
+        'estate.guns',
+        'marketValue',
+        (asset) => !!asset?.enabled,
+      ),
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewEstateBankInfoTitle',
@@ -183,6 +249,23 @@ export const overviewAssetsAndDebts = [
         ),
     },
   ),
+  buildDescriptionField({
+    id: 'bankAccountsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['bankAccounts']>(
+        answers,
+        'bankAccounts',
+        'balance',
+      ),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['bankAccounts']>(
+        answers,
+        'bankAccounts',
+        'balance',
+      ),
+    titleVariant: 'h4',
+  }),
   buildDividerField({
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
@@ -226,6 +309,15 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'claimsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['claims']>(answers, 'claims', 'value'),
+    titleVariant: 'h4',
+  }),
   buildDividerField({
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
@@ -254,23 +346,36 @@ export const overviewAssetsAndDebts = [
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => ({
-          title: stock.organization,
-          description: [
-            `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
-              stock.nationalId ?? '',
-            )}`,
-            `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
-              stock.faceValue ?? 0,
-            )}`,
-            `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-            `${m.stocksValue.defaultMessage}: ${formatCurrency(
-              stock.value ?? '0',
-            )}`,
-          ],
-        })),
+        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
+          return {
+            title: stock.organization,
+            description: [
+              `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                stock.nationalId ?? '',
+              )}`,
+              `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
+                stock.faceValue ?? '0',
+              )}`,
+              `${m.stocksRateOfChange.defaultMessage}: ${
+                stock.rateOfExchange?.replace('.', ',') ?? '0'
+              }`,
+              `${m.stocksValue.defaultMessage}: ${customCurrencyFormat(
+                stock.value ?? '0',
+              )}`,
+            ],
+          }
+        }),
     },
   ),
+  buildDescriptionField({
+    id: 'stocksTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['stocks']>(answers, 'stocks', 'value'),
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
   buildDescriptionField({
     id: 'overviewOtherAssetsHeader',
@@ -382,5 +487,40 @@ export const overviewAssetsAndDebts = [
         })),
     },
   ),
+  buildDescriptionField({
+    id: 'debtsTotal',
+    title: m.total,
+    description: ({ answers }: Application) =>
+      getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+    condition: (answers) =>
+      !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+    titleVariant: 'h4',
+  }),
   buildDividerField({}),
 ]
+
+const getSumFromAnswers = <T = unknown>(
+  answers: Application['answers'],
+  path: string,
+  field: string,
+  fn?: (item: T) => boolean,
+): string | null => {
+  let arr: T[] = getValueViaPath(answers, path) ?? []
+
+  if (Array.isArray(arr)) {
+    if (fn) {
+      arr = arr.filter(fn)
+    }
+
+    const value = arr.reduce((acc, cur) => {
+      const val = (getValueViaPath(cur as RecordObject, field) as number) ?? 0
+      return acc + Number(val)
+    }, 0)
+
+    if (value && value > 0) {
+      return formatCurrency(String(value))
+    }
+  }
+
+  return null
+}

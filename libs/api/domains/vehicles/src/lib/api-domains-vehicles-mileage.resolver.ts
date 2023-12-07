@@ -28,8 +28,14 @@ import {
   PostVehicleMileageInput,
   PutVehicleMileageInput,
 } from '../dto/postVehicleMileageInput'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)
 @Resolver(() => VehicleMileageOverview)
 @Audit({ namespace: '@island.is/api/vehicles' })
 @Scopes(ApiScope.vehicles)

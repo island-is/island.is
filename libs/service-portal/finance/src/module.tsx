@@ -17,6 +17,7 @@ const FinanceEmployeeClaims = lazy(() =>
 )
 const FinanceLocalTax = lazy(() => import('./screens/FinanceLocalTax'))
 const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
+const FinanceLoans = lazy(() => import('./screens/FinanceLoans'))
 
 export const financeModule: PortalModule = {
   name: 'Fjármál',
@@ -84,6 +85,13 @@ export const financeModule: PortalModule = {
       element: <FinanceSchedule />,
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeLoans,
+      path: FinancePaths.FinanceLoans,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      element: <FinanceLoans />,
+      key: 'FinanceHmsLoans',
     },
   ],
 }

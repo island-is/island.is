@@ -21,18 +21,24 @@ import { ServicePortalPaths } from '../../lib/paths'
 import { DocumentsPaths } from '@island.is/service-portal/documents'
 import { theme } from '@island.is/island-ui/theme'
 
-interface FullWidthLayoutProps {
+interface FullWidthLayoutWrapperProps {
   activeParent?: PortalNavigationItem
   height: number
   pathname: string
   children: ReactNode
 }
+type FullWidthLayoutProps = {
+  isDashboard: boolean
+  isDocuments: boolean
+} & FullWidthLayoutWrapperProps
 
 export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   activeParent,
   height,
   pathname,
   children,
+  isDashboard,
+  isDocuments,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -43,16 +49,6 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
       activeParent?.children?.filter((item) => !item.navHide) || undefined,
     )
   }, [activeParent?.children])
-
-  // Dashboard has a special "no top navigation view"
-  const isDashboard = Object.values(ServicePortalPaths).find((route) =>
-    matchPath(route, pathname),
-  )
-
-  // Documents has a special "split screen view"
-  const isDocuments = Object.values(DocumentsPaths).find((route) =>
-    matchPath(route, pathname),
-  )
 
   return (
     <Box
@@ -150,10 +146,26 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   )
 }
 
-const FullWidthLayoutWrapper: FC<FullWidthLayoutProps> = (props) => {
+const FullWidthLayoutWrapper: FC<FullWidthLayoutWrapperProps> = (props) => {
+  // Dashboard has a special "no top navigation view"
+  const isDashboard = Object.values(ServicePortalPaths).find((route) =>
+    matchPath(route, props.pathname),
+  )
+
+  // Documents has a special "split screen view"
+  const isDocuments = Object.values(DocumentsPaths).find((route) =>
+    matchPath(route, props.pathname),
+  )
+
+  const isSpecialView = !!isDashboard || !!isDocuments
+
   return (
-    <FullWidthLayout {...props}>
-      <ModuleAlertBannerSection paddingTop={2} />
+    <FullWidthLayout
+      isDashboard={!!isDashboard}
+      isDocuments={!!isDocuments}
+      {...props}
+    >
+      <ModuleAlertBannerSection paddingTop={isSpecialView ? 0 : 2} />
       {props.children}
     </FullWidthLayout>
   )

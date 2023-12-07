@@ -10,4 +10,5 @@ export enum AdminPortalScope {
   idsAdminSuperUser = '@admin.island.is/auth:admin',
   petitionsAdmin = '@admin.island.is/petitions',
   serviceDesk = '@admin.island.is/service-desk',
+  signatureCollection = '@admin.island.is/signature-collection',
 }

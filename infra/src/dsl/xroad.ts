@@ -654,3 +654,23 @@ export const DirectorateOfImmigration = new XroadConf({
     },
   },
 })
+
+export const UniversityGatewayUniversityOfIceland = new XroadConf({
+  env: {
+    XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const SocialInsuranceAdministration = new XroadConf({
+  env: {
+    TR_XROAD_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      staging: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
+    },
+  },
+})

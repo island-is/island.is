@@ -533,7 +533,16 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
-
+  nationalRegistryResidenceHistoryMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryResidenceHistoryMissing',
+    defaultMessage: 'Náði ekki að sækja búsetusögu',
+    description: 'Not able to fetch residence history',
+  },
+  nationalRegistryCohabitantsMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryCohabitantsMissing',
+    defaultMessage: 'Náði ekki að sækja samíbúa',
+    description: 'Not able to fetch cohabitants',
+  },
   applicationIsPrunedAndReadOnly: {
     id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
     defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
