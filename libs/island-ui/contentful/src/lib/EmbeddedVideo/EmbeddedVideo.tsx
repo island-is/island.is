@@ -205,34 +205,31 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
             position="relative"
             className={styles.innerContent}
             style={{
-              // backgroundColor: thumbnailImageUrl
-              //   ? 'transparent'
-              //   : theme.color.blue100,
-              border: '1px solid black',
+              backgroundColor: thumbnailImageUrl
+                ? 'transparent'
+                : theme.color.blue100,
+              opacity: showDisclaimer && !thumbnailImageUrl ? '0.4' : '1',
               backgroundImage: thumbnailImageUrl
                 ? `url(${thumbnailImageUrl})`
                 : '',
             }}
           >
-            {!thumbnailImageUrl && (
-              <Box padding="p2">
-                <Text>{title}</Text>
-              </Box>
+            {!showDisclaimer && (
+              <FocusableBox
+                tabIndex={0}
+                onKeyDown={(ev) => {
+                  if (ev.key === 'Enter' || ev.key === ' ') {
+                    onPlayButtonClick()
+                    ev.preventDefault()
+                  }
+                }}
+                onClick={onPlayButtonClick}
+                className={styles.playIconContainer}
+                as="button"
+              >
+                <Icon size="large" icon="playCircle" color="white" />
+              </FocusableBox>
             )}
-            <FocusableBox
-              tabIndex={0}
-              onKeyDown={(ev) => {
-                if (ev.key === 'Enter' || ev.key === ' ') {
-                  onPlayButtonClick()
-                  ev.preventDefault()
-                }
-              }}
-              onClick={onPlayButtonClick}
-              className={styles.playIconContainer}
-              as="button"
-            >
-              <Icon size="large" icon="playCircle" color="white" />
-            </FocusableBox>
           </Box>
         </Box>
       )}
