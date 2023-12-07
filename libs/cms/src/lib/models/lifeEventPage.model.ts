@@ -5,7 +5,7 @@ import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 import { Organization, mapOrganization } from './organization.model'
-import { Link, mapLink } from './link.model'
+import { Featured, mapFeatured } from './featured.model'
 
 @ObjectType()
 export class LifeEventPage {
@@ -39,11 +39,12 @@ export class LifeEventPage {
   @CacheField(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
 
-  @CacheField(() => [Link], { nullable: true })
-  featuredLinks?: Link[] | null
+  @CacheField(() => [Featured])
+  featured?: Array<Featured>
 
-  @CacheField(() => [Organization], { nullable: true })
-  organizations?: Organization[] | null
+
+  @CacheField(() => [Organization])
+  organizations?: Array<Organization>
 
   @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
@@ -70,7 +71,7 @@ export const mapLifeEventPage = ({
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
-  featuredLinks: (fields.featuredLinks ?? []).map(mapLink),
+  featured: (fields.featured ?? []).map(mapFeatured),
   organizations: (fields.organizations ?? []).map(mapOrganization),
   category: fields.category ? mapArticleCategory(fields.category) : null,
   shortIntro: fields.shortIntro ?? '',

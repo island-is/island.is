@@ -15,6 +15,9 @@ import {
   Box,
   GridContainer,
   BreadCrumbItem,
+  Inline,
+  Tag,
+  Link,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -33,7 +36,7 @@ import {
   QueryGetLifeEventPageArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver, useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useRouter } from 'next/router'
 import { Locale } from 'locale'
@@ -52,7 +55,7 @@ interface LifeEventPageProps {
 export const LifeEventPage: Screen<LifeEventPageProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  lifeEvent: { id, image, title, intro, content, featuredImage },
+  lifeEvent: { id, image, title, intro, content, featuredImage, featured },
   namespace,
   locale,
 }) => {
@@ -64,6 +67,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
+  const { linkResolver } = useLinkResolver()
   const sectionCountRef = useRef<number>(0)
   const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
 
@@ -153,6 +157,53 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     </span>
                   </Text>
                 )}
+                <Box className="rs_read" marginTop={2}>
+                  <Inline space={2}>
+                    {featured.map(
+                      ({
+                        title,
+                        attention,
+                        thing,
+                      }: {
+                        title: string
+                        attention: boolean
+                        thing: any
+                      }) => {
+                        const cardUrl = linkResolver(thing?.type as LinkType, [
+                          thing?.slug,
+                        ])
+                        return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                          <Tag
+                            key={title}
+                            {...(cardUrl.href.startsWith('/')
+                              ? {
+                                  CustomLink: ({ children, ...props }) => (
+                                    <Link
+                                      key={title}
+                                      {...props}
+                                      {...cardUrl}
+                                      dataTestId="featured-link"
+                                    >
+                                      {children}
+                                    </Link>
+                                  ),
+                                }
+                              : { href: cardUrl.href })}
+                            variant="blue"
+                            attention={attention}
+                          >
+                            {title}
+                          </Tag>
+                        ) : (
+                          <Tag key={title} variant="blue" attention={attention}>
+                            {title}
+                          </Tag>
+                        )
+                      },
+                    )}
+                  </Inline>
+                </Box>
+
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
                   {webRichText(
                     content as SliceType[],

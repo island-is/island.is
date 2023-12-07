@@ -1844,8 +1844,8 @@ export interface ILifeEventPageFields {
   /** content */
   content: Document
 
-  /** Featured Links */
-  featuredLinks?: ILink[] | undefined
+  /** Featured */
+  featured?: IFeatured[] | undefined
 
   /** Organizations */
   organizations?: IOrganization[] | undefined
