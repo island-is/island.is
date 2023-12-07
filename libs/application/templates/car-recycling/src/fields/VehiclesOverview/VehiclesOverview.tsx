@@ -221,6 +221,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                   type="number"
                   defaultValue={vehicle.mileage}
                   thousandSeparator
+                  suffix=" "
                   error={
                     errors &&
                     getErrorViaPath(
