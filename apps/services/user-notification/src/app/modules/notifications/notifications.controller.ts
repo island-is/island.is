@@ -1,3 +1,4 @@
+import { InjectQueue, QueueService } from '@island.is/message-queue'
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
   Inject,
@@ -35,6 +36,7 @@ export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
+    @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
   // redirecting legacy endpoint to new one with fixed values
@@ -136,6 +138,23 @@ export class NotificationsController {
   ): Promise<CreateNotificationResponse> {
     await this.notificationsService.validate(body.templateId, body.args)
 
-    return this.notificationsService.addToQueue(body)
+    const id = await this.queue.add(body)
+
+    const records: Record<string, string> = {}
+
+    for (const arg of body.args) {
+      records[arg.key] = arg.value
+    }
+
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...records,
+      templateId: body.templateId,
+      recipient: body.recipient,
+    })
+
+    return {
+      id,
+    }
   }
 }

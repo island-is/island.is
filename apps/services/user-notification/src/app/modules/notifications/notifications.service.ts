@@ -1,6 +1,5 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { InjectQueue, QueueService } from '@island.is/message-queue'
 import {
   BadRequestException,
   Inject,
@@ -8,10 +7,7 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import {
-  ArgumentDto,
-  CreateHnippNotificationDto,
-} from './dto/createHnippNotification.dto'
+import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import { Cache } from 'cache-manager'
 import axios from 'axios'
@@ -42,7 +38,6 @@ export class NotificationsService {
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
-    @InjectQueue('notifications') private queue: QueueService,
   ) {}
 
   async addToCache(key: string, item: object) {
@@ -134,27 +129,6 @@ export class NotificationsService {
       throw new NotFoundException(`Template: ${templateId} not found`)
     } catch {
       throw new NotFoundException(`Template: ${templateId} not found`)
-    }
-  }
-
-  async addToQueue(body: CreateHnippNotificationDto): Promise<{ id: string }> {
-    const id = await this.queue.add(body)
-
-    const records: Record<string, string> = {}
-
-    for (const arg of body.args) {
-      records[arg.key] = arg.value
-    }
-
-    this.logger.info('Message queued', {
-      messageId: id,
-      ...records,
-      templateId: body.templateId,
-      recipient: body.recipient,
-    })
-
-    return {
-      id,
     }
   }
 
