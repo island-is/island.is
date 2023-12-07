@@ -38,7 +38,7 @@ const mockProfile: UserProfile = {
   mobilePhoneNumber: '1234567',
   email: 'foo@bar.com',
   locale: UserProfileLocaleEnum.Is,
-  documentNotifications: true, // TODO change to pushNotifications
+  documentNotifications: true,
   created: new Date(),
   modified: new Date(),
   id: '1234567',

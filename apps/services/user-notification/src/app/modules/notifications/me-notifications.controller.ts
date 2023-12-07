@@ -1,19 +1,15 @@
 import {
-  Inject,
   Body,
   Get,
   Param,
   Query,
   UseGuards,
   Patch,
-  HttpStatus,
   Controller,
-  Post,
-  HttpCode,
+
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-// import type { Logger } from '@island.is/logging'
-// import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { NotificationsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
@@ -39,25 +35,9 @@ import { Documentation } from '@island.is/nest/swagger'
 })
 export class MeNotificationsController {
   constructor(
-    // @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationService: NotificationsService,
   ) {}
 
-  // /// REMOVE ME BEFORE MERGING
-  // @Post(':messageId') /// TEMPORARY FOR EASY CREATING NOTIFICATIONS
-  // @Documentation({
-  //   summary: '*** TEMP UTILITY METHOD FOR EASY CREATING NOTIFICATIONS ***',
-  // })
-  // @Scopes(NotificationsScope.read)
-  // @ApiTags('user-notification')
-  // @ApiSecurity('oauth2', [NotificationsScope.read])
-  // @HttpCode(HttpStatus.CREATED)
-  // async create(
-  //   @CurrentUser() user: User,
-  //   @Param('messageId') messageId: string,
-  // ): Promise<any> {
-  //   return this.notificationService.create(user, messageId)
-  // } /// REMOVE ME BEFORE MERGING
 
   @Get()
   @Documentation({
