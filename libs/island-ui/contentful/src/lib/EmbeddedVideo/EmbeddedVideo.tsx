@@ -226,6 +226,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
                 onClick={onPlayButtonClick}
                 className={styles.playIconContainer}
                 as="button"
+                boxShadow="large"
               >
                 <Icon size="large" icon="playCircle" color="white" />
               </FocusableBox>
