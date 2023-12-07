@@ -6,6 +6,8 @@ export const NO = 'No'
 export const JA = 'Já'
 export const NEI = 'Nei'
 
+export const PROPERTY_REGEX = /^[fFlL]\d+$/
+
 export const UPLOAD_ACCEPT = '.pdf, .doc, .docx, .rtf'
 export const FILE_SIZE_LIMIT = 10000000 // 10MB
 
@@ -47,3 +49,4 @@ export const relationWithApplicant = [
   'Barnabarnabarn (sameiginlegt barnabarnabarn hjóna)',
   'Stjúpbarnabarnabarn (barnabarnabarn látins maka)',
 ]
+

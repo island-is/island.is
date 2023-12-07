@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { m } from './messages'
-import { EstateTypes, YES, NO } from './constants'
+import { EstateTypes, YES, NO, PROPERTY_REGEX } from './constants'
 import * as kennitala from 'kennitala'
 import {
   customZodError,
@@ -29,7 +29,7 @@ const asset = z
   )
   .refine(
     ({ enabled, assetNumber }) => {
-      return enabled ? isValidString(assetNumber) : true
+      return enabled ? isValidString(assetNumber) && PROPERTY_REGEX.test(assetNumber) : true
     },
     {
       path: ['assetNumber'],
