@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   EinstaklingarApi,
   EinstaklingurDTOAllt,
@@ -15,6 +15,7 @@ import {
   GerviEinstaklingarApi,
 } from '../../gen/fetch'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class NationalRegistryV3ClientService {
