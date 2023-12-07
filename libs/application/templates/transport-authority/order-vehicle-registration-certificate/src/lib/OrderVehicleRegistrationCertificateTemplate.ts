@@ -26,7 +26,6 @@ import {
   CurrentVehiclesApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ChargeItemCode } from '@island.is/shared/constants'
@@ -62,7 +61,6 @@ const template: ApplicationTemplate<
     },
     {
       type: AuthDelegationType.Custom,
-      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
@@ -85,7 +83,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -137,7 +134,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
