@@ -3,27 +3,27 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { Entry } from 'contentful'
 import isCircular from 'is-circular'
-import { IAnchorPage } from '../../generated/contentfulTypes'
+import { ILifeEventPage } from '../../generated/contentfulTypes'
 import { mapAnchorPage } from '../../models/anchorPage.model'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
-export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
-  processSyncData(entries: processSyncDataInput<IAnchorPage>) {
+export class LifeEventPageSyncService implements CmsSyncProvider<ILifeEventPage> {
+  processSyncData(entries: processSyncDataInput<ILifeEventPage>) {
     logger.info('Processing sync data for anchor pages')
 
-    // only process anchor pages that we consider not to be empty and dont have circular structures
+    // only process life event pages that we consider not to be empty and dont have circular structures
     return entries.filter(
-      (entry: Entry<any>): entry is IAnchorPage =>
-        entry.sys.contentType.sys.id === 'anchorPage' &&
+      (entry: Entry<any>): entry is ILifeEventPage =>
+        entry.sys.contentType.sys.id === 'lifeEventPage' &&
         !!entry.fields.title &&
         !isCircular(entry),
     )
   }
 
-  doMapping(entries: IAnchorPage[]) {
-    logger.info('Mapping anchor pages', { count: entries.length })
+  doMapping(entries: ILifeEventPage[]) {
+    logger.info('Mapping life event pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
         try {
@@ -35,7 +35,7 @@ export class AnchorPageSyncService implements CmsSyncProvider<IAnchorPage> {
             title: mapped.title,
             content,
             contentWordCount: content.split(/\s+/).length,
-            type: entry.fields?.pageType === 'Digital Iceland Community Page' ? 'webDigitalIcelandCommunityPage' : 'webDigitalIcelandService',
+            type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify({ ...mapped, typename: 'AnchorPage' }),
             tags: [],
