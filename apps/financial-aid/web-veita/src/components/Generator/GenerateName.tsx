@@ -9,10 +9,12 @@ const randomNumberFromSeed = (seed: number): number => {
   return x - Math.floor(x)
 }
 
-const GenerateName = (nationalId: string, name: string): string => {
-  const { admin } = useContext(AdminContext)
-
-  return admin?.staff?.usePseudoName
+const GenerateName = (
+  nationalId: string,
+  name: string,
+  usePseudoName: boolean,
+): string => {
+  return usePseudoName
     ? `${words[Number(nationalId) % wordsLength]} ${
         words[
           Math.round(randomNumberFromSeed(Number(nationalId)) * wordsLength)

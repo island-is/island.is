@@ -59,12 +59,18 @@ const ActivationButtonTableItem = (
   )
 }
 
-const usePseudoName = (nationalId: string, name: string) => {
+const usePseudoName = (
+  nationalId: string,
+  name: string,
+  usePseudoName: boolean,
+) => {
   return (
     <Box display="flex" alignItems="center">
       <GeneratedProfile size={32} nationalId={nationalId} />
       <Box marginLeft={2}>
-        <Text variant="h5">{GenerateName(nationalId, name)}</Text>
+        <Text variant="h5">
+          {GenerateName(nationalId, name, usePseudoName)}
+        </Text>
       </Box>
     </Box>
   )
