@@ -7,7 +7,7 @@ export const bootstrapServer = () =>
   bootstrap({
     appModule: AppModule,
     name: 'services-university-gateway',
-    port: 3380,
+    port: 3333,
     swaggerPath: '/api/swagger',
     openApi,
     enableVersioning: true,
