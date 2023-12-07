@@ -127,6 +127,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const handleRowClick = (id: string) => {
+    if (isDeletingCase || isOpeningCaseId === id || !user?.role) {
+      return
+    }
+
     setIsOpeningCaseId(undefined)
 
     setTimeout(() => {
@@ -144,6 +148,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             onClick={() => handleRowClick(theCase.id)}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
+            isLoading={isOpeningCaseId === theCase.id}
           >
             {theCase.courtDate && (
               <Text fontWeight={'medium'} variant="small">
@@ -231,11 +236,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 aria-label="Opna kröfu"
                 aria-disabled={isDeletingCase || isOpeningCaseId === c.id}
                 onClick={() => {
-                  if (isDeletingCase || isOpeningCaseId === c.id) {
-                    return
-                  }
-
-                  user?.role && handleRowClick(c.id)
+                  handleRowClick(c.id)
                 }}
               >
                 <td className={styles.td}>

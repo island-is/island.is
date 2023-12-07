@@ -2,8 +2,9 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
+import { Box, FocusableBox, LoadingDots, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
   formatDOB,
@@ -19,6 +20,7 @@ interface CategoryCardProps {
   heading: string | React.ReactNode
   tags?: React.ReactNode
   onClick: () => void
+  isLoading?: boolean
 }
 
 const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
@@ -26,6 +28,7 @@ const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
   onClick,
   tags,
   children,
+  isLoading = false,
 }) => {
   return (
     <FocusableBox
@@ -42,6 +45,18 @@ const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
         {children}
         <Box marginTop={3}>{tags}</Box>
       </Box>
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.loadingContainer}
+          >
+            <LoadingDots />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </FocusableBox>
   )
 }
@@ -50,6 +65,7 @@ interface Props {
   theCase: CaseListEntry
   onClick: () => void
   isCourtRole: boolean
+  isLoading?: boolean
 }
 
 const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
@@ -57,6 +73,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
   onClick,
   isCourtRole,
   children,
+  isLoading = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -73,6 +90,7 @@ const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
           courtDate={theCase.courtDate}
         />,
       ]}
+      isLoading={isLoading}
     >
       <Text title={theCase.policeCaseNumbers.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
