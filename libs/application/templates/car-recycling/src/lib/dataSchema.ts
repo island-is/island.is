@@ -1,14 +1,12 @@
 import { z } from 'zod'
 
-const Vehicles = z
-  .object({
-    make: z.string(),
-    role: z.string(),
-    color: z.string(),
-    permno: z.string(),
-    mileage: z.string(),
-  })
-  .refine(({ mileage }) => mileage !== '' && mileage !== '0')
+const Vehicles = z.object({
+  make: z.string(),
+  role: z.string(),
+  color: z.string(),
+  permno: z.string(),
+  mileage: z.string().refine((m) => m !== '' && m !== '0'),
+})
 
 export const DataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),

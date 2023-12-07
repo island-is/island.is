@@ -12,7 +12,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC, useEffect, useState } from 'react'
 
-import { formatText } from '@island.is/application/core'
+import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
 import { InputController } from '@island.is/shared/form-fields'
 import {
@@ -25,7 +25,11 @@ import { useFormContext } from 'react-hook-form'
 
 import { VehicleDto } from '../../shared/types'
 
-const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
+const VehiclesOverview: FC<FieldBaseProps> = ({
+  application,
+  errors,
+  error,
+}) => {
   const { formatMessage } = useLocale()
 
   const [currentVehiclesList, setCurrentVehiclesList] = useState<VehicleDto[]>(
@@ -216,9 +220,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({ application, error }) => {
                   size="sm"
                   type="number"
                   defaultValue={vehicle.mileage}
-                  suffix=" "
                   thousandSeparator
-                  rightAlign={true}
+                  error={
+                    errors &&
+                    getErrorViaPath(
+                      errors,
+                      `vehicles.selectedVehicles[${index}].mileage`,
+                    )
+                  }
                   onChange={(e) => {
                     const list = selectedVehiclesList.map((prevVehicle) =>
                       vehicle.permno === prevVehicle.permno

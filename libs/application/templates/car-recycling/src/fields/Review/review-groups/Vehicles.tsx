@@ -12,7 +12,7 @@ export const Vehicles = ({
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { formatMessage, formatNumber } = useLocale()
+  const { formatMessage } = useLocale()
 
   const { selectedVehicles } = getApplicationAnswers(application.answers)
 
