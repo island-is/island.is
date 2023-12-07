@@ -2,7 +2,6 @@ import React from 'react'
 import {
   Text,
   Box,
-  Button,
   Filter,
   Stack,
   Checkbox,
@@ -12,12 +11,9 @@ import {
   ApplicationState,
   FilterType,
   StaffList,
-  capitalizeFirstLetter,
   getState,
-  months,
 } from '@island.is/financial-aid/shared/lib'
-import { NextRouter } from 'next/router'
-import useFilter, { Filters } from '../../utils/useFilter'
+import { Filters } from '../../utils/useFilter'
 
 interface Props {
   stateOptions: ApplicationState[]
@@ -28,11 +24,8 @@ interface Props {
     checked: boolean,
     filterType: FilterType,
   ) => void
-  // results: number
-  // onChecked: (item: ApplicationState | number, checked: boolean) => void
-  // onFilterClear: () => void
-  // staffOptions: string[]
-  // stateOptions?: ApplicationState[]
+  results: number
+  onFilterClear: () => void
 }
 
 const FilterPopover = ({
@@ -40,14 +33,9 @@ const FilterPopover = ({
   staffOptions,
   activeFilters,
   onChecked,
-}: // selectedStates,
-// selectedStaff,
-// results,
-// onChecked,
-// onFilterClear,
-// onFilterSave,
-// staffOptions,
-Props) => {
+  onFilterClear,
+  results,
+}: Props) => {
   const { applicationState, staff } = activeFilters
 
   return (
@@ -63,32 +51,31 @@ Props) => {
           labelClearAll="Hreinsa val"
           labelOpen="Sía niðurstöður"
           variant="popover"
-          onFilterClear={() => console.log('clear')}
+          onFilterClear={onFilterClear}
         >
           <>
-            <Box margin={3} marginBottom={0}>
+            <Box margin={3} marginBottom={3}>
               <Stack space={1}>
                 <Text fontWeight="semiBold" marginBottom={1}>
                   Staða
                 </Text>
-                {stateOptions &&
-                  stateOptions.map((state) => {
-                    const stateName = getState[state]
-                    return (
-                      <Checkbox
-                        name={stateName}
-                        label={stateName}
-                        checked={applicationState.includes(state)}
-                        onChange={(event) =>
-                          onChecked(
-                            state,
-                            event.target.checked,
-                            FilterType.APPLICATIONSTATE,
-                          )
-                        }
-                      />
-                    )
-                  })}
+                {stateOptions.map((state) => {
+                  const stateName = getState[state]
+                  return (
+                    <Checkbox
+                      name={stateName}
+                      label={stateName}
+                      checked={applicationState.includes(state)}
+                      onChange={(event) =>
+                        onChecked(
+                          state,
+                          event.target.checked,
+                          FilterType.APPLICATIONSTATE,
+                        )
+                      }
+                    />
+                  )
+                })}
               </Stack>
 
               <Box paddingY={3}>
@@ -120,7 +107,7 @@ Props) => {
       </Box>
 
       <Text fontWeight="semiBold" whiteSpace="nowrap">
-        {/* {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`} */}
+        {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`}
       </Text>
     </Box>
   )

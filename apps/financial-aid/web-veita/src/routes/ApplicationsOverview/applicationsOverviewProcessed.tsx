@@ -5,27 +5,16 @@ import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
   ApplicationsTable,
   FilterPopover,
-  SortableTableHeader,
-  State,
-  TableBody,
-  TableContainer,
-  TextTableItem,
-  usePseudoName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
-  Application,
   ApplicationPagination,
-  Routes,
   applicationPageSize,
-  getMonth,
   getStateFromRoute,
 } from '@island.is/financial-aid/shared/lib'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
 import useFilter from '@island.is/financial-aid-web/veita/src/utils/useFilter'
 import useApplicationFilter from '@island.is/financial-aid-web/veita/src/utils/useApplicationFilter'
-import useSortedApplications from '../../utils/useSortedApplications'
-import { calcDifferenceInDate } from '../../utils/formHelper'
 
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
@@ -35,15 +24,16 @@ export const ApplicationsOverviewProcessed = () => {
     navigationItems[0]
 
   const statesOnRoute = getStateFromRoute[router.pathname]
-  const [applications, setApplications] = useState<Application[]>()
-  const [staffList, setStaffList] = useState<StaffList[]>()
+  const [filterApplications, setFilterApplications] =
+    useState<ApplicationPagination>()
 
+  const { applications, staffList, totalCount } = filterApplications || {}
   const {
     currentPage,
     setCurrentPage,
     activeFilters,
     onChecked,
-    onClearFilter,
+    onFilterClear,
   } = useFilter()
 
   const { filterTable, error } = useApplicationFilter(
@@ -86,6 +76,8 @@ export const ApplicationsOverviewProcessed = () => {
             staffOptions={staffList}
             activeFilters={activeFilters}
             onChecked={onChecked}
+            onFilterClear={onFilterClear}
+            results={totalCount}
           />
         )}
 

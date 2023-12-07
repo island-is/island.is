@@ -26,7 +26,7 @@ const useFilter = () => {
   //     : [],
   // })
 
-  const onClearFilter = () => {
+  const onFilterClear = () => {
     setActiveFilters({ applicationState: [], staff: [] })
     setCurrentPage(1)
   }
@@ -57,7 +57,7 @@ const useFilter = () => {
     activeFilters,
     setActiveFilters,
     onChecked,
-    onClearFilter,
+    onFilterClear,
   }
 }
 export default useFilter
