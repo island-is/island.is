@@ -43,10 +43,10 @@ const Signees = () => {
   }, [searchTerm])
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={7}>
       <Text variant="h3">{formatMessage(m.listSigneesHeader)}</Text>
 
-      <GridRow marginBottom={5} marginTop={3}>
+      <GridRow marginTop={3}>
         <GridColumn span={['12/12', '12/12', '7/12']}>
           <FilterInput
             name="searchSignee"
@@ -79,7 +79,7 @@ const Signees = () => {
       </GridRow>
 
       {signees && signees.length > 0 ? (
-        <Box marginTop={5}>
+        <Box marginTop={3}>
           <T.Table>
             <T.Head>
               <T.Row>
@@ -138,7 +138,7 @@ const Signees = () => {
             </T.Body>
           </T.Table>
 
-          <Box marginTop={5}>
+          <Box marginTop={3}>
             <Pagination
               totalItems={signees.length}
               itemsPerPage={pageSize}

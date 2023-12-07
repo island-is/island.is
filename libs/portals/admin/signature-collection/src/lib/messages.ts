@@ -130,8 +130,8 @@ export const m = defineMessages({
     defaultMessage: 'Lorem ipsum',
     description: '',
   },
-  updateListEndTimeButton: {
-    id: 'admin-portal.signature-collection:updateListEndTimeButton',
+  updateListEndTime: {
+    id: 'admin-portal.signature-collection:updateListEndTime',
     defaultMessage: 'Framlengja lokadag',
     description: '',
   },
