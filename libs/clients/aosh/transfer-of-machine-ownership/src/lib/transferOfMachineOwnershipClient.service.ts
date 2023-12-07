@@ -8,6 +8,7 @@ import {
 } from '../../gen/fetch/apis'
 import {
   ChangeMachineOwner,
+  ChangeMachineSupervisor,
   ConfirmOwnerChange,
 } from './transferOfMachineOwnershipClient.types'
 import { CustomMachineApi } from './apiConfiguration'
@@ -102,7 +103,7 @@ export class TransferOfMachineOwnershipClient {
 
   public async changeMachineSupervisor(
     auth: Auth,
-    ownerChange: ChangeMachineOwner,
+    ownerChange: ChangeMachineSupervisor,
   ) {
     const input = apiChangeMachineSupervisorToApiRequest(ownerChange)
 

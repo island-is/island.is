@@ -269,7 +269,7 @@ export const ApplicationConfigurations = {
     translation: 'aosh.application',
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
-    slug: 'umradaskipti-vela',
+    slug: 'umradaskipti-taekja',
     translation: 'aosh-u.application',
   },
 }

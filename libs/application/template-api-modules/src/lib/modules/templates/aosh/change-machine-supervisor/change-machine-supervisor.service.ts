@@ -8,11 +8,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
 import { EmailRecipient, EmailRole } from './types'
 import { ChangeMachineSupervisorAnswers } from '@island.is/application/templates/aosh/change-machine-supervisor'
-import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
+//import { generateRequestReviewEmail } from './emailGenerators/requestReviewEmail'
 import { getRecipients } from './change-machine-supervisor.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
+//import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
 import {
   ChangeMachineOwner,
   TransferOfMachineOwnershipClient,
@@ -97,22 +97,22 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
       )
     } else if (payment?.fulfilled) {
       const answers = application.answers as ChangeMachineSupervisorAnswers
-      const ownerChange: ChangeMachineOwner = {
-        // id: application.id,
-        // machineId: answers.machine?.id,
-        // buyerNationalId: answers.buyer.nationalId,
-        // sellerNationalId: answers.seller.nationalId,
-        // delegateNationalId: answers.seller.nationalId,
-        // dateOfOwnerChange: new Date(),
-        // paymentId: paymentId,
-        // phoneNumber: answers.buyer.phone,
-        // email: answers.buyer.email,
-      }
+      // const ownerChange: ChangeMachineOwner = {
+      //   // id: application.id,
+      //   // machineId: answers.machine?.id,
+      //   // buyerNationalId: answers.buyer.nationalId,
+      //   // sellerNationalId: answers.seller.nationalId,
+      //   // delegateNationalId: answers.seller.nationalId,
+      //   // dateOfOwnerChange: new Date(),
+      //   // paymentId: paymentId,
+      //   // phoneNumber: answers.buyer.phone,
+      //   // email: answers.buyer.email,
+      // }
 
-      await this.transferOfMachineOwnershipClient.changeMachineOwner(
-        auth,
-        ownerChange,
-      )
+      // await this.transferOfMachineOwnershipClient.changeMachineOwner(
+      //   auth,
+      //   ownerChange,
+      // )
     }
 
     const answers = application.answers as ChangeMachineSupervisorAnswers
@@ -121,34 +121,34 @@ export class ChangeMachineSupervisorTemplateService extends BaseTemplateApiServi
       EmailRole.buyerOperator,
     ])
     // 2b. Send email/sms individually to each recipient
-    for (let i = 0; i < recipientList.length; i++) {
-      if (recipientList[i].email) {
-        await this.sharedTemplateAPIService
-          .sendEmail(
-            (props) => generateRequestReviewEmail(props, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending email about initReview to ${recipientList[i].email}`,
-            )
-          })
-      }
+    // for (let i = 0; i < recipientList.length; i++) {
+    //   if (recipientList[i].email) {
+    //     await this.sharedTemplateAPIService
+    //       .sendEmail(
+    //         (props) => generateRequestReviewEmail(props, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending email about initReview to ${recipientList[i].email}`,
+    //         )
+    //       })
+    //   }
 
-      if (recipientList[i].phone) {
-        await this.sharedTemplateAPIService
-          .sendSms(
-            (_, options) =>
-              generateRequestReviewSms(application, options, recipientList[i]),
-            application,
-          )
-          .catch(() => {
-            this.logger.error(
-              `Error sending sms about initReview to ${recipientList[i].phone}`,
-            )
-          })
-      }
-    }
+    //   if (recipientList[i].phone) {
+    //     await this.sharedTemplateAPIService
+    //       .sendSms(
+    //         (_, options) =>
+    //           generateRequestReviewSms(application, options, recipientList[i]),
+    //         application,
+    //       )
+    //       .catch(() => {
+    //         this.logger.error(
+    //           `Error sending sms about initReview to ${recipientList[i].phone}`,
+    //         )
+    //       })
+    //   }
+    // }
 
     return recipientList
   }
