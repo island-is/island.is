@@ -6,32 +6,35 @@ import { useRouter } from 'next/router'
 import cn from 'classnames'
 
 import {
-  TableHeaders,
   TableBody,
   LoadingContainer,
   TableSkeleton,
   TextTableItem,
   usePseudoName,
   State,
+  SortableTableHeader,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
+  ApplicationHeaderSortByEnum,
   ApplicationState,
   getMonth,
   getStateUrlFromRoute,
   Routes,
-  TableHeadersProps,
+  SortableTableHeaderProps,
 } from '@island.is/financial-aid/shared/lib'
 
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
+import useSortedApplications from '@island.is/financial-aid-web/veita/src/utils/useSortedApplications'
 
 interface PageProps {
   applications: Application[]
   setApplications?: React.Dispatch<
     React.SetStateAction<Application[] | undefined>
   >
-  headers: TableHeadersProps[]
+  headers: SortableTableHeaderProps[]
+  defaultHeaderSort: ApplicationHeaderSortByEnum
   emptyText?: string
 }
 
@@ -40,8 +43,12 @@ const ApplicationsTable = ({
   headers,
   emptyText,
   setApplications,
+  defaultHeaderSort,
 }: PageProps) => {
   const router = useRouter()
+
+  const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
+    useSortedApplications(defaultHeaderSort, 'descending', applications)
 
   const changeApplicationTable = useAllApplications()
 
@@ -107,18 +114,21 @@ const ApplicationsTable = ({
             >
               <thead className={`contentUp delay-50`}>
                 <tr>
-                  {headers.map((item, index) => (
-                    <TableHeaders
-                      header={item}
+                  {headers.map((header, index) => (
+                    <SortableTableHeader
+                      key={`table-header-${index}`}
                       index={index}
-                      key={`tableHeaders-${index}`}
+                      header={header}
+                      sortAsc={getClassNamesFor(header.sortBy) === 'ascending'}
+                      isSortActive={isActiveColumn(header.sortBy)}
+                      onClick={() => requestSort(header.sortBy)}
                     />
                   ))}
                 </tr>
               </thead>
 
               <tbody className={tableStyles.tableBody}>
-                {applications.map((item: Application, index) => (
+                {sortedData.map((item: Application, index) => (
                   <TableBody
                     items={[
                       usePseudoName(item.nationalId, item.name),

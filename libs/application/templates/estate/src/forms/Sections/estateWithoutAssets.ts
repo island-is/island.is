@@ -19,7 +19,7 @@ export const estateWithoutAssets = buildSection({
       children: [
         buildRadioField({
           id: 'estateWithoutAssets.estateAssetsExist',
-          title: m.doAssetsExist,
+          title: m.doAssetsExistSelect,
           width: 'half',
           largeButtons: false,
           options: [
