@@ -20,7 +20,10 @@ const useFilter = (router: NextRouter) => {
   })
 
   const onFilterClear = () => {
-    setActiveFilters({ applicationState: [], staff: [] })
+    setActiveFilters({
+      applicationState: [],
+      staff: [],
+    })
     setCurrentPage(1)
   }
 

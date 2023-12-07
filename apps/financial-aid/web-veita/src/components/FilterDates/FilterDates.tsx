@@ -1,11 +1,18 @@
 import React from 'react'
 import { Box, DatePicker } from '@island.is/island-ui/core'
+import { Filters } from '../../utils/useFilter'
 
 interface Props {
   minDateCreated: string
 }
 
 const FilterDates = ({ minDateCreated }: Props) => {
+  const endDate = new Date(minDateCreated)
+  const startDate = new Date(minDateCreated)
+
+  const minDate = new Date(minDateCreated)
+  const maxDate = new Date()
+
   return (
     <Box
       display="flex"
@@ -18,17 +25,18 @@ const FilterDates = ({ minDateCreated }: Props) => {
         label="Frá"
         size="sm"
         placeholderText="Pick a date"
-        selected={new Date(minDateCreated)}
+        selected={endDate}
         handleChange={(date: Date) => console.log(date)}
-        minDate={new Date(minDateCreated)}
+        minDate={minDate}
+        maxDate={maxDate}
       />
       <DatePicker
         label="Til"
         size="sm"
         placeholderText="Pick a date"
-        selected={new Date()}
+        selected={startDate}
         handleChange={(date: Date) => console.log(date)}
-        minDate={new Date(minDateCreated)}
+        minDate={minDate}
       />
     </Box>
   )

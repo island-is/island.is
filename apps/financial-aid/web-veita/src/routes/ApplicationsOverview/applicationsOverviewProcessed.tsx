@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Text, Box, Pagination, DatePicker } from '@island.is/island-ui/core'
+import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
   ApplicationsTable,
   FilterDates,
