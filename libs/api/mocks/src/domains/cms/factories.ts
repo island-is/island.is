@@ -17,6 +17,7 @@ import {
   News,
   ReferenceLink,
   AnchorPage,
+  LifeEventPage,
   SectionWithImage,
   Slice,
   SubArticle,
@@ -56,7 +57,7 @@ export const sectionWithImage = factory<SystemMetadata<SectionWithImage>>({
   typename: 'SectionWithImage',
   id: () => faker.datatype.uuid(),
   title: () => title(),
-  html: () => html(),
+  content: () => slice.list(3),
   image: () => image(),
 })
 
@@ -97,6 +98,18 @@ export const article = factory<SystemMetadata<Article>>({
 })
 
 export const anchorPage = factory<AnchorPage>({
+  id: () => faker.datatype.uuid(),
+  shortTitle: () => '',
+  tinyThumbnail: image(),
+  title: () => title(),
+  slug: slugify('title'),
+  intro: () => faker.lorem.paragraph(),
+  content: () => slice.list(6),
+  image: () => image(),
+  thumbnail: () => image(),
+})
+
+export const lifeEventPage = factory<LifeEventPage>({
   id: () => faker.datatype.uuid(),
   shortTitle: () => '',
   tinyThumbnail: image(),
@@ -195,5 +208,5 @@ export const frontpage = factory<Frontpage>({
   title: () => title(),
   featured: () => featured.list(3),
   slides: () => frontPageSlider.list(2),
-  lifeEvents: () => anchorPage.list(6),
+  lifeEvents: () => lifeEventPage.list(6),
 })
