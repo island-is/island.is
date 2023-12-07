@@ -6,6 +6,12 @@ export const getFakeData = (
 ): EstateInfo => {
   const data: EstateInfo = {
     addressOfDeceased: 'Gerviheimili 123, 600 Feneyjar',
+    availableSettlements: {
+      divisionOfEstateByHeirs: 'Í lagi',
+      estateWithoutAssets: 'Í lagi',
+      officialDivision: 'Í lagi',
+      permitForUndividedEstate: 'Í lagi',
+    },
     cash: [],
     marriageSettlement: false,
     assets: [

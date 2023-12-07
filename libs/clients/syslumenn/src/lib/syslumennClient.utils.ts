@@ -11,6 +11,7 @@ import {
   SkraningaradiliDanarbusSkeyti,
   TegundAndlags,
   DanarbuUppl,
+  DanarbuUpplRadstofun,
   EignirDanarbus,
   Fasteignasalar,
   Logmenn,
@@ -40,7 +41,6 @@ import {
   EstateMember,
   EstateAsset,
   EstateRegistrant,
-  EstateInfo,
   RealEstateAgent,
   Lawyer,
   OperatingLicensesCSV,
@@ -48,6 +48,8 @@ import {
   Broker,
   Advocate,
   MasterLicence,
+  EstateInfo,
+  AvailableSettlements,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -329,6 +331,20 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
   }
 }
 
+export const mapAvailableSettlements = (
+  settlementRaw: DanarbuUpplRadstofun['mogulegSkipti'],
+): AvailableSettlements | undefined => {
+  if (settlementRaw) {
+    return {
+      divisionOfEstateByHeirs: settlementRaw.Einkaskipti,
+      estateWithoutAssets: settlementRaw.EignalaustDanarbu,
+      officialDivision: settlementRaw.OpinberSkipti,
+      permitForUndividedEstate: settlementRaw.SetaiOskiptuBui,
+    }
+  }
+  return undefined
+}
+
 export const mapEstateRegistrant = (
   syslaData: SkraningaradiliDanarbusSkeyti,
 ): EstateRegistrant => {
@@ -390,7 +406,7 @@ export const mapEstateRegistrant = (
 }
 
 // TODO: get updated types into the client
-export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
+export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
   return {
     assets: syslaData.eignir
       ? syslaData.eignir
@@ -437,6 +453,7 @@ export const mapEstateInfo = (syslaData: DanarbuUppl): EstateInfo => {
     marriageSettlement: syslaData.kaupmali,
     nameOfDeceased: syslaData?.nafn ?? '',
     nationalIdOfDeceased: syslaData?.kennitala ?? '',
+    availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
