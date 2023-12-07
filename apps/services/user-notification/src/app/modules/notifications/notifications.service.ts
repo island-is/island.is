@@ -4,6 +4,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
@@ -168,20 +169,24 @@ export class NotificationsService {
     id: number,
     locale: string,
   ): Promise<RenderedNotificationDto> {
+    // Retrieve the notification
     const notification = await this.notificationModel.findOne({
       where: {
         id: id,
         recipient: user.nationalId,
       },
-    })
-
+    });
+  
     if (!notification) {
       throw new NotFoundException(
         'Notification not found or does not belong to the user',
-      )
-    } else {
-      const template = await this.getTemplate(notification.templateId, locale)
-      const formattedTemplate = this.formatArguments(notification, template)
+      );
+    }
+  
+    // Process and format the notification
+    try {
+      const template = await this.getTemplate(notification.templateId, locale);
+      const formattedTemplate = this.formatArguments(notification, template);
       return {
         id: notification.id,
         messageId: notification.messageId,
@@ -192,7 +197,10 @@ export class NotificationsService {
         created: notification.created,
         updated: notification.updated,
         status: notification.status,
-      }
+      };
+    } catch (error) {
+      this.logger.error('Error formatting notification:', error);
+      throw new InternalServerErrorException('Error processing notification');
     }
   }
 
@@ -207,25 +215,32 @@ export class NotificationsService {
       orderOption: [['id', 'DESC']],
       where: { recipient: user.nationalId },
     })
-    // loop through notifications and format them as a new property like in the method above
     const formattedNotifications = paginatedListResponse.data.map(
       (notification) => {
         const template = templates.find(
           (template) => template.templateId === notification.templateId,
         )
         if (template) {
-          const formattedTemplate = this.formatArguments(notification, template)
-          return {
-            id: notification.id,
-            messageId: notification.messageId,
-            title: formattedTemplate.notificationTitle,
-            body: formattedTemplate.notificationBody,
-            dataCopy: formattedTemplate.notificationDataCopy,
-            clickAction: formattedTemplate.clickAction,
-            created: notification.created,
-            updated: notification.updated,
-            status: notification.status,
+          try {
+            const formattedTemplate = this.formatArguments(notification, template);
+            return {
+              id: notification.id,
+              messageId: notification.messageId,
+              title: formattedTemplate.notificationTitle,
+              body: formattedTemplate.notificationBody,
+              dataCopy: formattedTemplate.notificationDataCopy,
+              clickAction: formattedTemplate.clickAction,
+              created: notification.created,
+              updated: notification.updated,
+              status: notification.status,
+            };
+          } catch (error) {
+            this.logger.error('Error formatting notification:', error);
+            throw new InternalServerErrorException('Error processing notification');
           }
+
+        } else {
+          this.logger.warn("Template not found for notification: " + notification.id)
         }
       },
     )
@@ -237,66 +252,43 @@ export class NotificationsService {
     user: User,
     id: number,
     updateNotificationDto: UpdateNotificationDto,
+    locale: string,
   ): Promise<RenderedNotificationDto> {
-    const notification = await this.notificationModel.findOne({
-      where: {
+    const [numberOfAffectedRows, [notification]] = await this.notificationModel.update(
+      updateNotificationDto, 
+      { where: {
         id: id,
-        recipient: user.nationalId,
-      },
-    })
-
-    if (!notification) {
+        recipient: user.nationalId},
+        returning: true,
+      })
+    if (numberOfAffectedRows === 0) {
       throw new NotFoundException(
         'Notification not found or does not belong to the user',
       )
     } else {
-      notification.status = updateNotificationDto.status
-      await notification.save()
-      const template = await this.getTemplate(notification.templateId)
-      const formattedTemplate = this.formatArguments(notification, template)
-      return {
-        id: notification.id,
-        messageId: notification.messageId,
-        title: formattedTemplate.notificationTitle,
-        body: formattedTemplate.notificationBody,
-        dataCopy: formattedTemplate.notificationDataCopy,
-        clickAction: formattedTemplate.clickAction,
-        created: notification.created,
-        updated: notification.updated,
-        status: notification.status,
+      // Process and format the notification
+      try {
+        const template = await this.getTemplate(notification.templateId, locale);
+        const formattedTemplate = this.formatArguments(notification, template);
+        return {
+          id: notification.id,
+          messageId: notification.messageId,
+          title: formattedTemplate.notificationTitle,
+          body: formattedTemplate.notificationBody,
+          dataCopy: formattedTemplate.notificationDataCopy,
+          clickAction: formattedTemplate.clickAction,
+          created: notification.created,
+          updated: notification.updated,
+          status: notification.status,
+        };
+      } catch (error) {
+        this.logger.error('Error formatting notification:', error);
+        throw new InternalServerErrorException('Error processing notification');
       }
+
+     
     }
   }
 
-  // // Just a test function for easy creating WHILE DEVELOPING
-  // async create(user: User, messageId: string): Promise<any> {
-  //   //user: User temp change for db bypassauth testing
-  //   const data = {
-  //     messageId,
-  //     recipient: user.nationalId,
-  //     templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-  //     args: [
-  //       {
-  //         key: 'organization',
-  //         value: 'Hnipp Test Crew',
-  //       },
-  //       {
-  //         key: 'documentId',
-  //         value: 'abcd-abcd-abcd-abcd',
-  //       },
-  //     ],
-  //     // status: NotificationStatus.UNREAD,
-  //   }
-
-  //   try {
-  //     return await this.notificationModel.create(data as any)
-  //   } catch (error) {
-  //     this.logger.info(error)
-  //     throw new BadRequestException(error.message)
-  //   }
-  // }
-
-  // async getAll(): Promise<Notification[]> {
-  //   return await this.notificationModel.findAll()
-  // }
+ 
 }

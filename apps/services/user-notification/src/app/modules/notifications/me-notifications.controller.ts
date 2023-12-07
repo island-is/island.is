@@ -12,8 +12,8 @@ import {
   HttpCode,
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
+// import type { Logger } from '@island.is/logging'
+// import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import { NotificationsService } from './notifications.service'
 import {
@@ -39,7 +39,7 @@ import { Documentation } from '@island.is/nest/swagger'
 })
 export class MeNotificationsController {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    // @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationService: NotificationsService,
   ) {}
 
@@ -71,7 +71,6 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Query() query: ExtendedPaginationDto,
   ): Promise<PaginatedNotificationDto> {
-    console.log('User: ', user)
     return this.notificationService.findMany(user, query)
   }
 
@@ -103,7 +102,8 @@ export class MeNotificationsController {
     @CurrentUser() user: User,
     @Param('id') id: number,
     @Body() updateNotificationDto: UpdateNotificationDto,
+    @Query('locale') locale: string,
   ): Promise<RenderedNotificationDto> {
-    return this.notificationService.update(user, id, updateNotificationDto)
+    return this.notificationService.update(user, id, updateNotificationDto,locale)
   }
 }
