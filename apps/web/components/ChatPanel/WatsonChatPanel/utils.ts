@@ -17,7 +17,7 @@ const submitButtonId = 'watson-assistant-chat-submit-button'
 const storageForSession = storageFactory(() => sessionStorage)
 const storageForReturningUsers = storageFactory(() => localStorage)
 
-type TranslationVariant = 'directorateOfImmigration'
+type TranslationVariant = 'directorateOfImmigration' | 'transportAuthority'
 
 const getTranslations = (
   namespace: Record<string, string>,
