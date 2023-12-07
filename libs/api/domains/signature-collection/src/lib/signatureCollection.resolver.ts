@@ -12,7 +12,10 @@ import { SignatureCollection } from './models/collection.model'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionIdInput } from './dto/id.input'
 import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionNationalIdsInput } from './dto/signatureListNationalIds.input'
+import {
+  SignatureCollectionListNationalIdsInput,
+  SignatureCollectionNationalIdsInput,
+} from './dto/signatureListNationalIds.input'
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
@@ -104,12 +107,6 @@ export class SignatureCollectionResolver {
     return this.signatureCollectionService.findSignature(input)
   }
 
-  @Query(() => SignatureCollectionBulk)
-  async signatureCollectionCompareLists(
-    @Args('input') input: SignatureCollectionNationalIdsInput,
-  ): Promise<SignatureCollectionBulk | null> {
-    return this.signatureCollectionService.compareLists(input)
-  }
 
   @Query(() => SignatureCollectionSignee)
   async signatureCollectionSignee(
@@ -151,7 +148,7 @@ export class SignatureCollectionResolver {
   @Mutation(() => SignatureCollectionSuccess)
   async signatureCollectionDelegateList(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.delegateList(input)
   }
@@ -159,23 +156,37 @@ export class SignatureCollectionResolver {
   @Mutation(() => SignatureCollectionSuccess)
   async signatureCollectionUndelegateList(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.undelegateList(input)
   }
   @Mutation(() => SignatureCollectionList)
   async signatureCollectionExtendDeadline(
     @Args('input') input: SignatureCollectionExtendDeadlineInput,
-  ):Promise<SignatureCollectionList> {
+  ): Promise<SignatureCollectionList> {
     return this.signatureCollectionService.extendDeadline(input)
-
   }
 
   @Mutation(() => SignatureCollectionBulk)
   async signatureCollectionBulkUploadSignatures(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionNationalIdsInput,
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionBulk> {
     return this.signatureCollectionService.bulkUploadSignatures(input)
+  }
+
+  @Mutation(() => [SignatureCollectionSignature])
+  async signatureCollectionBulkCompareSignaturesAllLists(
+    @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionNationalIdsInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.bulkCompareSignaturesAllLists(input)
+  }
+
+  @Mutation(() => [SignatureCollectionSignature])
+  async signatureCollectionCompareList(
+    @Args('input') input: SignatureCollectionListNationalIdsInput,
+  ): Promise<SignatureCollectionSignature[]> {
+    return this.signatureCollectionService.compareLists(input)
   }
 }

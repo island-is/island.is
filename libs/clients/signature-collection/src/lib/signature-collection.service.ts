@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import {
   EinstaklingurKosningInfoDTO,
-  KosningApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
@@ -16,7 +15,6 @@ import { BulkUpload } from './types/bulkUpload.dto'
 @Injectable()
 export class SignatureCollectionClientService {
   constructor(
-    private electionsApi: KosningApi,
     private listsApi: MedmaelalistarApi,
     private collectionsApi: MedmaelasofnunApi,
     private signatureApi: MedmaeliApi,
@@ -165,7 +163,7 @@ export class SignatureCollectionClientService {
 
   async canSign(nationalId: string): Promise<{ success: boolean }> {
     const { canSign } = await this.getSignee(nationalId)
-    //  TODO: map errors like in bulk 
+    //  TODO: map errors like in bulk
     return { success: canSign }
   }
 
@@ -200,29 +198,49 @@ export class SignatureCollectionClientService {
     }
   }
 
-  //   CanCreate
   async canCreate(nationalId: string): Promise<{ success: boolean }> {
     // TODO: update when api returns correct data
     const { canCreate } = await this.getSignee(nationalId)
     return { success: canCreate }
   }
-  //   IsOwner
+
   async isOwner(nationalId: string): Promise<{ success: boolean }> {
     const { isOwner } = await this.getSignee(nationalId)
     return { success: isOwner }
   }
 
-  //   FindSignature
+  async compareBulkSignaturesOnList(
+    listId: string,
+    nationalIds: string[],
+  ): Promise<Signature[]> {
+    // TODO: scope admin
+    // Takes a list of nationalIds listId and returns signatures found on list
+    const signaturesFound = await this.listsApi.medmaelalistarIDComparePost({
+      iD: parseInt(listId),
+      requestBody: nationalIds,
+    })
+    return signaturesFound.map(mapSignature)
+  }
 
-  //   CompareLists
-  // TODO: scope admin
+  async compareBulkSignaturesOnAllLists(
+    nationalIds: string[],
+  ): Promise<Signature[]> {
+    // TODO: scope admin
+    // Takes a list of nationalIds and returns signatures found on any list in current collection
+    const id = await this.currentCollectionId()
+    const signaturesFound =
+      await this.collectionsApi.medmaelasofnunIDComparePost({
+        iD: id,
+        requestBody: nationalIds,
+      })
+    return signaturesFound.map(mapSignature)
+  }
 
   //   - DelegateList
   // TODO: check if owner
   //   - UndelegateList
   // TODO: check if owner
 
-  
   async extendDeadline(listId: string, newEndDate: Date): Promise<List> {
     // TODO: scope admin
 
@@ -232,7 +250,7 @@ export class SignatureCollectionClientService {
     })
     return mapList(list)
   }
-  //   - BulkUploadSignatures
+
   async bulkUploadSignatures(
     listId: string,
     nationalIds: string[],

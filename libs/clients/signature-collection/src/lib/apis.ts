@@ -1,6 +1,5 @@
 import {
   Configuration,
-  KosningApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,
@@ -8,7 +7,6 @@ import {
 import { ApiConfiguration } from './apiConfiguration'
 
 export const exportedApis = [
-  KosningApi,
   MedmaelalistarApi,
   MedmaelasofnunApi,
   MedmaeliApi,

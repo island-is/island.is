@@ -6,7 +6,7 @@ import { SignatureCollection } from './models/collection.model'
 import { CurrentCollection, Lists, Signatures, signee } from './mocks'
 import { SignatureCollectionList } from './models/signatureList.model'
 import { SignatureCollectionSignature } from './models/signature.model'
-import { SignatureCollectionNationalIdsInput } from './dto/signatureListNationalIds.input'
+import { SignatureCollectionListNationalIdsInput, SignatureCollectionNationalIdsInput } from './dto/signatureListNationalIds.input'
 import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionSignee } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
@@ -95,26 +95,11 @@ export class SignatureCollectionService {
   async compareLists({
     nationalIds,
     listId,
-  }: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionBulk> {
-    const found: SignatureCollectionSignature[] = []
-
-    Signatures(listId).map((signature) => {
-      const nationalIdIndex = nationalIds.findIndex(
-        (id) => signature.signee.nationalId === id,
-      )
-      if (nationalIdIndex > 0 && signature.listId === listId) {
-        found.push(signature)
-        nationalIds.splice(nationalIdIndex, 1)
-      }
-    })
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: found,
-          failed: nationalIds.map((nationalId) => ({ nationalId })),
-        })
-      }, 300)
-    })
+  }: SignatureCollectionListNationalIdsInput): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.compareBulkSignaturesOnList(
+      listId,
+      nationalIds,
+    )
   }
 
   async signee(nationalId: string): Promise<SignatureCollectionSignee> {
@@ -158,7 +143,7 @@ export class SignatureCollectionService {
   }
 
   async delegateList(
-    input: SignatureCollectionNationalIdsInput,
+    input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     console.log('delegateList ', input)
     return new Promise((resolve) => {
@@ -169,7 +154,7 @@ export class SignatureCollectionService {
   }
 
   async undelegateList(
-    input: SignatureCollectionNationalIdsInput,
+    input: SignatureCollectionListNationalIdsInput,
   ): Promise<SignatureCollectionSuccess> {
     console.log('undelegateList ', input)
     return new Promise((resolve) => {
@@ -192,9 +177,17 @@ export class SignatureCollectionService {
   async bulkUploadSignatures({
     nationalIds,
     listId,
-  }: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionBulk> {
+  }: SignatureCollectionListNationalIdsInput): Promise<SignatureCollectionBulk> {
     return await this.signatureCollectionClientService.bulkUploadSignatures(
       listId,
+      nationalIds,
+    )
+  }
+
+  async bulkCompareSignaturesAllLists({
+    nationalIds,
+  }: SignatureCollectionNationalIdsInput): Promise<SignatureCollectionSignature[]> {
+    return await this.signatureCollectionClientService.compareBulkSignaturesOnAllLists(
       nationalIds,
     )
   }
