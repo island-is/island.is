@@ -1,11 +1,9 @@
-import { Answer } from '@island.is/application/types'
+import { Answer, NO, YES } from '@island.is/application/types'
 import { shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
-  NO,
   OmbudsmanComplaintTypeEnum,
-  YES,
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
 

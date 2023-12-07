@@ -36,12 +36,15 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
+  CaseDecision,
   CaseState,
   CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
   isIndictmentCase,
+  isRestrictionCase,
   restrictionCases,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -336,6 +339,20 @@ export class CaseController {
         break
       case CaseTransition.RECEIVE_APPEAL:
         update.appealReceivedByCourtDate = nowFactory()
+        break
+      case CaseTransition.COMPLETE_APPEAL:
+        if (
+          isRestrictionCase(theCase.type) &&
+          (theCase.decision === CaseDecision.ACCEPTING ||
+            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
+          theCase.state === CaseState.ACCEPTED &&
+          theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED
+        ) {
+          // The court of appeals has modified the ruling of a restriction case
+          update.validToDate = theCase.appealValidToDate
+          update.isCustodyIsolation = theCase.isAppealCustodyIsolation
+          update.isolationToDate = theCase.appealIsolationToDate
+        }
         break
     }
 

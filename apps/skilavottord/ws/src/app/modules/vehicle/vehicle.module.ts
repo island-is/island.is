@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { VehicleModel } from './vehicle.model'
 import { VehicleService } from './vehicle.service'
 import { VehicleResolver } from './vehicle.resolver'
+import { VehicleAppSysResolver } from './vehicleAppSys.resolver'
 import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
 
 @Module({
@@ -11,7 +12,7 @@ import { SamgongustofaModule } from '../samgongustofa/samgongustofa.module'
     SequelizeModule.forFeature([VehicleModel]),
     forwardRef(() => SamgongustofaModule),
   ],
-  providers: [VehicleResolver, VehicleService],
+  providers: [VehicleAppSysResolver, VehicleResolver, VehicleService],
   exports: [VehicleService],
 })
 export class VehicleModule {}

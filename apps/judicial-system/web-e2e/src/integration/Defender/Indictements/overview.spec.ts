@@ -5,6 +5,7 @@ import {
   CaseState,
   CaseType,
   IndictmentSubtype,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -35,6 +36,7 @@ describe('Indictment case overview for defenders', () => {
         ],
       }
 
+      cy.login(UserRole.DEFENDER)
       cy.stubAPIResponses()
       intercept(caseDataAddition)
       cy.visit(`${DEFENDER_INDICTMENT_ROUTE}/test_id`)
@@ -77,6 +79,7 @@ describe('Indictment case overview for defenders', () => {
         ],
       }
 
+      cy.login(UserRole.DEFENDER)
       cy.stubAPIResponses()
       intercept(caseDataAddition)
       cy.visit(`${DEFENDER_INDICTMENT_ROUTE}/test_id`)

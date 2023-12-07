@@ -70,6 +70,16 @@ const nextConfig = {
         destination: '/s/:slug/:subSlug',
         permanent: true,
       },
+      {
+        source: '/handbaekur',
+        destination: '/leit?q=*&type=webManual',
+        permanent: true,
+      },
+      {
+        source: '/en/manuals',
+        destination: '/en/search?q=*&type=webManual',
+        permanent: true,
+      },
     ]
   },
   webpack: (config, { isServer }) => {

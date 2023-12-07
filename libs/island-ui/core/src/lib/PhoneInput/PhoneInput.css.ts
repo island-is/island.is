@@ -1,5 +1,6 @@
 import { keyframes, style, styleVariants } from '@vanilla-extract/css'
 import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
+import { recipe } from '@vanilla-extract/recipes'
 import * as inputMixins from '../Input/Input.mixins'
 import omit from 'lodash/omit'
 import mapValues from 'lodash/mapValues'
@@ -29,22 +30,35 @@ export const container = style({
 
 export const containerSizes = styleVariants(inputMixins.containerSizes)
 
-export const input = style({
-  ...inputMixins.input,
-  zIndex: 2,
-  marginLeft: '120px',
-  '::placeholder': inputMixins.inputPlaceholder,
-  ':focus': inputMixins.inputFocus,
-  selectors: {
-    [`${noLabel} &::placeholder`]: {
-      color: theme.color.dark400,
+export const input = recipe({
+  base: {
+    ...inputMixins.input,
+    zIndex: 2,
+    marginLeft: '120px',
+    '::placeholder': inputMixins.inputPlaceholder,
+    ':focus': inputMixins.inputFocus,
+    selectors: {
+      [`${noLabel} &::placeholder`]: {
+        color: theme.color.dark400,
+      },
+    },
+    ...themeUtils.responsiveStyle({
+      xl: {
+        marginLeft: '140px',
+      },
+    }),
+  },
+  variants: {
+    xs: {
+      true: {
+        ...themeUtils.responsiveStyle({
+          md: {
+            marginLeft: '120px',
+          },
+        }),
+      },
     },
   },
-  ...themeUtils.responsiveStyle({
-    xl: {
-      marginLeft: '140px',
-    },
-  }),
 })
 
 export const inputDisabled = style({
@@ -101,21 +115,29 @@ export const hasError = style({
   ...inputMixins.inputErrorStateWithBefore,
 })
 
-export const label = style({
-  ...inputMixins.label,
-  zIndex: 2,
-  position: 'relative',
-  selectors: {
-    [`${hasError} &`]: inputMixins.labelErrorState,
-    [`${readOnly} &`]: inputMixins.labelReadOnly,
+export const label = recipe({
+  base: {
+    ...inputMixins.label,
+    zIndex: 2,
+    position: 'relative',
+    selectors: {
+      [`${hasError} &`]: inputMixins.labelErrorState,
+      [`${readOnly} &`]: inputMixins.labelReadOnly,
+    },
+  },
+  variants: {
+    readOnly: {
+      true: {
+        color: theme.color.dark400,
+      },
+    },
+    labelDisabledEmpty: {
+      true: inputMixins.labelDisabledEmptyInput,
+    },
   },
 })
 
 export const labelSizes = styleVariants(inputMixins.labelSizes)
-
-export const labelDisabledEmptyInput = style(
-  inputMixins.labelDisabledEmptyInput,
-)
 
 export const isRequiredStar = style({
   color: theme.color.red600,
@@ -161,40 +183,39 @@ export const spinner = style({
   animationTimingFunction: 'linear',
 })
 
-export const icon = style({
-  width: 24,
-  height: 24,
-  flexShrink: 0,
-  marginBottom: -3,
-  color: theme.color.blue400,
-  ...themeUtils.responsiveStyle({
-    md: {
-      selectors: {
-        [`${container}:not(${noLabel}) &`]: {
-          width: 32,
-          height: 32,
-        },
-        [`${container}${noLabel} &`]: {
+export const icon = recipe({
+  base: {
+    width: 24,
+    height: 24,
+    flexShrink: 0,
+    marginBottom: -3,
+    color: theme.color.blue400,
+  },
+  variants: {
+    noLabel: {
+      true: themeUtils.responsiveStyle({
+        md: {
           marginBottom: 0,
         },
+      }),
+    },
+    size: {
+      xs: {
+        width: 21,
+        height: 21,
+      },
+      sm: {
+        width: 24,
+        height: 24,
+      },
+      md: {
+        width: 28,
+        height: 28,
       },
     },
-  }),
+  },
 })
 
 export const iconError = style({
   color: theme.color.red600,
-})
-
-export const iconExtraSmall = style({
-  ...themeUtils.responsiveStyle({
-    md: {
-      selectors: {
-        [`${container}:not(${noLabel}) &`]: {
-          width: 21,
-          height: 21,
-        },
-      },
-    },
-  }),
 })

@@ -19,6 +19,7 @@ import { CaseQueryInput } from './dto/case.input'
 import { TransitionCaseInput } from './dto/transitionCase.input'
 import { UpdateCaseInput } from './dto/updateCase.input'
 import { CaseInterceptor } from './interceptors/case.interceptor'
+import { LimitedAccessCaseInterceptor } from './interceptors/limitedAccessCase.interceptor'
 import { Case } from './models/case.model'
 
 @UseGuards(new JwtGraphQlAuthGuard(true))
@@ -31,7 +32,7 @@ export class LimitedAccessCaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CaseInterceptor, LimitedAccessCaseInterceptor)
   async limitedAccessCase(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,

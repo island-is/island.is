@@ -6,6 +6,7 @@ export interface AuthContextType extends AuthReducerState {
   signInSilent(): void
   switchUser(nationalId?: string): void
   signOut(): void
+  authority?: string
 }
 
 export const defaultAuthContext = {

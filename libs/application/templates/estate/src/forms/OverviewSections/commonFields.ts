@@ -59,6 +59,8 @@ export const commonOverviewFields = [
                     m.inheritanceAdvocateLabel.defaultMessage +
                       ': ' +
                       member.advocate?.name,
+                    formatPhoneNumber(member.advocate.phone || ''),
+                    member.advocate.email,
                   ],
                 ]
               : '',
@@ -97,7 +99,8 @@ export const commonOverviewFields = [
       getValueViaPath(answers, 'estate.testament.dividedEstate'),
     width: 'half',
     condition: (answers) =>
-      getValueViaPath<string>(answers, 'estate.testament.wills') === YES,
+      getValueViaPath<string>(answers, 'estate.testament.dividedEstate') ===
+      YES,
   }),
   buildDescriptionField({
     id: 'space3',

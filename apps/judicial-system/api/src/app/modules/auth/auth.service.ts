@@ -22,7 +22,6 @@ import {
 
 import { DefenderService } from '../defender/defender.service'
 import { authModuleConfig } from './auth.config'
-import { AuthUser } from './auth.types'
 
 @Injectable()
 export class AuthService {
@@ -165,7 +164,11 @@ export class AuthService {
     }
   }
 
-  async logLogin(user: AuthUser) {
+  async logLogin(
+    eventType: EventType,
+    nationalId: string,
+    userRole?: UserRole,
+  ) {
     await fetch(`${this.config.backendUrl}/api/event-log/log-event`, {
       method: 'POST',
       headers: {
@@ -173,8 +176,9 @@ export class AuthService {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        eventType: EventType.LOGIN,
-        nationalId: user.nationalId,
+        eventType,
+        nationalId,
+        userRole,
       }),
     })
   }

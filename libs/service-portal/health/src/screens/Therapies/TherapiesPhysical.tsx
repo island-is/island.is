@@ -11,6 +11,7 @@ import {
 } from '../../utils/constants'
 import { useGetTherapiesQuery } from './Therapies.generated'
 import { TherapiesWrapper } from './wrapper/TherapiesWrapper'
+import { HealthPaths } from '../../lib/paths'
 
 const Therapies = () => {
   useNamespaces('sp.health')
@@ -37,7 +38,11 @@ const Therapies = () => {
   )
 
   return (
-    <TherapiesWrapper loading={loading} error={!!error}>
+    <TherapiesWrapper
+      loading={loading}
+      error={!!error}
+      pathname={HealthPaths.HealthTherapiesPhysical}
+    >
       <TherapiesTabContent
         data={physioTherapyData}
         link={formatMessage(messages.physioDescriptionLink)}

@@ -31,6 +31,7 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   DirectorateOfImmigration,
+  SocialInsuranceAdministration,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -110,6 +111,10 @@ export const workerSetup =
         dev: { schedule: '*/30 * * * *' },
         staging: { schedule: '*/30 * * * *' },
         prod: { schedule: '*/30 * * * *' },
+      })
+      .resources({
+        limits: { cpu: '400m', memory: '768Mi' },
+        requests: { cpu: '100m', memory: '384Mi' },
       })
 
 export const serviceSetup = (services: {
@@ -253,6 +258,7 @@ export const serviceSetup = (services: {
       Passports,
       EHIC,
       DirectorateOfImmigration,
+      SocialInsuranceAdministration,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -288,6 +294,12 @@ export const serviceSetup = (services: {
       VMST_ID: '/k8s/application-system/VMST_ID',
       DOMSYSLA_PASSWORD: '/k8s/application-system-api/DOMSYSLA_PASSWORD',
       DOMSYSLA_USERNAME: '/k8s/application-system-api/DOMSYSLA_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_SERVICE_PATH',
+      ALTHINGI_OMBUDSMAN_XROAD_USERNAME:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
+      ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
+        '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
