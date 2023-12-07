@@ -10,12 +10,11 @@ import { Filters } from './useFilter'
 
 const useApplicationFilter = (
   statesOnRoute: ApplicationState[],
-  setApplications: React.Dispatch<
-    React.SetStateAction<Application[] | undefined>
+  setFilterApplications: React.Dispatch<
+    React.SetStateAction<ApplicationPagination | undefined>
   >,
-  setStaffList: React.Dispatch<React.SetStateAction<StaffList[] | undefined>>,
 ) => {
-  const [getApplications] = useLazyQuery<{
+  const [getApplications, { error }] = useLazyQuery<{
     filterApplications: ApplicationPagination
   }>(ApplicationFilterQuery, {
     fetchPolicy: 'no-cache',
@@ -34,8 +33,7 @@ const useApplicationFilter = (
       },
     })
       .then((res) => {
-        setApplications(res?.data?.filterApplications.applications)
-        setStaffList(res?.data?.filterApplications.staffList)
+        setFilterApplications(res?.data?.filterApplications)
       })
       .catch(() => {
         console.log('ERROR')
@@ -71,6 +69,7 @@ const useApplicationFilter = (
 
   return {
     filterTable,
+    error,
   }
 }
 export default useApplicationFilter

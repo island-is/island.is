@@ -1,26 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useLazyQuery, useQuery } from '@apollo/client'
 
 import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
-  ApplicationOverviewSkeleton,
   ApplicationsTable,
   FilterPopover,
-  LoadingContainer,
+  SortableTableHeader,
+  State,
+  TableBody,
+  TableContainer,
+  TextTableItem,
+  usePseudoName,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   Application,
   ApplicationPagination,
-  StaffList,
+  Routes,
   applicationPageSize,
+  getMonth,
   getStateFromRoute,
 } from '@island.is/financial-aid/shared/lib'
-import { ApplicationFilterQuery } from '@island.is/financial-aid-web/veita/graphql/sharedGql'
 import { navigationItems } from '@island.is/financial-aid-web/veita/src/utils/navigation'
 import { container } from './applicationsOverviewProcessed.css'
-import useFilter, { Filters } from '../../utils/useFilter'
-import useApplicationFilter from '../../utils/useApplicationFilter'
+import useFilter from '@island.is/financial-aid-web/veita/src/utils/useFilter'
+import useApplicationFilter from '@island.is/financial-aid-web/veita/src/utils/useApplicationFilter'
+import useSortedApplications from '../../utils/useSortedApplications'
+import { calcDifferenceInDate } from '../../utils/formHelper'
 
 export const ApplicationsOverviewProcessed = () => {
   const router = useRouter()
@@ -41,52 +46,16 @@ export const ApplicationsOverviewProcessed = () => {
     onClearFilter,
   } = useFilter()
 
-  const { filterTable } = useApplicationFilter(
+  const { filterTable, error } = useApplicationFilter(
     statesOnRoute,
-    setApplications,
-    setStaffList,
+    setFilterApplications,
   )
-
-  const { data, error } = useQuery<{
-    filterApplications: ApplicationPagination
-  }>(ApplicationFilterQuery, {
-    variables: {
-      input: {
-        defaultStates: statesOnRoute,
-        states: [],
-        staff: [],
-        page: 1,
-      },
-    },
-    fetchPolicy: 'no-cache',
-    errorPolicy: 'all',
-  })
-
-  // useEffect(() => {
-  //   console.log('kemuru hér?')
-  //   if (data?.filterApplications) {
-  //     setApplications(data?.filterApplications.applications)
-  //     setStaffList(data?.filterApplications.staffList)
-  //   }
-  // }, [data])
 
   useEffect(() => {
     filterTable(activeFilters, 1)
   }, [activeFilters, router])
 
-  console.log(applications, staffList)
-
   // console.log(router, 'router', activeFilters, 'activeFilters')
-
-  const onFilterClear = () => {
-    onClearFilter()
-    // filter(1, activeFilters)
-  }
-
-  const onFilterSave = () => {
-    setCurrentPage(1)
-    // filter(1, activeFilters)
-  }
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
@@ -140,11 +109,7 @@ export const ApplicationsOverviewProcessed = () => {
         <Pagination
           page={currentPage}
           totalPages={
-            data?.filterApplications
-              ? Math.ceil(
-                  data?.filterApplications.totalCount / applicationPageSize,
-                )
-              : 0
+            totalCount ? Math.ceil(totalCount / applicationPageSize) : 0
           }
           renderLink={(page, className, children) => (
             <Box
