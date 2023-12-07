@@ -1,7 +1,5 @@
 import { Inject, Injectable, forwardRef } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-// import { paginate } from '@island.is/nest/pagination'
-
+import { paginate } from '@island.is/nest/pagination'
 import {
   RecyclingRequestModel,
   RecyclingRequestTypes,
@@ -15,8 +13,6 @@ export class VehicleService {
     @Inject(forwardRef(() => VehicleModel))
     private vehicleModel: VehicleModel,
   ) {}
-
-  /*
 
   async findAllByFilter(
     first: number,
@@ -49,7 +45,6 @@ export class VehicleService {
       ],
     })
   }
-  */
 
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
     try {
@@ -64,18 +59,23 @@ export class VehicleService {
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
-      const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
-      if (findVehicle) {
-        return true
-      }
+      // const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
+      // if (findVehicle) {
+      //   return true
+      // }
 
       // Save vehicle to database
       await vehicle.save()
       return true
     } catch (err) {
+      console.log(err)
       throw new Error(
         `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
       )
     }
+  }
+
+  test() {
+    return 'test'
   }
 }
