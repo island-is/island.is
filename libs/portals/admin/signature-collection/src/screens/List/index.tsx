@@ -6,13 +6,13 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
-import Signees from './components/Signees'
-import PaperUpload from './components/PaperUpload'
 import header from '../../../assets/headerImage.svg'
 import ActionReviewComplete from './components/actionReviewComplete'
 import ActionExtendDeadline from './components/actionExtendDeadline'
+import Signees from './components/Signees'
+import PaperUpload from './components/PaperUpload'
 
-const List = () => {
+export const List = () => {
   const { list } = useLoaderData() as { list: SignatureCollectionList }
   const { revalidate } = useRevalidator()
   const { formatMessage } = useLocale()
