@@ -1,8 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import {
   VehicleSearchApi,
   BasicVehicleInformationGetRequest,
-  PdfApi,
   PublicVehicleSearchApi,
   VehicleDtoListPagedResponse,
   VehicleSearchDto,
@@ -21,11 +20,16 @@ import {
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
 import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
 import { GetVehiclesForUserInput } from '../dto/getVehiclesForUserInput'
 import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
 import isSameDay from 'date-fns/isSameDay'
+
+const LOG_CATEGORY = 'vehicle-service'
+const UNAUTHORIZED_LOG = 'Vehicle user authorization failed'
 
 const isReadDateToday = (d?: Date) => {
   if (!d) {
@@ -46,6 +50,8 @@ export class VehiclesService {
     private readonly featureFlagService: FeatureFlagService,
     @Inject(PublicVehicleSearchApi)
     private publicVehiclesApi: PublicVehicleSearchApi,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
   private getVehiclesWithAuth(auth: Auth) {
@@ -136,6 +142,27 @@ export class VehiclesService {
     return basicVehicleInformationMapper(res)
   }
 
+  private async hasVehicleServiceAuth(
+    auth: User,
+    permno: string,
+  ): Promise<void> {
+    try {
+      await this.getVehicleDetail(auth, {
+        clientPersidno: auth.nationalId,
+        permno,
+      })
+    } catch (e) {
+      if (e.status === 401 || e.status === 403) {
+        this.logger.error(UNAUTHORIZED_LOG, {
+          category: LOG_CATEGORY,
+          error: e,
+        })
+        throw new UnauthorizedException(UNAUTHORIZED_LOG)
+      }
+      throw e as Error
+    }
+  }
+
   async getVehiclesSearch(
     auth: User,
     search: string,
@@ -162,6 +189,8 @@ export class VehiclesService {
       return null
     }
 
+    await this.hasVehicleServiceAuth(auth, input.permno)
+
     const res = await this.getMileageWithAuth(auth).getMileageReading({
       permno: input.permno,
     })
@@ -181,6 +210,8 @@ export class VehiclesService {
   ): Promise<PostMileageReadingModel | null> {
     if (!input) return null
 
+    await this.hasVehicleServiceAuth(auth, input.permno)
+
     const res = await this.getMileageWithAuth(auth).rootPost({
       postMileageReadingModel: input,
     })
@@ -193,6 +224,8 @@ export class VehiclesService {
     input: RootPutRequest['putMileageReadingModel'],
   ): Promise<PutMileageReadingModel | null> {
     if (!input) return null
+
+    await this.hasVehicleServiceAuth(auth, input.permno)
 
     const res = await this.getMileageWithAuth(auth).rootPut({
       putMileageReadingModel: input,
