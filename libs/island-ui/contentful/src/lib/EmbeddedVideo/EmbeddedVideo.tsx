@@ -83,11 +83,7 @@ export const EmbeddedVideo: FC<EmbeddedVideoProps> = ({
   }
 
   const TextsData = Texts({ termsUrl })
-
-  const texts: typeof TextsData[keyof typeof TextsData] =
-    Object.prototype.hasOwnProperty.call(TextsData, locale)
-      ? TextsData[locale]
-      : TextsData['is']
+  const texts = TextsData[locale as keyof typeof TextsData] ?? TextsData['is']
 
   const onPlayButtonClick = () => {
     if (itemKey) {
