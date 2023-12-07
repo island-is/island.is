@@ -40,9 +40,14 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.licensesVerify,
   ApiScope.company,
   ApiScope.vehicles,
-  ApiScope.health,
   ApiScope.workMachines,
   ApiScope.health,
+  ApiScope.healthPayments,
+  ApiScope.healthMedicines,
+  ApiScope.healthAssistiveAndNutrition,
+  ApiScope.healthTherapies,
+  ApiScope.healthHealthcare,
+  ApiScope.healthDentists,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'
