@@ -15,8 +15,6 @@ export class HealthController extends InfraController {
     const result = true
     return { ok: result }
   }
-
- 
 }
 
 // import { LOGGER_PROVIDER } from '@island.is/logging';

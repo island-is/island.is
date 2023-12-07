@@ -143,7 +143,6 @@ describe('NotificationsService', () => {
     expect(template.clickAction).toEqual('Demo click action world')
   })
 
-
   it('should return the correct locale mapping', async () => {
     expect(service.mapLocale('en')).toBe('en')
     expect(service.mapLocale('is')).toBe('is-IS')

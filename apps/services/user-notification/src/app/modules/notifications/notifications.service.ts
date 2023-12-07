@@ -246,7 +246,6 @@ export class NotificationsService {
         recipient: user.nationalId,
       },
     })
-    
 
     if (!notification) {
       throw new NotFoundException(
