@@ -36,12 +36,10 @@ export class VehicleAppSysResolver {
     )
     if (!vehicle) {
       logger.error(
-        'User ' +
-          user.nationalId +
-          ' does not own this vehicle ' +
-          input.permno,
+        `User ${user.nationalId} does not own the requested vehicle`,
+        { permno: input.permno, user },
       )
-      throw new NotFoundException(`User does not own this vehicle`)
+      return null
     }
     const newVehicle = new VehicleModel()
     newVehicle.vinNumber = vehicle.vinNumber
