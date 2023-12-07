@@ -62,6 +62,7 @@ const Signees = () => {
             justifyContent="flexEnd"
             alignItems="flexEnd"
             height="full"
+            marginTop={[1, 1, 0]}
           >
             {searchTerm.length > 0 && signees.length > 0
               ? signees.length > 0 && (

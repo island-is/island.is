@@ -90,17 +90,19 @@ const PaperUpload = () => {
             <Box marginY={5}>
               <Text>{formatMessage(m.uploadFileDescription)}</Text>
             </Box>
-            <InputFileUpload
-              fileList={fileList}
-              header={formatMessage(m.uploadHeader)}
-              description={formatMessage(m.uploadText)}
-              buttonLabel={formatMessage(m.uploadButton)}
-              onChange={onChange}
-              onRemove={() => setFileList([])}
-              accept=".xlsx"
-            />
+            <Box marginBottom={3}>
+              <InputFileUpload
+                fileList={fileList}
+                header={formatMessage(m.uploadHeader)}
+                description={formatMessage(m.uploadText)}
+                buttonLabel={formatMessage(m.uploadButton)}
+                onChange={onChange}
+                onRemove={() => setFileList([])}
+                accept=".xlsx"
+              />
+            </Box>
             {uploadResults.length > 0 && (
-              <Box marginY={5}>
+              <Box marginTop={7} marginBottom={3}>
                 <Text variant="h4">{formatMessage(m.uploadResultsHeader)}</Text>
                 <Accordion dividerOnTop={false}>
                   <AccordionItem
