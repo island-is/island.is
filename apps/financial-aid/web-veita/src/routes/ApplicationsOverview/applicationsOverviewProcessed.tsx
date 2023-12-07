@@ -23,6 +23,8 @@ export const ApplicationsOverviewProcessed = () => {
     navigationItems.find((i) => i.link === router.pathname) ||
     navigationItems[0]
 
+  const { label, headers, defaultHeaderSort } = currentNavigationItem
+
   const statesOnRoute = getStateFromRoute[router.pathname]
   const [filterApplications, setFilterApplications] =
     useState<ApplicationPagination>()
@@ -34,30 +36,29 @@ export const ApplicationsOverviewProcessed = () => {
     activeFilters,
     onChecked,
     onFilterClear,
-  } = useFilter()
+    ClearFilterOrFillFromRoute,
+  } = useFilter(router)
 
-  const { filterTable, error } = useApplicationFilter(
+  const { filterTable, error, loading } = useApplicationFilter(
+    router,
     statesOnRoute,
     setFilterApplications,
   )
 
   useEffect(() => {
-    filterTable(activeFilters, 1)
-  }, [activeFilters, router])
+    filterTable(activeFilters, currentPage)
+  }, [activeFilters])
 
-  // console.log(router, 'router', activeFilters, 'activeFilters')
+  useEffect(() => {
+    ClearFilterOrFillFromRoute()
+  }, [router.pathname])
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
-    // filter(page, activeFilters)
+    filterTable(activeFilters, page)
   }
 
   return (
-    // TODO
-    // <LoadingContainer
-    //   isLoading={loading}
-    //   loader={<ApplicationOverviewSkeleton />}
-    // >
     <Box
       className={container}
       display="flex"
@@ -67,7 +68,7 @@ export const ApplicationsOverviewProcessed = () => {
       <Box>
         <Box className={`contentUp delay-25`} marginTop={15}>
           <Text as="h1" variant="h1" marginBottom={[2, 2, 4]}>
-            {currentNavigationItem.label}
+            {label}
           </Text>
         </Box>
         {staffList && (
@@ -81,12 +82,12 @@ export const ApplicationsOverviewProcessed = () => {
           />
         )}
 
-        {applications && (
+        {applications && !loading && (
           <ApplicationsTable
-            headers={currentNavigationItem.headers}
+            headers={headers}
             applications={applications}
             emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
-            defaultHeaderSort={currentNavigationItem.defaultHeaderSort}
+            defaultHeaderSort={defaultHeaderSort}
           />
         )}
         {error && (
@@ -115,23 +116,7 @@ export const ApplicationsOverviewProcessed = () => {
         />
       </Box>
     </Box>
-    // </LoadingContainer>
   )
 }
 
 export default ApplicationsOverviewProcessed
-
-// const { data, error } = useQuery<{
-//   filterApplications: ApplicationPagination
-// }>(ApplicationFilterQuery, {
-//   variables: {
-//     input: {
-//       defaultStates: statesOnRoute,
-//       states: [],
-//       staff: [],
-//       page: 1,
-//     },
-//   },
-//   fetchPolicy: 'no-cache',
-//   errorPolicy: 'all',
-// })
