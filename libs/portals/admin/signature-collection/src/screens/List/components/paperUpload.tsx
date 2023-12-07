@@ -17,7 +17,7 @@ import { format as formatNationalId } from 'kennitala'
 import { downloadFile } from '../../../lib/utils'
 import { uuid } from 'uuidv4'
 
-export const PaperUpload = () => {
+const PaperUpload = () => {
   const { formatMessage } = useLocale()
   const [withPaperUpload, setWithPaperUpload] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFile>>([])
