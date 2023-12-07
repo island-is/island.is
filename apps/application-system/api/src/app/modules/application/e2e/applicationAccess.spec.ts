@@ -6,7 +6,7 @@ import {
   createApplication,
 } from '@island.is/application/testing'
 import * as faker from 'faker'
-import { User } from '@island.is/auth-nest-tools'
+import type { User } from '@island.is/auth-nest-tools'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { AllowedDelegation } from '@island.is/application/types'
 import { AuthDelegationType } from '@island.is/shared/types'
