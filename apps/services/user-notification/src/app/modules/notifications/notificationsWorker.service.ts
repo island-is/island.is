@@ -2,9 +2,7 @@ import { Injectable, Inject, OnApplicationBootstrap } from '@nestjs/common'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  UserProfileApi,
-} from '@island.is/clients/user-profile'
+import { UserProfileApi } from '@island.is/clients/user-profile'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { MessageProcessorService } from './messageProcessor.service'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
@@ -74,7 +72,6 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           await this.userProfileApi.userTokenControllerFindOneByNationalId({
             nationalId: message.recipient,
           })
-
 
         // can't send message if user has no user profile
         if (!profile) {
