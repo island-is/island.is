@@ -7,7 +7,7 @@ import { m } from '../../lib/messages'
 import { EstateTypes } from '../../lib/constants'
 
 export const applicationDescription = buildSection({
-  id: 'externalData',
+  id: 'applicationDescription',
   title: m.applicationDescriptionSectionTitle,
   children: [
     buildDescriptionField({

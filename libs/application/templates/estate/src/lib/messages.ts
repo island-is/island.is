@@ -94,22 +94,22 @@ export const m = defineMessages({
   },
 
   applicationDescriptionTextEstateWithoutAssets: {
-    id: 'es.application:applicationDescriptionTextEstateWithoutAssets',
+    id: 'es.application:applicationDescriptionTextEstateWithoutAssets#markdown',
     defaultMessage: 'Upplýsinga Texti fyrir eignalaust dánarbú',
     description: 'Upplýsingar skjár titill fyrir eignalust dánarbú',
   },
   applicationDescriptionTextOfficialDivision: {
-    id: 'es.application:applicationDescriptionTextOfficialDivision',
+    id: 'es.application:applicationDescriptionTextOfficialDivision#markdown',
     defaultMessage: 'Upplýsinga Texti fyrir opinber skipti',
     description: 'Upplýsingar skjár titill fyrir opinber skipti',
   },
   applicationDescriptionTextUndividedEstate: {
-    id: 'es.application:applicationDescriptionTextUndividedEstate',
+    id: 'es.application:applicationDescriptionTextUndividedEstate#markdown',
     defaultMessage: 'Upplýsinga Texti fyrir setu í óskiptu búi',
     description: 'Upplýsingar skjár titill fyrir setu í óskiptu búi',
   },
   applicationDescriptionTextDivisionOfEstateByHeirs: {
-    id: 'es.application:applicationDescriptionTextDivisionOfEstateByHeirs',
+    id: 'es.application:applicationDescriptionTextDivisionOfEstateByHeirs#markdown',
     defaultMessage: 'Upplýsinga Texti fyrir einkaskipti',
     description: 'Upplýsingar skjár titill fyrir Einkaskipti',
   },
