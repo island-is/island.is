@@ -1,23 +1,23 @@
-import { User } from '@island.is/auth-nest-tools'
+import { FeatureFlagUser } from '@island.is/feature-flags'
 import { Features } from '@island.is/nest/feature-flags'
 
 export class MockFeatureFlagService {
   async getValue(
     feature: Features,
     defaultValue: boolean | string,
-    user?: User,
+    user?: FeatureFlagUser,
   ) {
     if (feature === Features.exampleApplication) {
       return true
     }
     if (feature === Features.accidentNotification) {
-      if (user?.nationalId === '1234567890') {
+      if (user?.id === '1234567890') {
         return true
       }
       return false
     }
     if (feature === Features.applicationSystemHistory) {
-      if (user?.nationalId === '1234564321') {
+      if (user?.id === '1234564321') {
         return true
       }
       return false
