@@ -5,7 +5,7 @@ import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
 import {
   useGetListsBySigneeArea,
-  useGetListsForUser,
+  // useGetListsForUser,
   useGetSignedList,
 } from '../hooks'
 import format from 'date-fns/format'
