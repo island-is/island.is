@@ -47,6 +47,7 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
+  OLD_AGE_PENSION = 'OldAgePension',
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
@@ -247,6 +248,10 @@ export const ApplicationConfigurations = {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
   },
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: 'oap.application',
+  },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
     slug: 'medmaelalisti',
     translation: 'slc.application',
@@ -260,7 +265,7 @@ export const ApplicationConfigurations = {
     translation: 'doi.cs.application',
   },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
-    slug: 'vinnueftirlitid',
+    slug: 'eigendaskipti-taekis',
     translation: 'aosh.application',
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {

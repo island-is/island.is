@@ -18,7 +18,7 @@ import { InputController } from '@island.is/shared/form-fields'
 
 export const RealEstateRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers>>
-> = ({ application, field, errors }) => {
+> = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const error = (errors as any)?.estate?.assets
   const { id } = field
   const { formatMessage } = useLocale()
@@ -40,7 +40,7 @@ export const RealEstateRepeater: FC<
 
   const handleAddProperty = () =>
     append({
-      share: 1,
+      share: 100,
       assetNumber: undefined,
       description: undefined,
       marketValue: undefined,
@@ -54,7 +54,6 @@ export const RealEstateRepeater: FC<
       <GridRow>
         {fields.reduce((acc, asset: AssetFormField, index) => {
           const fieldError = error && error[index] ? error[index] : null
-
           if (!asset.initial) {
             return acc
           }

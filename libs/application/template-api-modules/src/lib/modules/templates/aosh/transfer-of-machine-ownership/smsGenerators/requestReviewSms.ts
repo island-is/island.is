@@ -2,7 +2,7 @@ import { SmsMessage } from '../../../../../types'
 import { EmailRecipient } from '../types'
 import { Application } from '@island.is/application/types'
 import { ApplicationConfigurations } from '@island.is/application/types'
-import { TransferOfMachineOwnerShipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
+import { TransferOfMachineOwnershipAnswers } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
 import { getApplicationPruneDateStr } from '../transfer-of-machine-ownership.utils'
 
 export type RequestReviewSms = (
@@ -20,7 +20,7 @@ export const generateRequestReviewSms: RequestReviewSms = (
 ) => {
   const { clientLocationOrigin } = options
 
-  const answers = application.answers as TransferOfMachineOwnerShipAnswers
+  const answers = application.answers as TransferOfMachineOwnershipAnswers
   const regNumber = answers?.machine?.regNumber
 
   if (!recipient.phone) throw new Error('Recipient phone was undefined')

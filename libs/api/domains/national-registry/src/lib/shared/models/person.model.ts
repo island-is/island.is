@@ -9,6 +9,7 @@ import { PersonBase } from './personBase.model'
 import { Name } from './name.model'
 import { BanMarking } from './banMarking.model'
 import { Address } from './address.model'
+import { ChildCustody } from './childCustody.model'
 
 @ObjectType('NationalRegistryPerson')
 export class Person extends PersonBase {
@@ -30,8 +31,8 @@ export class Person extends PersonBase {
   @Field(() => [PersonBase], { nullable: true })
   birthParents?: Array<PersonBase> | null
 
-  @Field(() => [Person], { nullable: true })
-  childCustody?: Array<Person> | null
+  @Field(() => [ChildCustody], { nullable: true })
+  childCustody?: Array<ChildCustody> | null
 
   @Field(() => Birthplace, { nullable: true })
   birthplace?: Birthplace | null

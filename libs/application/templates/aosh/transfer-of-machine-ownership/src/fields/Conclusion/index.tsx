@@ -12,17 +12,15 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
 import { conclusion } from '../../lib/messages'
-import { CopyLink } from '@island.is/application/ui-components'
-import { ApplicationConfigurations } from '@island.is/application/types'
 import { MessageWithLinkButtonFormField } from '@island.is/application/ui-fields'
 import { coreMessages } from '@island.is/application/core'
+import { ConclusionImage } from '../../assets/conclusion'
 
 export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application } = props
   const { formatMessage } = useLocale()
-  console.log('WE ARE HERE !!!!')
   return (
     <Box marginTop={2}>
       <Box marginBottom={5}>
@@ -40,14 +38,8 @@ export const Conclusion: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <Text>{formatMessage(conclusion.default.accordionText)}</Text>
       </AccordionCard>
 
-      <Box marginTop={3}>
-        <Text variant="h4">{formatMessage(conclusion.default.shareLink)}</Text>
-        <Box marginTop={2}>
-          <CopyLink
-            linkUrl={`${document.location.origin}/umsoknir/${ApplicationConfigurations.TransferOfMachineOwnership.slug}/${application.id}`}
-            buttonTitle={formatMessage(conclusion.default.copyLink)}
-          />
-        </Box>
+      <Box marginTop={3} padding={[2, 2, 4, 4]}>
+        <ConclusionImage />
       </Box>
 
       <Box marginTop={3} marginBottom={5}>

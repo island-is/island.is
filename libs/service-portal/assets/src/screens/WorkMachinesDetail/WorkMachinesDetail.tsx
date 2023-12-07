@@ -10,7 +10,7 @@ import {
   UserInfoLine,
   formatDate,
   m,
-  VINNUEFTIRLITID_ID,
+  VINNUEFTIRLITID_SLUG,
 } from '@island.is/service-portal/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
@@ -144,7 +144,7 @@ const WorkMachinesDetail = () => {
       <Box marginBottom={[1, 1, 3]}>
         <IntroHeader
           title={workMachine?.type ?? ''}
-          serviceProviderID={VINNUEFTIRLITID_ID}
+          serviceProviderSlug={VINNUEFTIRLITID_SLUG}
           serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
         />
       </Box>

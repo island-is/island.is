@@ -6,11 +6,11 @@ import {
 import { information } from '../../../lib/messages'
 
 export const pickMachineSubSection = buildSubSection({
-  id: 'pickVehicle',
+  id: 'pickMachine',
   title: information.labels.pickMachine.sectionTitle,
   children: [
     buildMultiField({
-      id: 'pickVehicleMultiField',
+      id: 'pickMachineMultiField',
       title: information.labels.pickMachine.title,
       description: information.labels.pickMachine.description,
       children: [

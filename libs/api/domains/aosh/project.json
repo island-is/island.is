@@ -1,23 +1,21 @@
 {
-  "name": "api-domains-administration-of-occupational-safety-and-health",
+  "name": "api-domains-aosh",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/administration-of-occupational-safety-and-health/src",
+  "sourceRoot": "libs/api/domains/aosh/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/administration-of-occupational-safety-and-health/**/*.ts"
-        ]
+        "lintFilePatterns": ["libs/api/domains/aosh/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/api/domains/administration-of-occupational-safety-and-health/jest.config.ts",
+        "jestConfig": "libs/api/domains/aosh/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {

@@ -1,4 +1,4 @@
-// Buyer and buyers coowner + button for buyer to add more coowners or operators
+// Buyer
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
 import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
@@ -32,7 +32,7 @@ export const BuyerSection: FC<
         isBuyer &&
         !hasReviewerApproved(reviewerNationalId, answers) &&
         application.state !== States.COMPLETED
-          ? formatMessage(overview.labels.addCoOwnerAndOperatorButton)
+          ? formatMessage(overview.labels.addBuyerOperatorButton)
           : undefined
       }
       isLast

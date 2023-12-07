@@ -12,8 +12,8 @@ import {
   ErrorScreen,
   NoDataScreen,
   m as coreMessage,
-  FJARSYSLAN_ID,
   FootNote,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -134,7 +134,7 @@ const FinanceSchedule = () => {
           ) : null}
         </Box>
       </Stack>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </Box>
   )
 }

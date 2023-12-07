@@ -40,4 +40,10 @@ export class User {
 
   @Field()
   readonly active!: boolean
+
+  @Field({ nullable: true })
+  readonly latestLogin?: string
+
+  @Field({ nullable: true })
+  readonly loginCount?: number
 }

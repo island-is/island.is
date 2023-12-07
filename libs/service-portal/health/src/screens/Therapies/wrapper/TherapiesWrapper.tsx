@@ -4,7 +4,7 @@ import {
   EmptyState,
   ErrorScreen,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
+  SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
   m,
 } from '@island.is/service-portal/core'
@@ -15,9 +15,15 @@ type Props = {
   children: React.ReactNode
   error: boolean
   loading: boolean
+  pathname?: string
 }
 
-export const TherapiesWrapper = ({ children, error, loading }: Props) => {
+export const TherapiesWrapper = ({
+  children,
+  error,
+  loading,
+  pathname,
+}: Props) => {
   const { formatMessage } = useLocale()
 
   if (error && !loading) {
@@ -39,11 +45,12 @@ export const TherapiesWrapper = ({ children, error, loading }: Props) => {
       <IntroHeader
         title={formatMessage(messages.therapyTitle)}
         intro={formatMessage(messages.therapyDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
       <TabNavigation
-        label="test"
+        label={formatMessage(messages.therapyTitle)}
+        pathname={pathname}
         items={
           healthNavigation.children?.find((itm) => itm.name === m.therapies)
             ?.children ?? []

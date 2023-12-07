@@ -98,6 +98,8 @@ import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-ma
 import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { ChangeMachineSupervisorTemplateService } from './aosh/change-machine-supervisor/change-machine-supervisor.service'
 import { ChangeMachineSupervisorTemplateModule } from './aosh/change-machine-supervisor/change-machine-supervisor.module'
+import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
+import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -148,6 +150,7 @@ export const modules = [
   DrivingLicenseBookUpdateInstructorModule,
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
+  SocialInsuranceAdministrationModule,
   CitizenshipModule,
   TransferOfMachineOwnershipTemplateModule,
   ChangeMachineSupervisorTemplateModule,
@@ -202,6 +205,7 @@ export const services = [
   DrivingLicenseBookUpdateInstructorService,
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
+  SocialInsuranceAdministrationService,
   CitizenshipService,
   TransferOfMachineOwnershipTemplateService,
   ChangeMachineSupervisorTemplateService,

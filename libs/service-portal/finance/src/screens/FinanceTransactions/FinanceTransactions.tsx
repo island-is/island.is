@@ -17,10 +17,10 @@ import {
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DynamicWrapper,
-  FJARSYSLAN_ID,
   FootNote,
   m,
   Filter,
+  FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
@@ -279,7 +279,7 @@ const FinanceTransactions = () => {
           </Box>
         </Stack>
       </Box>
-      <FootNote serviceProviderID={FJARSYSLAN_ID} />
+      <FootNote serviceProviderSlug={FJARSYSLAN_SLUG} />
     </DynamicWrapper>
   )
 }

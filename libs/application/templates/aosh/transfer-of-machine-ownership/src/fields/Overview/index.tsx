@@ -5,63 +5,32 @@ import {
   Text,
   Divider,
   Button,
-  AlertMessage,
   InputError,
 } from '@island.is/island-ui/core'
 import { ReviewScreenProps } from '../../shared'
 import { useLocale } from '@island.is/localization'
-import {
-  applicationCheck,
-  overview,
-  review,
-  error as errorMsg,
-} from '../../lib/messages'
+import { overview, review, error as errorMsg } from '../../lib/messages'
 import { States } from '../../lib/constants'
 import {
-  VehicleSection,
+  MachineSection,
   SellerSection,
   BuyerSection,
   OperatorSection,
   LocationSection,
 } from './sections'
-import {
-  getApproveAnswers,
-  hasReviewerApproved,
-  isLastReviewer,
-} from '../../utils'
+import { getApproveAnswers, hasReviewerApproved } from '../../utils'
 import { RejectConfirmationModal } from './RejectConfirmationModal'
-import {
-  APPLICATION_APPLICATION,
-  SUBMIT_APPLICATION,
-} from '@island.is/application/graphql'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { getValueViaPath } from '@island.is/application/core'
-import { OwnerChangeValidationMessage } from '@island.is/api/schema'
-import { APPROVE_OWNER_CHANGE } from '../../graphql/queries'
-import { TransferOfMachineOwnerShipAnswers } from '../..'
+import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import { useMutation } from '@apollo/client'
 
 export const Overview: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
-> = ({
-  setStep,
-  reviewerNationalId = '',
-  coOwnersAndOperators = [],
-  mainOperator = '',
-  ...props
-}) => {
+> = ({ setStep, reviewerNationalId = '', buyerOperator = {}, ...props }) => {
   const { application, refetch } = props
   const { formatMessage } = useLocale()
 
   const [rejectModalVisibility, setRejectModalVisibility] =
     useState<boolean>(false)
-  const [noInsuranceError, setNoInsuranceError] = useState<boolean>(false)
-
-  const [getApplicationInfo] = useLazyQuery(APPLICATION_APPLICATION, {
-    onError: (e) => {
-      console.error(e, e.message)
-      return
-    },
-  })
 
   const [submitApplication, { error }] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
@@ -73,116 +42,34 @@ export const Overview: FC<
   const [loading, setLoading] = useState(false)
 
   const doApproveAndSubmit = async () => {
-    const applicationInfo = await getApplicationInfo({
+    const approveAnswers = getApproveAnswers(
+      reviewerNationalId,
+      application.answers,
+    )
+    const resApprove = await submitApplication({
       variables: {
         input: {
           id: application.id,
+          event: DefaultEvents.APPROVE,
+          answers: approveAnswers,
         },
-        locale: 'is',
       },
-      fetchPolicy: 'no-cache',
     })
-    const updatedApplication = applicationInfo?.data?.applicationApplication
 
-    if (updatedApplication) {
-      const currentAnswers = updatedApplication.answers
+    const updatedApplication = resApprove?.data?.submitApplication
 
-      const approveAnswers = getApproveAnswers(
-        reviewerNationalId,
-        currentAnswers,
-      )
-
-      // First approve application only (event=APPROVE)
-      const resApprove = await submitApplication({
-        variables: {
-          input: {
-            id: application.id,
-            event: DefaultEvents.APPROVE,
-            answers: approveAnswers,
-          },
+    await submitApplication({
+      variables: {
+        input: {
+          id: application.id,
+          event: DefaultEvents.SUBMIT,
+          answers: updatedApplication,
         },
-      })
-
-      const updatedApplication2 = resApprove?.data?.submitApplication
-
-      if (updatedApplication2) {
-        const isLast = isLastReviewer(
-          reviewerNationalId,
-          updatedApplication2.answers,
-          coOwnersAndOperators,
-        )
-        // Then check if user is the last approver (using newer updated application answers), if so we
-        // need to submit the application (event=SUBMIT) to change the state to COMPLETED
-        if (isLast) {
-          const approveAnswers2 = getApproveAnswers(
-            reviewerNationalId,
-            updatedApplication2.answers,
-          )
-          console.log('updatedApplication2', updatedApplication2)
-          const answers =
-            updatedApplication2.answers as TransferOfMachineOwnerShipAnswers
-          console.log('answers', answers)
-          console.log('approveAnswers', approveAnswers)
-          console.log('input', {
-            id: application.id,
-            machineId: answers.machine?.id,
-            machineMoreInfo: answers.location?.moreInfo,
-            machinePostalCode: answers.location?.postCode,
-            machineAddress: answers.location?.address,
-            buyerNationalId: answers.buyer.nationalId,
-            delegateNationalId: reviewerNationalId,
-          })
-          await changeMachineOwnerMutation({
-            variables: {
-              input: {
-                id: application.id,
-                machineId: answers.machine?.id,
-                machineMoreInfo: answers.location?.moreInfo,
-                machinePostalCode: answers.location?.postCode,
-                machineAddress: answers.location?.address,
-                buyerNationalId: answers.buyer.nationalId,
-                delegateNationalId: reviewerNationalId,
-              },
-            },
-          })
-          const resSubmit = await submitApplication({
-            variables: {
-              input: {
-                id: application.id,
-                event: DefaultEvents.SUBMIT,
-                answers: approveAnswers2,
-              },
-            },
-          })
-
-          if (resSubmit?.data) {
-            setLoading(false)
-            setStep && setStep('conclusion')
-          }
-        } else {
-          setLoading(false)
-          setStep && setStep('conclusion')
-        }
-      }
-    }
-  }
-
-  const [changeMachineOwnerMutation, { data }] = useMutation(
-    gql`
-      ${APPROVE_OWNER_CHANGE}
-    `,
-    {
-      onCompleted: async (data) => {
-        console.log(data)
-        if (data && data.confirmOwnerChange) {
-          console.log('Change machine owner was successful')
-        } else {
-          // The operation failed
-          console.log('Change machine owner failed')
-        }
       },
-    },
-  )
+    })
+    setLoading(false)
+    setStep && setStep('conclusion')
+  }
 
   const onBackButtonClick = () => {
     setStep && setStep('states')
@@ -193,7 +80,6 @@ export const Overview: FC<
   }
 
   const onApproveButtonClick = async () => {
-    setNoInsuranceError(false)
     setLoading(true)
 
     await doApproveAndSubmit()
@@ -208,7 +94,7 @@ export const Overview: FC<
         <Text marginBottom={4}>
           {formatMessage(overview.general.description)}
         </Text>
-        <VehicleSection {...props} reviewerNationalId={reviewerNationalId} />
+        <MachineSection {...props} reviewerNationalId={reviewerNationalId} />
         <SellerSection {...props} reviewerNationalId={reviewerNationalId} />
         <BuyerSection
           setStep={setStep}
@@ -217,8 +103,7 @@ export const Overview: FC<
         />
         <OperatorSection
           reviewerNationalId={reviewerNationalId}
-          coOwnersAndOperators={coOwnersAndOperators}
-          mainOperator={mainOperator}
+          buyerOperator={buyerOperator}
           {...props}
         />
 
@@ -226,7 +111,6 @@ export const Overview: FC<
           setStep={setStep}
           {...props}
           reviewerNationalId={reviewerNationalId}
-          noInsuranceError={noInsuranceError}
         />
 
         {error && (
@@ -234,47 +118,6 @@ export const Overview: FC<
             errorMessage={errorMsg.submitApplicationError.defaultMessage}
           />
         )}
-
-        {data?.vehicleOwnerChangeValidation?.hasError &&
-        data.vehicleOwnerChangeValidation.errorMessages.length > 0 ? (
-          <Box>
-            <AlertMessage
-              type="error"
-              title={formatMessage(applicationCheck.validation.alertTitle)}
-              message={
-                <Box component="span" display="block">
-                  <ul>
-                    {data.vehicleOwnerChangeValidation.errorMessages.map(
-                      (error: OwnerChangeValidationMessage) => {
-                        const message = formatMessage(
-                          getValueViaPath(
-                            applicationCheck.validation,
-                            error?.errorNo || '',
-                          ),
-                        )
-                        const defaultMessage = error.defaultMessage
-                        const fallbackMessage =
-                          formatMessage(
-                            applicationCheck.validation.fallbackErrorMessage,
-                          ) +
-                          ' - ' +
-                          error?.errorNo
-
-                        return (
-                          <li key={error.errorNo}>
-                            <Text variant="small">
-                              {message || defaultMessage || fallbackMessage}
-                            </Text>
-                          </li>
-                        )
-                      },
-                    )}
-                  </ul>
-                </Box>
-              }
-            />
-          </Box>
-        ) : null}
 
         <Box marginTop={14}>
           <Divider />

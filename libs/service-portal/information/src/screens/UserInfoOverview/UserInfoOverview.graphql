@@ -8,14 +8,6 @@ query UserInfoOverview($api: String) {
     childCustody {
       nationalId
       fullName
-      custodians {
-        nationalId
-        fullName
-      }
-      birthParents {
-        nationalId
-        fullName
-      }
     }
   }
 }

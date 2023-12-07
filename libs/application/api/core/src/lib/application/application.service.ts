@@ -116,6 +116,7 @@ export class ApplicationService {
     typeId?: string,
     status?: string,
     actor?: string,
+    showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
@@ -136,7 +137,7 @@ export class ApplicationService {
               ...[{ assignees: { [Op.contains]: [nationalId] } }],
             ],
           },
-          applicationIsNotSetToBePruned(),
+          showPruned ? {} : applicationIsNotSetToBePruned(),
         ],
         isListed: {
           [Op.eq]: true,

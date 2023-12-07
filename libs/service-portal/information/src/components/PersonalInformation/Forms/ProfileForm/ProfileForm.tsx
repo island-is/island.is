@@ -1,7 +1,13 @@
 import React, { FC, useState, useEffect } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
-import { GridRow, GridColumn, GridContainer } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Input,
+  PhoneInput,
+} from '@island.is/island-ui/core'
 import { parseNumber, LoadModal } from '@island.is/service-portal/core'
 import {
   useUserProfile,
@@ -20,11 +26,19 @@ import { DropModalType, DataStatus } from './types/form'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
 import { diffModifiedOverMaxDate } from '../../../../utils/showUserOnboardingModal'
 import { PaperMail } from './components/Inputs/PaperMail'
+import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
 
 import {
   FeatureFlagClient,
+  Features,
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
+import { useAuth } from '@island.is/auth/react'
+
+enum IdsUserProfileLinks {
+  EMAIL = '/app/user-profile/email',
+  PHONE_NUMBER = '/app/user-profile/phone',
+}
 
 interface Props {
   onCloseOverlay?: () => void
@@ -53,29 +67,60 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showPaperMail, setShowPaperMail] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const [v2UserProfileEnabled, setV2UserProfileEnabled] = useState(false)
   const { updateOrCreateUserProfile, loading: updateLoading } =
     useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
-
+  const { authority } = useAuth()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
-
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
   const { formatMessage } = useLocale()
+
+  const isV2UserProfileEnabled = async () => {
+    const ffEnabled = await featureFlagClient.getValue(
+      Features.isIASSpaPagesEnabled,
+      false,
+    )
+
+    if (ffEnabled) {
+      setV2UserProfileEnabled(ffEnabled as boolean)
+    }
+  }
+
+  /* Should disable email and phone input with deeplink to IDS */
+  useEffect(() => {
+    isV2UserProfileEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  /**
+   * Creates a link to the IDS user profile page.
+   * By setting the continue_onboarding to false, the user won´t be forced to finish the onboarding.
+   */
+  const getIDSLink = (linkPath: IdsUserProfileLinks) => {
+    const returnUrl = encodeURIComponent(
+      `${window.location}&continue_onboarding=false`,
+    )
+
+    return `${authority}${linkPath}?returnUrl=${returnUrl}`
+  }
+
+  const isFlagEnabled = async () => {
+    const ffEnabled = await featureFlagClient.getValue(
+      `isServicePortalPaperMailSettingsEnabled`,
+      false,
+    )
+
+    if (ffEnabled) {
+      setShowPaperMail(ffEnabled as boolean)
+    }
+  }
 
   /* Should show the paper mail settings? */
   useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isServicePortalPaperMailSettingsEnabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setShowPaperMail(ffEnabled as boolean)
-      }
-    }
     isFlagEnabled()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -206,14 +251,37 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             text={formatMessage(msg.editEmailText)}
             loading={userLoading}
           >
-            {!userLoading && (
-              <InputEmail
-                buttonText={formatMessage(msg.saveEmail)}
-                email={userProfile?.email || ''}
-                emailDirty={(isDirty) => setEmailDirty(isDirty)}
-                disabled={updateLoading || deleteLoading}
-              />
-            )}
+            {!userLoading &&
+              (v2UserProfileEnabled ? (
+                <ReadOnlyWithLinks
+                  input={
+                    <Input
+                      name="email"
+                      placeholder={formatMessage(msg.email)}
+                      value={userProfile?.email || ''}
+                      size="xs"
+                      label={formatMessage(msg.email)}
+                      readOnly
+                      {...(userProfile?.emailVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
+                  }
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.EMAIL),
+                    title: formatMessage(
+                      userProfile?.email ? msg.change : msg.add,
+                    ),
+                  }}
+                />
+              ) : (
+                <InputEmail
+                  buttonText={formatMessage(msg.saveEmail)}
+                  email={userProfile?.email || ''}
+                  emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                  disabled={updateLoading || deleteLoading}
+                />
+              ))}
           </InputSection>
           {showDetails && (
             <InputSection
@@ -241,14 +309,37 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             text={formatMessage(msg.editTelText)}
             loading={userLoading}
           >
-            {!userLoading && (
-              <InputPhone
-                buttonText={formatMessage(msg.saveTel)}
-                mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
-                telDirty={(isDirty) => setTelDirty(isDirty)}
-                disabled={updateLoading || deleteLoading}
-              />
-            )}
+            {!userLoading &&
+              (v2UserProfileEnabled ? (
+                <ReadOnlyWithLinks
+                  input={
+                    <PhoneInput
+                      name="phoneNumber"
+                      label={formatMessage(msg.tel)}
+                      placeholder="000-0000"
+                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      size="xs"
+                      readOnly
+                      {...(userProfile?.mobilePhoneNumberVerified && {
+                        icon: { name: 'checkmark' },
+                      })}
+                    />
+                  }
+                  link={{
+                    href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
+                    title: formatMessage(
+                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                    ),
+                  }}
+                />
+              ) : (
+                <InputPhone
+                  buttonText={formatMessage(msg.saveTel)}
+                  mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                  telDirty={(isDirty) => setTelDirty(isDirty)}
+                  disabled={updateLoading || deleteLoading}
+                />
+              ))}
           </InputSection>
           {showDetails && (
             <InputSection

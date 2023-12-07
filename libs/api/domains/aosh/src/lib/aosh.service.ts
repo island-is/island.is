@@ -1,8 +1,6 @@
 import { User } from '@island.is/auth-nest-tools'
 
 import { Injectable } from '@nestjs/common'
-import { ChangeMachineOwner } from './graphql/ownerChange.input'
-import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
 import {
   ChangeMachineSupervisor,
   TransferOfMachineOwnershipClient,
@@ -16,30 +14,7 @@ export class AoshApi {
   ) {}
 
   async getMachineDetails(auth: User, id: string): Promise<MachineHateoasDto> {
-    return await this.transferOfMachineOwnershipClient.getMachineDetail(
-      auth,
-      id,
-    )
-  }
-
-  async changeMachineOwner(
-    auth: User,
-    changeOwner: ChangeMachineOwner,
-  ): Promise<void> {
-    await this.transferOfMachineOwnershipClient.changeMachineOwner(
-      auth,
-      changeOwner,
-    )
-  }
-
-  async confirmOwnerChange(
-    auth: User,
-    confirmChange: ConfirmOwnerChange,
-  ): Promise<void> {
-    await this.transferOfMachineOwnershipClient.confirmOwnerChange(
-      auth,
-      confirmChange,
-    )
+    return this.transferOfMachineOwnershipClient.getMachineDetail(auth, id)
   }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {

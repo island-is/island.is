@@ -32,22 +32,14 @@ export const MachineSelectField: FC<
     '',
   ) as string
 
+  const [isSelected, setSelected] = useState<boolean>(false)
   const currentMachine = currentMachineList[parseInt(machineValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [selectedMachine, setSelectedMachine] =
     useState<MachineHateoasDto | null>(
       currentMachine && currentMachine.registrationNumber
-        ? {
-            id: currentMachine.id,
-            registrationNumber: currentMachine.registrationNumber,
-            type: currentMachine.type,
-            ownerName: currentMachine.ownerName,
-            supervisorName: currentMachine.supervisorName,
-            status: currentMachine.status,
-            category: currentMachine.category,
-            ownerNumber: '',
-          }
+        ? currentMachine
         : null,
     )
   const [machineId, setMachineId] = useState<string>(
@@ -65,25 +57,20 @@ export const MachineSelectField: FC<
     [getMachineDetails],
   )
 
+  function isCurrentMachineDisabled(
+    machine: MachineHateoasDto | null,
+  ): boolean {
+    return !machine?.links?.some((link) => link?.rel === 'ownerChange')
+  }
+
   const onChange = (option: Option) => {
     const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
+    setSelected(true)
     if (currentMachine.id) {
       getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
-          setSelectedMachine({
-            id: currentMachine.id,
-            registrationNumber: currentMachine.registrationNumber,
-            type: currentMachine.type,
-            ownerName: currentMachine.ownerName,
-            supervisorName: currentMachine.supervisorName,
-            status: currentMachine.status,
-            links: currentMachine.links,
-            category: currentMachine.category,
-            ownerNumber: response.aoshMachineDetails?.ownerNumber || '',
-          })
-
-          const disabled = isCurrentMachineDisabled(selectedMachine?.status)
+          setSelectedMachine(response.aoshMachineDetails)
 
           setValue(
             'machine.regNumber',
@@ -107,36 +94,19 @@ export const MachineSelectField: FC<
           )
           setValue('machine.id', response.aoshMachineDetails.id)
           setValue('machine.date', new Date().toISOString())
-
-          setMachineId(disabled ? '' : currentMachine.id || '')
+          setValue(
+            'pickMachine.isValid',
+            isCurrentMachineDisabled(response.aoshMachineDetails)
+              ? undefined
+              : true,
+          )
+          setMachineId(currentMachine?.id || '')
           setIsLoading(false)
         })
         .catch((error) => console.error(error))
     }
   }
   // Use this when Links have been added to machine
-  // const isCurrentMachineDisabled = (machine: Machine | undefined | null) => !machine?._links?.some((link) => link.rel === "ownerChange");
-
-  function isCurrentMachineDisabled(status?: string | null): boolean {
-    const disabledStatuses = [
-      'Læst',
-      'Í skráningarferli',
-      'Eigandaskipti í gangi',
-      'Umráðamannaskipti í gangi',
-      'Afskráð tímabundið',
-      'Afskráð endanlega',
-      '',
-    ]
-    if (status === undefined || status == null) return true
-    if (
-      disabledStatuses.includes(status) ||
-      status.startsWith(disabledStatuses[0])
-    ) {
-      return true
-    } else {
-      return false
-    }
-  }
 
   useEffect(() => {
     setFieldLoadingState?.(isLoading)
@@ -166,40 +136,37 @@ export const MachineSelectField: FC<
             {selectedMachine && (
               <CategoryCard
                 colorScheme={
-                  isCurrentMachineDisabled(selectedMachine?.status)
-                    ? 'red'
-                    : 'blue'
+                  isCurrentMachineDisabled(selectedMachine) ? 'red' : 'blue'
                 }
                 heading={selectedMachine.registrationNumber || ''}
                 text={`${selectedMachine.type}`}
               />
             )}
-            {selectedMachine &&
-              isCurrentMachineDisabled(selectedMachine?.status) && (
-                <Box marginTop={2}>
-                  <AlertMessage
-                    type="error"
-                    title={formatMessage(
-                      information.labels.pickMachine.hasErrorTitle,
-                    )}
-                    message={
-                      <Box>
-                        <BulletList>
-                          {!!selectedMachine.status?.length && (
-                            <Bullet>{selectedMachine.status}</Bullet>
-                          )}
-                        </BulletList>
-                      </Box>
-                    }
-                  />
-                </Box>
-              )}
+            {selectedMachine && isCurrentMachineDisabled(selectedMachine) && (
+              <Box marginTop={2}>
+                <AlertMessage
+                  type="error"
+                  title={formatMessage(
+                    information.labels.pickMachine.hasErrorTitle,
+                  )}
+                  message={
+                    <Box>
+                      <BulletList>
+                        {!!selectedMachine.status?.length && (
+                          <Bullet>{selectedMachine.status}</Bullet>
+                        )}
+                      </BulletList>
+                    </Box>
+                  }
+                />
+              </Box>
+            )}
           </Box>
         )}
       </Box>
-      {machineId.length === 0 && !isLoading && (errors as any)?.machine && (
+      {machineId.length === 0 && !isLoading && isSelected ? (
         <InputError errorMessage={formatMessage(error.requiredValidMachine)} />
-      )}
+      ) : null}
     </Box>
   )
 }

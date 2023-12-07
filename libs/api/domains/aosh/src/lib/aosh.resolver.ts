@@ -1,5 +1,5 @@
-import { Query, Resolver, Args, Mutation } from '@nestjs/graphql'
-import { AoshMachineDetails } from './graphql/machineDetails.input'
+import { Query, Resolver, Args } from '@nestjs/graphql'
+import { AoshMachineDetails } from './graphql/machineDetails'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -11,9 +11,12 @@ import { AoshApi } from './aosh.service'
 import { ApiScope } from '@island.is/auth/scopes'
 import { UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
+<<<<<<< HEAD
 import { ChangeMachineOwner } from './graphql/ownerChange.input'
 import { ConfirmOwnerChange } from './graphql/confirmOwnerChange.input'
 import { ChangeMachineSupervisor } from './graphql/changeMachineSupervisor.input'
+=======
+>>>>>>> db/feature-vinnueftirlit
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -24,7 +27,7 @@ export class AoshResolver {
   @Query(() => AoshMachineDetails)
   @Audit()
   async aoshMachineDetails(@CurrentUser() auth: User, @Args('id') id: string) {
-    return await this.aoshApi.getMachineDetails(auth, id)
+    return this.aoshApi.getMachineDetails(auth, id)
   }
 
   @Scopes(ApiScope.internal, ApiScope.internalProcuring)
@@ -36,6 +39,7 @@ export class AoshResolver {
   ) {
     return await this.aoshApi.isPaymentRequired(auth, regNumber)
   }
+<<<<<<< HEAD
 
   @Mutation(() => Boolean)
   async changeMachineOwner(
@@ -81,4 +85,6 @@ export class AoshResolver {
       return false // Operation failed
     }
   }
+=======
+>>>>>>> db/feature-vinnueftirlit
 }

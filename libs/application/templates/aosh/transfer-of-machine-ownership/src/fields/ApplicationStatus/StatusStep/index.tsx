@@ -1,8 +1,9 @@
 import { Box, Tag, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC } from 'react'
-import { review } from '../../../lib/messages'
 import { ReviewScreenProps, ReviewSectionProps } from '../../../shared'
+import { review } from '../../../lib/messages/steps'
+import { review as reviewStatus } from '../../../lib/messages/review'
 
 export const StatusStep: FC<
   React.PropsWithChildren<ReviewSectionProps & ReviewScreenProps>
@@ -51,7 +52,7 @@ export const StatusStep: FC<
           </Box>
           {reviewer.length > 0 &&
             !isComplete &&
-            !!reviewer.find((reviewerItem) => !reviewerItem.approved) && (
+            reviewer.find((reviewerItem) => !reviewerItem.approved) && (
               <Box>
                 {reviewer.map((reviewerItem, index) => {
                   return (
@@ -63,7 +64,7 @@ export const StatusStep: FC<
                     >
                       {reviewerItem.name}{' '}
                       {reviewerNationalId === reviewerItem.nationalId
-                        ? `(${formatMessage(review.status.youLabel)})`
+                        ? `(${formatMessage(reviewStatus.status.youLabel)})`
                         : ''}
                     </Text>
                   )

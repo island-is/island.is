@@ -153,9 +153,25 @@ export const spmm = defineMessages({
 })
 
 export const msg = defineMessages({
+  email: {
+    id: 'sp.settings:email',
+    defaultMessage: 'Netfang',
+  },
   saveEmail: {
     id: 'sp.settings:save-email',
     defaultMessage: 'Vista netfang',
+  },
+  add: {
+    id: 'sp.settings:add',
+    defaultMessage: 'Bæta við',
+  },
+  change: {
+    id: 'sp.settings:change',
+    defaultMessage: 'Breyta',
+  },
+  changeEmail: {
+    id: 'sp.settings:change-email',
+    defaultMessage: 'Breyta netfangi',
   },
   editEmailText: {
     id: 'sp.settings:edit-email-text',
@@ -165,6 +181,14 @@ export const msg = defineMessages({
   saveTel: {
     id: 'sp.settings:save-tel',
     defaultMessage: 'Vista símanúmer',
+  },
+  tel: {
+    id: 'sp.settings:tel',
+    defaultMessage: 'Símanúmer',
+  },
+  changeTel: {
+    id: 'sp.settings:change-tel',
+    defaultMessage: 'Breyta símanúmeri',
   },
   editTelText: {
     id: 'sp.settings:edit-tel-text',

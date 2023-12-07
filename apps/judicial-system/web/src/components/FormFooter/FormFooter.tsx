@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
-import { useRouter } from 'next/router'
+import router from 'next/router'
 
 import {
   Box,
@@ -32,7 +32,6 @@ interface Props {
 }
 
 const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
-  const router = useRouter()
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md

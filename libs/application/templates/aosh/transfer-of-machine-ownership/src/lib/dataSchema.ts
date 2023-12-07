@@ -64,11 +64,10 @@ export const UserInformationSchema = z.intersection(
   }),
 )
 
-export const CoOwnerAndOperatorSchema = z.intersection(
+export const OperatorSchema = z.intersection(
   RemovableUserSchemaBase,
   z.object({
     approved: z.boolean().optional(),
-    type: z.enum(['operator', 'coOwner']),
   }),
 )
 
@@ -76,7 +75,7 @@ export const RejecterSchema = z.object({
   regNumber: z.string(),
   name: z.string(),
   nationalId: z.string(),
-  type: z.enum(['buyer', 'operator']),
+  type: z.enum(['buyer']),
 })
 
 export const MachineAnswersSchema = z.object({
@@ -95,13 +94,14 @@ export const MachineAnswersSchema = z.object({
   pickMachine: z.object({
     index: z.string().optional(),
     id: z.string().min(1),
+    isValid: z.boolean(),
   }),
   location: z.object({
     address: z.string(),
-    postCode: z.number(),
+    postCode: z.number().optional(),
     moreInfo: z.string(),
   }),
-  buyerCoOwnerAndOperator: z.array(CoOwnerAndOperatorSchema),
+  buyerOperator: OperatorSchema.optional(),
   approveExternalData: z.boolean(),
   rejecter: RejecterSchema,
 })

@@ -160,6 +160,22 @@ export const messages = defineMessages({
     id: 'sp.health:health-insurance-status',
     defaultMessage: 'Staða sjúkratryggingar',
   },
+  healthInsuranceConfirmation: {
+    id: 'sp.health:health-insurance-confirmation',
+    defaultMessage: 'Staðfesting á sjúkratryggingu',
+  },
+  healthInsuranceConfirmationButton: {
+    id: 'sp.health:health-insurance-confirmation-button',
+    defaultMessage: 'Sækja staðfestingu',
+  },
+  healthInsuranceConfirmationLoading: {
+    id: 'sp.health:health-insurance-confirmation-loading',
+    defaultMessage: 'Sæki skjal',
+  },
+  healthInsuranceConfirmationTransferError: {
+    id: 'sp.health:health-center-registration-transfer-error-title',
+    defaultMessage: 'Villa hefur komið upp',
+  },
   noHealthInsurance: {
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',
@@ -586,6 +602,14 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  chooseDoctorLabel: {
+    id: 'sp.health:choose-doctor-label',
+    defaultMessage: 'Viltu velja heimilislækni?',
+  },
+  chooseDoctorPlaceholder: {
+    id: 'sp.health:close-placeholder',
+    defaultMessage: 'Heimilislæknir',
+  },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
@@ -813,6 +837,18 @@ export const messages = defineMessages({
   medicineIsValidCertificate: {
     id: 'sp.health:medicine-is-valid-certificate',
     defaultMessage: 'Í gildi',
+  },
+  medicineIsRejectedCertificate: {
+    id: 'sp.health:medicine-is-rejected-certificate',
+    defaultMessage: 'Hafnað',
+  },
+  medicineIsExpiredCertificate: {
+    id: 'sp.health:medicine-is-expired-certificate',
+    defaultMessage: 'Útrunnið',
+  },
+  medicineIsProcessedCertificate: {
+    id: 'sp.health:medicine-is-processed-certificate',
+    defaultMessage: 'Í vinnslu',
   },
   medicineIsNotValidCertificate: {
     id: 'sp.health:medicine-is-not-valid-certificate',

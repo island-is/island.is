@@ -72,10 +72,13 @@ export class TransferOfMachineOwnershipClient {
       auth,
     ).apiMachineCategoryGet({ registrationNumber: regNumber })
 
-    return result.paymentRequiredForOwnerChange
+    return result.paymentRequiredForOwnerChange || false
   }
 
-  public async changeMachineOwner(auth: Auth, ownerChange: ChangeMachineOwner) {
+  public async initiateOwnerChangeProcess(
+    auth: Auth,
+    ownerChange: ChangeMachineOwner,
+  ) {
     const input = apiChangeMachineOwnerToApiRequest(ownerChange)
 
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePost(
@@ -87,7 +90,10 @@ export class TransferOfMachineOwnershipClient {
     auth: Auth,
     confirmChange: ConfirmOwnerChange,
   ) {
-    const input = confirmChangeToApiRequest(confirmChange)
+    const input = confirmChangeToApiRequest(
+      confirmChange,
+      auth.nationalId || '',
+    )
 
     await this.machineOwnerChangeApiWithAuth(auth).apiMachineOwnerChangePut(
       input,

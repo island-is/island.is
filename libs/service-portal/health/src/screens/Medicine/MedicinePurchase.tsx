@@ -43,7 +43,9 @@ export const MedicinePurchase = () => {
   const [selectedPeriod, setSelectedPeriod] =
     useState<RightsPortalDrugPeriod | null>(null)
   const [selectedLineItem, setSelectedLineItem] = useState<string>('')
-  const fetchedLineItems = new Map<string, RightsPortalDrugBillLine[]>()
+  const [fetchedLineItems] = useState(
+    new Map<string, RightsPortalDrugBillLine[]>(),
+  )
   const formatDatePeriod = (dateFrom: Date, dateTo: Date) => {
     if (!dateFrom || !dateTo) return ''
     return `${formatDateFns(dateFrom, DATE_FORMAT)} - ${formatDateFns(
@@ -90,11 +92,11 @@ export const MedicinePurchase = () => {
   }, [data])
 
   return (
-    <MedicineWrapper>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicinePurchase}>
       <Box marginBottom={SECTION_GAP}>
         <IntroHeader
           isSubheading
-          span={['8/8']}
+          span={['8/8', '8/8', '8/8', '5/8', '5/8']}
           title={messages.medicinePurchaseTitle}
           intro={messages.medicinePurchaseIntroText}
         />
@@ -220,200 +222,210 @@ export const MedicinePurchase = () => {
         </LinkResolver>
       </Box>
       <Box>
-        <Text marginBottom={CONTENT_GAP} variant="h5">
-          {formatMessage(messages.medicineBills)}
-        </Text>
         {billsLoading || loading ? (
           <SkeletonLoader repeat={3} borderRadius="large" space={1} />
         ) : (
           bills?.length && (
-            <T.Table data-testid="invoices">
-              <ExpandHeader
-                data={[
-                  { value: '' },
-                  { value: formatMessage(m.date) },
-                  { value: formatMessage(m.explanationNote) },
-                  {
-                    value: (
-                      <Hyphen>
-                        {formatMessage(
-                          messages.medicinePaymentParticipationPrice,
-                        )}
-                      </Hyphen>
-                    ),
-                  },
-                  { value: formatMessage(messages.medicinePaidByCustomer) },
-                ]}
-              />
-              {bills.map((bill, i) => {
-                return (
-                  <T.Body key={i}>
-                    <ExpandRow
-                      expandWhenLoadingFinished={true}
-                      loading={lineItemLoading && bill.id === selectedLineItem}
-                      data={[
-                        { value: formatDateFns(bill.date, DATE_FORMAT) },
-                        { value: bill.description ?? '' },
-                        {
-                          value: amountFormat(bill.totalCopaymentAmount ?? 0),
-                        },
-                        {
-                          value: amountFormat(bill.totalCustomerAmount ?? 0),
-                        },
-                      ]}
-                      onExpandCallback={() => {
-                        if (bill?.id && selectedPeriod?.id) {
-                          setSelectedLineItem(bill.id)
-                          lineItemQuery({
-                            variables: {
-                              input: {
-                                billId: bill.id,
-                                paymentPeriodId: selectedPeriod.id,
-                              },
-                            },
-                            onCompleted: (data) => {
-                              if (bill && bill.id) {
-                                fetchedLineItems.set(
-                                  bill.id,
-                                  data.rightsPortalDrugBillLines,
-                                )
-                              }
-                            },
-                          })
+            <>
+              <Text marginBottom={CONTENT_GAP} variant="h5">
+                {formatMessage(messages.medicineBills)}
+              </Text>
+              <T.Table data-testid="invoices">
+                <ExpandHeader
+                  data={[
+                    { value: '' },
+                    { value: formatMessage(m.date) },
+                    { value: formatMessage(m.explanationNote) },
+                    {
+                      value: (
+                        <Hyphen>
+                          {formatMessage(
+                            messages.medicinePaymentParticipationPrice,
+                          )}
+                        </Hyphen>
+                      ),
+                    },
+                    { value: formatMessage(messages.medicinePaidByCustomer) },
+                  ]}
+                />
+                {bills.map((bill, i) => {
+                  return (
+                    <T.Body key={i}>
+                      <ExpandRow
+                        expandWhenLoadingFinished={true}
+                        loading={
+                          lineItemLoading && bill.id === selectedLineItem
                         }
-                      }}
-                    >
-                      <Box
-                        padding={CONTENT_GAP}
-                        paddingBottom={SECTION_GAP}
-                        background="blue100"
+                        data={[
+                          { value: formatDateFns(bill.date, DATE_FORMAT) },
+                          { value: bill.description ?? '' },
+                          {
+                            value: amountFormat(bill.totalCopaymentAmount ?? 0),
+                          },
+                          {
+                            value: amountFormat(bill.totalCustomerAmount ?? 0),
+                          },
+                        ]}
+                        onExpandCallback={() => {
+                          if (bill?.id && selectedPeriod?.id) {
+                            setSelectedLineItem(bill.id)
+                            lineItemQuery({
+                              variables: {
+                                input: {
+                                  billId: bill.id,
+                                  paymentPeriodId: selectedPeriod.id,
+                                },
+                              },
+                              onCompleted: (data) => {
+                                if (bill && bill.id) {
+                                  fetchedLineItems.set(
+                                    bill.id,
+                                    data.rightsPortalDrugBillLines,
+                                  )
+                                }
+                              },
+                            })
+                          }
+                        }}
                       >
-                        <Text variant="h5" marginBottom={1}>
-                          {formatMessage(messages.medicineDrugLines)}
-                        </Text>
-                        <T.Table>
-                          <T.Head>
-                            <T.Row>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineDrugName)}
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineStrength)}
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineQuantity)}
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineAmount)}
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(messages.medicineSalePrice)}
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  <Hyphen>
+                        <Box
+                          padding={CONTENT_GAP}
+                          paddingBottom={SECTION_GAP}
+                          background="blue100"
+                        >
+                          <Text variant="h5" marginBottom={1}>
+                            {formatMessage(messages.medicineDrugLines)}
+                          </Text>
+                          <T.Table>
+                            <T.Head>
+                              <T.Row>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(messages.medicineDrugName)}
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(messages.medicineStrength)}
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(messages.medicineQuantity)}
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(messages.medicineAmount)}
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(messages.medicineSalePrice)}
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    <Hyphen>
+                                      {formatMessage(
+                                        messages.medicinePaymentParticipationPrice,
+                                      )}
+                                    </Hyphen>
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
+                                    <Hyphen>
+                                      {formatMessage(
+                                        messages.medicineExcessPrice,
+                                      )}
+                                    </Hyphen>
+                                  </span>
+                                </T.HeadData>
+                                <T.HeadData>
+                                  <span className={styles.subTableHeaderText}>
                                     {formatMessage(
-                                      messages.medicinePaymentParticipationPrice,
+                                      messages.medicinePaidByCustomer,
                                     )}
-                                  </Hyphen>
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  <Hyphen>
-                                    {formatMessage(
-                                      messages.medicineExcessPrice,
-                                    )}
-                                  </Hyphen>
-                                </span>
-                              </T.HeadData>
-                              <T.HeadData>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(
-                                    messages.medicinePaidByCustomer,
-                                  )}
-                                </span>
-                              </T.HeadData>
-                            </T.Row>
-                          </T.Head>
-                          <T.Body>
-                            {[...fetchedLineItems].map((item, j) => {
-                              const [billId, lineItems] = item
+                                  </span>
+                                </T.HeadData>
+                              </T.Row>
+                            </T.Head>
+                            <T.Body>
+                              {[...fetchedLineItems].map((item, j) => {
+                                const [billId, lineItems] = item
 
-                              if (billId !== bill.id) return null
-                              return lineItems.map((lineItem, k) => {
-                                return (
-                                  <T.Row key={`${i}-${j}-${k}`}>
-                                    <T.Data>{lineItem.drugName}</T.Data>
-                                    <T.Data>{lineItem.strength}</T.Data>
-                                    <T.Data>{lineItem.quantity}</T.Data>
-                                    <T.Data>{lineItem.units}</T.Data>
-                                    <T.Data>
-                                      {amountFormat(lineItem.salesPrice ?? 0)}
-                                    </T.Data>
-                                    <T.Data>
-                                      {amountFormat(
-                                        lineItem.copaymentAmount ?? 0,
-                                      )}
-                                    </T.Data>
-                                    <T.Data>
-                                      {amountFormat(lineItem.excessAmount ?? 0)}
-                                    </T.Data>
-                                    <T.Data>
-                                      {amountFormat(
-                                        lineItem.customerAmount ?? 0,
-                                      )}
-                                    </T.Data>
-                                  </T.Row>
-                                )
-                              })
-                            })}
-                          </T.Body>
-                          <T.Foot>
-                            <T.Row>
-                              <T.Data>
-                                <span className={styles.subTableHeaderText}>
-                                  {formatMessage(m.total)}
-                                </span>
-                              </T.Data>
-                              <T.Data></T.Data>
-                              <T.Data></T.Data>
-                              <T.Data></T.Data>
-                              <T.Data></T.Data>
-                              <T.Data>
-                                <span className={styles.subTableHeaderText}>
-                                  {amountFormat(bill.totalCopaymentAmount ?? 0)}
-                                </span>
-                              </T.Data>
-                              <T.Data>
-                                <span className={styles.subTableHeaderText}>
-                                  {amountFormat(bill.totalExcessAmount ?? 0)}
-                                </span>
-                              </T.Data>
-                              <T.Data>
-                                <span className={styles.subTableHeaderText}>
-                                  {amountFormat(bill.totalCustomerAmount ?? 0)}
-                                </span>
-                              </T.Data>
-                            </T.Row>
-                          </T.Foot>
-                        </T.Table>
-                      </Box>
-                    </ExpandRow>
-                  </T.Body>
-                )
-              })}
-            </T.Table>
+                                if (billId !== bill.id) return null
+                                return lineItems.map((lineItem, k) => {
+                                  return (
+                                    <T.Row key={`${i}-${j}-${k}`}>
+                                      <T.Data>{lineItem.drugName}</T.Data>
+                                      <T.Data>{lineItem.strength}</T.Data>
+                                      <T.Data>{lineItem.quantity}</T.Data>
+                                      <T.Data>{lineItem.units}</T.Data>
+                                      <T.Data>
+                                        {amountFormat(lineItem.salesPrice ?? 0)}
+                                      </T.Data>
+                                      <T.Data>
+                                        {amountFormat(
+                                          lineItem.copaymentAmount ?? 0,
+                                        )}
+                                      </T.Data>
+                                      <T.Data>
+                                        {amountFormat(
+                                          lineItem.excessAmount ?? 0,
+                                        )}
+                                      </T.Data>
+                                      <T.Data>
+                                        {amountFormat(
+                                          lineItem.customerAmount ?? 0,
+                                        )}
+                                      </T.Data>
+                                    </T.Row>
+                                  )
+                                })
+                              })}
+                            </T.Body>
+                            <T.Foot>
+                              <T.Row>
+                                <T.Data>
+                                  <span className={styles.subTableHeaderText}>
+                                    {formatMessage(m.total)}
+                                  </span>
+                                </T.Data>
+                                <T.Data></T.Data>
+                                <T.Data></T.Data>
+                                <T.Data></T.Data>
+                                <T.Data></T.Data>
+                                <T.Data>
+                                  <span className={styles.subTableHeaderText}>
+                                    {amountFormat(
+                                      bill.totalCopaymentAmount ?? 0,
+                                    )}
+                                  </span>
+                                </T.Data>
+                                <T.Data>
+                                  <span className={styles.subTableHeaderText}>
+                                    {amountFormat(bill.totalExcessAmount ?? 0)}
+                                  </span>
+                                </T.Data>
+                                <T.Data>
+                                  <span className={styles.subTableHeaderText}>
+                                    {amountFormat(
+                                      bill.totalCustomerAmount ?? 0,
+                                    )}
+                                  </span>
+                                </T.Data>
+                              </T.Row>
+                            </T.Foot>
+                          </T.Table>
+                        </Box>
+                      </ExpandRow>
+                    </T.Body>
+                  )
+                })}
+              </T.Table>
+            </>
           )
         )}
       </Box>

@@ -1,41 +1,61 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
-import { FC, useCallback, useEffect } from 'react'
+import { FC, useCallback, useEffect, useState } from 'react'
 import { MachineSelectField } from './MachineSelectField'
 import { MachineRadioField } from './MachineRadioField'
-import { useFormContext } from 'react-hook-form'
-import { useMutation } from '@apollo/client'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useLocale } from '@island.is/localization'
 import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { gql, useApolloClient } from '@apollo/client'
+import { GET_MACHINE_DETAILS } from '../../graphql/queries'
 
 export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
-  const { locale } = useLocale()
-  const { setValue } = useFormContext()
   const { application } = props
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const currentMachineList = application?.externalData.machinesList
-    .data as MachineHateoasDto[]
+  const [isLoading, setIsLoading] = useState(false)
+  const initialMachineList = application?.externalData.machinesList.data as
+    | MachineHateoasDto[]
+    | undefined
 
-  const updateData = useCallback(async () => {
-    await updateApplication({
-      variables: {
-        input: {
-          id: application.id,
-          answers: {
-            sellerCoOwner: [],
-          },
+  const [currentMachineList, setCurrentMachineList] = useState<
+    MachineHateoasDto[]
+  >(initialMachineList || [])
+
+  const client = useApolloClient()
+
+  const getMachineDetails = useCallback(
+    async (machine: MachineHateoasDto) => {
+      const { data } = await client.query({
+        query: gql`
+          ${GET_MACHINE_DETAILS}
+        `,
+        variables: {
+          id: machine.id,
         },
-        locale,
-      },
-    })
-  }, [])
+      })
+
+      return data.aoshMachineDetails
+    },
+    [client],
+  )
+
   useEffect(() => {
-    setValue('sellerCoOwner', [])
-    updateData()
-  }, [setValue])
+    const fetchData = async () => {
+      if (currentMachineList.length <= 5) {
+        setIsLoading(true)
+        const updatedMachines = await Promise.all(
+          currentMachineList.map(async (machine) => {
+            const updatedMachine = await getMachineDetails(machine)
+            return updatedMachine || machine
+          }),
+        )
+        setCurrentMachineList(updatedMachines)
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <Box paddingTop={2}>
       {currentMachineList.length > 5 ? (
@@ -44,7 +64,12 @@ export const MachinesField: FC<React.PropsWithChildren<FieldBaseProps>> = (
           {...props}
         />
       ) : (
-        <MachineRadioField currentMachineList={currentMachineList} {...props} />
+        !isLoading && (
+          <MachineRadioField
+            currentMachineList={currentMachineList}
+            {...props}
+          />
+        )
       )}
     </Box>
   )
