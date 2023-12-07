@@ -82,7 +82,6 @@ export class RenderedNotificationDto {
   @IsString()
   messageId!: string
 
-
   @ApiProperty({ example: 'hnipp' })
   @IsString()
   title!: string
