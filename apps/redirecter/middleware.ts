@@ -22,14 +22,28 @@ const redirects: Record<string, string | ((path: URL) => string)> = {
     `https://beta.dev01.devland.is${p.pathname.replace(/-/g, '/')}`,
 }
 
-const pages = ['/', '/about', '/contact', '/404']
+const noRedirectPaths = [
+  '/',
+  '/about',
+  '/contact',
+  '/404',
+  '/liveness',
+  '/readiness',
+  '/robots.txt',
+  '/_next',
+  '/_nextjs',
+  '/favicon.ico',
+]
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
-  if (pages.includes(pathname)) {
+  const rootPath = request.nextUrl.pathname.split('/').slice(0, 2).join('/')
+  if (noRedirectPaths.includes(rootPath)) {
+    logger.info(`Skipping redirect for ${rootPath}`)
     return NextResponse.next()
   }
+  logger.info(`Handling redirect for ${request.nextUrl}`)
 
   if (!pathname || pathname.search(/^\/r\/?$/) === 0) {
     logger.info(`Redirecting ${request.nextUrl} -> / (root)`)
@@ -37,13 +51,14 @@ export function middleware(request: NextRequest) {
   }
 
   if (!redirects[pathname]) {
-    logger.info(`No redirect found for '${pathname}', redirecting`)
+    logger.info(`No redirect found for '${pathname}', redirecting to /404`)
     return NextResponse.redirect(new URL('/404', request.url))
   }
 
   const redirect = redirects[pathname]
   const destination =
-    typeof redirect === 'string' ? redirect : redirect(request.nextUrl)
+    (typeof redirect === 'string' ? redirect : redirect(request.nextUrl)) +
+    request.nextUrl.search
   logger.info(`Found redirect '${pathname}' -> '${destination}'`)
 
   if (destination.startsWith('/')) {
