@@ -15,6 +15,8 @@ export { default as EmailFormatInputModal } from './ModalTypes/EmailFormatInputM
 export { default as AcceptModal } from './ModalTypes/AcceptModal'
 export { default as AidAmountModal } from './AidAmountModal/AidAmountModal'
 export { default as TableHeaders } from './TableHeaders/TableHeaders'
+export { default as SortableTableHeader } from './TableHeaders/SortableTableHeader'
+
 export {
   TableBody,
   TextTableItem,

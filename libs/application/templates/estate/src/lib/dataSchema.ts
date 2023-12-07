@@ -199,7 +199,9 @@ export const estateSchema = z.object({
     })
     .refine(
       ({ selection, spouse }) => {
-        return selection === YES ? !!spouse?.nationalId : true
+        return selection === YES
+          ? spouse?.nationalId && kennitala.isValid(spouse?.nationalId)
+          : true
       },
       {
         path: ['spouse', 'nationalId'],
@@ -479,7 +481,9 @@ export const estateSchema = z.object({
     .refine(
       ({ name, nationalId, phone, email }) => {
         return name !== '' || phone !== '' || email !== ''
-          ? nationalId && kennitala.isPerson(nationalId)
+          ? nationalId &&
+              kennitala.isPerson(nationalId) &&
+              kennitala.info(nationalId).age >= 18
           : true
       },
       {

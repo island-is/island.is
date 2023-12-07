@@ -81,9 +81,10 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-duplicate/              @island-is/juni
 /libs/application/templates/inheritance-report/                                                          @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/inheritance-report                      @island-is/juni
+/libs/application/templates/signature-collection                                                         @island-is/juni
 /libs/api/domains/disability-license                                                                     @island-is/juni
 /libs/portals/admin/petition                                                                             @island-is/juni
-/libs/application/templates/signature-collection                                                         @island-is/juni
+/libs/portals/admin/signature-collection                                                                 @island-is/juni
 /libs/portals/admin/icelandic-names-registry                                                             @island-is/juni
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 
@@ -239,12 +240,19 @@ libs/clients/rsk/relationships/                                                 
 /apps/consultation-portal/                                                                               @island-is/advania
 /libs/clients/consultation-portal/                                                                       @island-is/advania
 /libs/api/domains/consultation-portal/                                                                   @island-is/advania
+
 /apps/skilavottord/                                                                                      @island-is/deloitte
 /libs/skilavottord/                                                                                      @island-is/deloitte
 /libs/application/templates/parental-leave/                                                              @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/parental-leave/                         @island-is/deloitte
 /libs/clients/vmst/                                                                                      @island-is/deloitte
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
+/libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte
+/libs/application/templates/car-recycling/                                                               @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                          @island-is/deloitte
+/libs/clients/car-recycling/                                                                             @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja

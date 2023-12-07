@@ -313,5 +313,5 @@ export interface TempCaseListEntry
 
 export interface CourtDocument {
   name: string
-  submittedBy: UserRole
+  submittedBy?: UserRole
 }
