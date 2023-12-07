@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { redirects } from './redirects'
 // import { logger } from '@island.is/logging'
 const logger = console
 
@@ -12,15 +13,6 @@ export const config = {
   matcher: `/:path*`,
 }
 logger.info('Redirect config', config)
-
-// TODO: Set up as a database
-const redirects: Record<string, string | ((path: URL) => string)> = {
-  '/test-nx': 'https://nx.dev',
-  '/test-relative': '/foo',
-  '/test-func': (p: URL) => `${p.pathname.replace(/[aeiou]/g, '_')}`,
-  '/test-devland': (p: URL) =>
-    `https://beta.dev01.devland.is${p.pathname.replace(/-/g, '/')}`,
-}
 
 const noRedirectPaths = [
   '/',
@@ -68,7 +60,7 @@ export function middleware(request: NextRequest) {
     const url = new URL(
       destination,
       request.nextUrl.origin.replace(
-        new RegExp(`${redirectSubdomain}\\.(dev|staging)\\d+\.devland\\.is`),
+        new RegExp(`${redirectSubdomain}\\.(dev|staging)\\d+\\.devland\\.is`),
         '$1.dev01.devland.is',
       ),
     )

@@ -1,4 +1,4 @@
-import { ref, service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
+import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 
 export const serviceSetup = (): ServiceBuilder<'redirecter'> =>
   service('redirecter')
@@ -19,8 +19,8 @@ export const serviceSetup = (): ServiceBuilder<'redirecter'> =>
     .ingress({
       primary: {
         host: {
-          dev: ['redirect'],
-          staging: ['redirect'],
+          dev: ['r', 'redirect'],
+          staging: ['r', 'redirect'],
           prod: ['r.island.is', 'redirect.island.is'],
         },
         extraAnnotations: {
