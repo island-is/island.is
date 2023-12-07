@@ -1,14 +1,11 @@
+import { User } from '@island.is/auth-nest-tools'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { UserProfile, UserProfileApi } from '@island.is/clients/user-profile'
 import { EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { InjectWorker, WorkerService } from '@island.is/message-queue'
-import {
-  FeatureFlagService,
-  Features,
-  UserWithAttributes,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Inject, Injectable, OnApplicationBootstrap } from '@nestjs/common'
 import { join } from 'path'
 import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
@@ -179,12 +176,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     const allowEmailNotification = await this.featureFlagService.getValue(
       Features.isNotificationEmailWorkerEnabled,
       false,
-      {
-        id: nationalId,
-        attributes: {
-          nationalId,
-        },
-      },
+      { nationalId } as User,
     )
 
     if (!allowEmailNotification) {

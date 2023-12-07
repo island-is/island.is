@@ -58,15 +58,7 @@ export class ApplicationValidationService {
   }
 
   async isTemplateFeatureFlaggedReady(featureFlag: Features, user?: User) {
-    return await this.featureFlagService.getValue(
-      featureFlag,
-      false,
-      user
-        ? {
-            id: user.nationalId,
-          }
-        : undefined,
-    )
+    return await this.featureFlagService.getValue(featureFlag, false, user)
   }
 
   // Determines if a template is ready based on the presence of a configcat flag or the readyForProduction flag.

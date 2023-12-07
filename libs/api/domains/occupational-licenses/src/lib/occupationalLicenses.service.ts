@@ -276,7 +276,7 @@ export class OccupationalLicensesService {
     const allowHealthDirectorate = await this.featureFlagService.getValue(
       Features.occupationalLicensesHealthDirectorate,
       false,
-      { id: user.nationalId },
+      user,
     )
     const errors: OccupationalLicensesError[] = []
     const items: Array<EducationalLicense | HealthDirectorateLicense> = []

@@ -296,9 +296,7 @@ export class ApplicationAccessService {
       featureAllowed = await this.featureFlagService.getValue(
         delegation.featureFlag,
         false,
-        {
-          id: user.nationalId,
-        },
+        user,
       )
     }
 

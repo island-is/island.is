@@ -1,4 +1,4 @@
-import { FeatureFlagUser } from '@island.is/feature-flags'
+import { User } from '@island.is/auth-nest-tools'
 import { ApplicationAccessService } from '../tools/applicationAccess.service'
 import { Test } from '@nestjs/testing'
 import { ApplicationService } from '@island.is/application/api/core'
@@ -86,15 +86,15 @@ describe('ApplicationAccesService', () => {
             getValue(
               feature: Features,
               defaultValue: boolean | string,
-              user?: FeatureFlagUser,
+              user?: User,
             ) {
-              if (user?.id === procurationHolderUser.nationalId) {
+              if (user?.nationalId === procurationHolderUser.nationalId) {
                 if (feature === Features.testing) {
                   return true
                 }
               }
 
-              if (user?.id === legalGuardianUser.nationalId) {
+              if (user?.nationalId === legalGuardianUser.nationalId) {
                 if (feature === Features.testing) {
                   return false
                 }

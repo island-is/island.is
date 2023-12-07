@@ -35,7 +35,7 @@ export class UserProfileController {
     const fetchUserProfileClaims = await this.featureFlagService.getValue(
       Features.userProfileClaims,
       false,
-      { id: user.nationalId },
+      user,
     )
     return this.userProfileService.getUserProfileClaims(
       user,

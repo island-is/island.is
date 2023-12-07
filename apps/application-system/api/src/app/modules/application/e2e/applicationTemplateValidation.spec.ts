@@ -1,5 +1,4 @@
 import type { User } from '@island.is/auth-nest-tools'
-import { FeatureFlagUser } from '@island.is/feature-flags'
 import { ApplicationValidationService } from '../tools/applicationTemplateValidation.service'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Test } from '@nestjs/testing'
@@ -21,13 +20,13 @@ describe('ApplicationTemplateValidation', () => {
             getValue(
               feature: Features,
               defaultValue: boolean | string,
-              user?: FeatureFlagUser,
+              user?: User,
             ) {
               if (feature === Features.exampleApplication) {
                 return true
               }
               if (feature === Features.accidentNotification) {
-                if (user?.id === '1234567890') {
+                if (user?.nationalId === '1234567890') {
                   return true
                 }
                 return false

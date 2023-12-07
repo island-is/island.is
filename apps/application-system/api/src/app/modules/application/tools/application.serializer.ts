@@ -58,9 +58,7 @@ export class ApplicationSerializer
           const showHistory = await this.featureFlagService.getValue(
             Features.applicationSystemHistory,
             false,
-            {
-              id: user.nationalId,
-            },
+            user,
           )
 
           let histories: History[] = []
