@@ -159,7 +159,9 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     </Text>
                   )}
                   <Box marginTop={[3, 3, 5]}>
-                    <Text variant="eyebrow" marginBottom={2}>Flýtileiðir</Text>
+                    <Text variant="eyebrow" marginBottom={2}>
+                      Flýtileiðir
+                    </Text>
                     <Inline space={2}>
                       {featured.map(
                         ({
@@ -171,9 +173,10 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                           attention: boolean
                           thing: any
                         }) => {
-                          const cardUrl = linkResolver(thing?.type as LinkType, [
-                            thing?.slug,
-                          ])
+                          const cardUrl = linkResolver(
+                            thing?.type as LinkType,
+                            [thing?.slug],
+                          )
                           return cardUrl?.href && cardUrl?.href.length > 0 ? (
                             <Tag
                               key={title}
@@ -197,7 +200,11 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                               {title}
                             </Tag>
                           ) : (
-                            <Tag key={title} variant="blue" attention={attention}>
+                            <Tag
+                              key={title}
+                              variant="blue"
+                              attention={attention}
+                            >
                               {title}
                             </Tag>
                           )
@@ -206,7 +213,12 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     </Inline>
                   </Box>
                 </Box>
-                <Box className="rs_read" paddingTop={[6, 8, 10]} borderTopWidth="standard" borderColor="blue200">
+                <Box
+                  className="rs_read"
+                  paddingTop={[6, 8, 10]}
+                  borderTopWidth="standard"
+                  borderColor="blue200"
+                >
                   {webRichText(
                     content as SliceType[],
                     {
