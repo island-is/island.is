@@ -59,27 +59,38 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         //   ],
         //   status: NotificationStatus.UNREAD,
         // }
-
         const notification = { messageId, ...message }
-        this.logger.info('notification setup for db 1.1', {
-          notification,
-          messageId,
-        })
-        // write to db
-        try {
-          const res = await this.notificationModel.create(notification as any)
-          if (res) {
-            this.logger.info('notification written to db 1.1', {
-              notification,
-              messageId,
-            })
-          }
-        } catch (e) {
-          this.logger.error('error writing notification to db 1.1', {
-            e,
-            messageId,
+        const messageIdExists = await this.notificationModel.count({
+          where: { messageId },
+        });
+        
+        if (messageIdExists > 0) {
+          // messageId exists do nothing
+          this.logger.info('notification written to db 1.1', {
+            messageId
           })
+        } else {
+          // messageId does not exist
+          // write to db
+          try {
+              const res = await this.notificationModel.create(notification as any)
+              if (res) {
+                this.logger.info('notification written to db 1.1', {
+                  notification,
+                  messageId,
+                })
+              }
+            } catch (e) {
+              this.logger.error('error writing notification to db 1.1', {
+                e,
+                messageId,
+              })
+            }
         }
+
+        
+
+        
 
         const profile =
           await this.userProfileApi.userTokenControllerFindOneByNationalId({

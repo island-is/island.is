@@ -44,6 +44,7 @@ module.exports = {
     })
 
     await queryInterface.addIndex('user_notification', ['recipient']) // Adding index
+    await queryInterface.addIndex('user_notification', ['message_id']) // Adding index
   },
 
   down: async (queryInterface, Sequelize) => {
