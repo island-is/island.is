@@ -1,8 +1,14 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  getTextStyles,
+  LoadingDots,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import {
@@ -46,6 +52,9 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
+  // The id of the case that's about to be opened
+  const [isOpeningCaseId, setIsOpeningCaseId] = useState<string>()
+
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
 
@@ -56,6 +65,20 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
       ),
     [cases],
   )
+
+  const handleRowClick = (id: string) => {
+    if (isOpeningCaseId === id || !user?.role) {
+      return
+    }
+
+    setIsOpeningCaseId(undefined)
+
+    setTimeout(() => {
+      setIsOpeningCaseId(id)
+    }, 2000)
+
+    // onRowClick(id)
+  }
 
   const { width } = useViewport()
 
@@ -109,6 +132,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
           </th>
           <TableHeaderText title={formatMessage(tables.state)} />
           <TableHeaderText title={formatMessage(tables.duration)} />
+          <th></th>
         </>
       }
     >
@@ -116,7 +140,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
         return (
           <tr
             className={styles.row}
-            onClick={() => onRowClick(column.id)}
+            onClick={() => handleRowClick(column.id)}
             key={column.id}
           >
             <td>
@@ -164,6 +188,19 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   column.rulingDate,
                 )}
               </Text>
+            </td>
+            <td className={styles.loadingContainer}>
+              <AnimatePresence>
+                {isOpeningCaseId === column.id && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <LoadingDots single />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </td>
           </tr>
         )

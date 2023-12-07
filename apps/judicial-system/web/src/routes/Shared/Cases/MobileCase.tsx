@@ -53,7 +53,7 @@ const CategoryCard: React.FC<React.PropsWithChildren<CategoryCardProps>> = ({
             exit={{ opacity: 0 }}
             className={styles.loadingContainer}
           >
-            <LoadingDots />
+            <LoadingDots single />
           </motion.div>
         )}
       </AnimatePresence>

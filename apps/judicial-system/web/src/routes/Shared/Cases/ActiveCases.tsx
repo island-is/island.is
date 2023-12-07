@@ -392,7 +392,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                       >
-                        <LoadingDots />
+                        <LoadingDots single />
                       </motion.div>
                     )}
                   </AnimatePresence>
