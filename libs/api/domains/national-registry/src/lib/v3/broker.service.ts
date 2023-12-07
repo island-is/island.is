@@ -168,10 +168,9 @@ export class BrokerService {
       ? parentData.forsja.born
       : []
 
-    const k = children
+    return children
       .map((c) => formatChildCustody(c, useFakeData))
       .filter(isDefined)
-    return k
   }
 
   async getChildDetails(
@@ -186,8 +185,6 @@ export class BrokerService {
     if (!child) {
       return null
     }
-
-    this.logger.debug(JSON.stringify(child))
 
     return formatPersonDiscriminated(child)
   }
