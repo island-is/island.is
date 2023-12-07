@@ -4,6 +4,8 @@ import { ILifeEventPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
+import { Organization, mapOrganization } from './organization.model'
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class LifeEventPage {
@@ -37,6 +39,12 @@ export class LifeEventPage {
   @CacheField(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
 
+  @CacheField(() => [Link], { nullable: true })
+  featuredLinks?: Link[] | null
+
+  @CacheField(() => [Organization], { nullable: true })
+  organizations?: Organization[] | null
+
   @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
@@ -62,6 +70,8 @@ export const mapLifeEventPage = ({
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
+  featuredLinks: (fields.featuredLinks ?? []).map(mapLink),
+  organizations: (fields.organizations ?? []).map(mapOrganization),
   category: fields.category ? mapArticleCategory(fields.category) : null,
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
