@@ -1,7 +1,7 @@
 import { InfraController } from '@island.is/infra-nest-server'
-import { LOGGER_PROVIDER,Logger } from '@island.is/logging';
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { Controller, Get, Inject, Injectable } from '@nestjs/common'
-import { Sequelize } from 'sequelize-typescript';
+import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 @Controller()
@@ -10,19 +10,21 @@ export class UserNotificationsInfraController extends InfraController {
     private sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    ) {
+  ) {
     super()
   }
 
   @Get('/readiness')
   async readiness(): Promise<{ ok: boolean }> {
     try {
-      await this.sequelize.authenticate();
-      this.logger.info('readiness: Connection to the database has been established successfully.');
-      return { ok: true };
+      await this.sequelize.authenticate()
+      this.logger.info(
+        'readiness: Connection to the database has been established successfully.',
+      )
+      return { ok: true }
     } catch (error) {
-      this.logger.error('readiness: Unable to connect to the database:', error);
-      return { ok: false };
+      this.logger.error('readiness: Unable to connect to the database:', error)
+      return { ok: false }
     }
-  } 
+  }
 }

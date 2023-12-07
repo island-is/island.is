@@ -6,7 +6,6 @@ import {
   UseGuards,
   Patch,
   Controller,
-
 } from '@nestjs/common'
 import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
@@ -34,10 +33,7 @@ import { Documentation } from '@island.is/nest/swagger'
   version: '1',
 })
 export class MeNotificationsController {
-  constructor(
-    private readonly notificationService: NotificationsService,
-  ) {}
-
+  constructor(private readonly notificationService: NotificationsService) {}
 
   @Get()
   @Documentation({
@@ -84,6 +80,11 @@ export class MeNotificationsController {
     @Body() updateNotificationDto: UpdateNotificationDto,
     @Query('locale') locale: string,
   ): Promise<RenderedNotificationDto> {
-    return this.notificationService.update(user, id, updateNotificationDto,locale)
+    return this.notificationService.update(
+      user,
+      id,
+      updateNotificationDto,
+      locale,
+    )
   }
 }

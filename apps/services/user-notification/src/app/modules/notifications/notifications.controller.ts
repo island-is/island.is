@@ -170,6 +170,4 @@ export class NotificationsController {
     })
     return { id }
   }
-
- 
 }
