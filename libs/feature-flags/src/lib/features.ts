@@ -19,6 +19,7 @@ export enum Features {
   oldAgePensionApplication = 'isOldAgePensionEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
+  carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
 
   // Application System Delegations active
