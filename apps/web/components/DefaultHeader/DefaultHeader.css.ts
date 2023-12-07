@@ -48,7 +48,6 @@ export const textInnerContainer = style({
       paddingLeft: '60px',
       paddingRight: '16px',
       paddingBottom: '105px',
-      zIndex: 1,
       justifyContent: 'center',
     },
   }),
@@ -76,6 +75,7 @@ export const logoContainer = style({
   left: '7%',
   display: 'grid',
   placeItems: 'center',
+  zIndex: 1,
 })
 
 export const logo = style({
@@ -110,4 +110,8 @@ export const logoContainerMobile = style({
   placeItems: 'center',
   margin: '0 auto',
   marginBottom: '4px',
+})
+
+export const title = style({
+  zIndex: 1,
 })
