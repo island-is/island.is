@@ -724,6 +724,7 @@ application-system-api:
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
+    RECYCLING_FUND_GQL_BASE_PATH: '/k8s/skilavottord-ws/RECYCLING_FUND_GQL_BASE_PATH'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
