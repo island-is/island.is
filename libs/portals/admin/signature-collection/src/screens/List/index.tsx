@@ -5,11 +5,7 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import {
-  GridColumn,
-  GridContainer,
-  GridRow,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import Signees from './components/Signees'
 import PaperUpload from './components/PaperUpload'
 import header from '../../../assets/headerImage.svg'
