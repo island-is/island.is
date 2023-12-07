@@ -18,11 +18,9 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
-  AnchorNavigation,
   BackgroundImage,
   Form,
   HeadWithSocialSharing,
-  Sticky,
   WatsonChatPanel,
 } from '@island.is/web/components'
 import {
@@ -35,17 +33,14 @@ import {
   QueryGetLifeEventPageArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
-import { createNavigation } from '@island.is/web/utils/navigation'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
+import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
 import { Locale } from 'locale'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
 import { Webreader } from '@island.is/web/components'
-import { DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN } from '@island.is/web/constants'
 import { watsonConfig } from '../AnchorPage/config'
 
 interface LifeEventPageProps {
@@ -64,14 +59,13 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
   useContentfulId(id)
   useLocalLinkTypeResolver()
 
-  usePlausiblePageview(DIGITAL_ICELAND_PLAUSIBLE_TRACKING_DOMAIN)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const n = useNamespace(namespace)
-  const { linkResolver } = useLinkResolver()
   const router = useRouter()
   const { activeLocale } = useI18n()
   const sectionCountRef = useRef<number>(0)
+  const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
 
   const breadcrumbItems = useMemo(() => {
     const items: BreadCrumbItem[] = [
@@ -82,41 +76,13 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
       },
     ]
 
-    const overviewUrl = router.asPath.slice(0, router.asPath.lastIndexOf('/'))
-
-    // If we're viewing the digital iceland services we need to change the breadcrumbs
-    if (
-      linkResolver('digitalicelandservices', [], locale).href === overviewUrl
-    ) {
-      items.push({
-        title: n('digitalIceland', 'Stafrænt Ísland'),
-        href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
-      })
-      items.push({
-        title: n('digitalIcelandServices', 'Þjónusta'),
-        href: overviewUrl,
-      })
-    } else if (
-      linkResolver('digitalicelandcommunityoverview', [], locale).href ===
-      overviewUrl
-    ) {
-      items.push({
-        title: n('digitalIceland', 'Stafrænt Ísland'),
-        href: overviewUrl.slice(0, overviewUrl.lastIndexOf('/')),
-      })
-      items.push({
-        title: n('digitalIcelandCommunity', 'Ísland.is samfélagið'),
-        href: overviewUrl,
-      })
-    } else {
-      items.push({
-        title: n('lifeEvents', 'Lífsviðburðir'),
-        href: overviewUrl,
-      })
-    }
+    items.push({
+      title: n('lifeEvents', 'Lífsviðburðir'),
+      href: overviewUrl,
+    })
 
     return items
-  }, [])
+  }, [n, overviewUrl])
 
   const socialImage = featuredImage ?? image
 
