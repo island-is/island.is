@@ -137,74 +137,76 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     }}
                   />
                 </Box>
-                <Text variant="h1" as="h1">
-                  <span className="rs_read" id={slugify(title)}>
-                    {title}
-                  </span>
-                </Text>
-
-                <Webreader
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  readId={null}
-                  readClass="rs_read"
-                />
-
-                {intro && (
-                  <Text variant="intro" as="p" paddingTop={2}>
-                    <span className="rs_read" id={slugify(intro)}>
-                      {intro}
+                <Box paddingBottom={[4, 4, 6]}>
+                  <Text variant="h1" as="h1">
+                    <span className="rs_read" id={slugify(title)}>
+                      {title}
                     </span>
                   </Text>
-                )}
-                <Box className="rs_read" marginTop={2}>
-                  <Inline space={2}>
-                    {featured.map(
-                      ({
-                        title,
-                        attention,
-                        thing,
-                      }: {
-                        title: string
-                        attention: boolean
-                        thing: any
-                      }) => {
-                        const cardUrl = linkResolver(thing?.type as LinkType, [
-                          thing?.slug,
-                        ])
-                        return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                          <Tag
-                            key={title}
-                            {...(cardUrl.href.startsWith('/')
-                              ? {
-                                  CustomLink: ({ children, ...props }) => (
-                                    <Link
-                                      key={title}
-                                      {...props}
-                                      {...cardUrl}
-                                      dataTestId="featured-link"
-                                    >
-                                      {children}
-                                    </Link>
-                                  ),
-                                }
-                              : { href: cardUrl.href })}
-                            variant="blue"
-                            attention={attention}
-                          >
-                            {title}
-                          </Tag>
-                        ) : (
-                          <Tag key={title} variant="blue" attention={attention}>
-                            {title}
-                          </Tag>
-                        )
-                      },
-                    )}
-                  </Inline>
-                </Box>
 
-                <Box className="rs_read" paddingTop={[3, 3, 4]}>
+                  <Webreader
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore make web strict
+                    readId={null}
+                    readClass="rs_read"
+                  />
+
+                  {intro && (
+                    <Text variant="intro" as="p" paddingTop={2}>
+                      <span className="rs_read" id={slugify(intro)}>
+                        {intro}
+                      </span>
+                    </Text>
+                  )}
+                  <Box className="rs_read" marginTop={[3, 3, 5]}>
+                    <Text variant="eyebrow" marginBottom={2}>Flýtileiðir</Text>
+                    <Inline space={2}>
+                      {featured.map(
+                        ({
+                          title,
+                          attention,
+                          thing,
+                        }: {
+                          title: string
+                          attention: boolean
+                          thing: any
+                        }) => {
+                          const cardUrl = linkResolver(thing?.type as LinkType, [
+                            thing?.slug,
+                          ])
+                          return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                            <Tag
+                              key={title}
+                              {...(cardUrl.href.startsWith('/')
+                                ? {
+                                    CustomLink: ({ children, ...props }) => (
+                                      <Link
+                                        key={title}
+                                        {...props}
+                                        {...cardUrl}
+                                        dataTestId="featured-link"
+                                      >
+                                        {children}
+                                      </Link>
+                                    ),
+                                  }
+                                : { href: cardUrl.href })}
+                              variant="blue"
+                              attention={attention}
+                            >
+                              {title}
+                            </Tag>
+                          ) : (
+                            <Tag key={title} variant="blue" attention={attention}>
+                              {title}
+                            </Tag>
+                          )
+                        },
+                      )}
+                    </Inline>
+                  </Box>
+                </Box>
+                <Box className="rs_read" paddingTop={[6, 8, 10]} borderTopWidth="standard" borderColor="blue200">
                   {webRichText(
                     content as SliceType[],
                     {
