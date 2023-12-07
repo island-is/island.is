@@ -267,6 +267,9 @@
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
       ],
+      "@island.is/application/templates/car-recycling": [
+        "libs/application/templates/car-recycling/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
@@ -500,6 +503,9 @@
       ],
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
+      ],
+      "@island.is/clients/car-recycling": [
+        "libs/clients/car-recycling/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
