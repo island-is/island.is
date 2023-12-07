@@ -191,6 +191,9 @@
       "@island.is/api/domains/ship-registry": [
         "libs/api/domains/ship-registry/src/index.ts"
       ],
+      "@island.is/api/domains/signature-collection": [
+        "libs/api/domains/signature-collection/src/index.ts"
+      ],
       "@island.is/api/domains/statistics": [
         "libs/api/domains/statistics/src/index.ts"
       ],
@@ -263,6 +266,9 @@
       ],
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
+      ],
+      "@island.is/application/templates/car-recycling": [
+        "libs/application/templates/car-recycling/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -408,6 +414,12 @@
       "@island.is/application/templates/signature-collection/signature-list-signing": [
         "libs/application/templates/signature-collection/signature-list-signing/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration-core/*": [
+        "libs/application/templates/social-insurance-administration/core/src/*"
+      ],
+      "@island.is/application/templates/social-insurance-administration/old-age-pension": [
+        "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/anonymity-in-vehicle-registry": [
         "libs/application/templates/transport-authority/anonymity-in-vehicle-registry/src/index.ts"
       ],
@@ -491,6 +503,9 @@
       ],
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
+      ],
+      "@island.is/clients/car-recycling": [
+        "libs/clients/car-recycling/src/index.ts"
       ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
@@ -602,6 +617,9 @@
       ],
       "@island.is/clients/smartsolutions": [
         "libs/clients/smartsolutions/src/index.ts"
+      ],
+      "@island.is/clients/social-insurance-administration": [
+        "libs/clients/social-insurance-administration/src/index.ts"
       ],
       "@island.is/clients/statistics": ["libs/clients/statistics/src/index.ts"],
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
@@ -779,6 +797,9 @@
       ],
       "@island.is/portals/admin/service-desk": [
         "libs/portals/admin/service-desk/src/index.ts"
+      ],
+      "@island.is/portals/admin/signature-collection": [
+        "libs/portals/admin/signature-collection/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [
