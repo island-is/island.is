@@ -1,5 +1,7 @@
 import { InfraController } from '@island.is/infra-nest-server'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
+
 import { Controller, Get, Inject, Injectable } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 
