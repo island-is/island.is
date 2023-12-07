@@ -77,7 +77,7 @@ export const ApplicationsOverviewProcessed = () => {
             activeFilters={activeFilters}
             onChecked={onChecked}
             onFilterClear={onFilterClear}
-            results={totalCount}
+            results={totalCount ?? 0}
           />
         )}
 
