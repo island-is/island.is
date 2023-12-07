@@ -9,7 +9,7 @@ export const restrictionLength = defineMessages({
       'Notaður sem titill fyrir "Breyta lengd" hluta í gæsluvarðhalds-, vistunar- og farbannsmálum.',
   },
   title: {
-    id: 'judicial.system.core:restriction_lenght.isolation_title',
+    id: 'judicial.system.core:restriction_length.isolation_title',
     defaultMessage: 'Einangrun',
     description:
       'Notaður sem titill fyrir "Takmarkanir á gæslu" hlutann á úrskurðar skrefi í gæsluvarðhalds- og farbannsmálum.',
