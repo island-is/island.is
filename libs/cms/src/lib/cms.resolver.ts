@@ -27,7 +27,6 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
 import { GetAnchorPageInput } from './dto/getAnchorPage.input'
 import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
-import { GetAnchorPagesInCategoryInput } from './dto/getAnchorPagesInCategory.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
@@ -341,17 +340,6 @@ export class CmsResolver {
     @Args('input') input: GetAnchorPagesInput,
   ): Promise<AnchorPage[]> {
     return this.cmsContentfulService.getAnchorPages(input.lang)
-  }
-
-  @CacheControl(defaultCache)
-  @Query(() => [AnchorPage])
-  getAnchorPagesInCategory(
-    @Args('input') input: GetAnchorPagesInCategoryInput,
-  ): Promise<AnchorPage[]> {
-    return this.cmsContentfulService.getAnchorPagesInCategory(
-      input.lang,
-      input.slug,
-    )
   }
 
   @CacheControl(defaultCache)

@@ -24,13 +24,12 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
-  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
+  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
-  GetAnchorPagesInCategoryQuery,
   GetNamespaceQuery,
   GetArticlesQuery,
   QueryGetArticlesArgs,
@@ -38,10 +37,11 @@ import {
   QueryGetNamespaceArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
-  QueryGetAnchorPagesInCategoryArgs,
   Image,
   ArticleGroup,
   Article,
+  GetLifeEventsInCategoryQuery,
+  QueryGetLifeEventsInCategoryArgs,
 } from '@island.is/web/graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
@@ -55,7 +55,7 @@ import {
 import { hasProcessEntries } from '@island.is/web/utils/article'
 
 type Articles = GetArticlesQuery['getArticles']
-type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
+type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
 interface CategoryProps {
   articles: Articles
@@ -570,7 +570,7 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles: articles },
     },
     {
-      data: { getAnchorPagesInCategory: lifeEvents },
+      data: { getLifeEventsInCategory: lifeEvents },
     },
     {
       data: { getArticleCategories },
@@ -588,10 +588,10 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<
-      GetAnchorPagesInCategoryQuery,
-      QueryGetAnchorPagesInCategoryArgs
+      GetLifeEventsInCategoryQuery,
+      QueryGetLifeEventsInCategoryArgs
     >({
-      query: GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
+      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
       variables: {
         input: {
           slug,

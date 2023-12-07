@@ -666,39 +666,6 @@ export class CmsContentfulService {
     return items.map(mapAnchorPage)
   }
 
-  async getAnchorPagesInCategory(
-    lang: string,
-    slug: string,
-  ): Promise<AnchorPage[]> {
-    const params = {
-      ['content_type']: 'anchorPage',
-      'fields.category.sys.contentType.sys.id': 'articleCategory',
-      'fields.category.fields.slug': slug,
-    }
-
-    let items = []
-
-    const { items: anchorPageItems } = await this.contentfulRepository
-      .getLocalizedEntries<types.IAnchorPageFields>(lang, params)
-      .catch(errorHandler('getAnchorPagesInCategory'))
-
-    items = anchorPageItems as types.IAnchorPage[]
-
-    // Fallback to lifeEventPage
-    if (!items.length) {
-      const { items: lifeEventItems } = await this.contentfulRepository
-        .getLocalizedEntries<types.IAnchorPageFields>(lang, {
-          ...params,
-          ['content_type']: 'lifeEventPage',
-        })
-        .catch(errorHandler('getAnchorPagesInCategory'))
-
-      items = lifeEventItems as types.ILifeEventPage[]
-    }
-
-    return items.map(mapAnchorPage)
-  }
-
   async getLifeEventPage(
     slug: string,
     lang: string,

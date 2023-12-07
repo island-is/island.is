@@ -42,26 +42,3 @@ export const GET_ANCHOR_PAGES_QUERY = gql`
     }
   }
 `
-
-export const GET_ANCHOR_PAGES_IN_CATEGORY_QUERY = gql`
-  query GetAnchorPagesInCategory($input: GetAnchorPagesInCategoryInput!) {
-    getAnchorPagesInCategory(input: $input) {
-      id
-      title
-      slug
-      intro
-      category {
-        title
-        slug
-      }
-      thumbnail {
-        url
-        title
-      }
-      image {
-        url
-        title
-      }
-    }
-  }
-`
