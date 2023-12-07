@@ -99,6 +99,8 @@ import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/drivi
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { CarRecyclingModule } from './car-recycling/car-recycling.module'
+import { CarRecyclingService } from './car-recycling/car-recycling.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -150,6 +152,7 @@ export const modules = [
   DrivingLearnersPermitModule,
   DrivingLicenseDuplicateModule,
   SocialInsuranceAdministrationModule,
+  CarRecyclingModule,
   CitizenshipModule,
   EnergyFundsModule,
 ]
@@ -204,6 +207,7 @@ export const services = [
   DrivingLearnersPermitService,
   DrivingLicenseDuplicateService,
   SocialInsuranceAdministrationService,
+  CarRecyclingService,
   CitizenshipService,
   EnergyFundsService,
 ]
