@@ -59,23 +59,21 @@ const FilterPopover = ({
                 <Text fontWeight="semiBold" marginBottom={1}>
                   Staða
                 </Text>
-                {stateOptions.map((state) => {
-                  const stateName = getState[state]
-                  return (
-                    <Checkbox
-                      name={stateName}
-                      label={stateName}
-                      checked={applicationState.includes(state)}
-                      onChange={(event) =>
-                        onChecked(
-                          state,
-                          event.target.checked,
-                          FilterType.APPLICATIONSTATE,
-                        )
-                      }
-                    />
-                  )
-                })}
+                {stateOptions.map((state) => (
+                  <Checkbox
+                    name={getState[state]}
+                    label={getState[state]}
+                    key={`state-${state}`}
+                    checked={applicationState.includes(state)}
+                    onChange={(event) =>
+                      onChecked(
+                        state,
+                        event.target.checked,
+                        FilterType.APPLICATIONSTATE,
+                      )
+                    }
+                  />
+                ))}
               </Stack>
 
               <Box paddingY={3}>
@@ -90,6 +88,7 @@ const FilterPopover = ({
                   <Checkbox
                     name={staffMember.name}
                     label={staffMember.name}
+                    key={`state-${staffMember.nationalId}`}
                     checked={staff.includes(staffMember.nationalId)}
                     onChange={(event) =>
                       onChecked(
