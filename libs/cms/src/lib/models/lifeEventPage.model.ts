@@ -42,7 +42,6 @@ export class LifeEventPage {
   @CacheField(() => [Featured])
   featured?: Array<Featured>
 
-
   @CacheField(() => [Organization])
   organizations?: Array<Organization>
 
