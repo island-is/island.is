@@ -62,7 +62,7 @@ const ActivationButtonTableItem = (
 const usePseudoName = (
   nationalId: string,
   name: string,
-  usePseudoName: boolean,
+  usePseudoName?: boolean,
 ) => {
   return (
     <Box display="flex" alignItems="center">

@@ -1,6 +1,4 @@
-import { useContext } from 'react'
 import words from '@island.is/financial-aid-web/veita/src/utils/words'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 const wordsLength = words.length - 1
 
@@ -12,7 +10,7 @@ const randomNumberFromSeed = (seed: number): number => {
 const GenerateName = (
   nationalId: string,
   name: string,
-  usePseudoName: boolean,
+  usePseudoName?: boolean,
 ): string => {
   return usePseudoName
     ? `${words[Number(nationalId) % wordsLength]} ${

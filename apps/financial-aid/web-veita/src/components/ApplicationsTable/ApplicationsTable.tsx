@@ -136,7 +136,7 @@ const ApplicationsTable = ({
                       usePseudoName(
                         item.nationalId,
                         item.name,
-                        admin?.staff?.usePseudoName ?? false,
+                        admin?.staff?.usePseudoName,
                       ),
                       State(item.state),
                       TextTableItem(

@@ -625,33 +625,6 @@ export class ApplicationService {
           }
         : { model: StaffModel, as: 'staff' }
 
-    // if (filters.months.length > 0) {
-    //   const date = new Date()
-    //   const currentYear = date.getFullYear()
-    //   const currentMonth = date.getMonth()
-
-    //   whereOptions[Op.or] = filters.months.map((month) =>
-    //     Sequelize.and(
-    //       Sequelize.where(
-    //         Sequelize.fn(
-    //           'date_part',
-    //           'month',
-    //           Sequelize.col('ApplicationModel.created'),
-    //         ),
-    //         (month + 1).toString(),
-    //       ),
-    //       Sequelize.where(
-    //         Sequelize.fn(
-    //           'date_part',
-    //           'year',
-    //           Sequelize.col('ApplicationModel.created'),
-    //         ),
-    //         (month > currentMonth ? currentYear - 1 : currentYear).toString(),
-    //       ),
-    //     ),
-    //   )
-    // }
-
     const results = await this.applicationModel.findAndCountAll({
       where: whereOptions,
       order: [['modified', 'DESC']],

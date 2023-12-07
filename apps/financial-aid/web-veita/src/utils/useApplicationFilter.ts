@@ -52,7 +52,6 @@ const useApplicationFilter = (
       })
       .catch(() => {
         console.log('ERROR')
-        // TODO
       })
   }
 
