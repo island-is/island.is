@@ -2,7 +2,7 @@ import { defineMessages } from 'react-intl'
 
 export const restrictionLength = defineMessages({
   caseType: {
-    id: 'judicial.system.core:restriction_lenght.case_type',
+    id: 'judicial.system.core:restriction_length.case_type',
     defaultMessage:
       '{caseType, select, ADMISSION_TO_FACILITY {vistun} TRAVEL_BAN {farbann} other {gæsluvarðhald}}',
     description:
