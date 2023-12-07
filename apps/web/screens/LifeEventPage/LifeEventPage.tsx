@@ -158,7 +158,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                       </span>
                     </Text>
                   )}
-                  <Box className="rs_read" marginTop={[3, 3, 5]}>
+                  <Box marginTop={[3, 3, 5]}>
                     <Text variant="eyebrow" marginBottom={2}>Flýtileiðir</Text>
                     <Inline space={2}>
                       {featured.map(
