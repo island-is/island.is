@@ -9,7 +9,7 @@ import { GridColumn, GridContainer, GridRow } from '@island.is/island-ui/core'
 import Signees from './components/Signees'
 import PaperUpload from './components/PaperUpload'
 import header from '../../../assets/headerImage.svg'
-import ActionRewiewComplete from './components/actionReviewComplete'
+import ActionReviewComplete from './components/actionReviewComplete'
 import ActionExtendDeadline from './components/actionExtendDeadline'
 
 const List = () => {
@@ -50,7 +50,7 @@ const List = () => {
               <ActionExtendDeadline endTime={list.endTime} />
               <Signees />
               <PaperUpload />
-              <ActionRewiewComplete />
+              <ActionReviewComplete />
             </>
           )}
         </GridColumn>
