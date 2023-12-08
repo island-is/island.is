@@ -5,6 +5,7 @@ query getIntellectualPropertiesTrademarkById(
     vmId
     text
     type
+    typeReadable
     subType
     status
     canRenew

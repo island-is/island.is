@@ -157,7 +157,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <Divider />
           <UserInfoLine
             label={ipMessages.type}
-            content={ip?.type ?? ''}
+            content={ip?.typeReadable ?? ''}
             loading={loading}
           />
           <Divider />

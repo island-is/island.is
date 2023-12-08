@@ -33,6 +33,7 @@ export class IntellectualPropertiesService {
           text: t.text ?? '',
           status: t.status ?? '',
           type: mapTrademarkType(t.type) ?? undefined,
+          typeReadable: t.type ?? '',
           subType: mapTrademarkSubtype(t) ?? undefined,
           vmId: t.vmid,
           applicationDate: parseDateIfValid(t.applicationDate),
