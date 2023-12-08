@@ -17,6 +17,8 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
 import { customCurrencyFormat } from '../../lib/utils'
+import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
+import { getMarketValueShare } from '../../utils/getMarketValueShare'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -61,28 +63,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) => {
-      const assets = getValueViaPath(answers, 'estate.assets')
-
-      if (Array.isArray(assets) && assets.length > 0) {
-        const sum = assets.reduce((acc, cur) => {
-          const marketValue = parseFloat(cur?.marketValue ?? 0)
-          const share = parseFloat(cur?.share ?? 0)
-
-          if (share === 0) {
-            return acc
-          }
-
-          acc += marketValue * (share > 1 ? share / 100 : 1)
-
-          return acc
-        }, 0)
-
-        return formatCurrency(String(sum))
-      }
-
-      return ''
-    },
+    description: ({ answers }: Application) => getMarketValueShare(answers),
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
@@ -513,29 +494,3 @@ export const overviewAssetsAndDebts = [
   }),
   buildDividerField({}),
 ]
-
-const getSumFromAnswers = <T = unknown>(
-  answers: Application['answers'],
-  path: string,
-  field: string,
-  fn?: (item: T) => boolean,
-): string | null => {
-  let arr: T[] = getValueViaPath(answers, path) ?? []
-
-  if (Array.isArray(arr)) {
-    if (fn) {
-      arr = arr.filter(fn)
-    }
-
-    const value = arr.reduce((acc, cur) => {
-      const val = (getValueViaPath(cur as RecordObject, field) as number) ?? 0
-      return acc + Number(val)
-    }, 0)
-
-    if (value && value > 0) {
-      return formatCurrency(String(value))
-    }
-  }
-
-  return null
-}
