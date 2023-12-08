@@ -13,7 +13,7 @@ export const SocialInsuranceAdministrationClientConfig = defineConfig({
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
-      'TR_XROAD_PATH',
+      'XROAD_TR_PATH',
       'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
     ),
     fetch: {
