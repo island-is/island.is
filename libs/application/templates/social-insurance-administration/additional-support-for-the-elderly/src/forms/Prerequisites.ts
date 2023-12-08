@@ -3,11 +3,13 @@ import {
   buildExternalDataProvider,
   buildForm,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import {
   Form,
   FormModes,
   NationalRegistryUserApi,
+  DefaultEvents,
 } from '@island.is/application/types'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
@@ -21,8 +23,7 @@ export const PrerequisitesForm: Form = buildForm({
   title: additionalSupportForTheElderyFormMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: false,
-  renderLastScreenBackButton: false,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'externalData',
@@ -37,6 +38,19 @@ export const PrerequisitesForm: Form = buildForm({
               .externalDataDescription,
           checkboxLabel:
             additionalSupportForTheElderyFormMessage.pre.checkboxProvider,
+          submitField: buildSubmitField({
+            id: 'submit',
+            placement: 'footer',
+            title: additionalSupportForTheElderyFormMessage.pre.startApplication,
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: additionalSupportForTheElderyFormMessage.pre.startApplication,
+                type: 'primary',
+              },
+            ],
+          }),  
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,

@@ -36,6 +36,11 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
+    prerequisitesSection: {
+      id: 'asfte.application:prerequisites.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
+    },
     externalDataSection: {
       id: 'asfte.application:externalData.section',
       defaultMessage: 'Gagnaöflun',
@@ -78,6 +83,98 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       id: 'asfte.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
+    },
+  }),
+
+  confirm: defineMessages({
+    section: {
+      id: 'asfte.application:confirmation.section',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation',
+    },
+    title: {
+      id: 'asfte.application:confirmation.title',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Review and submit',
+    },
+    description: {
+      id: 'asfte.application:confirm.description',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'Please review the application before submitting.',
+    },
+    buttonEdit: {
+      id: 'asfte.application:button.edit',
+      defaultMessage: 'Breyta umsókn',
+      description: 'Edit application',
+    },
+    additionalDocumentsAttachment: {
+      id: 'asfte.application:additional.documents.attachment',
+      defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
+      description: 'Additional documents to Tryggingastofnunar',
+    },
+  }),
+
+  fileUpload: defineMessages({
+    title: {
+      id: 'asfte.application:fileUpload.title',
+      defaultMessage: 'Fylgiskjöl',
+      description: 'Attachments',
+    },
+    attachmentButton: {
+      id: 'asfte.application:fileUpload.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Upload file',
+    },
+    attachmentHeader: {
+      id: 'asfte.application:fileUpload.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag files here to upload',
+    },
+    attachmentDescription: {
+      id: 'asfte.application:fileUpload.attachment.description',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
+      description: 'Accepted documents with the following extensions: .pdf',
+    },
+    attachmentMaxSizeError: {
+      id: 'asfte.application:fileUpload.attachment.maxSizeError',
+      defaultMessage: 'Hámark 5 MB á skrá',
+      description: 'Max 5 MB per file',
+    },
+    additionalFileTitle: {
+      id: 'asfte.application:fileUpload.additionalFile.title',
+      defaultMessage: 'Viðbótagögn',
+      description: 'Additional attachments',
+    },
+    additionalFileDescription: {
+      id: 'asfte.application:fileUpload.additionalFile.description',
+      defaultMessage:
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
+  }),
+
+  comment: defineMessages({
+    additionalInfoTitle: {
+      id: 'asfte.application:comment.additional.info.title',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
+    commentSection: {
+      id: 'asfte.application:comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    description: {
+      id: 'asfte.application:comment.description',
+      defaultMessage: 'Hafir þú einhverja athugasemd skildu hana eftir hér.',
+      description: 'If you have any comments, leave them here.',
+    },
+    placeholder: {
+      id: 'asfte.application:comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
     },
   }),
 }
