@@ -17,6 +17,7 @@ export enum Features {
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
   oldAgePensionApplication = 'isOldAgePensionEnable',
+  householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
