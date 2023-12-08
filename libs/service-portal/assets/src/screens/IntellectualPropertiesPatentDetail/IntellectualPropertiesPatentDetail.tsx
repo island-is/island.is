@@ -129,7 +129,7 @@ const IntellectualPropertiesPatentDetail = () => {
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.applicationDate
-                      ? formatDate(ip.lifecycle.applicationDate, 'dd.MM.yy')
+                      ? formatDate(ip.lifecycle.applicationDate)
                       : ''}
                   </Text>
                   <Text>Umsókn</Text>
@@ -137,7 +137,7 @@ const IntellectualPropertiesPatentDetail = () => {
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.registrationDate
-                      ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
+                      ? formatDate(ip.lifecycle.registrationDate)
                       : ''}
                   </Text>
                   <Text>Skráning</Text>
@@ -173,13 +173,13 @@ const IntellectualPropertiesPatentDetail = () => {
                   {
                     title: 'Umsóknardagur',
                     value: ip?.lifecycle.applicationDate
-                      ? formatDate(ip.lifecycle.applicationDate, 'dd.MM.yy')
+                      ? formatDate(ip.lifecycle.applicationDate)
                       : '',
                   },
                   {
                     title: 'Umsóknarnúmer',
                     value: ip?.applicationNumber
-                      ? formatDate(ip?.applicationNumber, 'dd.MM.yy')
+                      ? formatDate(ip?.applicationNumber)
                       : '',
                   },
                   {
@@ -211,7 +211,7 @@ const IntellectualPropertiesPatentDetail = () => {
                   {
                     title: 'Skráningardagur',
                     value: ip?.lifecycle.registrationDate
-                      ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
+                      ? formatDate(ip.lifecycle.registrationDate)
                       : '',
                   },
                   {

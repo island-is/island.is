@@ -190,10 +190,7 @@ const IntellectualPropertiesDesignDetail = () => {
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.internationalRegistrationDate
-                      ? formatDate(
-                          ip.lifecycle.internationalRegistrationDate,
-                          'dd.MM.yy',
-                        )
+                      ? formatDate(ip.lifecycle.internationalRegistrationDate)
                       : ''}
                   </Text>
                   <Text>
@@ -203,7 +200,7 @@ const IntellectualPropertiesDesignDetail = () => {
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.expiryDate
-                      ? formatDate(ip.lifecycle.expiryDate, 'dd.MM.yy')
+                      ? formatDate(ip.lifecycle.expiryDate)
                       : ''}
                   </Text>
                   <Text>{formatMessage(ipMessages.expires)}</Text>
@@ -218,10 +215,7 @@ const IntellectualPropertiesDesignDetail = () => {
                         ipMessages.internationalRegistrationDate,
                       ),
                       value: ip?.lifecycle.internationalRegistrationDate
-                        ? formatDate(
-                            ip.lifecycle.internationalRegistrationDate,
-                            'dd.MM.yy',
-                          )
+                        ? formatDate(ip.lifecycle.internationalRegistrationDate)
                         : '',
                     },
                     {
@@ -235,7 +229,7 @@ const IntellectualPropertiesDesignDetail = () => {
                     {
                       title: 'Umsóknardagur',
                       value: ip?.lifecycle.registrationDate
-                        ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
+                        ? formatDate(ip.lifecycle.registrationDate)
                         : '',
                     },
                     {

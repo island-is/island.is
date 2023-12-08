@@ -67,6 +67,10 @@ const IntellectualPropertiesTrademarkDetail = () => {
     return <EmptyState />
   }
 
+  const categories = ip?.markCategories?.filter(
+    (c) => !!c.categoryDescription && !!c.categoryNumber,
+  )
+
   return (
     <>
       <Box marginBottom={[1, 1, 3]}>
@@ -190,7 +194,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   <Stack key="list-item-application-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.applicationDate
-                        ? formatDate(ip.lifecycle.applicationDate, 'dd.MM.yy')
+                        ? formatDate(ip.lifecycle.applicationDate)
                         : ''}
                     </Text>
                     <Text>Umsókn</Text>
@@ -198,7 +202,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   <Stack key="list-item-publish-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.publishDate
-                        ? formatDate(ip.lifecycle.publishDate, 'dd.MM.yy')
+                        ? formatDate(ip.lifecycle.publishDate)
                         : ''}
                     </Text>
                     <Text>Birting</Text>
@@ -220,7 +224,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   <Stack key="list-item-registrationDate" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.registrationDate
-                        ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
+                        ? formatDate(ip.lifecycle.registrationDate)
                         : ''}
                     </Text>
                     <Text>Skráning</Text>
@@ -228,7 +232,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   <Stack key="list-item-expiration-date" space="smallGutter">
                     <Text variant="h5">
                       {ip?.lifecycle.expiryDate
-                        ? formatDate(ip?.lifecycle.expiryDate, 'dd.MM.yy')
+                        ? formatDate(ip?.lifecycle.expiryDate)
                         : ''}
                     </Text>
                     <Text>Gildir til</Text>
@@ -240,49 +244,16 @@ const IntellectualPropertiesTrademarkDetail = () => {
                 dataArray={chunk(
                   [
                     {
-                      title: 'Umsóknardagur',
-                      value: ip?.lifecycle.applicationDate
-                        ? formatDate(ip.lifecycle.applicationDate, 'dd.MM.yy')
-                        : '',
-                    },
-                    {
                       title: 'Umsóknarnúmer',
-                      value: ip?.vmId ? formatDate(ip?.vmId, 'dd.MM.yy') : '',
-                    },
-                    {
-                      title: 'Birtingardagur',
-                      value: ip?.lifecycle.publishDate
-                        ? formatDate(ip.lifecycle.publishDate, 'dd.MM.yy')
-                        : '',
+                      value: ip?.vmId ? formatDate(ip?.vmId) : '',
                     },
                     {
                       title: 'Myndflokkur',
                       value: ip?.imageCategories ?? '',
                     },
                     {
-                      title: 'Andmælafrestur',
-                      value: ip?.lifecycle.maxValidObjectionDate
-                        ? formatDate(
-                            ip.lifecycle.maxValidObjectionDate,
-                            'dd.MM.yy',
-                          )
-                        : '',
-                    },
-                    {
                       title: 'Merkið er í lit',
                       value: ip?.isColorMark ? 'Já' : 'Nei',
-                    },
-                    {
-                      title: 'Skráningardagur',
-                      value: ip?.lifecycle.registrationDate
-                        ? formatDate(ip.lifecycle.registrationDate, 'dd.MM.yy')
-                        : '',
-                    },
-                    {
-                      title: 'Gildir til',
-                      value: ip?.lifecycle.expiryDate
-                        ? formatDate(ip.lifecycle.expiryDate, 'dd.MM.yy')
-                        : '',
                     },
                   ].filter(isDefined),
                   2,
@@ -305,24 +276,26 @@ const IntellectualPropertiesTrademarkDetail = () => {
           />
           <Divider />
         </Stack>
-        <Stack space="p2">
-          <UserInfoLine
-            title="Umboðsmaður"
-            label="Nafn"
-            content={ip?.markAgent?.name ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label="Heimilisfang"
-            content={ip?.markAgent?.address ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
+        {ip?.markAgent?.name && ip?.markAgent.address && (
+          <Stack space="p2">
+            <UserInfoLine
+              title="Umboðsmaður"
+              label="Nafn"
+              content={ip?.markAgent?.name ?? ''}
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
+              label="Heimilisfang"
+              content={ip?.markAgent?.address ?? ''}
+              loading={loading}
+            />
+            <Divider />
+          </Stack>
+        )}
 
-        {ip?.markCategories?.length && (
-          <Accordion dividerOnBottom dividerOnTop={false} space={3}>
+        {!!categories?.length && (
+          <Accordion dividerOnTop={false} space={3}>
             {ip?.markCategories
               ?.map((category, index) => {
                 if (!category.categoryNumber) {
@@ -342,13 +315,6 @@ const IntellectualPropertiesTrademarkDetail = () => {
               .filter(isDefined)}
           </Accordion>
         )}
-        <Text variant="small" paddingBottom={2}>
-          Lorem ipsum dolor sit amet consectetur. Sem libero at mi feugiat diam.
-          Turpis quam dignissim eleifend lectus venenatis. Nullam et aliquet
-          augue ultrices dignissim nibh. Orci justo diam tincidunt et ut.
-          Egestas tincidunt aliquam consectetur feugiat lectus. Risus fringilla
-          vitae nec id lectus ullamcorper.
-        </Text>
       </Stack>
     </>
   )
