@@ -560,6 +560,7 @@ application-system-api:
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     NOVA_USERNAME: 'IslandIs_User_Production'
+    RECYCLING_FUND_GQL_BASE_PATH: 'http://web-skilavottord-ws.skilavottord.svc.cluster.local'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
@@ -714,7 +715,6 @@ application-system-api:
     ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE'
     NOVA_PASSWORD: '/k8s/application-system/api/NOVA_PASSWORD'
     NOVA_URL: '/k8s/application-system-api/NOVA_URL'
-    RECYCLING_FUND_GQL_BASE_PATH: '/k8s/skilavottord-ws/RECYCLING_FUND_GQL_BASE_PATH'
     SYSLUMENN_HOST: '/k8s/application-system-api/SYSLUMENN_HOST'
     SYSLUMENN_PASSWORD: '/k8s/application-system/api/SYSLUMENN_PASSWORD'
     SYSLUMENN_USERNAME: '/k8s/application-system/api/SYSLUMENN_USERNAME'
@@ -2319,6 +2319,8 @@ skilavottord-ws:
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces:
     - 'nginx-ingress-external'
+    - 'nginx-ingress-internal'
+    - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:

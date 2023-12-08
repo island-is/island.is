@@ -119,6 +119,7 @@ export const workerSetup =
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
+  skilavottordWs: ServiceBuilder<'skilavottord-ws'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -233,6 +234,9 @@ export const serviceSetup = (services: {
         staging: 'https://identity-server.staging01.devland.is/api',
         prod: 'https://innskra.island.is/api',
       },
+      RECYCLING_FUND_GQL_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.skilavottordWs)}`,
+      ),
     })
     .xroad(
       Base,
@@ -298,8 +302,6 @@ export const serviceSetup = (services: {
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_USERNAME',
       ALTHINGI_OMBUDSMAN_XROAD_PASSWORD:
         '/k8s/api/ALTHINGI_OMBUDSMAN_XROAD_PASSWORD',
-      RECYCLING_FUND_GQL_BASE_PATH:
-        '/k8s/skilavottord-ws/RECYCLING_FUND_GQL_BASE_PATH',
     })
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],

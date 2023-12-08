@@ -46,3 +46,8 @@ export const serviceSetup = (): ServiceBuilder<'skilavottord-ws'> =>
         paths: ['/app/skilavottord/api/graphql'],
       },
     })
+    .grantNamespaces(
+      'nginx-ingress-external',
+      'nginx-ingress-internal',
+      'islandis',
+    )
