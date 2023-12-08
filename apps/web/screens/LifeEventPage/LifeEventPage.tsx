@@ -139,7 +139,10 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                 </Box>
                 <Box paddingBottom={[4, 4, 6]}>
                   <Text variant="h1" as="h1">
-                    <span className="rs_read" id={slugify(lifeEvent?.title ?? '')}>
+                    <span
+                      className="rs_read"
+                      id={slugify(lifeEvent?.title ?? '')}
+                    >
                       {lifeEvent?.title}
                     </span>
                   </Text>
@@ -165,11 +168,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                       </Text>
                       <Inline space={2}>
                         {lifeEvent?.featured.map(
-                          ({
-                            title,
-                            attention,
-                            thing,
-                          }) => {
+                          ({ title, attention, thing }) => {
                             const cardUrl = linkResolver(
                               thing?.type as LinkType,
                               [thing?.slug ?? ''],
