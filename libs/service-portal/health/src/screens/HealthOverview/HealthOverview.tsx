@@ -5,11 +5,11 @@ import {
 } from './HealthOverview.generated'
 import {
   ErrorScreen,
-  SYSLUMENN_SLUG,
   IntroHeader,
   UserInfoLine,
   amountFormat,
   m,
+  downloadLink,
   SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
@@ -67,10 +67,7 @@ export const HealthOverview = () => {
     const downloadData = data.data?.rightsPortalInsuranceConfirmation.items[0]
 
     if (downloadData?.data && downloadData.fileName) {
-      const downloadLink = document.createElement('a')
-      downloadLink.href = 'data:application/pdf;base64,' + downloadData?.data
-      downloadLink.download = downloadData.fileName
-      downloadLink.click()
+      downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
     }
   }
 

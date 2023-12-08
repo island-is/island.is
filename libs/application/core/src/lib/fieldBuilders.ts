@@ -33,6 +33,7 @@ import {
   SelectField,
   SubmitField,
   TextField,
+  ImageField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -250,6 +251,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
   } = data
   return {
     ...extractCommonFields(data),
@@ -264,6 +266,7 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
   }
@@ -503,23 +506,12 @@ export function buildExpandableDescriptionField(
 export function buildAlertMessageField(
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField {
-  const {
-    id,
-    title,
-    message,
-    alertType,
-    condition,
-    marginTop,
-    marginBottom,
-    links,
-  } = data
+  const { message, alertType, marginTop, marginBottom, links } = data
   return {
+    ...extractCommonFields(data),
     children: undefined,
-    id,
-    title,
     message,
     alertType,
-    condition,
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     marginTop,
@@ -557,5 +549,35 @@ export function buildPaymentChargeOverviewField(
     getSelectedChargeItems,
     type: FieldTypes.PAYMENT_CHARGE_OVERVIEW,
     component: FieldComponents.PAYMENT_CHARGE_OVERVIEW,
+  }
+}
+
+export function buildImageField(
+  data: Omit<ImageField, 'type' | 'component' | 'children'>,
+): ImageField {
+  const {
+    id,
+    title,
+    image,
+    alt,
+    marginTop,
+    marginBottom,
+    condition,
+    imageWidth = 'full',
+    titleVariant = 'h4',
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    image,
+    alt,
+    imageWidth,
+    marginTop,
+    marginBottom,
+    condition,
+    titleVariant,
+    type: FieldTypes.IMAGE,
+    component: FieldComponents.IMAGE,
   }
 }

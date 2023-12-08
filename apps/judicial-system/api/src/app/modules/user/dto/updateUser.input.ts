@@ -11,30 +11,30 @@ export class UpdateUserInput implements UpdateUser {
   readonly id!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly name?: string
+  @Field()
+  readonly name!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly title?: string
+  @Field()
+  readonly title!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly mobileNumber?: string
+  @Field()
+  readonly mobileNumber!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly email?: string
+  @Field()
+  readonly email!: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly role?: UserRole
+  @Field(() => String)
+  readonly role!: UserRole
 
   @Allow()
-  @Field({ nullable: true })
-  readonly institutionId?: string
+  @Field()
+  readonly institutionId!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly active?: boolean
+  @Field()
+  readonly active!: boolean
 }

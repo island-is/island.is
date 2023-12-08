@@ -17,7 +17,7 @@ const asset = z
     marketValue: z.string(),
     initial: z.boolean(),
     enabled: z.boolean(),
-    share: z.number().optional(),
+    share: z.number(),
   })
   .refine(
     ({ enabled, marketValue }) => {
@@ -33,6 +33,14 @@ const asset = z
     },
     {
       path: ['assetNumber'],
+    },
+  )
+  .refine(
+    ({ share }) => {
+      return share ? share > 0 && share <= 100 : true
+    },
+    {
+      path: ['share'],
     },
   )
   .refine(
@@ -191,7 +199,9 @@ export const estateSchema = z.object({
     })
     .refine(
       ({ selection, spouse }) => {
-        return selection === YES ? !!spouse?.nationalId : true
+        return selection === YES
+          ? spouse?.nationalId && kennitala.isValid(spouse?.nationalId)
+          : true
       },
       {
         path: ['spouse', 'nationalId'],
@@ -227,6 +237,7 @@ export const estateSchema = z.object({
     .object({
       accountNumber: z.string(),
       balance: z.string(),
+      total: z.number().optional(),
     })
     .refine(
       ({ accountNumber, balance }) => {
@@ -252,6 +263,7 @@ export const estateSchema = z.object({
     .object({
       publisher: z.string(),
       value: z.string(),
+      nationalId: z.string().optional(),
     })
     .refine(
       ({ publisher, value }) => {
@@ -267,6 +279,16 @@ export const estateSchema = z.object({
       },
       {
         path: ['publisher'],
+      },
+    )
+    .refine(
+      ({ nationalId }) => {
+        return nationalId && nationalId !== ''
+          ? kennitala.isValid(nationalId)
+          : true
+      },
+      {
+        path: ['nationalId'],
       },
     )
     .array()
@@ -459,7 +481,9 @@ export const estateSchema = z.object({
     .refine(
       ({ name, nationalId, phone, email }) => {
         return name !== '' || phone !== '' || email !== ''
-          ? nationalId && kennitala.isPerson(nationalId)
+          ? nationalId &&
+              kennitala.isPerson(nationalId) &&
+              kennitala.info(nationalId).age >= 18
           : true
       },
       {
@@ -501,5 +525,6 @@ export const estateSchema = z.object({
     ),
 
   confirmAction: z.array(z.enum([YES])).length(1),
+  confirmActionAssetsAndDebt: z.array(z.enum([YES])).length(1),
   confirmActionUndividedEstate: z.array(z.enum([YES])).length(1),
 })

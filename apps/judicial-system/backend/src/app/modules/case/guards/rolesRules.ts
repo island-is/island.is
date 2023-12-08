@@ -96,6 +96,9 @@ const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
   'appealConclusion',
   'appealRulingDecision',
   'appealRulingModifiedHistory',
+  'appealValidToDate',
+  'isAppealCustodyIsolation',
+  'appealIsolationToDate',
 ]
 
 const limitedAccessFields: (keyof UpdateCaseDto)[] = ['defendantStatementDate']

@@ -4,6 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
 import { ChartComponent } from '@island.is/web/graphql/schema'
 
+import { BASE_ACCORDION_HEIGHT, CHART_HEIGHT } from '../constants'
 import { ChartComponentType, ChartType } from '../types'
 import { formatDate, formatValueForPresentation } from './format'
 
@@ -83,3 +84,16 @@ export const getCartesianGridComponents = (
         />,
       ]
     : null
+
+export const calculateChartSkeletonLoaderHeight = (
+  isCard: boolean,
+  isExpanded: boolean,
+) => {
+  if (!isCard) {
+    return CHART_HEIGHT
+  }
+
+  return isExpanded
+    ? CHART_HEIGHT + BASE_ACCORDION_HEIGHT
+    : BASE_ACCORDION_HEIGHT
+}

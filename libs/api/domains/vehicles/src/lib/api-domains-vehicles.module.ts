@@ -7,6 +7,7 @@ import { VehiclesMileageResolver } from './api-domains-vehicles-mileage.resolver
 import { VehiclesService } from './api-domains-vehicles.service'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { VehiclesSharedResolver } from './api-domains-vehicles-shared.resolver'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
   providers: [
@@ -15,7 +16,12 @@ import { VehiclesSharedResolver } from './api-domains-vehicles-shared.resolver'
     VehiclesMileageResolver,
     VehiclesService,
   ],
-  imports: [VehiclesClientModule, VehiclesMileageClientModule, AuthModule],
+  imports: [
+    VehiclesClientModule,
+    VehiclesMileageClientModule,
+    AuthModule,
+    FeatureFlagModule,
+  ],
   exports: [VehiclesService],
 })
 export class VehiclesModule {}

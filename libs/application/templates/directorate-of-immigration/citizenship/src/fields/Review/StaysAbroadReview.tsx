@@ -53,12 +53,14 @@ export const StaysAbroadReview: FC<Props> = ({
           {answers?.staysAbroad?.hasStayedAbroad === YES &&
           answers?.staysAbroad?.selectedAbroadCountries &&
           answers?.staysAbroad?.selectedAbroadCountries?.length > 0 ? (
-            answers?.staysAbroad?.selectedAbroadCountries?.map((country) => {
-              const countryInfo = countryOptions.filter(
-                (z) => z.id?.toString() === country.countryId,
-              )[0]
-              return <GridColumn span="1/2">{countryInfo.name}</GridColumn>
-            })
+            answers?.staysAbroad?.selectedAbroadCountries
+              ?.filter((x) => !x.wasRemoved)
+              ?.map((country) => {
+                const countryInfo = countryOptions.filter(
+                  (z) => z.id?.toString() === country.countryId,
+                )[0]
+                return <GridColumn span="1/2">{countryInfo.name}</GridColumn>
+              })
           ) : (
             <GridColumn>
               <Text>
