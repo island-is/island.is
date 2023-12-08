@@ -136,9 +136,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   >([])
   const [query, setQuery] = useState('')
   const searchTermHasBeenInitialized = useRef(false)
-  const [filteredResults, setFilteredResults] = useState<
-    Array<Fuse.FuseResult<UniversityGatewayProgram>>
-  >(
+  const [filteredResults, setFilteredResults] = useState<Array<any>>(
     data.map((item: UniversityGatewayProgram, index: number) => {
       return { item, refIndex: index, score: 1 }
     }),
@@ -227,10 +225,11 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [filters, query])
 
   const resetFilteredList = () => {
-    const resultProducts: Array<Fuse.FuseResult<UniversityGatewayProgram>> =
-      data.map((item: UniversityGatewayProgram, index: number) => {
+    const resultProducts: Array<any> = data.map(
+      (item: UniversityGatewayProgram, index: number) => {
         return { item, refIndex: index, score: 1 }
-      })
+      },
+    )
     setFilteredResults(resultProducts)
   }
 
@@ -424,9 +423,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                             const str = filter.field as keyof typeof filters
 
                             if (str === 'universityId') {
-                              keyField = universities.filter(
-                                (x) => x.id === option,
-                              )[0].contentfulTitle
+                              keyField =
+                                universities.filter((x) => x.id === option)[0]
+                                  .contentfulTitle || ''
                             }
                             if (keyField !== 'OTHER') {
                               return (
@@ -550,7 +549,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                               {n(
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
-                                      .contentfulTitle
+                                      .contentfulTitle || ''
                                   : item,
                                 option.field === 'universityId'
                                   ? universities.filter((x) => x.id === item)[0]
@@ -610,9 +609,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   let keyField = option
 
                                   if (str === 'universityId') {
-                                    keyField = universities.filter(
-                                      (x) => x.id === option,
-                                    )[0].contentfulTitle
+                                    keyField =
+                                      universities.filter(
+                                        (x) => x.id === option,
+                                      )[0].contentfulTitle || ''
                                   }
                                   return {
                                     label: `${n(keyField, keyField)}${
@@ -689,6 +689,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                     )
                     .map((item, index) => {
                       const dataItem = item.item
+                      console.log('dataItem', dataItem)
                       return (
                         <Box marginBottom={3} key={index}>
                           <ActionCategoryCard
@@ -713,7 +714,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                 src={
                                   universities.filter(
                                     (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl
+                                  )[0].contentfulLogoUrl || ''
                                 }
                                 alt={`Logo fyrir ${
                                   locale === 'en'
@@ -733,9 +734,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       locale === 'en'
                                         ? dataItem.nameEn
                                         : dataItem.nameIs,
-                                    iconSrc: universities.filter(
-                                      (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl,
+                                    iconSrc:
+                                      universities.filter(
+                                        (x) => x.id === dataItem.universityId,
+                                      )[0].contentfulLogoUrl || '',
                                   })
                                 }
                                 checked={
@@ -870,7 +872,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                   src={
                                     universities.filter(
                                       (x) => x.id === dataItem.universityId,
-                                    )[0].contentfulLogoUrl
+                                    )[0].contentfulLogoUrl || ''
                                   }
                                   alt={`Logo fyrir ${
                                     locale === 'en'
@@ -886,9 +888,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                     locale === 'en'
                                       ? dataItem.nameEn
                                       : dataItem.nameIs,
-                                  iconSrc: universities.filter(
-                                    (x) => x.id === dataItem.universityId,
-                                  )[0].contentfulLogoUrl,
+                                  iconSrc:
+                                    universities.filter(
+                                      (x) => x.id === dataItem.universityId,
+                                    )[0].contentfulLogoUrl || '',
                                 })
                               }
                               checked={
@@ -1218,6 +1221,8 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
     await apolloClient.query<GetUniversityGatewayUniversitiesQuery>({
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     })
+
+  console.log('universities', universities)
 
   return {
     data,

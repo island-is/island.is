@@ -174,11 +174,15 @@ export class CmsContentfulService {
 
   async getOrganizationLogos(
     organizationTitles: string[],
+    searchByKey?: boolean,
   ): Promise<Array<string | null>> {
+    const fieldParam = searchByKey
+      ? 'fields.referenceIdentifier[in]'
+      : 'fields.title[in]'
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.logo,fields.title',
-      'fields.title[in]': organizationTitles.join(','),
+      select: 'fields.logo,fields.title,fields.referenceIdentifier',
+      [fieldParam]: organizationTitles.join(','),
     }
 
     const result = await this.contentfulRepository
@@ -189,9 +193,16 @@ export class CmsContentfulService {
       if (!result.items) {
         return null
       } else {
-        const organization = result.items.find(
-          (item) => item.fields.title === title,
-        )
+        let organization
+        if (searchByKey) {
+          organization = result.items.find(
+            (item) => item.fields.referenceIdentifier === title,
+          )
+        } else {
+          organization = result.items.find(
+            (item) => item.fields.title === title,
+          )
+        }
 
         const image = organization?.fields.logo
           ? mapImage(organization?.fields.logo)
@@ -202,31 +213,30 @@ export class CmsContentfulService {
     })
   }
 
-  async getOrganizationStortTitles(
-    organizationTitles: string[],
+  async getOrganizationTitles(
+    organizationKeys: string[],
   ): Promise<Array<string | null>> {
     const params = {
       ['content_type']: 'organization',
-      select: 'fields.shortTitle,fields.title',
-      'fields.title[in]': organizationTitles.join(','),
+      select: 'fields.title,fields.referenceIdentifier',
+      'fields.referenceIdentifier[in]': organizationKeys.join(','),
     }
 
     const result = await this.contentfulRepository
       .getLocalizedEntries<types.IOrganizationFields>(null, params)
-      .catch(errorHandler('getOrganizationsShortTitle'))
+      .catch(errorHandler('getOrganizationsTitle'))
 
-    return organizationTitles.map((title) => {
+    return organizationKeys.map((key) => {
       if (!result.items) {
         return null
       } else {
         const organization = result.items.find(
-          (item) => item.fields.title === title,
+          (item) => item.fields.referenceIdentifier === key,
         )
 
-        const shortTitle =
-          organization?.fields.shortTitle || organization?.fields.title
+        const title = organization?.fields.title || organization?.fields.title
 
-        return shortTitle ? shortTitle : null
+        return title ? title : null
       }
     })
   }

@@ -1,9 +1,6 @@
 import { Locale } from 'locale'
-<<<<<<< HEAD
-=======
 
 import { OrganizationPage, OrganizationTheme } from '../graphql/schema'
->>>>>>> main
 import { linkResolver } from '../hooks'
 
 // TODO: Perhaps add this functionality to the linkResolver
@@ -15,8 +12,6 @@ export const getOrganizationLink = (
     ? linkResolver('organizationpage', [organization.slug], locale).href
     : organization?.link
 }
-<<<<<<< HEAD
-=======
 
 export const getOrganizationSidebarNavigationItems = (
   organizationPage: OrganizationPage,
@@ -51,4 +46,3 @@ export const getBackgroundStyle = (
       linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
   return background.backgroundColor ?? ''
 }
->>>>>>> main

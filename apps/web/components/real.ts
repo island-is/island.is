@@ -87,8 +87,5 @@ export * from './SectionWithVideo'
 export * from './events'
 export * from './SearchableTagsFilter'
 export * from './QueryFilterInput'
-<<<<<<< HEAD
 export * from './ActionCategoryCard/ActionCategoryCard'
-=======
 export * from './DefaultHeader'
->>>>>>> main
