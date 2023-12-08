@@ -11,7 +11,7 @@ import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 export const displayCaseType = (
   formatMessage: IntlShape['formatMessage'],
   caseType: CaseType,
-  decision?: CaseDecision,
+  decision?: CaseDecision | null,
 ) => {
   if (decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN) {
     return capitalize(caseTypes[CaseType.TRAVEL_BAN])
