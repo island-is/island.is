@@ -25,5 +25,5 @@ export const getSumFromAnswers = <T = unknown>(
     }
   }
 
-  return null
+  return ''
 }

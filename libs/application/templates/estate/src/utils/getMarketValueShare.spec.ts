@@ -25,7 +25,17 @@ describe('getMarketValueShare', () => {
     },
   }
 
+  const answersWithNoAsssets: FormValue = {
+    estate: {
+      assets: [],
+    },
+  }
+
   it('should return the sum in a currency format: "45.000.000 kr"', () => {
     expect(getMarketValueShare(answers)).toEqual('45.000.000 kr.')
+  })
+
+  it('should return an empty string', () => {
+    expect(getMarketValueShare(answersWithNoAsssets)).toEqual('')
   })
 })

@@ -19,6 +19,10 @@ describe('getSumFromAnswers', () => {
     ],
   }
 
+  const answersWithNoVehicles: FormValue = {
+    vehicles: [],
+  }
+
   it('should return the sum in a currency format: "1.000.000 kr"', () => {
     expect(
       getSumFromAnswers<FormValue>(
@@ -28,5 +32,16 @@ describe('getSumFromAnswers', () => {
         (item) => !!item.enabled,
       ),
     ).toEqual('1.000.000 kr.')
+  })
+
+  it('should return an empty string', () => {
+    expect(
+      getSumFromAnswers<FormValue>(
+        answersWithNoVehicles,
+        'vehicles',
+        'marketValue',
+        (item) => !!item.enabled,
+      ),
+    ).toEqual('')
   })
 })
