@@ -39,6 +39,7 @@ import {
   DistrictCommissioners,
   DirectorateOfImmigration,
   SocialInsuranceAdministration,
+  IntellectualProperties,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -354,6 +355,7 @@ export const serviceSetup = (services: {
       Client,
       OccupationalLicenses,
       HealthInsurance,
+      IntellectualProperties,
       Labor,
       DrivingLicense,
       Payment,
