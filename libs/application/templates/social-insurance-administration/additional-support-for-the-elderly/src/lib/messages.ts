@@ -44,18 +44,19 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     externalDataSection: {
       id: 'asfte.application:externalData.section',
       defaultMessage: 'Gagnaöflun',
-      description: 'External Data',
+      description: 'Data collection',
     },
     externalDataDescription: {
       id: 'asfte.application:externalData.description',
       defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt',
-      description: 'english translation',
+      description: 'The following information will be retrieved electronically',
     },
     checkboxProvider: {
       id: 'asfte.application:prerequisites.checkbox.provider',
       defaultMessage:
         'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
-      description: 'Checbox to confirm data provider',
+      description:
+        'I understand that the above information will be collected during the application process',
     },
     skraInformationTitle: {
       id: 'asfte.application:prerequisites.national.registry.title',
@@ -71,18 +72,48 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     socialInsuranceAdministrationInformationTitle: {
       id: 'asfte.application:prerequisites.socialInsuranceAdministration.title',
       defaultMessage: 'Upplýsingar um tekjur og aðstæður',
-      description: 'Information about income and circumstances',
+      description: 'Information regarding income and circumstances',
     },
     socialInsuranceAdministrationInformationDescription: {
       id: 'asfte.application:prerequisites.socialInsuranceAdministration.description#markdown',
       defaultMessage:
-        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. Tryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar, [https://www.tr.is/tryggingastofnun/personuvernd](https://www.tr.is/tryggingastofnun/personuvernd). Ef tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
-      description: 'english translation',
+        'Upplýsingar um netfang, símanúmer og bankareikningur eru sóttar á mínar síður hjá Tryggingastofnun. \n\nTryggingastofnun sækir einungis nauðsynlegar upplýsingar til úrvinnslu umsókna og afgreiðsla mála. Þær upplýsingar geta varðað bæði tekjur og aðrar aðstæður þínar. Ef við á þá hefur Tryggingastofnun heimild að ná í upplýsingar frá öðrum stofnunum. \n\nFrekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna í persónuverndarstefnu Tryggingarstofnunar [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.',
+      description:
+        'Information about email address, phone number and bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. That information can relate to both your income and other circumstances. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd). \n\nIf your income or other circumstances change, you must notify the Social Insurance Administration as this may affect your payments.',
     },
     startApplication: {
       id: 'asfte.application:prerequisites.start.application',
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
+    },
+  }),
+
+  info: defineMessages({
+    section: {
+      id: 'asfte.application:info.section',
+      defaultMessage: 'Almennar upplýsingar',
+      description: 'General information',
+    },
+    subSectionTitle: {
+      id: 'asfte.application:info.sub.section.title',
+      defaultMessage: 'Netfang og símanúmer',
+      description: 'Email and phone number',
+    },
+    subSectionDescription: {
+      id: 'asfte.application:info.sub.section.description',
+      defaultMessage:
+        'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
+      description: 'translation',
+    },
+    applicantEmail: {
+      id: 'asfte.application:info.applicant.email',
+      defaultMessage: 'Netfang',
+      description: 'Email address',
+    },
+    applicantPhonenumber: {
+      id: 'asfte.application:info.applicant.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
     },
   }),
 
@@ -112,6 +143,31 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       id: 'asfte.application:additional.documents.attachment',
       defaultMessage: 'Viðbótargögn til Tryggingastofnunar',
       description: 'Additional documents to Tryggingastofnunar',
+    },
+    overviewTitle: {
+      id: 'asfte.application:confirm.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
+    name: {
+      id: 'asfte.application:confirm.name',
+      defaultMessage: 'Nafn',
+      description: 'Name',
+    },
+    nationalId: {
+      id: 'asfte.application:confirm.nationalId',
+      defaultMessage: 'Kennitala',
+      description: 'National registry ID',
+    },
+    email: {
+      id: 'asfte.application:confirm.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phonenumber: {
+      id: 'asfte.application:confirm.phonenumber',
+      defaultMessage: 'Símanúmer',
+      description: 'phonenumber',
     },
   }),
 
@@ -177,4 +233,51 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       description: 'Your comment',
     },
   }),
+
+  conclusionScreen: defineMessages({
+    title: {
+      id: 'asfte.application:conclusionScreen.title',
+      defaultMessage: 'Umsókn móttekin og bíður tekjuáætlunar',
+      description: 'Application received and awaiting income estimate',
+    },
+    alertTitle: {
+      id: 'asfte.application:conclusionScreen.alertTitle',
+      defaultMessage:
+        'Athugið að ef þú hefur ekki skilað inn tekjuáætlun er mikilvægt að gera það svo hægt sé að afgreiða umsóknina. Þú getur skilað inn tekjuáætlun með því að ýta á takkann hér fyrir neðan.',
+      description:
+        'Attention, if you have not submitted an income estimate, you must do so for your application to be processed. You can submit an income estimate by pression the button below.',
+    },
+    bulletList: {
+      id: `asfte.application:conclusionScreen.bulletList#markdown`,
+      defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef það hefur ekki verið gert nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til félagslegs viðbótarstuðnings við aldraða. Vinnslutími umsókna um félagslegan viðbótarstuðning er allt að fjórar vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót`,
+      description: `* You must submit an income estimate, if it has not been submitted already.\n* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether an additional support for the elderly will be granted. The processing time for additional support for the elderly applications is up to four weeks.\n* **You may be entitled to:**\n\t* Household supplement`,
+    },
+    incomePlanCardLabel: {
+      id: 'asfte.application:conclusionScreen.incomePlanCardLabel',
+      defaultMessage: 'Skila inn tekjuáætlun',
+      description: 'Submit income estimate',
+    },
+    incomePlanCardText: {
+      id: 'asfte.application:conclusionScreen.incomePlanCardText',
+      defaultMessage:
+        'Mikilvægt er að skila inn tekjuáætlun sem fyrst svo hægt sé að afgreiða umsóknina og búa til greiðsluáætlun.',
+      description:
+        'It is important to submit an income estimate as soon as possible so that the application can be processed and a payment plan can be created.',
+    },
+    nextStepsText: {
+      id: 'asfte.application:conclusionScreen.nextStepsText',
+      defaultMessage:
+        'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til félagslegs viðbótarstuðnings við aldraða.',
+      description:
+        'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
+    },
+  }),
 }
+
+export const errorMessages = defineMessages({
+  phoneNumber: {
+    id: 'asfte.application:error.phonenumber',
+    defaultMessage: 'Símanúmerið þarf að vera gilt.',
+    description: 'The phone number must be valid.',
+  },
+})

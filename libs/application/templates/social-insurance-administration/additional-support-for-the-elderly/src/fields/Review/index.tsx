@@ -9,7 +9,7 @@ import { additionalSupportForTheElderyFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/additionalSupportForTheElderlyUtils'
 import { Comment } from './review-groups/Comment'
 import { Attachments } from './review-groups/Attachments'
-
+import { BaseInformation } from './review-groups/BaseInformation'
 
 interface ReviewScreenProps {
   application: Application
@@ -20,7 +20,7 @@ interface ReviewScreenProps {
   editable?: boolean
 }
 
-export const Review: FC<ReviewScreenProps> = ({ 
+export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
@@ -28,17 +28,13 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-
-  const { comment } = getApplicationAnswers(
-    application.answers,
-  )
-
+  const { comment } = getApplicationAnswers(application.answers)
   const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
 
   const groupHasNoErrors = (ids: string[]) =>
-  ids.every((id) => !has(errors, id))
+    ids.every((id) => !has(errors, id))
 
   const childProps = {
     application,
@@ -49,14 +45,16 @@ export const Review: FC<ReviewScreenProps> = ({
   }
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     <>
       {state === `${States.DRAFT}` && (
         <Box display="flex" justifyContent="spaceBetween">
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(additionalSupportForTheElderyFormMessage.confirm.title)}
+                {formatMessage(
+                  additionalSupportForTheElderyFormMessage.confirm
+                    .overviewTitle,
+                )}
               </Text>
             </Box>
             <Box marginBottom={10}>
@@ -79,6 +77,7 @@ export const Review: FC<ReviewScreenProps> = ({
           </Box>
         </Box>
       )}
+      <BaseInformation {...childProps} />
       {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>

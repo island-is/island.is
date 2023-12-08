@@ -1,10 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
-import {
-  AttachmentLabel,
-} from './constants'
+import { Application } from '@island.is/application/types'
+import { AttachmentLabel } from './constants'
 import {
   FileType,
   Attachments,
@@ -16,16 +12,47 @@ enum AttachmentTypes {
 }
 
 export function getApplicationAnswers(answers: Application['answers']) {
+  const applicantPhonenumber = getValueViaPath(
+    answers,
+    'applicantInfo.phonenumber',
+  ) as string
+
   const comment = getValueViaPath(answers, 'comment') as string
-  console.log('comment:', comment)
+
   const additionalAttachments = getValueViaPath(
     answers,
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
-  console.log('additionalAttachments: ', additionalAttachments)
+
   return {
+    applicantPhonenumber,
     comment,
     additionalAttachments,
+  }
+}
+
+export function getApplicationExternalData(
+  externalData: Application['externalData'],
+) {
+  const applicantName = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.fullName',
+  ) as string
+
+  const applicantNationalId = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.nationalId',
+  ) as string
+
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
+  return {
+    applicantName,
+    applicantNationalId,
+    email,
   }
 }
 

@@ -11,7 +11,6 @@ export const Comment = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const [{ comment }] = useStatefulAnswers(application)
-
   const { formatMessage } = useLocale()
 
   return (
