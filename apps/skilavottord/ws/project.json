@@ -63,6 +63,7 @@
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/skilavottord/ws/jest.config.ts",
+        "runInBand": true,
         "passWithNoTests": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/ws"]
