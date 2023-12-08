@@ -96,5 +96,10 @@ export const PrerequisitesForm: Form = buildForm({
       title: additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
       children: [],
     }),
+    buildSection({
+      id: 'conclusion',
+      title: additionalSupportForTheElderyFormMessage.confirm.section,
+      children: [],
+    }),
   ],
 })

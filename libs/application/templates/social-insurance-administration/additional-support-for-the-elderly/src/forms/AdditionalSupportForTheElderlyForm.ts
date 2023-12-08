@@ -177,5 +177,25 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         }),
       ],
     }),
+    buildFormConclusionSection({
+      multiFieldTitle:
+        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+      alertTitle:
+        additionalSupportForTheElderyFormMessage.conclusionScreen.title,
+      alertMessage:
+        additionalSupportForTheElderyFormMessage.conclusionScreen.alertTitle,
+      alertType: 'warning',
+      expandableDescription:
+        additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
+      expandableIntro:
+        additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
+      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLabel:
+        additionalSupportForTheElderyFormMessage.conclusionScreen
+          .incomePlanCardLabel,
+      bottomButtonMessage:
+        additionalSupportForTheElderyFormMessage.conclusionScreen
+          .incomePlanCardText,
+    }),
   ],
 })
