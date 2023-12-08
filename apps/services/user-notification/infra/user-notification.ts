@@ -84,11 +84,6 @@ export const userNotificationWorkerSetup = (services: {
     .serviceAccount(serviceWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
-    .extraAttributes({
-      dev: { schedule: '30 03 * * *' },
-      staging: { schedule: '30 03 * * *' },
-      prod: { schedule: '30 03 * * *' },
-    })
     .postgres(postgresInfo)
     .initContainer({
       containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
