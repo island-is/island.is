@@ -35,7 +35,7 @@ describe('getMarketValueShare', () => {
     },
   }
 
-  it('should return the sum in a currency format: "45.200.000 kr"', () => {
+  it('should return the correct sum in a currency format', () => {
     expect(getMarketValueShare(answers)).toEqual('45.200.000 kr.')
   })
 

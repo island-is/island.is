@@ -23,7 +23,7 @@ describe('getSumFromAnswers', () => {
     vehicles: [],
   }
 
-  it('should return the sum in a currency format: "1.000.000 kr"', () => {
+  it('should return the correct sum in a currency format', () => {
     expect(
       getSumFromAnswers<FormValue>(
         answers,
