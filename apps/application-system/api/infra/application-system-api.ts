@@ -31,6 +31,7 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   DirectorateOfImmigration,
+  SocialInsuranceAdministration,
 } from '../../../../infra/src/dsl/xroad'
 
 const postgresInfo: PostgresInfo = {
@@ -261,6 +262,7 @@ export const serviceSetup = (services: {
       Passports,
       EHIC,
       DirectorateOfImmigration,
+      SocialInsuranceAdministration,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
