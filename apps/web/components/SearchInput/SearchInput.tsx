@@ -449,7 +449,9 @@ const Results = ({
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore make web strict
               .map((item: SearchResultItem, i) => {
-                const typename = item.__typename?.toLowerCase() as LinkType | 'anchorpage'
+                const typename = item.__typename?.toLowerCase() as
+                  | LinkType
+                  | 'anchorpage'
                 let variables = item.slug?.split('/')
 
                 if (typename === 'organizationsubpage') {
