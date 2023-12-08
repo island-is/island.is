@@ -1,7 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
-  OldAgePension,
   SendApplicationApi,
   Response,
   GetIsApplicantEligibleApi,
@@ -11,6 +10,7 @@ import {
   GetCurrenciesApi,
   SendAdditionalDocumentsApi,
   Attachment,
+  ApplicationDTO,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -40,11 +40,11 @@ export class SocialInsuranceAdministrationClientService {
 
   sendApplication(
     user: User,
-    oldAgePension: OldAgePension,
+    applicationDTO: ApplicationDTO,
     applicationType: string,
   ): Promise<Response> {
-    return this.sendAPIWithAuth(user).oldAgePensionSendApplication({
-      oldAgePension,
+    return this.sendAPIWithAuth(user).sendApplication({
+      applicationDTO,
       applicationType,
     })
   }
