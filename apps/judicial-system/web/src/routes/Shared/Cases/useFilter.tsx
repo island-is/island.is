@@ -7,10 +7,10 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import {
+  CaseListEntry,
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
 
 import { useFilter as m } from './useFilter.strings'
 
