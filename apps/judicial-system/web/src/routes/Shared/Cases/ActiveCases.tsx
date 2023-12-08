@@ -31,11 +31,11 @@ import {
 import { SortButton } from '@island.is/judicial-system-web/src/components/Table'
 import ColumnCaseType from '@island.is/judicial-system-web/src/components/Table/ColumnCaseType/ColumnCaseType'
 import TagCaseState from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
   SortConfig,
-  TempCaseListEntry as CaseListEntry,
 } from '@island.is/judicial-system-web/src/types'
 import { useViewport } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
