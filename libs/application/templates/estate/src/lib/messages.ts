@@ -800,6 +800,11 @@ export const m = defineMessages({
     defaultMessage: 'Eru eignir til staðar?',
     description: '',
   },
+  doAssetsExistSidebarTitle: {
+    id: 'es.application:doAssetsExistSidebarTitle',
+    defaultMessage: 'Átti látni eignir á dánardegi?',
+    description: '',
+  },
   doAssetsExistSelect: {
     id: 'es.application:doAssetsExistSelect',
     defaultMessage: 'Eru eignir til staðar?',
