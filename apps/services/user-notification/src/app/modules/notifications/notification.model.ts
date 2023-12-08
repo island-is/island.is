@@ -25,7 +25,10 @@ export enum NotificationStatus {
   tableName: 'user_notification', // Explicitly setting the table name
 })
 @Table
-export class Notification extends Model<InferAttributes<Notification>, InferCreationAttributes<Notification>> {
+export class Notification extends Model<
+  InferAttributes<Notification>,
+  InferCreationAttributes<Notification>
+> {
   @PrimaryKey
   @AutoIncrement
   @Column({
