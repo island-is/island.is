@@ -20,7 +20,7 @@ export interface EmbeddedVideoProps {
   title?: string
   url: string
   locale?: string
-  thumbnailImageUrl?: string
+  thumbnailImageUrl?: string | null
 }
 
 const Texts = ({ termsUrl = '#' }) => ({

@@ -19,7 +19,7 @@ const DEFAULT_BUTTON_TEXT: Record<Locale, string> = {
 
 interface SignLanguageButtonProps {
   videoUrl: string
-  videoThumbnailImageUrl?: string
+  videoThumbnailImageUrl?: string | null
   content: ReactNode
 }
 
