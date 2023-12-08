@@ -9,7 +9,7 @@ import {
   UpdatedAt,
   Index,
 } from 'sequelize-typescript'
-import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize/types/model'
+import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize';
 
 
 interface ArgItem {
