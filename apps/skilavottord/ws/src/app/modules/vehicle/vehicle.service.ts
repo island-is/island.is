@@ -58,6 +58,10 @@ export class VehicleService {
     }
   }
 
+  test() {
+    return 'test'
+  }
+
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
       // Check if Vehicle is already in database
