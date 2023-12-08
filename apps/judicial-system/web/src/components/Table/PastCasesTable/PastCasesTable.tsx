@@ -5,10 +5,7 @@ import cn from 'classnames'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import {
-  CaseListEntry,
-  isDistrictCourtUser,
-} from '@island.is/judicial-system/types'
+import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
@@ -26,6 +23,7 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useSortCases,
   useViewport,
