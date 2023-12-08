@@ -13,7 +13,7 @@ import {
   NationalRegistryUserApi,
   InstitutionNationalIds,
 } from '@island.is/application/types'
-import { EphemeralStateLifeCycle } from '@island.is/application/core'
+import { EphemeralStateLifeCycle, pruneAfterDays } from '@island.is/application/core'
 
 import {
   SocialInsuranceAdministrationApplicantApi,
@@ -75,6 +75,35 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         on: {
           SUBMIT: States.DRAFT,
         },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: States.DRAFT,
+          status: 'draft',
+          lifecycle: pruneAfterDays(30),
+          progress: 0.25,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/AdditionalSupportForTheElderlyForm').then((val) =>
+                  Promise.resolve(val.AdditionalSupportForTheElderlyForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Submit',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+            },
+          ],
+        },
+        // on: {
+        //   SUBMIT: [],
+        // },
       },
     },
   },
