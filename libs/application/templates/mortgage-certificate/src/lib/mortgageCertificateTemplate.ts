@@ -79,7 +79,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           onExit: defineTemplateApi({
             action: ApiActions.validateMortgageCertificate,
@@ -147,7 +146,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitRequestToSyslumenn,
@@ -194,7 +192,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(3 * 30),
           onExit: defineTemplateApi({
             action: ApiActions.validateMortgageCertificate,
@@ -240,7 +237,6 @@ const template: ApplicationTemplate<
               variant: 'red',
             },
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -273,7 +269,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
