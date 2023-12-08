@@ -109,18 +109,6 @@ export const anchorPage = factory<AnchorPage>({
   thumbnail: () => image(),
 })
 
-export const lifeEventPage = factory<LifeEventPage>({
-  id: () => faker.datatype.uuid(),
-  shortTitle: () => '',
-  tinyThumbnail: image(),
-  title: () => title(),
-  slug: slugify('title'),
-  intro: () => faker.lorem.paragraph(),
-  content: () => slice.list(6),
-  image: () => image(),
-  thumbnail: () => image(),
-})
-
 export const link = factory<Link>({
   text: () => faker.lorem.words(),
   date: () => faker.date.past().toISOString(),
@@ -196,6 +184,21 @@ export const featured = factory<Featured>({
   thing: () => referenceLink(),
   title: (_) => title(),
   attention: () => faker.datatype.boolean(),
+})
+
+export const lifeEventPage = factory<LifeEventPage>({
+  id: () => faker.datatype.uuid(),
+  shortTitle: () => '',
+  tinyThumbnail: image(),
+  title: () => title(),
+  slug: slugify('title'),
+  intro: () => faker.lorem.paragraph(),
+  content: () => slice.list(6),
+  image: () => image(),
+  thumbnail: () => image(),
+  featured: featured.list(3),
+  organizations: [],
+  relatedLifeEvents: [],
 })
 
 export const genericPage = factory<GenericPage>({
