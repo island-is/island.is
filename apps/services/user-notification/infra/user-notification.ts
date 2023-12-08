@@ -79,7 +79,7 @@ export const userNotificationWorkerSetup = (services: {
   userProfileApi: ServiceBuilder<typeof serviceWorkerName>
 }): ServiceBuilder<typeof serviceWorkerName> =>
   service(serviceWorkerName)
-    .image(serviceName)
+    .image(imageName)
     .namespace(serviceName)
     .serviceAccount(serviceWorkerName)
     .command('node')
