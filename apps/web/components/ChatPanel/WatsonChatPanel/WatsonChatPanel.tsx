@@ -100,6 +100,17 @@ export const WatsonChatPanel = (props: WatsonChatPanelProps) => {
             activeLocale,
             'directorateOfImmigration',
           )
+        } else if (
+          // Askur - Samgöngustofa
+          props.integrationID === 'fe12e960-329c-46d5-9ae1-8bd8b8219f43' ||
+          props.integrationID === '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+        ) {
+          onAuthenticatedWatsonAssistantChatLoad(
+            instance,
+            namespace,
+            activeLocale,
+            'transportAuthority',
+          )
         }
 
         if (onLoad) {
