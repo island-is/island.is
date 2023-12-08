@@ -115,7 +115,7 @@
     },
     "codegen/backend-client": {
       "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
-      "inputs": ["schema-files", "^schema-outputs"]
+      "inputs": ["schema-files"]
     },
     "codegen/backend-schema": {
       "dependsOn": [
@@ -160,10 +160,10 @@
       "{projectRoot}/codegen.yml",
       "{projectRoot}/**/*.graphql"
     ],
-    "schema-files": ["{projectRoot}/**/clientConfig.@(yml|yaml|json)"],
-    "schema-outputs": [
+    "schema-files": [
+      "{projectRoot}/**/clientConfig.@(yml|yaml|json)",
       {
-        "dependentTasksOutputFiles": "**/*openapi.@(yml|yaml|json)"
+        "dependentTasksOutputFiles": "**/openapi.@(yml|yaml|json)"
       },
       {
         "dependentTasksOutputFiles": "**/api.graphql"

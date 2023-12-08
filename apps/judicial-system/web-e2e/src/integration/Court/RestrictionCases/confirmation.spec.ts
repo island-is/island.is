@@ -1,7 +1,12 @@
-import { Case, CaseDecision, CaseType } from '@island.is/judicial-system/types'
+import {
+  Case,
+  CaseDecision,
+  CaseType,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import { RESTRICTION_CASE_CONFIRMATION_ROUTE } from '@island.is/judicial-system/consts'
 
-import { intercept, mockCase } from '../../../utils'
+import { intercept, makeJudge, mockCase } from '../../../utils'
 
 describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   const caseData = mockCase(CaseType.CUSTODY)
@@ -13,12 +18,15 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
       'Samkvæmt framangreindu og rannsóknargögnum málsins og með vísan til þess sem fram kemur í greinargerð sóknaraðila er fallist á það með lögreglustjóra að varnaraðili sé undir rökstuddum grun um saknæma aðild að háttsemi sem fangelsisrefsing er lögð við. Fyrir liggur að rannsókn málsins beinist að [..] óljóst er hversu margir aðilar kunni að tengjast. Telur dómurinn að fullnægt sé skilyrðum a-liðar 1. mgr. 95. gr. laga nr. 88/2008 um meðferð sakamála til þess að varnaraðila verði gert að sæta gæsluvarðhaldi. Þá þykja ekki efni til að marka gæsluvarðhaldi skemmri tíma en krafist er. Að virtum þeim rannsóknarhagsmunum sem málið varða samkvæmt framangreindu er fallist á að nauðsynlegt sé að varnaraðili sæti einangrun á meðan á gæsluvarðhaldsvistinni stendur, skv. 2. mgr. 98. gr., sbr. b-lið 99. gr. laga nr. 88/2008. Með vísan til þessa er fallist á kröfuna eins og nánar greinir í úrskurðarorði. Kristín Gunnarsdóttir héraðsdómari kveður upp úrskurðinn.',
   }
   const interceptByDecision = (decision: CaseDecision) => {
-    intercept({ ...caseDataAddition, decision })
+    cy.login(UserRole.DISTRICT_COURT_JUDGE)
+    cy.stubAPIResponses()
+    intercept({ ...caseDataAddition, judge: makeJudge(), decision })
     cy.visit(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)
   }
 
   describe('Displaying elements', () => {
     beforeEach(() => {
+      cy.login(UserRole.DISTRICT_COURT_JUDGE)
       cy.stubAPIResponses()
       intercept(caseDataAddition)
       cy.visit(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/test_id_stadfesting`)
@@ -36,7 +44,9 @@ describe(`${RESTRICTION_CASE_CONFIRMATION_ROUTE}/:id`, () => {
   })
 
   describe('Cases with ACCEPTING decision', () => {
-    beforeEach(() => interceptByDecision(CaseDecision.ACCEPTING))
+    beforeEach(() => {
+      interceptByDecision(CaseDecision.ACCEPTING)
+    })
 
     it('should have the correct "confirm" button if decision is "ACCEPTING" in custody and travel ban cases', () => {
       cy.getByTestid('continueButton')

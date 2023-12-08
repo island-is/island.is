@@ -82,6 +82,7 @@ export {
   getAppealedDate,
   defenderCaseFileCategoriesForIndictmentCases,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  prosecutorShouldSelectDefenderForInvestigationCase,
 } from './lib/case'
 export type {
   Case,

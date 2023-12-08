@@ -1,0 +1,807 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/livness": {
+      "get": {
+        "summary": "Check livness status",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Utility"]
+      }
+    },
+    "/version": {
+      "get": {
+        "summary": "Get API version",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Utility"]
+      }
+    },
+    "/active-programs": {
+      "get": {
+        "summary": "Get active programs",
+        "responses": {
+          "200": {
+            "description": "Returns all active programs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "externalId": {
+                            "type": "string"
+                          },
+                          "nameIs": {
+                            "type": "string"
+                          },
+                          "nameEn": {
+                            "type": "string"
+                          },
+                          "departmentNameIs": {
+                            "type": "string"
+                          },
+                          "departmentNameEn": {
+                            "type": "string"
+                          },
+                          "startingSemesterYear": {
+                            "type": "string"
+                          },
+                          "startingSemesterSeason": {
+                            "type": "string"
+                          },
+                          "applicationStartDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "applicationEndDate": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "degreeType": {
+                            "type": "string"
+                          },
+                          "degreeAbbreviation": {
+                            "type": "string"
+                          },
+                          "credits": {
+                            "type": "integer"
+                          },
+                          "descriptionIs": {
+                            "type": "string"
+                          },
+                          "descriptionEn": {
+                            "type": "string"
+                          },
+                          "durationInYears": {
+                            "type": "integer"
+                          },
+                          "costPerYear": {
+                            "type": "integer"
+                          },
+                          "iscedCode": {
+                            "type": "string"
+                          },
+                          "externalUrlIs": {
+                            "type": "string"
+                          },
+                          "externalUrlEn": {
+                            "type": "string"
+                          },
+                          "modeOfDelivery": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "interestTags": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "admissionRequirementsIs": {
+                            "type": "string"
+                          },
+                          "admissionRequirementsEn": {
+                            "type": "string"
+                          },
+                          "studyRequirementsIs": {
+                            "type": "string"
+                          },
+                          "studyRequirementsEn": {
+                            "type": "string"
+                          },
+                          "costInformationIs": {
+                            "type": "string"
+                          },
+                          "costInformationEn": {
+                            "type": "string"
+                          },
+                          "extraApplicationSettings": {
+                            "type": "object",
+                            "properties": {
+                              "clausus": {
+                                "type": "string"
+                              },
+                              "inntokuprof": {
+                                "type": "string"
+                              },
+                              "banna_undanthagur": {
+                                "type": "string"
+                              },
+                              "kjorsvid_skylda": {
+                                "type": "string"
+                              },
+                              "kennt_a_ensku": {
+                                "type": "string"
+                              },
+                              "sleppa_namskeidavali": {
+                                "type": "string"
+                              },
+                              "dags_haust_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_haust_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_vor_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_vor_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_erlendir_opnar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "dags_erlendir_lokar": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "nafnleynd": {
+                                "type": "string"
+                              }
+                            }
+                          },
+                          "extraApplicationFields": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "nameIs": {
+                                  "type": "string"
+                                },
+                                "nameEn": {
+                                  "type": "string"
+                                },
+                                "descriptionIs": {
+                                  "type": "string"
+                                },
+                                "descriptionEn": {
+                                  "type": "string"
+                                },
+                                "fieldType": {
+                                  "type": "string"
+                                },
+                                "uploadAcceptedFileType": {
+                                  "type": "string"
+                                },
+                                "required": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          },
+                          "kjorsvid": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "id": {
+                                  "type": "integer"
+                                },
+                                "heiti": {
+                                  "type": "string"
+                                },
+                                "heiti_en": {
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Programs"]
+      }
+    },
+    "/program/{externalId}/courses": {
+      "get": {
+        "summary": "Get courses for a program",
+        "parameters": [
+          {
+            "name": "externalId",
+            "required": true,
+            "in": "path",
+            "allowEmptyValue": false,
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "externalId": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          },
+                          "nameIs": {
+                            "type": "string"
+                          },
+                          "nameEn": {
+                            "type": "string"
+                          },
+                          "required": {
+                            "type": "string",
+                            "enum": [
+                              "MANDATORY",
+                              "ELECTIVE",
+                              "RESTRICTED_ELECTIVE"
+                            ]
+                          },
+                          "credits": {
+                            "type": "string"
+                          },
+                          "semesterYear": {
+                            "type": "string"
+                          },
+                          "semesterSeason": {
+                            "type": "string",
+                            "enum": [
+                              "SPRING",
+                              "FALL",
+                              "SUMMER",
+                              "WHOLE_YEAR",
+                              "ANY"
+                            ]
+                          },
+                          "descriptionIs": {
+                            "type": "string"
+                          },
+                          "descriptionEn": {
+                            "type": "string"
+                          },
+                          "externalUrlIs": {
+                            "type": "string"
+                          },
+                          "externalUrlEn": {
+                            "type": "string"
+                          },
+                          "displayId": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Courses"]
+      }
+    },
+    "/applications/{id}": {
+      "get": {
+        "operationId": "Controller_getApplicationStatus",
+        "summary": "Get application data",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "allowEmptyValue": false,
+            "description": "Application ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns the updated application data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"]
+      },
+      "post": {
+        "operationId": "Controller_updateApplication",
+        "summary": "Update application status. Used when student accepts/rejects/cancels.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "allowEmptyValue": false,
+            "description": "Application ID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "TBD",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Applications"]
+      }
+    },
+    "/applications": {
+      "post": {
+        "summary": "Submit an application",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "guid": {
+                    "type": "string"
+                  },
+                  "kennitala": {
+                    "type": "string"
+                  },
+                  "simi": {
+                    "type": "string"
+                  },
+                  "namsleid": {
+                    "type": "string"
+                  },
+                  "tegund_umsoknar": {
+                    "type": "integer"
+                  },
+                  "namsform": {
+                    "type": "string"
+                  },
+                  "nomination_id": {
+                    "type": "integer"
+                  },
+                  "undanthaga": {
+                    "type": "string"
+                  },
+                  "leidbeiningar_fylgigogn_lesid": {
+                    "type": "string"
+                  },
+                  "inntokuskilyrdi_lesin": {
+                    "type": "string"
+                  },
+                  "kjorsvid": {
+                    "type": "string"
+                  },
+                  "personuvernd_samthykki": {
+                    "type": "string"
+                  },
+                  "hugverkarettur_samthykki": {
+                    "type": "string"
+                  },
+                  "eldri_umsokn": {
+                    "type": "string"
+                  },
+                  "skilyrdi_msl": {
+                    "type": "string"
+                  },
+                  "personuvernd_msl_lesin": {
+                    "type": "string"
+                  },
+                  "samthykki_creditinfo": {
+                    "type": "string"
+                  },
+                  "samthykki_trunadarlaeknir": {
+                    "type": "string"
+                  },
+                  "samthykki_sakaskra": {
+                    "type": "string"
+                  },
+                  "samthykki_okurettindaskra": {
+                    "type": "string"
+                  },
+                  "framhaldsskolar": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "framhaldsskoli_nafn": {
+                          "type": "string"
+                        },
+                        "framhaldsskoli_land": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "fyrra_nam": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "skoli": {
+                          "type": "string"
+                        },
+                        "namsgrein": {
+                          "type": "string"
+                        },
+                        "namsgrada": {
+                          "type": "string"
+                        },
+                        "land": {
+                          "type": "string"
+                        },
+                        "nami_lokid": {
+                          "type": "string"
+                        },
+                        "ar_lokid": {
+                          "type": "integer"
+                        },
+                        "manudur_lokid": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "medmaelendur": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "nafn": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "simanumer": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "leidbeinandi": {
+                    "type": "object",
+                    "properties": {
+                      "nafn": {
+                        "type": "string"
+                      },
+                      "email": {
+                        "type": "string"
+                      },
+                      "simanumer": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "tenglar": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "skrar": {
+                    "type": "object",
+                    "properties": {
+                      "cv": {
+                        "type": "string"
+                      },
+                      "markmid": {
+                        "type": "string"
+                      },
+                      "rannsoknaraaetlun": {
+                        "type": "string"
+                      },
+                      "namsaaetlun": {
+                        "type": "string"
+                      },
+                      "rannsoknarverkefni": {
+                        "type": "string"
+                      },
+                      "vidhengi_medmaelendur": {
+                        "type": "string"
+                      },
+                      "leidbeinandi": {
+                        "type": "string"
+                      },
+                      "profskirteini": {
+                        "type": "string"
+                      },
+                      "profskirteini2": {
+                        "type": "string"
+                      },
+                      "onnur_skjol": {
+                        "type": "string"
+                      },
+                      "kynningarbref": {
+                        "type": "string"
+                      },
+                      "ferilsskra": {
+                        "type": "string"
+                      },
+                      "leyfisbref": {
+                        "type": "string"
+                      },
+                      "portofolio": {
+                        "type": "string"
+                      },
+                      "sakavottord": {
+                        "type": "string"
+                      },
+                      "profskirteini3": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "namskeid": {
+                    "type": "object",
+                    "properties": {
+                      "H": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Application ID"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Application"]
+      }
+    },
+    "/openapi.yaml": {
+      "get": {
+        "operationId": "InfraController_openapi",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "content": {
+              "text/yaml": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            },
+            "headers": {
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "description": "Used only with `text/yaml` responses",
+                  "example": "attachment; filename=\"openapi.yaml\""
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Utility"]
+      }
+    }
+  },
+  "info": {
+    "title": "University Gateway",
+    "description": "API description",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [
+    {
+      "url": "https://{environment}.is/api/umsoknirislandis/",
+      "variables": {
+        "environment": {
+          "default": "ugla.hi",
+          "enum": [
+            "ugla.hi",
+            "ugla.unak",
+            "ugla.bifrost",
+            "ugla.holar",
+            "ugla.lbhi",
+            "ugla.lhi",
+            "aribj.throun.hi"
+          ]
+        }
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Application": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Application status",
+            "example": "IN_REVIEW",
+            "enum": [
+              "IN_REVIEW",
+              "IN_PROGRESS",
+              "ACCEPTED_BY_UNIVERSITY",
+              "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
+              "REJECTED_BY_STUDENT_REASON_CANCELLED",
+              "REJECTED_BY_STUDENT_REASON_OTHER_ACCEPTED",
+              "REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT",
+              "REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY",
+              "CANCELLED_BY_STUDENT"
+            ]
+          }
+        },
+        "required": ["status"]
+      },
+      "ApplicationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "description": "Application status data",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Application"
+              }
+            ]
+          }
+        },
+        "required": ["data"]
+      },
+      "CreateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "universityId": {
+            "type": "string",
+            "description": "University ID",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "programId": {
+            "type": "string",
+            "description": "Program ID",
+            "example": "00000000-0000-0000-0000-000000000000"
+          },
+          "modeOfDelivery": {
+            "type": "string",
+            "description": "What mode of delivery was selected in the application",
+            "example": "ON_SITE",
+            "enum": ["ON_SITE", "ONLINE", "ONLINE_WITH_SESSION"]
+          },
+          "extraData": {
+            "type": "string",
+            "description": "Extra data that should follow application",
+            "example": "TBD"
+          }
+        },
+        "required": ["universityId", "programId", "modeOfDelivery"]
+      },
+      "UpdateApplicationDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Application status",
+            "example": "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
+            "enum": [
+              "IN_REVIEW",
+              "IN_PROGRESS",
+              "ACCEPTED_BY_UNIVERSITY",
+              "ACCEPTED_BY_UNIVERSITY_AND_STUDENT",
+              "REJECTED_BY_STUDENT_REASON_CANCELLED",
+              "REJECTED_BY_STUDENT_REASON_OTHER_ACCEPTED",
+              "REJECTED_BY_UNIVERSITY_REASON_INSUFFICIENT",
+              "REJECTED_BY_UNIVERSITY_REASON_NO_AVAILABILITY",
+              "CANCELLED_BY_STUDENT"
+            ]
+          }
+        },
+        "required": ["status"]
+      }
+    }
+  }
+}
