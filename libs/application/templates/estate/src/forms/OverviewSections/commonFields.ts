@@ -12,6 +12,7 @@ import { deceasedInfoFields } from '../Sections/deceasedInfoFields'
 import { format as formatNationalId } from 'kennitala'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { JA, NEI, YES } from '../../lib/constants'
+import format from 'date-fns/format'
 
 export const commonOverviewFields = [
   ...deceasedInfoFields,
@@ -41,31 +42,37 @@ export const commonOverviewFields = [
           (answers.estate as unknown as EstateInfo).estateMembers?.filter(
             (member) => member.enabled,
           ) ?? []
-        ).map((member) => ({
-          title: member.name,
-          description: [
-            member.nationalId !== ''
-              ? formatNationalId(member.nationalId)
-              : member.dateOfBirth,
-            member.relation,
-            member.relationWithApplicant,
-            formatPhoneNumber(member.phone || ''),
-            member.email,
+        ).map((member) => {
+          console.log('member', member)
+          return {
+            title: member.name,
+            description: [
+              typeof member.nationalId !== 'undefined' &&
+              member.nationalId !== ''
+                ? formatNationalId(member.nationalId)
+                : member.dateOfBirth
+                ? format(new Date(member.dateOfBirth), 'dd.MM.yyyy')
+                : '',
+              member.relation,
+              member.relationWithApplicant,
+              formatPhoneNumber(member.phone || ''),
+              member.email,
 
-            /* Advocate */
-            member.advocate
-              ? [
-                  [
-                    m.inheritanceAdvocateLabel.defaultMessage +
-                      ': ' +
-                      member.advocate?.name,
-                    formatPhoneNumber(member.advocate.phone || ''),
-                    member.advocate.email,
-                  ],
-                ]
-              : '',
-          ],
-        })),
+              /* Advocate */
+              member.advocate
+                ? [
+                    [
+                      m.inheritanceAdvocateLabel.defaultMessage +
+                        ': ' +
+                        member.advocate?.name,
+                      formatPhoneNumber(member.advocate.phone || ''),
+                      member.advocate.email,
+                    ],
+                  ]
+                : '',
+            ],
+          }
+        }),
     },
   ),
   buildDescriptionField({
