@@ -378,6 +378,9 @@
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/offical-journal-of-iceland": [
+        "libs/application/templates/offical-journal-of-iceland/src/index.ts"
+      ],
       "@island.is/application/templates/operating-license": [
         "libs/application/templates/operating-license/src/index.ts"
       ],

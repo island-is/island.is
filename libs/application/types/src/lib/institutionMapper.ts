@@ -76,4 +76,6 @@ export const institutionMapper = {
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
+  [ApplicationTypes.OFFICAL_JOURNAL_OF_ICELAND]:
+    InstitutionTypes.DOMSMALARADUNEYTID,
 }
