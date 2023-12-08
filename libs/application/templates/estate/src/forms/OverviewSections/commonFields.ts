@@ -42,37 +42,33 @@ export const commonOverviewFields = [
           (answers.estate as unknown as EstateInfo).estateMembers?.filter(
             (member) => member.enabled,
           ) ?? []
-        ).map((member) => {
-          console.log('member', member)
-          return {
-            title: member.name,
-            description: [
-              typeof member.nationalId !== 'undefined' &&
-              member.nationalId !== ''
-                ? formatNationalId(member.nationalId)
-                : member.dateOfBirth
-                ? format(new Date(member.dateOfBirth), 'dd.MM.yyyy')
-                : '',
-              member.relation,
-              member.relationWithApplicant,
-              formatPhoneNumber(member.phone || ''),
-              member.email,
+        ).map((member) => ({
+          title: member.name,
+          description: [
+            typeof member.nationalId !== 'undefined' && member.nationalId !== ''
+              ? formatNationalId(member.nationalId)
+              : member.dateOfBirth
+              ? format(new Date(member.dateOfBirth), 'dd.MM.yyyy')
+              : '',
+            member.relation,
+            member.relationWithApplicant,
+            formatPhoneNumber(member.phone || ''),
+            member.email,
 
-              /* Advocate */
-              member.advocate
-                ? [
-                    [
-                      m.inheritanceAdvocateLabel.defaultMessage +
-                        ': ' +
-                        member.advocate?.name,
-                      formatPhoneNumber(member.advocate.phone || ''),
-                      member.advocate.email,
-                    ],
-                  ]
-                : '',
-            ],
-          }
-        }),
+            /* Advocate */
+            member.advocate
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate?.name,
+                    formatPhoneNumber(member.advocate.phone || ''),
+                    member.advocate.email,
+                  ],
+                ]
+              : '',
+          ],
+        })),
     },
   ),
   buildDescriptionField({
