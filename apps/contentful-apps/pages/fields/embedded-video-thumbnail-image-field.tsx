@@ -41,7 +41,7 @@ const EmbeddedVideoThumbnailImageField = () => {
     const locales = Object.keys(sdk.locales.names)
 
     const config = {
-      environmentId: 'stefna' || CONTENTFUL_ENVIRONMENT,
+      environmentId: CONTENTFUL_ENVIRONMENT,
       spaceId: CONTENTFUL_SPACE,
     }
 
