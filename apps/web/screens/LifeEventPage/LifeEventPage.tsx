@@ -55,11 +55,11 @@ interface LifeEventPageProps {
 export const LifeEventPage: Screen<LifeEventPageProps> = ({
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
-  lifeEvent: { id, image, title, intro, content, featuredImage, featured },
+  lifeEvent,
   namespace,
   locale,
 }) => {
-  useContentfulId(id)
+  useContentfulId(lifeEvent?.id)
   useLocalLinkTypeResolver()
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -88,13 +88,13 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
     return items
   }, [n, overviewUrl])
 
-  const socialImage = featuredImage ?? image
+  const socialImage = lifeEvent?.featuredImage ?? lifeEvent?.image
 
   return (
     <Box paddingBottom={[2, 2, 10]}>
       <HeadWithSocialSharing
-        title={`${title} | Ísland.is`}
-        description={intro}
+        title={`${lifeEvent?.title} | Ísland.is`}
+        description={lifeEvent?.intro ?? ''}
         imageUrl={socialImage?.url}
         imageContentType={socialImage?.contentType}
         imageWidth={socialImage?.width?.toString()}
@@ -109,12 +109,12 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
             width="full"
             printHidden
           >
-            {image && (
+            {lifeEvent?.image && (
               <BackgroundImage
                 ratio="12:4"
                 background="transparent"
                 boxProps={{ background: 'white' }}
-                image={image}
+                image={lifeEvent.image}
               />
             )}
           </Box>
@@ -139,8 +139,8 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                 </Box>
                 <Box paddingBottom={[4, 4, 6]}>
                   <Text variant="h1" as="h1">
-                    <span className="rs_read" id={slugify(title)}>
-                      {title}
+                    <span className="rs_read" id={slugify(lifeEvent?.title ?? '')}>
+                      {lifeEvent?.title}
                     </span>
                   </Text>
 
@@ -151,67 +151,65 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                     readClass="rs_read"
                   />
 
-                  {intro && (
+                  {lifeEvent?.intro && (
                     <Text variant="intro" as="p" paddingTop={2}>
-                      <span className="rs_read" id={slugify(intro)}>
-                        {intro}
+                      <span className="rs_read" id={slugify(lifeEvent.intro)}>
+                        {lifeEvent.intro}
                       </span>
                     </Text>
                   )}
-                  <Box marginTop={[3, 3, 5]}>
-                    <Text variant="eyebrow" marginBottom={2}>
-                      Flýtileiðir
-                    </Text>
-                    <Inline space={2}>
-                      {featured.map(
-                        ({
-                          title,
-                          attention,
-                          thing,
-                        }: {
-                          title: string
-                          attention: boolean
-                          thing: any
-                        }) => {
-                          const cardUrl = linkResolver(
-                            thing?.type as LinkType,
-                            [thing?.slug],
-                          )
-                          return cardUrl?.href && cardUrl?.href.length > 0 ? (
-                            <Tag
-                              key={title}
-                              {...(cardUrl.href.startsWith('/')
-                                ? {
-                                    CustomLink: ({ children, ...props }) => (
-                                      <Link
-                                        key={title}
-                                        {...props}
-                                        {...cardUrl}
-                                        dataTestId="featured-link"
-                                      >
-                                        {children}
-                                      </Link>
-                                    ),
-                                  }
-                                : { href: cardUrl.href })}
-                              variant="blue"
-                              attention={attention}
-                            >
-                              {title}
-                            </Tag>
-                          ) : (
-                            <Tag
-                              key={title}
-                              variant="blue"
-                              attention={attention}
-                            >
-                              {title}
-                            </Tag>
-                          )
-                        },
-                      )}
-                    </Inline>
-                  </Box>
+                  {lifeEvent?.featured.length && (
+                    <Box marginTop={[3, 3, 5]}>
+                      <Text variant="eyebrow" marginBottom={2}>
+                        {n('shortcuts', 'Flýtileiðir')}
+                      </Text>
+                      <Inline space={2}>
+                        {lifeEvent?.featured.map(
+                          ({
+                            title,
+                            attention,
+                            thing,
+                          }) => {
+                            const cardUrl = linkResolver(
+                              thing?.type as LinkType,
+                              [thing?.slug ?? ''],
+                            )
+                            return cardUrl?.href && cardUrl?.href.length > 0 ? (
+                              <Tag
+                                key={title}
+                                {...(cardUrl.href.startsWith('/')
+                                  ? {
+                                      CustomLink: ({ children, ...props }) => (
+                                        <Link
+                                          key={title}
+                                          {...props}
+                                          {...cardUrl}
+                                          dataTestId="featured-link"
+                                        >
+                                          {children}
+                                        </Link>
+                                      ),
+                                    }
+                                  : { href: cardUrl.href })}
+                                variant="blue"
+                                attention={attention}
+                              >
+                                {title}
+                              </Tag>
+                            ) : (
+                              <Tag
+                                key={title}
+                                variant="blue"
+                                attention={attention}
+                              >
+                                {title}
+                              </Tag>
+                            )
+                          },
+                        )}
+                      </Inline>
+                    </Box>
+                  )}
                 </Box>
                 <Box
                   className="rs_read"
@@ -220,7 +218,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                   borderColor="blue200"
                 >
                   {webRichText(
-                    content as SliceType[],
+                    lifeEvent?.content as SliceType[],
                     {
                       renderComponent: {
                         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
