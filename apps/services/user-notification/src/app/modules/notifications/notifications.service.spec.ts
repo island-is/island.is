@@ -142,4 +142,19 @@ describe('NotificationsService', () => {
     expect(service.mapLocale(null)).toBe('is-IS')
     expect(service.mapLocale(undefined)).toBe('is-IS')
   })
+
+  // it('should return a single notification for a given user and id', async () => {
+  //   const mockNotification = {
+  //     id: 12,
+  //     messageId: '5d5dc45b-96a2-d9f7-ce1e-049f350ce6f8',
+  //     // ... other properties
+  //     status: 'read'
+  //   };
+
+  //   jest.spyOn(service, 'findOne').mockResolvedValue(mockNotification);
+
+  //   const result = await service.findOne(user, 12, 'en');
+  //   expect(service.findOne).toHaveBeenCalledWith(user, 12, 'en');
+  //   expect(result).toEqual(mockNotification);
+  // });
 })
