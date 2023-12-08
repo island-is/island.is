@@ -1,13 +1,14 @@
-import { useState, ReactNode, useMemo } from 'react'
-import { useQuery } from '@apollo/client'
+import { ReactNode, useMemo, useState } from 'react'
 import type { Locale } from 'locale'
-import { Box, Text, Hidden, Icon } from '@island.is/island-ui/core'
+import { useQuery } from '@apollo/client'
+
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'
-import { useI18n } from '@island.is/web/i18n'
+import { Box, Hidden, Icon, Text } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/react/components'
 import { Query, QueryGetNamespaceArgs } from '@island.is/web/graphql/schema'
-import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_NAMESPACE_QUERY } from '@island.is/web/screens/queries'
 
 import * as styles from './SignLanguageButton.css'
 
@@ -18,11 +19,13 @@ const DEFAULT_BUTTON_TEXT: Record<Locale, string> = {
 
 interface SignLanguageButtonProps {
   videoUrl: string
+  videoThumbnailImageUrl?: string
   content: ReactNode
 }
 
 export const SignLanguageButton = ({
   videoUrl,
+  videoThumbnailImageUrl,
   content,
 }: SignLanguageButtonProps) => {
   const { activeLocale } = useI18n()
@@ -61,7 +64,11 @@ export const SignLanguageButton = ({
           <Box display="flex" columnGap={3}>
             <Box className={styles.leftColumn}>
               <Box position="sticky" top={0} left={0}>
-                <EmbeddedVideo url={videoUrl} locale={activeLocale} />
+                <EmbeddedVideo
+                  url={videoUrl}
+                  locale={activeLocale}
+                  thumbnailImageUrl={videoThumbnailImageUrl}
+                />
               </Box>
             </Box>
             <Box className={styles.rightColumn}>{content}</Box>
