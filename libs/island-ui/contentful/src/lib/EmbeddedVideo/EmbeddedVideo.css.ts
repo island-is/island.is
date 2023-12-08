@@ -48,4 +48,5 @@ export const modal = style({
   zIndex: 2,
   width: '400px',
   maxWidth: '100%',
+  boxShadow: '0 4px 30px rgba(0, 0, 0, 0.16)',
 })
