@@ -16,7 +16,6 @@ import {
   InferCreationAttributes,
 } from 'sequelize'
 
-
 interface ArgItem {
   key: string
   value: string

@@ -41,16 +41,16 @@ export class NotificationsService {
     notification: Notification,
     templateId: string,
     locale: string,
-    template?: HnippTemplate
+    template?: HnippTemplate,
   ): Promise<RenderedNotificationDto> {
     try {
       // If template is not provided, fetch it
       if (!template) {
-        template = await this.getTemplate(templateId, locale);
+        template = await this.getTemplate(templateId, locale)
       }
 
       // Format the template with arguments from the notification
-      const formattedTemplate = this.formatArguments(notification, template);
+      const formattedTemplate = this.formatArguments(notification, template)
 
       // Map to RenderedNotificationDto
       return {
@@ -63,10 +63,10 @@ export class NotificationsService {
         created: notification.created,
         updated: notification.updated,
         status: notification.status,
-      };
+      }
     } catch (error) {
-      this.logger.error('Error formatting notification:', error);
-      throw new InternalServerErrorException('Error processing notification');
+      this.logger.error('Error formatting notification:', error)
+      throw new InternalServerErrorException('Error processing notification')
     }
   }
 
@@ -198,20 +198,28 @@ export class NotificationsService {
     return template
   }
 
-  async findOne(user: User, id: number, locale: string): Promise<RenderedNotificationDto> {
+  async findOne(
+    user: User,
+    id: number,
+    locale: string,
+  ): Promise<RenderedNotificationDto> {
     const notification = await this.notificationModel.findOne({
       where: { id: id, recipient: user.nationalId },
-    });
+    })
 
     if (!notification) {
-      throw new NoContentException();
+      throw new NoContentException()
     }
 
-    return this.formatAndMapNotification(notification, notification.templateId, locale);
+    return this.formatAndMapNotification(
+      notification,
+      notification.templateId,
+      locale,
+    )
   }
 
   async findMany(user: User, query: any): Promise<PaginatedNotificationDto> {
-    const templates = await this.getTemplates(query.locale);
+    const templates = await this.getTemplates(query.locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
@@ -220,45 +228,57 @@ export class NotificationsService {
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
       where: { recipient: user.nationalId },
-    });
-  
+    })
+
     const formattedNotifications = await Promise.all(
       paginatedListResponse.data.map(async (notification) => {
         const template = templates.find(
-          (t) => t.templateId === notification.templateId
-        );
-  
+          (t) => t.templateId === notification.templateId,
+        )
+
         if (template) {
-          return this.formatAndMapNotification(notification, notification.templateId, query.locale, template);
+          return this.formatAndMapNotification(
+            notification,
+            notification.templateId,
+            query.locale,
+            template,
+          )
         } else {
-          this.logger.warn('Template not found for notification: ' + notification.id);
-          return null; // or handle as appropriate
+          this.logger.warn(
+            'Template not found for notification: ' + notification.id,
+          )
+          return null // or handle as appropriate
         }
-      })
-    );
-  
-    paginatedListResponse.data = formattedNotifications.filter(n => n); // Filter out nulls if any
-    return paginatedListResponse;
+      }),
+    )
+
+    paginatedListResponse.data = formattedNotifications.filter((n) => n) // Filter out nulls if any
+    return paginatedListResponse
   }
 
   async update(
     user: User,
     id: number,
     updateNotificationDto: UpdateNotificationDto,
-    locale: string
+    locale: string,
   ): Promise<RenderedNotificationDto> {
-    const [numberOfAffectedRows, [updatedNotification]] = await this.notificationModel.update(updateNotificationDto, {
-      where: {
-        id: id,
-        recipient: user.nationalId,
-      },
-      returning: true,
-    });
-  
+    const [numberOfAffectedRows, [updatedNotification]] =
+      await this.notificationModel.update(updateNotificationDto, {
+        where: {
+          id: id,
+          recipient: user.nationalId,
+        },
+        returning: true,
+      })
+
     if (numberOfAffectedRows === 0) {
-      throw new NoContentException();
+      throw new NoContentException()
     } else {
-      return this.formatAndMapNotification(updatedNotification, updatedNotification.templateId, locale);
+      return this.formatAndMapNotification(
+        updatedNotification,
+        updatedNotification.templateId,
+        locale,
+      )
     }
   }
 }
