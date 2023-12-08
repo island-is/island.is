@@ -1817,31 +1817,34 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
 }
 
 export interface ILifeEventPageFields {
-  /** title */
+  /** Title */
   title: string
 
-  /** short title */
+  /** Short Title */
   shortTitle?: string | undefined
 
-  /** slug */
+  /** Slug */
   slug: string
 
-  /** intro */
+  /** Intro */
   intro?: string | undefined
 
-  /** short intro */
+  /** Short Intro */
   shortIntro?: string | undefined
 
-  /** image */
+  /** Image */
   image?: Asset | undefined
 
-  /** thumbnail */
+  /** Thumbnail */
   thumbnail?: Asset | undefined
 
-  /** tiny thumbnail */
+  /** Tiny Thumbnail */
   tinyThumbnail?: Asset | undefined
 
-  /** content */
+  /** Featured Image */
+  featuredImage?: Asset | undefined
+
+  /** Content */
   content: Document
 
   /** Featured */
@@ -1850,21 +1853,21 @@ export interface ILifeEventPageFields {
   /** Organizations */
   organizations?: IOrganization[] | undefined
 
-  /** category */
+  /** Category */
   category?: IArticleCategory | undefined
 
-  /** see more text */
+  /** Related Life Events */
+  relatedLifeEvents?: ILifeEventPage[] | undefined
+
+  /** See More Text */
   seeMoreText?: string | undefined
 
-  /** page type */
+  /** Page Type */
   pageType?:
     | 'Life Event'
     | 'Digital Iceland Service'
     | 'Digital Iceland Community Page'
     | undefined
-
-  /** featured image */
-  featuredImage?: Asset | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {

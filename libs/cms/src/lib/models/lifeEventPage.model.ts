@@ -36,6 +36,9 @@ export class LifeEventPage {
   @CacheField(() => Image, { nullable: true })
   tinyThumbnail?: Image | null
 
+  @CacheField(() => Image, { nullable: true })
+  featuredImage?: Image | null
+
   @CacheField(() => [SliceUnion])
   content!: Array<typeof SliceUnion>
 
@@ -48,11 +51,11 @@ export class LifeEventPage {
   @CacheField(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory | null
 
+  @CacheField(() => [LifeEventPage])
+  relatedLifeEvents?: Array<LifeEventPage>
+
   @Field({ nullable: true })
   seeMoreText?: string
-
-  @CacheField(() => Image, { nullable: true })
-  featuredImage?: Image | null
 }
 
 export const mapLifeEventPage = ({
@@ -67,13 +70,14 @@ export const mapLifeEventPage = ({
   image: fields.image ? mapImage(fields.image) : null,
   thumbnail: fields.thumbnail ? mapImage(fields.thumbnail) : null,
   tinyThumbnail: fields.tinyThumbnail ? mapImage(fields.tinyThumbnail) : null,
+  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],
   featured: (fields.featured ?? []).map(mapFeatured),
   organizations: (fields.organizations ?? []).map(mapOrganization),
   category: fields.category ? mapArticleCategory(fields.category) : null,
+  relatedLifeEvents: (fields.relatedLifeEvents ?? []).map(mapLifeEventPage),
   shortIntro: fields.shortIntro ?? '',
   seeMoreText: fields.seeMoreText ?? '',
-  featuredImage: fields.featuredImage ? mapImage(fields.featuredImage) : null,
 })
