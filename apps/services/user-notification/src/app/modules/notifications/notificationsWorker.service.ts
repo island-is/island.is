@@ -46,9 +46,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         if (messageIdExists > 0) {
           // messageId exists do nothing
-          this.logger.debug('notification with messageId already exists in db', {
-            messageId,
-          })
+          this.logger.debug(
+            'notification with messageId already exists in db',
+            {
+              messageId,
+            },
+          )
         } else {
           // messageId does not exist
           // write to db

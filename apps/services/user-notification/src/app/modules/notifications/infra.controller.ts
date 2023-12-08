@@ -2,7 +2,13 @@ import { InfraController } from '@island.is/infra-nest-server'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 
-import { Controller, Get, Inject, Injectable, ServiceUnavailableException } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Injectable,
+  ServiceUnavailableException,
+} from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
@@ -26,8 +32,9 @@ export class UserNotificationsInfraController extends InfraController {
       return { ok: true }
     } catch (error) {
       this.logger.error('readiness: Unable to connect to the database:', error)
-      throw new ServiceUnavailableException('Service is temporarily unavailable.');
-
+      throw new ServiceUnavailableException(
+        'Service is temporarily unavailable.',
+      )
     }
   }
 }

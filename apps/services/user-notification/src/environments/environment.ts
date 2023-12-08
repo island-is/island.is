@@ -48,7 +48,8 @@ export const environment = {
   },
   contentfulAccessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL  },
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+  },
 }
 
 export type Config = typeof environment

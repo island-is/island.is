@@ -11,7 +11,7 @@ import type { User } from '@island.is/auth-nest-tools'
 
 const user: User = {
   nationalId: '1234567890',
-  scope: [NotificationsScope.read,NotificationsScope.write],
+  scope: [NotificationsScope.read, NotificationsScope.write],
   authorization: '',
   client: '',
 }
@@ -26,8 +26,6 @@ const mockHnippTemplate: HnippTemplate = {
   args: ['arg1', 'arg2'],
 }
 
-
-
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
@@ -38,8 +36,6 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
     { key: 'arg2', value: 'world' },
   ],
 }
-
-
 
 describe('NotificationsService', () => {
   let service: NotificationsService

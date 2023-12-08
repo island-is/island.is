@@ -12,7 +12,7 @@ import {
   IsUUID,
 } from 'class-validator'
 import { Type } from 'class-transformer'
-import {NotificationStatus} from '../notification.model'
+import { NotificationStatus } from '../notification.model'
 
 // export enum NotificationStatus {
 //   READ = 'read',

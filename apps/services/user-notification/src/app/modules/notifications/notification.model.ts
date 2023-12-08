@@ -9,8 +9,11 @@ import {
   UpdatedAt,
   Index,
 } from 'sequelize-typescript'
-import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize/types/model'
-
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize/types/model'
 
 interface ArgItem {
   key: string
@@ -25,7 +28,10 @@ export enum NotificationStatus {
   tableName: 'user_notification', // Explicitly setting the table name
 })
 @Table
-export class Notification extends Model<InferAttributes<Notification>, InferCreationAttributes<Notification>> {
+export class Notification extends Model<
+  InferAttributes<Notification>,
+  InferCreationAttributes<Notification>
+> {
   @PrimaryKey
   @AutoIncrement
   @Column({
