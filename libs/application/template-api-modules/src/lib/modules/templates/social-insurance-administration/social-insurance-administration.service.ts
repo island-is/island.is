@@ -287,6 +287,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      // TODO: Implement sendApplication for ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+      console.log(
+        'Send additional support for the elderly application (Not implemented)',
+      )
+    }
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {

@@ -20,6 +20,7 @@ import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { ApplicantInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getApplicationAnswers } from '../lib/additionalSupportForTheElderlyUtils'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
@@ -166,6 +167,16 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               placement: 'footer',
               title: additionalSupportForTheElderyFormMessage.confirm.title,
               actions: [
+                {
+                  event: DefaultEvents.ABORT,
+                  name: additionalSupportForTheElderyFormMessage.confirm
+                    .cancelButton,
+                  type: 'reject',
+                  condition: (answers) => {
+                    const { tempAnswers } = getApplicationAnswers(answers)
+                    return !!tempAnswers
+                  },
+                },
                 {
                   event: DefaultEvents.SUBMIT,
                   name: additionalSupportForTheElderyFormMessage.confirm.title,

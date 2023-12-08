@@ -103,7 +103,8 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       id: 'asfte.application:info.sub.section.description',
       defaultMessage:
         'Netfang og símanúmer er sótt frá Tryggingastofnun. Ef símanúmerið er ekki rétt eða vantar getur þú skráð það hérna fyrir neðan.',
-      description: 'translation',
+      description:
+        'Email address and phone number is retrieved from the Social Insurance Administration. If the phone number is incorrect or missing you can register the correct one below.',
     },
     applicantEmail: {
       id: 'asfte.application:info.applicant.email',
@@ -169,6 +170,11 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       defaultMessage: 'Símanúmer',
       description: 'phonenumber',
     },
+    cancelButton: {
+      id: 'oap.application:cancel.button',
+      defaultMessage: 'Hætta við',
+      description: 'Cancel',
+    },
   }),
 
   fileUpload: defineMessages({
@@ -208,6 +214,23 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
         'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+    },
+
+    additionalDocumentsEditSubmit: {
+      id: 'oap.application:fileUpload.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
+    additionalDocumentRequiredTitle: {
+      id: 'asfte.application:fileUpload.additionalDocumentRequired.title',
+      defaultMessage: 'Viðbótargögn krafist',
+      description: 'Additional attachments required',
+    },
+    additionalDocumentRequiredDescription: {
+      id: 'asfte.application:fileUpload.additionalDocumentRequired.description#markdown',
+      defaultMessage:
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english translation',
     },
   }),
 
@@ -279,5 +302,96 @@ export const errorMessages = defineMessages({
     id: 'asfte.application:error.phonenumber',
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'The phone number must be valid.',
+  },
+})
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'asfte.application:inReview.form.title',
+    defaultMessage: 'Umsókn um félagslegan viðbótarstuðning við aldraða',
+    description: 'Application for additional support for the elderly',
+  },
+})
+
+export const statesMessages = defineMessages({
+  draftDescription: {
+    id: 'asfte.application:draft.description',
+    defaultMessage: 'Þú hefur útbúið drög að umsókn.',
+    description: 'You have create a draft application.',
+  },
+  applicationSent: {
+    id: 'asfte.application:applicationSent',
+    defaultMessage: 'Umsókn send',
+    description: 'Application submitted',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'asfte.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Umsókn hefur verið send til Tryggingastofnunnar',
+    description:
+      'Application has been sent to the Social Insurance Administration',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'asfte.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Umsóknin þín er í bið eftir yfirferð. Hægt er að breyta umsókn þar til umsókn er komin í yfirferð.',
+    description:
+      'Your application is awaiting review. It is possible to edit the application until it is under review.',
+  },
+  tryggingastofnunInReviewTitle: {
+    id: 'asfte.application:tryggingastofnunInReviewTitle',
+    defaultMessage: 'Verið er að fara yfir umsóknina',
+    description: 'The application is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'asfte.application:tryggingastofnunInReviewContent',
+    defaultMessage:
+      'Tryggingastofnun fer nú yfir umsóknina og því getur þetta tekið nokkra daga',
+    description:
+      'The Social Insurance Administration is currently reviewing the application, this may take a few days',
+  },
+  applicationEdited: {
+    id: 'asfte.application:applicationEdited',
+    defaultMessage: 'Umsókn breytt',
+    description: 'Application edited',
+  },
+  applicationRejected: {
+    id: 'asfte.application:applicationRejected',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application rejected',
+  },
+  applicationRejectedDescription: {
+    id: 'asfte.application:applicationRejectedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið hafnað',
+    description: 'The application for old-age pension has been rejected',
+  },
+  applicationApproved: {
+    id: 'asfte.application:applicationApproved',
+    defaultMessage: 'Tryggingastofnun hefur samþykkt umsóknina',
+    description: 'Tryggingastofnun has accepted the application',
+  },
+  applicationApprovedDescription: {
+    id: 'asfte.application:applicationApprovedDescription',
+    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
+    description: 'The application for old-age pension has been approved',
+  },
+  additionalDocumentRequired: {
+    id: 'asfte.application:additionalDocumentRequired',
+    defaultMessage: 'Viðbótargögn vantar',
+    description: 'Additional documents required',
+  },
+  additionalDocumentsAdded: {
+    id: 'asfte.application:additionalDocumentsAdded',
+    defaultMessage: 'Viðbótargögnum bætt við',
+    description: 'Additional documents added',
+  },
+  additionalDocumentRequiredDescription: {
+    id: 'asfte.application:additionalDocumentRequired.description',
+    defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
+    description: 'Description of the state - additionalDocumentRequired',
+  },
+  pendingTag: {
+    id: 'asfte.application:pending.tag',
+    defaultMessage: 'Í bið',
+    description: 'Pending',
   },
 })
