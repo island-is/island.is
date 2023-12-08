@@ -44,7 +44,6 @@ const ViewList = () => {
                 <Box
                   key={collector.name}
                   width="half"
-                  marginBottom={[2, 0]}
                   display={['block', 'flex']}
                   justifyContent="spaceBetween"
                 >
