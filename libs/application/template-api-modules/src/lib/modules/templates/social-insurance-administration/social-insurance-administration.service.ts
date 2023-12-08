@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -11,10 +15,15 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationType,
   Employment,
-  getApplicationAnswers,
+  getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
-  errorMessages,
+  errorMessages as OAPErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  HouseholdSupplementHousing,
+  getApplicationAnswers as getHSApplicationAnswers,
+  errorMessages as HSErrorMessages,
+} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -23,6 +32,7 @@ import {
 import { S3 } from 'aws-sdk'
 import {
   getApplicationType,
+  transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
@@ -67,10 +77,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   private async getAdditionalAttachments(
     application: Application,
   ): Promise<Array<Attachment>> {
-    const { additionalAttachmentsRequired } = getApplicationAnswers(
-      application.answers,
-    )
     const attachments: Array<Attachment> = []
+    let additionalAttachmentsRequired: FileType[] = []
+
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      additionalAttachmentsRequired = getOAPApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
 
     if (
       additionalAttachmentsRequired &&
@@ -79,7 +98,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          AttachmentTypeEnum.Other,
+          AttachmentTypeEnum.Undefined,
           additionalAttachmentsRequired,
         )),
       )
@@ -88,7 +107,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  private async getAttachments(
+  private async getOAPAttachments(
     application: Application,
   ): Promise<Attachment[]> {
     const {
@@ -99,7 +118,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       earlyRetirementAttachments,
       applicationType,
       employmentStatus,
-    } = getApplicationAnswers(application.answers)
+    } = getOAPApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -168,6 +187,60 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
+  private async getHSAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const {
+      additionalAttachments,
+      schoolConfirmationAttachments,
+      leaseAgreementAttachments,
+      householdSupplementChildren,
+      householdSupplementHousing,
+    } = getHSApplicationAnswers(application.answers)
+
+    const attachments: Attachment[] = []
+
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachments,
+        )),
+      )
+    }
+
+    if (
+      schoolConfirmationAttachments &&
+      schoolConfirmationAttachments.length > 0 &&
+      householdSupplementChildren === YES
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.SchoolConfirmation,
+          schoolConfirmationAttachments,
+        )),
+      )
+    }
+
+    if (
+      leaseAgreementAttachments &&
+      leaseAgreementAttachments.length > 0 &&
+      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.RentalAgreement,
+          leaseAgreementAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
   async getPdf(key: string) {
     const file = await this.s3
       .getObject({ Bucket: this.attachmentBucket, Key: key })
@@ -183,7 +256,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
     if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
-      const attachments = await this.getAttachments(application)
+      const attachments = await this.getOAPAttachments(application)
 
       const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
         application,
@@ -197,6 +270,21 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         oldAgePensionDTO,
         applicationType,
       )
+
+      return response
+    }
+
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      const attachments = await this.getHSAttachments(application)
+      const householdSupplementDTO =
+        transformApplicationToHouseholdSupplementDTO(application, attachments)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        householdSupplementDTO,
+        application.typeId.toLowerCase(),
+      )
+
       return response
     }
   }
@@ -211,7 +299,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
   }
 
-  async getApplicant({ auth }: TemplateApiModuleActionProps) {
+  async getApplicant({ application, auth }: TemplateApiModuleActionProps) {
     const res = await this.siaClientService.getApplicant(auth)
 
     // mock data since gervimenn don't have bank account registered at TR,
@@ -235,8 +323,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title: errorMessages.noEmailFound,
-          summary: errorMessages.noEmailFoundDescription,
+          title:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFound
+              : HSErrorMessages.noEmailFound,
+          summary:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFoundDescription
+              : HSErrorMessages.noEmailFoundDescription,
         },
         500,
       )
@@ -246,10 +340,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    if (isRunningOnEnvironment('local')) {
-      return { isEligible: true }
-    }
-    const applicationType = getApplicationType(application).toLowerCase()
+    const applicationType =
+      application.typeId === ApplicationTypes.OLD_AGE_PENSION
+        ? getApplicationType(application).toLowerCase()
+        : application.typeId.toLowerCase()
+
     return await this.siaClientService.getIsEligible(auth, applicationType)
   }
 

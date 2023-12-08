@@ -14,23 +14,65 @@ export const overviewConfirmAction = [
     condition: (answers) =>
       getValueViaPath(answers, 'selectedEstate') ===
       EstateTypes.estateWithoutAssets,
-    options: (application) =>
-      getValueViaPath(
-        application.answers,
-        'estateWithoutAssets.estateAssetsExist',
-      ) === NO
-        ? [
-            {
-              value: YES,
-              label: m.acceptNoAssets,
-            },
-          ]
-        : [
-            {
-              value: YES,
-              label: m.acceptAssets,
-            },
-          ],
+    options: (application) => {
+      const hasAssets =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateAssetsExist',
+        ) === YES
+      const hasDebt =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateDebtsExist',
+        ) === YES
+
+      if ((hasAssets && hasDebt) || (hasAssets && !hasDebt)) {
+        return [
+          {
+            value: YES,
+            label: m.acceptAssets,
+          },
+        ]
+      } else if (!hasAssets && !hasDebt) {
+        return [
+          {
+            value: YES,
+            label: m.acceptNoAssetsNoDebts,
+          },
+        ]
+      } else return []
+    },
+  }),
+  buildCheckboxField({
+    id: 'confirmActionAssetsAndDebt',
+    title: '',
+    backgroundColor: 'blue',
+    defaultValue: [],
+    condition: (answers) =>
+      getValueViaPath(answers, 'selectedEstate') ===
+      EstateTypes.estateWithoutAssets,
+
+    options: (application) => {
+      const hasAssets =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateAssetsExist',
+        ) === YES
+      const hasDebt =
+        getValueViaPath(
+          application.answers,
+          'estateWithoutAssets.estateDebtsExist',
+        ) === YES
+
+      if (hasAssets && hasDebt) {
+        return [
+          {
+            value: YES,
+            label: m.acceptNoAssets,
+          },
+        ]
+      } else return []
+    },
   }),
   buildCheckboxField({
     id: 'confirmActionUndividedEstate',
