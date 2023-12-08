@@ -161,7 +161,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                       </span>
                     </Text>
                   )}
-                  {lifeEvent?.featured.length && (
+                  {(lifeEvent?.featured ?? []).length > 0 && (
                     <Box marginTop={[3, 3, 5]}>
                       <Text variant="eyebrow" marginBottom={2}>
                         {n('shortcuts', 'Flýtileiðir')}
