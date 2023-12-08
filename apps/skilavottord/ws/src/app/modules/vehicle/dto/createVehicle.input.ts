@@ -4,4 +4,7 @@ import { Field, InputType } from '@nestjs/graphql'
 export class CreateVehicleInput {
   @Field()
   permno!: string
+
+  @Field()
+  mileage!: number
 }
