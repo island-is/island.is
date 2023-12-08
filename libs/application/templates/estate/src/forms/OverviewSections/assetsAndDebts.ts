@@ -53,7 +53,7 @@ export const overviewAssetsAndDebts = [
                 ? asset.share > 1
                   ? asset.share + '%'
                   : asset.share * 100 + '%'
-                : ''),
+                : '0%'),
           ],
         })),
     },
@@ -61,13 +61,28 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
-      getSumFromAnswers<EstateAsset>(
-        answers,
-        'estate.assets',
-        'marketValue',
-        (asset) => !!asset?.enabled,
-      ),
+    description: ({ answers }: Application) => {
+      const assets = getValueViaPath(answers, 'estate.assets')
+
+      if (Array.isArray(assets) && assets.length > 0) {
+        const sum = assets.reduce((acc, cur) => {
+          const marketValue = parseFloat(cur?.marketValue ?? 0)
+          const share = parseFloat(cur?.share ?? 0)
+
+          if (share === 0) {
+            return acc
+          }
+
+          acc += marketValue * (share > 1 ? share / 100 : 1)
+
+          return acc
+        }, 0)
+
+        return formatCurrency(String(sum))
+      }
+
+      return ''
+    },
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
