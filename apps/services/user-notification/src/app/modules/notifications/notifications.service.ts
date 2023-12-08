@@ -21,6 +21,7 @@ import {
   UpdateNotificationDto,
   RenderedNotificationDto,
 } from './dto/notification.dto'
+import { NoContentException } from '@island.is/nest/problem'
 
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 const contentfulGqlUrl =
@@ -178,9 +179,7 @@ export class NotificationsService {
     })
 
     if (!notification) {
-      throw new NotFoundException(
-        'Notification not found or does not belong to the user',
-      )
+      throw new NoContentException()
     }
 
     // Process and format the notification
@@ -269,9 +268,7 @@ export class NotificationsService {
         returning: true,
       })
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        'Notification not found or does not belong to the user',
-      )
+      throw new NoContentException()
     } else {
       // Process and format the notification
       try {

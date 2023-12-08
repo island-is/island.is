@@ -9,13 +9,15 @@ import {
   UpdatedAt,
   Index,
 } from 'sequelize-typescript'
+import { CreationOptional, InferAttributes, InferCreationAttributes } from 'sequelize/types/model'
+
 
 interface ArgItem {
   key: string
   value: string
 }
 
-enum NotificationStatus {
+export enum NotificationStatus {
   READ = 'read',
   UNREAD = 'unread',
 }
@@ -23,7 +25,7 @@ enum NotificationStatus {
   tableName: 'user_notification', // Explicitly setting the table name
 })
 @Table
-export class Notification extends Model<Notification> {
+export class Notification extends Model<InferAttributes<Notification>, InferCreationAttributes<Notification>> {
   @PrimaryKey
   @AutoIncrement
   @Column({
@@ -31,7 +33,7 @@ export class Notification extends Model<Notification> {
     allowNull: false,
     field: 'id',
   })
-  id!: number
+  id!: CreationOptional<number>
 
   @Index // Adding an index
   @Column({
@@ -68,14 +70,14 @@ export class Notification extends Model<Notification> {
     type: DataType.DATE,
     field: 'created',
   })
-  created!: Date
+  created!: CreationOptional<Date>
 
   @UpdatedAt
   @Column({
     type: DataType.DATE,
     field: 'updated',
   })
-  updated!: Date
+  updated!: CreationOptional<Date>
 
   @Column({
     type: DataType.ENUM,
@@ -84,5 +86,5 @@ export class Notification extends Model<Notification> {
     allowNull: false,
     field: 'status',
   })
-  status!: NotificationStatus
+  status!: CreationOptional<NotificationStatus>
 }

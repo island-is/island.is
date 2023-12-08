@@ -9,13 +9,15 @@ import {
   IsArray,
   ValidateNested,
   IsOptional,
+  IsUUID,
 } from 'class-validator'
 import { Type } from 'class-transformer'
+import {NotificationStatus} from '../notification.model'
 
-export enum NotificationStatus {
-  READ = 'read',
-  UNREAD = 'unread',
-}
+// export enum NotificationStatus {
+//   READ = 'read',
+//   UNREAD = 'unread',
+// }
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -27,7 +29,7 @@ export class ExtendedPaginationDto extends PaginationDto {
   locale?: string
 }
 
-export class ArgItem {
+class ArgItem {
   @ApiProperty({ example: 'key1' })
   @IsString()
   key!: string
@@ -44,13 +46,14 @@ export class NotificationDto {
 
   @ApiProperty({ example: 'uuid-message-id' })
   @IsString()
+  @IsUUID()
   messageId!: string
 
-  @ApiProperty({ example: 'recipient-uuid' })
+  @ApiProperty({ example: '1234567890' })
   @IsString()
   recipient!: string
 
-  @ApiProperty({ example: 'template-uuid' })
+  @ApiProperty({ example: 'HNIPP.ORG.CONTEXT' })
   @IsString()
   templateId!: string
 
@@ -78,20 +81,21 @@ export class RenderedNotificationDto {
   @IsInt()
   id!: number
 
-  @ApiProperty({ example: 'uuid-message-id' })
+  @ApiProperty({ example: 'message-uuid' })
   @IsString()
+  @IsUUID()
   messageId!: string
 
-  @ApiProperty({ example: 'hnipp' })
+  @ApiProperty({ example: 'Catchy notification title' })
   @IsString()
   title!: string
-  @ApiProperty({ example: 'hnipp' })
+  @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
   body!: string
-  @ApiProperty({ example: 'hnipp' })
+  @ApiProperty({ example: 'Extra body text for further viewing' })
   @IsString()
   dataCopy!: string | null | undefined
-  @ApiProperty({ example: 'hnipp' })
+  @ApiProperty({ example: '//inbox/document-uuid' })
   @IsString()
   clickAction!: string | null | undefined
 
@@ -117,26 +121,26 @@ export class Message {
   @IsString()
   body!: string
 
-  @ApiProperty({ required: false, example: 'Some data copy' })
+  @ApiPropertyOptional({ example: 'Some data copy' })
   @IsOptional()
   @IsString()
   dataCopy?: string
 
-  @ApiProperty({ required: false, example: 'click/action' })
+  @ApiPropertyOptional({ example: 'click/action' })
   @IsOptional()
   @IsString()
   clickAction?: string
 }
-export class ExtendedNotificationDto {
-  @ApiProperty({
-    example: {
-      /* ... */
-    },
-  })
-  @ValidateNested()
-  @Type(() => Message)
-  message!: Message
-}
+// export class ExtendedNotificationDto {
+//   @ApiProperty({
+//     example: {
+//       /* ... */
+//     },
+//   })
+//   @ValidateNested()
+//   @Type(() => Message)
+//   message!: Message
+// }
 
 export class PaginatedNotificationDto {
   @ApiProperty({ example: 100 })

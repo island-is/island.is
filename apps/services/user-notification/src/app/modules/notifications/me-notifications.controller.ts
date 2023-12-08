@@ -28,6 +28,9 @@ import {
 import { Documentation } from '@island.is/nest/swagger'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(NotificationsScope.read)
+@ApiSecurity('oauth2', [NotificationsScope.read])
+@ApiTags('user-notification')
 @Controller({
   path: 'me/notifications',
   version: '1',
@@ -40,9 +43,6 @@ export class MeNotificationsController {
     summary: 'Returns a paginated list of user notifications',
     response: { status: 200, type: PaginatedNotificationDto },
   })
-  @Scopes(NotificationsScope.read)
-  @ApiTags('user-notification')
-  @ApiSecurity('oauth2', [NotificationsScope.read])
   findMany(
     @CurrentUser() user: User,
     @Query() query: ExtendedPaginationDto,
@@ -55,9 +55,6 @@ export class MeNotificationsController {
     summary: 'Returns a specific user notification',
     response: { status: 200, type: RenderedNotificationDto },
   })
-  @Scopes(NotificationsScope.read)
-  @ApiTags('user-notification')
-  @ApiSecurity('oauth2', [NotificationsScope.read])
   findOne(
     @CurrentUser() user: User,
     @Param('id') id: number,
@@ -72,7 +69,6 @@ export class MeNotificationsController {
   })
   @Patch(':id')
   @Scopes(NotificationsScope.write)
-  @ApiTags('user-notification')
   @ApiSecurity('oauth2', [NotificationsScope.write])
   update(
     @CurrentUser() user: User,

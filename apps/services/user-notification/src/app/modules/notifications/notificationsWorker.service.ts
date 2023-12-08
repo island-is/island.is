@@ -37,7 +37,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     await this.worker.run<CreateHnippNotificationDto>(
       async (message, job): Promise<void> => {
         const messageId = job.id
-        this.logger.info('Message received by worker 1.1', { messageId })
+        this.logger.info('Message received by worker', { messageId })
 
         const notification = { messageId, ...message }
         const messageIdExists = await this.notificationModel.count({
@@ -46,22 +46,22 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
         if (messageIdExists > 0) {
           // messageId exists do nothing
-          this.logger.info('notification already exists 1.1', {
+          this.logger.debug('notification with messageId already exists in db', {
             messageId,
           })
         } else {
           // messageId does not exist
           // write to db
           try {
-            const res = await this.notificationModel.create(notification as any)
+            const res = await this.notificationModel.create(notification)
             if (res) {
-              this.logger.info('notification written to db 1.1', {
+              this.logger.info('notification written to db', {
                 notification,
                 messageId,
               })
             }
           } catch (e) {
-            this.logger.error('error writing notification to db 1.1', {
+            this.logger.error('error writing notification to db', {
               e,
               messageId,
             })

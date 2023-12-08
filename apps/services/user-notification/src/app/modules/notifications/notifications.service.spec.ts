@@ -6,6 +6,15 @@ import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from './notification.model'
+import { NotificationsScope } from '@island.is/auth/scopes'
+import type { User } from '@island.is/auth-nest-tools'
+
+const user: User = {
+  nationalId: '1234567890',
+  scope: [NotificationsScope.read,NotificationsScope.write],
+  authorization: '',
+  client: '',
+}
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -16,6 +25,9 @@ const mockHnippTemplate: HnippTemplate = {
   category: 'Demo category',
   args: ['arg1', 'arg2'],
 }
+
+
+
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
 
 const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
@@ -26,23 +38,8 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
     { key: 'arg2', value: 'world' },
   ],
 }
-// const mockNotification = {
-//   id: 1,
-//   recipient: '1234567890',
-//   templateId: 'HNIPP.DEMO.ID',
-//   args: [
-//     { key: 'arg1', value: 'hello' },
-//     { key: 'arg2', value: 'world' },
-//   ],
-//   notificationTitle: 'Demo title ',
-//   notificationBody: 'Demo body {{arg1}}',
-//   notificationDataCopy: 'Demo data copy',
-//   clickAction: 'Demo click action {{arg2}}',
-//   category: 'Demo category',
-//   status: 'UNREAD',
-//   created: new Date(),
-//   modified: new Date(),
-// }
+
+
 
 describe('NotificationsService', () => {
   let service: NotificationsService
@@ -149,60 +146,4 @@ describe('NotificationsService', () => {
     expect(service.mapLocale(null)).toBe('is-IS')
     expect(service.mapLocale(undefined)).toBe('is-IS')
   })
-
-  // it('should find and return a specific notification', async () => {
-  //   const user: User = { nationalId: '12345' }
-  //   const id = 1
-  //   const locale = 'en'
-  //   // const mockNotification = { /* your mock notification object */ }
-  //   // const mockTemplate = { /* your mock template object */ }
-
-  //   jest.spyOn(service, 'getTemplate').mockResolvedValue(mockHnippTemplate)
-  //   jest.spyOn(service, 'formatArguments').mockReturnValue(mockHnippTemplate)
-  //   service['notificationModel'].findOne = jest.fn().mockResolvedValue(mockNotification)
-
-  //   const result = await service.findOne(user, id, locale)
-  //   expect(result).toEqual(mockNotification)
-  // })
-
-  // it('should return a paginated list of formatted notifications', async () => {
-  //   const user = { nationalId: '12345' }
-  //   const query = { locale: 'en', limit: 10, after: 1 }
-  //   const mockTemplates = [/* your mock templates */]
-  //   const mockPaginatedResponse = { data: [/* your mock notifications */] }
-
-  //   jest.spyOn(service, 'getTemplates').mockResolvedValue(mockTemplates)
-  //   jest.spyOn(service, 'formatArguments').mockImplementation((notification, template) => /* your formatted notification */)
-  //   service['notificationModel'].paginate = jest.fn().mockResolvedValue(mockPaginatedResponse)
-
-  //   const result = await service.findMany(user, query)
-  //   expect(result.data).toEqual(/* expected formatted notifications */)
-  // })
-
-  // it('should update a notification status', async () => {
-  //   const user = { nationalId: '12345' }
-  //   const id = 1
-  //   const updateNotificationDto = { status: 'READ' }
-  //   const mockNotification = { save: jest.fn(), /* other properties */ }
-  //   const mockTemplate = { /* your mock template object */ }
-
-  //   jest.spyOn(service, 'getTemplate').mockResolvedValue(mockTemplate)
-  //   jest.spyOn(service, 'formatArguments').mockReturnValue(mockTemplate)
-  //   service['notificationModel'].findOne = jest.fn().mockResolvedValue(mockNotification)
-
-  //   const result = await service.update(user, id, updateNotificationDto)
-  //   expect(mockNotification.save).toHaveBeenCalled()
-  //   expect(result).toEqual(/* expected result */)
-  // })
-
-  // it('should create a notification', async () => {
-  //   const user = { nationalId: '12345' }
-  //   const mockNotificationData = { /* your mock notification data */ }
-
-  //   service['notificationModel'].create = jest.fn().mockResolvedValue(mockNotificationData)
-
-  //   const result = await service.create(user)
-  //   expect(service['notificationModel'].create).toHaveBeenCalledWith(/* expected arguments */)
-  //   expect(result).toEqual(mockNotificationData)
-  // })
 })
