@@ -94,11 +94,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                   : undefined
               }
               title={formatMessage(itemChild.name)}
-              colorScheme={
-                itemChild.active && activeItem.path !== itemChild.path
-                  ? 'default'
-                  : 'light'
-              }
+              colorScheme={pathname === itemChild.path ? 'default' : 'light'}
               marginLeft={ii === 0 ? 0 : 2}
             />
           ))}

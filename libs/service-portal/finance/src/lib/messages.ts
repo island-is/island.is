@@ -15,50 +15,56 @@ export const m = defineMessages({
   },
 
   transactionsLabel: {
-    id: 'service.portal:finance-transactions-label',
+    id: 'sp.finance:finance-transactions-label',
     defaultMessage: 'Veldu gjaldflokk',
   },
 
   transactionsYear: {
-    id: 'service.portal:finance-transactions-label',
+    id: 'sp.finance:finance-transactions-label',
     defaultMessage: 'Ár',
   },
 
   feeCategory: {
-    id: 'service.portal:fee-category',
+    id: 'sp.finance:fee-category',
     defaultMessage: 'Gjaldflokkur / stofnun',
   },
+
+  chargeType: {
+    id: 'sp.finance:charge-type',
+    defaultMessage: 'Gjaldflokkur',
+  },
+
   feeBase: {
-    id: 'service.portal:fee-base',
+    id: 'sp.finance:fee-base',
     defaultMessage: 'Gjaldgrunnur',
   },
   feeBasePlural: {
-    id: 'service.portal:fee-base-plural',
+    id: 'sp.finance:fee-base-plural',
     defaultMessage: 'Gjaldgrunnar',
   },
   feeBasePlaceholder: {
-    id: 'service.portal:fee-base-placeholder',
+    id: 'sp.finance:fee-base-placeholder',
     defaultMessage: 'Veldu gjaldgrunna',
   },
   feeBaseDescription: {
-    id: 'service.portal:fee-category-description',
+    id: 'sp.finance:fee-category-description',
     defaultMessage: 'Skýring á gjaldgrunni',
   },
   combinedStatus: {
-    id: 'service.portal:fee-combined-status',
+    id: 'sp.finance:fee-combined-status',
     defaultMessage: 'Uppsöfnuð staða',
   },
 
   selectedPeriods: {
-    id: 'service.portal:selected-periods',
+    id: 'sp.finance:selected-periods',
     defaultMessage: 'Valin tímabil',
   },
   displaySelectedPeriods: {
-    id: 'service.portal:display-selected-periods',
+    id: 'sp.finance:display-selected-periods',
     defaultMessage: 'Birta valin tímabil',
   },
   lastMovement: {
-    id: 'service.portal:last-movement',
+    id: 'sp.finance:last-movement',
     defaultMessage: 'Síðasta hreyfing',
   },
 

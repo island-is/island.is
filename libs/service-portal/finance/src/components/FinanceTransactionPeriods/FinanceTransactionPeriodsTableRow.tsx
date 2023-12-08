@@ -54,6 +54,7 @@ const FinanceTransactionPeriodsTableRow = ({ record }: Props) => {
         <FinanceTransactionPeriodsTableDetail
           data={chargeItemSubjects}
           typeId={record.iD}
+          chargeType={record.name}
         />
       ) : null}
     </ExpandRow>

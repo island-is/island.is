@@ -29,4 +29,5 @@ export type SelectedPeriod = {
   typeId: string
   period: string
   subject: string
+  chargeType: string
 }

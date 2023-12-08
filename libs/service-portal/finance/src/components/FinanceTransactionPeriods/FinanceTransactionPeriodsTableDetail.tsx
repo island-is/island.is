@@ -28,12 +28,17 @@ import { m as messages } from '../../lib/messages'
 
 interface Props {
   typeId: string
+  chargeType: string
   data: ChargeItemSubjects
 }
 
 const ITEMS_ON_PAGE = 5
 
-const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
+const FinanceTransactionPeriodsTableDetail = ({
+  typeId,
+  data,
+  chargeType,
+}: Props) => {
   const { formatMessage } = useLocale()
   const { financeTransactionPeriodsState, setFinanceTransactionPeriodsState } =
     useFinanceTransactionPeriodsState()
@@ -114,6 +119,7 @@ const FinanceTransactionPeriodsTableDetail = ({ typeId, data }: Props) => {
           period: period.period,
           subject: subject.chargeItemSubject,
           year: financeTransactionPeriodsState.year ?? '',
+          chargeType: chargeType,
         })
       } else if (!checked && selectedPeriods.find(findPeriod)) {
         selectedPeriods = selectedPeriods.filter(

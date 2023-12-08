@@ -41,6 +41,12 @@ export default function FinanceTransactionSelectedPeriod({
     <Box paddingBottom={4}>
       <Box paddingBottom={2}>
         <Text fontWeight="semiBold" variant="medium" as="span">
+          {formatMessage(messages.chargeType)}:{' '}
+        </Text>
+        <Text variant="small" as="span">
+          {period.chargeType} -{' '}
+        </Text>
+        <Text fontWeight="semiBold" variant="medium" as="span">
           {formatMessage(messages.feeBase)}:{' '}
         </Text>
         <Text variant="small" as="span">
