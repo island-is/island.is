@@ -21,6 +21,10 @@ describe('getMarketValueShare', () => {
           marketValue: '20000000',
           share: 75,
         },
+        {
+          marketValue: '20000000',
+          share: 1,
+        },
       ],
     },
   }
@@ -31,8 +35,8 @@ describe('getMarketValueShare', () => {
     },
   }
 
-  it('should return the sum in a currency format: "45.000.000 kr"', () => {
-    expect(getMarketValueShare(answers)).toEqual('45.000.000 kr.')
+  it('should return the sum in a currency format: "45.200.000 kr"', () => {
+    expect(getMarketValueShare(answers)).toEqual('45.200.000 kr.')
   })
 
   it('should return an empty string', () => {

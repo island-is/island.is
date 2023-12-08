@@ -14,7 +14,7 @@ export const getMarketValueShare = (answers: FormValue) => {
         return acc
       }
 
-      acc += marketValue * (share > 1 ? share / 100 : 1)
+      acc += marketValue * (share / 100)
 
       return acc
     }, 0)
