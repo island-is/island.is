@@ -10,7 +10,7 @@ export class FilterApplicationsResponse {
   totalCount: number
 
   @ApiProperty()
-  minDateCreated: Date
+  minDateCreated?: Date
 
   @ApiProperty()
   staffList: StaffModel[]

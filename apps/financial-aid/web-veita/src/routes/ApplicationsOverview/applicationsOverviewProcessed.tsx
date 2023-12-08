@@ -40,6 +40,9 @@ export const ApplicationsOverviewProcessed = () => {
     onChecked,
     onFilterClear,
     ClearFilterOrFillFromRoute,
+    period,
+    setPeriod,
+    handleDateChange,
   } = useFilter(router)
 
   const { filterTable, error, loading } = useApplicationFilter(
@@ -49,8 +52,12 @@ export const ApplicationsOverviewProcessed = () => {
   )
 
   useEffect(() => {
-    filterTable(activeFilters, currentPage)
+    filterTable(activeFilters, currentPage, period)
   }, [activeFilters])
+
+  useEffect(() => {
+    if (minDateCreated) setPeriod({ ...period, from: new Date(minDateCreated) })
+  }, [minDateCreated])
 
   useEffect(() => {
     ClearFilterOrFillFromRoute()
@@ -58,7 +65,11 @@ export const ApplicationsOverviewProcessed = () => {
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
-    filterTable(activeFilters, page)
+    filterTable(activeFilters, page, period)
+  }
+
+  const handleFilterByDate = () => {
+    filterTable(activeFilters, currentPage, period)
   }
 
   return (
@@ -74,6 +85,7 @@ export const ApplicationsOverviewProcessed = () => {
             {label}
           </Text>
         </Box>
+        {/* TODO add skeleton */}
         {staffList && (
           <FilterPopover
             stateOptions={statesOnRoute}
@@ -85,7 +97,13 @@ export const ApplicationsOverviewProcessed = () => {
           />
         )}
 
-        {minDateCreated && <FilterDates minDateCreated={minDateCreated} />}
+        <FilterDates
+          onDateChange={handleDateChange}
+          periodFrom={period.from}
+          periodTo={period.to}
+          minDateCreated={minDateCreated}
+          onFilterFromDates={handleFilterByDate}
+        />
 
         {applications && !loading && (
           <ApplicationsTable

@@ -1,43 +1,55 @@
 import React from 'react'
-import { Box, DatePicker } from '@island.is/island-ui/core'
-import { Filters } from '../../utils/useFilter'
+import { Box, Button, DatePicker } from '@island.is/island-ui/core'
+import { PeriodFilter } from '../../utils/useFilter'
 
 interface Props {
-  minDateCreated: string
+  onDateChange: (period: PeriodFilter) => void
+  periodFrom?: Date
+  periodTo?: Date
+  minDateCreated?: string
+  onFilterFromDates: () => void
 }
 
-const FilterDates = ({ minDateCreated }: Props) => {
-  const endDate = new Date(minDateCreated)
-  const startDate = new Date(minDateCreated)
-
-  const minDate = new Date(minDateCreated)
-  const maxDate = new Date()
-
+const FilterDates = ({
+  onDateChange,
+  periodFrom,
+  periodTo,
+  minDateCreated,
+  onFilterFromDates,
+}: Props) => {
   return (
     <Box
       display="flex"
-      width="half"
       justifyContent="flexStart"
       alignItems="center"
       marginY={2}
     >
       <DatePicker
+        id="periodFrom"
         label="Frá"
         size="sm"
-        placeholderText="Pick a date"
-        selected={endDate}
-        handleChange={(date: Date) => console.log(date)}
-        minDate={minDate}
-        maxDate={maxDate}
+        placeholderText="Frá"
+        minDate={minDateCreated ? new Date(minDateCreated) : undefined}
+        maxDate={periodTo}
+        selected={periodFrom}
+        handleChange={(from) => onDateChange({ from })}
+        locale="is"
       />
       <DatePicker
+        id="periodTo"
         label="Til"
         size="sm"
-        placeholderText="Pick a date"
-        selected={startDate}
-        handleChange={(date: Date) => console.log(date)}
-        minDate={minDate}
+        placeholderText="Til"
+        minDate={periodFrom}
+        maxDate={new Date()}
+        selected={periodTo}
+        handleChange={(to) => onDateChange({ to })}
+        locale="is"
       />
+
+      <Button onClick={onFilterFromDates} variant="ghost">
+        Sía dags.
+      </Button>
     </Box>
   )
 }

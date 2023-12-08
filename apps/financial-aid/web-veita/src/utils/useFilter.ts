@@ -10,6 +10,11 @@ export interface Filters {
   staff: string[]
 }
 
+export interface PeriodFilter {
+  from?: Date
+  to?: Date
+}
+
 const useFilter = (router: NextRouter) => {
   const [currentPage, setCurrentPage] = useState<number>(
     router?.query?.page ? parseInt(router.query.page as string) : 1,
@@ -17,6 +22,11 @@ const useFilter = (router: NextRouter) => {
   const [activeFilters, setActiveFilters] = useState<Filters>({
     applicationState: [],
     staff: [],
+  })
+
+  const [period, setPeriod] = useState<PeriodFilter>({
+    from: undefined,
+    to: new Date(),
   })
 
   const onFilterClear = () => {
@@ -40,6 +50,13 @@ const useFilter = (router: NextRouter) => {
     } else {
       onFilterClear()
     }
+  }
+
+  const handleDateChange = (period: PeriodFilter) => {
+    setPeriod((prev) => ({
+      ...prev,
+      ...period,
+    }))
   }
 
   const onChecked = (
@@ -70,6 +87,9 @@ const useFilter = (router: NextRouter) => {
     onChecked,
     onFilterClear,
     ClearFilterOrFillFromRoute,
+    period,
+    setPeriod,
+    handleDateChange,
   }
 }
 export default useFilter

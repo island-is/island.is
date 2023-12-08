@@ -663,7 +663,7 @@ export class ApplicationService {
     return {
       applications: resultsApplications.rows,
       totalCount: resultsApplications.count,
-      minDateCreated: resultsMinDate.created,
+      minDateCreated: resultsMinDate?.created,
       staffList: staffListUniq,
     }
   }
