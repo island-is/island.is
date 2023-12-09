@@ -26,7 +26,7 @@ export class ExtendedPaginationDto extends PaginationDto {
     type: 'string',
   })
   @IsString()
-  locale?: string
+  locale!: string
 }
 
 class ArgItem {

@@ -20,6 +20,7 @@ import {
   PaginatedNotificationDto,
   UpdateNotificationDto,
   RenderedNotificationDto,
+  ExtendedPaginationDto,
 } from './dto/notification.dto'
 import { NoContentException } from '@island.is/nest/problem'
 
@@ -218,12 +219,12 @@ export class NotificationsService {
     )
   }
 
-  async findMany(user: User, query: any): Promise<PaginatedNotificationDto> {
+  async findMany(user: User, query: ExtendedPaginationDto): Promise<PaginatedNotificationDto> {
     const templates = await this.getTemplates(query.locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
-      after: query.after,
+      after: query.after || "",
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
@@ -247,7 +248,7 @@ export class NotificationsService {
           this.logger.warn(
             'Template not found for notification: ' + notification.id,
           )
-          return null // or handle as appropriate
+          return null
         }
       }),
     )
