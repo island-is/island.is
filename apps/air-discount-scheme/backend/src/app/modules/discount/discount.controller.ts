@@ -21,10 +21,11 @@ import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
   CreateExplicitDiscountCodeParams,
+  CreateSuperExplicitDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
 import { DiscountService } from './discount.service'
-import { FlightService } from '../flight'
+import { Flight, FlightService } from '../flight'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -37,6 +38,11 @@ import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
 import { AirlineUser } from '../user/user.model'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
+import {
+  AKUREYRI_FLIGHT_CODES,
+  REYKJAVIK_FLIGHT_CODES,
+} from '../flight/flight.service'
+import { ExplicitFlight } from './dto/ExplicitFlight.dto'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -129,25 +135,30 @@ export class PrivateDiscountController {
 @Scopes(AirDiscountSchemeScope.admin)
 @UseGuards(IdsUserGuard, ScopesGuard)
 export class PrivateDiscountAdminController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   @Post('users/createExplicitDiscountCode')
-  @ApiOkResponse({ type: Discount })
+  @ApiOkResponse({ type: [Discount] })
   @ApiBearerAuth()
   @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
-  @Scopes(AirDiscountSchemeScope.admin)
   async createExplicitDiscountCode(
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
-  ): Promise<Discount> {
-    const unConnectedFlights =
-      await this.flightService.findThisYearsConnectableFlightsByNationalId(
-        body.nationalId,
-      )
+  ): Promise<Array<Discount>> {
+    const date = new Date()
+    date.setDate(date.getDate() + body.numberOfDaysUntilExpiration)
+
+    const flight: ExplicitFlight = {
+      connectable: true,
+      id: 'explicit',
+      flightLegs: [
+        {
+          origin: REYKJAVIK_FLIGHT_CODES[0],
+          destination: AKUREYRI_FLIGHT_CODES[0],
+          date,
+        },
+      ],
+    }
 
     const discount = await this.discountService.createExplicitDiscountCode(
       auth,
@@ -156,13 +167,58 @@ export class PrivateDiscountAdminController {
       auth.nationalId,
       body.comment,
       body.numberOfDaysUntilExpiration,
-      unConnectedFlights,
-      body.isExplicit,
+      body.needsConnectionFlight ? [flight] : [],
+      false,
       body.flightLegs,
     )
 
     if (!discount) {
       throw new Error(`Could not create explicit discount`)
+    }
+    return discount
+  }
+  @Post('users/createSuperExplicitDiscountCode')
+  @ApiOkResponse({ type: [Discount] })
+  @ApiBearerAuth()
+  @ApiExcludeEndpoint(!process.env.ADS_PRIVATE_CLIENT)
+  async createSuperExplicitDiscountCode(
+    @Body() body: CreateSuperExplicitDiscountCodeParams,
+    @CurrentUser() auth: AuthUser,
+  ): Promise<Array<Discount>> {
+    /*const unConnectedFlights =
+      await this.flightService.findThisYearsConnectableFlightsByNationalId(
+        body.nationalId,
+      )
+      */
+    const date = new Date()
+    date.setDate(date.getDate() + body.numberOfDaysUntilExpiration)
+
+    const flight: ExplicitFlight = {
+      connectable: true,
+      id: 'explicit',
+      flightLegs: [
+        {
+          origin: REYKJAVIK_FLIGHT_CODES[0],
+          destination: AKUREYRI_FLIGHT_CODES[0],
+          date,
+        },
+      ],
+    }
+
+    const discount = await this.discountService.createExplicitDiscountCode(
+      auth,
+      body.nationalId,
+      body.postalcode,
+      auth.nationalId,
+      body.comment,
+      body.numberOfDaysUntilExpiration,
+      body.needsConnectionFlight ? [flight] : [],
+      true,
+      body.flightLegs,
+    )
+
+    if (!discount) {
+      throw new Error(`Could not create super explicit discount`)
     }
 
     return discount

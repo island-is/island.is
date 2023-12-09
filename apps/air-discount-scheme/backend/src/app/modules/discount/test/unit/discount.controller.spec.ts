@@ -232,7 +232,7 @@ describe('DiscountController', () => {
       )
       const createExplicitDiscountCodeSpy = jest
         .spyOn(discountService, 'createExplicitDiscountCode')
-        .mockImplementation(() => Promise.resolve(discount))
+        .mockImplementation(() => Promise.resolve([discount]))
 
       const result =
         await privateDiscountAdminController.createExplicitDiscountCode(
@@ -241,6 +241,9 @@ describe('DiscountController', () => {
             nationalId,
             postalcode,
             numberOfDaysUntilExpiration,
+            needsConnectionFlight: false,
+            isExplicit: false,
+            flightLegs: 1,
           },
           auth,
         )

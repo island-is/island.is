@@ -11,5 +11,5 @@ export enum AdminPortalScope {
   petitionsAdmin = '@admin.island.is/petitions',
   serviceDesk = '@admin.island.is/service-desk',
   signatureCollection = '@admin.island.is/signature-collection',
-  superAirDiscountScheme = '@admin.island.is/super-ads',
+  explicitAirDiscountScheme = '@admin.island.is/ads:explicit',
 }

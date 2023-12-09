@@ -19,11 +19,6 @@ import {
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
 
-enum TypeOptionsValue {
-  Normal,
-  Connecting,
-}
-
 const AdminCreateDiscount = () => {
   const options = [
     {
@@ -37,10 +32,10 @@ const AdminCreateDiscount = () => {
   ]
 
   const typeOptions = [
-    { label: 'Venjulegt flug', value: TypeOptionsValue.Normal },
+    { label: 'Nei', value: false },
     {
-      label: 'Tengiflug',
-      value: TypeOptionsValue.Connecting,
+      label: 'Já',
+      value: true,
     },
   ]
 
@@ -55,7 +50,7 @@ const AdminCreateDiscount = () => {
   const [comment, setComment] = useState('')
   const [length, setLength] = useState(options[0])
   const [flightLegs, setFlightLegs] = useState(possibleFlightLegs[0])
-  const [typeOfFlight, setTypeOfFlight] = useState(typeOptions[0])
+  const [needsConnecting, setNeedsConnecting] = useState(typeOptions[0])
   const [discountCode, setDiscountCode] = useState<
     CreateExplicitDiscountCodeMutation | undefined | null
   >(null)
@@ -78,42 +73,29 @@ const AdminCreateDiscount = () => {
               <Text variant="h1" as="h1">
                 Handvirkir kóðar
               </Text>
-
               {discountCode ? (
                 <>
-                  {typeOfFlight.value === TypeOptionsValue.Connecting ? (
-                    <>
-                      <Text variant="h2" marginBottom={1}>
-                        Tengiflugs kóðar
-                      </Text>
-                      {discountCode?.createAirDiscountSchemeExplicitDiscountCode.connectionDiscountCodes.map(
-                        (item) => (
-                          <>
-                            <Text variant="h3">Tengiflug - kóði</Text>
-                            <Text>
-                              Kóði: <strong>{item.code}</strong>
-                            </Text>
-                            <Text>Flug: {item.flightDesc}</Text>
-                          </>
-                        ),
-                      )}
-                      {discountCode.createAirDiscountSchemeExplicitDiscountCode
-                        .connectionDiscountCodes.length === 0 && (
-                        <Text>
-                          Engir kóðar fundust, athugaðu að fyrst þarf að nota
-                          venjulegan kóða áður en tengiflugskóðinn birtist.
-                        </Text>
-                      )}
-                    </>
-                  ) : (
-                    <Text variant="h2">
-                      Venjulegur kóði:{' '}
-                      {
-                        discountCode
-                          ?.createAirDiscountSchemeExplicitDiscountCode
-                          .discountCode
-                      }
-                    </Text>
+                  {discountCode?.createAirDiscountSchemeExplicitDiscountCode?.map(
+                    (item, i) => {
+                      return (
+                        <>
+                          <Text variant="h2">Leið {i + 1}</Text>
+                          <Text variant="h3">
+                            Venjulegur kóði: {item.discountCode}
+                          </Text>
+                          {!!item.connectionDiscountCodes.length &&
+                            item.connectionDiscountCodes.map(
+                              (connectionCode) => {
+                                return (
+                                  <Text variant="h3">
+                                    Tengiflugs kóði: {connectionCode.code}
+                                  </Text>
+                                )
+                              },
+                            )}
+                        </>
+                      )
+                    },
                   )}
                   <Text>
                     Umsýsluviðmótið geymir þessa kóða ekki. Þeir munu birtast í
@@ -165,15 +147,15 @@ const AdminCreateDiscount = () => {
                   />
                   <Select
                     name="length"
-                    label="Tegund kóða"
+                    label="Þarf tengiflug"
                     required
                     onChange={(opt) => {
-                      setTypeOfFlight(
+                      setNeedsConnecting(
                         typeOptions.find((item) => item.value === opt?.value) ??
                           typeOptions[0],
                       )
                     }}
-                    value={typeOfFlight}
+                    value={needsConnecting}
                     options={typeOptions}
                   />
                   <Select
@@ -181,7 +163,7 @@ const AdminCreateDiscount = () => {
                     label="Leið"
                     required
                     onChange={(opt) => {
-                      setTypeOfFlight(
+                      setFlightLegs(
                         possibleFlightLegs.find(
                           (item) => item.value === opt?.value,
                         ) ?? possibleFlightLegs[0],
@@ -232,7 +214,8 @@ const AdminCreateDiscount = () => {
                 comment,
                 numberOfDaysUntilExpiration: parseInt(length.value, 10),
                 isExplicit: false,
-                flightLegs: flightLegs,
+                flightLegs: flightLegs.value,
+                needsConnectionFlight: needsConnecting.value,
               },
             },
           }).then((data) => {

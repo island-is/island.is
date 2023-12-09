@@ -16,8 +16,10 @@ const SuperDiscount = lazy(() =>
 export const airDiscountSchemeAdminModule: PortalModule = {
   name: m.airDiscountScheme,
   layout: 'full',
-  enabled: ({ userInfo }) =>
-    userInfo.scopes.includes(AdminPortalScope.airDiscountScheme),
+  enabled: ({ userInfo }) => {
+    console.log(userInfo)
+    return userInfo.scopes.includes(AdminPortalScope.airDiscountScheme)
+  },
   routes: (props) => [
     {
       name: m.overview,
@@ -35,7 +37,10 @@ export const airDiscountSchemeAdminModule: PortalModule = {
       path: AirDiscountSchemePaths.SuperDiscount,
       element: <SuperDiscount />,
       enabled: props.userInfo.scopes.includes(
-        AdminPortalScope.superAirDiscountScheme,
+        AdminPortalScope.explicitAirDiscountScheme,
+      ),
+      navHide: !props.userInfo.scopes.includes(
+        AdminPortalScope.explicitAirDiscountScheme,
       ),
     },
   ],

@@ -1,13 +1,10 @@
-mutation CreateExplicitDiscountCode(
+mutation CreateSuperExplicitDiscountCode(
   $input: AirDiscountSchemeCreateExplicitDiscountCodeInput!
 ) {
-  createAirDiscountSchemeExplicitDiscountCode(input: $input) {
+  createAirDiscountSchemeSuperExplicitDiscountCode(input: $input) {
     discountCode
     connectionDiscountCodes {
       code
-      flightId
-      flightDesc
-      validUntil
     }
   }
 }

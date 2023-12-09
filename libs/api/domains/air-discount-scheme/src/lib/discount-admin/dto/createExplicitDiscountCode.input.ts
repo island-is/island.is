@@ -15,7 +15,10 @@ export class CreateExplicitDiscountCodeInput {
   numberOfDaysUntilExpiration!: number
 
   @Field((_) => Boolean)
-  isExplicit!: number
+  needsConnectionFlight!: boolean
+
+  @Field((_) => Boolean)
+  isExplicit!: boolean
 
   @Field((_) => Int)
   flightLegs!: number

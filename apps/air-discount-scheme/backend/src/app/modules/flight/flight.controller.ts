@@ -187,6 +187,14 @@ export class PublicFlightController {
       throw new BadRequestException('Discount code is invalid')
     }
 
+    console.log('discount!!', discount)
+    if (
+      discount.connectionDiscountCodes.find(
+        (item) => item.code === params.discountCode,
+      )?.flightId === 'explicit'
+    ) {
+      return
+    }
     await this.validateConnectionFlights(
       discount,
       params.discountCode,

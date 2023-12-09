@@ -15,6 +15,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { UserService } from '../user/user.service'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { number } from 'yargs'
+import { ExplicitFlight } from './dto/ExplicitFlight.dto'
 
 interface CachedDiscount {
   user: User
@@ -89,8 +90,9 @@ export class DiscountService {
   async createDiscountCode(
     user: User,
     nationalId: string,
-    connectableFlights: Flight[],
+    connectableFlights: Flight[] | ExplicitFlight[],
     numberOfDaysUntilExpiration = 1,
+    isExplicit = false,
   ): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const cacheId = CACHE_KEYS.discount(uuid())
@@ -102,7 +104,7 @@ export class DiscountService {
 
     let previousFlightIds: string[] = []
 
-    if (previousCache?.connectionDiscountCodes) {
+    if (previousCache?.connectionDiscountCodes && !isExplicit) {
       connectionDiscountCodes = previousCache.connectionDiscountCodes
       previousFlightIds = connectionDiscountCodes.map((cdc) => cdc.flightId)
     }
@@ -132,6 +134,7 @@ export class DiscountService {
         const flightDesc = `${flightLegs[0].origin}-${
           flightLegs[flightLegsCount - 1].destination
         }`
+
         const connectionDiscountCode = this.generateDiscountCode()
 
         // Point every connection discount code to the cache id for lookup later
@@ -190,24 +193,36 @@ export class DiscountService {
     employeeId: string,
     comment: string,
     numberOfDaysUntilExpiration: number,
-    unConnectedFlights: Flight[],
-    isExplicit = false,
+    unConnectedFlights: Flight[] | ExplicitFlight[],
+    isExplicit: boolean,
     flightLegs = 1,
-  ): Promise<Discount | null> {
+  ): Promise<Array<Discount> | null> {
     const user = await this.userService.getUserInfoByNationalId(
       nationalId,
       auth,
     )
+
     if (!user) {
       return null
     }
     // overwrite credit since validation may return 0 depending on what the problem is
+    user.fund.total = 0
+    user.fund.credit = 0
+    user.fund.used = 0
+    console.log('trying explicit', user)
+    console.log(isExplicit)
+    if (isExplicit) {
+      console.log('we are explcitid')
+    }
     if (user.fund.total === 0 && isExplicit) {
+      console.log('we are explicit')
       const allExplicit = await this.explicitModel.findAll({
         where: { customerId: nationalId },
       })
-      if (allExplicit.length <= 5) {
+      console.log('we are explicit', allExplicit.length.toString())
+      if (allExplicit === null || allExplicit.length <= 5) {
         user.fund.credit = flightLegs
+        console.log('we are flightlegs', user.fund.credit)
       } else {
         return null
       }
@@ -217,39 +232,47 @@ export class DiscountService {
       user.fund.credit = user.fund.total - user.fund.used
     }
 
-    const discount = await this.createDiscountCode(
-      {
-        ...user,
-        postalcode: postalCode,
-      },
-      nationalId,
-      unConnectedFlights,
-      numberOfDaysUntilExpiration,
-    )
+    const getDiscount = async () => {
+      const discount = await this.createDiscountCode(
+        {
+          ...user,
+          postalcode: postalCode,
+        },
+        nationalId,
+        unConnectedFlights,
+        numberOfDaysUntilExpiration,
+        true,
+      )
+      // Create record of the explicit code
+      this.explicitModel.create({
+        code: discount.discountCode,
+        customerId: nationalId,
+        employeeId: employeeId,
+        comment: comment,
+      })
 
-    // Create record of the explicit code
-    this.explicitModel.create({
-      code: discount.discountCode,
-      customerId: nationalId,
-      employeeId: employeeId,
-      comment,
-    })
+      // Flag the discount as explicit in the cache
+      const cacheId = discount.discountCode
+      const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
+      await this.setCache<string>(
+        cacheKey,
+        cacheId,
+        numberOfDaysUntilExpiration * ONE_DAY,
+      ) // cacheId pointer
+      await this.setCache<string>(
+        cacheId,
+        discount.discountCode,
+        numberOfDaysUntilExpiration * ONE_DAY,
+      ) // cache value
+      return discount
+    }
 
-    // Flag the discount as explicit in the cache
-    const cacheId = discount.discountCode
-    const cacheKey = CACHE_KEYS.explicitCode(discount.discountCode)
-    await this.setCache<string>(
-      cacheKey,
-      cacheId,
-      numberOfDaysUntilExpiration * ONE_DAY,
-    ) // cacheId pointer
-    await this.setCache<string>(
-      cacheId,
-      discount.discountCode,
-      numberOfDaysUntilExpiration * ONE_DAY,
-    ) // cache value
+    const discounts = []
+    for (let i = 0; i < flightLegs; i++) {
+      discounts.push(await getDiscount())
+    }
 
-    return discount
+    return discounts
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount | null> {
