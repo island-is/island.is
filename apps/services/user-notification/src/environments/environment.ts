@@ -53,4 +53,3 @@ export const environment = {
 }
 
 export type Config = typeof environment
-

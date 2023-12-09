@@ -9,9 +9,12 @@ import { Notification } from './notification.model'
 import { NotificationsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
-
-import { ExtendedPaginationDto, UpdateNotificationDto, RenderedNotificationDto, PaginatedNotificationDto } from './dto/notification.dto';
-
+import {
+  ExtendedPaginationDto,
+  UpdateNotificationDto,
+  RenderedNotificationDto,
+  PaginatedNotificationDto,
+} from './dto/notification.dto'
 
 const user: User = {
   nationalId: '1234567890',
@@ -150,38 +153,44 @@ describe('NotificationsService', () => {
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {
       // const user = { id: 1 }; // Mock user object
-      const query = new ExtendedPaginationDto(); // Mock query object
-      const mockedResponse = new PaginatedNotificationDto(); // Mocked response
-      jest.spyOn(service, 'findMany').mockImplementation(async () => mockedResponse);
+      const query = new ExtendedPaginationDto() // Mock query object
+      const mockedResponse = new PaginatedNotificationDto() // Mocked response
+      jest
+        .spyOn(service, 'findMany')
+        .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findMany(user, query)).toBe(mockedResponse);
-    });
-  });
+      expect(await service.findMany(user, query)).toBe(mockedResponse)
+    })
+  })
 
   describe('findOne', () => {
     it('should return a specific notification', async () => {
       // const user = { id: 1 }; // Mock user object
-      const id = 123; // Mock notification id
-      const locale = 'en'; // Mock locale
-      const mockedResponse = new RenderedNotificationDto(); // Mocked response
-      jest.spyOn(service, 'findOne').mockImplementation(async () => mockedResponse);
+      const id = 123 // Mock notification id
+      const locale = 'en' // Mock locale
+      const mockedResponse = new RenderedNotificationDto() // Mocked response
+      jest
+        .spyOn(service, 'findOne')
+        .mockImplementation(async () => mockedResponse)
 
-      expect(await service.findOne(user, id, locale)).toBe(mockedResponse);
-    });
-  });
+      expect(await service.findOne(user, id, locale)).toBe(mockedResponse)
+    })
+  })
 
   describe('update', () => {
     it('should update a notification', async () => {
       // const user = { id: 1 }; // Mock user object
-      const id = 123; // Mock notification id
-      const updateNotificationDto = new UpdateNotificationDto(); // Mock update DTO
-      const locale = 'en'; // Mock locale
-      const mockedResponse = new RenderedNotificationDto(); // Mocked response
-      jest.spyOn(service, 'update').mockImplementation(async () => mockedResponse);
+      const id = 123 // Mock notification id
+      const updateNotificationDto = new UpdateNotificationDto() // Mock update DTO
+      const locale = 'en' // Mock locale
+      const mockedResponse = new RenderedNotificationDto() // Mocked response
+      jest
+        .spyOn(service, 'update')
+        .mockImplementation(async () => mockedResponse)
 
-      expect(await service.update(user, id, updateNotificationDto, locale)).toBe(mockedResponse);
-    });
-  });
-
-  
+      expect(
+        await service.update(user, id, updateNotificationDto, locale),
+      ).toBe(mockedResponse)
+    })
+  })
 })

@@ -219,12 +219,15 @@ export class NotificationsService {
     )
   }
 
-  async findMany(user: User, query: ExtendedPaginationDto): Promise<PaginatedNotificationDto> {
+  async findMany(
+    user: User,
+    query: ExtendedPaginationDto,
+  ): Promise<PaginatedNotificationDto> {
     const templates = await this.getTemplates(query.locale)
     const paginatedListResponse = await paginate({
       Model: this.notificationModel,
       limit: query.limit || 10,
-      after: query.after || "",
+      after: query.after || '',
       before: query.before,
       primaryKeyField: 'id',
       orderOption: [['id', 'DESC']],
