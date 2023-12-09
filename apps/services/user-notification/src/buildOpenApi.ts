@@ -5,6 +5,7 @@ import { QueueModule } from '@island.is/message-queue'
 import { openApi } from './openApi'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { SequelizeConfigService } from './app/sequelizeConfig.service'
+import { AppModule } from './app/app.module'
 @Module({
   imports: [
     CacheModule.register({
@@ -27,6 +28,6 @@ class BuildModule {}
 
 buildOpenApi({
   path: 'apps/services/user-notification/src/openapi.yaml',
-  appModule: BuildModule,
+  appModule: AppModule,//BuildModule
   openApi,
 })
