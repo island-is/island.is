@@ -58,7 +58,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-
+import { uuid } from 'uuidv4'
 @ApiTags('Flights')
 @Controller('api/public')
 @UseGuards(AuthGuard)
@@ -122,12 +122,15 @@ export class PublicFlightController {
     }
 
     // Validate the first chronological flightLeg of the connection flight
+    console.log('krass her?')
     let isConnectingFlight =
-      await this.flightService.isFlightLegConnectingFlight(
-        connectingId,
-        incomingLeg as FlightLeg, // must have date, destination and origin
-      )
-
+      connectingId === 'explicit'
+        ? true
+        : await this.flightService.isFlightLegConnectingFlight(
+            connectingId,
+            incomingLeg as FlightLeg, // must have date, destination and origin
+          )
+    console.log('nope!!')
     // If round-trip
     if (
       chronoLogicallegs[0].origin ===
@@ -142,12 +145,15 @@ export class PublicFlightController {
         ),
       }
       // Lazy evaluation makes this cheap
+      console.log('aþena')
       isConnectingFlight =
-        isConnectingFlight &&
-        (await this.flightService.isFlightLegConnectingFlight(
-          connectingId,
-          incomingLeg as FlightLeg,
-        ))
+        isConnectingFlight && connectingId === 'explicit'
+          ? true
+          : await this.flightService.isFlightLegConnectingFlight(
+              connectingId,
+              incomingLeg as FlightLeg,
+            )
+      console.log('dís')
     }
 
     if (!isConnectingFlight) {
@@ -155,6 +161,7 @@ export class PublicFlightController {
         'User does not meet the requirements for a connecting flight for this flight. Must be 48 hours or less between flight and connectingflight. Each connecting flight must go from/to Akureyri',
       )
     }
+    console.log(connectingId)
     return connectingId
   }
 
@@ -227,7 +234,7 @@ export class PublicFlightController {
         'Flight cannot be booked outside the current year',
       )
     }
-
+    console.log('náum hingað!!')
     let connectingFlight = false
     let isConnectable = true
     let connectingId = undefined
@@ -282,7 +289,7 @@ export class PublicFlightController {
       discount.user,
       request.airline,
       isConnectable,
-      connectingId,
+      connectingId === 'explicit' ? uuid() : connectingId,
     )
     await this.discountService.useDiscount(
       params.discountCode,

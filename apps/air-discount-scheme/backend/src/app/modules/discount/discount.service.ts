@@ -299,6 +299,7 @@ export class DiscountService {
     const cacheValue = await this.getCache<CachedDiscount>(cacheKey)
 
     if (!cacheValue) {
+      console.log('we here')
       return await this.getDiscountByConnectionDiscountCode(discountCode)
     }
 
@@ -321,12 +322,12 @@ export class DiscountService {
     if (!cacheValue) {
       return null
     }
-
+    console.log('her')
     const connectionDiscountCode = this.filterConnectionDiscountCodes(
       cacheValue.connectionDiscountCodes,
       discountCode,
     )
-
+    console.log('no fail')
     if (!connectionDiscountCode) {
       return null
     }
