@@ -206,23 +206,13 @@ export class DiscountService {
       return null
     }
     // overwrite credit since validation may return 0 depending on what the problem is
-    user.fund.total = 0
-    user.fund.credit = 0
-    user.fund.used = 0
-    console.log('trying explicit', user)
-    console.log(isExplicit)
-    if (isExplicit) {
-      console.log('we are explcitid')
-    }
     if (user.fund.total === 0 && isExplicit) {
-      console.log('we are explicit')
       const allExplicit = await this.explicitModel.findAll({
         where: { customerId: nationalId },
       })
-      console.log('we are explicit', allExplicit.length.toString())
+
       if (allExplicit === null || allExplicit.length <= 5) {
         user.fund.credit = flightLegs
-        console.log('we are flightlegs', user.fund.credit)
       } else {
         return null
       }
