@@ -12,6 +12,7 @@ import { INestApplication } from '@nestjs/common'
 let app: INestApplication
 let vehicleService: VehicleService
 
+//sjá->apps/air-discount-scheme/backend/src/app/modules/flight/test/integration/flight.service.spec.ts
 beforeAll(async () => {
   app = await setup()
   vehicleService = app.get<VehicleService>(VehicleService)
@@ -20,31 +21,12 @@ beforeAll(async () => {
 describe('PublicVehicleServiceTest', () => {
   let vehicleModel: VehicleModel
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        VehicleService,
-        {
-          provide: getModelToken(VehicleModel),
-          useClass: jest.fn(() => ({
-            findOne: () => ({}),
-          })),
-        },
-      ],
-    }).compile()
-    vehicleService = moduleRef.get<VehicleService>(VehicleService)
-    vehicleModel = moduleRef.get<VehicleModel>(getModelToken(VehicleModel))
-  })
-
   describe('run test', () => {
     it('run test test', () => {
       const testRes = vehicleService.test()
       expect(testRes).toBe('test')
     })
     it('run test findByVehicleId', async () => {
-      jest
-        .spyOn(vehicleModel as any, 'findOne')
-        .mockImplementation(() => Promise.resolve(0))
       const testRes = await vehicleService.findByVehicleId('fox33')
       console.log(testRes)
       // expect(true).toBe(true)
