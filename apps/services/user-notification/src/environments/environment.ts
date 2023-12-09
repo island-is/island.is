@@ -51,5 +51,6 @@ export const environment = {
     issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
   },
 }
-
+environment.firebaseCredentials = JSON.parse(environment.firebaseCredentials)
+console.log(environment)
 export type Config = typeof environment

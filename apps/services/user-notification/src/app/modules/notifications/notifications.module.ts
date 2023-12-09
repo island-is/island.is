@@ -59,7 +59,7 @@ import { UserNotificationsInfraController } from './infra.controller'
       useFactory: () =>
         firebaseAdmin.initializeApp({
           credential: firebaseAdmin.credential.cert(
-            JSON.parse(environment.firebaseCredentials),
+            environment.firebaseCredentials, // env stored as json string
           ),
         }),
     },
