@@ -8,7 +8,6 @@ import {
   CreatedAt,
   UpdatedAt,
   Index,
-  
 } from 'sequelize-typescript'
 import {
   CreationOptional,
