@@ -256,8 +256,10 @@ describe('DiscountController', () => {
         comment,
         numberOfDaysUntilExpiration,
         [],
+        false,
+        1,
       )
-      expect(result).toEqual(discount)
+      expect(result).toEqual([discount])
     })
   })
 })
