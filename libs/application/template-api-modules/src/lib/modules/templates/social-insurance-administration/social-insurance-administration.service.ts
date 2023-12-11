@@ -24,7 +24,10 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
   errorMessages as HSErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+import {
+  getApplicationAnswers as getASFTEApplicationAnswers,
+  errorMessages as ASFTEErrorMessages,
+} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -343,11 +346,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           title:
             application.typeId === ApplicationTypes.OLD_AGE_PENSION
               ? OAPErrorMessages.noEmailFound
-              : HSErrorMessages.noEmailFound,
+              : application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT
+              ? HSErrorMessages.noEmailFound
+              : ASFTEErrorMessages.noEmailFound,
           summary:
             application.typeId === ApplicationTypes.OLD_AGE_PENSION
               ? OAPErrorMessages.noEmailFoundDescription
-              : HSErrorMessages.noEmailFoundDescription,
+              : application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT
+              ? HSErrorMessages.noEmailFoundDescription
+              : ASFTEErrorMessages.noEmailFoundDescription,
         },
         500,
       )

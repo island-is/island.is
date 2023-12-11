@@ -307,6 +307,18 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
     description: 'You must upload an attachment to continue.',
   },
+  noEmailFound: {
+    id: 'asfte.application:error.no.email.found.title',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'No email address registered',
+  },
+  noEmailFoundDescription: {
+    id: 'asfte.application:error.no.email.found.description#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um félagslegan viðbótarstuðning við aldraða.',
+    description:
+      'You do not have a registered email address with the Social Insurance Administration. Please register an email address [here](https://minarsidur.tr.is/min-sida) and subsequently return to this application to apply for additional support for the elderly.',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
