@@ -38,7 +38,7 @@ const fetchVimeoVideoThumbnailUrl = async (vimeoUrl: string) => {
 }
 
 const createYoutubeVideoThumbnailUrl = (youtubeVideoId: string) => {
-  return `https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg`
+  return `https://i.ytimg.com/vi/${youtubeVideoId}/maxresdefault.jpg`
 }
 
 const getVideoImageThumbnailUrl = async (videoUrl: string) => {
