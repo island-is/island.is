@@ -43,13 +43,23 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const [navItems, setNavItems] = useState<PortalNavigationItem[] | undefined>()
+  const [activeChild, setActiveChild] = useState<
+    PortalNavigationItem | undefined
+  >()
 
   useEffect(() => {
-    setNavItems(
-      activeParent?.children?.filter((item) => !item.navHide) || undefined,
-    )
+    const visibleNavItems =
+      activeParent?.children?.filter((item) => !item.navHide) || undefined
+    setNavItems(visibleNavItems)
+
+    const activeVisibleChild = visibleNavItems?.filter(
+      (item) => item.active,
+    )?.[0]
+    setActiveChild(activeVisibleChild)
   }, [activeParent?.children])
 
+  const activeDescription =
+    activeParent?.description || activeChild?.description
   return (
     <Box
       as="main"
@@ -106,10 +116,13 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
                     <IntroHeader
                       title={activeParent?.name || ''}
                       intro={activeParent?.heading}
-                      serviceProviderSlug={activeParent?.serviceProvider}
+                      serviceProviderSlug={
+                        activeChild?.serviceProvider ??
+                        activeParent?.serviceProvider
+                      }
                       serviceProviderTooltip={
-                        activeParent?.description
-                          ? formatMessage(activeParent.description)
+                        activeDescription
+                          ? formatMessage(activeDescription)
                           : undefined
                       }
                       backgroundColor="white"
