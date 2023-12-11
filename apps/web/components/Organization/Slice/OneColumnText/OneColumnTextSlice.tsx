@@ -1,4 +1,7 @@
 import React from 'react'
+import Link from 'next/link'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   BoxProps,
@@ -7,8 +10,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { OneColumnText } from '@island.is/web/graphql/schema'
-import Link from 'next/link'
-import { SliceType } from '@island.is/island-ui/contentful'
+import { useI18n } from '@island.is/web/i18n'
 import { webRichText } from '@island.is/web/utils/richText'
 
 interface SliceProps {
@@ -18,6 +20,7 @@ interface SliceProps {
 export const OneColumnTextSlice: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
+  const { activeLocale } = useI18n()
   const boxProps: BoxProps = slice.dividerOnTop
     ? {
         borderTopWidth: 'standard',
@@ -45,7 +48,7 @@ export const OneColumnTextSlice: React.FC<
               {slice.title}
             </Text>
           )}
-          {webRichText(slice.content as SliceType[])}
+          {webRichText(slice.content as SliceType[], undefined, activeLocale)}
           {slice.link && slice.link.url && (
             <Link href={slice.link.url} legacyBehavior>
               <Button

@@ -39,6 +39,7 @@ import {
   DistrictCommissioners,
   DirectorateOfImmigration,
   SocialInsuranceAdministration,
+  IntellectualProperties,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -306,6 +307,7 @@ export const serviceSetup = (services: {
       FIREARM_LICENSE_FETCH_TIMEOUT: '/k8s/api/FIREARM_LICENSE_FETCH_TIMEOUT',
       DISABILITY_LICENSE_FETCH_TIMEOUT:
         '/k8s/api/DISABILITY_LICENSE_FETCH_TIMEOUT',
+      INTELLECTUAL_PROPERTY_API_KEY: '/k8s/api/IP_API_KEY',
       ISLYKILL_SERVICE_PASSPHRASE: '/k8s/api/ISLYKILL_SERVICE_PASSPHRASE',
       ISLYKILL_SERVICE_BASEPATH: '/k8s/api/ISLYKILL_SERVICE_BASEPATH',
       IDENTITY_SERVER_CLIENT_SECRET: '/k8s/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -353,6 +355,7 @@ export const serviceSetup = (services: {
       Client,
       OccupationalLicenses,
       HealthInsurance,
+      IntellectualProperties,
       Labor,
       DrivingLicense,
       Payment,

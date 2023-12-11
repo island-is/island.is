@@ -10,7 +10,7 @@ import { JA, YES, NEI, NO } from '../../lib/constants'
 
 export const estateWithoutAssets = buildSection({
   id: 'estateAssetsExist',
-  title: m.doAssetsExist,
+  title: m.doAssetsExistSidebarTitle,
   children: [
     buildMultiField({
       id: 'estateAssetsExist',
