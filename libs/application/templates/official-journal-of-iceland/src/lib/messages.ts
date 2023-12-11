@@ -1,6 +1,22 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  cancel: {
+    id: 'ojoi.application:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  confirm: {
+    id: 'ojoi.application:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  searchPlaceholder: {
+    id: 'ojoi.application:searchPlaceholder',
+    defaultMessage: 'Sláðu inn leitarorð',
+  },
+  caseForCopying: {
+    id: 'ojoi.application:caseForCopying',
+    defaultMessage: 'Mál til afritunar',
+  },
   copyOlderApplicationTemplate: {
     id: 'ojoi.application:copyOlderApplicationTemplate',
     defaultMessage: 'Afrita eldra mál',

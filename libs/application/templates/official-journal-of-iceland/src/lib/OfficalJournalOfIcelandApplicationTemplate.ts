@@ -101,7 +101,7 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
           onEntry: defineTemplateApi({
             action: TEMPLATE_API_ACTIONS.getPreviousTemplates,
             shouldPersistToExternalData: true,
-            externalDataId: 'string',
+            externalDataId: 'previousTemplates',
             throwOnError: false,
           }),
           roles: [
@@ -109,6 +109,7 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
               id: Roles.APPLICANT,
               read: 'all',
               write: 'all',
+              delete: true,
               formLoader: () =>
                 import('../forms/BasicInformation').then((val) =>
                   Promise.resolve(val.BasicInformation),
