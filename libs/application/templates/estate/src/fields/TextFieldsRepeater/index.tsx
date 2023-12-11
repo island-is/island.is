@@ -143,7 +143,7 @@ export const TextFieldsRepeater: FC<
         return (
           <Box
             position="relative"
-            key={repeaterField.id}
+            key={`${repeaterField.id}-${index}`}
             marginTop={2}
             hidden={repeaterField.initial}
           >
@@ -168,7 +168,7 @@ export const TextFieldsRepeater: FC<
             )}
 
             <GridRow>
-              {props.fields.map((field: Field) => {
+              {props.fields.map((field: Field, index) => {
                 const key = `${id}.${field.id}`
 
                 if (key === 'stocks.faceValue') {
@@ -186,7 +186,7 @@ export const TextFieldsRepeater: FC<
                     <GridColumn
                       span={['1/1', '1/2']}
                       paddingBottom={2}
-                      key={field.id}
+                      key={`${field.id}-${index}`}
                     >
                       <NumberFormat
                         customInput={Input}
@@ -230,7 +230,7 @@ export const TextFieldsRepeater: FC<
                     <GridColumn
                       span={['1/1', '1/2']}
                       paddingBottom={2}
-                      key={field.id}
+                      key={`${field.id}-${index}`}
                     >
                       <NumberFormat
                         customInput={Input}
@@ -256,7 +256,7 @@ export const TextFieldsRepeater: FC<
                   <GridColumn
                     span={['1/1', '1/2']}
                     paddingBottom={2}
-                    key={field.id}
+                    key={`${field.id}-${index}`}
                   >
                     <InputController
                       id={`${fieldIndex}.${field.id}`}

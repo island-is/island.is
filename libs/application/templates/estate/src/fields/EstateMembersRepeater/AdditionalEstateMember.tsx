@@ -67,7 +67,7 @@ export const AdditionalEstateMember = ({
   }, [foreignCitizenship])
 
   return (
-    <Box position="relative" key={field.id} marginTop={7}>
+    <Box position="relative" key={`${field.id}-${index}`} marginTop={7}>
       <Controller
         name={initialField}
         control={control}

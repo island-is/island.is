@@ -62,7 +62,7 @@ export const RealEstateRepeater: FC<
             <GridColumn
               span={['12/12', '12/12', '6/12']}
               paddingBottom={3}
-              key={asset.id}
+              key={`${asset.id}-${index}`}
             >
               <ProfileCard
                 disabled={!asset.enabled}
@@ -114,7 +114,7 @@ export const RealEstateRepeater: FC<
         }, [] as JSX.Element[])}
       </GridRow>
       {fields.map((field: AssetFormField, index) => (
-        <Box key={field.id} hidden={field.initial}>
+        <Box key={`${field.id}-${index}`} hidden={field.initial}>
           <AdditionalRealEstate
             field={field}
             fieldName={id}

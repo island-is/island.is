@@ -78,14 +78,14 @@ export const AssetsRepeater: FC<
           return [
             ...acc,
             <GridColumn
-              key={asset.id}
+              key={`${asset.id}-${index}`}
               span={['12/12', '12/12', '6/12']}
               paddingBottom={3}
             >
               <ProfileCard
                 disabled={!asset.enabled}
                 title={asset.assetNumber}
-                key={asset.assetNumber}
+                key={`${asset.assetNumber}-${index}`}
                 description={[
                   `${asset.description}`,
                   <Box marginTop={1} as="span">
@@ -141,7 +141,7 @@ export const AssetsRepeater: FC<
         return (
           <Box
             position="relative"
-            key={field.id}
+            key={`${field.id}-${index}`}
             marginTop={2}
             hidden={field.initial}
           >

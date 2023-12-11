@@ -30,6 +30,7 @@ export const EstateMembersRepeater: FC<
     name: id,
   })
 
+  console.log('application', application)
   const { clearErrors } = useFormContext()
 
   const externalData = application.externalData.syslumennOnEntry?.data as {
@@ -276,7 +277,7 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box key={member.id} hidden={member.initial}>
+          <Box key={`${member.id}-${index}`} hidden={member.initial}>
             <AdditionalEstateMember
               application={application}
               field={member}

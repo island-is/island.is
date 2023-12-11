@@ -20,6 +20,8 @@ import { formatCurrency } from '@island.is/application/ui-components'
 import { currencyStringToNumber } from '../../lib/utils/currencyStringToNumber'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
+import { MessageDescriptor } from 'react-intl'
+import { ZodTypeAny } from 'zod'
 
 type RepeaterProps = {
   field: {
@@ -31,6 +33,19 @@ type RepeaterProps = {
       fromExternalData?: string
     }
   }
+}
+
+export const customZodError = (
+  zodValidation: ZodTypeAny,
+  errorMessage: MessageDescriptor,
+): ZodTypeAny => {
+  if (zodValidation._def.checks) {
+    for (const check of zodValidation._def.checks) {
+      check['params'] = errorMessage
+      check['code'] = 'custom_error'
+    }
+  }
+  return zodValidation
 }
 
 function setIfValueIsNotNan(
@@ -50,6 +65,7 @@ export const ReportFieldsRepeater: FC<
   const { answers, externalData } = application
   const { id, props } = field
   const splitId = id.split('.')
+  console.log('application', application)
 
   const error =
     errors && errors[splitId[0]]
