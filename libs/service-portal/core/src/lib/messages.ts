@@ -73,18 +73,12 @@ export const m = defineMessages({
     id: 'service.portal:action-category',
     defaultMessage: 'Aðgerðarflokkur',
   },
-  feeCategory: {
-    id: 'service.portal:fee-category',
-    defaultMessage: 'Gjaldflokkur / stofnun',
-  },
-  feeBase: {
-    id: 'service.portal:fee-base',
-    defaultMessage: 'Gjaldgrunnur',
-  },
+
   period: {
     id: 'service.portal:period',
     defaultMessage: 'Tímabil',
   },
+
   guardian: {
     id: 'service.portal:guardian',
     defaultMessage: 'Þjónustuaðili',
@@ -92,6 +86,10 @@ export const m = defineMessages({
   status: {
     id: 'service.portal:status',
     defaultMessage: 'Staða',
+  },
+  statusTotal: {
+    id: 'service.portal:status-total',
+    defaultMessage: 'Uppsöfnuð staða',
   },
   total: {
     id: 'service.portal:total',
@@ -104,6 +102,10 @@ export const m = defineMessages({
   date: {
     id: 'service.portal:date',
     defaultMessage: 'Dagsetning',
+  },
+  dateShort: {
+    id: 'service.portal:date-short',
+    defaultMessage: 'Dags.',
   },
   transactionType: {
     id: 'service.portal:transaction-type',
@@ -125,10 +127,7 @@ export const m = defineMessages({
     id: 'service.portal:view',
     defaultMessage: 'Skoða',
   },
-  transactionsLabel: {
-    id: 'service.portal:transactions-label',
-    defaultMessage: 'Veldu gjaldflokk',
-  },
+
   chooseDate: {
     id: 'service.portal:choose-date',
     defaultMessage: 'Veldu dagsetningu',
@@ -573,6 +572,14 @@ export const m = defineMessages({
   financeTransactions: {
     id: 'service.portal:finance-transactions',
     defaultMessage: 'Hreyfingar',
+  },
+  financeTransactionsCategories: {
+    id: 'service.portal:finance-transactions-categories',
+    defaultMessage: 'Gjaldflokkar',
+  },
+  financeTransactionPeriods: {
+    id: 'service.portal:finance-transaction-periods',
+    defaultMessage: 'Gjaldtímabil',
   },
   financeBills: {
     id: 'service.portal:finance-bills',
