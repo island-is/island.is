@@ -468,7 +468,7 @@ export const overviewAssetsAndDebts = [
     condition: (answers) => {
       const hasDebt =
         getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
-        const estateWithoutAssetsSelected =
+      const estateWithoutAssetsSelected =
         getValueViaPath(answers, 'selectedEstate') ===
         EstateTypes.estateWithoutAssets
 
