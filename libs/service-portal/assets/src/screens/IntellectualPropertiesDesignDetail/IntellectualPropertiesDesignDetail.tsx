@@ -263,32 +263,32 @@ const IntellectualPropertiesDesignDetail = () => {
           <Divider />
         </Stack>
         {ip?.designers?.length && (
-          <>
-            <Stack space="p2">
-              <UserInfoLine
-                title="Hönnuður"
-                label="Nafn"
-                content={ip?.designers?.[0]?.name ?? ''}
-                loading={loading}
-              />
-              <Divider />
-            </Stack>
-            <Stack space="p2">
-              <UserInfoLine
-                title="Umboðsmaður"
-                label="Nafn"
-                content={ip?.agent?.name ?? ''}
-                loading={loading}
-              />
-              <Divider />
-              <UserInfoLine
-                label="Heimilisfang"
-                content={ip?.agent?.address ?? ''}
-                loading={loading}
-              />
-              <Divider />
-            </Stack>
-          </>
+          <Stack space="p2">
+            <UserInfoLine
+              title="Hönnuður"
+              label="Nafn"
+              content={ip?.designers?.[0]?.name ?? ''}
+              loading={loading}
+            />
+            <Divider />
+          </Stack>
+        )}
+        {ip?.agent?.address && ip?.agent?.name && (
+          <Stack space="p2">
+            <UserInfoLine
+              title="Umboðsmaður"
+              label="Nafn"
+              content={ip?.agent?.name ?? ''}
+              loading={loading}
+            />
+            <Divider />
+            <UserInfoLine
+              label="Heimilisfang"
+              content={ip?.agent?.address ?? ''}
+              loading={loading}
+            />
+            <Divider />
+          </Stack>
         )}
       </Stack>
     </>
