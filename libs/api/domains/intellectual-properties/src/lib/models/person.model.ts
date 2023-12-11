@@ -37,5 +37,5 @@ export class Person {
   isForeign?: boolean
 
   @Field(() => String, { nullable: true })
-  ssn?: string
+  nationalId?: string
 }

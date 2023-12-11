@@ -30,6 +30,7 @@ import {
 @Resolver()
 @FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(ApiScope.internal)
 @Audit({ namespace: '@island.is/api/intellectual-properties' })
 export class IntellectualPropertiesResolver {
   constructor(
@@ -37,7 +38,6 @@ export class IntellectualPropertiesResolver {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Scopes(ApiScope.internal)
   @Query(() => IntellectualPropertiesResponse, {
     name: 'intellectualProperties',
     nullable: true,
@@ -60,7 +60,6 @@ export class IntellectualPropertiesResolver {
     }
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => Patent, {
     name: 'intellectualPropertiesPatent',
     nullable: true,
@@ -74,7 +73,6 @@ export class IntellectualPropertiesResolver {
     return this.ipService.getPatentById(user, input.key)
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => Design, {
     name: 'intellectualPropertiesDesign',
     nullable: true,
@@ -88,7 +86,6 @@ export class IntellectualPropertiesResolver {
     return this.ipService.getDesignById(user, input.key)
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => ImageList, {
     name: 'intellectualPropertiesDesignImageList',
     nullable: true,
@@ -110,7 +107,6 @@ export class IntellectualPropertiesResolver {
     }
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => Image, {
     name: 'intellectualPropertiesDesignImage',
     nullable: true,
@@ -130,7 +126,6 @@ export class IntellectualPropertiesResolver {
     )
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => [Trademark], {
     name: 'intellectualPropertiesTrademarks',
     nullable: true,
@@ -140,7 +135,6 @@ export class IntellectualPropertiesResolver {
     return this.ipService.getTrademarks(user)
   }
 
-  @Scopes(ApiScope.internal)
   @Query(() => Trademark, {
     name: 'intellectualPropertiesTrademark',
     nullable: true,

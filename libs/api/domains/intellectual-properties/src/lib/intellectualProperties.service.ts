@@ -76,7 +76,7 @@ export class IntellectualPropertiesService {
         country: {
           name: o.country ?? '',
         },
-        ssn: o.ssn ?? '',
+        nationalId: o.ssn ?? '',
       })),
       markCategories: trademark.markCategories ?? [],
       markAgent: trademark.markAgent
@@ -85,7 +85,7 @@ export class IntellectualPropertiesService {
             address: trademark.markAgent.address ?? '',
             postalCode: trademark.markAgent.postalCode ?? '',
             county: trademark.markAgent.county ?? '',
-            ssn: trademark.markAgent.ssn ?? '',
+            nationalId: trademark.markAgent.ssn ?? '',
           }
         : undefined,
       imagePath: trademark.imagePath ?? '',
@@ -156,7 +156,7 @@ export class IntellectualPropertiesService {
       },
       agent: {
         id: patent.patentAgent?.id ?? '',
-        ssn: patent.patentAgent?.ssn ?? '',
+        nationalId: patent.patentAgent?.ssn ?? '',
         name: patent.patentAgent?.name ?? '',
         address: patent.patentAgent?.address ?? '',
         postalCode: patent.patentAgent?.postalCode ?? '',
@@ -262,7 +262,7 @@ export class IntellectualPropertiesService {
         email: o.email ?? '',
         telephone: o.telephone ?? '',
         mobilePhone: o.mobilephone ?? '',
-        ssn: o.ssn ?? '',
+        nationalId: o.ssn ?? '',
       })),
       designers: response.designers?.map((d) => ({
         name: d.name ?? '',
@@ -276,7 +276,7 @@ export class IntellectualPropertiesService {
         email: d.email ?? '',
         telephone: d.telephone ?? '',
         mobilePhone: d.mobilephone ?? '',
-        ssn: d.ssn ?? '',
+        nationalId: d.ssn ?? '',
       })),
       agent: {
         name: response?.agent?.name ?? '',
@@ -290,7 +290,7 @@ export class IntellectualPropertiesService {
         email: response?.agent?.email ?? '',
         telephone: response?.agent?.telephone ?? '',
         mobilePhone: response?.agent?.mobilephone ?? '',
-        ssn: response?.agent?.ssn ?? '',
+        nationalId: response?.agent?.ssn ?? '',
       },
     }
 
