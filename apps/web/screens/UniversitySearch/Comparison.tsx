@@ -260,8 +260,8 @@ const Comparison: Screen<UniversityComparisonProps> = ({
 }
 
 Comparison.getProps = async ({ query, apolloClient, locale }) => {
-  const { items } = query
-  const parsedComparison = items ? JSON.parse(items as string) : []
+  const { comparison } = query
+  const parsedComparison = comparison ? JSON.parse(comparison as string) : []
 
   const namespaceResponse = await apolloClient.query<
     GetNamespaceQuery,
