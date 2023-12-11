@@ -13,7 +13,7 @@ import {
   StaffList,
   getState,
 } from '@island.is/financial-aid/shared/lib'
-import { Filters } from '../../utils/useFilter'
+import { Filters } from '@island.is/financial-aid-web/veita/src/utils/useFilter'
 
 interface Props {
   stateOptions: ApplicationState[]
@@ -24,7 +24,6 @@ interface Props {
     checked: boolean,
     filterType: FilterType,
   ) => void
-  results: number
   onFilterClear: () => void
 }
 
@@ -34,80 +33,68 @@ const FilterPopover = ({
   activeFilters,
   onChecked,
   onFilterClear,
-  results,
 }: Props) => {
   const { applicationState, staff } = activeFilters
 
   return (
-    <Box
-      display="flex"
-      width="half"
-      justifyContent="flexStart"
-      alignItems="center"
-    >
-      <Box marginRight={3}>
-        <Filter
-          labelClear=""
-          labelClearAll="Hreinsa val"
-          labelOpen="Sía niðurstöður"
-          variant="popover"
-          onFilterClear={onFilterClear}
-        >
-          <>
-            <Box margin={3} marginBottom={3}>
-              <Stack space={1}>
-                <Text fontWeight="semiBold" marginBottom={1}>
-                  Staða
-                </Text>
-                {stateOptions.map((state) => (
-                  <Checkbox
-                    name={getState[state]}
-                    label={getState[state]}
-                    key={`state-${state}`}
-                    checked={applicationState.includes(state)}
-                    onChange={(event) =>
-                      onChecked(
-                        state,
-                        event.target.checked,
-                        FilterType.APPLICATIONSTATE,
-                      )
-                    }
-                  />
-                ))}
-              </Stack>
+    <Box>
+      <Filter
+        labelClear=""
+        labelClearAll="Hreinsa val"
+        labelOpen="Sía"
+        variant="popover"
+        onFilterClear={onFilterClear}
+      >
+        <>
+          <Box margin={3} marginBottom={3}>
+            <Stack space={1}>
+              <Text fontWeight="semiBold" marginBottom={1}>
+                Staða
+              </Text>
+              {stateOptions.map((state) => (
+                <Checkbox
+                  name={getState[state]}
+                  label={getState[state]}
+                  key={`state-${state}`}
+                  checked={applicationState.includes(state)}
+                  onChange={(event) =>
+                    onChecked(
+                      state,
+                      event.target.checked,
+                      FilterType.APPLICATIONSTATE,
+                    )
+                  }
+                />
+              ))}
+            </Stack>
 
-              <Box paddingY={3}>
-                <Divider />
-              </Box>
-
-              <Stack space={1}>
-                <Text fontWeight="semiBold" marginBottom={1}>
-                  Starfsmenn
-                </Text>
-                {staffOptions.map((staffMember) => (
-                  <Checkbox
-                    name={staffMember.name}
-                    label={staffMember.name}
-                    key={`state-${staffMember.nationalId}`}
-                    checked={staff.includes(staffMember.nationalId)}
-                    onChange={(event) =>
-                      onChecked(
-                        staffMember.nationalId,
-                        event.target.checked,
-                        FilterType.STAFF,
-                      )
-                    }
-                  />
-                ))}
-              </Stack>
+            <Box paddingY={3}>
+              <Divider />
             </Box>
-          </>
-        </Filter>
-      </Box>
 
-      <Text fontWeight="semiBold" whiteSpace="nowrap">
-        {`${results} ${results === 1 ? 'niðurstaða' : 'niðurstöður'}`}
-      </Text>
+            <Stack space={1}>
+              <Text fontWeight="semiBold" marginBottom={1}>
+                Starfsmenn
+              </Text>
+              {staffOptions.map((staffMember) => (
+                <Checkbox
+                  name={staffMember.name}
+                  label={staffMember.name}
+                  key={`state-${staffMember.nationalId}`}
+                  checked={staff.includes(staffMember.nationalId)}
+                  onChange={(event) =>
+                    onChecked(
+                      staffMember.nationalId,
+                      event.target.checked,
+                      FilterType.STAFF,
+                    )
+                  }
+                />
+              ))}
+            </Stack>
+          </Box>
+        </>
+      </Filter>
     </Box>
   )
 }

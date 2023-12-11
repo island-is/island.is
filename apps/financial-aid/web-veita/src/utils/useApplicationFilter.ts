@@ -4,7 +4,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import { useLazyQuery } from '@apollo/client'
 import { ApplicationFilterQuery } from '../../graphql'
-import { Filters, PeriodFilter } from './useFilter'
+import { Filters } from './useFilter'
 import { NextRouter } from 'next/router'
 import format from 'date-fns/format'
 
@@ -22,12 +22,8 @@ const useApplicationFilter = (
     errorPolicy: 'all',
   })
 
-  const filterTable = async (
-    filters: Filters,
-    currentPage: number,
-    period: PeriodFilter,
-  ) => {
-    const { applicationState, staff } = filters
+  const filterTable = async (filters: Filters, currentPage: number) => {
+    const { applicationState, staff, period } = filters
 
     const query = new URLSearchParams()
     query.append('page', currentPage.toString())

@@ -4,58 +4,64 @@ import {
   FilterType,
 } from '@island.is/financial-aid/shared/lib'
 import { NextRouter } from 'next/router'
-
-export interface Filters {
-  applicationState: ApplicationState[]
-  staff: string[]
-}
-
 export interface PeriodFilter {
   from?: Date
   to?: Date
 }
+export interface Filters {
+  applicationState: ApplicationState[]
+  staff: string[]
+  period: PeriodFilter
+}
 
-const useFilter = (router: NextRouter) => {
+const useFilter = (router: NextRouter, minDateCreated?: string) => {
+  const fromMinDate = minDateCreated ? new Date(minDateCreated) : undefined
+
   const [currentPage, setCurrentPage] = useState<number>(
     router?.query?.page ? parseInt(router.query.page as string) : 1,
   )
   const [activeFilters, setActiveFilters] = useState<Filters>({
     applicationState: [],
     staff: [],
-  })
-
-  const [period, setPeriod] = useState<PeriodFilter>({
-    from: undefined,
-    to: new Date(),
+    period: {
+      from: fromMinDate,
+      to: new Date(),
+    },
   })
 
   const onFilterClear = () => {
     setActiveFilters({
       applicationState: [],
       staff: [],
+      period: {
+        from: fromMinDate,
+        to: new Date(),
+      },
     })
     setCurrentPage(1)
   }
 
-  const ClearFilterOrFillFromRoute = () => {
+  const onClearFilterOrFillFromRoute = () => {
     if (router?.query?.state || router?.query?.staff) {
-      setActiveFilters({
+      setActiveFilters((prev) => ({
+        ...prev,
         applicationState: router?.query?.state
           ? ((router?.query?.state as string).split(',') as ApplicationState[])
           : [],
         staff: router?.query?.staff
           ? ((router?.query?.staff as string).split(',') as string[])
           : [],
-      })
+      }))
     } else {
       onFilterClear()
     }
   }
 
   const handleDateChange = (period: PeriodFilter) => {
-    setPeriod((prev) => ({
+    const update = { ...activeFilters.period, ...period }
+    setActiveFilters((prev) => ({
       ...prev,
-      ...period,
+      period: update,
     }))
   }
 
@@ -86,9 +92,7 @@ const useFilter = (router: NextRouter) => {
     setActiveFilters,
     onChecked,
     onFilterClear,
-    ClearFilterOrFillFromRoute,
-    period,
-    setPeriod,
+    onClearFilterOrFillFromRoute,
     handleDateChange,
   }
 }

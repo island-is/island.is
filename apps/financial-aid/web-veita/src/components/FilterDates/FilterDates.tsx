@@ -1,13 +1,12 @@
 import React from 'react'
-import { Box, Button, DatePicker } from '@island.is/island-ui/core'
-import { PeriodFilter } from '../../utils/useFilter'
+import { Box, DatePicker } from '@island.is/island-ui/core'
+import { PeriodFilter } from '@island.is/financial-aid-web/veita/src/utils/useFilter'
 
 interface Props {
   onDateChange: (period: PeriodFilter) => void
   periodFrom?: Date
   periodTo?: Date
   minDateCreated?: string
-  onFilterFromDates: () => void
 }
 
 const FilterDates = ({
@@ -15,30 +14,33 @@ const FilterDates = ({
   periodFrom,
   periodTo,
   minDateCreated,
-  onFilterFromDates,
 }: Props) => {
+  const minDate = minDateCreated ? new Date(minDateCreated) : undefined
   return (
     <Box
       display="flex"
       justifyContent="flexStart"
       alignItems="center"
-      marginY={2}
+      columnGap={2}
     >
-      <DatePicker
-        id="periodFrom"
-        label="Frá"
-        size="sm"
-        placeholderText="Frá"
-        minDate={minDateCreated ? new Date(minDateCreated) : undefined}
-        maxDate={periodTo}
-        selected={periodFrom}
-        handleChange={(from) => onDateChange({ from })}
-        locale="is"
-      />
+      {minDateCreated && (
+        <DatePicker
+          id="periodFrom"
+          label="Frá"
+          size="xs"
+          placeholderText="Frá"
+          minDate={minDate}
+          maxDate={periodTo}
+          selected={periodFrom ? periodFrom : new Date(minDateCreated)}
+          handleChange={(from) => onDateChange({ from })}
+          locale="is"
+        />
+      )}
+
       <DatePicker
         id="periodTo"
         label="Til"
-        size="sm"
+        size="xs"
         placeholderText="Til"
         minDate={periodFrom}
         maxDate={new Date()}
@@ -46,10 +48,6 @@ const FilterDates = ({
         handleChange={(to) => onDateChange({ to })}
         locale="is"
       />
-
-      <Button onClick={onFilterFromDates} variant="ghost">
-        Sía dags.
-      </Button>
     </Box>
   )
 }

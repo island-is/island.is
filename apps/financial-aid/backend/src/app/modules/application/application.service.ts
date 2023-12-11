@@ -612,6 +612,9 @@ export class ApplicationService {
           filters.states.length > 0 ? filters.states : filters.defaultStates,
       },
       municipalityCode: { [Op.in]: municipalityCodes },
+      ...(filters?.endDate && {
+        created: { [Op.gte]: filters.endDate, [Op.lte]: filters.startDate },
+      }),
     }
 
     const staffOptions =
@@ -634,7 +637,13 @@ export class ApplicationService {
     })
 
     const resultsMinDate = await this.applicationModel.findOne({
-      where: whereOptions,
+      where: {
+        state: {
+          [Op.in]:
+            filters.states.length > 0 ? filters.states : filters.defaultStates,
+        },
+        municipalityCode: { [Op.in]: municipalityCodes },
+      },
       attributes: ['created'],
       include: [staffOptions],
       order: [['created', 'ASC']],

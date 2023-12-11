@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { Text, Box, Pagination } from '@island.is/island-ui/core'
 import {
-  ApplicationsTable,
+  Text,
+  Box,
+  Pagination,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import {
+  ApplicationsFilterTable,
   FilterDates,
   FilterPopover,
+  LoadingContainer,
+  TableSkeleton,
 } from '@island.is/financial-aid-web/veita/src/components'
 import {
   ApplicationPagination,
@@ -39,11 +46,9 @@ export const ApplicationsOverviewProcessed = () => {
     activeFilters,
     onChecked,
     onFilterClear,
-    ClearFilterOrFillFromRoute,
-    period,
-    setPeriod,
+    onClearFilterOrFillFromRoute,
     handleDateChange,
-  } = useFilter(router)
+  } = useFilter(router, minDateCreated)
 
   const { filterTable, error, loading } = useApplicationFilter(
     router,
@@ -52,24 +57,20 @@ export const ApplicationsOverviewProcessed = () => {
   )
 
   useEffect(() => {
-    filterTable(activeFilters, currentPage, period)
+    filterTable(activeFilters, currentPage)
   }, [activeFilters])
 
-  useEffect(() => {
-    if (minDateCreated) setPeriod({ ...period, from: new Date(minDateCreated) })
-  }, [minDateCreated])
+  // useEffect(() => {
+  //   if (minDateCreated) handleDateChange({ from: new Date(minDateCreated) })
+  // }, [minDateCreated])
 
   useEffect(() => {
-    ClearFilterOrFillFromRoute()
+    onClearFilterOrFillFromRoute()
   }, [router.pathname])
 
   const onPageChange = (page: number) => {
     setCurrentPage(page)
-    filterTable(activeFilters, page, period)
-  }
-
-  const handleFilterByDate = () => {
-    filterTable(activeFilters, currentPage, period)
+    filterTable(activeFilters, page)
   }
 
   return (
@@ -85,34 +86,56 @@ export const ApplicationsOverviewProcessed = () => {
             {label}
           </Text>
         </Box>
-        {/* TODO add skeleton */}
-        {staffList && (
-          <FilterPopover
-            stateOptions={statesOnRoute}
-            staffOptions={staffList}
-            activeFilters={activeFilters}
-            onChecked={onChecked}
-            onFilterClear={onFilterClear}
-            results={totalCount ?? 0}
-          />
-        )}
 
-        <FilterDates
-          onDateChange={handleDateChange}
-          periodFrom={period.from}
-          periodTo={period.to}
-          minDateCreated={minDateCreated}
-          onFilterFromDates={handleFilterByDate}
-        />
+        <LoadingContainer
+          isLoading={staffList === undefined}
+          loader={<SkeletonLoader height={64} />}
+        >
+          <Box
+            display="flex"
+            alignItems="flexEnd"
+            rowGap={1}
+            columnGap={2}
+            flexWrap="wrap"
+            marginBottom={4}
+          >
+            {staffList && (
+              <FilterPopover
+                stateOptions={statesOnRoute}
+                staffOptions={staffList}
+                activeFilters={activeFilters}
+                onChecked={onChecked}
+                onFilterClear={onFilterClear}
+              />
+            )}
 
-        {applications && !loading && (
-          <ApplicationsTable
-            headers={headers}
-            applications={applications}
-            emptyText="Engar umsóknir fundust með þessum leitarskilyrðum 👀"
-            defaultHeaderSort={defaultHeaderSort}
-          />
-        )}
+            <FilterDates
+              onDateChange={handleDateChange}
+              periodFrom={activeFilters.period.from}
+              periodTo={activeFilters.period.to}
+              minDateCreated={minDateCreated}
+            />
+
+            <Text fontWeight="semiBold" whiteSpace="nowrap">
+              {`${totalCount} ${
+                totalCount === 1 ? 'niðurstaða' : 'niðurstöður'
+              }`}
+            </Text>
+          </Box>
+        </LoadingContainer>
+
+        <LoadingContainer isLoading={loading} loader={<TableSkeleton />}>
+          {applications && applications.length > 0 ? (
+            <ApplicationsFilterTable
+              headers={headers}
+              applications={applications}
+              defaultHeaderSort={defaultHeaderSort}
+            />
+          ) : (
+            <Text marginTop={2}>Engar umsóknir bíða þín, vel gert 👏</Text>
+          )}
+        </LoadingContainer>
+
         {error && (
           <div>
             Abbabab mistókst að sækja umsóknir, ertu örugglega með aðgang að
