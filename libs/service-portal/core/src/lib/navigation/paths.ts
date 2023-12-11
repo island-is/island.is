@@ -106,6 +106,10 @@ export enum ServicePortalPath {
   // Assets
   AssetsRoot = '/fasteignir',
   AssetsRealEstateDetail = '/fasteignir/:id',
+  AssetsIntellectualProperties = '/eignir/hugverkarettindi',
+  AssetsIntellectualPropertiesTrademark = '/eignir/hugverkarettindi/vorumerki/:id',
+  AssetsIntellectualPropertiesPatent = '/eignir/hugverkarettindi/einkaleyfi/:id',
+  AssetsIntellectualPropertiesDesign = '/eignir/hugverkarettindi/honnun/:id',
 
   // Messages
   MessagesRoot = '/skilabod',
