@@ -218,5 +218,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     appealConclusion
     appealRulingDecision
     appealRulingModifiedHistory
+    appealValidToDate
+    isAppealCustodyIsolation
+    appealIsolationToDate
   }
 }
