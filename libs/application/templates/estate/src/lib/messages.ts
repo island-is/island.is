@@ -17,6 +17,11 @@ export const m = defineMessages({
     defaultMessage: 'Drög að ólokinni umsókn',
     description: 'Draft description',
   },
+  applicationDenied: {
+    id: 'dl.application:applicationDenied',
+    defaultMessage: 'Umsókn hafnað',
+    description: 'Application denied',
+  },
   // Application end
 
   // Prereqs title
@@ -152,6 +157,24 @@ export const m = defineMessages({
   settingsInfoProviderSubtitleEstateWithoutAssets: {
     id: 'es.application:settingsInfoProviderSubtitleEstateWithoutAssets',
     defaultMessage: 'Persónustillingar þínar (sími og netfang) frá Ísland.is.',
+    description: '',
+  },
+
+  // SettlementValidation Screen
+  settlementValidationTitle: {
+    id: 'es.application:settlementValidationTitle',
+    defaultMessage: 'Óleyfileg aðgerð',
+    description: '',
+  },
+  settlementValidationDescription: {
+    id: 'es.application:settlementValidationDescription',
+    defaultMessage:
+      'Þú hefur ekki leyfi til þess að halda áfram umsókn. Vinsamlegast hafðu samband ef þú telur þig hafa réttinn á því.',
+    description: '',
+  },
+  settlementValidationFailureTitle: {
+    id: 'es.application:settlementValidationFailureTitle',
+    defaultMessage: 'Ástæða höfnunar',
     description: '',
   },
 

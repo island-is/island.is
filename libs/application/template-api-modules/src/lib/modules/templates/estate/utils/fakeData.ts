@@ -97,7 +97,21 @@ export const getFakeData = (
   }
 
   if (application.applicant.endsWith('7789')) {
-    data.estateMembers.push(fakeChild)
+    // Uncomment the following line to test for <18 rejections
+    // data.estateMembers.push(fakeChild)
+
+    // I'm just a programmer. I had little direction about what these validation messages might be.
+    // This is just fake data.
+    data.availableSettlements = {
+      divisionOfEstateByHeirs:
+        'Því miður hvílir bölvun á dánarbúinu og þarf fyrst að hafa samband við miðil.',
+      estateWithoutAssets:
+        'Ríkið hefur áskilið sér þann rétt að hægja á vinnslu þessa dánarbús vegna gruns um skattsviks.',
+      permitForUndividedEstate:
+        'Því miður getur þú ekki sótt eftirfarandi vegna þess að málsaðila undir 18 ára aldri.',
+      officialDivision:
+        'Því miður er maki hins látna með punkta á ökuskírteini og stendur í heiftarlegum vanskilum.',
+    }
   } else {
     data.estateMembers.push({
       ...fakeChild,

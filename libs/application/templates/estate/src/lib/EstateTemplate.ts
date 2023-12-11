@@ -169,6 +169,51 @@ const EstateTemplate: ApplicationTemplate<
           [DefaultEvents.SUBMIT]: {
             target: States.done,
           },
+          [DefaultEvents.REJECT]: {
+            target: States.declined,
+          },
+        },
+      },
+      [States.declined]: {
+        meta: {
+          name: 'Declined',
+          status: 'rejected',
+          progress: 1,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT_NO_ASSETS,
+              formLoader: () =>
+                import('../forms/Declined').then((val) =>
+                  Promise.resolve(val.declined),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_OFFICIAL_DIVISION,
+              formLoader: () =>
+                import('../forms/Declined').then((val) =>
+                  Promise.resolve(val.declined),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_PERMIT_FOR_UNDIVIDED_ESTATE,
+              formLoader: () =>
+                import('../forms/Declined').then((val) =>
+                  Promise.resolve(val.declined),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.APPLICANT_DIVISION_OF_ESTATE_BY_HEIRS,
+              formLoader: () =>
+                import('../forms/Declined').then((val) =>
+                  Promise.resolve(val.declined),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.done]: {

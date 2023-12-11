@@ -107,7 +107,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
       estateResponse = getFakeData(application)
     } else {
       estateResponse = (
-        await this.syslumennService.getEstateInfo(application.applicant)
+        await this.syslumennService.getEstateInfoWithAvailableSettlements(
+          application.applicant,
+        )
       )[0]
     }
 

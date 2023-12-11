@@ -13,6 +13,7 @@ export enum States {
   prerequisites = 'prerequisites',
   draft = 'draft',
   done = 'done',
+  declined = 'declined',
 }
 
 export type EstateEvent =

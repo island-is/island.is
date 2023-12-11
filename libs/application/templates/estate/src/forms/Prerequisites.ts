@@ -5,8 +5,16 @@ import {
   buildSection,
   buildRadioField,
   buildSubmitField,
+  buildKeyValueField,
+  buildTextField,
+  buildCustomField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Form,
+  FormModes,
+} from '@island.is/application/types'
 import { EstateTypes } from '../lib/constants'
 import { m } from '../lib/messages'
 import { deceasedInfoFields } from './Sections/deceasedInfoFields'
@@ -37,6 +45,11 @@ export const getForm = ({
                 space: 'containerGutter',
                 title: '',
                 description: m.prerequisitesSubtitle,
+              }),
+              buildCustomField({
+                component: 'HiddenInformation',
+                id: '',
+                title: '',
               }),
               buildRadioField({
                 id: 'selectedEstate',
