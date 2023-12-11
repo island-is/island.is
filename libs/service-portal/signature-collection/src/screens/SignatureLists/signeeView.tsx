@@ -79,6 +79,7 @@ const SigneeView = () => {
               {listsBySigneeArea.map((list) => {
                 return (
                   <ActionCard
+                    key={list.id}
                     backgroundColor="white"
                     heading={list.owner.name + ' - ' + list.area.name}
                     eyebrow={format(new Date(list.endTime), 'dd.MM.yyyy')}
