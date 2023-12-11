@@ -4,7 +4,7 @@ const withVanillaExtract = createVanillaExtractPlugin()
 
 const {
   BASE_PATH = '/app/skilavottord',
-  API_URL = 'http://localhost:3339',
+  API_URL = 'http://localhost:3333',
   API_PATH = '/app/skilavottord/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   DD_RUM_APPLICATION_ID,
