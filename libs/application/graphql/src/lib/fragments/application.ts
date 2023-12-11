@@ -55,6 +55,18 @@ export const ApplicationFragment = gql`
           description
           space
           draftPageNumber
+          fields {
+            id
+            title
+            type
+            component
+            disabled
+            width
+            colSpan
+            defaultValue
+            doesNotRequireAnswer
+            specifics
+          }
           dataProviders {
             id
             action

@@ -189,7 +189,7 @@ export const ApplicationConfigurations: Record<
   [ApplicationTypes.CRIMINAL_RECORD]: {
     slug: 'sakavottord',
     translation: 'cr.application',
-    formType: ApplicationFormTypes.STATIC,
+    formType: ApplicationFormTypes.DYNAMIC,
   },
   [ApplicationTypes.FINANCIAL_AID]: {
     slug: 'fjarhagsadstod',

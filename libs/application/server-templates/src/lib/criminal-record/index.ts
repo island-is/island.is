@@ -22,7 +22,7 @@ export const criminalRecord = buildCertificateTemplate({
     subTitle: 'Skjal sem inniheldur sakavottorðið þitt.',
   },
   getPdfApi: pdfApi,
-  templateId: ApplicationTypes.NEW_TYPE_OF_APPLICATION,
+  templateId: ApplicationTypes.CRIMINAL_RECORD,
   title: 'Sakavottorð',
   organizationId: InstitutionNationalIds.SYSLUMENN,
   chargeItemCodes: [ChargeItemCode.CRIMINAL_RECORD],

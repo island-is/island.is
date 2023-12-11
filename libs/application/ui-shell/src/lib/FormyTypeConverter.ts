@@ -1,4 +1,3 @@
-import { RetryLink } from '@apollo/client/link/retry'
 import {
   CheckboxField,
   DateField,
@@ -6,11 +5,8 @@ import {
   FieldComponents,
   FieldTypes,
   Form,
-  FormChildren,
-  FormItemChildren,
   FormItemTypes,
   FormModes,
-  IDataProviderItem,
   IField,
   IForm,
   IFormItem,
@@ -22,6 +18,11 @@ import {
   TextField,
   RadioField,
   SubmitField,
+  PaymentPendingField,
+  LinkField,
+  AlertMessageField,
+  ExpandableDescriptionField,
+  MessageWithLinkButtonField,
 } from '@island.is/application/types'
 
 export class FormTypeConverter {
@@ -81,6 +82,46 @@ export class FormTypeConverter {
         return {
           // ... mappings for DateField
         } as DateField
+      case FieldTypes.PAYMENT_PENDING:
+        return {
+          id: sourceField.id,
+          type: FieldTypes.PAYMENT_PENDING,
+          component: FieldComponents.PAYMENT_PENDING,
+        } as PaymentPendingField
+      case FieldTypes.LINK:
+        return {
+          id: sourceField.id,
+          type: FieldTypes.LINK,
+          component: FieldComponents.LINK,
+          title: sourceField.title,
+          s3key: sourceField.specifics?.s3key?.toString(),
+        } as LinkField
+      case FieldTypes.ALERT_MESSAGE:
+        return {
+          id: sourceField.id,
+          type: FieldTypes.ALERT_MESSAGE,
+          component: FieldComponents.ALERT_MESSAGE,
+          message: sourceField.specifics?.message?.toString(),
+          links: sourceField.specifics?.links?.toString(),
+        } as AlertMessageField
+      case FieldTypes.EXPANDABLE_DESCRIPTION:
+        return {
+          id: sourceField.id,
+          type: FieldTypes.EXPANDABLE_DESCRIPTION,
+          component: FieldComponents.EXPANDABLE_DESCRIPTION,
+          introText: sourceField.specifics?.introText?.toString(),
+          description: sourceField.specifics?.description?.toString(),
+          startExpanded: sourceField.specifics?.startExpanded ?? false,
+        } as ExpandableDescriptionField
+      case FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD:
+        return {
+          id: sourceField.id,
+          type: FieldTypes.MESSAGE_WITH_LINK_BUTTON_FIELD,
+          component: FieldComponents.MESSAGE_WITH_LINK_BUTTON_FIELD,
+          url: sourceField.specifics?.url?.toString() ?? '',
+          buttonTitle: sourceField.specifics?.buttonTitle?.toString() ?? '',
+          message: sourceField.specifics?.message?.toString() ?? '',
+        } as MessageWithLinkButtonField
       // ... cases for other Field subtypes
       default:
         throw new Error(`Unhandled field type: ${sourceField.type}`)

@@ -12,7 +12,7 @@ export class SubmitFieldFactory implements IFieldFactory {
   createField(field: SubmitField): FieldDto {
     const context = this.contextService.getContext()
 
-    const externalData = context.applicationData?.externalData
+    const externalData = context.application?.externalData
     if (!externalData) throw new Error('External data not found')
     const fullName = getValueViaPath(
       externalData,

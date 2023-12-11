@@ -7,6 +7,7 @@ import { FormDto } from './dto/form.dto'
 import {
   Application as BaseApplication,
   Form,
+  FormatMessage,
 } from '@island.is/application/types'
 import { ApplicationTemplateHelper } from '@island.is/application/core'
 import { SectionFactory } from './formFactory/formItems/sectionFactory'
@@ -22,17 +23,19 @@ export class FormService {
   async getFormByApplicationId(
     nationalId: string,
     application: BaseApplication,
-  ): Promise<FormDto> {
+    formatMessage: FormatMessage,
+  ): Promise<FormDto | undefined> {
     const template = await this.templateService.getApplicationTemplate(
       application.typeId,
     )
-    this.contextService.setContext(application)
+    this.contextService.setContext(application, formatMessage)
     //TODO: Refactor template functions
     const templateHelper = new ApplicationTemplateHelper(application, template)
+
     const userRole = template.mapUserToRole(nationalId, application) ?? ''
     const form = templateHelper.getRoleInState(userRole)?.form
 
-    if (!form) throw new Error('Form not found')
+    if (!form) return undefined
     return this.renderForm(form)
   }
 

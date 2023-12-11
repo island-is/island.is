@@ -14,7 +14,6 @@ export function prerequisitesState(data: {
 }) {
   const { name, providers, targetState, templateApis } = data
   const form = prerequisitesForm(name, providers)
-  //const apis = providers.map((provider) => provider.provider)
 
   return state('prerequisites', 'draft')
     .apis(...templateApis)

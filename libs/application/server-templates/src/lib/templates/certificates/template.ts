@@ -7,17 +7,19 @@ import {
   DataProviderBuilderItem,
   NationalRegistryUserApi,
   UserProfileApi,
+  Form,
+  Section,
 } from '@island.is/application/types'
 import {
   applicationBuilder,
-  fields,
   paymentState,
   prerequisitesState,
-  startForm,
   state,
+  conclusionForm,
 } from '@island.is/application/utils'
 
 import { generateCompleted } from './forms'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 
 export function buildCertificateTemplate(data: {
   name: string
@@ -27,6 +29,7 @@ export function buildCertificateTemplate(data: {
   title: string
   organizationId: InstitutionNationalIds
   chargeItemCodes: string[]
+  draftForm?: Form
 }) {
   const {
     name,
@@ -36,8 +39,9 @@ export function buildCertificateTemplate(data: {
     title,
     organizationId,
     chargeItemCodes,
+    draftForm,
   } = data
-  const draftForm = startForm('Heimsk umsókn')
+  /* const draftForm = startForm('Heimsk umsókn')
     .startSection({ title: 'Fyrsti hluti' })
     .startSubSection({ title: 'Fyrsta síðan' })
     .page({
@@ -66,17 +70,7 @@ export function buildCertificateTemplate(data: {
     })
     .endSubSection()
     .endSection()
-    .endForm()
-
-  const completed = state('completed', 'completed')
-  const draft = state('draft', 'draft')
-
-  const payment = paymentState({
-    institutionId: organizationId,
-    chargeItemCodes: chargeItemCodes,
-    submitTarget: completed.name,
-    abortTarget: draft.name,
-  })
+    .endForm()*/
 
   const dataProviders = [
     {
@@ -116,23 +110,40 @@ export function buildCertificateTemplate(data: {
 
   const s = providers.map((provider) => provider.provider)
 
+  const completed = state('completed', 'completed')
+  const draft = state('draft', 'draft')
+
+  const payment = paymentState({
+    institutionId: organizationId,
+    chargeItemCodes: chargeItemCodes,
+    submitTarget: completed.name,
+    abortTarget: draftForm ? draft.name : 'prerequisites',
+  })
+
+  if (draftForm) {
+    draft.setForm(draftForm).addTransition(DefaultEvents.SUBMIT, payment.name)
+  }
+
+  const conclusionSection: Section = buildFormConclusionSection({
+    s3FileKey: 'criminalRecord.data.contentBase64',
+    link: 'Þú ert búinn',
+  })
+
+  const conslusionForm = conclusionForm('lokin', conclusionSection)
+  console.log('conslusionForm', conslusionForm)
   const application = applicationBuilder(name, templateId)
     .addState(
       prerequisitesState({
         name,
         providers,
         templateApis: s,
-        targetState: draft.name,
+        targetState: draftForm ? draft.name : payment.name,
       }),
     )
-    .addState(
-      draft
-        .setForm(draftForm)
-        .addTransition(DefaultEvents.SUBMIT, payment.name),
-    )
     .addState(payment)
-    .addState(completed.setForm(generateCompleted(title)).addOnEntry(getPdfApi)) //TODO ADD verify payment
-    .build()
+    .addState(completed.setForm(conslusionForm).addOnEntry(getPdfApi)) //TODO ADD verify payment
 
-  return application
+  if (draftForm) application.addState(draft)
+
+  return application.build()
 }

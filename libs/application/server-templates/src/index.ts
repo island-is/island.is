@@ -8,6 +8,6 @@ import { caramelPermission } from './lib/caramel'
 export const TemplateMapper: Partial<
   Record<ApplicationTypes, ApplicationTemplate<any, any, any>>
 > = {
-  [ApplicationTypes.NEW_TYPE_OF_APPLICATION]: criminalRecord,
+  [ApplicationTypes.CRIMINAL_RECORD]: criminalRecord,
   [ApplicationTypes.CARAMEL]: caramelPermission,
 }

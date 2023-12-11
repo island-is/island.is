@@ -19,7 +19,7 @@ import {
   IsString,
 } from 'class-validator'
 
-type FieldValue = string | number | boolean | Date
+type FieldValue = string | number | boolean | Date | undefined
 
 export class FieldDto implements IField {
   @ApiProperty()
