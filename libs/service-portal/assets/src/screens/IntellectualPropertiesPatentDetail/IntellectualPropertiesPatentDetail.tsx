@@ -1,11 +1,8 @@
-import React from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
-  ErrorScreen,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
-  NotFound,
   TableGrid,
   UserInfoLine,
   formatDate,
@@ -46,11 +43,11 @@ const IntellectualPropertiesPatentDetail = () => {
   })
 
   if (error && !loading) {
-    return <Problem type="internal_service_error" />
+    return <Problem type="not_found" />
   }
 
   if (!data?.intellectualPropertiesPatent && !loading) {
-    return <NotFound title={formatMessage(m.notFound)} />
+    return <Problem type="no_data" />
   }
 
   const ip = data?.intellectualPropertiesPatent
@@ -76,7 +73,7 @@ const IntellectualPropertiesPatentDetail = () => {
                   iconType="outline"
                   variant="utility"
                 >
-                  {'Veðsetning'}
+                  {formatMessage(ipMessages.mortgage)}
                 </Button>
                 <Button
                   size="medium"
@@ -84,7 +81,7 @@ const IntellectualPropertiesPatentDetail = () => {
                   iconType="outline"
                   variant="utility"
                 >
-                  {'Nytjaleyfi'}
+                  {formatMessage(ipMessages.usagePermit)}
                 </Button>
                 <Button
                   size="medium"
@@ -92,7 +89,7 @@ const IntellectualPropertiesPatentDetail = () => {
                   iconType="outline"
                   variant="utility"
                 >
-                  {'Afturköllun'}
+                  {formatMessage(ipMessages.revocation)}
                 </Button>
               </Inline>
             </Box>
@@ -115,7 +112,7 @@ const IntellectualPropertiesPatentDetail = () => {
         </Stack>
         {!loading && !error && (
           <>
-            <Timeline title={'Tímalína'}>
+            <Timeline title={formatMessage(ipMessages.timeline)}>
               {[
                 <Stack space="smallGutter">
                   <Text variant="h5">
@@ -123,7 +120,7 @@ const IntellectualPropertiesPatentDetail = () => {
                       ? formatDate(ip.lifecycle.applicationDate)
                       : ''}
                   </Text>
-                  <Text>Umsókn</Text>
+                  <Text>{formatMessage(ipMessages.application)}</Text>
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
@@ -131,76 +128,44 @@ const IntellectualPropertiesPatentDetail = () => {
                       ? formatDate(ip.lifecycle.registrationDate)
                       : ''}
                   </Text>
-                  <Text>Skráning</Text>
+                  <Text>{formatMessage(ipMessages.registration)}</Text>
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.applicationDatePublishedAsAvailable
                       ? formatDate(
                           ip.lifecycle.applicationDatePublishedAsAvailable,
-                          'dd.MM.yy',
                         )
                       : ''}
                   </Text>
-                  <Text>Birting</Text>
+                  <Text>{formatMessage(ipMessages.publishDate)}</Text>
                 </Stack>,
                 <Stack space="smallGutter">
                   <Text variant="h5">
                     {ip?.lifecycle.maxValidObjectionDate
-                      ? formatDate(
-                          ip.lifecycle.maxValidObjectionDate,
-                          'dd.MM.yy',
-                        )
+                      ? formatDate(ip.lifecycle.maxValidObjectionDate)
                       : ''}
                   </Text>
-                  <Text>Andmælafrestur</Text>
+                  <Text>{formatMessage(ipMessages.maxValidObjectionDate)}</Text>
                 </Stack>,
               ]}
             </Timeline>
             <TableGrid
-              title={'Upplýsingar'}
+              title={formatMessage(ipMessages.information)}
               dataArray={chunk(
                 [
                   {
-                    title: 'Umsóknardagur',
-                    value: ip?.lifecycle.applicationDate
-                      ? formatDate(ip.lifecycle.applicationDate)
-                      : '',
-                  },
-                  {
-                    title: 'Umsóknarnúmer',
+                    title: formatMessage(ipMessages.applicationNumber),
                     value: ip?.applicationNumber
                       ? formatDate(ip?.applicationNumber)
                       : '',
                   },
                   {
-                    title: 'Birtingardagur',
-                    value: ip?.lifecycle.applicationDatePublishedAsAvailable
-                      ? formatDate(
-                          ip.lifecycle.applicationDatePublishedAsAvailable,
-                          'dd.MM.yy',
-                        )
-                      : '',
-                  },
-                  /* {
-                    title: 'Flokkun',
-                    value: ip?.internalClassifications?.[0]?.category ?? '',
-                  },*/
-                  {
-                    title: 'Andmælafrestur',
-                    value: ip?.lifecycle.maxValidObjectionDate
-                      ? formatDate(
-                          ip?.lifecycle.maxValidObjectionDate,
-                          'dd.MM.yy',
-                        )
-                      : '',
-                  },
-                  {
-                    title: 'Staða',
+                    title: formatMessage(m.status),
                     value: ip?.statusText ?? '',
                   },
                   {
-                    title: 'Skráningardagur',
+                    title: formatMessage(ipMessages.registrationDate),
                     value: ip?.lifecycle.registrationDate
                       ? formatDate(ip.lifecycle.registrationDate)
                       : '',
@@ -217,14 +182,14 @@ const IntellectualPropertiesPatentDetail = () => {
         )}
         <Stack space="p2">
           <UserInfoLine
-            title="Eigandi"
-            label="Nafn"
+            title={formatMessage(ipMessages.owner)}
+            label={formatMessage(ipMessages.name)}
             content={ip?.owner?.name ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label="Heimilsfang"
+            label={formatMessage(ipMessages.address)}
             content={ip?.owner?.address ?? ''}
             loading={loading}
           />
@@ -232,8 +197,8 @@ const IntellectualPropertiesPatentDetail = () => {
         </Stack>
         <Stack space="p2">
           <UserInfoLine
-            title="Hönnuður"
-            label="Nafn"
+            title={formatMessage(ipMessages.designer)}
+            label={formatMessage(ipMessages.name)}
             content={ip?.inventors?.[0]?.name ?? ''}
             loading={loading}
           />
@@ -241,26 +206,19 @@ const IntellectualPropertiesPatentDetail = () => {
         </Stack>
         <Stack space="p2">
           <UserInfoLine
-            title="Umboðsmaður"
-            label="Nafn"
+            title={formatMessage(ipMessages.agent)}
+            label={formatMessage(ipMessages.name)}
             content={ip?.agent?.name ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label="Heimilisfang"
+            label={formatMessage(ipMessages.address)}
             content={ip?.agent?.address ?? ''}
             loading={loading}
           />
           <Divider />
         </Stack>
-        <Text variant="small" paddingBottom={2}>
-          Lorem ipsum dolor sit amet consectetur. Sem libero at mi feugiat diam.
-          Turpis quam dignissim eleifend lectus venenatis. Nullam et aliquet
-          augue ultrices dignissim nibh. Orci justo diam tincidunt et ut.
-          Egestas tincidunt aliquam consectetur feugiat lectus. Risus fringilla
-          vitae nec id lectus ullamcorper.
-        </Text>
       </Stack>
     </>
   )

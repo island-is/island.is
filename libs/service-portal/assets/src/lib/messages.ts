@@ -1009,9 +1009,9 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:other-information',
     defaultMessage: 'Aðrar upplýsingar',
   },
-  classification: {
-    id: 'sp.intellectual-property:classification',
-    defaultMessage: 'Flokkun',
+  applicationDate: {
+    id: 'sp.intellectual-property:application-date',
+    defaultMessage: 'Umsóknardagur',
   },
 })
 
