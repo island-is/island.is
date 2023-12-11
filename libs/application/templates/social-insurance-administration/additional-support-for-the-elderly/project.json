@@ -3,7 +3,6 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -28,5 +27,6 @@
         }
       }
     }
-  }
+  },
+  "tags": ["scope:application-system", "lib:application-system"]
 }

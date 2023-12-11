@@ -26,7 +26,7 @@ export const PrerequisitesForm: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      id: 'externalData',
+      id: 'prerequisites',
       title: additionalSupportForTheElderyFormMessage.pre.externalDataSection,
       children: [
         buildExternalDataProvider({
@@ -41,16 +41,18 @@ export const PrerequisitesForm: Form = buildForm({
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
-            title: additionalSupportForTheElderyFormMessage.pre.startApplication,
+            title:
+              additionalSupportForTheElderyFormMessage.pre.startApplication,
             refetchApplicationAfterSubmit: true,
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: additionalSupportForTheElderyFormMessage.pre.startApplication,
+                name: additionalSupportForTheElderyFormMessage.pre
+                  .startApplication,
                 type: 'primary',
               },
             ],
-          }),  
+          }),
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
@@ -77,6 +79,27 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
+    }),
+    buildSection({
+      id: 'infoSection',
+      title: additionalSupportForTheElderyFormMessage.info.section,
+      children: [],
+    }),
+    buildSection({
+      id: 'additionalInformation',
+      title:
+        additionalSupportForTheElderyFormMessage.comment.additionalInfoTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: additionalSupportForTheElderyFormMessage.confirm.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
+      title: additionalSupportForTheElderyFormMessage.confirm.section,
+      children: [],
     }),
   ],
 })

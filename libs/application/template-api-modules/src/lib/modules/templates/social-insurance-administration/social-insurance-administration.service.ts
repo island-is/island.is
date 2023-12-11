@@ -25,6 +25,10 @@ import {
   errorMessages as HSErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
+  getApplicationAnswers as getASFTEApplicationAnswers,
+  errorMessages as ASFTEErrorMessages,
+} from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+import {
   Attachment,
   AttachmentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -87,6 +91,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      additionalAttachmentsRequired = getASFTEApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }
@@ -287,6 +298,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
       return response
     }
+
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      // TODO: Implement sendApplication for ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+      console.log(
+        'Send additional support for the elderly application (Not implemented)',
+      )
+    }
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
@@ -326,11 +346,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           title:
             application.typeId === ApplicationTypes.OLD_AGE_PENSION
               ? OAPErrorMessages.noEmailFound
-              : HSErrorMessages.noEmailFound,
+              : application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT
+              ? HSErrorMessages.noEmailFound
+              : ASFTEErrorMessages.noEmailFound,
           summary:
             application.typeId === ApplicationTypes.OLD_AGE_PENSION
               ? OAPErrorMessages.noEmailFoundDescription
-              : HSErrorMessages.noEmailFoundDescription,
+              : application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT
+              ? HSErrorMessages.noEmailFoundDescription
+              : ASFTEErrorMessages.noEmailFoundDescription,
         },
         500,
       )

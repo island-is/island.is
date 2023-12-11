@@ -1,12 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-} from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
-import {
-  AttachmentLabel,
-} from './constants'
+import { AttachmentLabel } from './constants'
 import {
   FileType,
   Attachments,
@@ -21,6 +17,10 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
+  const applicantPhonenumber = getValueViaPath(
+    answers,
+    'applicantInfo.phonenumber',
+  ) as string
 
   const comment = getValueViaPath(answers, 'comment') as string
 
@@ -29,27 +29,51 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+  ) as FileType[]
+
+  const tempAnswers = getValueViaPath(
+    answers,
+    'tempAnswers',
+  ) as Application['answers']
+
   return {
+    applicantPhonenumber,
     selectedYear,
     selectedMonth,
     comment,
     additionalAttachments,
+    additionalAttachmentsRequired,
+    tempAnswers,
   }
 }
 
 export function getApplicationExternalData(
   externalData: Application['externalData'],
 ) {
+  const applicantName = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.fullName',
+  ) as string
+
   const applicantNationalId = getValueViaPath(
     externalData,
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
   return {
+    applicantName,
     applicantNationalId,
+    email,
   }
 }
-
 
 export function getAttachments(application: Application) {
   const getAttachmentDetails = (
