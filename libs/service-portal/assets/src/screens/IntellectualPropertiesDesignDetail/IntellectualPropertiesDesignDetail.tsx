@@ -1,8 +1,6 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
-  EmptyState,
-  ErrorScreen,
   Gallery,
   GalleryItem,
   HUGVERKASTOFAN_SLUG,
@@ -50,7 +48,7 @@ const IntellectualPropertiesDesignDetail = () => {
   const ip = data?.intellectualPropertiesDesign
 
   if (!ip && !loading) {
-    return <EmptyState />
+    return <Problem type="no_data" />
   }
 
   return (
@@ -74,7 +72,7 @@ const IntellectualPropertiesDesignDetail = () => {
               iconType="outline"
               variant="utility"
             >
-              {'Ógilding'}
+              {formatMessage(ipMessages.invalidation)}
             </Button>
             <Button
               size="medium"
@@ -82,7 +80,7 @@ const IntellectualPropertiesDesignDetail = () => {
               iconType="outline"
               variant="utility"
             >
-              {'Veðsetning'}
+              {formatMessage(ipMessages.mortgage)}
             </Button>
             <Button
               size="medium"
@@ -90,7 +88,7 @@ const IntellectualPropertiesDesignDetail = () => {
               iconType="outline"
               variant="utility"
             >
-              {'Nytjaleyfi'}
+              {formatMessage(ipMessages.usagePermit)}
             </Button>
             <Button
               size="medium"
@@ -98,7 +96,7 @@ const IntellectualPropertiesDesignDetail = () => {
               iconType="outline"
               variant="utility"
             >
-              {'Afturköllun'}
+              {formatMessage(ipMessages.revocation)}
             </Button>
           </Inline>
         </Box>
@@ -174,7 +172,7 @@ const IntellectualPropertiesDesignDetail = () => {
           ip?.lifecycle.internationalRegistrationDate && (
             <>
               <Timeline
-                title={'Tímalína'}
+                title={formatMessage(ipMessages.timeline)}
                 maxDate={new Date(ip.lifecycle.expiryDate)}
                 minDate={new Date(ip.lifecycle.internationalRegistrationDate)}
               >
@@ -198,7 +196,7 @@ const IntellectualPropertiesDesignDetail = () => {
                 </Stack>
               </Timeline>
               <TableGrid
-                title={'Aðrar upplýsingar'}
+                title={formatMessage(ipMessages.otherInformation)}
                 dataArray={chunk(
                   [
                     {
@@ -210,21 +208,21 @@ const IntellectualPropertiesDesignDetail = () => {
                         : '',
                     },
                     {
-                      title: 'Umsóknarnúmer',
+                      title: formatMessage(ipMessages.applicationNumber),
                       value: ip?.applicationNumber ?? '',
                     },
                     {
-                      title: 'Flokkun',
+                      title: formatMessage(ipMessages.classification),
                       value: ip?.classification?.[0] ?? '',
                     },
                     {
-                      title: 'Umsóknardagur',
+                      title: formatMessage(ipMessages.registrationDate),
                       value: ip?.lifecycle.registrationDate
                         ? formatDate(ip.lifecycle.registrationDate)
                         : '',
                     },
                     {
-                      title: 'Staða',
+                      title: formatMessage(m.status),
                       value: ip?.status ?? '',
                     },
                     {
@@ -239,14 +237,14 @@ const IntellectualPropertiesDesignDetail = () => {
           )}
         <Stack space="p2">
           <UserInfoLine
-            title="Eigandi"
-            label="Nafn"
+            title={formatMessage(ipMessages.owner)}
+            label={formatMessage(ipMessages.name)}
             content={ip?.owners?.[0]?.name ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label="Heimilsfang"
+            label={formatMessage(ipMessages.address)}
             content={ip?.owners?.[0]?.address ?? ''}
             loading={loading}
           />
@@ -255,8 +253,8 @@ const IntellectualPropertiesDesignDetail = () => {
         {ip?.designers?.length && (
           <Stack space="p2">
             <UserInfoLine
-              title="Hönnuður"
-              label="Nafn"
+              title={formatMessage(ipMessages.designer)}
+              label={formatMessage(ipMessages.name)}
               content={ip?.designers?.[0]?.name ?? ''}
               loading={loading}
             />
@@ -266,14 +264,14 @@ const IntellectualPropertiesDesignDetail = () => {
         {ip?.agent?.address && ip?.agent?.name && (
           <Stack space="p2">
             <UserInfoLine
-              title="Umboðsmaður"
-              label="Nafn"
+              title={formatMessage(ipMessages.agent)}
+              label={formatMessage(ipMessages.name)}
               content={ip?.agent?.name ?? ''}
               loading={loading}
             />
             <Divider />
             <UserInfoLine
-              label="Heimilisfang"
+              label={formatMessage(ipMessages.address)}
               content={ip?.agent?.address ?? ''}
               loading={loading}
             />

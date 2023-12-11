@@ -969,6 +969,10 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:agent',
     defaultMessage: 'Umboðsmaður',
   },
+  designer: {
+    id: 'sp.intellectual-property:designer',
+    defaultMessage: 'Umboðsmaður',
+  },
   category: {
     id: 'sp.intellectual-property:category',
     defaultMessage: 'Flokkur',
@@ -984,6 +988,30 @@ export const ipMessages = defineMessages({
   timeline: {
     id: 'sp.intellectual-property:timeline',
     defaultMessage: 'Tímalína',
+  },
+  invalidation: {
+    id: 'sp.intellectual-property:invalidation',
+    defaultMessage: 'Ógilding',
+  },
+  mortgage: {
+    id: 'sp.intellectual-property:mortgage',
+    defaultMessage: 'Veðsetning',
+  },
+  usagePermit: {
+    id: 'sp.intellectual-property:usage-permit',
+    defaultMessage: 'Nytjaleyfi',
+  },
+  revocation: {
+    id: 'sp.intellectual-property:revocation',
+    defaultMessage: 'Afturköllun',
+  },
+  otherInformation: {
+    id: 'sp.intellectual-property:other-information',
+    defaultMessage: 'Aðrar upplýsingar',
+  },
+  classification: {
+    id: 'sp.intellectual-property:classification',
+    defaultMessage: 'Flokkun',
   },
 })
 
