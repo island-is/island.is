@@ -36,7 +36,7 @@ export const up = compose(
       legalGuardians: false,
       procuringHolders: false,
     },
-    accessControlled: true,
+    accessControlled: false,
     addToResource: '@island.is',
     addToClients: ['@island.is/web'],
   }),
