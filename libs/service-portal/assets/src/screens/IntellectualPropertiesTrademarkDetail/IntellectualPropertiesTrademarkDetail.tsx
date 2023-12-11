@@ -235,7 +235,9 @@ const IntellectualPropertiesTrademarkDetail = () => {
                     },
                     {
                       title: formatMessage(ipMessages.colorMark),
-                      value: ip?.isColorMark ? 'Já' : 'Nei',
+                      value: ip?.isColorMark
+                        ? formatMessage(m.yes)
+                        : formatMessage(m.no),
                     },
                   ].filter(isDefined),
                   2,
