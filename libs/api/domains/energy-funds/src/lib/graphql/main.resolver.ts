@@ -29,6 +29,6 @@ export class MainResolver {
     @Args('vin', { type: () => String }) vin: string,
     @CurrentUser() user: User,
   ) {
-    return await this.energyFundsService.getVehicleDetails(user, vin)
+    return this.energyFundsService.getVehicleDetails(user, vin)
   }
 }

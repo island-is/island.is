@@ -27,13 +27,6 @@ export class EnergyFundsService extends BaseTemplateApiService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private getVehicleGrant = async (auth: User, vehicle: VehicleMiniDto) => {
-    return await this.energyFundsClientService.getCatalogValueForVehicle(
-      auth,
-      vehicle,
-    )
-  }
-
   async getCurrentVehiclesWithDetails({ auth }: TemplateApiModuleActionProps) {
     const results = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
@@ -50,7 +43,11 @@ export class EnergyFundsService extends BaseTemplateApiService {
     if (onlyElectricVehicles.length < 5) {
       onlyElectricVehicles = await Promise.all(
         onlyElectricVehicles.map(async (vehicle: VehicleMiniDto) => {
-          const vehicleGrant = await this.getVehicleGrant(auth, vehicle)
+          const vehicleGrant =
+            await this.energyFundsClientService.getCatalogValueForVehicle(
+              auth,
+              vehicle,
+            )
           return {
             ...vehicle,
             vehicleGrant: vehicleGrant?.priceAmount,

@@ -14,13 +14,6 @@ export class EnergyFundsService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  private getVehicleGrant = async (auth: User, vehicle: VehicleMiniDto) => {
-    return await this.energyFundsClientService.getCatalogValueForVehicle(
-      auth,
-      vehicle,
-    )
-  }
-
   async getVehicleDetails(auth: User, vin: string) {
     const results = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
@@ -39,7 +32,11 @@ export class EnergyFundsService {
       )
     }
 
-    const vehicleGrantItem = await this.getVehicleGrant(auth, currentVehicle)
+    const vehicleGrantItem =
+      await this.energyFundsClientService.getCatalogValueForVehicle(
+        auth,
+        currentVehicle,
+      )
 
     if (!vehicleGrantItem)
       throw new Error('Could not get available grants for this vehicle')

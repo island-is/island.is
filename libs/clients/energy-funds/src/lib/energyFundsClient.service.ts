@@ -45,7 +45,7 @@ export class EnergyFundsClientService {
     const catalogCodes = await this.getCatalogItems(auth)
 
     //TODO CHANGE YEAR
-    const cutOffDate = new Date(2021, 0, 1)
+    const cutOffDate = new Date(2022, 0, 1)
 
     const importCode = vehicle.importCode || ''
     const vehicleRegistrationCode = vehicle.vehicleRegistrationCode
