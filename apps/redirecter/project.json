@@ -56,6 +56,12 @@
         }
       }
     },
+    "e2e": {
+      "executor": "@nx/run-commands",
+      "options": {
+        "command": "yarn playwright test apps/redirecter/e2e"
+      }
+    },
     "lint": {
       "executor": "@nx/linter:eslint",
       "outputs": ["{options.outputFile}"],
