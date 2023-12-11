@@ -354,6 +354,9 @@
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
       ],
+      "@island.is/application/templates/healthcare-license-certificate": [
+        "libs/application/templates/healthcare-license-certificate/src/index.ts"
+      ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
       ],
@@ -574,6 +577,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
+      "@island.is/clients/intellectual-properties": [
+        "libs/clients/intellectual-properties/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"

@@ -1,3 +1,5 @@
-export { HealthDirectorateClientConfig } from './lib/client.config'
+export { HealthDirectorateClientConfig } from './lib/healthDirectorateClient.config'
 export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.module'
 export { HealthDirectorateClientService } from './lib/healthDirectorateClient.service'
+export * from './lib/healthDirectorateClient.types'
+export * from '../gen/fetch/models'
