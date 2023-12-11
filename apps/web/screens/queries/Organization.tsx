@@ -233,6 +233,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         imagePadding
         imageIsFullHeight
         imageObjectFit
+        imageObjectPosition
       }
       externalLinks {
         text
