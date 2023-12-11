@@ -10,7 +10,7 @@ export const up = compose(
     accessControlled: true,
     delegation: {
       custom: true,
-      procuringHolders: false,
+      procuringHolders: true,
       legalGuardians: false,
     },
   }),
@@ -23,7 +23,7 @@ export const up = compose(
     accessControlled: true,
     delegation: {
       custom: true,
-      procuringHolders: false,
+      procuringHolders: true,
       legalGuardians: false,
     },
   }),
