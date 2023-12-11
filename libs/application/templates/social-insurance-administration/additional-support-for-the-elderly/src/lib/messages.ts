@@ -86,6 +86,41 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
   }),
 
+  info: defineMessages({
+    periodTitle: {
+      id: 'asfte.application:info.period.title',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    periodDescription: {
+      id: 'asfte.application:info.period.description',
+      defaultMessage:
+        'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
+      description: `english translation`,
+    },
+    periodYear: {
+      id: 'asfte.application:info.period.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    periodYearDefaultText: {
+      id: 'asfte.application:info.period.year.default.text',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    periodMonth: {
+      id: 'asfte.application:info.period.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    periodMonthDefaultText: {
+      id: 'asfte.application:info.period.month.default.text',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
+    },
+
+  }),
+
   confirm: defineMessages({
     section: {
       id: 'asfte.application:confirmation.section',
@@ -177,4 +212,75 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       description: 'Your comment',
     },
   }),
+
+  months: defineMessages({
+    january: {
+      id: 'asfte.application:month.january',
+      defaultMessage: 'Janúar',
+      description: 'January',
+    },
+    february: {
+      id: 'asfte.application:month.february',
+      defaultMessage: 'Febrúar',
+      description: 'February',
+    },
+    march: {
+      id: 'asfte.application:month.march',
+      defaultMessage: 'Mars',
+      description: 'March',
+    },
+    april: {
+      id: 'asfte.application:month.april',
+      defaultMessage: 'Apríl',
+      description: 'April',
+    },
+    may: {
+      id: 'asfte.application:month.may',
+      defaultMessage: 'Maí',
+      description: 'May',
+    },
+    june: {
+      id: 'asfte.application:month.june',
+      defaultMessage: 'Júní',
+      description: 'June',
+    },
+    july: {
+      id: 'asfte.application:month.july',
+      defaultMessage: 'Júlí',
+      description: 'July',
+    },
+    august: {
+      id: 'asfte.application:month.august',
+      defaultMessage: 'Ágúst',
+      description: 'August',
+    },
+    september: {
+      id: 'asfte.application:month.september',
+      defaultMessage: 'September',
+      description: 'September',
+    },
+    october: {
+      id: 'asfte.application:month.october',
+      defaultMessage: 'Október',
+      description: 'October',
+    },
+    november: {
+      id: 'asfte.application:month.november',
+      defaultMessage: 'Nóvember',
+      description: 'November',
+    },
+    desember: {
+      id: 'asfte.application:month.desember',
+      defaultMessage: 'Desember',
+      description: 'December',
+    },
+  }),
 }
+
+export const errorMessages = defineMessages({
+  period: {
+    id: 'asfte.application:error.period',
+    defaultMessage: 'Ógildur mánuður.',
+    description: 'Invalid month.',
+  },
+})

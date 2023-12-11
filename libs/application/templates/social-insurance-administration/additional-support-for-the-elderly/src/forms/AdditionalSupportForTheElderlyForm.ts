@@ -4,13 +4,22 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { 
+  Application, 
+  Form, 
+  FormModes 
+} from '@island.is/application/types'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 import { FILE_SIZE_LIMIT } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { 
+  getAvailableYears,
+} from '../lib/additionalSupportForTheElderlyUtils'
+import { MONTHS } from '../lib/constants'
 
 export const AdditionalSupportForTheElderlyForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyDraft',
@@ -22,6 +31,37 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
       id: 'prerequisites',
       title: additionalSupportForTheElderyFormMessage.pre.prerequisitesSection,
       children: [],
+    }),
+    buildSection({
+      id: 'periodSection',
+      title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+      children: [
+        buildMultiField({
+          id: 'periodField',
+          title: additionalSupportForTheElderyFormMessage.info.periodTitle,
+          description: additionalSupportForTheElderyFormMessage.info.periodDescription,
+          children: [
+            buildSelectField({
+              id: 'period.year',
+              title: additionalSupportForTheElderyFormMessage.info.periodYear,
+              width: 'half',
+              placeholder:
+              additionalSupportForTheElderyFormMessage.info.periodYearDefaultText,
+              options: (application: Application) => {
+                return getAvailableYears(application)
+              },
+            }),
+            buildSelectField({
+              id: 'period.month',
+              title: additionalSupportForTheElderyFormMessage.info.periodMonth,
+              width: 'half',
+              placeholder:
+              additionalSupportForTheElderyFormMessage.info.periodMonthDefaultText,
+              options: MONTHS
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'additionalInformation',
