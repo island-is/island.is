@@ -323,10 +323,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       throw new TemplateApiError(
         {
           title: errorMessages.noEmailFound,
-          summary: {
-            ...errorMessages.noEmailFoundDescription,
-            values: { applicationName: 'ellilífeyri' },
-          },
+          summary: errorMessages.noEmailFoundDescription,
         },
         500,
       )
