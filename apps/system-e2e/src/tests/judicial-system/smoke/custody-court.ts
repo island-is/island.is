@@ -10,12 +10,10 @@ export function addTests() {
     let context: BrowserContext
 
     test.beforeAll(async ({ browser }) => {
-      context = await judicialSystemSession(
-        {
-          browser,
-        },
-        JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-      )
+      context = await judicialSystemSession({
+        browser,
+        homeUrl: JUDICIAL_SYSTEM_JUDGE_HOME_URL,
+      })
     })
 
     test.afterAll(async () => await context.close())
