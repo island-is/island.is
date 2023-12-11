@@ -14,10 +14,7 @@ import {
 import { Type } from 'class-transformer'
 import { NotificationStatus } from '../notification.model'
 
-// export enum NotificationStatus {
-//   READ = 'read',
-//   UNREAD = 'unread',
-// }
+
 
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
@@ -131,16 +128,7 @@ export class Message {
   @IsString()
   clickAction?: string
 }
-// export class ExtendedNotificationDto {
-//   @ApiProperty({
-//     example: {
-//       /* ... */
-//     },
-//   })
-//   @ValidateNested()
-//   @Type(() => Message)
-//   message!: Message
-// }
+
 
 export class PaginatedNotificationDto {
   @ApiProperty({ example: 100 })

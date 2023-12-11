@@ -152,9 +152,8 @@ describe('NotificationsService', () => {
 
   describe('findMany', () => {
     it('should return a paginated list of notifications', async () => {
-      // const user = { id: 1 }; // Mock user object
-      const query = new ExtendedPaginationDto() // Mock query object
-      const mockedResponse = new PaginatedNotificationDto() // Mocked response
+      const query = new ExtendedPaginationDto()
+      const mockedResponse = new PaginatedNotificationDto()
       jest
         .spyOn(service, 'findMany')
         .mockImplementation(async () => mockedResponse)
@@ -165,10 +164,9 @@ describe('NotificationsService', () => {
 
   describe('findOne', () => {
     it('should return a specific notification', async () => {
-      // const user = { id: 1 }; // Mock user object
-      const id = 123 // Mock notification id
-      const locale = 'en' // Mock locale
-      const mockedResponse = new RenderedNotificationDto() // Mocked response
+      const id = 123
+      const locale = 'en'
+      const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'findOne')
         .mockImplementation(async () => mockedResponse)
@@ -179,11 +177,10 @@ describe('NotificationsService', () => {
 
   describe('update', () => {
     it('should update a notification', async () => {
-      // const user = { id: 1 }; // Mock user object
-      const id = 123 // Mock notification id
-      const updateNotificationDto = new UpdateNotificationDto() // Mock update DTO
+      const id = 123
+      const updateNotificationDto = new UpdateNotificationDto()
       const locale = 'en' // Mock locale
-      const mockedResponse = new RenderedNotificationDto() // Mocked response
+      const mockedResponse = new RenderedNotificationDto()
       jest
         .spyOn(service, 'update')
         .mockImplementation(async () => mockedResponse)

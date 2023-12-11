@@ -47,7 +47,7 @@ const mockProfile: UserProfile = {
   profileImageUrl: '',
   emailStatus: 'VERIFIED',
   mobileStatus: 'VERIFIED',
-  lastNudge: new Date(), // ... confirm this property hasright value
+  lastNudge: new Date(),
 }
 
 describe('MessageProcessorService', () => {
