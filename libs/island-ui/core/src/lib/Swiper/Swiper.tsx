@@ -40,8 +40,7 @@ export const Swiper: FC<React.PropsWithChildren<Props>> = ({
           {arr.map((child, i) => (
             <div
               key={i}
-              className={cn(
-                styles.slide,{
+              className={cn(styles.slide, {
                 [`${className}`]: !!className,
                 [styles.noMargin]: i === 0,
               })}
