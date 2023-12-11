@@ -11,6 +11,7 @@ import { States } from '@island.is/application/templates/social-insurance-admini
 import { additionalSupportForTheElderyFormMessage } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/additionalSupportForTheElderlyUtils'
 import { Comment } from './review-groups/Comment'
+import { Period } from './review-groups/Period'
 import { Attachments } from './review-groups/Attachments'
 import { BaseInformation } from './review-groups/BaseInformation'
 
@@ -156,6 +157,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <BaseInformation {...childProps} />
+      <Period {...childProps} />
       {comment && <Comment {...childProps} />}
       <Attachments {...childProps} />
     </>
