@@ -9,7 +9,11 @@ import {
 import getYear from 'date-fns/getYear'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
-import { dateFormat, dateFormatWithTime } from '@island.is/shared/constants'
+import {
+  dateFormat,
+  timeFormat,
+  dateFormatWithTime,
+} from '@island.is/shared/constants'
 import { VisuallyHidden } from 'reakit'
 import range from 'lodash/range'
 
@@ -27,11 +31,13 @@ const languageConfig = {
   is: {
     format: dateFormat.is,
     formatWithTime: dateFormatWithTime.is,
+    timeFormat: timeFormat.is,
     locale: is,
   },
   en: {
     format: dateFormat.en,
     formatWithTime: dateFormatWithTime.en,
+    timeFormat: timeFormat.en,
     locale: en,
   },
 }
@@ -151,7 +157,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               size={size}
             />
           }
-          timeFormat="HH:mm"
+          timeFormat={currentLanguage.timeFormat}
           timeInputLabel={timeInputLabel}
           showTimeInput={showTimeInput}
           renderCustomHeader={(props) => (
