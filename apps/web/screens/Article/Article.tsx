@@ -705,6 +705,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   videoUrl={(subArticle ?? article).signLanguageVideo.url}
+                  videoThumbnailImageUrl={
+                    (subArticle ?? article)?.signLanguageVideo
+                      ?.thumbnailImageUrl
+                  }
                   content={
                     <>
                       {!inStepperView && (
