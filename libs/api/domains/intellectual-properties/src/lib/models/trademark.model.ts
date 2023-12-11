@@ -31,6 +31,9 @@ export class Trademark {
   @Field(() => TrademarkType, { nullable: true })
   type?: TrademarkType
 
+  @Field(() => String, { nullable: true })
+  typeReadable?: string
+
   @Field(() => TrademarkSubType, { nullable: true })
   subType?: TrademarkSubType
 
