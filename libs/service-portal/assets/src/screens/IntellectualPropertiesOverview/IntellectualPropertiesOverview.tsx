@@ -3,7 +3,6 @@ import {
   ActionCard,
   CardLoader,
   EmptyState,
-  ErrorScreen,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   m,
@@ -67,7 +66,7 @@ const IntellectualPropertiesOverview = () => {
       {!loading && (data?.intellectualProperties?.totalCount ?? 0) < 1 && (
         <Box width="full" marginTop={4} display="flex" justifyContent="center">
           <Box marginTop={8}>
-            <EmptyState />
+            return <Problem type="no_data" />
           </Box>
         </Box>
       )}
@@ -94,7 +93,7 @@ const IntellectualPropertiesOverview = () => {
               case 'IntellectualPropertiesPatent':
                 return generateActionCard(
                   index,
-                  ip.name || 'TEMP NAME',
+                  ip.name,
                   ip.applicationNumber,
                   undefined,
                   AssetsPaths.AssetsIntellectualPropertiesPatent.replace(
