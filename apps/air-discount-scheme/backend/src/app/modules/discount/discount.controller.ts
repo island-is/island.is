@@ -140,11 +140,7 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
-    return await this.discountService.createManualDiscountCode(
-      body,
-      auth,
-      false,
-    )
+    return this.discountService.createManualDiscountCode(body, auth, false)
   }
   @Post('users/createSuperExplicitDiscountCode')
   @ApiOkResponse({ type: [Discount] })
@@ -154,6 +150,6 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateSuperExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
-    return await this.discountService.createManualDiscountCode(body, auth, true)
+    return this.discountService.createManualDiscountCode(body, auth, true)
   }
 }
