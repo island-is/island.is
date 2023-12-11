@@ -12,14 +12,31 @@ let vehicleModel: VehicleModel
 beforeAll(async () => {
   app = await setup()
   vehicleService = app.get<VehicleService>(VehicleService)
+  // vehicleModel = app.get<VehicleModel>(VehicleModel)
 })
+
+const vehicleDestroy = async () => {
+  console.log('---> vehicleDestroy called')
+  return {}
+}
 
 const vehicleMoc = {
   vehicleId: '123345',
   ownerNationalId: '1111111111',
   vehicleType: 'Kia-soul',
   vehicleColor: 'White',
-} as VehicleModel
+  destroy: jest.fn(),
+  save: jest.fn(),
+} as unknown as VehicleModel
+
+const vehicleMocNewOwner = {
+  vehicleId: '123345',
+  ownerNationalId: '2222222222',
+  vehicleType: 'Kia-soul',
+  vehicleColor: 'White',
+  destroy: jest.fn(),
+  save: jest.fn(),
+} as unknown as VehicleModel
 
 describe('PublicVehicleServiceTest', () => {
   beforeEach(async () => {
@@ -29,6 +46,8 @@ describe('PublicVehicleServiceTest', () => {
           provide: VehicleModel,
           useClass: jest.fn(() => ({
             findOne: () => ({}),
+            destroy: vehicleDestroy,
+            save: jest.fn(),
           })),
         },
       ],
@@ -41,17 +60,20 @@ describe('PublicVehicleServiceTest', () => {
       const testRes = vehicleService.test()
       expect(testRes).toBe('test')
     })
-    it('run test findByVehicleId', async () => {
+    it('run create vehicle', async () => {
       jest
-        .spyOn(vehicleService as any, 'findByVehicleId')
+        .spyOn(vehicleService, 'findByVehicleId')
         .mockImplementation(() => Promise.resolve(vehicleMoc))
+      // const vehicleModelDestroySpy = jest.spyOn(vehicleModel, 'destroy')
       const testRes1 = await vehicleService.findByVehicleId('HRX53')
-      console.log(`----> testRest1 ----> ` + JSON.stringify(testRes1))
-      // expect(true).toBe(true)
       expect(testRes1).toBe(vehicleMoc)
       const testRes2 = await vehicleService.create(vehicleMoc)
-      console.log(`----> testRest2 ----> ${testRes2}`)
+      expect(vehicleMoc.save).toHaveBeenCalled()
       expect(testRes2).toBe(true)
+      const testRes3 = await vehicleService.create(vehicleMocNewOwner)
+      expect(vehicleMocNewOwner.save).toHaveBeenCalled()
+      expect(vehicleMocNewOwner.destroy).toHaveBeenCalled()
+      expect(testRes3).toBe(true)
     })
   })
 })

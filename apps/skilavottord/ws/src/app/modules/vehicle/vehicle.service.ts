@@ -78,6 +78,7 @@ export class VehicleService {
       await vehicle.save()
       return true
     } catch (err) {
+      console.log('error----> ' + err)
       throw new Error(
         `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
       )
