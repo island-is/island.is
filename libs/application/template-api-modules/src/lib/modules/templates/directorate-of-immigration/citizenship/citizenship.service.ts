@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import {
   ApplicantChildCustodyInformation,
   ApplicationTypes,
+  ApplicationWithAttachments,
   NationalRegistryBirthplace,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
@@ -146,6 +147,7 @@ export class CitizenshipService extends BaseTemplateApiService {
     }
 
     const answers = application.answers as CitizenshipAnswers
+
     const individual = application.externalData.individual?.data as
       | NationalRegistryIndividual
       | undefined
@@ -189,25 +191,22 @@ export class CitizenshipService extends BaseTemplateApiService {
           givenName: p.givenName,
           familyName: p.familyName,
         }))
-    const criminalRecordListFlattened = []
-    const criminalRecordList =
-      answers.supportingDocuments?.criminalRecordList || []
-    for (let i = 0; i < criminalRecordList.length; i++) {
-      const countryId = criminalRecordList[i].countryId
-      if (countryId) {
-        const fileList = criminalRecordList[i].file || []
-        for (let j = 0; j < fileList.length; j++) {
-          criminalRecordListFlattened.push({
-            countryId: countryId,
-            filename: fileList[j].filename,
-            base64: fileList[j].base64,
-          })
-        }
-      }
-    }
 
-    if (!applicantPassport) {
-      throw new Error('Ekki er búið að skrá upplýsingar um vegabréf umsækjanda')
+    // Get attachment array with countryId field from attachment array of arrays
+    const applicantCriminalRecordAttachments = []
+    const criminalRecordList = answers.supportingDocuments?.criminalRecord || []
+    for (let i = 0; i < criminalRecordList.length; i++) {
+      const countryId = criminalRecordList[i]?.countryId
+      const attachments = criminalRecordList[i]?.attachment || []
+      for (let j = 0; j < attachments.length; j++) {
+        const attachment = attachments[j]
+        if (countryId && attachment?.name && attachment?.key)
+          applicantCriminalRecordAttachments.push({
+            name: attachment.name,
+            key: attachment.key,
+            countryId,
+          })
+      }
     }
 
     // Submit the application
@@ -256,39 +255,36 @@ export class CitizenshipService extends BaseTemplateApiService {
           passportNumber: applicantPassport.passportNumber,
           passportTypeId: parseInt(applicantPassport.passportTypeId),
           countryOfIssuerId: applicantPassport.countryOfIssuerId,
-          file:
-            applicantPassport.file?.map((file) => ({
-              filename: file.filename,
-              base64: file.base64,
-            })) || [],
+          file: await this.getFilesFromAttachment(
+            application,
+            answers?.passport?.attachment,
+          ),
         },
         supportingDocuments: {
-          birthCertificate: answers.supportingDocuments?.birthCertificate?.map(
-            (file) => ({ filename: file.filename, base64: file.base64 }),
+          birthCertificate: await this.getFilesFromAttachment(
+            application,
+            answers?.supportingDocuments?.birthCertificate,
           ),
-          subsistenceCertificate:
-            answers.supportingDocuments?.subsistenceCertificate?.map(
-              (file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              }),
-            ) || [],
-          subsistenceCertificateForTown:
-            answers.supportingDocuments?.subsistenceCertificateForTown?.map(
-              (file) => ({ filename: file.filename, base64: file.base64 }),
-            ) || [],
-          certificateOfLegalResidenceHistory:
-            answers.supportingDocuments?.certificateOfLegalResidenceHistory?.map(
-              (file) => ({ filename: file.filename, base64: file.base64 }),
-            ) || [],
-          icelandicTestCertificate:
-            answers.supportingDocuments?.icelandicTestCertificate?.map(
-              (file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              }),
-            ) || [],
-          criminalRecordList: criminalRecordListFlattened,
+          subsistenceCertificate: await this.getFilesFromAttachment(
+            application,
+            answers?.supportingDocuments?.subsistenceCertificate,
+          ),
+          subsistenceCertificateForTown: await this.getFilesFromAttachment(
+            application,
+            answers?.supportingDocuments?.subsistenceCertificateForTown,
+          ),
+          certificateOfLegalResidenceHistory: await this.getFilesFromAttachment(
+            application,
+            answers?.supportingDocuments?.certificateOfLegalResidenceHistory,
+          ),
+          icelandicTestCertificate: await this.getFilesFromAttachment(
+            application,
+            answers?.supportingDocuments?.icelandicTestCertificate,
+          ),
+          criminalRecord: await this.getFilesFromAttachment(
+            application,
+            applicantCriminalRecordAttachments,
+          ),
         },
         children:
           childrenCustodyInformation?.map((c) => ({
@@ -297,45 +293,59 @@ export class CitizenshipService extends BaseTemplateApiService {
             givenName: c.givenName,
             familyName: c.familyName,
           })) || [],
-        childrenPassport:
-          answers.childrenPassport?.map((p) => ({
+        childrenPassport: await Promise.all(
+          answers.childrenPassport?.map(async (p) => ({
             nationalId: p.nationalId,
             dateOfIssue: new Date(p.publishDate),
             dateOfExpiry: new Date(p.expirationDate),
             passportNumber: p.passportNumber,
             passportTypeId: parseInt(p.passportTypeId),
             countryIdOfIssuer: p.countryOfIssuerId,
-            file:
-              p.file?.map((file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              })) || [],
+            file: await this.getFilesFromAttachment(application, p.attachment),
           })) || [],
-        childrenSupportingDocuments:
-          answers.childrenSupportingDocuments?.map((d) => ({
+        ),
+        childrenSupportingDocuments: await Promise.all(
+          answers.childrenSupportingDocuments?.map(async (d) => ({
             nationalId: d.nationalId,
-            birthCertificate:
-              d.birthCertificate?.map((file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              })) || [],
-            writtenConsentFromChild:
-              d.writtenConsentFromChild?.map((file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              })) || [],
-            writtenConsentFromOtherParent:
-              d.writtenConsentFromOtherParent?.map((file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              })) || [],
-            custodyDocuments:
-              d.custodyDocuments?.map((file) => ({
-                filename: file.filename,
-                base64: file.base64,
-              })) || [],
+            birthCertificate: await this.getFilesFromAttachment(
+              application,
+              d.birthCertificate,
+            ),
+            writtenConsentFromChild: await this.getFilesFromAttachment(
+              application,
+              d.writtenConsentFromChild,
+            ),
+            writtenConsentFromOtherParent: await this.getFilesFromAttachment(
+              application,
+              d.writtenConsentFromOtherParent,
+            ),
+            custodyDocuments: await this.getFilesFromAttachment(
+              application,
+              d.custodyDocuments,
+            ),
           })) || [],
+        ),
       },
+    )
+  }
+
+  private async getFilesFromAttachment(
+    application: ApplicationWithAttachments,
+    attachments?: { name: string; key: string; countryId?: string }[],
+  ): Promise<{ filename: string; base64: string; countryId: string }[]> {
+    return await Promise.all(
+      attachments?.map(async (file) => {
+        const base64 =
+          await this.sharedTemplateAPIService.getAttachmentContentAsBase64(
+            application,
+            file.key,
+          )
+        return {
+          filename: file.name,
+          base64,
+          countryId: file.countryId || '',
+        }
+      }) || [],
     )
   }
 }

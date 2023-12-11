@@ -299,13 +299,6 @@ export const oldAgePensionFormMessage: MessageDir = {
       description:
         'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
     },
-    taxThirdLevel: {
-      id: 'oap.application:payment.tax.forth.level',
-      defaultMessage:
-        'Ég vil að miðað sé við Skattþrep 3 í útreikningum staðgreiðslu (46,25% af tekjum yfir 1.151.012 kr.)',
-      description:
-        'I want tax level 3 to be taken into account in the withholding calculations (46,25% of income over ISK 1,151,012)',
-    },
     icelandicBankAccount: {
       id: 'oap.application:payment.icelandic.bank.account',
       defaultMessage: 'Íslenskur reikningur',
@@ -678,7 +671,7 @@ export const oldAgePensionFormMessage: MessageDir = {
     },
     bulletList: {
       id: `oap.application:conclusionScreen.bulletList#markdown`,
-      defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef ekki búið nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.\n* Þú gætir átt rétt á barnalífeyri og/eða uppbót á lífeyri. Þú getur sótt um það á [Ísland.is](https://island.is)`,
+      defaultMessage: `* Þú verður að skila inn tekjuáætlun, ef ekki búið nú þegar.\n* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til elllífeyris. Vinnslutími umsókna um ellilífeyri er fjórar til sex vikur.\n* **Þú gætir átt rétt á:**\n\t* Heimilisuppbót\n\t* Barnalífeyri\n\t* Uppbót á lífeyri\n\t* Ellilífeyri vegna EES.`,
       description: 'BulletList',
     },
     incomePlanCardLabel: {

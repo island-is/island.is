@@ -16,9 +16,10 @@ import {
   FormModes,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  NO,
 } from '@island.is/application/types'
-import Logo from '../assets/Logo'
-import { ApplicationType, NO } from '../lib/constants'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { ApplicationType } from '../lib/constants'
 import { oldAgePensionFormMessage } from '../lib/messages'
 import {
   getApplicationAnswers,
@@ -56,7 +57,6 @@ export const PrerequisitesForm: Form = buildForm({
               options: [
                 {
                   value: ApplicationType.OLD_AGE_PENSION,
-                  dataTestId: 'old-age-pension',
                   label: oldAgePensionFormMessage.shared.applicationTitle,
                   subLabel:
                     oldAgePensionFormMessage.pre
@@ -64,7 +64,6 @@ export const PrerequisitesForm: Form = buildForm({
                 },
                 // {
                 //   value: ApplicationType.HALF_OLD_AGE_PENSION,
-                //   dataTestId: 'half-old-age-pension',
                 //   label:
                 //     oldAgePensionFormMessage.pre
                 //       .halfRetirementPensionApplicationTitle,
@@ -74,7 +73,6 @@ export const PrerequisitesForm: Form = buildForm({
                 // },
                 {
                   value: ApplicationType.SAILOR_PENSION,
-                  dataTestId: 'sailor-pension',
                   label: oldAgePensionFormMessage.pre.fishermenApplicationTitle,
                   subLabel:
                     oldAgePensionFormMessage.pre
@@ -185,13 +183,6 @@ export const PrerequisitesForm: Form = buildForm({
                 }),
               ],
             }),
-            // Has to be here so that the submit button appears (does not appear if no screen is left).
-            // Tackle that as AS task.
-            buildDescriptionField({
-              id: 'unused',
-              title: '',
-              description: '',
-            }),
           ],
         }),
         buildMultiField({
@@ -241,6 +232,11 @@ export const PrerequisitesForm: Form = buildForm({
     }),
     buildSection({
       id: 'confirm',
+      title: oldAgePensionFormMessage.review.overviewTitle,
+      children: [],
+    }),
+    buildSection({
+      id: 'conclusion',
       title: oldAgePensionFormMessage.review.confirmSectionTitle,
       children: [],
     }),

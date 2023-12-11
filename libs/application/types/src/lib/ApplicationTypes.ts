@@ -48,6 +48,8 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
+  HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  CAR_RECYCLING = 'CarRecycling',
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
@@ -249,6 +251,14 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
     translation: 'oap.application',
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    slug: 'heimilisuppbot',
+    translation: 'hs.application',
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    slug: 'skilavottord',
+    translation: 'rf.cr.application',
   },
   [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
     slug: 'medmaelalisti',

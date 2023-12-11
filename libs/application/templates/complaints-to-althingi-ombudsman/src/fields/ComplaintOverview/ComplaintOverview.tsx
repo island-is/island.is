@@ -27,7 +27,6 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
   const answers = application.answers as ComplaintsToAlthingiOmbudsman
   const { isEditable } = field.props
   const {
-    appeals,
     complaintType,
     applicant: { name, phoneNumber, email, address },
     complaintDescription: { decisionDate },
@@ -130,26 +129,13 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       />
       <ReviewGroup
         isEditable={isEditable}
-        editAction={() => changeScreens('appeals')}
-      >
-        <GridRow>
-          <GridColumn span="9/12">
-            <ValueLine
-              value={yesNoMessageMapper[appeals]}
-              label={complaintInformation.appealsHeader}
-            />
-          </GridColumn>
-        </GridRow>
-      </ReviewGroup>
-      <ReviewGroup
-        isEditable={isEditable}
         editAction={() => changeScreens('preexistingComplaint.multifield')}
       >
         <GridRow>
           <GridColumn span="9/12">
             <ValueLine
-              label={complaintOverview.labels.courtAction}
               value={yesNoMessageMapper[answers.preexistingComplaint]}
+              label={complaintInformation.appealsHeader}
             />
           </GridColumn>
         </GridRow>

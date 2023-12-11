@@ -1,7 +1,7 @@
-import { Answer } from '@island.is/application/types'
+import { Answer, YES } from '@island.is/application/types'
 
 import { validatorErrorMessages } from '../messages'
-import { AnswerValidationConstants, YES } from '../constants'
+import { AnswerValidationConstants } from '../constants'
 import { buildError } from './utils'
 
 export const paymentInfo = (newAnswer: unknown) => {
@@ -22,24 +22,6 @@ export const paymentInfo = (newAnswer: unknown) => {
       return buildError(
         validatorErrorMessages.personalAllowance,
         `${PAYMENTINFO}.personalAllowanceUsage`,
-      )
-    }
-  }
-
-  if (obj.spouseAllowance === YES) {
-    const spouseAllow = (obj as { spouseAllowanceUsage: string })
-      .spouseAllowanceUsage
-    if (!spouseAllow) {
-      return buildError(
-        validatorErrorMessages.requireAnswer,
-        `${PAYMENTINFO}.spouseAllowanceUsage`,
-      )
-    }
-
-    if (+spouseAllow < 1 || +spouseAllow > 100) {
-      return buildError(
-        validatorErrorMessages.personalAllowance,
-        `${PAYMENTINFO}.spouseAllowanceUsage`,
       )
     }
   }

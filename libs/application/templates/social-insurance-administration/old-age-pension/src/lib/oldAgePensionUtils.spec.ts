@@ -17,7 +17,6 @@ import {
   getApplicationExternalData,
   isEarlyRetirement,
   filterValidEmployers,
-  shouldNotUpdateBankAccount,
 } from './oldAgePensionUtils'
 import { ApplicationType, MONTHS } from './constants'
 import * as kennitala from 'kennitala'
@@ -307,73 +306,5 @@ describe('filterValidEmployers', () => {
 
     expect(employers).toEqual(filteredList)
     expect(res).toEqual(filteredList)
-  })
-})
-
-describe('shouldNotUpdateBankAccount', () => {
-  it('should return true if bank account returned from TR is not changed', () => {
-    const application = buildApplication({
-      answers: {
-        paymentInfo: {
-          bankAccountInfo: {
-            bank: '222200123456',
-            bankAccountType: 'icelandic',
-          },
-        },
-      },
-      externalData: {
-        socialInsuranceAdministrationApplicant: {
-          data: {
-            bankAccount: {
-              bank: '2222',
-              ledger: '00',
-              accountNumber: '123456',
-            },
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = shouldNotUpdateBankAccount(
-      application.answers,
-      application.externalData,
-    )
-
-    expect(true).toEqual(res)
-  })
-
-  it('should return false if bank account returned from TR is changed', () => {
-    const application = buildApplication({
-      answers: {
-        paymentInfo: {
-          bankAccountInfo: {
-            bank: '222200000000',
-            bankAccountType: 'icelandic',
-          },
-        },
-      },
-      externalData: {
-        socialInsuranceAdministrationApplicant: {
-          data: {
-            bankAccount: {
-              bank: '2222',
-              ledger: '00',
-              accountNumber: '123456',
-            },
-          },
-          date: new Date(),
-          status: 'success',
-        },
-      },
-    })
-
-    const res = shouldNotUpdateBankAccount(
-      application.answers,
-      application.externalData,
-    )
-
-    expect(false).toEqual(res)
   })
 })

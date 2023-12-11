@@ -50,7 +50,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
   ...props
 }) => {
   const { setValue } = useFormContext()
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const { application, errors } = props
   const fieldIndex = `${id}[${index}]`
   const countryField = `${fieldIndex}.countryId`
@@ -167,6 +167,7 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
           <Column>
             <DatePickerController
               id={dateFromField}
+              locale={lang}
               disabled={readOnly}
               label={formatMessage(
                 information.labels.staysAbroad.dateFromLabel,
@@ -175,18 +176,21 @@ export const StaysAbroadRepeaterItem: FC<Props & FieldBaseProps> = ({
               onChange={(value) =>
                 addDataToCountryList('dateFrom', value as string, index)
               }
+              maxDate={new Date()}
               required
             />
           </Column>
           <Column>
             <DatePickerController
               id={dateToField}
+              locale={lang}
               disabled={readOnly}
               label={formatMessage(information.labels.staysAbroad.dateToLabel)}
               error={errors && getErrorViaPath(errors, dateToField)}
               onChange={(value) =>
                 addDataToCountryList('dateTo', value as string, index)
               }
+              maxDate={new Date()}
               required
             />
           </Column>

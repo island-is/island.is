@@ -365,24 +365,9 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
       id: 'complaint.section.appeals',
       title: complaintInformation.appealsSectionTitle,
       children: [
-        buildRadioField({
-          id: 'appeals',
-          title: complaintInformation.appealsHeader,
-          width: 'half',
-          options: [
-            { label: shared.general.yes, value: YES },
-            { label: shared.general.no, value: NO },
-          ],
-        }),
-      ],
-    }),
-    buildSection({
-      id: 'courtAction',
-      title: preexistingComplaint.general.sectionTitle,
-      children: [
         buildMultiField({
           id: 'preexistingComplaint.multifield',
-          title: preexistingComplaint.general.title,
+          title: complaintInformation.appealsHeader,
           description: preexistingComplaint.general.description,
           children: [
             buildRadioField({
@@ -414,6 +399,12 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
           ],
         }),
+      ],
+    }),
+    buildSection({
+      id: 'courtAction',
+      title: preexistingComplaint.general.sectionTitle,
+      children: [
         buildMultiField({
           id: 'courtAction.question',
           title: courtAction.title,

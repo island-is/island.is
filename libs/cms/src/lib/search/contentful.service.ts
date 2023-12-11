@@ -5,6 +5,7 @@ import {
   CreateClientParams,
   Entry,
   EntryCollection,
+  SyncCollection as ContentfulSyncCollection,
   Sys,
 } from 'contentful'
 import Bottleneck from 'bottleneck'
@@ -20,6 +21,10 @@ import {
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
 import { Locale } from 'locale'
+
+type SyncCollection = ContentfulSyncCollection & {
+  nextPageToken?: string
+}
 
 // Taken from here: https://github.com/contentful/contentful-sdk-core/blob/054328ba2d0df364a5f1ce6d164c5018efb63572/lib/create-http-client.js#L34-L42
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,6 +43,7 @@ interface SyncerResult {
   items: Entry<unknown>[]
   deletedEntryIds: string[]
   elasticIndex: string
+  nextPageToken?: string
 }
 
 interface UpdateNextSyncTokenOptions {
@@ -45,7 +51,10 @@ interface UpdateNextSyncTokenOptions {
   elasticIndex: string
 }
 
-type typeOfSync = { initial: boolean } | { nextSyncToken: string }
+type typeOfSync =
+  | { initial: boolean }
+  | { nextSyncToken: string }
+  | { nextPageToken: string }
 
 @Injectable()
 export class ContentfulService {
@@ -189,10 +198,19 @@ export class ContentfulService {
   private async getTypeOfSync({
     syncType,
     elasticIndex,
+    nextPageToken,
   }: {
     syncType: SyncOptions['syncType']
     elasticIndex: string
+    nextPageToken?: string
   }): Promise<typeOfSync> {
+    if (nextPageToken) {
+      logger.info('Getting data from next page token found in Contentful', {
+        elasticIndex,
+        nextPageToken,
+      })
+      return { nextPageToken }
+    }
     if (syncType === 'full') {
       // this is a full sync, get all data
       logger.info('Getting all data from Contentful')
@@ -209,9 +227,21 @@ export class ContentfulService {
   }
 
   private async getSyncData(typeOfSync: typeOfSync) {
-    const syncData = await this.contentfulClient.sync({
-      ...typeOfSync,
-    })
+    const syncData = await (
+      this.contentfulClient.sync as (
+        query: unknown,
+        options: unknown,
+      ) => Promise<SyncCollection>
+    )(
+      {
+        ...typeOfSync,
+      },
+      {
+        // So we get a paginated response (sounds counter-intuitive to set paginate to false but that's how it is)
+        // This was derived from reading the contentfulClient source code: https://github.com/contentful/contentful.js/blob/8f88492583f657d8689f40a409f08e3161fb0a7d/lib/paged-sync.js
+        paginate: false,
+      },
+    )
 
     // Remove unnecessary fields to save memory
     for (let i = 0; i < syncData.entries.length; i += 1) {
@@ -266,6 +296,7 @@ export class ContentfulService {
     const {
       entries,
       nextSyncToken: newNextSyncToken,
+      nextPageToken,
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
@@ -327,6 +358,7 @@ export class ContentfulService {
       nestedEntryIds,
       deletedEntryIds,
       newNextSyncToken,
+      nextPageToken,
     }
   }
 
@@ -336,7 +368,11 @@ export class ContentfulService {
       locale,
       elasticIndex = getElasticsearchIndex(options.locale),
     } = options
-    const typeOfSync = await this.getTypeOfSync({ syncType, elasticIndex })
+    const typeOfSync = await this.getTypeOfSync({
+      syncType,
+      elasticIndex,
+      nextPageToken: options.nextPageToken,
+    })
 
     // Contentful only allows a maximum of 7MB response size, so this chunkSize variable allows us to tune down how many entries we fetch in one request
     const chunkSize = Number(
@@ -351,8 +387,12 @@ export class ContentfulService {
       chunkSize,
     )
 
-    const { indexableEntries, newNextSyncToken, deletedEntryIds } =
-      populatedSyncEntriesResult
+    const {
+      indexableEntries,
+      newNextSyncToken,
+      deletedEntryIds,
+      nextPageToken,
+    } = populatedSyncEntriesResult
     let { nestedEntryIds } = populatedSyncEntriesResult
 
     const isDeltaUpdate = syncType !== 'full'
@@ -427,6 +467,7 @@ export class ContentfulService {
       items: indexableEntries,
       deletedEntryIds,
       elasticIndex,
+      nextPageToken,
     }
   }
 }

@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { Application, ApplicationTypes } from '@island.is/application/types'
+import {
+  Application,
+  ApplicationTypes,
+  YES,
+} from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
@@ -11,24 +15,28 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationType,
   Employment,
-  getApplicationAnswers,
+  getApplicationAnswers as getOAPApplicationAnswers,
   isEarlyRetirement,
-  FileType,
-  errorMessages,
+  errorMessages as OAPErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  HouseholdSupplementHousing,
+  getApplicationAnswers as getHSApplicationAnswers,
+  errorMessages as HSErrorMessages,
+} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   Attachment,
   AttachmentTypeEnum,
-  ResponseError,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
 import {
   getApplicationType,
+  transformApplicationToHouseholdSupplementDTO,
   transformApplicationToOldAgePensionDTO,
 } from './social-insurance-administration-utils'
-import { coreErrorMessages } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -45,17 +53,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     super('SocialInsuranceAdministration')
   }
 
-  private parseErrors(e: Error | ResponseError) {
-    if (e instanceof Error) {
-      return e.message
-    }
-
-    return { message: e.message }
-  }
-
   private async initAttachments(
     application: Application,
-    id: string,
     type: AttachmentTypeEnum,
     attachments: FileType[],
   ): Promise<Attachment[]> {
@@ -63,7 +62,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     for (const attachment of attachments) {
       const Key = `${application.id}/${attachment.key}`
-      const pdf = await this.getPdf(Key, id)
+      const pdf = await this.getPdf(Key)
 
       result.push({
         name: attachment.name,
@@ -75,7 +74,40 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
-  private async getAttachments(
+  private async getAdditionalAttachments(
+    application: Application,
+  ): Promise<Array<Attachment>> {
+    const attachments: Array<Attachment> = []
+    let additionalAttachmentsRequired: FileType[] = []
+
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      additionalAttachmentsRequired = getOAPApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+
+    if (
+      additionalAttachmentsRequired &&
+      additionalAttachmentsRequired.length > 0
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Undefined,
+          additionalAttachmentsRequired,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
+  private async getOAPAttachments(
     application: Application,
   ): Promise<Attachment[]> {
     const {
@@ -86,7 +118,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       earlyRetirementAttachments,
       applicationType,
       employmentStatus,
-    } = getApplicationAnswers(application.answers)
+    } = getOAPApplicationAnswers(application.answers)
 
     const attachments: Attachment[] = []
 
@@ -94,7 +126,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUploadAdditionalFiles.additionalDocuments',
           AttachmentTypeEnum.Other,
           additionalAttachments,
         )),
@@ -105,7 +136,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.pension',
           AttachmentTypeEnum.Pension,
           pensionAttachments,
         )),
@@ -120,7 +150,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.fishermen',
           AttachmentTypeEnum.Sailor,
           fishermenAttachments,
         )),
@@ -135,7 +164,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'employment.selfEmployedAttachment',
           AttachmentTypeEnum.SelfEmployed,
           selfEmployedAttachments,
         )),
@@ -150,7 +178,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       attachments.push(
         ...(await this.initAttachments(
           application,
-          'fileUpload.earlyRetirement',
           AttachmentTypeEnum.Retirement,
           earlyRetirementAttachments,
         )),
@@ -160,53 +187,120 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return attachments
   }
 
-  async getPdf(key: string, fileUpload: string) {
-    try {
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key: key })
-        .promise()
-      const fileContent = file.Body as Buffer
+  private async getHSAttachments(
+    application: Application,
+  ): Promise<Attachment[]> {
+    const {
+      additionalAttachments,
+      schoolConfirmationAttachments,
+      leaseAgreementAttachments,
+      householdSupplementChildren,
+      householdSupplementHousing,
+    } = getHSApplicationAnswers(application.answers)
 
-      if (!fileContent) {
-        throw new Error('File content was undefined')
-      }
+    const attachments: Attachment[] = []
 
-      return fileContent.toString('base64')
-    } catch (e) {
-      this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
-      throw new Error('Failed to get the ' + fileUpload + ' attachment')
+    if (additionalAttachments && additionalAttachments.length > 0) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.Other,
+          additionalAttachments,
+        )),
+      )
     }
+
+    if (
+      schoolConfirmationAttachments &&
+      schoolConfirmationAttachments.length > 0 &&
+      householdSupplementChildren === YES
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.SchoolConfirmation,
+          schoolConfirmationAttachments,
+        )),
+      )
+    }
+
+    if (
+      leaseAgreementAttachments &&
+      leaseAgreementAttachments.length > 0 &&
+      householdSupplementHousing === HouseholdSupplementHousing.RENTER
+    ) {
+      attachments.push(
+        ...(await this.initAttachments(
+          application,
+          AttachmentTypeEnum.RentalAgreement,
+          leaseAgreementAttachments,
+        )),
+      )
+    }
+
+    return attachments
+  }
+
+  async getPdf(key: string) {
+    const file = await this.s3
+      .getObject({ Bucket: this.attachmentBucket, Key: key })
+      .promise()
+    const fileContent = file.Body as Buffer
+
+    if (!fileContent) {
+      throw new Error('File content was undefined')
+    }
+
+    return fileContent.toString('base64')
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
-        const attachments = await this.getAttachments(application)
+    if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
+      const attachments = await this.getOAPAttachments(application)
 
-        const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
-          application,
-          attachments,
-        )
+      const oldAgePensionDTO = transformApplicationToOldAgePensionDTO(
+        application,
+        attachments,
+      )
 
-        const applicationType = getApplicationType(application).toLowerCase()
+      const applicationType = getApplicationType(application).toLowerCase()
 
-        const response = await this.siaClientService.sendApplication(
-          auth,
-          oldAgePensionDTO,
-          applicationType,
-        )
-        return response
-      }
-    } catch (e) {
-      this.logger.error('Failed to send the old age pension application', e)
-      throw this.parseErrors(e)
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        oldAgePensionDTO,
+        applicationType,
+      )
+
+      return response
+    }
+
+    if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
+      const attachments = await this.getHSAttachments(application)
+      const householdSupplementDTO =
+        transformApplicationToHouseholdSupplementDTO(application, attachments)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        householdSupplementDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      return response
     }
   }
 
-  async getApplicant({ auth }: TemplateApiModuleActionProps) {
-    const res = await this.siaClientService.getApplicant(auth).catch(() => {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    })
+  async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
+    const attachments = await this.getAdditionalAttachments(application)
+
+    await this.siaClientService.sendAdditionalDocuments(
+      auth,
+      application.id,
+      attachments,
+    )
+  }
+
+  async getApplicant({ application, auth }: TemplateApiModuleActionProps) {
+    const res = await this.siaClientService.getApplicant(auth)
 
     // mock data since gervimenn don't have bank account registered at TR,
     // and might also not have phone number and email address registered
@@ -215,12 +309,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         res.bankAccount.bank = '2222'
         res.bankAccount.ledger = '00'
         res.bankAccount.accountNumber = '123456'
-
-        // ;(res.bankAccount.iban = 'RU02 0445 2560 0407 0281 0412 3456 7890 1'),
-        //   (res.bankAccount.swift = 'BARC GB 22 XXX'),
-        //   (res.bankAccount.foreignBankAddress = 'mosagata'),
-        //   (res.bankAccount.foreignBankName = 'banki'),
-        //   (res.bankAccount.currency = 'AUD')
       }
 
       if (!res.emailAddress) {
@@ -235,8 +323,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (!res.emailAddress) {
       throw new TemplateApiError(
         {
-          title: errorMessages.noEmailFound,
-          summary: errorMessages.noEmailFoundDescription,
+          title:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFound
+              : HSErrorMessages.noEmailFound,
+          summary:
+            application.typeId === ApplicationTypes.OLD_AGE_PENSION
+              ? OAPErrorMessages.noEmailFoundDescription
+              : HSErrorMessages.noEmailFoundDescription,
         },
         500,
       )
@@ -246,22 +340,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      if (isRunningOnEnvironment('local')) {
-        return { isEligible: true }
-      }
-      const applicationType = getApplicationType(application).toLowerCase()
-      return await this.siaClientService.getIsEligible(auth, applicationType)
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    }
+    const applicationType =
+      application.typeId === ApplicationTypes.OLD_AGE_PENSION
+        ? getApplicationType(application).toLowerCase()
+        : application.typeId.toLowerCase()
+
+    return await this.siaClientService.getIsEligible(auth, applicationType)
   }
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
-    try {
-      return await this.siaClientService.getCurrencies(auth)
-    } catch (e) {
-      throw new TemplateApiError(coreErrorMessages.defaultTemplateApiError, 500)
-    }
+    return await this.siaClientService.getCurrencies(auth)
   }
 }

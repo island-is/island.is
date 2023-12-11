@@ -8,29 +8,28 @@ import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import { getTaxLevelOption } from './utils'
-import { YES, BankAccountType } from '../../../lib/constants'
+import { getApplicationAnswers } from '../../../lib/oldAgePensionUtils'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { YES } from '@island.is/application/types'
 
 export const PaymentInformation = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const [
-    {
-      taxLevel,
-      personalAllowance,
-      personalAllowanceUsage,
-      bank,
-      bankAccountType,
-      iban,
-      swift,
-      bankName,
-      bankAddress,
-      currency,
-    },
-  ] = useStatefulAnswers(application)
+  const {
+    taxLevel,
+    personalAllowance,
+    personalAllowanceUsage,
+    bank,
+    bankAccountType,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+  } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
 
@@ -40,16 +39,7 @@ export const PaymentInformation = ({
       isEditable={editable}
       editAction={() => goToScreen?.('paymentInfo')}
     >
-      {bankAccountType === BankAccountType.ICELANDIC ? (
-        <GridRow marginBottom={3}>
-          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
-            <DataValue
-              label={formatMessage(oldAgePensionFormMessage.review.bank)}
-              value={formatBankInfo(bank)}
-            />
-          </GridColumn>
-        </GridRow>
-      ) : (
+      {bankAccountType === BankAccountType.FOREIGN ? (
         <>
           <GridRow marginBottom={3}>
             <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
@@ -103,6 +93,15 @@ export const PaymentInformation = ({
             </GridColumn>
           </GridRow>
         </>
+      ) : (
+        <GridRow marginBottom={3}>
+          <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            <DataValue
+              label={formatMessage(oldAgePensionFormMessage.review.bank)}
+              value={formatBankInfo(bank)}
+            />
+          </GridColumn>
+        </GridRow>
       )}
 
       <GridRow>

@@ -7,8 +7,6 @@ export const getTaxLevelOption = (option: TaxLevelOptions) => {
       return oldAgePensionFormMessage.payment.taxFirstLevel
     case TaxLevelOptions.SECOND_LEVEL:
       return oldAgePensionFormMessage.payment.taxSecondLevel
-    case TaxLevelOptions.THIRD_LEVEL:
-      return oldAgePensionFormMessage.payment.taxThirdLevel
     default:
       return oldAgePensionFormMessage.payment.taxIncomeLevel
   }

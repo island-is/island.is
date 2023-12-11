@@ -10,6 +10,7 @@ import { Routes } from '../../lib/constants'
 import { getValueViaPath } from '@island.is/application/core'
 import { OptionSetItem } from '@island.is/clients/directorate-of-immigration'
 import { GenericReview } from '../../components/GenericReview'
+import { formatDate } from '../../utils'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -57,10 +58,10 @@ export const ChildrenPassportReview: FC<Props> = ({
         leftColumnItems={[
           `${formatMessage(
             supportingDocuments.labels.passport.publishDate,
-          )}: ${publishDate}`,
+          )}: ${formatDate(new Date(publishDate))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.expirationDate,
-          )}: ${expirationDate}`,
+          )}: ${formatDate(new Date(expirationDate))}`,
           `${formatMessage(
             supportingDocuments.labels.passport.passportNumber,
           )}: ${passportNumber}`,
@@ -72,9 +73,6 @@ export const ChildrenPassportReview: FC<Props> = ({
             travelDocumentTypes.find((x) => x.id?.toString() === passportTypeId)
               ?.name
           }`,
-          `${formatMessage(
-            supportingDocuments.labels.passport.expirationDate,
-          )}: ${expirationDate}`,
           `${formatMessage(supportingDocuments.labels.passport.publisher)}: ${
             countryOptions.find((x) => x.id?.toString() === countryOfIssuerId)
               ?.name

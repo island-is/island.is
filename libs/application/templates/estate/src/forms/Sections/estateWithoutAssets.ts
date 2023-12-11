@@ -10,7 +10,7 @@ import { JA, YES, NEI, NO } from '../../lib/constants'
 
 export const estateWithoutAssets = buildSection({
   id: 'estateAssetsExist',
-  title: m.doAssetsExist,
+  title: m.doAssetsExistSidebarTitle,
   children: [
     buildMultiField({
       id: 'estateAssetsExist',
@@ -19,7 +19,7 @@ export const estateWithoutAssets = buildSection({
       children: [
         buildRadioField({
           id: 'estateWithoutAssets.estateAssetsExist',
-          title: m.doAssetsExist,
+          title: m.doAssetsExistSelect,
           width: 'half',
           largeButtons: false,
           options: [

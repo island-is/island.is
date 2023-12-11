@@ -1,23 +1,23 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   oldAgePensionAge,
-  YES,
   fishermenMinAge,
   earlyRetirementMinAge,
   earlyRetirementMaxAge,
-  NO,
   ApplicationType,
   Employment,
   TaxLevelOptions,
   MONTHS,
   AttachmentLabel,
-  BankAccountType,
+  AttachmentTypes,
 } from './constants'
 import {
   Option,
   Application,
   NationalRegistryResidenceHistory,
   YesOrNo,
+  YES,
+  NO,
 } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 
@@ -29,24 +29,16 @@ import {
   CombinedResidenceHistory,
   Employer,
   IncompleteEmployer,
-  FileType,
   SelfEmployed,
-  AdditionalInformation,
   FileUpload,
-  Attachments,
 } from '../types'
-import { getBankIsk } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
-import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
-import isEmpty from 'lodash/isEmpty'
-
-enum AttachmentTypes {
-  PENSION = 'pension',
-  EARLY_RETIREMENT = 'earlyRetirement',
-  FISHERMAN = 'fishermen',
-  SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
-  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
-  FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
-}
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import {
+  Attachments,
+  BankInfo,
+  FileType,
+  PaymentInfo,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 
 export function getApplicationAnswers(answers: Application['answers']) {
   const pensionFundQuestion = getValueViaPath(
@@ -62,11 +54,6 @@ export function getApplicationAnswers(answers: Application['answers']) {
   const selectedYear = getValueViaPath(answers, 'period.year') as string
 
   const selectedMonth = getValueViaPath(answers, 'period.month') as string
-
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
 
   const applicantPhonenumber = getValueViaPath(
     answers,
@@ -116,7 +103,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const additionalAttachmentsRequired = getValueViaPath(
     answers,
-    'fileUploadAdditionalFiles.additionalDocumentsRequired',
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
   const pensionAttachments = getValueViaPath(
@@ -146,45 +133,31 @@ export function getApplicationAnswers(answers: Application['answers']) {
 
   const bankAccountType = getValueViaPath(
     answers,
-    'paymentInfo.bankAccountInfo.bankAccountType',
+    'paymentInfo.bankAccountType',
   ) as BankAccountType
 
-  const bank = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.bank',
-  ) as string
+  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
 
-  const iban = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.iban',
-  ) as string
+  const iban = getValueViaPath(answers, 'paymentInfo.iban') as string
 
-  const swift = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.swift',
-  ) as string
+  const swift = getValueViaPath(answers, 'paymentInfo.swift') as string
 
-  const bankName = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.bankName',
-  ) as string
+  const bankName = getValueViaPath(answers, 'paymentInfo.bankName') as string
 
   const bankAddress = getValueViaPath(
     answers,
-    'paymentInfo.bankAccountInfo.bankAddress',
+    'paymentInfo.bankAddress',
   ) as string
 
-  const currency = getValueViaPath(
-    answers,
-    'paymentInfo.bankAccountInfo.currency',
-  ) as string
+  const currency = getValueViaPath(answers, 'paymentInfo.currency') as string
+
+  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
   return {
     pensionFundQuestion,
     applicationType,
     selectedYear,
     selectedMonth,
-    applicantEmail,
     applicantPhonenumber,
     bank,
     residenceHistoryQuestion,
@@ -209,6 +182,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     bankName,
     bankAddress,
     currency,
+    paymentInfo,
   }
 }
 
@@ -268,6 +242,11 @@ export function getApplicationExternalData(
     'nationalRegistrySpouse.data.maritalStatus',
   ) as string
 
+  const email = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationApplicant.data.emailAddress',
+  ) as string
+
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -294,6 +273,7 @@ export function getApplicationExternalData(
     spouseNationalId,
     maritalStatus,
     isEligible,
+    email,
     bankInfo,
     currencies,
   }
@@ -470,7 +450,12 @@ export function getAttachments(application: Application) {
   }
 
   const { answers, externalData } = application
-  const { applicationType, employmentStatus } = getApplicationAnswers(answers)
+  const {
+    applicationType,
+    employmentStatus,
+    additionalAttachments,
+    additionalAttachmentsRequired,
+  } = getApplicationAnswers(answers)
   const earlyRetirement = isEarlyRetirement(answers, externalData)
   const attachments: Attachments[] = []
 
@@ -497,17 +482,13 @@ export function getAttachments(application: Application) {
     )
   }
 
-  const additionalInfo =
-    answers.fileUploadAdditionalFiles as AdditionalInformation
-
   const additionalDocuments = [
-    ...(additionalInfo.additionalDocuments &&
-    additionalInfo.additionalDocuments?.length > 0
-      ? additionalInfo.additionalDocuments
+    ...(additionalAttachments && additionalAttachments?.length > 0
+      ? additionalAttachments
       : []),
-    ...(additionalInfo.additionalDocumentsRequired &&
-    additionalInfo.additionalDocumentsRequired?.length > 0
-      ? additionalInfo.additionalDocumentsRequired
+    ...(additionalAttachmentsRequired &&
+    additionalAttachmentsRequired?.length > 0
+      ? additionalAttachmentsRequired
       : []),
   ]
 
@@ -573,10 +554,6 @@ export function getTaxOptions() {
       value: TaxLevelOptions.SECOND_LEVEL,
       label: oldAgePensionFormMessage.payment.taxSecondLevel,
     },
-    {
-      value: TaxLevelOptions.THIRD_LEVEL,
-      label: oldAgePensionFormMessage.payment.taxThirdLevel,
-    },
   ]
 
   return options
@@ -622,39 +599,4 @@ export const filterValidEmployers = (
     })
 
   return filtered as Employer[]
-}
-
-export const formatBank = (bankInfo: string) => {
-  return bankInfo.replace(/^(.{4})(.{2})/, '$1-$2-')
-}
-
-// We should only send bank account to TR if applicant is registering
-// new one or changing.
-export const shouldNotUpdateBankAccount = (
-  answers: Application['answers'],
-  externalData: Application['externalData'],
-) => {
-  const { bankInfo } = getApplicationExternalData(externalData)
-  const {
-    bankAccountType,
-    bank,
-    iban,
-    swift,
-    bankName,
-    bankAddress,
-    currency,
-  } = getApplicationAnswers(answers)
-
-  if (bankAccountType === BankAccountType.ICELANDIC) {
-    return getBankIsk(bankInfo) === bank ?? false
-  } else {
-    return (
-      !isEmpty(bankInfo) &&
-      bankInfo.iban === iban &&
-      bankInfo.swift === swift &&
-      bankInfo.foreignBankName === bankName &&
-      bankInfo.foreignBankAddress === bankAddress &&
-      bankInfo.currency === currency
-    )
-  }
 }

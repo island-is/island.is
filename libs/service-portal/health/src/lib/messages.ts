@@ -602,6 +602,14 @@ export const messages = defineMessages({
     id: 'sp.health:close-modal',
     defaultMessage: 'Loka sprettiglugga',
   },
+  chooseDoctorLabel: {
+    id: 'sp.health:choose-doctor-label',
+    defaultMessage: 'Viltu velja heimilislækni?',
+  },
+  chooseDoctorPlaceholder: {
+    id: 'sp.health:close-placeholder',
+    defaultMessage: 'Heimilislæknir',
+  },
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:

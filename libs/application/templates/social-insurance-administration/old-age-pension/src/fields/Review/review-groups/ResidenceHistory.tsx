@@ -7,8 +7,12 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { oldAgePensionFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
-import { useStatefulAnswers } from '../../../hooks/useStatefulAnswers'
 import ResidenceHistoryTable from '../../ResidenceHistory/ResidenceHistoryTable'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+} from '../../../lib/oldAgePensionUtils'
+import { NO, YES } from '@island.is/application/types'
 
 export const ResidenceHistory = ({
   application,
@@ -16,17 +20,28 @@ export const ResidenceHistory = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const [{ residenceHistoryQuestion }] = useStatefulAnswers(application)
+  const { residenceHistoryQuestion } = getApplicationAnswers(
+    application.answers,
+  )
+  const { residenceHistory } = getApplicationExternalData(
+    application.externalData,
+  )
 
   return (
     <ReviewGroup
-      isEditable={editable}
+      isEditable={
+        (editable && residenceHistoryQuestion === YES) ||
+        residenceHistoryQuestion === NO
+      }
       editAction={() => goToScreen?.('residenceHistory')}
       isLast={true}
     >
       <GridRow>
-        {!residenceHistoryQuestion && (
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        {residenceHistory.length > 0 && (
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12']}
+            paddingBottom={3}
+          >
             <Label>
               {formatMessage(
                 oldAgePensionFormMessage.residence.residenceHistoryTitle,

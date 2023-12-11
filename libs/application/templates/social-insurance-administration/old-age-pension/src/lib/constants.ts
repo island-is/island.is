@@ -1,15 +1,11 @@
-import { DefaultEvents } from '@island.is/application/types'
 import { oldAgePensionFormMessage } from './messages'
 import { MessageDescriptor } from 'react-intl'
 
-export const YES = 'yes'
-export const NO = 'no'
 export const oldAgePensionAge = 67
 export const earlyRetirementMinAge = 65
 export const earlyRetirementMaxAge = 66
 export const fishermenMinAge = 60
 export const fishermenMaxAge = 66
-export const IS = 'IS'
 export const employeeRatio = 50
 
 export const MONTHS = [
@@ -30,64 +26,37 @@ export const MONTHS = [
   { value: 'December', label: oldAgePensionFormMessage.period.desember },
 ]
 
-export const FILE_SIZE_LIMIT = 5000000 // 5MB
-
-export enum OAPEvents {
-  ADDITIONALDOCUMENTSREQUIRED = 'ADDITIONALDOCUMENTSREQUIRED',
-  INREVIEW = 'INREVIEW',
-  PENDING = 'PENDING',
-  DISMISSED = 'DISMISSED',
-}
-
-export type Events =
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.EDIT }
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  // | { type: 'ADDITIONALDOCUMENTSREQUIRED' } // Ex: TR ask for more documents
-  | { type: OAPEvents.ADDITIONALDOCUMENTSREQUIRED } // Ex: TR ask for more documents
-  | { type: OAPEvents.INREVIEW } // Ex: TR's employee start review application
-  | { type: OAPEvents.PENDING }
-  | { type: OAPEvents.DISMISSED }
-  | { type: DefaultEvents.ABORT }
-
-export enum Roles {
-  APPLICANT = 'applicant',
-  ORGINISATION_REVIEWER = 'tryggingastofnun',
-}
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-
-  TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
-  TRYGGINGASTOFNUN_IN_REVIEW = 'tryggingastofnunInReview', // I_VINNSLU = 562
-
-  ADDITIONAL_DOCUMENTS_REQUIRED = 'additionalDocumentsRequired', // I_BID_GOGN_VANTAR = 1617
-
-  REJECTED = 'rejected', // SYNJAD = 1281
-  APPROVED = 'approved', // AFGREIDD = 563
+export enum RatioType {
+  YEARLY = 'yearly',
+  MONTHLY = 'monthly',
 }
 
 export enum AnswerValidationConstants {
   PERIOD = 'period',
   FILEUPLOAD = 'fileUpload',
-  EMPLOYMENT = 'employment',
   VALIDATE_LATEST_EMPLOYER = 'employers',
   PAYMENTINFO = 'paymentInfo',
 }
 
 export enum TaxLevelOptions {
-  INCOME = '0',
+  INCOME = '2',
   FIRST_LEVEL = '1',
-  SECOND_LEVEL = '2',
-  THIRD_LEVEL = '3',
+  SECOND_LEVEL = '3',
 }
 
 export enum ApplicationType {
   OLD_AGE_PENSION = 'oldAgePension',
   HALF_OLD_AGE_PENSION = 'halfOldAgePension',
   SAILOR_PENSION = 'sailorPension',
+}
+
+export enum AttachmentTypes {
+  PENSION = 'pension',
+  EARLY_RETIREMENT = 'earlyRetirement',
+  FISHERMAN = 'fishermen',
+  SELF_EMPLOYED_ATTACHMENT = 'SelfEmployedAttachment',
+  ADDITIONAL_DOCUMENTS = 'additionalDocuments',
+  FOREIGN_BANK_ACCOUNT = 'foreignBankAccount',
 }
 
 export const AttachmentLabel: {
@@ -122,18 +91,4 @@ export const maritalStatuses: {
 export enum Employment {
   SELFEMPLOYED = 'selfEmployed',
   EMPLOYEE = 'employee',
-}
-
-export enum RatioType {
-  YEARLY = 'yearly',
-  MONTHLY = 'monthly',
-}
-
-export enum Actions {
-  SEND_APPLICATION = 'sendApplication',
-}
-
-export enum BankAccountType {
-  ICELANDIC = 'icelandic',
-  FOREIGN = 'foreign',
 }
