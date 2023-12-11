@@ -166,6 +166,9 @@ export class UserProfileService {
         ...(isDefined(userProfile.emailNotifications) && {
           emailNotifications: userProfile.emailNotifications,
         }),
+        ...(isDefined(userProfile.documentNotifications) && {
+          documentNotifications: userProfile.documentNotifications,
+        }),
       }
 
       await this.userProfileModel.upsert(

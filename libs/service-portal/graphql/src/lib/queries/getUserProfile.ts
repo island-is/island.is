@@ -12,6 +12,7 @@ export const USER_PROFILE = gql`
       emailStatus
       mobileStatus
       modified
+      emailNotifications
     }
   }
 `

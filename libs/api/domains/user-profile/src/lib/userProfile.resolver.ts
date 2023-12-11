@@ -21,8 +21,6 @@ import { UserDeviceToken } from './userDeviceToken.model'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UserProfileLocale } from './models/userProfileLocale.model'
-import { UpdateEmailNotificationsInput } from './dto/updateEmailNotificationsInput'
-import { V2UserProfile } from './V2UserProfile.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -121,23 +119,5 @@ export class UserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<DeleteTokenResponse> {
     return await this.userUserProfileService.deleteDeviceToken(input, user)
-  }
-
-  @Mutation(() => V2UserProfile, { name: 'updateEmailNotifications' })
-  async updateEmailNotifications(
-    @Args('input') input: UpdateEmailNotificationsInput,
-    @CurrentUser() user: User,
-  ): Promise<V2UserProfile> {
-    return await this.userUserProfileService.updateEmailNotifications(
-      input,
-      user,
-    )
-  }
-
-  @Query(() => V2UserProfile, { name: 'getUserProfileV2' })
-  async getUserProfileV2(
-    @CurrentUser() user: User,
-  ): Promise<V2UserProfile | null | undefined> {
-    return this.userUserProfileService.getUserProfileV2(user)
   }
 }

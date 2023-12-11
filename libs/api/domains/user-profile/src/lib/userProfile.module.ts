@@ -11,6 +11,9 @@ import {
   IslykillApiModule,
   IslykillApiModuleConfig,
 } from '@island.is/clients/islykill'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { UserProfileServiceV2 } from './V2/userProfile.service'
+import { UserProfileServiceV1 } from './V1/userProfile.service'
 
 export interface Config {
   userProfileServiceBasePath: string
@@ -23,6 +26,8 @@ export class UserProfileModule {
       module: UserProfileModule,
       providers: [
         UserProfileService,
+        UserProfileServiceV2,
+        UserProfileServiceV1,
         UserProfileResolver,
         IslykillService,
         ...[UserProfileApi, V2MeApi].map((Api) => ({
@@ -37,6 +42,7 @@ export class UserProfileModule {
         })),
       ],
       imports: [
+        FeatureFlagModule,
         IslykillApiModule.register({
           cert: config.islykill.cert,
           passphrase: config.islykill.passphrase,

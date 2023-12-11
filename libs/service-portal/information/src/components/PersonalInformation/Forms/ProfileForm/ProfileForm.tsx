@@ -19,7 +19,7 @@ import { InputEmail } from './components/Inputs/Email'
 import { InputPhone } from './components/Inputs/Phone'
 import { DropModal } from './components/DropModal'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
-import { Nudge } from './components/Inputs/Nudge/Nudge'
+import { Nudge } from './components/Inputs/Nudge'
 import { msg } from '../../../../lib/messages'
 import { DataStatus, DropModalType } from './types/form'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
@@ -33,7 +33,6 @@ import {
   useFeatureFlagClient,
 } from '@island.is/react/feature-flags'
 import { useAuth } from '@island.is/auth/react'
-import { useGetUserProfileV2LazyQuery } from './ProfileForm.generated'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -77,11 +76,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
   const { formatMessage } = useLocale()
 
-  const [
-    getUserProfileV2,
-    { data: userProfileV2Data, loading: userV2Loading },
-  ] = useGetUserProfileV2LazyQuery()
-
   const isV2UserProfileEnabled = async () => {
     const ffEnabled = await featureFlagClient.getValue(
       Features.isIASSpaPagesEnabled,
@@ -90,7 +84,6 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
 
     if (ffEnabled) {
       setV2UserProfileEnabled(ffEnabled as boolean)
-      await getUserProfileV2()
     }
   }
 
@@ -264,12 +257,11 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                     <Input
                       name="email"
                       placeholder={formatMessage(msg.email)}
-                      value={userProfileV2Data?.getUserProfileV2?.email || ''}
+                      value={userProfile?.email || ''}
                       size="xs"
                       label={formatMessage(msg.email)}
                       readOnly
-                      {...(userProfileV2Data?.getUserProfileV2
-                        .emailVerified && {
+                      {...(userProfile?.emailVerified && {
                         icon: { name: 'checkmark' },
                       })}
                     />
@@ -277,9 +269,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   link={{
                     href: getIDSLink(IdsUserProfileLinks.EMAIL),
                     title: formatMessage(
-                      userProfileV2Data?.getUserProfileV2?.email
-                        ? msg.change
-                        : msg.add,
+                      userProfile?.email ? msg.change : msg.add,
                     ),
                   }}
                 />
@@ -298,32 +288,19 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
               loading={userLoading}
               text={formatMessage(msg.editNudgeText)}
             >
-              {v2UserProfileEnabled
-                ? !userV2Loading && (
-                    <Nudge
-                      isV2UserProfileEnabled={v2UserProfileEnabled}
-                      refuseMail={
-                        userProfileV2Data?.getUserProfileV2
-                          ?.emailNotifications === null ||
-                        userProfileV2Data?.getUserProfileV2
-                          .emailNotifications !== true
-                      }
-                    />
-                  )
-                : !userLoading && (
-                    <Nudge
-                      isV2UserProfileEnabled={v2UserProfileEnabled}
-                      refuseMail={
-                        /**
-                         * This checkbox block is being displayed as the opposite of canNudge.
-                         * Details inside <Nudge />
-                         */
-                        typeof userProfile?.canNudge === 'boolean'
-                          ? !userProfile.canNudge
-                          : true
-                      }
-                    />
-                  )}
+              {!userLoading && (
+                <Nudge
+                  refuseMail={
+                    /**
+                     * This checkbox block is being displayed as the opposite of canNudge.
+                     * Details inside <Nudge />
+                     */
+                    typeof userProfile?.emailNotifications === 'boolean'
+                      ? !userProfile.emailNotifications
+                      : true
+                  }
+                />
+              )}
             </InputSection>
           )}
           <InputSection
@@ -339,10 +316,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                       name="phoneNumber"
                       label={formatMessage(msg.tel)}
                       placeholder="000-0000"
-                      value={parseNumber(
-                        userProfileV2Data?.getUserProfileV2.mobilePhoneNumber ||
-                          '',
-                      )}
+                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
                       size="xs"
                       readOnly
                       {...(userProfile?.mobilePhoneNumberVerified && {
@@ -353,9 +327,7 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
                   link={{
                     href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
                     title: formatMessage(
-                      userProfileV2Data?.getUserProfileV2.mobilePhoneNumber
-                        ? msg.change
-                        : msg.add,
+                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
                     ),
                   }}
                 />

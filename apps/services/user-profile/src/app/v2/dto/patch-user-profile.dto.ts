@@ -49,4 +49,9 @@ export class PatchUserProfileDto {
   @IsOptional()
   @IsBoolean()
   emailNotifications?: boolean
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsBoolean()
+  documentNotifications?: boolean
 }

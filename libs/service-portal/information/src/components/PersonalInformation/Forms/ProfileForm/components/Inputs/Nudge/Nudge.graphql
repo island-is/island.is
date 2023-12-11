@@ -1,6 +1,0 @@
-mutation emailNotification($input: UpdateEmailNotificationsInput!) {
-  updateEmailNotifications(input: $input) {
-    nationalId
-    emailNotifications
-  }
-}

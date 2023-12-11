@@ -14,14 +14,12 @@ import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'
 import { useLocale, useNamespaces } from '@island.is/localization'
 
-import { FormButton } from '../../FormButton'
-import * as styles from '../ProfileForms.css'
-import { useEmailNotificationMutation } from './Nudge.generated'
-import { msg } from '../../../../../../../lib/messages'
+import { FormButton } from '../FormButton'
+import * as styles from './ProfileForms.css'
+import { msg } from '@island.is/service-portal/information/messages'
 
 interface Props {
   refuseMail: boolean
-  isV2UserProfileEnabled?: boolean
 }
 
 /**
@@ -30,10 +28,7 @@ interface Props {
  * "Refuse nudge" while the value in the db is of "Accept nudge (canNudge)"
  * So we need to get the value and set it to the opposite of the db value.
  */
-export const Nudge: FC<React.PropsWithChildren<Props>> = ({
-  refuseMail,
-  isV2UserProfileEnabled = false,
-}) => {
+export const Nudge: FC<React.PropsWithChildren<Props>> = ({ refuseMail }) => {
   useNamespaces('sp.settings')
   const { formatMessage } = useLocale()
   const { control, handleSubmit, getValues, setValue } = useForm<Props>({
@@ -43,7 +38,6 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({
   })
   const [allowSubmit, setAllowSubmit] = useState(false)
   const [submitError, setSubmitError] = useState<string>()
-  const [emailNotificationMutation, resp] = useEmailNotificationMutation()
 
   useEffect(() => {
     setValue('refuseMail', refuseMail)
@@ -55,20 +49,9 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({
     setSubmitError(undefined)
 
     try {
-      if (isV2UserProfileEnabled) {
-        // use UserProfile v2
-        await emailNotificationMutation({
-          variables: {
-            input: {
-              emailNotifications: !data.refuseMail,
-            },
-          },
-        })
-      } else {
-        await updateOrCreateUserProfile({
-          canNudge: !data.refuseMail,
-        })
-      }
+      await updateOrCreateUserProfile({
+        canNudge: !data.refuseMail,
+      })
 
       setAllowSubmit(false)
     } catch (err) {
@@ -122,12 +105,12 @@ export const Nudge: FC<React.PropsWithChildren<Props>> = ({
               </Hidden>
             )}
             <Box display="flex" alignItems="flexStart" flexDirection="column">
-              {!loading && !resp.loading && (
+              {!loading && (
                 <FormButton disabled={!allowSubmit} submit>
                   {formatMessage(msg.saveSettings)}
                 </FormButton>
               )}
-              {(loading || resp.loading) && <LoadingDots />}
+              {loading && <LoadingDots />}
             </Box>
           </Box>
         </Column>
