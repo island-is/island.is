@@ -4,6 +4,7 @@ import {
   Table as T,
   AlertBanner,
   SkeletonLoader,
+  Button,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -18,6 +19,7 @@ import { useGetChargeTypePeriodSubjectQuery } from '../../screens/FinanceTransac
 import { SelectedPeriod } from './FinanceTransactionPeriodsTypes'
 import FinanceTransactionsDetail from '../FinanceTransactionsDetail/FinanceTransactionsDetail'
 import { m as messages } from '../../lib/messages'
+import { exportPeriodBreakdownFile } from '../../utils/filesPeriodBreakdown'
 
 export default function FinanceTransactionSelectedPeriod({
   period,
@@ -39,7 +41,7 @@ export default function FinanceTransactionSelectedPeriod({
 
   return (
     <Box paddingBottom={4}>
-      <Box paddingBottom={2}>
+      <Box paddingBottom={1}>
         <Text fontWeight="semiBold" variant="medium" as="span">
           {formatMessage(messages.chargeType)}:{' '}
         </Text>
@@ -59,6 +61,40 @@ export default function FinanceTransactionSelectedPeriod({
           {periodFormat(period.period)}
         </Text>
       </Box>
+
+      {data?.getChargeTypePeriodSubject.records?.length ? (
+        <Box paddingBottom={4} display="flex" flexDirection="row">
+          <Button
+            colorScheme="default"
+            icon="arrowForward"
+            iconType="filled"
+            onClick={() =>
+              exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'xlsx')
+            }
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="text"
+          >
+            {formatMessage(m.getAsExcel)}
+          </Button>
+          <Box marginLeft={2} />
+          <Button
+            colorScheme="default"
+            icon="arrowForward"
+            iconType="filled"
+            onClick={() =>
+              exportPeriodBreakdownFile(data, period, 'ValinTimabil', 'csv')
+            }
+            preTextIconType="filled"
+            size="small"
+            type="button"
+            variant="text"
+          >
+            {formatMessage(m.getAsCsv)}
+          </Button>
+        </Box>
+      ) : null}
 
       {error && (
         <AlertBanner
@@ -109,7 +145,7 @@ export default function FinanceTransactionSelectedPeriod({
                   { value: record.itemCode },
                   { value: record.category },
                   { value: amountFormat(record.amount), align: 'right' },
-                  { value: '??', align: 'right' },
+                  { value: '', align: 'right' },
                 ]}
               >
                 <FinanceTransactionsDetail
