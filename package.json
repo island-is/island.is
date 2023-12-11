@@ -211,7 +211,7 @@
     "msw": "0.21.3",
     "nest-winston": "1.4.0",
     "next": "13.3.0",
-    "next-auth": "3.29.10",
+    "next-auth": "4.24.5",
     "next-cookies": "2.0.3",
     "next-usequerystate": "1.8.4",
     "node-fetch": "2.6.7",
