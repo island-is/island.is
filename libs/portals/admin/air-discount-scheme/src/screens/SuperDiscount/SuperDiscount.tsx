@@ -12,12 +12,14 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import { PortalNavigation } from '@island.is/portals/core'
-import {
-  CreateExplicitDiscountCodeMutation,
-  useCreateExplicitDiscountCodeMutation,
-} from './CreateDiscount.generated'
+
 import Modal from '../../components/Modal/Modal'
 import { airDiscountSchemeNavigation } from '../../lib/navigation'
+
+import {
+  CreateSuperExplicitDiscountCodeMutation,
+  useCreateSuperExplicitDiscountCodeMutation,
+} from './SuperDiscount.generated'
 
 const AdminCreateDiscount = () => {
   const options = [
@@ -44,7 +46,8 @@ const AdminCreateDiscount = () => {
     { label: 'Báðar leiðir', value: 2 },
   ]
 
-  const [createExplicitDiscountCode] = useCreateExplicitDiscountCodeMutation()
+  const [createSuperExplicitDiscountCode] =
+    useCreateSuperExplicitDiscountCodeMutation()
   const [nationalId, setNationalId] = useState('')
   const [postalcode, setPostalcode] = useState('')
   const [comment, setComment] = useState('')
@@ -52,7 +55,7 @@ const AdminCreateDiscount = () => {
   const [flightLegs, setFlightLegs] = useState(possibleFlightLegs[0])
   const [needsConnecting, setNeedsConnecting] = useState(typeOptions[0])
   const [discountCode, setDiscountCode] = useState<
-    CreateExplicitDiscountCodeMutation | undefined | null
+    CreateSuperExplicitDiscountCodeMutation | undefined | null
   >(null)
   const [showModal, setShowModal] = useState(false)
 
@@ -73,9 +76,10 @@ const AdminCreateDiscount = () => {
               <Text variant="h1" as="h1">
                 Handvirkir kóðar
               </Text>
+
               {discountCode ? (
                 <>
-                  {discountCode?.createAirDiscountSchemeExplicitDiscountCode?.map(
+                  {discountCode?.createAirDiscountSchemeSuperExplicitDiscountCode?.map(
                     (item, i) => {
                       return (
                         <>
@@ -108,6 +112,7 @@ const AdminCreateDiscount = () => {
                       setPostalcode('')
                       setComment('')
                       setDiscountCode(null)
+                      setFlightLegs(possibleFlightLegs[0])
                     }}
                   >
                     Búa til nýjan kóða
@@ -206,14 +211,14 @@ const AdminCreateDiscount = () => {
         onContinue={() => {
           setDiscountCode(null)
           setShowModal(false)
-          createExplicitDiscountCode({
+          createSuperExplicitDiscountCode({
             variables: {
               input: {
                 nationalId: nationalId.replace('-', ''),
-                postalcode: parseInt(postalcode, 10),
+                postalcode: Number.parseInt(postalcode, 10),
                 comment,
-                numberOfDaysUntilExpiration: parseInt(length.value, 10),
-                isExplicit: false,
+                numberOfDaysUntilExpiration: Number.parseInt(length.value, 10),
+                isExplicit: true,
                 flightLegs: flightLegs.value,
                 needsConnectionFlight: needsConnecting.value,
               },

@@ -99,7 +99,6 @@ air-discount-scheme-backend:
     XROAD_TLS_BASE_PATH: 'https://securityserver.island.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   grantNamespaces:
-    - 'nginx-ingress-external'
     - 'islandis'
   grantNamespacesEnabled: true
   healthCheck:

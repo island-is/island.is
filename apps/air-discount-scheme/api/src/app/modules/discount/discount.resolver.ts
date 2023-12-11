@@ -85,11 +85,11 @@ export class DiscountResolver {
 
   @Roles(Role.ADMIN)
   @UseGuards(RolesGuard)
-  @Mutation(() => Discount)
+  @Mutation(() => [Discount], { nullable: true })
   createExplicitDiscountCode(
     @Context('dataSources') { backendApi },
     @Args('input', { type: () => CreateExplicitDiscountCodeInput }) input,
-  ): Promise<Discount> {
+  ): Promise<Array<Discount>> {
     return backendApi.createExplicitDiscountCode(input)
   }
 
