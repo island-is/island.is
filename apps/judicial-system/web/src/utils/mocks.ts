@@ -82,7 +82,7 @@ export const mockJudgeQuery = [
   },
 ]
 
-export const mockCourtOfAppealsQuery = [
+export const mockCourtOfAppealsJudgeQuery = [
   {
     request: {
       query: CurrentUserDocument,
