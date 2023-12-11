@@ -11452,12 +11452,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/common@npm:10.0.5":
-  version: 10.0.5
-  resolution: "@nestjs/common@npm:10.0.5"
+"@nestjs/common@npm:10.2.10":
+  version: 10.2.10
+  resolution: "@nestjs/common@npm:10.2.10"
   dependencies:
     iterare: 1.2.1
-    tslib: 2.6.0
+    tslib: 2.6.2
     uid: 2.0.2
   peerDependencies:
     class-transformer: "*"
@@ -11469,7 +11469,7 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 6fa9d32c10354bd96cb5818a701c9f31870bc9d86a511643af3d3429dec5a6215fbc4946f8bd938a700d26b96a7187e179e86eeb2e44ba2cef4d26b0fb53bd35
+  checksum: 120b55eaa06780461bf9ba96c7a753c373e63889120ad5fffe3337603748164bd0177a67dfd90c8421fd0ca18a3e0dfe49f12dd5a204cc33c8efb52072aa86b4
   languageName: node
   linkType: hard
 
@@ -33953,7 +33953,7 @@ __metadata:
     "@nestjs/axios": 2.0.0
     "@nestjs/bull": 0.6.3
     "@nestjs/cache-manager": 2.0.1
-    "@nestjs/common": 10.0.5
+    "@nestjs/common": 10.2.10
     "@nestjs/config": 0.5.0
     "@nestjs/core": 10.0.5
     "@nestjs/graphql": 10.1.1
