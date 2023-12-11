@@ -10,8 +10,8 @@ import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
 import { ReykjavikUniversityApplicationClientConfig } from '@island.is/clients/university-application/reykjavik-university'
 import { UniversityOfIcelandApplicationClientConfig } from '@island.is/clients/university-application/university-of-iceland'
 import { AuditModule } from '@island.is/nest/audit'
-import { environment } from '../environments'
 import { AuthModule } from '@island.is/auth-nest-tools'
+import { environment } from '../environments'
 
 @Module({
   imports: [
