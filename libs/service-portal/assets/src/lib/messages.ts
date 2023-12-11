@@ -890,7 +890,7 @@ export const ipMessages = defineMessages({
     defaultMessage: 'Myndband',
   },
   animation: {
-    id: 'sp.intellectual-property:video',
+    id: 'sp.intellectual-property:animation',
     defaultMessage: 'Hreyfimynd',
   },
   name: {
@@ -904,10 +904,6 @@ export const ipMessages = defineMessages({
   make: {
     id: 'sp.intellectual-property:make',
     defaultMessage: 'Gerð',
-  },
-  status: {
-    id: 'sp.intellectual-property:status',
-    defaultMessage: 'Staða',
   },
   internationalRegistration: {
     id: 'sp.intellectual-property:international-registration',
@@ -971,11 +967,15 @@ export const ipMessages = defineMessages({
   },
   designer: {
     id: 'sp.intellectual-property:designer',
-    defaultMessage: 'Umboðsmaður',
+    defaultMessage: 'Hönnuður',
   },
   category: {
     id: 'sp.intellectual-property:category',
     defaultMessage: 'Flokkur',
+  },
+  classification: {
+    id: 'sp.intellectual-property:classification',
+    defaultMessage: 'Flokkun',
   },
   information: {
     id: 'sp.intellectual-property:information',
