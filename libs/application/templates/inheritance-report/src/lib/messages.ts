@@ -184,6 +184,13 @@ export const m = defineMessages({
     description: '',
   },
 
+  // Errors
+  errorRelation: {
+    id: 'es.application:error.errorRelation',
+    defaultMessage: 'Tengsl virðast ekki vera rétt',
+    description: 'Relation is invalid',
+  },
+
   // Estate Properties
   properties: {
     id: 'ir.application:properties',
