@@ -4,7 +4,7 @@ import { formatCurrency } from '@island.is/application/ui-components'
 
 export const getMarketValueShare = (answers: FormValue) => {
   const assets = getValueViaPath(answers, 'estate.assets')
-  
+
   if (Array.isArray(assets) && assets.length > 0) {
     const sum = assets.reduce((acc, cur) => {
       const marketValue = parseInt(cur?.marketValue ?? 0, 10)
@@ -18,7 +18,7 @@ export const getMarketValueShare = (answers: FormValue) => {
 
       return acc
     }, 0)
-    
+
     return formatCurrency(String(sum))
   }
 
