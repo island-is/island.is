@@ -153,9 +153,13 @@ export async function session({
   return context
 }
 
-export async function judicialSystemSession(
-  { browser, homeUrl }: { browser: Browser, homeUrl?: string },
-) {
+export async function judicialSystemSession({
+  browser,
+  homeUrl,
+}: {
+  browser: Browser
+  homeUrl?: string
+}) {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
