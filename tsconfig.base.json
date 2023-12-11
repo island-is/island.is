@@ -267,6 +267,9 @@
       "@island.is/application/templates/announcement-of-death/types": [
         "libs/application/templates/announcement-of-death/src/types.ts"
       ],
+      "@island.is/application/templates/car-recycling": [
+        "libs/application/templates/car-recycling/src/index.ts"
+      ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
       ],
@@ -414,6 +417,9 @@
       "@island.is/application/templates/social-insurance-administration-core/*": [
         "libs/application/templates/social-insurance-administration/core/src/*"
       ],
+      "@island.is/application/templates/social-insurance-administration/household-supplement": [
+        "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
       ],
@@ -501,6 +507,9 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/car-recycling": [
+        "libs/clients/car-recycling/src/index.ts"
+      ],
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
@@ -565,6 +574,9 @@
       ],
       "@island.is/clients/identity": ["libs/clients/identity/src/index.ts"],
       "@island.is/clients/inna": ["libs/clients/inna/src/index.ts"],
+      "@island.is/clients/intellectual-properties": [
+        "libs/clients/intellectual-properties/src/index.ts"
+      ],
       "@island.is/clients/islykill": ["libs/clients/islykill/src/index.ts"],
       "@island.is/clients/judicial-administration": [
         "libs/clients/judicial-administration/src/index.ts"
@@ -791,6 +803,9 @@
       ],
       "@island.is/portals/admin/service-desk": [
         "libs/portals/admin/service-desk/src/index.ts"
+      ],
+      "@island.is/portals/admin/signature-collection": [
+        "libs/portals/admin/signature-collection/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
       "@island.is/portals/shared-modules/delegations": [

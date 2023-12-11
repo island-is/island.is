@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import * as tableStyles from '../../sharedStyles/Table.css'
 import { useRouter } from 'next/router'
@@ -27,6 +27,7 @@ import {
 import { useAllApplications } from '@island.is/financial-aid-web/veita/src/utils/useAllApplications'
 import { calcDifferenceInDate } from '@island.is/financial-aid-web/veita/src/utils/formHelper'
 import useSortedApplications from '@island.is/financial-aid-web/veita/src/utils/useSortedApplications'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 interface PageProps {
   applications: Application[]
@@ -46,6 +47,7 @@ const ApplicationsTable = ({
   defaultHeaderSort,
 }: PageProps) => {
   const router = useRouter()
+  const { admin } = useContext(AdminContext)
 
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortedApplications(defaultHeaderSort, 'descending', applications)
@@ -131,7 +133,11 @@ const ApplicationsTable = ({
                 {sortedData.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      usePseudoName(item.nationalId, item.name),
+                      usePseudoName(
+                        item.nationalId,
+                        item.name,
+                        admin?.staff?.usePseudoName,
+                      ),
                       State(item.state),
                       TextTableItem(
                         'default',
