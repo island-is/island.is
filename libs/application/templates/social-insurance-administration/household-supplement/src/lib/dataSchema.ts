@@ -1,7 +1,7 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import { HouseholdSupplementHousing } from './constants'
-import { errorMessages, validatorErrorMessages } from './messages'
+import { validatorErrorMessages } from './messages'
 import addMonths from 'date-fns/addMonths'
 import addYears from 'date-fns/addYears'
 import {
@@ -10,6 +10,7 @@ import {
   validSWIFT,
 } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/messages'
 import { NO, YES } from '@island.is/application/types'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
