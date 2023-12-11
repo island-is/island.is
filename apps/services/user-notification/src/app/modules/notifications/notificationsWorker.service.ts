@@ -106,7 +106,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
       },
       subject: template.notificationTitle,
       template: {
-        title: 'Testinga',
+        title: template.notificationTitle,
         body: [
           {
             component: 'Image',
