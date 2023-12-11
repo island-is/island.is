@@ -5,7 +5,7 @@ import {
   buildKeyValueField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { Application, RecordObject, YES } from '@island.is/application/types'
+import { Application } from '@island.is/application/types'
 import { EstateAsset, EstateInfo } from '@island.is/clients/syslumenn'
 import { m } from '../../lib/messages'
 import { format as formatNationalId } from 'kennitala'
@@ -15,7 +15,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { EstateTypes } from '../../lib/constants'
+import { EstateTypes, YES } from '../../lib/constants'
 import { customCurrencyFormat } from '../../lib/utils'
 import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
 import { getMarketValueShare } from '../../utils/getMarketValueShare'
@@ -466,9 +466,11 @@ export const overviewAssetsAndDebts = [
     titleVariant: 'h3',
     space: 'gutter',
     condition: (answers) => {
+      console.log(answers,)
       const hasDebt =
         getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
-      const estateWithoutAssetsSelected =
+      console.log(getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist'))
+        const estateWithoutAssetsSelected =
         getValueViaPath(answers, 'selectedEstate') ===
         EstateTypes.estateWithoutAssets
 
