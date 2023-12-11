@@ -79,8 +79,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
 }
 
 export const workerSetup = (): ServiceBuilder<typeof serviceWorkerName> => {
-  return service(typeof serviceWorkerName)
-    .serviceAccount(typeof serviceWorkerName)
+  return service(serviceWorkerName)
+    .serviceAccount(serviceWorkerName)
     .namespace(namespace)
     .image(imageName)
     .command('node')
