@@ -140,7 +140,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
           {
             component: 'Button',
             context: {
-              copy: isEnglish ? 'Open mailbox' : 'Opna pósthólf',
+              copy: `${isEnglish ? 'Open in' : 'Opna á'} island.is`,
               href:
                 formattedTemplate.clickActionWeb ??
                 'https://www.island.is/minarsidur/postholf',
