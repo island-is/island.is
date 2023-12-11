@@ -277,6 +277,7 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ENERGY_FUNDS]: {
     slug: 'rafbila-styrkur',
     translation: 'ef.application',
+  },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',
     translation: 'hlc.application',
