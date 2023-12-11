@@ -16,6 +16,9 @@ import {
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
 import { EstateTypes } from '../../lib/constants'
+import { customCurrencyFormat } from '../../lib/utils'
+import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
+import { getMarketValueShare } from '../../utils/getMarketValueShare'
 type EstateSchema = zinfer<typeof estateSchema>
 
 export const overviewAssetsAndDebts = [
@@ -56,13 +59,7 @@ export const overviewAssetsAndDebts = [
   buildDescriptionField({
     id: 'estateAssetsTotal',
     title: m.total,
-    description: ({ answers }: Application) =>
-      getSumFromAnswers<EstateAsset>(
-        answers,
-        'estate.assets',
-        'marketValue',
-        (asset) => !!asset?.enabled,
-      ),
+    description: ({ answers }: Application) => getMarketValueShare(answers),
     condition: (answers) =>
       !!getSumFromAnswers<EstateAsset>(
         answers,
@@ -338,24 +335,33 @@ export const overviewAssetsAndDebts = [
       id: 'stocksCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
+      condition: (answers) =>
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+          ? false
+          : true,
     },
     {
       cards: ({ answers }: Application) =>
-        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => ({
-          title: stock.organization,
-          description: [
-            `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
-              stock.nationalId ?? '',
-            )}`,
-            `${m.stocksFaceValue.defaultMessage}: ${formatCurrency(
-              stock.faceValue ?? 0,
-            )}`,
-            `${m.stocksRateOfChange.defaultMessage}: ${stock.rateOfExchange}`,
-            `${m.stocksValue.defaultMessage}: ${formatCurrency(
-              stock.value ?? '0',
-            )}`,
-          ],
-        })),
+        ((answers as unknown as EstateSchema).stocks ?? []).map((stock) => {
+          return {
+            title: stock.organization,
+            description: [
+              `${m.stocksNationalId.defaultMessage}: ${formatNationalId(
+                stock.nationalId ?? '',
+              )}`,
+              `${m.stocksFaceValue.defaultMessage}: ${customCurrencyFormat(
+                stock.faceValue ?? '0',
+              )}`,
+              `${m.stocksRateOfChange.defaultMessage}: ${
+                stock.rateOfExchange?.replace('.', ',') ?? '0'
+              }`,
+              `${m.stocksValue.defaultMessage}: ${customCurrencyFormat(
+                stock.value ?? '0',
+              )}`,
+            ],
+          }
+        }),
     },
   ),
   buildDescriptionField({
@@ -444,8 +450,9 @@ export const overviewAssetsAndDebts = [
     id: 'moneyAndDepositNotFilledOut',
     title: '',
     component: 'NotFilledOut',
-    condition: (answers) =>
-      getValueViaPath<string>(answers, 'moneyAndDeposit.value') === '',
+    condition: (answers) => {
+      return getValueViaPath<string>(answers, 'moneyAndDeposit.value') === ''
+    },
   }),
   buildDividerField({}),
   buildDescriptionField({
@@ -489,29 +496,3 @@ export const overviewAssetsAndDebts = [
   }),
   buildDividerField({}),
 ]
-
-const getSumFromAnswers = <T = unknown>(
-  answers: Application['answers'],
-  path: string,
-  field: string,
-  fn?: (item: T) => boolean,
-): string | null => {
-  let arr: T[] = getValueViaPath(answers, path) ?? []
-
-  if (Array.isArray(arr)) {
-    if (fn) {
-      arr = arr.filter(fn)
-    }
-
-    const value = arr.reduce((acc, cur) => {
-      const val = (getValueViaPath(cur as RecordObject, field) as number) ?? 0
-      return acc + Number(val)
-    }, 0)
-
-    if (value && value > 0) {
-      return formatCurrency(String(value))
-    }
-  }
-
-  return null
-}
