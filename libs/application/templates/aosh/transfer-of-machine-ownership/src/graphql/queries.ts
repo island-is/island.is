@@ -9,7 +9,7 @@ export const IDENTITY_QUERY = `
 
 export const GET_MACHINE_DETAILS = `
 query GetMachineDetails($id: String!) {
-  aoshMachineDetails(id: $id) {
+  getWorkerMachineDetails(id: $id) {
     id
     regNumber
     type

@@ -16,10 +16,6 @@ import {
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { generateRequestReviewSms } from './smsGenerators/requestReviewSms'
-import {
-  ChangeMachineOwner,
-  TransferOfMachineOwnershipClient,
-} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
 import { generateApplicationSubmittedSms } from './smsGenerators/applicationSubmittedSms'
 import { applicationCheck } from '@island.is/application/templates/aosh/transfer-of-machine-ownership'
@@ -29,19 +25,23 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { generateApplicationRejectedEmail } from './emailGenerators/applicationRejectedEmail'
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
+import {
+  ChangeMachineOwner,
+  WorkMachinesClientService,
+} from '@island.is/clients/work-machines'
 @Injectable()
 export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    private readonly workMachineClientService: WorkMachinesClientService,
   ) {
     super(ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP)
   }
 
   async getMachines({ auth }: TemplateApiModuleActionProps) {
-    const result = await this.transferOfMachineOwnershipClient.getMachines(auth)
+    const result = await this.workMachineClientService.getMachines(auth)
 
     if (!result || !result.length) {
       throw new TemplateApiError(
@@ -56,7 +56,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       return await Promise.all(
         result.map(async (machine) => {
           if (machine.id) {
-            return await this.transferOfMachineOwnershipClient.getMachineDetail(
+            return await this.workMachineClientService.getMachineDetail(
               auth,
               machine.id,
             )
@@ -105,7 +105,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     if (!answers.machine.id) {
       throw new Error('Ekki er búið að velja vél')
     }
-    await this.transferOfMachineOwnershipClient.confirmOwnerChange(auth, {
+    await this.workMachineClientService.confirmOwnerChange(auth, {
       applicationId: application.id,
       machineId: answers.machine.id,
       machineMoreInfo: answers.location.moreInfo,
@@ -199,7 +199,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       email: answers.buyer.email,
     }
 
-    await this.transferOfMachineOwnershipClient.initiateOwnerChangeProcess(
+    await this.workMachineClientService.initiateOwnerChangeProcess(
       auth,
       ownerChange,
     )

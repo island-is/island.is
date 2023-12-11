@@ -45,7 +45,6 @@ import {
   CommunicationsConfig,
   CommunicationsModule,
 } from '@island.is/api/domains/communications'
-import { AoshModule } from '@island.is/api/domains/aosh'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { NationalRegistrySoffiaClientConfig } from '@island.is/clients/national-registry-v1'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -118,7 +117,6 @@ import {
   HealthDirectorateClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
-import { TransferOfMachineOwnershipClientConfig } from '@island.is/clients/aosh/transfer-of-machine-ownership'
 import { CmsModule, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
@@ -299,7 +297,6 @@ const environment = getConfig
     UniversityGatewayApiModule,
     SessionsModule,
     AuthAdminModule,
-    AoshModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
     ConfigModule.forRoot({
@@ -368,7 +365,6 @@ const environment = getConfig
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
         MMSClientConfig,
-        TransferOfMachineOwnershipClientConfig,
         StatisticsClientConfig,
         UniversityGatewayApiClientConfig,
       ],

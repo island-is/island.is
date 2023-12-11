@@ -33,7 +33,7 @@ import {
 } from '../dataProviders'
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
-import { promise } from 'zod'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -91,7 +91,11 @@ const template: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.Custom,
+    },
   ],
+  requiredScopes: [ApiScope.vinnueftirlitid],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

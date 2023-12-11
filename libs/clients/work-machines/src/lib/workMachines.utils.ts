@@ -4,10 +4,7 @@ import {
   ApiMachineOwnerChangePostRequest,
   MachineOwnerChangeCreateDto,
 } from '../../gen/fetch'
-import {
-  ConfirmOwnerChange,
-  ChangeMachineOwner,
-} from './transferOfMachineOwnershipClient.types'
+import { ConfirmOwnerChange, ChangeMachineOwner } from './workMachines.types'
 
 export const confirmChangeToApiRequest = (
   confirmChange: ConfirmOwnerChange,

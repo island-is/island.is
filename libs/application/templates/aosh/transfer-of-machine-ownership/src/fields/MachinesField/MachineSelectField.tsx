@@ -15,7 +15,7 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { MachineDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { MachineDto } from '@island.is/clients/work-machines'
 
 interface MachineSearchFieldProps {
   currentMachineList: MachineDto[]
@@ -61,23 +61,34 @@ export const MachineSelectField: FC<
     if (currentMachine.id) {
       getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
-          setSelectedMachine(response.aoshMachineDetails)
-          console.log(response.aoshMachineDetails)
-          setValue('machine.regNumber', response.aoshMachineDetails.regNumber)
-          setValue('machine.category', response.aoshMachineDetails.category)
+          setSelectedMachine(response.getWorkerMachineDetails)
+          setValue(
+            'machine.regNumber',
+            response.getWorkerMachineDetails.regNumber,
+          )
+          setValue(
+            'machine.category',
+            response.getWorkerMachineDetails.category,
+          )
 
-          setValue('machine.type', response.aoshMachineDetails.type || '')
-          setValue('machine.subType', response.aoshMachineDetails.subType || '')
-          setValue('machine.plate', response.aoshMachineDetails.plate || '')
+          setValue('machine.type', response.getWorkerMachineDetails.type || '')
+          setValue(
+            'machine.subType',
+            response.getWorkerMachineDetails.subType || '',
+          )
+          setValue(
+            'machine.plate',
+            response.getWorkerMachineDetails.plate || '',
+          )
           setValue(
             'machine.ownerNumber',
-            response.aoshMachineDetails.ownerNumber || '',
+            response.getWorkerMachineDetails.ownerNumber || '',
           )
-          setValue('machine.id', response.aoshMachineDetails.id)
+          setValue('machine.id', response.getWorkerMachineDetails.id)
           setValue('machine.date', new Date().toISOString())
           setValue(
             'pickMachine.isValid',
-            response.aoshMachineDetails.disabled ? undefined : true,
+            response.getWorkerMachineDetails.disabled ? undefined : true,
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)

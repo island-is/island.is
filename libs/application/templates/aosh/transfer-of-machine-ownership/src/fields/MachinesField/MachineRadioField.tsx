@@ -13,7 +13,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { MachineDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { MachineDto } from '@island.is/clients/work-machines'
 
 interface Option {
   value: string

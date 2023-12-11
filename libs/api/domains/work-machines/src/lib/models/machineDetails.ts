@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType()
-export class AoshMachineDetails {
+export class MachineDetails {
   @Field(() => String)
   id!: string
 

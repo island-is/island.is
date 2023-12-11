@@ -45,6 +45,7 @@ if (userMocked) {
       ApiScope.assets,
       ApiScope.samgongustofaVehicles,
       ApiScope.carRecycling,
+      //ApiScope.vinnueftirlitid, add later when scope has been fixed
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'as.',

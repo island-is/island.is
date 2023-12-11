@@ -17,6 +17,7 @@ export enum ApiScope {
   samradsgatt = '@samradsgatt.island.is/samradsgatt',
   health = '@island.is/health',
   workMachines = '@island.is/work-machines',
+  vinnueftirlitid = '@island.is/applications/ver',
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
   carRecycling = '@island.is/applications/urvinnslusjodur',
 }
