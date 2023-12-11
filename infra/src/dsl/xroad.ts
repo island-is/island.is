@@ -427,6 +427,16 @@ export const PaymentSchedule = new XroadConf({
   },
 })
 
+export const IntellectualProperties = new XroadConf({
+  env: {
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: {
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+    },
+  },
+})
+
 export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
