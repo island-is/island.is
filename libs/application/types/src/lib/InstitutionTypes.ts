@@ -19,4 +19,5 @@ export enum InstitutionTypes {
   URVINNSLUSJODUR = 'urvinnslusjodur',
   UTLENDINGASTOFNUN = 'utlendingastofnun',
   ORKUSTOFNUN = 'Orkustofnun',
+  EMBAETTI_LANDLAEKNIS = 'embaetti-landlaeknis',
 }

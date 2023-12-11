@@ -79,4 +79,6 @@ export const institutionMapper = {
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: InstitutionTypes.THJODSKRA,
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
   [ApplicationTypes.ENERGY_FUNDS]: InstitutionTypes.ORKUSTOFNUN,
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]:
+    InstitutionTypes.EMBAETTI_LANDLAEKNIS,
 }
