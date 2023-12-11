@@ -16,6 +16,7 @@ import {
   SamgongustofaModule,
   FjarsyslaModule,
 } from './modules'
+import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
 
@@ -38,6 +39,10 @@ const autoSchemaFile = environment.production
       useClass: SequelizeConfigService,
     }),
     AuthModule,
+    AuthJwtModule.register({
+      audience: null,
+      issuer: environment.auth.issuer,
+    }),
     AccessControlModule,
     RecyclingRequestModule,
     SamgongustofaModule,

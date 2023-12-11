@@ -427,6 +427,16 @@ export const PaymentSchedule = new XroadConf({
   },
 })
 
+export const IntellectualProperties = new XroadConf({
+  env: {
+    XROAD_INTELLECTUAL_PROPERTIES_PATH: {
+      dev: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/',
+      staging: 'IS-TEST/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+      prod: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI/',
+    },
+  },
+})
+
 export const CriminalRecord = new XroadConf({
   env: {
     XROAD_CRIMINAL_RECORD_PATH: {
@@ -661,6 +671,16 @@ export const UniversityGatewayUniversityOfIceland = new XroadConf({
       dev: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
       staging: 'IS-DEV/EDU/10010/HI-Protected/umsoknir-v1',
       prod: 'IS/EDU/6001692039/HI-Protected/umsoknir-v1',
+    },
+  },
+})
+
+export const SocialInsuranceAdministration = new XroadConf({
+  env: {
+    XROAD_TR_PATH: {
+      dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      staging: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
+      prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
     },
   },
 })

@@ -21,9 +21,15 @@ import { IntellectualPropertiesDesignImagesInput } from './dto/designImages.inpu
 import { IntellectualPropertiesInput } from './dto/ip.input'
 import { IntellectualPropertiesService } from './intellectualProperties.service'
 import { IntellectualPropertiesResponse } from './models/intellectualProperty.model'
+import {
+  FeatureFlagGuard,
+  FeatureFlag,
+  Features,
+} from '@island.is/nest/feature-flags'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard)
+@FeatureFlag(Features.isIntellectualPropertyModuleEnabled)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/intellectual-properties' })
 export class IntellectualPropertiesResolver {
   constructor(
@@ -79,8 +85,7 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    //return this.ipService.getDesignById(user, input.key)
-    return this.ipService.getDesignById(user, 'H0002611')
+    return this.ipService.getDesignById(user, input.key)
   }
 
   @Scopes(ApiScope.internal)
