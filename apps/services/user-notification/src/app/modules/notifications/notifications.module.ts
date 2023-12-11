@@ -57,11 +57,13 @@ import { UserNotificationsInfraController } from './infra.controller'
     {
       provide: FIREBASE_PROVIDER,
       useFactory: () =>
-        firebaseAdmin.initializeApp({
-          credential: firebaseAdmin.credential.cert(
-            JSON.parse(environment.firebaseCredentials),
-          ),
-        }),
+        process.env.INIT_SCHEMA === 'true'
+          ? {}
+          : firebaseAdmin.initializeApp({
+              credential: firebaseAdmin.credential.cert(
+                JSON.parse(environment.firebaseCredentials),
+              ),
+            }),
     },
     {
       provide: userProfile.UserProfileApi,
