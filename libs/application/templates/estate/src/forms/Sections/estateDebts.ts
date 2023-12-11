@@ -11,12 +11,17 @@ export const estateDebts = buildSection({
   id: 'debts',
   title: m.debtsTitle,
   condition: (answers) => {
-    const assetsExists = getValueViaPath(answers, 'estateWithoutAssets.estateAssetsExist')
-    const debtExists = getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist')
+    const assetsExists = getValueViaPath(
+      answers,
+      'estateWithoutAssets.estateAssetsExist',
+    )
+    const debtExists = getValueViaPath(
+      answers,
+      'estateWithoutAssets.estateDebtsExist',
+    )
     const selectedEstate = getValueViaPath(answers, 'selectedEstate')
 
-    return selectedEstate ===
-      EstateTypes.estateWithoutAssets
+    return selectedEstate === EstateTypes.estateWithoutAssets
       ? assetsExists === YES && debtExists === YES
       : true
   },
