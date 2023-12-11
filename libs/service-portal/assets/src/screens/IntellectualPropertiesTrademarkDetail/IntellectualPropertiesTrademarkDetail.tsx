@@ -151,7 +151,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           />
           <Divider />
           <UserInfoLine
-            label={ipMessages.status}
+            label={m.status}
             content={ip?.status ?? ''}
             loading={loading}
           />
@@ -159,12 +159,6 @@ const IntellectualPropertiesTrademarkDetail = () => {
           <UserInfoLine
             label={ipMessages.make}
             content={ip?.subType ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label={ipMessages.status}
-            content={ip?.status ?? ''}
             loading={loading}
           />
           <Divider />
