@@ -34,6 +34,7 @@ export const ApiConfig = {
       headers: {
         'X-Road-Client': xroadConfig.xRoadClient,
         Accept: 'application/json',
+        ApiKey: config.apiKey,
       },
     }),
   inject: [

@@ -47,6 +47,9 @@ export enum Features {
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
+  //Enable intellectual properties fetch
+  isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
+
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
 

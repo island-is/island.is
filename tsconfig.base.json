@@ -146,6 +146,9 @@
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
       ],
+      "@island.is/api/domains/intellectual-properties": [
+        "libs/api/domains/intellectual-properties/src/index.ts"
+      ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
       ],
