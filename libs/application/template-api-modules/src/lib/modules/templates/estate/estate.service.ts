@@ -70,7 +70,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     const { availableSettlements } = applicationData
-    console.log('Application answers', JSON.stringify(applicationAnswers))
     const selectedEstate = applicationAnswers.selectedEstate
     const selectedEstateKey = Object.keys(EstateTypes).find(
       (key) => EstateTypes[key as keyof typeof EstateTypes] === selectedEstate,
@@ -80,7 +79,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       availableSettlements &&
       availableSettlements[selectedEstateKey] !== 'Í lagi'
     ) {
-      let message = availableSettlements[selectedEstateKey]
+      const message = availableSettlements[selectedEstateKey]
       this.logger.warn(`[estate]: Validation failed with message: ${message}`)
 
       throw new TemplateApiError(
