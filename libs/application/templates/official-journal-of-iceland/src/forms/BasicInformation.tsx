@@ -5,34 +5,49 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-export const PrerequsitesForm: Form = buildForm({
-  id: 'OfficalJournalOfIcelandPreRequsitesForm',
-  title: 'Skilyrði', // page title
+export const BasicInformation: Form = buildForm({
+  id: 'OfficalJournalOfIcelandBasicInformation',
+  title: 'Stjórnartíðindi',
   mode: FormModes.NOT_STARTED,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'ExternalData',
       title: m.prerequisitesSectionTitle,
-      children: [
-        buildMultiField({
-          id: 'prerequisites',
-          title: '',
-          children: [
-            buildCustomField({
-              id: 'prerequisites',
-              title: '',
-              component: 'Prerequisites',
-            }),
-          ],
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'BasicInformation',
       title: m.basicInformationSectionTitle,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'basicInformation',
+          title: '',
+          space: 2,
+          children: [
+            buildCustomField({
+              id: 'basicInformation',
+              title: '',
+              component: 'BasicInformation',
+            }),
+            buildSubmitField({
+              id: 'submit',
+              title: m.continue,
+              placement: 'footer',
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.continue,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
     }),
     buildSection({
       id: 'AdditionsAndDocuments',

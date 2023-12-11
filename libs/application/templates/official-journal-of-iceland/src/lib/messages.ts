@@ -86,4 +86,8 @@ export const m = defineMessages({
     id: 'ojoi.application:summarySectionTitle',
     defaultMessage: 'Samantekt',
   },
+  completeFormTitle: {
+    id: 'ojoi.application:summaryFormTitle',
+    defaultMessage: 'Mál hefur verið sent inn til yfirferðar',
+  },
 })

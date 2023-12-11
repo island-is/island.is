@@ -135,8 +135,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
     ),
-  [ApplicationTypes.OFFICAL_JOURNAL_OF_ICELAND]: () =>
-    import('@island.is/application/templates/offical-journal-of-iceland'),
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: () =>
+    import('@island.is/application-templates-official-journal-of-iceland'),
 }
 
 export default templates

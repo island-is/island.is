@@ -17,9 +17,11 @@ export const FormWrap = ({ children, footer, header }: Props) => {
       {header && (
         <FormHeader button={header.button}>{header.children}</FormHeader>
       )}
-      <Box flexGrow={1} flexShrink={0}>
-        {children}
-      </Box>
+      {children && (
+        <Box flexGrow={1} flexShrink={0}>
+          {children}
+        </Box>
+      )}
       {footer && (
         <FormFooter
           prevButton={footer.prevButton}

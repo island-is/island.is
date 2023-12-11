@@ -51,7 +51,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
-  OFFICAL_JOURNAL_OF_ICELAND = 'OfficalJournalOfIceland',
+  OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
 }
 
 export const ApplicationConfigurations = {
@@ -263,7 +263,7 @@ export const ApplicationConfigurations = {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
   },
-  [ApplicationTypes.OFFICAL_JOURNAL_OF_ICELAND]: {
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
   },

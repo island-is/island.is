@@ -96,6 +96,8 @@ import { DrivingLicenseDuplicateModule } from './driving-license-duplicate/drivi
 import { DrivingLicenseDuplicateService } from './driving-license-duplicate/driving-license-duplicate.service'
 import { SocialInsuranceAdministrationModule } from './social-insurance-administration/social-insurance-administration.module'
 import { SocialInsuranceAdministrationService } from './social-insurance-administration/social-insurance-administration.service'
+import { OfficialJournalOfIcelandModule } from './official-journal-of-iceland/official-journal-of-iceland.module'
+import { OfficialJournalOfIcelandService } from './official-journal-of-iceland/official-journal-of-iceland.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -148,6 +150,7 @@ export const modules = [
   DrivingLicenseDuplicateModule,
   SocialInsuranceAdministrationModule,
   CitizenshipModule,
+  OfficialJournalOfIcelandModule,
 ]
 
 export const services = [
@@ -201,4 +204,5 @@ export const services = [
   DrivingLicenseDuplicateService,
   SocialInsuranceAdministrationService,
   CitizenshipService,
+  OfficialJournalOfIcelandService,
 ]

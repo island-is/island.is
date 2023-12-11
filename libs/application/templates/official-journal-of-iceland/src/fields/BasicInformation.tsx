@@ -1,6 +1,6 @@
 import { Text, Box, Button } from '@island.is/island-ui/core'
 
-import React, { FC, useState } from 'react'
+import React, { FC, useReducer, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { m } from '../lib/messages'
@@ -57,26 +57,6 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               application,
               formatMessage,
             )}
-          </Button>
-        ),
-      }}
-      footer={{
-        prevButton: (
-          <Button
-            variant="ghost"
-            onClick={() => console.log('should go back')}
-            preTextIcon="arrowBack"
-          >
-            {formatText(m.goBack, application, formatMessage)}
-          </Button>
-        ),
-        nextButton: (
-          <Button
-            disabled={!hasFilledForm}
-            onClick={onContinue}
-            icon="arrowForward"
-          >
-            {formatText(m.continue, application, formatMessage)}
           </Button>
         ),
       }}

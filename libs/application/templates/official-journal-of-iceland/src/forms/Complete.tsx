@@ -1,12 +1,15 @@
 import {
   buildCustomField,
+  buildDescriptionField,
   buildForm,
+  buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
-export const BasicInformation: Form = buildForm({
-  id: 'OfficalJournalOfIcelandBasicInformation',
+export const CompleteForm: Form = buildForm({
+  id: 'OfficalJournalOfIcelandPreRequsitesForm',
   title: 'Skilyrði', // page title
   mode: FormModes.NOT_STARTED,
   children: [
@@ -18,13 +21,7 @@ export const BasicInformation: Form = buildForm({
     buildSection({
       id: 'BasicInformation',
       title: m.basicInformationSectionTitle,
-      children: [
-        buildCustomField({
-          id: 'basicInformation',
-          title: '',
-          component: 'BasicInformation',
-        }),
-      ],
+      children: [],
     }),
     buildSection({
       id: 'AdditionsAndDocuments',
@@ -44,7 +41,20 @@ export const BasicInformation: Form = buildForm({
     buildSection({
       id: 'Summary',
       title: m.summarySectionTitle,
-      children: [],
+      children: [
+        buildMultiField({
+          id: 'summary',
+          title: '',
+          space: 2,
+          children: [
+            buildCustomField({
+              id: 'complete',
+              title: '',
+              component: 'Complete',
+            }),
+          ],
+        }),
+      ],
     }),
   ],
 })

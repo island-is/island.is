@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'application-templates-offical-journal-of-iceland',
+  displayName: 'application-templates-official-journal-of-iceland',
   preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
@@ -8,5 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '../../../../coverage/libs/application/templates/offical-journal-of-iceland',
+    '../../../../coverage/libs/application/templates/official-journal-of-iceland',
 }

@@ -1,4 +1,7 @@
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import { OfficalJournalOfIcelandSchema } from './dataSchema'
 import { m } from './messages'
 
@@ -11,13 +14,16 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
 } from '@island.is/application/types'
+import { hasApprovedExternalData } from '../utils/hasApprovedExternalData'
+import { TEMPLATE_API_ACTIONS } from '../shared'
+import { OfficialJournalOfIcelandTemplateApi } from '../dataProviders'
 
-const ApplicationStates = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-  // inReview: 'inReview',
-  approved: 'approved',
+export enum ApplicationStates {
+  DRAFT = 'draft',
+  DATA_GATHERING = 'data_gathering',
+  COMPLETE = 'complete',
 }
 
 enum Roles {
@@ -37,33 +43,29 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
   ApplicationStateSchema<OfficalJournalOfIcelandEvents>,
   OfficalJournalOfIcelandEvents
 > = {
-  type: ApplicationTypes.OFFICAL_JOURNAL_OF_ICELAND,
+  type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
   name: m.applicationName,
   institution: m.institutionName,
   translationNamespaces: [
-    ApplicationConfigurations.OfficalJournalOfIceland.translation,
+    ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
   dataSchema: OfficalJournalOfIcelandSchema,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
-    initial: ApplicationStates.prerequisites,
+    initial: ApplicationStates.DRAFT,
     states: {
-      [ApplicationStates.prerequisites]: {
+      [ApplicationStates.DRAFT]: {
         meta: {
-          name: 'Application name test',
+          name: 'Umsókn um stjórnartíðindi',
           status: 'draft',
           progress: 0.33,
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            whenToPrune: 24 * 3600 * 1000,
-            shouldDeleteChargeIfPaymentFulfilled: null,
-          },
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
               write: 'all',
+              delete: true,
               formLoader: () =>
                 import('../forms/Prerequisites').then((val) =>
                   Promise.resolve(val.PrerequsitesForm),
@@ -71,7 +73,7 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda umsókn',
+                  name: 'Staðfesta',
                   type: 'primary',
                 },
               ],
@@ -79,15 +81,29 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: ApplicationStates.draft,
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: ApplicationStates.DATA_GATHERING,
+              cond: hasApprovedExternalData,
+            },
+            {
+              target: ApplicationStates.DRAFT,
+            },
+          ],
         },
       },
-      [ApplicationStates.draft]: {
+      [ApplicationStates.DATA_GATHERING]: {
         meta: {
           name: '',
           status: 'draft',
           progress: 0.66,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: TEMPLATE_API_ACTIONS.getPreviousTemplates,
+            shouldPersistToExternalData: true,
+            externalDataId: 'string',
+            throwOnError: false,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -104,19 +120,30 @@ const OfficalJournalOfIcelandApplicationTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
+              api: [OfficialJournalOfIcelandTemplateApi],
             },
           ],
         },
         on: {
-          SUBMIT: ApplicationStates.approved,
+          SUBMIT: ApplicationStates.COMPLETE,
         },
       },
-      [ApplicationStates.approved]: {
+      [ApplicationStates.COMPLETE]: {
         meta: {
           name: '',
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           status: 'approved',
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
+              formLoader: () =>
+                import('../forms/Complete').then((val) =>
+                  Promise.resolve(val.CompleteForm),
+                ),
+            },
+          ],
         },
         type: 'final',
       },

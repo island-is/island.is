@@ -1,11 +1,14 @@
 import { Text, Box, Button, Checkbox } from '@island.is/island-ui/core'
 
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { m } from '../lib/messages'
 import { FormWrap } from '../components/FormWrap'
-import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import {
+  SUBMIT_APPLICATION,
+  UPDATE_APPLICATION,
+} from '@island.is/application/graphql'
 import { DefaultEvents, FieldBaseProps } from '@island.is/application/types'
 import { useMutation } from '@apollo/client'
 
@@ -13,15 +16,40 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => {
-  const { formatMessage } = useLocale()
-  const [agreed, setAgreed] = useState(false)
+  const { locale, formatMessage } = useLocale()
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
   const [submitApplication] = useMutation(SUBMIT_APPLICATION, {
     onError: (e) => console.error(e.message),
   })
 
+  const hasAgreed = application.answers?.approveExternalData
+    ? (application.answers.approveExternalData as boolean)
+    : false
+
   const onGoBack = () => {
     window.open(`${window.location.origin}/minarsidur`, '_blank')
   }
+  const updateAnswers = useCallback(async (checked: boolean) => {
+    await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            approveExternalData: checked,
+          },
+        },
+        locale,
+      },
+    }).then(({ data, errors } = {}) => {
+      if (data && !errors?.length) {
+        // Takes them to the next state (which loads the relevant form)
+        refetch?.()
+      } else {
+        return Promise.reject()
+      }
+    })
+  }, [])
 
   const onContinue = () => {
     submitApplication({
@@ -51,7 +79,12 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           </Button>
         ),
         nextButton: (
-          <Button disabled={!agreed} onClick={onContinue} icon="arrowForward">
+          <Button
+            loading={loading}
+            disabled={!hasAgreed}
+            onClick={onContinue}
+            icon="arrowForward"
+          >
             {formatText(m.continue, application, formatMessage)}
           </Button>
         ),
@@ -96,8 +129,8 @@ export const Prerequisites: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 application,
                 formatMessage,
               )}
-              checked={agreed}
-              onChange={() => setAgreed(!agreed)}
+              checked={application.answers?.approveExternalData ? true : false}
+              onChange={(e) => updateAnswers(e.target.checked)}
             />
           </Box>
         </Box>
