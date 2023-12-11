@@ -16,5 +16,7 @@ export enum InstitutionTypes {
   VINNUMALASTOFNUN = 'vinnumalastofnun',
   THJODSKRA = 'thjodskra-islands',
   TRYGGINGASTOFNUN = 'tryggingastofnun',
+  URVINNSLUSJODUR = 'urvinnslusjodur',
   UTLENDINGASTOFNUN = 'utlendingastofnun',
+  EMBAETTI_LANDLAEKNIS = 'embaetti-landlaeknis',
 }

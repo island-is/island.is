@@ -65,6 +65,55 @@ export const m = defineMessages({
     description:
       'User not eligible for estate or no estates found bound to their national id',
   },
+
+  applicationDescriptionSectionTitle: {
+    id: 'es.application:applicationDescriptionSectionTitle',
+    defaultMessage: 'Upplýsingar',
+    description: 'Titill fyrir hliðastiku',
+  },
+
+  applicationDescriptionTitleEstateWithoutAssets: {
+    id: 'es.application:applicationDescriptionTitleEstateWithoutAssets',
+    defaultMessage: 'Upplýsingar fyrir eingnalaust dánarbú',
+    description: 'Upplýsingar skjár titill fyrir eignalaust dánarbú',
+  },
+  applicationDescriptionTitleOfficialDivision: {
+    id: 'es.application:applicationDescriptionTitleOfficialDivision',
+    defaultMessage: 'Upplýsingar fyrir opinber skipti',
+    description: 'Upplýsingar skjár titill fyrir opinber skipti',
+  },
+  applicationDescriptionTitleUndividedEstate: {
+    id: 'es.application:applicationDescriptionTitleUndividedEstate',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsingar skjár titill fyrir setu í óskiptu búi',
+  },
+  applicationDescriptionTitleDivisionOfEstateByHeirs: {
+    id: 'es.application:applicationDescriptionTitleDivisionOfEstateByHeirs',
+    defaultMessage: 'Upplýsingar',
+    description: 'Upplýsinga skjár titill fyrir Einkaskipti',
+  },
+
+  applicationDescriptionTextEstateWithoutAssets: {
+    id: 'es.application:applicationDescriptionTextEstateWithoutAssets#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir eignalaust dánarbú',
+    description: 'Upplýsingar skjár titill fyrir eignalust dánarbú',
+  },
+  applicationDescriptionTextOfficialDivision: {
+    id: 'es.application:applicationDescriptionTextOfficialDivision#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir opinber skipti',
+    description: 'Upplýsingar skjár titill fyrir opinber skipti',
+  },
+  applicationDescriptionTextUndividedEstate: {
+    id: 'es.application:applicationDescriptionTextUndividedEstate#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir setu í óskiptu búi',
+    description: 'Upplýsingar skjár titill fyrir setu í óskiptu búi',
+  },
+  applicationDescriptionTextDivisionOfEstateByHeirs: {
+    id: 'es.application:applicationDescriptionTextDivisionOfEstateByHeirs#markdown',
+    defaultMessage: 'Upplýsinga Texti fyrir einkaskipti',
+    description: 'Upplýsingar skjár titill fyrir Einkaskipti',
+  },
+
   deceasedInfoProviderTitle: {
     id: 'es.application:deceasedInfoProviderTitle',
     defaultMessage: 'Upplýsingar um hinn látna',
@@ -631,6 +680,12 @@ export const m = defineMessages({
       'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
+  acceptNoAssetsNoDebts: {
+    id: 'es.application:acceptNoAssetsNoDebts',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
   acceptCorrectAssets: {
     id: 'es.application:acceptCorrectAssets',
     defaultMessage:
@@ -743,6 +798,11 @@ export const m = defineMessages({
   doAssetsExist: {
     id: 'es.application:doAssetsExist',
     defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
+  doAssetsExistSidebarTitle: {
+    id: 'es.application:doAssetsExistSidebarTitle',
+    defaultMessage: 'Átti látni eignir á dánardegi?',
     description: '',
   },
   doAssetsExistSelect: {

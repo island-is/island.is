@@ -3,68 +3,15 @@ import { Locale } from 'locale'
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
-  WatsonIntegration,
 } from '@island.is/web/components'
+import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
 
 export const liveChatIncConfig: Record<
   Locale,
   Record<string, LiveChatIncChatPanelProps>
 > = {
-  is: {
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-    },
-  },
-  en: {
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-      group: 2,
-    },
-  },
-}
-
-interface WatsonInstance {
-  on: (_: {
-    type: string
-    handler: (event: WatsonPreSendEvent) => void
-  }) => void
-  updateHomeScreenConfig: (params: { is_on: boolean }) => void
-}
-
-interface WatsonPreSendEvent {
-  data: {
-    context: {
-      skills: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        ['main skill']: { user_defined: Record<string, any> }
-      }
-    }
-  }
-}
-
-const setupOneScreenWatsonChatBot = (
-  instance: WatsonInstance,
-  categoryTitle: string,
-  categoryGroup: WatsonIntegration,
-) => {
-  if (sessionStorage.getItem(categoryGroup) !== categoryTitle) {
-    sessionStorage.clear()
-  }
-  sessionStorage.setItem(categoryGroup, categoryTitle)
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const preSendhandler = (event: WatsonPreSendEvent) => {
-    event.data.context.skills['main skill'].user_defined[
-      `category_${categoryTitle}`
-    ] = true
-  }
-  instance.on({ type: 'pre:send', handler: preSendhandler })
-
-  instance.updateHomeScreenConfig({
-    is_on: false,
-  })
+  is: {},
+  en: {},
 }
 
 export const defaultWatsonConfig: Record<Locale, WatsonChatPanelProps> = {
@@ -241,7 +188,7 @@ export const watsonConfig: Record<
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
-      integrationID: '53c6e788-8178-448d-94c3-f5d71ec3b80e',
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
@@ -279,12 +226,50 @@ export const watsonConfig: Record<
 
     // Kílómetragjald
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
-    '4ydMzxTVny5W9nTn6abfZm': defaultWatsonConfig.en,
+    '4ydMzxTVny5W9nTn6abfZm': {
+      ...defaultWatsonConfig.en,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kilometragjald',
+          defaultWatsonConfig.en.integrationID,
+        )
+      },
+    },
+
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: 'fe12e960-329c-46d5-9ae1-8bd8b8219f43',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
     // Kílómetragjald
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4ydMzxTVny5W9nTn6abfZm
-    '4ydMzxTVny5W9nTn6abfZm': defaultWatsonConfig.is,
+    '4ydMzxTVny5W9nTn6abfZm': {
+      ...defaultWatsonConfig.is,
+      onLoad(instance) {
+        setupOneScreenWatsonChatBot(
+          instance,
+          'kilometragjald',
+          defaultWatsonConfig.is.integrationID,
+        )
+      },
+    },
 
     // Rafræn skilríki
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4lkmXszsB5q5kJkXqhW5Ex
