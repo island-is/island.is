@@ -13,6 +13,7 @@ import { ipMessages, ipMessages as messages } from '../../lib/messages'
 import { useGetIntellectualPropertiesQuery } from './IntellectualPropertiesOverview.generated'
 import { isDefined } from '@island.is/shared/utils'
 import { AssetsPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 
 const IntellectualPropertiesOverview = () => {
   useNamespaces('sp.intellectual-property')
@@ -47,17 +48,7 @@ const IntellectualPropertiesOverview = () => {
   )
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="not_found" />
   }
 
   return (

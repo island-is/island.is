@@ -28,6 +28,7 @@ import { AudioPlayer, VideoPlayer } from '@island.is/service-portal/core'
 import { TrademarkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesTrademarkByIdQuery } from './IntellectualPropertiesTrademarkDetail.generated'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -48,17 +49,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
     })
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="not_found" />
   }
 
   const ip = data?.intellectualPropertiesTrademark

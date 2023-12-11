@@ -26,6 +26,7 @@ import Timeline from '../../components/Timeline/Timeline'
 import chunk from 'lodash/chunk'
 import { useGetIntellectualPropertiesPatentByIdQuery } from './IntellectualPropertiesPatentDetail.generated'
 import { isDefined } from '@island.is/shared/utils'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -45,17 +46,7 @@ const IntellectualPropertiesPatentDetail = () => {
   })
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="internal_service_error" />
   }
 
   if (!data?.intellectualPropertiesPatent && !loading) {

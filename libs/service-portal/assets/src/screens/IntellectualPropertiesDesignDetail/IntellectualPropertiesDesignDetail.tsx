@@ -25,6 +25,7 @@ import chunk from 'lodash/chunk'
 import { isDefined } from '@island.is/shared/utils'
 import { useGetIntellectualPropertiesDesignQuery } from './IntellectualPropertiesDesignDetail.generated'
 import { ipMessages } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
   id: string
@@ -44,17 +45,7 @@ const IntellectualPropertiesDesignDetail = () => {
   })
 
   if (error && !loading) {
-    return (
-      <ErrorScreen
-        figure="./assets/images/hourglass.svg"
-        tagVariant="red"
-        tag={formatMessage(m.errorTitle)}
-        title={formatMessage(m.somethingWrong)}
-        children={formatMessage(m.errorFetchModule, {
-          module: formatMessage(m.intellectualProperties).toLowerCase(),
-        })}
-      />
-    )
+    return <Problem type="not_found" />
   }
   const ip = data?.intellectualPropertiesDesign
 
@@ -236,7 +227,6 @@ const IntellectualPropertiesDesignDetail = () => {
                       title: 'Staða',
                       value: ip?.status ?? '',
                     },
-                    //cheap hack to make the underline not disappear
                     {
                       title: '',
                       value: '',
