@@ -583,6 +583,7 @@ application-system-api:
     XROAD_FINANCES_PATH: 'IS/GOV/5402697509/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS/GOV/5402697509/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS/MUN/5502694739/samband-sveitarfelaga/financial-aid-backend'
+    XROAD_HEALTH_DIRECTORATE_PATH: 'IS/GOV/7101695009/EmbaettiLandlaeknis-Protected/landlaeknir'
     XROAD_HEALTH_INSURANCE_ID: 'IS/GOV/4804080550/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS/GOV/4804080550/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://huld.sjukra.is/islandrg?wsdl'
