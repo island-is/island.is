@@ -2765,7 +2765,7 @@ skilavottord-ws:
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'islandis'
+    - 'application-system'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
