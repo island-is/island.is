@@ -36,7 +36,7 @@ export const Swiper: FC<React.PropsWithChildren<Props>> = ({
   return (
     <div className={styles.root}>
       <div className={cn(styles.container)} ref={ref}>
-        <div className={cn(styles.slides)}>
+        <div className={styles.slides}>
           {arr.map((child, i) => (
             <div
               key={i}
