@@ -175,10 +175,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </Column>
                 <Column width="content">
                   <span
-                    className={styles.plusIconWrap({
-                      iconVariant,
-                      color: plusColor,
-                    })}
+                    className={cn(
+                      styles.iconWrap,
+                      styles.plusIconWrap({
+                        iconVariant,
+                        color: plusColor,
+                      }),
+                    )}
                   >
                     <span
                       className={cn(styles.icon, styles.removeIcon, {
