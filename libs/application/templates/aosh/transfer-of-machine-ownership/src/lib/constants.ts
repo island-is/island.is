@@ -21,4 +21,5 @@ export enum Roles {
   APPLICANT = 'applicant',
   BUYER = 'buyer',
   REVIEWER = 'reviewer',
+  BUYEROPERATOR = 'buyerOperator',
 }

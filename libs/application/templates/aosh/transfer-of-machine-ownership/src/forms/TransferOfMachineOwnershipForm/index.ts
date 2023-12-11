@@ -1,11 +1,13 @@
 import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { informationSection } from './InformationSection'
-import { conclusionSection } from './conclusionSection'
 import { prerequisitesSection } from './prerequisitesSection'
 import { Logo } from '../../assets/Logo'
-import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
-import { payment } from '../../lib/messages'
+import {
+  buildFormConclusionSection,
+  buildFormPaymentChargeOverviewSection,
+} from '@island.is/application/ui-forms'
+import { conclusion, payment } from '../../lib/messages'
 import { getChargeItemCodes } from '../../utils'
 
 export const TransferOfMachineOwnershipForm: Form = buildForm({
@@ -23,6 +25,13 @@ export const TransferOfMachineOwnershipForm: Form = buildForm({
           chargeItemCode: x,
         })),
     }),
-    conclusionSection,
+    buildFormConclusionSection({
+      sectionTitle: conclusion.general.sectionTitle,
+      multiFieldTitle: conclusion.general.title,
+      alertTitle: conclusion.default.accordionTitle,
+      alertMessage: conclusion.default.alertMessage,
+      expandableHeader: conclusion.default.accordionTitle,
+      expandableDescription: conclusion.default.accordionText,
+    }),
   ],
 })

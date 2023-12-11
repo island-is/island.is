@@ -3,12 +3,13 @@ import { FC, useState } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { ApplicationStatus } from '../ApplicationStatus'
 import { Overview } from '../Overview'
-import { ReviewConclusion } from '../ReviewConclusion'
 import { Location } from '../Location'
 import { ReviewOperatorRepeater } from '../ReviewOperatorRepeater'
 import { Operator, MachineLocation, ReviewState } from '../../shared'
 import { getValueViaPath } from '@island.is/application/core'
 import { useAuth } from '@island.is/auth/react'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { conclusion } from '../../lib/messages'
 
 export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
   const { application } = props
@@ -54,12 +55,16 @@ export const Review: FC<React.PropsWithChildren<FieldBaseProps>> = (props) => {
         )
       case 'conclusion':
         return (
-          <ReviewConclusion
-            setStep={setStep}
-            reviewerNationalId={reviewerNationalId}
-            buyerOperator={filteredBuyerOperator}
-            {...props}
-          />
+          <>
+            {buildFormConclusionSection({
+              sectionTitle: conclusion.general.sectionTitle,
+              multiFieldTitle: conclusion.general.title,
+              alertTitle: conclusion.default.accordionTitle,
+              alertMessage: conclusion.default.alertMessage,
+              expandableHeader: conclusion.default.accordionTitle,
+              expandableDescription: conclusion.default.accordionText,
+            })}
+          </>
         )
       case 'addPeople':
         return (

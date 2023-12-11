@@ -1,8 +1,10 @@
 import { User } from '@island.is/auth-nest-tools'
 
 import { Injectable } from '@nestjs/common'
-import { TransferOfMachineOwnershipClient } from '@island.is/clients/aosh/transfer-of-machine-ownership'
-import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import {
+  MachineDto,
+  TransferOfMachineOwnershipClient,
+} from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 @Injectable()
 export class AoshApi {
@@ -10,7 +12,7 @@ export class AoshApi {
     private readonly transferOfMachineOwnershipClient: TransferOfMachineOwnershipClient,
   ) {}
 
-  async getMachineDetails(auth: User, id: string): Promise<MachineHateoasDto> {
+  async getMachineDetails(auth: User, id: string): Promise<MachineDto> {
     return this.transferOfMachineOwnershipClient.getMachineDetail(auth, id)
   }
 

@@ -4,7 +4,6 @@ import {
   buildTextField,
   buildDateField,
   buildSubSection,
-  buildCustomField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { getSelectedMachine } from '../../../utils/getSelectedMachine'

@@ -15,15 +15,15 @@ import { SelectController } from '@island.is/shared/form-fields'
 import { useLazyMachineDetails } from '../../hooks/useLazyMachineDetails'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
-import { MachineHateoasDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
+import { MachineDto } from '@island.is/clients/aosh/transfer-of-machine-ownership'
 
 interface MachineSearchFieldProps {
-  currentMachineList: MachineHateoasDto[]
+  currentMachineList: MachineDto[]
 }
 
 export const MachineSelectField: FC<
   React.PropsWithChildren<MachineSearchFieldProps & FieldBaseProps>
-> = ({ currentMachineList, application, errors, setFieldLoadingState }) => {
+> = ({ currentMachineList, application, setFieldLoadingState }) => {
   const { formatMessage } = useLocale()
   const { setValue } = useFormContext()
   const machineValue = getValueViaPath(
@@ -36,12 +36,9 @@ export const MachineSelectField: FC<
   const currentMachine = currentMachineList[parseInt(machineValue, 10)]
 
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [selectedMachine, setSelectedMachine] =
-    useState<MachineHateoasDto | null>(
-      currentMachine && currentMachine.registrationNumber
-        ? currentMachine
-        : null,
-    )
+  const [selectedMachine, setSelectedMachine] = useState<MachineDto | null>(
+    currentMachine && currentMachine.regNumber ? currentMachine : null,
+  )
   const [machineId, setMachineId] = useState<string>(
     getValueViaPath(application.answers, 'pickMachine.id', '') as string,
   )
@@ -57,12 +54,6 @@ export const MachineSelectField: FC<
     [getMachineDetails],
   )
 
-  function isCurrentMachineDisabled(
-    machine: MachineHateoasDto | null,
-  ): boolean {
-    return !machine?.links?.some((link) => link?.rel === 'ownerChange')
-  }
-
   const onChange = (option: Option) => {
     const currentMachine = currentMachineList[parseInt(option.value, 10)]
     setIsLoading(true)
@@ -71,23 +62,13 @@ export const MachineSelectField: FC<
       getMachineDetailsCallback(currentMachine.id)
         .then((response) => {
           setSelectedMachine(response.aoshMachineDetails)
-
-          setValue(
-            'machine.regNumber',
-            response.aoshMachineDetails.registrationNumber,
-          )
+          console.log(response.aoshMachineDetails)
+          setValue('machine.regNumber', response.aoshMachineDetails.regNumber)
           setValue('machine.category', response.aoshMachineDetails.category)
-          const [type, ...subType] =
-            currentMachine.type?.split(' - ') ||
-            response.aoshMachineDetails.type?.split(' ') ||
-            []
 
-          setValue('machine.type', type || '')
-          setValue('machine.subType', subType.join() || '')
-          setValue(
-            'machine.plate',
-            response.aoshMachineDetails.licensePlateNumber || '',
-          )
+          setValue('machine.type', response.aoshMachineDetails.type || '')
+          setValue('machine.subType', response.aoshMachineDetails.subType || '')
+          setValue('machine.plate', response.aoshMachineDetails.plate || '')
           setValue(
             'machine.ownerNumber',
             response.aoshMachineDetails.ownerNumber || '',
@@ -96,9 +77,7 @@ export const MachineSelectField: FC<
           setValue('machine.date', new Date().toISOString())
           setValue(
             'pickMachine.isValid',
-            isCurrentMachineDisabled(response.aoshMachineDetails)
-              ? undefined
-              : true,
+            response.aoshMachineDetails.disabled ? undefined : true,
           )
           setMachineId(currentMachine?.id || '')
           setIsLoading(false)
@@ -106,7 +85,6 @@ export const MachineSelectField: FC<
         .catch((error) => console.error(error))
     }
   }
-  // Use this when Links have been added to machine
 
   useEffect(() => {
     setFieldLoadingState?.(isLoading)
@@ -135,14 +113,12 @@ export const MachineSelectField: FC<
           <Box>
             {selectedMachine && (
               <CategoryCard
-                colorScheme={
-                  isCurrentMachineDisabled(selectedMachine) ? 'red' : 'blue'
-                }
-                heading={selectedMachine.registrationNumber || ''}
-                text={`${selectedMachine.type}`}
+                colorScheme={selectedMachine.disabled ? 'red' : 'blue'}
+                heading={selectedMachine.regNumber || ''}
+                text={`${selectedMachine.type} ${selectedMachine.subType}`}
               />
             )}
-            {selectedMachine && isCurrentMachineDisabled(selectedMachine) && (
+            {selectedMachine && selectedMachine.disabled && (
               <Box marginTop={2}>
                 <AlertMessage
                   type="error"

@@ -22,3 +22,16 @@ export type ConfirmOwnerChange = {
   supervisorPhoneNumber?: string | null
   machineAddress?: string | null
 }
+
+export type MachineDto = {
+  disabled?: boolean
+  id?: string
+  ownerNumber?: string
+  plate?: string
+  subType?: string
+  type?: string
+  category?: string
+  regNumber?: string
+  supervisorName?: string
+  status?: string
+}

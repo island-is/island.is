@@ -18,13 +18,11 @@ import {
   getValueViaPath,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { Features } from '@island.is/feature-flags'
 import { Events, States, Roles } from './constants'
 import { ApiActions } from '../shared'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { MachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
-import { Operator } from '../shared'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
@@ -35,6 +33,7 @@ import {
 } from '../dataProviders'
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
+import { promise } from 'zod'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
@@ -83,7 +82,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP,
   name: determineMessageFromApplicationAnswers,
   institution: applicationMessage.institutionName,
-  featureFlag: Features.transferOfMachineOwnership,
+  //featureFlag: Features.transferOfMachineOwnership,
   translationNamespaces: [
     ApplicationConfigurations.TransferOfMachineOwnership.translation,
   ],
@@ -112,7 +111,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
 
           roles: [
@@ -182,7 +180,6 @@ const template: ApplicationTemplate<
             ],
             pendingAction: reviewStatePendingAction,
           },
-          progress: 0.65,
           lifecycle: {
             shouldBeListed: true,
             shouldBePruned: true,
@@ -226,7 +223,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Rejected',
           status: 'rejected',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.rejectApplication,
@@ -261,7 +257,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
@@ -287,6 +282,14 @@ const template: ApplicationTemplate<
             },
             {
               id: Roles.BUYER,
+              formLoader: () =>
+                import('../forms/Approved').then((module) =>
+                  Promise.resolve(module.Approved),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.BUYEROPERATOR,
               formLoader: () =>
                 import('../forms/Approved').then((module) =>
                   Promise.resolve(module.Approved),

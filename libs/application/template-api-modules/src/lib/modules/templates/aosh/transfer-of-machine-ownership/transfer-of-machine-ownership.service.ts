@@ -43,7 +43,6 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   async getMachines({ auth }: TemplateApiModuleActionProps) {
     const result = await this.transferOfMachineOwnershipClient.getMachines(auth)
 
-    // Validate that user has at least 1 machine
     if (!result || !result.length) {
       throw new TemplateApiError(
         {
@@ -53,7 +52,18 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         400,
       )
     }
-
+    if (result.length <= 5) {
+      return await Promise.all(
+        result.map(async (machine) => {
+          if (machine.id) {
+            return await this.transferOfMachineOwnershipClient.getMachineDetail(
+              auth,
+              machine.id,
+            )
+          }
+        }),
+      )
+    }
     return result
   }
 
@@ -71,7 +81,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
         'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
       )
     }
-    console.log('submit Appliocation')
+
     // Make sure payment is fulfilled (has been paid)
     const payment: { fulfilled: boolean } | undefined =
       await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
@@ -107,7 +117,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       supervisorPhoneNumber: answers.buyerOperator?.phone?.replace(/-/g, ''),
       machineAddress: answers.location.address,
     })
-    console.log('confirmOwnerChange done')
+
     // send email/sms to all recipients
     const recipientList = getRecipients(answers, [
       EmailRole.buyer,

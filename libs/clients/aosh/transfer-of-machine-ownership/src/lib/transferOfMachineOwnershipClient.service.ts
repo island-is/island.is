@@ -8,6 +8,7 @@ import {
 import {
   ChangeMachineOwner,
   ConfirmOwnerChange,
+  MachineDto,
 } from './transferOfMachineOwnershipClient.types'
 import { CustomMachineApi } from './apiConfiguration'
 import {
@@ -15,7 +16,6 @@ import {
   confirmChangeToApiRequest,
 } from './transferOfMachineOwnershipClient.utils'
 import { MachineFriendlyDto } from '../../gen/fetch/models/MachineFriendlyDto'
-import { MachineHateoasDto } from '../../gen/fetch/models/MachineHateoasDto'
 
 @Injectable()
 export class TransferOfMachineOwnershipClient {
@@ -49,13 +49,23 @@ export class TransferOfMachineOwnershipClient {
     return result?.value || []
   }
 
-  public async getMachineDetail(
-    auth: User,
-    id: string,
-  ): Promise<MachineHateoasDto> {
-    return await this.machineApiWithAuth(auth).getMachine({
+  public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
+    const result = await this.machineApiWithAuth(auth).getMachine({
       id,
     })
+    const [type, ...subType] = result.type?.split(' ') || ''
+    return {
+      id: result.id,
+      ownerNumber: result?.ownerNumber || '',
+      plate: result?.licensePlateNumber || '',
+      subType: subType.join(' '),
+      type: type,
+      category: result?.category || '',
+      regNumber: result?.registrationNumber || '',
+      supervisorName: result?.supervisorName || '',
+      status: result?.status || '',
+      disabled: !result?.links?.some((link) => link?.rel === 'ownerChange'),
+    }
   }
 
   public async isPaymentRequired(auth: Auth, regNumber: string) {
