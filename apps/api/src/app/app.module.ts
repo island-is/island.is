@@ -61,6 +61,7 @@ import { RegulationsAdminModule } from '@island.is/api/domains/regulations-admin
 import { RightsPortalModule } from '@island.is/api/domains/rights-portal'
 import { SyslumennModule } from '@island.is/api/domains/syslumenn'
 import { TransportAuthorityApiModule } from '@island.is/api/domains/transport-authority'
+import { EnergyFundsServiceModule } from '@island.is/api/domains/energy-funds'
 import { UniversityOfIcelandModule } from '@island.is/api/domains/university-of-iceland'
 import { UserProfileModule } from '@island.is/api/domains/user-profile'
 import { VehiclesModule } from '@island.is/api/domains/vehicles'
@@ -81,6 +82,7 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { AuthIdsApiClientConfig } from '@island.is/clients/auth/ids-api'
 import { AuthPublicApiClientConfig } from '@island.is/clients/auth/public-api'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
+import { EnergyFundsClientConfig } from '@island.is/clients/energy-funds'
 import { ConsultationPortalClientConfig } from '@island.is/clients/consultation-portal'
 import { DisabilityLicenseClientConfig } from '@island.is/clients/disability-license'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
@@ -293,6 +295,7 @@ const environment = getConfig
     FishingLicenseModule,
     MortgageCertificateModule,
     TransportAuthorityApiModule,
+    EnergyFundsServiceModule,
     UniversityOfIcelandModule,
     WorkMachinesModule,
     AdministrationOfOccupationalSafetyAndHealthModule,
@@ -349,6 +352,7 @@ const environment = getConfig
         FileStorageConfig,
         FiskistofaClientConfig,
         ChargeFjsV2ClientConfig,
+        EnergyFundsClientConfig,
         ZenterSignupConfig,
         PaymentScheduleClientConfig,
         JudicialAdministrationClientConfig,

@@ -53,6 +53,7 @@ export enum ApplicationTypes {
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
   CITIZENSHIP = 'Citizenship',
+  ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
 }
 
@@ -272,6 +273,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: 'doi.cs.application',
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
   },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',
