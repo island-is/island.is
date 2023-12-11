@@ -16,6 +16,8 @@ import {
   Icon,
   LinkV2,
   Stack,
+  Tabs,
+  TabType,
   Text,
 } from '@island.is/island-ui/core'
 import { IconTitleCard } from '@island.is/web/components'
@@ -90,6 +92,38 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     )
   }, [data, sortedCourses])
 
+  const createTabContent = () => {
+    if (sortedCourses.length === 0) {
+      return
+    }
+    const tabContentList = []
+    const tabList: Array<TabType> = []
+    sortedCourses.map((course, index) => {
+      if (
+        index > 0 &&
+        course.semesterSeason + course.semesterYear !==
+          sortedCourses[index - 1].semesterSeason +
+            sortedCourses[index - 1].semesterYear
+      ) {
+        tabList.push({
+          id: course.id,
+          label: `${n(
+            course.semesterSeason,
+            TranslationDefaults[course.semesterSeason],
+          )} - ${course.semesterYear || ''}`,
+          content: <p>TESTING</p>,
+        })
+      }
+      // tabContentList.push({
+      //   id: course.id,
+      //   label: locale === 'en' ? course.nameEn : course.nameIs,
+      //   content: <p>HALLOOO</p>
+      // })
+    })
+
+    return tabList
+  }
+
   return (
     <SidebarLayout
       sidebarContent={
@@ -109,14 +143,14 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
           <IconTitleCard
             heading={
               universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulTitle
+                .contentfulTitle || ''
             }
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             href="/"
             imgSrc={
               universities.filter((x) => x.id === data.universityId)[0]
-                .contentfulLogoUrl
+                .contentfulLogoUrl || ''
             }
             alt="University infomation"
           />
@@ -326,6 +360,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               expanded={isOpen[2]}
               onToggle={() => toggleIsOpen(2)}
             >
+              {/* <Tabs /> */}
               <Text as="p">
                 {sortedCourses &&
                   sortedCourses.map((i, index) => {

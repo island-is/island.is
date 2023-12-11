@@ -1222,8 +1222,6 @@ UniversitySearch.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
     })
 
-  console.log('universities', universities)
-
   return {
     data,
     searchQuery: search as string,
