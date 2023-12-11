@@ -38,7 +38,7 @@ const fakeSigners = [
 export const signee = (nationalId: string): SignatureCollectionSignee => ({
   id: nationalId,
   nationalId,
-  name: `Nafn ${nationalId}`,
+  name: `Nafn Nafnsson`,
   areaId: 'SF',
   address: 'Home',
 })

@@ -10,31 +10,28 @@ export const Attachments = ({ application }: ReviewGroupProps) => {
   const attachments = getAttachments(application)
 
   return (
-    // eslint-disable-next-line react/jsx-no-useless-fragment
-    <>
-      {attachments.length > 0 && (
-        <ReviewGroup isLast={true}>
-          {attachments.map((attach, index) => {
-            return (
-              <Box key={index} marginBottom={2}>
-                <Label>{formatMessage(attach.label)}</Label>
-                {attach.attachments.map((attachment) => {
-                  const nameArray = attachment.name?.split('.')
-                  const fileType = nameArray.pop()?.toUpperCase()
-                  const fileName = nameArray.join()
-                  return (
-                    <Box key={attachment.key} marginY={1}>
-                      <TopicCard tag={fileType || undefined}>
-                        {fileName}
-                      </TopicCard>
-                    </Box>
-                  )
-                })}
-              </Box>
-            )
-          })}
-        </ReviewGroup>
-      )}
-    </>
+    attachments.length > 0 && (
+      <ReviewGroup isLast={true}>
+        {attachments.map((attach, index) => {
+          return (
+            <Box key={index} marginBottom={2}>
+              <Label>{formatMessage(attach.label)}</Label>
+              {attach.attachments.map((attachment) => {
+                const nameArray = attachment.name?.split('.')
+                const fileType = nameArray.pop()?.toUpperCase()
+                const fileName = nameArray.join()
+                return (
+                  <Box key={attachment.key} marginY={1}>
+                    <TopicCard tag={fileType || undefined}>
+                      {fileName}
+                    </TopicCard>
+                  </Box>
+                )
+              })}
+            </Box>
+          )
+        })}
+      </ReviewGroup>
+    )
   )
 }
