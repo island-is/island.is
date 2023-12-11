@@ -104,7 +104,7 @@ const IntellectualPropertiesPatentDetail = () => {
           />
           <Divider />
           <UserInfoLine
-            label={ipMessages.status}
+            label={m.status}
             content={ip?.statusText ?? ''}
             loading={loading}
           />

@@ -160,7 +160,7 @@ const IntellectualPropertiesDesignDetail = () => {
           />
           <Divider />
           <UserInfoLine
-            label={formatMessage(ipMessages.status)}
+            label={formatMessage(m.status)}
             content={ip?.status ?? ''}
             loading={loading}
           />
