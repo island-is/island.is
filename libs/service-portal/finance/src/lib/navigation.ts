@@ -34,7 +34,7 @@ export const financeNavigation: PortalNavigationItem = {
       name: m.financeLoans,
       path: FinancePaths.FinanceLoans,
       serviceProvider: HMS_SLUG,
-      // description: m.realEstateTooltip,
+      description: m.realEstateTooltip,
     },
   ],
   icon: {
