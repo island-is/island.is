@@ -1,5 +1,7 @@
 import { Locale } from 'locale'
 
+import { setupOneScreenWatsonChatBot } from '@island.is/web/utils/webChat'
+
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,
@@ -28,12 +30,6 @@ export const liveChatIncConfig: Record<
       license: 15092154,
       version: '2.0',
     },
-    // Samgöngustofa - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-    },
   },
   en: {
     // HSN - Organization
@@ -53,13 +49,6 @@ export const liveChatIncConfig: Record<
     Un4jJk0rPybt9fu8gk94m: {
       license: 15092154,
       version: '2.0',
-    },
-    // Samgöngustofa - Organization
-    // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6IZT17s7stKJAmtPutjpD7
-    '6IZT17s7stKJAmtPutjpD7': {
-      license: 13270509,
-      version: '2.0',
-      group: 1,
     },
   },
 }
@@ -89,7 +78,7 @@ export const watsonConfig: Record<
     // Útlendingastofnun - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/77rXck3sISbMsUv7BO1PG2
     '77rXck3sISbMsUv7BO1PG2': {
-      integrationID: '53c6e788-8178-448d-94c3-f5d71ec3b80e',
+      integrationID: '89a03e83-5c73-4642-b5ba-cd3771ceca54',
       region: 'eu-gb',
       serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
       showLauncher: false,
@@ -107,8 +96,28 @@ export const watsonConfig: Record<
       carbonTheme: 'g10',
       namespaceKey: 'default',
     },
+
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: '1e649a3f-9476-4995-ba24-0e72040b0cc0',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
   },
   is: {
+    // Samgöngustofa - Organization
+    '6IZT17s7stKJAmtPutjpD7': {
+      integrationID: 'fe12e960-329c-46d5-9ae1-8bd8b8219f43',
+      region: 'eu-gb',
+      serviceInstanceID: 'bc3d8312-d862-4750-b8bf-529db282050a',
+      showLauncher: false,
+      carbonTheme: 'g10',
+      namespaceKey: 'default',
+    },
+
     // Skatturinn - Organization
     // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/4yJlHgCMTqpgRSj4p6LuBQ
     '4yJlHgCMTqpgRSj4p6LuBQ': {
