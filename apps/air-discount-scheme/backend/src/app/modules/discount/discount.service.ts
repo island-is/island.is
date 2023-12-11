@@ -462,7 +462,6 @@ export class DiscountService {
   }
 
   async createManualDiscountCode(
-    discountService: DiscountService,
     body: CreateSuperExplicitDiscountCodeParams,
     auth: AuthUser,
     isExplicit: boolean,

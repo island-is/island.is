@@ -38,11 +38,6 @@ import { AuthGuard } from '../common'
 import { GetUserByDiscountCodeParams } from '../user/dto'
 import { AirlineUser } from '../user/user.model'
 import { AirDiscountSchemeScope } from '@island.is/auth/scopes'
-import {
-  AKUREYRI_FLIGHT_CODES,
-  REYKJAVIK_FLIGHT_CODES,
-} from '../flight/flight.service'
-import { ExplicitFlight } from './dto/ExplicitFlight.dto'
 
 @ApiTags('Users')
 @Controller('api/public')
@@ -146,7 +141,6 @@ export class PrivateDiscountAdminController {
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
     return await this.discountService.createManualDiscountCode(
-      this.discountService,
       body,
       auth,
       false,
@@ -160,11 +154,6 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateSuperExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
-    return await this.discountService.createManualDiscountCode(
-      this.discountService,
-      body,
-      auth,
-      true,
-    )
+    return await this.discountService.createManualDiscountCode(body, auth, true)
   }
 }
