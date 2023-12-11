@@ -128,7 +128,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan
-/libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan
+/libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/api/domains/national-registry/                                                                     @island-is/hugsmidjan
 /libs/api/domains/user-profile/                                                                          @island-is/hugsmidjan @island-is/juni @island-is/aranja
 /libs/api/domains/passport/                                                                              @island-is/hugsmidjan
@@ -142,7 +142,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/clients/finance/                                                                                   @island-is/hugsmidjan
 /libs/clients/finance-v2/                                                                                @island-is/hugsmidjan
 /libs/clients/adr-and-machine-license/                                                                   @island-is/hugsmidjan
-/libs/clients/work-machines/                                                                             @island-is/hugsmidjan
+/libs/clients/work-machines/                                                                             @island-is/hugsmidjan @island-is/origo
 /libs/clients/disability-license/                                                                        @island-is/hugsmidjan
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
@@ -307,8 +307,6 @@ libs/clients/rsk/relationships/                                                 
 /libs/application/template-api-modules/src/lib/modules/templates/directorate-of-immigration/             @island-is/origo
 /libs/clients/directorate-of-immigration/                                                                @island-is/origo
 
-/libs/api/domains/aosh/                                                                                  @island-is/origo
-/libs/clients/aosh/                                                                                      @island-is/origo
 /libs/application/templates/aosh/                                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                    @island-is/origo
 
