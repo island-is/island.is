@@ -165,7 +165,7 @@ libs/clients/rsk/relationships/                                                 
 /libs/regulations/                                                                                       @island-is/hugsmidjan
 /libs/portals/admin/regulations-admin/                                                                   @island-is/hugsmidjan
 /libs/clients/icelandic-health-insurance/rights-portal/                                                  @island-is/hugsmidjan
-/libs/clients/health-directorate                                                                         @island-is/hugsmidjan
+/libs/clients/health-directorate                                                                         @island-is/hugsmidjan @island-is/origo
 /libs/portals/admin/air-discount-scheme                                                                  @island-is/hugsmidjan
 
 /libs/application/templates/data-protection-complaint/                                                   @island-is/norda
@@ -309,6 +309,9 @@ libs/clients/rsk/relationships/                                                 
 
 /libs/application/templates/aosh/                                                                        @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/aosh                                    @island-is/origo
+
+/libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
 
 # Temporary assignment while the QA bootstrap project is in progress
 /apps/system-e2e/                                                                                        @island-is/qa

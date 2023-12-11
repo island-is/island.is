@@ -80,4 +80,6 @@ export const institutionMapper = {
   [ApplicationTypes.CITIZENSHIP]: InstitutionTypes.UTLENDINGASTOFNUN,
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]:
     InstitutionTypes.VINNUEFTIRLITID,
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]:
+    InstitutionTypes.EMBAETTI_LANDLAEKNIS,
 }

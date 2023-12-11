@@ -16,4 +16,5 @@ export interface NationalRegistryIndividual {
     code?: string | null
     description?: string | null
   } | null
+  birthDate: Date
 }
