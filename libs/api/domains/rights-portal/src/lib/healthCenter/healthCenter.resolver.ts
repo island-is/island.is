@@ -30,7 +30,7 @@ export class HealthCenterResolver {
   constructor(private readonly service: HealthCenterService) {}
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => HealthCenterRegistrationHistory, {
     name: 'rightsPortalHealthCenterRegistrationHistory',
     nullable: true,
@@ -52,7 +52,7 @@ export class HealthCenterResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => [HealthCenterDoctors], {
     name: 'rightsPortalHealthCenterDoctors',
     nullable: true,
@@ -66,7 +66,7 @@ export class HealthCenterResolver {
   }
 
   @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => PaginatedHealthCentersResponse, {
     name: 'rightsPortalPaginatedHealthCenters',
     nullable: true,
@@ -76,7 +76,7 @@ export class HealthCenterResolver {
     return this.service.getHealthCenters(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Mutation(() => HealthCenterRegisterResponse, {
     name: 'rightsPortalRegisterHealthCenter',
   })
