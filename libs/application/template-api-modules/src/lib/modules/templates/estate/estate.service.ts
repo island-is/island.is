@@ -69,6 +69,36 @@ export class EstateTemplateService extends BaseTemplateApiService {
       )
     }
 
+    const { availableSettlements } = applicationData
+    console.log('Application answers', JSON.stringify(applicationAnswers))
+    const selectedEstate = applicationAnswers.selectedEstate
+    const selectedEstateKey = Object.keys(EstateTypes).find(
+      (key) => EstateTypes[key as keyof typeof EstateTypes] === selectedEstate,
+    ) as keyof typeof availableSettlements
+
+    if (
+      availableSettlements &&
+      availableSettlements[selectedEstateKey] !== 'Í lagi'
+    ) {
+      let message = availableSettlements[selectedEstateKey]
+      this.logger.warn(`[estate]: Validation failed with message: ${message}`)
+
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.errorDataProviderEstateValidationFailed,
+          summary: {
+            ...coreErrorMessages.errorDataProviderEstateValidationFailedSummary,
+            defaultMessage:
+              coreErrorMessages.errorDataProviderEstateValidationFailedSummary.defaultMessage.replace(
+                '{message}',
+                message,
+              ),
+          },
+        },
+        400,
+      )
+    }
+
     const youngheirs = applicationData.estateMembers.filter(
       (heir) => kennitala.info(heir.nationalId).age < 18,
     )
