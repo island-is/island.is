@@ -679,7 +679,8 @@ export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
       dev: 'IS-DEV/GOV/10008/TR-Protected/external-v1/api/protected/v1',
-      staging: 'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
+      staging:
+        'IS-TEST/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
       prod: 'IS/GOV/5012130120/TR-Protected/external-v1/api/protected/v1',
     },
   },
