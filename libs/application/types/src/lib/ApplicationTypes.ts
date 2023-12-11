@@ -276,7 +276,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     slug: 'eigendaskipti-taekis',
-    translation: 'aosh.application',
+    translation: 'aosh.tmo.application',
   },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
     slug: 'starfsleyfis-vottord',

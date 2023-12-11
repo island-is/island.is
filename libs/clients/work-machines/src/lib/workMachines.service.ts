@@ -5,7 +5,6 @@ import {
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
-  MachineFriendlyDto,
   MachineHateoasDto,
   MachineOwnerChangeApi,
   MachinesApi,
@@ -56,17 +55,25 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
- async getMachines(auth: User): Promise<MachineFriendlyDto[]> {
+  async getMachines(auth: User): Promise<MachineDto[]> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
     })
-    return result?.value || []
-  }
 
+    return (
+      result?.value?.map((machine) => {
+        return {
+          id: machine.id,
+          type: machine.type || '',
+          category: machine?.category || '',
+          regNumber: machine?.registrationNumber || '',
+          status: machine?.status || '',
+        }
+      }) || []
+    )
+  }
   public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
-    const result = await this.machinesApiWithAuth(auth).getMachine({
-      id,
-    })
+    const result = await this.machinesApiWithAuth(auth).getMachine({ id })
     const [type, ...subType] = result.type?.split(' ') || ''
     return {
       id: result.id,

@@ -42,8 +42,6 @@ const ConfigFactory = (
   },
 })
 
-export class CustomMachineApi extends MachinesApi {}
-
 export const apiProviders = [
   {
     api: MachinesApi,

@@ -28,7 +28,6 @@ import { generateApplicationRejectedSms } from './smsGenerators/applicationRejec
 import {
   ChangeMachineOwner,
   MachineDto,
-  MachineFriendlyDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -42,9 +41,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
     super(ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP)
   }
 
-  async getMachines({ auth }: TemplateApiModuleActionProps) {
+  async getMachines({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<MachineDto[]> {
     const result = await this.workMachineClientService.getMachines(auth)
-
     if (!result || !result.length) {
       throw new TemplateApiError(
         {
@@ -63,6 +63,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               machine.id,
             )
           }
+          return machine
         }),
       )
     }
