@@ -59,7 +59,7 @@ export const FullWidthLayout: FC<FullWidthLayoutProps> = ({
   }, [activeParent?.children])
 
   const activeDescription =
-    activeParent?.description || activeChild?.description
+    activeChild?.description || activeParent?.description
   return (
     <Box
       as="main"
