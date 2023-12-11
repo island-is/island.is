@@ -56,7 +56,7 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  public async getMachines(auth: User): Promise<MachineFriendlyDto[]> {
+ async getMachines(auth: User): Promise<MachineFriendlyDto[]> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
       onlyShowOwnedMachines: true,
     })
