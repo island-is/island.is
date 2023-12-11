@@ -11,7 +11,6 @@ const extraAnnotations = {
 export const serviceSetup = (): ServiceBuilder<'auth-admin-web'> => {
   return service('auth-admin-web')
     .namespace('identity-server-admin')
-    .image('auth-admin-web')
     .env({
       NEXT_PUBLIC_BACKEND_URL: '/backend',
       IDENTITYSERVER_DOMAIN: {

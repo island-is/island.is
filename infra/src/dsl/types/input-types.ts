@@ -76,6 +76,12 @@ export type Feature = {
   secrets: Secrets
 }
 
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
+
 export type Features = { [name in FeatureNames]: Feature }
 export type MountedFile = { filename: string; env: string }
 
@@ -94,7 +100,7 @@ export type ServiceDefinitionCore = {
   serviceAccountEnabled: boolean
   cmds?: string
   args?: string[]
-  image?: string
+  image?: DockerImage
   resources: Resources
   replicaCount?: ReplicaCount
   securityContext: {
@@ -115,6 +121,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
   redis?: RedisInfo
   extraAttributes?: ExtraValues
   xroadConfig: XroadConfig[]
+  jobs?: Job
 }
 
 /**
@@ -123,6 +130,7 @@ export type ServiceDefinition = ServiceDefinitionCore & {
 export type ServiceDefinitionForEnv = ServiceDefinitionCore & {
   initContainers?: InitContainersForEnv
   env: EnvironmentVariablesForEnv
+  jobs?: JobForEnv
   ingress: { [name: string]: IngressForEnv }
   postgres?: PostgresInfoForEnv
   redis?: RedisInfoForEnv
@@ -181,32 +189,62 @@ export type ReplicaCount = {
   scalingMagicNumber?: number
 }
 
+export type Container = {
+  command: string
+  image?: string
+  args?: string[]
+  name?: string
+  resources?: Resources
+}
+
 export type InitContainers = {
   envs: EnvironmentVariables
   secrets: Secrets
   features: Partial<Features>
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+  containers: Container[]
   postgres?: PostgresInfo
 }
+
 export type InitContainersForEnv = {
   envs: EnvironmentVariablesForEnv
   secrets: Secrets
   features: Partial<Features>
-  containers: {
-    command: string
-    image?: string
-    args?: string[]
-    name?: string
-    resources?: Resources
-  }[]
+  containers: Container[]
   postgres?: PostgresInfoForEnv
 }
+
+export type JobItem = {
+  envs?: EnvironmentVariables
+  secrets?: Secrets
+  name: string
+  backoffLimit?: number
+  restartPolicy?: 'Never' | 'OnFailure'
+  ttlSecondsAfterFinished?: number
+  containers: Container[]
+  extraAttributes?: ExtraValues
+}
+
+export type JobItemForEnv = {
+  envs?: EnvironmentVariables
+  secrets?: Secrets
+  name: string
+  backoffLimit?: number
+  restartPolicy?: 'Never' | 'OnFailure'
+  ttlSecondsAfterFinished?: number
+  containers: Container[]
+  extraAttributes?: Hash
+}
+
+export type Job =
+  | Optional<
+      {
+        [idx in OpsEnvWithLocal]: JobItem[]
+      },
+      'local'
+    >
+  | JobItem[]
+
+export type JobForEnv = JobItemForEnv[]
 
 export interface Context {
   featureDeploymentName?: string

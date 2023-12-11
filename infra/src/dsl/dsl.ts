@@ -16,6 +16,8 @@ import {
   Secrets,
   ServiceDefinition,
   XroadConfig,
+  DockerImage,
+  Job,
 } from './types/input-types'
 type Optional<T, L extends keyof T> = Omit<T, L> & Partial<Pick<T, L>>
 
@@ -52,6 +54,7 @@ export class ServiceBuilder<ServiceType> {
       xroadConfig: [],
       files: [],
       volumes: [],
+      jobs: [],
     }
   }
 
@@ -112,8 +115,8 @@ export class ServiceBuilder<ServiceType> {
     return this
   }
 
-  image(name: string) {
-    this.serviceDef.image = name
+  image(image?: DockerImage) {
+    this.serviceDef.image = image
     return this
   }
 
@@ -240,6 +243,15 @@ export class ServiceBuilder<ServiceType> {
    */
   ingress(ingress: { [name: string]: Ingress }) {
     this.serviceDef.ingress = ingress
+    return this
+  }
+
+  /**
+   * TODO
+   * @param jobs Job parameters
+   */
+  jobs(jobs: Job) {
+    this.serviceDef.jobs = jobs
     return this
   }
 

@@ -1,7 +1,6 @@
 import { service, ServiceBuilder } from '../../../infra/src/dsl/dsl'
 export const serviceSetup = (): ServiceBuilder<'contentful-apps'> =>
   service('contentful-apps')
-    .image('contentful-apps')
     .namespace('contentful-apps')
     .serviceAccount('contentful-apps')
     .ingress({

@@ -14,7 +14,6 @@ const getEnvironment = (
     featuresOn: [],
     defaultMaxReplicas: 3,
     defaultMinReplicas: 2,
-    releaseName: 'web',
     awsAccountId: '111111',
     awsAccountRegion: 'eu-west-1',
     feature: 'chicken-curry',
@@ -73,7 +72,7 @@ describe('Feature jobs', () => {
     )
     job = await renderHelmJobForFeature(
       dev,
-      `${dev.releaseName}-${dev.feature}`,
+      `${dev.feature}`,
       services.included,
     )
   })
@@ -95,7 +94,7 @@ describe('Feature jobs', () => {
           },
           { name: 'DB_EXTENSIONS', value: 'multiple,extensions' },
         ],
-        image: `web-chicken-curry`,
+        image: `chicken-curry`,
         name: 'feature-chicken-curry-dependency1',
         securityContext: { allowPrivilegeEscalation: false, privileged: false },
       },
@@ -114,7 +113,7 @@ describe('Feature jobs', () => {
           },
           { name: 'DB_EXTENSIONS', value: 'single-extension' },
         ],
-        image: 'web-chicken-curry',
+        image: 'chicken-curry',
         name: 'feature-chicken-curry-graphql1',
         securityContext: { allowPrivilegeEscalation: false, privileged: false },
       },

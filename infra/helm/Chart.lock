@@ -29,8 +29,32 @@ dependencies:
 - name: api-template
   repository: file://libs/api-template
   version: 0.0.1
-- name: cronjob-template
-  repository: file://libs/cronjob-template
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
+  version: 0.0.1
+- name: api-template
+  repository: file://libs/api-template
   version: 0.0.1
 - name: api-template
   repository: file://libs/api-template
@@ -59,9 +83,6 @@ dependencies:
 - name: api-template
   repository: file://libs/api-template
   version: 0.0.1
-- name: cronjob-template
-  repository: file://libs/cronjob-template
-  version: 0.0.1
 - name: api-template
   repository: file://libs/api-template
   version: 0.0.1
@@ -70,21 +91,6 @@ dependencies:
   version: 0.0.1
 - name: api-template
   repository: file://libs/api-template
-  version: 0.0.1
-- name: api-template
-  repository: file://libs/api-template
-  version: 0.0.1
-- name: api-template
-  repository: file://libs/api-template
-  version: 0.0.1
-- name: api-template
-  repository: file://libs/api-template
-  version: 0.0.1
-- name: cronjob-template
-  repository: file://libs/cronjob-template
-  version: 0.0.1
-- name: cronjob-template
-  repository: file://libs/cronjob-template
   version: 0.0.1
 - name: api-template
   repository: file://libs/api-template
@@ -110,11 +116,5 @@ dependencies:
 - name: api-template
   repository: file://libs/api-template
   version: 0.0.1
-- name: cronjob-template
-  repository: file://libs/cronjob-template
-  version: 0.0.1
-- name: api-template
-  repository: file://libs/api-template
-  version: 0.0.1
-digest: sha256:d282af5c4270985ea9ca1ecb9f8bfb5c96f72ac30aade68f34b7e7f898da180b
-generated: "2023-09-18T13:08:28.226991116Z"
+digest: sha256:d04b8526f53a95c0e9c0991740d280531c41dfde5ac5592a719ab94bd31dbded
+generated: "2023-11-09T13:00:31.820725105Z"

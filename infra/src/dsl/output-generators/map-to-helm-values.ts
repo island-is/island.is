@@ -39,6 +39,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )
+  const defaultRepository = '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
   const serviceDef = service
   const {
     grantNamespaces,
@@ -52,9 +53,9 @@ const serializeService: SerializeMethod<HelmService> = async (
     grantNamespacesEnabled: grantNamespacesEnabled,
     namespace: namespace,
     image: {
-      repository: `821090935708.dkr.ecr.eu-west-1.amazonaws.com/${
-        serviceDef.image ?? serviceDef.name
-      }`,
+      repository: `${serviceDef.image?.repository ?? defaultRepository}`,
+      name: `${serviceDef.image?.name ?? serviceDef.name}`,
+      tag: `${serviceDef.image?.tag ?? 'latest_master'}`,
     },
     env: {
       SERVERSIDE_FEATURES_ON: env1.featuresOn.join(','),
@@ -77,6 +78,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       },
     },
     securityContext,
+    jobs: serviceDef.jobs ?? [],
   }
 
   // command and args
@@ -441,7 +443,7 @@ const serviceMockDef = (options: {
     grantNamespacesEnabled: true,
     namespace: getFeatureDeploymentNamespace(options.env),
     image: {
-      repository: `bbyars/mountebank`,
+      name: `bbyars/mountebank`,
     },
     env: {},
     command: ['mb', 'start', '--configfile=/etc/config/default-imposters.json'],
@@ -481,6 +483,7 @@ const serviceMockDef = (options: {
       privileged: false,
       allowPrivilegeEscalation: false,
     },
+    jobs: [],
   }
   return result
 }

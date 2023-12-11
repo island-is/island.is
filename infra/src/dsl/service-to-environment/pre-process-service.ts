@@ -6,8 +6,12 @@ import {
   Features,
   Hash,
   IngressForEnv,
+  Job,
+  JobForEnv,
+  JobItem,
   localFromDev,
   MissingSetting,
+  OpsEnv,
   OpsEnvWithLocal,
   PostgresInfo,
   PostgresInfoForEnv,
@@ -16,6 +20,7 @@ import {
   ServiceDefinition,
   ServiceDefinitionForEnv,
   ValueType,
+  JobItemForEnv,
 } from '../types/input-types'
 import { EnvironmentConfig } from '../types/charts'
 import { FeatureNames } from '../features'
@@ -121,10 +126,15 @@ export const prepareServiceForEnv = (
   if (serviceDef.redis) {
     result.redis = getEnvRedis(serviceDef.redis, env)
   }
+  if (serviceDef.jobs) {
+    const { jobs, errors } = getEnvJobs(serviceDef.jobs, env)
+    result.jobs = jobs
+    addToErrors(errors)
+  }
   // extra attributes
   if (serviceDef.extraAttributes) {
     const { errors, envs } = getEnvExtraValues(
-      service,
+      service.name,
       env,
       serviceDef.extraAttributes,
     )
@@ -263,7 +273,7 @@ function getEnvValue(
 }
 
 function getEnvExtraValues(
-  service: ServiceDefinition,
+  resourceName: string,
   env: EnvironmentConfig,
   extraValues: ExtraValues,
 ): { errors: string[]; envs: Hash } {
@@ -272,13 +282,14 @@ function getEnvExtraValues(
     return {
       envs: {},
       errors: [
-        `Missing extra setting for service ${service.name} in env ${env.type}`,
+        `Missing extra setting for service ${resourceName} in env ${env.type}`,
       ],
     }
   } else {
     return { errors: [], envs: extraEnvsForType }
   }
 }
+
 function getEnvPostgres(
   postgres: PostgresInfo,
   env: EnvironmentConfig,
@@ -296,6 +307,39 @@ function getEnvRedis(
 ): RedisInfoForEnv {
   return {
     host: redis.host?.[localFromDev(env.type)],
+  }
+}
+function getEnvJobUtil(
+  jobs: JobItem[],
+  env: EnvironmentConfig,
+): { jobs: JobItemForEnv[]; errors: string[] } {
+  const transformed = jobs.map((job) => {
+    if (job.extraAttributes !== undefined) {
+      const { errors, envs } = getEnvExtraValues(
+        job.name,
+        env,
+        job.extraAttributes,
+      )
+      const jobForEnv: JobItemForEnv = { ...job, extraAttributes: envs }
+      return { job: jobForEnv, errors }
+    }
+    return { job, errors: [] }
+  })
+
+  const allJobs = transformed.map((item) => item.job)
+  const allErrors = transformed.flatMap((item) => item.errors)
+
+  return { jobs: allJobs, errors: allErrors }
+}
+
+function getEnvJobs(
+  jobs: Job,
+  env: EnvironmentConfig,
+): { jobs: JobItemForEnv[]; errors: string[] } {
+  if (Array.isArray(jobs)) {
+    return getEnvJobUtil(jobs, env)
+  } else {
+    return getEnvJobUtil(jobs[localFromDev(env.type)], env)
   }
 }
 

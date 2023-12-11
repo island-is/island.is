@@ -13,7 +13,6 @@ const Staging: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
-  releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
   global: {},
@@ -22,7 +21,7 @@ const Staging: EnvironmentConfig = {
 describe('Basic serialization', () => {
   const sut = service('api')
     .namespace('islandis')
-    .image('test')
+    .image({ name: 'test', repository: 'testrepo', tag: 'testtag' })
     .env({ A: 'B' })
     .secrets({
       SECRET: '/path',
@@ -61,10 +60,15 @@ describe('Basic serialization', () => {
     expect(result.serviceDef[0].namespace).toBe('islandis')
   })
 
-  it('image and repo', () => {
-    expect(result.serviceDef[0].image.repository).toBe(
-      '821090935708.dkr.ecr.eu-west-1.amazonaws.com/test',
-    )
+  it('repo', () => {
+    expect(result.serviceDef[0].image.repository).toBe('testrepo')
+  })
+  it('image', () => {
+    expect(result.serviceDef[0].image.name).toBe('test')
+  })
+
+  it('image tag', () => {
+    expect(result.serviceDef[0].image.tag).toBe('testtag')
   })
 
   it('command and args', () => {
@@ -148,7 +152,7 @@ describe('Basic serialization', () => {
 })
 
 describe('Env definition defaults', () => {
-  const sut = service('api').namespace('islandis').image('test')
+  const sut = service('api').namespace('islandis')
   let result: SerializeSuccess<HelmService>
   beforeEach(async () => {
     result = (await generateOutputOne({

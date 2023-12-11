@@ -5,7 +5,6 @@ import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
   return service('services-auth-public-api')
     .namespace('identity-server-admin')
-    .image('services-auth-public-api')
     .postgres({
       username: 'servicesauth',
       name: 'servicesauth',

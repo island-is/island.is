@@ -6,7 +6,6 @@ const postgresInfo = {
 export const serviceSetup =
   (): ServiceBuilder<'icelandic-names-registry-backend'> =>
     service('icelandic-names-registry-backend')
-      .image('icelandic-names-registry-backend')
       .namespace('icelandic-names-registry')
       .postgres(postgresInfo)
       .initContainer({

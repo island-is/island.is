@@ -36,7 +36,9 @@ auth-admin-web:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/auth-admin-web'
+    name: 'auth-admin-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -50,6 +52,7 @@ auth-admin-web:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/admin'
+  jobs: []
   namespace: 'identity-server-admin'
   progressDeadlineSeconds: 1200
   pvcs: []
@@ -110,7 +113,7 @@ identity-server:
     IdentityServer__SigningCertificate__Path: '/etc/config/ids-signing.pfx'
     MeUserProfileApiSettings__BaseAddress: 'http://web-service-portal-api.service-portal.svc.cluster.local'
     NODE_OPTIONS: '--max-old-space-size=1843'
-    PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
+    PersistenceSettings__BaseAddress: 'http://services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'false'
     PersistenceSettings__SessionsBaseAddress: 'http://web-services-sessions.services-sessions.svc.cluster.local'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com'
@@ -139,7 +142,9 @@ identity-server:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/identity-server'
+    name: 'identity-server'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -152,6 +157,7 @@ identity-server:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'identity-server'
   podSecurityContext:
     fsGroup: 65534
@@ -235,7 +241,9 @@ services-auth-admin-api:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-admin-api'
+    name: 'services-auth-admin-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -246,6 +254,7 @@ services-auth-admin-api:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/backend'
+  jobs: []
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:
@@ -310,7 +319,9 @@ services-auth-delegation-api:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-delegation-api'
+    name: 'services-auth-delegation-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     internal-alb:
       annotations:
@@ -320,6 +331,7 @@ services-auth-delegation-api:
         - host: 'auth-delegation-api.internal.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'identity-server-delegation'
   pvcs: []
   replicaCount:
@@ -389,7 +401,9 @@ services-auth-ids-api:
         max: 15
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-ids-api'
+    name: 'services-auth-ids-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -427,6 +441,7 @@ services-auth-ids-api:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-auth/api/DB_PASSWORD'
+  jobs: []
   namespace: 'identity-server'
   pvcs: []
   replicaCount:
@@ -480,7 +495,9 @@ services-auth-personal-representative:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative'
+    name: 'services-auth-personal-representative'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -490,6 +507,7 @@ services-auth-personal-representative:
         - host: 'personal-representative-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'personal-representative'
   pvcs: []
   replicaCount:
@@ -539,7 +557,9 @@ services-auth-personal-representative-public:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-personal-representative-public'
+    name: 'services-auth-personal-representative-public'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     demo-alb:
       annotations:
@@ -557,6 +577,7 @@ services-auth-personal-representative-public:
         - host: 'personal-representative-public-xrd.internal.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'personal-representative'
   pvcs: []
   replicaCount:
@@ -624,7 +645,9 @@ services-auth-public-api:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-auth-public-api'
+    name: 'services-auth-public-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -638,6 +661,7 @@ services-auth-public-api:
         - host: 'identity-server.staging01.devland.is'
           paths:
             - '/api(/|$)(.*)'
+  jobs: []
   namespace: 'identity-server-admin'
   pvcs: []
   replicaCount:

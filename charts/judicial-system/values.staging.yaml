@@ -26,7 +26,7 @@ judicial-system-api:
     AUTH_IDS_LOGOUT_REDIRECT_URI: 'https://judicial-system.staging01.devland.is'
     AUTH_IDS_REDIRECT_URI: 'https://judicial-system.staging01.devland.is/api/auth/callback/identity-server'
     AUTH_IDS_SCOPE: 'openid profile'
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: ''
@@ -54,7 +54,9 @@ judicial-system-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
+    name: 'judicial-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -69,6 +71,7 @@ judicial-system-api:
             - '/api/auth'
             - '/api/case'
             - '/api/feature'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -152,7 +155,9 @@ judicial-system-backend:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
+    name: 'judicial-system-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -175,6 +180,7 @@ judicial-system-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -235,7 +241,7 @@ judicial-system-message-handler:
     - 'node'
   enabled: true
   env:
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
@@ -262,7 +268,10 @@ judicial-system-message-handler:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-message-handler'
+    name: 'judicial-system-message-handler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534
@@ -297,7 +306,7 @@ judicial-system-scheduler:
     - 'node'
   enabled: true
   env:
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
     TIME_TO_LIVE_MINUTES: '30'
@@ -322,7 +331,10 @@ judicial-system-scheduler:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
+    name: 'judicial-system-scheduler'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
@@ -347,7 +359,7 @@ judicial-system-web:
   enabled: true
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
-    INTERNAL_API_URL: 'http://web-judicial-system-api'
+    INTERNAL_API_URL: 'http://judicial-system-api'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -371,7 +383,9 @@ judicial-system-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-web'
+    name: 'judicial-system-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -383,6 +397,7 @@ judicial-system-web:
         - host: 'judicial-system.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'judicial-system'
   pvcs: []
   replicaCount:
@@ -410,7 +425,7 @@ judicial-system-xrd-api:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
     AUDIT_TRAIL_REGION: 'eu-west-1'
     AUDIT_TRAIL_USE_GENERIC_LOGGER: 'false'
-    BACKEND_URL: 'http://web-judicial-system-backend'
+    BACKEND_URL: 'http://judicial-system-backend'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
@@ -434,7 +449,9 @@ judicial-system-xrd-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-xrd-api'
+    name: 'judicial-system-xrd-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -444,6 +461,7 @@ judicial-system-xrd-api:
         - host: 'judicial-system-xrd-api.internal.staging01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'judicial-system'
   podSecurityContext:
     fsGroup: 65534

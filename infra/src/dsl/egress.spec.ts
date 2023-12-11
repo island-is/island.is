@@ -18,7 +18,6 @@ const Staging: EnvironmentConfig = {
   featuresOn: [],
   defaultMaxReplicas: 3,
   defaultMinReplicas: 2,
-  releaseName: 'web',
   awsAccountId: '111111',
   awsAccountRegion: 'eu-west-1',
   feature: 'some-feature',
@@ -48,9 +47,7 @@ describe('Egress', () => {
   })
 
   it('Variable has address of the mock', () => {
-    expect(serviceDef.serviceDef[0].env['A']).toBe(
-      'http://web-mock-server:9209',
-    )
+    expect(serviceDef.serviceDef[0].env['A']).toBe('http://mock-server:9209')
   })
 
   it('should render an extra for the mock', () => {

@@ -6,7 +6,6 @@ export const serviceSetup = (services: {
   service('judicial-system-message-handler')
     .namespace('judicial-system')
     .serviceAccount('judicial-system-message-handler')
-    .image('judicial-system-message-handler')
     .env({
       SQS_QUEUE_NAME: 'sqs-judicial-system',
       SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',

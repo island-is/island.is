@@ -8,7 +8,7 @@ air-discount-scheme-api:
   enabled: true
   env:
     AUTH_AUDIENCE: 'loftbru.dev01.devland.is'
-    BACKEND_URL: 'http://web-air-discount-scheme-backend'
+    BACKEND_URL: 'http://air-discount-scheme-backend'
     CONTENTFUL_HOST: 'preview.contentful.com'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
@@ -36,7 +36,9 @@ air-discount-scheme-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
+    name: 'air-discount-scheme-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -49,6 +51,7 @@ air-discount-scheme-api:
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
             - '/api/graphql'
+  jobs: []
   namespace: 'air-discount-scheme'
   podSecurityContext:
     fsGroup: 65534
@@ -122,7 +125,9 @@ air-discount-scheme-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
+    name: 'air-discount-scheme-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -160,6 +165,7 @@ air-discount-scheme-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  jobs: []
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
@@ -189,7 +195,7 @@ air-discount-scheme-backend:
 air-discount-scheme-web:
   enabled: true
   env:
-    API_URL: 'http://web-air-discount-scheme-api'
+    API_URL: 'http://air-discount-scheme-api'
     ENVIRONMENT: 'dev'
     IDENTITY_SERVER_ISSUER_DOMAIN: 'identity-server.dev01.devland.is'
     NEXTAUTH_URL: 'https://loftbru.dev01.devland.is'
@@ -217,7 +223,9 @@ air-discount-scheme-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
+    name: 'air-discount-scheme-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -235,6 +243,7 @@ air-discount-scheme-web:
         - host: 'loftbru-cf.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'air-discount-scheme'
   pvcs: []
   replicaCount:
@@ -265,11 +274,11 @@ api:
     - 'node'
   enabled: true
   env:
-    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://web-air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
+    AIR_DISCOUNT_SCHEME_BACKEND_URL: 'http://air-discount-scheme-backend.air-discount-scheme.svc.cluster.local'
     AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000'
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
     APOLLO_CACHE_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
-    APPLICATION_SYSTEM_API_URL: 'http://web-application-system-api.application-system.svc.cluster.local'
+    APPLICATION_SYSTEM_API_URL: 'http://application-system-api.application-system.svc.cluster.local'
     AUTH_ADMIN_API_PATHS: '{"development":"https://identity-server.dev01.devland.is/backend"}'
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
     AUTH_IDS_API_URL: 'https://identity-server.dev01.devland.is'
@@ -282,7 +291,7 @@ api:
     DOWNLOAD_SERVICE_BASE_PATH: 'https://api.dev01.devland.is'
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
     ELECTRONIC_REGISTRATION_STATISTICS_API_URL: 'https://api-staging.thinglysing.is/business/tolfraedi'
-    ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENDORSEMENT_SYSTEM_BASE_API_URL: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_DOWNLOAD_BUCKET: 'island-is-dev-download-cache-api'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -292,7 +301,7 @@ api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FISKISTOFA_ZENTER_CLIENT_ID: '1114'
     HSN_WEB_FORM_ID: '1dimJFHLFYtnhoYEA3JxRK'
-    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://web-icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
+    ICELANDIC_NAMES_REGISTRY_BACKEND_URL: 'http://icelandic-names-registry-backend.icelandic-names-registry.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     ISLYKILL_CERT: '/etc/config/islyklar.p12'
@@ -302,12 +311,12 @@ api:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=1843'
-    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+    REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
-    SERVICE_USER_PROFILE_URL: 'http://web-service-portal-api.service-portal.svc.cluster.local'
-    SESSIONS_API_URL: 'http://web-services-sessions.services-sessions.svc.cluster.local'
+    SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
+    SERVICE_USER_PROFILE_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+    SESSIONS_API_URL: 'http://services-sessions.services-sessions.svc.cluster.local'
     SOFFIA_SOAP_URL: 'https://soffiaprufa.skra.is'
     SYSLUMENN_TIMEOUT: '40000'
     TELL_US_A_STORY_EMAIL: 's@kogk.is'
@@ -405,7 +414,9 @@ api:
         max: 50
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
+    name: 'api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -418,6 +429,7 @@ api:
         - host: 'api-catalogue.dev01.devland.is'
           paths:
             - '/api'
+  jobs: []
   namespace: 'islandis'
   podSecurityContext:
     fsGroup: 65534
@@ -551,7 +563,7 @@ application-system-api:
     DB_USER: 'application_system_api'
     EHIC_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected/ehic'
     EMAIL_REGION: 'eu-west-1'
-    ENDORSEMENTS_API_BASE_PATH: 'http://web-endorsement-system-api.endorsement-system.svc.cluster.local'
+    ENDORSEMENTS_API_BASE_PATH: 'http://endorsement-system-api.endorsement-system.svc.cluster.local'
     FILE_SERVICE_PRESIGN_BUCKET: 'island-is-dev-fs-presign-bucket'
     FILE_STORAGE_UPLOAD_BUCKET: 'island-is-dev-upload-api'
     FINANCIAL_STATEMENTS_INAO_BASE_PATH: 'https://dev-re.crm4.dynamics.com/api/data/v9.1'
@@ -561,7 +573,7 @@ application-system-api:
     FISHING_LICENSE_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10012/Fiskistofa-Protected/veidileyfi-v1'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
     FUNDING_GOVERNMENT_PROJECTS_APPLICATION_RECIPIENT_NAME: 'Gunnar Ingi'
-    GRAPHQL_API_URL: 'http://web-api.islandis.svc.cluster.local'
+    GRAPHQL_API_URL: 'http://api.islandis.svc.cluster.local'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/application-system'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: 'gunnar.ingi@fjr.is'
@@ -575,7 +587,7 @@ application-system-api:
     RECYCLING_FUND_GQL_BASE_PATH: 'http://web-skilavottord-ws.skilavottord.svc.cluster.local'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
-    SERVICE_DOCUMENTS_BASEPATH: 'http://web-services-documents.services-documents.svc.cluster.local'
+    SERVICE_DOCUMENTS_BASEPATH: 'http://services-documents.services-documents.svc.cluster.local'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_CHARGE_FJS_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/chargeFJS_v2'
@@ -644,7 +656,9 @@ application-system-api:
         max: 60
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+    name: 'application-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -683,6 +697,7 @@ application-system-api:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/application-system/api/DB_PASSWORD'
+  jobs: []
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
@@ -803,7 +818,10 @@ application-system-api-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
+    name: 'application-system-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'application-system'
   podSecurityContext:
     fsGroup: 65534
@@ -877,7 +895,9 @@ application-system-form:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-form'
+    name: 'application-system-form'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -889,6 +909,7 @@ application-system-form:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/umsoknir'
+  jobs: []
   namespace: 'application-system'
   pvcs: []
   replicaCount:
@@ -913,7 +934,7 @@ application-system-form:
 consultation-portal:
   enabled: true
   env:
-    API_URL: 'http://web-api.islandis.svc.cluster.local'
+    API_URL: 'http://api.islandis.svc.cluster.local'
     BACKEND_DL_URL: 'https://samradapi-test.devland.is/api/Documents/'
     BASEPATH: '/consultation-portal'
     ENVIRONMENT: 'dev'
@@ -941,7 +962,9 @@ consultation-portal:
         max: 30
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
+    name: 'consultation-portal'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -953,6 +976,7 @@ consultation-portal:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/samradsgatt'
+  jobs: []
   namespace: 'consultation-portal'
   pvcs: []
   replicaCount:
@@ -999,7 +1023,9 @@ contentful-apps:
         max: 10
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
+    name: 'contentful-apps'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1010,6 +1036,7 @@ contentful-apps:
         - host: 'contentful-apps.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'contentful-apps'
   podSecurityContext:
     fsGroup: 65534
@@ -1060,7 +1087,9 @@ contentful-entry-tagger-service:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-contentful-entry-tagger'
+    name: 'services-contentful-entry-tagger'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1071,6 +1100,7 @@ contentful-entry-tagger-service:
         - host: 'contentful-entry-tagger-service.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'contentful-entry-tagger'
   podSecurityContext:
     fsGroup: 65534
@@ -1124,7 +1154,9 @@ contentful-translation-extension:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-translation-extension'
+    name: 'contentful-translation-extension'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1135,6 +1167,7 @@ contentful-translation-extension:
         - host: 'contentful-translation-extension.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'contentful-translation-extension'
   pvcs: []
   replicaCount:
@@ -1159,7 +1192,7 @@ download-service:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     NODE_OPTIONS: '--max-old-space-size=460'
-    REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
+    REGULATIONS_ADMIN_URL: 'http://regulations-admin-backend.regulations-admin.svc.cluster.local'
     SERVERSIDE_FEATURES_ON: ''
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1199,7 +1232,9 @@ download-service:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/download-service'
+    name: 'download-service'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1209,6 +1244,7 @@ download-service:
         - host: 'api.dev01.devland.is'
           paths:
             - '/download'
+  jobs: []
   namespace: 'download-service'
   pvcs: []
   replicaCount:
@@ -1291,7 +1327,9 @@ endorsement-system-api:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-endorsements-api'
+    name: 'services-endorsements-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1315,6 +1353,7 @@ endorsement-system-api:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
+  jobs: []
   namespace: 'endorsement-system'
   podSecurityContext:
     fsGroup: 65534
@@ -1379,7 +1418,10 @@ external-contracts-tests:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/external-contracts-tests'
+    name: 'external-contracts-tests'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'external-contracts-tests'
   pvcs: []
   replicaCount:
@@ -1435,7 +1477,9 @@ github-actions-cache:
         max: 8
         min: 3
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
+    name: 'github-actions-cache'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1446,6 +1490,7 @@ github-actions-cache:
         - host: 'cache.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'github-actions-cache'
   podSecurityContext:
     fsGroup: 65534
@@ -1513,7 +1558,9 @@ icelandic-names-registry-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/icelandic-names-registry-backend'
+    name: 'icelandic-names-registry-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1550,6 +1597,7 @@ icelandic-names-registry-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/icelandic-names-registry-backend/DB_PASSWORD'
+  jobs: []
   namespace: 'icelandic-names-registry'
   pvcs: []
   replicaCount:
@@ -1595,7 +1643,9 @@ island-ui-storybook:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/island-ui-storybook'
+    name: 'island-ui-storybook'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1606,6 +1656,7 @@ island-ui-storybook:
         - host: 'ui.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'storybook'
   pvcs: []
   replicaCount:
@@ -1662,7 +1713,9 @@ license-api:
         max: 10
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
+    name: 'license-api'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1672,6 +1725,7 @@ license-api:
         - host: 'license-api-xrd.internal.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'license-api'
   pvcs: []
   replicaCount:
@@ -1765,7 +1819,9 @@ portals-admin:
         max: 30
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
+    name: 'portals-admin'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1777,6 +1833,7 @@ portals-admin:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/stjornbord'
+  jobs: []
   namespace: 'portals-admin'
   pvcs: []
   replicaCount:
@@ -1840,7 +1897,9 @@ regulations-admin-backend:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/regulations-admin-backend'
+    name: 'regulations-admin-backend'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -1863,6 +1922,7 @@ regulations-admin-backend:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/regulations-admin-backend/DB_PASSWORD'
+  jobs: []
   namespace: 'regulations-admin'
   pvcs: []
   replicaCount:
@@ -1920,7 +1980,9 @@ search-indexer-service:
         max: 1
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer'
+    name: 'services-search-indexer'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -1985,6 +2047,7 @@ search-indexer-service:
     secrets:
       CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
       CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
+  jobs: []
   namespace: 'search-indexer'
   podSecurityContext:
     fsGroup: 65534
@@ -2048,7 +2111,9 @@ service-portal:
         max: 30
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
+    name: 'service-portal'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -2060,6 +2125,7 @@ service-portal:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/minarsidur'
+  jobs: []
   namespace: 'service-portal'
   pvcs: []
   replicaCount:
@@ -2121,7 +2187,9 @@ service-portal-api:
         max: 30
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
+    name: 'services-user-profile'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     internal-alb:
       annotations:
@@ -2153,6 +2221,7 @@ service-portal-api:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/service-portal/api/DB_PASSWORD'
+  jobs: []
   namespace: 'service-portal'
   podSecurityContext:
     fsGroup: 65534
@@ -2220,7 +2289,9 @@ services-documents:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-documents'
+    name: 'services-documents'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -2243,6 +2314,7 @@ services-documents:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-documents/DB_PASSWORD'
+  jobs: []
   namespace: 'services-documents'
   pvcs: []
   replicaCount:
@@ -2298,7 +2370,9 @@ services-sessions:
         max: 10
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+    name: 'services-sessions'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     internal-alb:
       annotations:
@@ -2308,6 +2382,7 @@ services-sessions:
         - host: 'sessions-api.internal.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'services-sessions'
   pvcs:
     - accessModes: 'ReadWriteMany'
@@ -2315,7 +2390,7 @@ services-sessions:
       name: 'sessions-geoip-db'
       size: '1Gi'
       storageClass: 'efs-csi'
-      useExisting: true
+      useExisting: false
   replicaCount:
     default: 1
     max: 10
@@ -2350,9 +2425,10 @@ services-sessions-geoip-job:
     NODE_OPTIONS: '--max-old-space-size=921'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
-    - 'nginx-ingress-internal'
-    - 'islandis'
-    - 'identity-server'
+    - 'nginx-ingress-external'
+    - 'api-catalogue'
+    - 'application-system'
+    - 'consultation-portal'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -2369,13 +2445,14 @@ services-sessions-geoip-job:
         cpuAverageUtilization: 70
         nginxRequestsIrate: 5
       replicas:
-        max: 1
+        max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
-  namespace: 'services-sessions'
-  podSecurityContext:
-    fsGroup: 65534
+    name: 'services-sessions'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
+  namespace: 'islandis'
   pvcs:
     - accessModes: 'ReadWriteMany'
       mountPath: '/geoip-lite/data'
@@ -2385,7 +2462,7 @@ services-sessions-geoip-job:
       useExisting: false
   replicaCount:
     default: 1
-    max: 1
+    max: 3
     min: 1
   resources:
     limits:
@@ -2394,18 +2471,12 @@ services-sessions-geoip-job:
     requests:
       cpu: '500m'
       memory: '500Mi'
-  schedule: '0 0 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     GEOIP_LICENSE_KEY: '/k8s/services-sessions/GEOIP_LICENSE_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
-  serviceAccount:
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/sessions-geoip'
-    create: true
-    name: 'sessions-geoip'
 services-sessions-worker:
   args:
     - 'main.js'
@@ -2447,7 +2518,9 @@ services-sessions-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
+    name: 'services-sessions'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   initContainer:
     containers:
       - args:
@@ -2471,6 +2544,7 @@ services-sessions-worker:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-sessions/DB_PASSWORD'
+  jobs: []
   namespace: 'services-sessions'
   podSecurityContext:
     fsGroup: 65534
@@ -2692,7 +2766,7 @@ services-university-gateway-worker:
 skilavottord-web:
   enabled: true
   env:
-    API_URL: 'http://web-skilavottord-ws'
+    API_URL: 'http://skilavottord-ws'
     ENVIRONMENT: 'dev'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
@@ -2717,7 +2791,9 @@ skilavottord-web:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
+    name: 'skilavottord-web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -2729,6 +2805,7 @@ skilavottord-web:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/app/skilavottord/'
+  jobs: []
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
@@ -2784,7 +2861,9 @@ skilavottord-ws:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-ws'
+    name: 'skilavottord-ws'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -2816,6 +2895,7 @@ skilavottord-ws:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/skilavottord/DB_PASSWORD'
+  jobs: []
   namespace: 'skilavottord'
   pvcs: []
   replicaCount:
@@ -2878,7 +2958,9 @@ user-notification:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    name: 'services-user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -2890,6 +2972,7 @@ user-notification:
         - host: 'user-notification-xrd.internal.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -2932,7 +3015,7 @@ user-notification-worker:
     MAIN_QUEUE_NAME: 'user-notification'
     NODE_OPTIONS: '--max-old-space-size=230'
     SERVERSIDE_FEATURES_ON: ''
-    SERVICE_USER_PROFILE_BASEPATH: 'http://web-service-portal-api.service-portal.svc.cluster.local'
+    SERVICE_USER_PROFILE_BASEPATH: 'http://service-portal-api.service-portal.svc.cluster.local'
     USER_NOTIFICATION_APP_PROTOCOL: 'is.island.app.dev'
   grantNamespaces:
     - 'nginx-ingress-internal'
@@ -2955,7 +3038,10 @@ user-notification-worker:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
+    name: 'services-user-notification'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'user-notification'
   podSecurityContext:
     fsGroup: 65534
@@ -2988,7 +3074,7 @@ user-notification-worker:
 web:
   enabled: true
   env:
-    API_URL: 'http://web-api'
+    API_URL: 'http://api'
     DISABLE_API_CATALOGUE: 'false'
     DISABLE_ORGANIZATION_CHATBOT: 'false'
     DISABLE_SYSLUMENN_PAGE: 'false'
@@ -3020,7 +3106,9 @@ web:
         max: 50
         min: 2
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
+    name: 'web'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
   ingress:
     primary-alb:
       annotations:
@@ -3032,6 +3120,7 @@ web:
         - host: 'beta.dev01.devland.is'
           paths:
             - '/'
+  jobs: []
   namespace: 'islandis'
   pvcs: []
   replicaCount:
@@ -3089,7 +3178,10 @@ xroad-collector:
         max: 3
         min: 1
   image:
-    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-xroad-collector'
+    name: 'services-xroad-collector'
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com'
+    tag: 'latest_master'
+  jobs: []
   namespace: 'xroad-collector'
   podSecurityContext:
     fsGroup: 65534

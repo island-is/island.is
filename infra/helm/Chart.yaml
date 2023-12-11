@@ -42,8 +42,8 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: api-catalogue
-  - name: cronjob-template
-    repository: file://libs/cronjob-template
+  - name: api-template
+    repository: file://libs/api-template
     version: 0.0.1
     alias: xroad-collector
   - name: api-template
@@ -82,8 +82,8 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: party-letter-registry-api
-  - name: cronjob-template
-    repository: file://libs/cronjob-template
+  - name: api-template
+    repository: file://libs/api-template
     version: 0.0.1
     alias: endorsement-system-scripts-update-metadata
   - name: api-template
@@ -110,12 +110,12 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: user-notification-worker
-  - name: cronjob-template
-    repository: file://libs/cronjob-template
+  - name: api-template
+    repository: file://libs/api-template
     version: 0.0.1
     alias: external-contracts-tests
-  - name: cronjob-template
-    repository: file://libs/cronjob-template
+  - name: api-template
+    repository: file://libs/api-template
     version: 0.0.1
     alias: application-system-api-worker
   - name: api-template
@@ -150,8 +150,8 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: services-sessions-worker
-  - name: cronjob-template
-    repository: file://libs/cronjob-template
+  - name: api-template
+    repository: file://libs/api-template
     version: 0.0.1
     alias: services-sessions-geoip-worker
   - name: api-template

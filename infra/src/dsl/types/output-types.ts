@@ -1,4 +1,9 @@
-import { Hash, ServiceDefinition, ServiceDefinitionForEnv } from './input-types'
+import {
+  Hash,
+  JobForEnv,
+  ServiceDefinition,
+  ServiceDefinitionForEnv,
+} from './input-types'
 import { ReferenceResolver, EnvironmentConfig } from './charts'
 
 // Output types
@@ -18,6 +23,13 @@ export type ContainerRunHelm = {
     }
   }
 }
+
+export type DockerImage = {
+  name?: string
+  repository?: string
+  tag?: string
+}
+
 export type OutputAccessModes = 'ReadWriteMany' | 'ReadOnlyMany'
 export type OutputPersistentVolumeClaim = {
   name?: string
@@ -121,11 +133,10 @@ export interface HelmService {
   secrets: ContainerSecrets
   enabled: boolean
   namespace: string
-  image: {
-    repository: string
-  }
+  image: DockerImage
   extra?: Hash
   files?: string[]
+  jobs: JobForEnv | []
 }
 
 export interface LocalrunService {
@@ -137,8 +148,13 @@ export interface LocalrunService {
 export interface FeatureKubeJob {
   apiVersion: 'batch/v1'
   kind: 'Job'
-  metadata: { name: string; labels?: { [name: string]: string } }
+  metadata: {
+    name: string
+    labels?: { [name: string]: string }
+    annotations?: { [name: string]: string }
+  }
   spec: {
+    ttlSecondsAfterFinished?: number
     template: {
       spec: {
         serviceAccountName: 'feature-deployment'

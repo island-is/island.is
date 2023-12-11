@@ -73,7 +73,7 @@ jobs:
           fi
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+          echo "FEATURE_NAME=$(echo $GIT_BRANCH | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)" >> $GITHUB_OUTPUT
 
       - name: Check if we want to run workflow
         id: should-run
@@ -161,6 +161,7 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      infra-node-modules-hash: ${{ steps.calculate_infra_node_modules_hash.outputs.infra-node-modules-hash }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
@@ -237,7 +238,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH:0:45} | tr "/." "-" )
+          export DOCKER_BRANCH_TAG=$(echo $GIT_BRANCH | tr -cs '[:alnum:]' '-' | sed -e 's/^-//' -e 's/-$//' | tr '[:upper:]' '[:lower:]' | cut -c 1-63)
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -280,6 +281,15 @@ jobs:
           export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
           echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
           echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
+
+      - name: Calculate cache key for infra node_modules
+        id: calculate_infra_node_modules_hash
+        run: |
+          INFRA_PACKAGE_JSON_HASH=$(cat infra/package.json | sha1sum -t | cut -f1 -d" ")
+          echo "INFRA_PACKAGE_JSON_HASH: $INFRA_PACKAGE_JSON_HASH"
+          export INFRA_NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('infra/yarn.lock') }}-$INFRA_PACKAGE_JSON_HASH
+          echo "INFRA_NODE_MODULES_HASH: $INFRA_NODE_MODULES_HASH"
+          echo "infra-node-modules-hash=$INFRA_NODE_MODULES_HASH" >> $GITHUB_OUTPUT
 
       - name: Calculate cache keys for generated files
         id: calculate_generated_files_cache_key
@@ -566,7 +576,7 @@ jobs:
           path: cache
           key: ${{ needs.prepare.outputs.node-modules-hash }}-docker-deps-1
 
-      - name: Check cache success
+      - name: check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
       # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
@@ -698,12 +708,72 @@ jobs:
           aws-region: eu-west-1
       - name: Retag unaffected Docker images
         run: ./scripts/ci/retag-unaffected.sh "$UNAFFECTED"
-
+  deploy-feature:
+    runs-on: ec2-runners
+    container: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    if: always() && needs.pre-checks.result == 'success' && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true') && needs.helm-docker-build.result != 'failure' && needs.prepare.outputs.IMAGES != ''
+    needs:
+      - pre-checks
+      - prepare
+      - helm-docker-build
+      - retag-unaffected
+    env:
+      GIT_BRANCH_DEPLOY: ${{ needs.pre-checks.outputs.GIT_BRANCH_DEPLOY }}
+      FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+      IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+    steps:
+      - name: Checkout monorepo
+        uses: actions/checkout@v4
+        with:
+          path: monorepo
+      - name: Checkout feature-values
+        uses: actions/checkout@v4
+        with:
+          repository: island-is/feature-values
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          path: feature-values
+      - name: Cache for NodeJS dependencies - Infra
+        id: infra-node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: monorepo/infra/node_modules
+          key: ${{ needs.prepare.outputs.infra-node-modules-hash }}
+      - name: check cache success
+        run: '[[ "${{ steps.infra-node-modules.outputs.success }}" != "false" ]] || exit 1'
+      - name: Install infra modules
+        if: steps.infra-node-modules.outputs.cache-hit != 'true'
+        working-directory: monorepo/infra
+        run: |
+          CI=true yarn install --immutable
+      - name: Generate islandis feature-deployment charts for ArgoCD
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+          IMAGES: ${{ needs.prepare.outputs.IMAGES }}
+          DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
+        run: |
+          ./monorepo/infra/scripts/generate-feature-values.sh jobs --feature $FEATURE_NAME --images "$IMAGES" --chart islandis --jobImage "821090935708.dkr.ecr.eu-west-1.amazonaws.com/helm-config:$DOCKER_TAG" > feature-values/$FEATURE_NAME-job-manifest.yaml
+          ./monorepo/infra/scripts/generate-feature-values.sh values --chart islandis --feature "$FEATURE_NAME" --images "$IMAGES" --dockertag "$DOCKER_TAG" > feature-values/$FEATURE_NAME.yaml
+      - name: Commit and push feature-values
+        env:
+          FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
+        working-directory: feature-values
+        run: |
+          if [[ -z $(git status --porcelain) ]]; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git config user.name andes-it
+          git config user.email andes-it@andes.is
+          git add .
+          git commit -m "Generated feature values for $FEATURE_NAME"
+          git push
   deploy:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure'
+    if: always() && needs.retag-unaffected.result == 'success' && needs.helm-docker-build.result != 'failure' && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - retag-unaffected
       - pre-checks
@@ -716,7 +786,7 @@ jobs:
       IMAGES: ${{ needs.prepare.outputs.IMAGES }}
     steps:
       - uses: actions/checkout@v3
-      - name: Trigger Deployment for service
+      - name: Trigger Spinnaker Deployment for service
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
