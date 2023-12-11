@@ -95,7 +95,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
               ),
           },
         },
-        400,
+        500,
       )
     }
 

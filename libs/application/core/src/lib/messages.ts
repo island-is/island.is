@@ -311,6 +311,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Erfingi undir 18 ára án málsvara',
     description: 'Young estate heirs without advocate error',
   },
+  errorDataProviderEstateValidationFailed: {
+    id: 'application.system:core.error.dataProviderEstateValidationFailed',
+    defaultMessage: 'Gögnum hafnað',
+    description:
+      'Text that appears when district comissioner has validation fails in pre-data',
+  },
   errorDataProviderEstateValidationFailedSummary: {
     id: 'application.system:core.error.dataProviderEstateValidationFailedSummary',
     defaultMessage: 'Svar frá Sýslumanni: {message}',
