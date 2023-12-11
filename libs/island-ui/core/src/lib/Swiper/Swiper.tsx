@@ -41,10 +41,10 @@ export const Swiper: FC<React.PropsWithChildren<Props>> = ({
             <div
               key={i}
               className={cn(
-                styles.slide,
-                className,
-                i === 0 && styles.noMargin,
-              )}
+                styles.slide,{
+                [`${className}`]: !!className,
+                [styles.noMargin]: i === 0,
+              })}
               style={{
                 width: itemWidth,
                 aspectRatio: '1/1',
