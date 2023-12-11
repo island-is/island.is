@@ -22,6 +22,7 @@ export enum Features {
   citizenship = 'isCitizenshipEnabled',
   carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
+  healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
