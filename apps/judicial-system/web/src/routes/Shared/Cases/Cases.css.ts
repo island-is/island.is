@@ -28,6 +28,7 @@ export const table = style({
 
 export const infoContainer = style({
   maxWidth: '50%',
+  marginBottom: theme.spacing[3],
 })
 
 export const thead = style({
