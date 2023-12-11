@@ -466,10 +466,8 @@ export const overviewAssetsAndDebts = [
     titleVariant: 'h3',
     space: 'gutter',
     condition: (answers) => {
-      console.log(answers,)
       const hasDebt =
         getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
-      console.log(getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist'))
         const estateWithoutAssetsSelected =
         getValueViaPath(answers, 'selectedEstate') ===
         EstateTypes.estateWithoutAssets
