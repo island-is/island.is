@@ -14,8 +14,6 @@ import {
 import { Type } from 'class-transformer'
 import { NotificationStatus } from '../notification.model'
 
-
-
 export class ExtendedPaginationDto extends PaginationDto {
   @IsOptional()
   @ApiPropertyOptional({
@@ -128,7 +126,6 @@ export class Message {
   @IsString()
   clickAction?: string
 }
-
 
 export class PaginatedNotificationDto {
   @ApiProperty({ example: 100 })
