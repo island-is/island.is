@@ -16,6 +16,7 @@ export interface DefaultHeaderProps {
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
+  imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
 }
 
@@ -32,6 +33,7 @@ export const DefaultHeader: React.FC<
   imagePadding = '20px',
   imageIsFullHeight = true,
   imageObjectFit = 'contain',
+  imageObjectPosition = 'center',
   className,
 }) => {
   const imageProvided = !!image
@@ -111,6 +113,7 @@ export const DefaultHeader: React.FC<
                 style={{
                   padding: imagePadding,
                   objectFit: imageObjectFit,
+                  objectPosition: imageObjectPosition,
                   height: imageIsFullHeight ? '100%' : undefined,
                 }}
                 className={styles.headerImage}
