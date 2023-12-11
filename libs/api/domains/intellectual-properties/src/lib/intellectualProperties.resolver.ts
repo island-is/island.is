@@ -85,8 +85,7 @@ export class IntellectualPropertiesResolver {
     @Args('input', { type: () => IntellectualPropertiesInput })
     input: IntellectualPropertiesInput,
   ) {
-    //return this.ipService.getDesignById(user, input.key)
-    return this.ipService.getDesignById(user, 'H0002611')
+    return this.ipService.getDesignById(user, input.key)
   }
 
   @Scopes(ApiScope.internal)
