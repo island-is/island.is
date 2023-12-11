@@ -139,24 +139,28 @@ export const assetsModule: PortalModule = {
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualProperties,
+        key: 'isServicePortalIntellectualPropertiesPageEnabled',
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <IPOverview />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesDesign,
+        key: 'isServicePortalIntellectualPropertiesPageEnabled',
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <IPDesignDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesTrademark,
+        key: 'isServicePortalIntellectualPropertiesPageEnabled',
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <IPTrademarkDetail />,
       },
       {
         name: m.intellectualProperties,
         path: AssetsPaths.AssetsIntellectualPropertiesPatent,
+        key: 'isServicePortalIntellectualPropertiesPageEnabled',
         enabled: userInfo.scopes.includes(ApiScope.internal),
         element: <IPPatentDetail />,
       },
