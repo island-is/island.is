@@ -5,6 +5,7 @@ import { carRecyclingMessages } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { States } from '../../../shared/constants'
 import { getApplicationAnswers } from '../../../lib/carRecyclingUtils'
+import isNumber from 'lodash/isNumber'
 
 export const Vehicles = ({
   application,
@@ -40,9 +41,23 @@ export const Vehicles = ({
             borderRadius="large"
             padding={4}
             marginBottom={2}
+            display="flex"
+            flexDirection={['row']}
+            justifyContent={'spaceBetween'}
           >
-            <Label>{formatMessage(vehicle.permno || '')}</Label>
-            {vehicle.make}, {vehicle.color}
+            <Box>
+              <Label>{formatMessage(vehicle.permno || '')}</Label>
+              {vehicle.make}, {vehicle.color}
+            </Box>
+
+            {vehicle.mileage && isNumber(+vehicle.mileage) && (
+              <Box>
+                <Label>
+                  {formatMessage(carRecyclingMessages.review.mileage)}
+                </Label>
+                {vehicle.mileage} km
+              </Box>
+            )}
           </Box>
         )
       })}
