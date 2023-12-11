@@ -123,6 +123,11 @@ export const m = defineMessages({
     defaultMessage: 'Engin meðmæli',
     description: '',
   },
+  noSigneesFoundBySearch: {
+    id: 'sp.signatureCollection:noSigneesFoundBySearch',
+    defaultMessage: 'Engin meðmæli fundust þegar leitað var að',
+    description: '',
+  },
   signeeDate: {
     id: 'sp.signatureCollection:signeeDate',
     defaultMessage: 'Dagsetning',
