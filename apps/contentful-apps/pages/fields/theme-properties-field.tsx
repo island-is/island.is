@@ -209,7 +209,7 @@ const ThemePropertiesField = () => {
       <Stack flexDirection="column" alignItems="flex-start" spacing="none">
         <FormControl.Label>Image Object Position</FormControl.Label>
         <Stack flexDirection="row">
-        <Radio
+          <Radio
             name="imageObjectPositionRadio"
             id="imageObjectPositionLeft"
             value="left"
@@ -224,7 +224,10 @@ const ThemePropertiesField = () => {
             name="imageObjectPositionRadio"
             id="imageObjectPositionCenter"
             value="center"
-            isChecked={!state.imageObjectPosition || state.imageObjectPosition === 'center'}
+            isChecked={
+              !state.imageObjectPosition ||
+              state.imageObjectPosition === 'center'
+            }
             onChange={() => {
               updateState('imageObjectPosition', 'center')
             }}
