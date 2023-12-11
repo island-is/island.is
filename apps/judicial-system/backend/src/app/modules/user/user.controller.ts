@@ -4,10 +4,11 @@ import {
   Get,
   Inject,
   Param,
-  Patch,
   Post,
+  Put,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -25,6 +26,8 @@ import {
 import { adminRule } from '../../guards'
 import { CreateUserDto } from './dto/createUser.dto'
 import { UpdateUserDto } from './dto/updateUser.dto'
+import { UserInterceptor } from './interceptors/user.interceptor'
+import { UserValidator } from './interceptors/user.validator'
 import { User } from './user.model'
 import { UserService } from './user.service'
 
@@ -38,6 +41,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
+  @UseInterceptors(UserValidator)
   @Post('user')
   @ApiCreatedResponse({ type: User, description: 'Creates a new user' })
   create(@Body() userToCreate: CreateUserDto): Promise<User> {
@@ -48,7 +52,8 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @RolesRules(adminRule)
-  @Patch('user/:userId')
+  @UseInterceptors(UserValidator)
+  @Put('user/:userId')
   @ApiOkResponse({ type: User, description: 'Updates an existing user' })
   update(
     @Param('userId') userId: string,
@@ -60,6 +65,7 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(UserInterceptor)
   @Get('users')
   @ApiOkResponse({
     type: User,
@@ -78,7 +84,7 @@ export class UserController {
     type: User,
     description: 'Gets an existing user',
   })
-  async getById(@Param('userId') userId: string): Promise<User> {
+  getById(@Param('userId') userId: string): Promise<User> {
     this.logger.debug(`Finding user ${userId}`)
 
     return this.userService.findById(userId)

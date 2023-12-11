@@ -1,0 +1,47 @@
+{
+  "name": "clients-university-application-university-of-iceland",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-application/university-of-iceland/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/clients/university-application/university-of-iceland/**/*.ts"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/university-application/university-of-iceland"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/university-application/university-of-iceland/jest.config.ts",
+        "passWithNoTests": true
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/getOpenAPI?serviceCode=umsoknir-v1 -H 'Accept: application/json' > src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/university-application/university-of-iceland"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-application/university-of-iceland/gen/fetch -i libs/clients/university-application/university-of-iceland/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
+        ]
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  },
+  "tags": ["lib:client", "scope:client"]
+}

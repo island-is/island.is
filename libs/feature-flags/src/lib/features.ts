@@ -12,13 +12,17 @@ export enum Features {
   financialStatementInao = 'financialStatementInao',
   inheritanceReport = 'isInheritanceReportApplicationEnabled',
   transportAuthorityDigitalTachographCompanyCard = 'isTransportAuthorityDigitalTachographCompanyCardEnabled',
-  transportAuthorityDigitalTachographDriversCard = 'isTransportAuthorityDigitalTachographDriversCardEnabled',
   transportAuthorityDigitalTachographWorkshopCard = 'isTransportAuthorityDigitalTachographWorkshopCardEnabled',
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
+  oldAgePensionApplication = 'isOldAgePensionEnable',
+  householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
+  carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
+  complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
+  healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -34,6 +38,7 @@ export enum Features {
   servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
   servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
+  servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
@@ -41,9 +46,11 @@ export enum Features {
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
 
+  //Enable intellectual properties fetch
+  isIntellectualPropertyModuleEnabled = 'isIntellectualPropertyModuleEnabled',
+
   // Application delegation flags
   isFishingLicenceCustomDelegationEnabled = 'isFishingLicenceCustomDelegationEnabled',
-  transportAuthorityApplicationsCustomDelegation = 'isTransportAuthorityApplicationsCustomDelegationEnabled',
 
   //Application system
   applicationSystemHistory = 'applicationSystemHistory',

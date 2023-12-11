@@ -14,6 +14,7 @@ import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.mode
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
 import { HealthCenterRecord } from './models/healthCenterRecord.model'
 import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
+import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
 
 const LOG_CATEGORY = 'rights-portal-health-center'
 
@@ -24,6 +25,7 @@ export class HealthCenterService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
+
   async getHealthCenters(
     user: User,
   ): Promise<PaginatedHealthCentersResponse | null> {
@@ -106,6 +108,13 @@ export class HealthCenterService {
       },
       history,
     }
+  }
+
+  async getHealthCenterDoctors(user: User, input: HealthCenterDoctorsInput) {
+    return this.api
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getHealthCenterDoctors(input)
+      .catch(handle404)
   }
 
   async registerHealthCenter(

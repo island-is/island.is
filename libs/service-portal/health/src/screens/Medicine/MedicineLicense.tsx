@@ -51,11 +51,17 @@ export const MedicineLicense = () => {
                     heading={certificate.drugName ?? undefined}
                     tag={{
                       label: formatMessage(
-                        certificate.approved
+                        certificate.valid
                           ? messages.medicineIsValidCertificate
+                          : certificate.rejected
+                          ? messages.medicineIsRejectedCertificate
+                          : certificate.expired
+                          ? messages.medicineIsExpiredCertificate
+                          : certificate.processed && !certificate.approved
+                          ? messages.medicineIsProcessedCertificate
                           : messages.medicineIsNotValidCertificate,
                       ),
-                      variant: certificate?.approved ? 'blue' : 'red',
+                      variant: certificate?.valid ? 'blue' : 'red',
                     }}
                     text={certificate.atcName ?? undefined}
                     cta={{

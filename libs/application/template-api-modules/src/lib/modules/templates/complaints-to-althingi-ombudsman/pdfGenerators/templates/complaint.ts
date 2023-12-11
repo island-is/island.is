@@ -132,24 +132,7 @@ export async function generateComplaintPdf(application: Application) {
 
   addSubheader('Hafa kæruleiðir verið nýttar', doc)
   addValue(
-    `${answers.appeals === YES ? 'Já' : 'Nei'}`,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.NORMAL_LINE_GAP,
-  )
-
-  addSubheader('Lagt fyrir dómstóla', doc)
-  addValue(
     `${answers.preexistingComplaint === YES ? 'Já' : 'Nei'}`,
-    doc,
-    PdfConstants.NORMAL_FONT,
-    PdfConstants.NORMAL_LINE_GAP,
-  )
-
-  // TODO: Redundant question, make sure this is correct
-  addSubheader('Hefur málið verið lagt fyrir dómstóla', doc)
-  addValue(
-    `${answers.courtActionAnswer === YES ? 'Já' : 'Nei'}`,
     doc,
     PdfConstants.NORMAL_FONT,
     PdfConstants.NORMAL_LINE_GAP,

@@ -13,6 +13,16 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeTransactions,
       path: FinancePaths.FinanceTransactions,
+      children: [
+        {
+          name: m.financeTransactionsCategories,
+          path: FinancePaths.FinanceTransactions,
+        },
+        {
+          name: m.financeTransactionPeriods,
+          path: FinancePaths.FinanceTransactionPeriods,
+        },
+      ],
     },
     {
       name: m.financeBills,
@@ -29,6 +39,10 @@ export const financeNavigation: PortalNavigationItem = {
     {
       name: m.financeLocalTax,
       path: FinancePaths.FinanceLocalTax,
+    },
+    {
+      name: m.financeLoans,
+      path: FinancePaths.FinanceLoans,
     },
   ],
   icon: {

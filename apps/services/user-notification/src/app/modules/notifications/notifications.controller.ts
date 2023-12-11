@@ -9,8 +9,10 @@ import {
   BadRequestException,
   Version,
   VERSION_NEUTRAL,
+  Controller,
+  Post,
+  HttpCode,
 } from '@nestjs/common'
-import { Controller, Post, HttpCode } from '@nestjs/common'
 import {
   ApiOkResponse,
   ApiBody,
@@ -32,7 +34,7 @@ import { NotificationsService } from './notifications.service'
 
 @Controller('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor) // auto-caching GET responses
+@UseInterceptors(CacheInterceptor)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
@@ -72,8 +74,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches all templates',
-    summary: 'Fetches all templates',
+    summary: 'Fetches all notification templates',
     includeNoContentResponse: true,
     response: { status: 200, type: [HnippTemplate] },
     request: {
@@ -95,8 +96,7 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Fetches a single template',
-    summary: 'Fetches a single template',
+    summary: 'Fetches a single notification template',
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
@@ -127,7 +127,6 @@ export class NotificationsController {
   }
 
   @Documentation({
-    description: 'Creates a new notification and adds to queue',
     summary: 'Creates a new notification and adds to queue',
     includeNoContentResponse: true,
     response: { status: 201, type: CreateNotificationResponse },
@@ -143,27 +142,32 @@ export class NotificationsController {
     // check counts
     if (!this.notificationsService.validateArgCounts(body, template)) {
       throw new BadRequestException(
-        "Number of arguments doesn't match - template requires " +
-          template.args.length +
-          ' arguments but ' +
-          body.args.length +
-          ' were provided',
+        `Number of arguments doesn't match - template requires ${template.args.length} arguments but ${body.args.length} were provided`,
       )
     }
-    // check keys/args/properties
+    const records: Record<string, string> = {}
     for (const arg of body.args) {
-      if (!template.args.includes(arg.key)) {
+      records[arg.key] = arg.value
+    }
+
+    // check keys/args/properties
+    for (const [key] of Object.entries(records)) {
+      if (!template.args.includes(key)) {
         throw new BadRequestException(
-          arg.key +
-            ' is not a valid argument for template: ' +
-            template.templateId,
+          `${key} is not a valid argument for template: ${template.templateId}`,
         )
       }
     }
 
     // add to queue
     const id = await this.queue.add(body)
-    this.logger.info('Message queued ... ...', { messageId: id, ...body })
+    const { templateId, recipient } = body
+    this.logger.info('Message queued', {
+      messageId: id,
+      ...records,
+      templateId,
+      recipient,
+    })
     return { id }
   }
 }
