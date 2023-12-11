@@ -75,7 +75,7 @@ export const apiProviders = [
     provide: MachinesDocumentApi,
     acceptHeader: 'application/vnd.ver.hateoas.v1+json',
   },
-].map((item) => ({
+].map(({api, provide, acceptHeader}) => ({
   provide: item.provide,
   scope: LazyDuringDevScope,
   useFactory: (
