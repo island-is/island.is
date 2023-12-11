@@ -34,6 +34,7 @@ import {
 import { getChargeItemCodes, hasReviewerApproved } from '../utils'
 import { buildPaymentState } from '@island.is/application/utils'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 
 const pruneInDaysAtMidnight = (application: Application, days: number) => {
   const date = new Date(application.created)
