@@ -143,6 +143,9 @@
       "@island.is/api/domains/identity": [
         "libs/api/domains/identity/src/index.ts"
       ],
+      "@island.is/api/domains/intellectual-properties": [
+        "libs/api/domains/intellectual-properties/src/index.ts"
+      ],
       "@island.is/api/domains/islykill": [
         "libs/api/domains/islykill/src/index.ts"
       ],
@@ -353,6 +356,9 @@
       ],
       "@island.is/application/templates/health-insurance": [
         "libs/application/templates/health-insurance/src/index.ts"
+      ],
+      "@island.is/application/templates/healthcare-license-certificate": [
+        "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
       "@island.is/application/templates/inheritance-report": [
         "libs/application/templates/inheritance-report/src/index.ts"
