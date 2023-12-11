@@ -680,6 +680,12 @@ export const m = defineMessages({
       'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
     description: '',
   },
+  acceptNoAssetsNoDebts: {
+    id: 'es.application:acceptNoAssetsNoDebts',
+    defaultMessage:
+      'Ég lýsi því yfir að eftir minni bestu vitund eru engar eignir í búinu.',
+    description: '',
+  },
   acceptCorrectAssets: {
     id: 'es.application:acceptCorrectAssets',
     defaultMessage:
@@ -792,6 +798,11 @@ export const m = defineMessages({
   doAssetsExist: {
     id: 'es.application:doAssetsExist',
     defaultMessage: 'Eru eignir til staðar?',
+    description: '',
+  },
+  doAssetsExistSidebarTitle: {
+    id: 'es.application:doAssetsExistSidebarTitle',
+    defaultMessage: 'Átti látni eignir á dánardegi?',
     description: '',
   },
   doAssetsExistSelect: {
