@@ -811,7 +811,7 @@ export const vehicleMessage = defineMessages({
   },
   vehicleMileageInputPlaceholder: {
     id: 'sp.vehicles:mileage-input-placeholder',
-    defaultMessage: '20.000',
+    defaultMessage: 'Skráðu inn kílómetrastöðu',
   },
   vehicleMileageInputTitle: {
     id: 'sp.vehicles:mileage-input-title',
@@ -840,7 +840,7 @@ export const vehicleMessage = defineMessages({
   mileageSuccessFormText: {
     id: 'sp.vehicles:mileage-success-form-text',
     defaultMessage:
-      'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}',
+      'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}.',
   },
   mileageTagText: {
     id: 'sp.vehicles:mileage-tag-text',
@@ -848,7 +848,11 @@ export const vehicleMessage = defineMessages({
   },
   mileageAlreadyRegistered: {
     id: 'sp.vehicles:mileage-already-registered',
-    defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð. ',
+    defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
+  },
+  mileageExtLink: {
+    id: 'sp.vehicles:mileage-external-link',
+    defaultMessage: '/kilometragjald-a-vetnis-og-rafmagnsbila',
   },
 })
 

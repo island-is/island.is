@@ -27,12 +27,14 @@ export class CoPayer {
   coPayerNationalId?: string
 }
 
-@ObjectType('HmsLoansLoan')
-export class Loanhistory {
+@ObjectType('HmsLoansHistory')
+export class LoanHistory {
   @Field(() => Number, { nullable: true })
   loanId?: number
 
   @Field(() => String, { nullable: true })
+  name?: string
+
   @Field(() => String, { nullable: true })
   homeAddress?: string
 
@@ -69,8 +71,8 @@ export class Loanhistory {
   @Field(() => String, { nullable: true })
   variableInterest?: string
 
-  @Field(() => Number, { nullable: true })
-  affiliateLoan?: number
+  @Field(() => String, { nullable: true })
+  affiliateLoan?: string
 
   @Field(() => String, { nullable: true })
   priceIndexType?: string
@@ -146,6 +148,9 @@ export class Loanhistory {
 
   @Field(() => Number, { nullable: true })
   installments?: number
+
+  @Field(() => String, { nullable: true })
+  creditor?: string
 
   @Field(() => String, { nullable: true })
   coPayerName?: string

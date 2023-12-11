@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
+import cn from 'classnames'
 import round from 'lodash/round'
 
-import { Icon, SkeletonLoader } from '@island.is/island-ui/core'
+import { Icon, SkeletonLoader, Tooltip } from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 
@@ -81,7 +82,13 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={cn({
+        [styles.wrapper]: true,
+        [styles.wrapperTwoChildren]: boxData.length === 2,
+        [styles.wrapperThreeChildren]: boxData.length === 3,
+      })}
+    >
       {boxData.map((data, index) => {
         // We assume that the data that key that is provided is a valid number
         const value = queryResult.data?.[data.sourceDataIndex]?.[
@@ -97,12 +104,15 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
 
         return (
           <div
-            className={styles.numberBox}
-            style={{
-              flex: '1',
-            }}
+            className={cn({
+              [styles.numberBox]: true,
+              [styles.numberBoxFillWidth]: boxData.length === 3 && index === 0,
+            })}
           >
-            <h3 className={styles.title}>{data.title}</h3>
+            <div className={styles.titleWrapper}>
+              <h3 className={styles.title}>{data.title}</h3>
+              {index === 0 && <Tooltip text={slice.numberBoxDescription} />}
+            </div>
             <p className={styles.value}>
               {index > 0 && result !== 0 && (
                 <Icon

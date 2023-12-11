@@ -25,8 +25,8 @@ import {
   m,
   FootNote,
   IntroHeader,
-  LinkResolver,
   SAMGONGUSTOFA_SLUG,
+  LinkButton,
 } from '@island.is/service-portal/core'
 
 import OwnersTable from '../../components/DetailTable/OwnersTable'
@@ -195,55 +195,50 @@ const VehicleDetail = () => {
         {!loading && (downloadServiceURL || reqMileageReg) && (
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
-              <Box display="flex" justifyContent="flexStart" printHidden>
+              <Box
+                display="flex"
+                flexWrap="wrap"
+                justifyContent="flexStart"
+                printHidden
+              >
                 {reqMileageReg && (
+                  <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
+                    <LinkButton
+                      to={
+                        id
+                          ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
+                              ':id',
+                              id.toString(),
+                            )
+                          : ''
+                      }
+                      icon="pencil"
+                      variant="button"
+                      text={formatMessage(messages.vehicleMileageInputTitle)}
+                    />
+                  </Box>
+                )}
+                {downloadServiceURL && (
                   <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                     <Button
                       colorScheme="default"
-                      icon="pencil"
+                      icon="receipt"
                       iconType="outline"
                       size="default"
                       type="button"
                       variant="utility"
+                      onClick={() => formSubmit(`${downloadServiceURL}`)}
                     >
-                      <LinkResolver
-                        href={
-                          id
-                            ? AssetsPaths.AssetsVehiclesDetailMileage.replace(
-                                ':id',
-                                id.toString(),
-                              )
-                            : ''
-                        }
-                      >
-                        {formatMessage(messages.vehicleMileageInputTitle)}
-                      </LinkResolver>
+                      {formatMessage(messages.vehicleHistoryReport)}
                     </Button>
                   </Box>
                 )}
-                {downloadServiceURL && (
-                  <>
-                    <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
-                      <Button
-                        colorScheme="default"
-                        icon="receipt"
-                        iconType="outline"
-                        size="default"
-                        type="button"
-                        variant="utility"
-                        onClick={() => formSubmit(`${downloadServiceURL}`)}
-                      >
-                        {formatMessage(messages.vehicleHistoryReport)}
-                      </Button>
-                    </Box>
-                    <Box paddingRight={2}>
-                      <Dropdown
-                        label={formatMessage(messages.actions)}
-                        dropdownItems={dropdownArray}
-                      />
-                    </Box>
-                  </>
-                )}
+                <Box paddingRight={2}>
+                  <Dropdown
+                    label={formatMessage(messages.actions)}
+                    dropdownItems={dropdownArray}
+                  />
+                </Box>
               </Box>
             </GridColumn>
           </GridRow>

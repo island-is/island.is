@@ -228,7 +228,7 @@ export class DirectorateOfImmigrationClient {
       },
       {
         attachmentType: AttachmentType.CriminalRecord,
-        fileList: application.supportingDocuments.criminalRecordList || [],
+        fileList: application.supportingDocuments.criminalRecord || [],
       },
     ]
     for (let j = 0; j < attachmentList.length; j++) {

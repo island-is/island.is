@@ -734,6 +734,69 @@ export class InternalCaseService {
       .then(() => ({ delivered: true }))
   }
 
+  private async deliverCaseToPoliceWithFiles(
+    theCase: Case,
+    user: TUser,
+    requestPdf?: string,
+    courtRecordPdf?: string,
+    rulingPdf?: string,
+    custodyNoticePdf?: string,
+    appealRuling?: string[],
+  ): Promise<DeliverResponse> {
+    return this.refreshFormatMessage()
+      .then(async () => {
+        const originalAncestor = await this.findOriginalAncestor(theCase)
+
+        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
+          (ids, defendant) =>
+            !defendant.noNationalId && defendant.nationalId
+              ? [...ids, defendant.nationalId]
+              : ids,
+          [],
+        )
+
+        const validToDate =
+          ([
+            CaseType.CUSTODY,
+            CaseType.ADMISSION_TO_FACILITY,
+            CaseType.TRAVEL_BAN,
+          ].includes(theCase.type) &&
+            theCase.state === CaseState.ACCEPTED &&
+            theCase.validToDate) ||
+          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
+
+        const delivered = await this.policeService.updatePoliceCase(
+          user,
+          originalAncestor.id,
+          theCase.type,
+          theCase.state,
+          theCase.policeCaseNumbers.length > 0
+            ? theCase.policeCaseNumbers[0]
+            : '',
+          defendantNationalIds && defendantNationalIds[0]
+            ? defendantNationalIds[0].replace('-', '')
+            : '',
+          validToDate,
+          theCase.conclusion ?? '',
+          requestPdf,
+          courtRecordPdf,
+          rulingPdf,
+          custodyNoticePdf,
+          appealRuling,
+        )
+
+        return { delivered }
+      })
+      .catch((reason) => {
+        // Tolerate failure, but log error
+        this.logger.error(`Failed to deliver case ${theCase.id} to police`, {
+          reason,
+        })
+
+        return { delivered: false }
+      })
+  }
+
   async deliverCaseToPolice(
     theCase: Case,
     user: TUser,
@@ -757,46 +820,16 @@ export class InternalCaseService {
           ) && theCase.state === CaseState.ACCEPTED
             ? await getCustodyNoticePdfAsString(theCase, this.formatMessage)
             : undefined
-        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-          (ids, defendant) =>
-            !defendant.noNationalId && defendant.nationalId
-              ? [...ids, defendant.nationalId]
-              : ids,
-          [],
-        )
-        const validToDate =
-          ([
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.TRAVEL_BAN,
-          ].includes(theCase.type) &&
-            theCase.state === CaseState.ACCEPTED &&
-            theCase.validToDate) ||
-          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
-        const originalAncestor = await this.findOriginalAncestor(theCase)
-
-        const delivered = await this.policeService.updatePoliceCase(
+        return this.deliverCaseToPoliceWithFiles(
+          theCase,
           user,
-          originalAncestor.id,
-          theCase.type,
-          theCase.state,
-          theCase.policeCaseNumbers.length > 0
-            ? theCase.policeCaseNumbers[0]
-            : '',
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0].replace('-', '')
-            : '',
-          validToDate,
-          theCase.conclusion ?? '',
-          requestPdf as string,
-          courtRecordPdf as string,
-          rulingPdf as string,
+          requestPdf,
+          courtRecordPdf,
+          rulingPdf,
           custodyNoticePdf,
           undefined,
         )
-
-        return { delivered }
       })
       .catch((reason) => {
         // Tolerate failure, but log error
@@ -828,46 +861,16 @@ export class InternalCaseService {
                   ),
               )
             : []
-        const defendantNationalIds = theCase.defendants?.reduce<string[]>(
-          (ids, defendant) =>
-            !defendant.noNationalId && defendant.nationalId
-              ? [...ids, defendant.nationalId]
-              : ids,
-          [],
-        )
-        const validToDate =
-          ([
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.TRAVEL_BAN,
-          ].includes(theCase.type) &&
-            theCase.state === CaseState.ACCEPTED &&
-            theCase.validToDate) ||
-          new Date() // The API requires a date so we send 1970-01-01T00:00:00.000Z as a dummy date
 
-        const originalAncestor = await this.findOriginalAncestor(theCase)
-
-        const delivered = await this.policeService.updatePoliceCase(
+        return this.deliverCaseToPoliceWithFiles(
+          theCase,
           user,
-          originalAncestor.id,
-          theCase.type,
-          theCase.state,
-          theCase.policeCaseNumbers.length > 0
-            ? theCase.policeCaseNumbers[0]
-            : '',
-          defendantNationalIds && defendantNationalIds[0]
-            ? defendantNationalIds[0].replace('-', '')
-            : '',
-          validToDate,
-          theCase.conclusion ?? '',
           undefined,
           undefined,
           undefined,
           undefined,
           appealRuling,
         )
-
-        return { delivered }
       })
       .catch((reason) => {
         // Tolerate failure, but log error

@@ -356,7 +356,29 @@ describe('readableIndictmentSubtypes', () => {
 describe('sanitize', () => {
   test('should return empty string if text is empty', () => {
     // Arrange
+    const text = ``
+
+    // Act
+    const r = sanitize(text)
+
+    // Assert
+    expect(r).toBe('')
+  })
+
+  test('should work with one instance of "', () => {
+    // Arrange
     const text = `bla"bla.pdf`
+
+    // Act
+    const r = sanitize(text)
+
+    // Assert
+    expect(r).toBe('blabla.pdf')
+  })
+
+  test('should work with multiple instances of "', () => {
+    // Arrange
+    const text = `bla"bl"a.pdf`
 
     // Act
     const r = sanitize(text)
