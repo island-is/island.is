@@ -937,6 +937,54 @@ export const ipMessages = defineMessages({
     id: 'sp.intellectual-property:expires',
     defaultMessage: 'Gildir til',
   },
+  application: {
+    id: 'sp.intellectual-property:application',
+    defaultMessage: 'Umsókn',
+  },
+  applicationNumber: {
+    id: 'sp.intellectual-property:application-number',
+    defaultMessage: 'Umsóknarnúmer',
+  },
+  maxValidObjectionDate: {
+    id: 'sp.intellectual-property:max-valid-objection-date',
+    defaultMessage: 'Andmælafrestur',
+  },
+  imageCategories: {
+    id: 'sp.intellectual-property:image-categories',
+    defaultMessage: 'Myndflokkar',
+  },
+  colorMark: {
+    id: 'sp.intellectual-property:color-mark',
+    defaultMessage: 'Merkið er í lit',
+  },
+  owner: {
+    id: 'sp.intellectual-property:owner',
+    defaultMessage: 'Eigandi',
+  },
+  address: {
+    id: 'sp.intellectual-property:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  agent: {
+    id: 'sp.intellectual-property:agent',
+    defaultMessage: 'Umboðsmaður',
+  },
+  category: {
+    id: 'sp.intellectual-property:category',
+    defaultMessage: 'Flokkur',
+  },
+  information: {
+    id: 'sp.intellectual-property:information',
+    defaultMessage: 'Upplýsingar',
+  },
+  registrationCertificate: {
+    id: 'sp.intellectual-property:registration-certificate',
+    defaultMessage: 'Skráningarskírteini',
+  },
+  timeline: {
+    id: 'sp.intellectual-property:timeline',
+    defaultMessage: 'Tímalína',
+  },
 })
 
 export const urls = defineMessages({

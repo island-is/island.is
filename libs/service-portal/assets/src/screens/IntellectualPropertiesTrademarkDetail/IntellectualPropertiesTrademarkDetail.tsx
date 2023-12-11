@@ -1,8 +1,6 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import {
-  EmptyState,
-  ErrorScreen,
   HUGVERKASTOFAN_SLUG,
   IntroHeader,
   TableGrid,
@@ -55,7 +53,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
   const ip = data?.intellectualPropertiesTrademark
 
   if (!ip && !loading) {
-    return <EmptyState />
+    return <Problem type="no_data" />
   }
 
   const categories = ip?.markCategories?.filter(
@@ -82,7 +80,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
               iconType="outline"
               variant="utility"
             >
-              {'Skráningarskírteini'}
+              {formatMessage(ipMessages.registrationCertificate)}
             </Button>
           </Inline>
         </Box>
@@ -177,7 +175,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
           ip.lifecycle.applicationDate && (
             <>
               <Timeline
-                title={'Tímalína'}
+                title={formatMessage(ipMessages.timeline)}
                 maxDate={new Date(ip.lifecycle.expiryDate)}
                 minDate={new Date(ip.lifecycle.applicationDate)}
               >
@@ -188,7 +186,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                         ? formatDate(ip.lifecycle.applicationDate)
                         : ''}
                     </Text>
-                    <Text>Umsókn</Text>
+                    <Text>{formatMessage(ipMessages.application)}</Text>
                   </Stack>,
                   <Stack key="list-item-publish-date" space="smallGutter">
                     <Text variant="h5">
@@ -196,7 +194,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                         ? formatDate(ip.lifecycle.publishDate)
                         : ''}
                     </Text>
-                    <Text>Birting</Text>
+                    <Text>{formatMessage(ipMessages.publish)}</Text>
                   </Stack>,
                   <Stack
                     key="list-item-maxValidObjectionDate"
@@ -204,13 +202,12 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   >
                     <Text variant="h5">
                       {ip?.lifecycle.maxValidObjectionDate
-                        ? formatDate(
-                            ip.lifecycle.maxValidObjectionDate,
-                            'dd.MM.yy',
-                          )
+                        ? formatDate(ip.lifecycle.maxValidObjectionDate)
                         : ''}
                     </Text>
-                    <Text>Andmælafrestur</Text>
+                    <Text>
+                      {formatMessage(ipMessages.maxValidObjectionDate)}
+                    </Text>
                   </Stack>,
                   <Stack key="list-item-registrationDate" space="smallGutter">
                     <Text variant="h5">
@@ -218,7 +215,7 @@ const IntellectualPropertiesTrademarkDetail = () => {
                         ? formatDate(ip.lifecycle.registrationDate)
                         : ''}
                     </Text>
-                    <Text>Skráning</Text>
+                    <Text> {formatMessage(ipMessages.registration)}</Text>
                   </Stack>,
                   <Stack key="list-item-expiration-date" space="smallGutter">
                     <Text variant="h5">
@@ -226,24 +223,24 @@ const IntellectualPropertiesTrademarkDetail = () => {
                         ? formatDate(ip?.lifecycle.expiryDate)
                         : ''}
                     </Text>
-                    <Text>Gildir til</Text>
+                    <Text>{formatMessage(ipMessages.expires)}</Text>
                   </Stack>,
                 ]}
               </Timeline>
               <TableGrid
-                title={'Upplýsingar'}
+                title={formatMessage(ipMessages.information)}
                 dataArray={chunk(
                   [
                     {
-                      title: 'Umsóknarnúmer',
+                      title: formatMessage(ipMessages.expires),
                       value: ip?.vmId ? formatDate(ip?.vmId) : '',
                     },
                     {
-                      title: 'Myndflokkur',
+                      title: formatMessage(ipMessages.imageCategories),
                       value: ip?.imageCategories ?? '',
                     },
                     {
-                      title: 'Merkið er í lit',
+                      title: formatMessage(ipMessages.colorMark),
                       value: ip?.isColorMark ? 'Já' : 'Nei',
                     },
                   ].filter(isDefined),
@@ -254,14 +251,14 @@ const IntellectualPropertiesTrademarkDetail = () => {
           )}
         <Stack space="p2">
           <UserInfoLine
-            title="Eigandi"
-            label="Nafn"
+            title={formatMessage(ipMessages.owner)}
+            label={formatMessage(ipMessages.name)}
             content={ip?.markOwners?.[0]?.name ?? ''}
             loading={loading}
           />
           <Divider />
           <UserInfoLine
-            label="Heimilsfang"
+            label={formatMessage(ipMessages.address)}
             content={ip?.markOwners?.[0]?.address ?? ''}
             loading={loading}
           />
@@ -270,14 +267,14 @@ const IntellectualPropertiesTrademarkDetail = () => {
         {ip?.markAgent?.name && ip?.markAgent.address && (
           <Stack space="p2">
             <UserInfoLine
-              title="Umboðsmaður"
-              label="Nafn"
+              title={formatMessage(ipMessages.agent)}
+              label={formatMessage(ipMessages.name)}
               content={ip?.markAgent?.name ?? ''}
               loading={loading}
             />
             <Divider />
             <UserInfoLine
-              label="Heimilisfang"
+              label={formatMessage(ipMessages.address)}
               content={ip?.markAgent?.address ?? ''}
               loading={loading}
             />
@@ -297,7 +294,9 @@ const IntellectualPropertiesTrademarkDetail = () => {
                   <AccordionItem
                     key={`${category.categoryNumber}-${index}}`}
                     id={category.categoryNumber}
-                    label={`Flokkur ${category.categoryNumber}`}
+                    label={`${formatMessage(ipMessages.category)} ${
+                      category.categoryNumber
+                    }`}
                   >
                     <Text>{category.categoryDescription ?? ''}</Text>
                   </AccordionItem>
