@@ -88,4 +88,51 @@ describe('SocialInsuranceAdministrationService', () => {
 
     expect(result).toMatchObject({ applicationLineId: '123' })
   })
+
+  it('should send household supplement application', async () => {
+    const auth = createCurrentUser()
+    const application = createApplication({
+      externalData: {
+        socialInsuranceAdministrationApplicant: {
+          data: {
+            bankAccount: {
+              bank: '2222',
+              ledger: '00',
+              accountNumber: '123456',
+            },
+          },
+          date: new Date('2021-06-10T11:31:02.641Z'),
+          status: 'success',
+        },
+      },
+      answers: {
+        paymentInfo: {
+          bank: '222200123456',
+          iban: '',
+          swift: '',
+          taxLevel: '2',
+          bankAccountType: 'icelandic',
+          personalAllowance: 'no',
+        },
+        'period.year': '2023',
+        'fileUploadAdditionalFiles.additionalDocuments': [
+          { key: 'key', name: 'name' },
+        ],
+      },
+      typeId: ApplicationTypes.HOUSEHOLD_SUPPLEMENT,
+    })
+
+    // Also need to mock the pdf here
+    jest
+      .spyOn(socialInsuranceAdministrationService, 'getPdf')
+      .mockImplementation(jest.fn())
+
+    const result = await socialInsuranceAdministrationService.sendApplication({
+      application,
+      auth,
+      currentUserLocale: 'is',
+    })
+
+    expect(result).toMatchObject({ applicationLineId: '123' })
+  })
 })
