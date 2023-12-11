@@ -262,37 +262,34 @@ const IntellectualPropertiesDesignDetail = () => {
           />
           <Divider />
         </Stack>
-        <Stack space="p2">
-          <UserInfoLine
-            title="Hönnuður"
-            label="Nafn"
-            content={ip?.designers?.[0]?.name ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        <Stack space="p2">
-          <UserInfoLine
-            title="Umboðsmaður"
-            label="Nafn"
-            content={ip?.agent?.name ?? ''}
-            loading={loading}
-          />
-          <Divider />
-          <UserInfoLine
-            label="Heimilisfang"
-            content={ip?.agent?.address ?? ''}
-            loading={loading}
-          />
-          <Divider />
-        </Stack>
-        <Text variant="small" paddingBottom={2}>
-          Lorem ipsum dolor sit amet consectetur. Sem libero at mi feugiat diam.
-          Turpis quam dignissim eleifend lectus venenatis. Nullam et aliquet
-          augue ultrices dignissim nibh. Orci justo diam tincidunt et ut.
-          Egestas tincidunt aliquam consectetur feugiat lectus. Risus fringilla
-          vitae nec id lectus ullamcorper.
-        </Text>
+        {ip?.designers?.length && (
+          <>
+            <Stack space="p2">
+              <UserInfoLine
+                title="Hönnuður"
+                label="Nafn"
+                content={ip?.designers?.[0]?.name ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+            <Stack space="p2">
+              <UserInfoLine
+                title="Umboðsmaður"
+                label="Nafn"
+                content={ip?.agent?.name ?? ''}
+                loading={loading}
+              />
+              <Divider />
+              <UserInfoLine
+                label="Heimilisfang"
+                content={ip?.agent?.address ?? ''}
+                loading={loading}
+              />
+              <Divider />
+            </Stack>
+          </>
+        )}
       </Stack>
     </>
   )
