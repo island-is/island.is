@@ -24,6 +24,7 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
   errorMessages as HSErrorMessages,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   Attachment,
   AttachmentTypeEnum,
@@ -87,6 +88,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
     if (application.typeId === ApplicationTypes.HOUSEHOLD_SUPPLEMENT) {
       additionalAttachmentsRequired = getHSApplicationAnswers(
+        application.answers,
+      ).additionalAttachmentsRequired
+    }
+    if (
+      application.typeId === ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY
+    ) {
+      additionalAttachmentsRequired = getASFTEApplicationAnswers(
         application.answers,
       ).additionalAttachmentsRequired
     }

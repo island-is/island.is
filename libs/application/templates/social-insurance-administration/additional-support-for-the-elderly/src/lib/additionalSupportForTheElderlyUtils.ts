@@ -24,6 +24,11 @@ export function getApplicationAnswers(answers: Application['answers']) {
     'fileUploadAdditionalFiles.additionalDocuments',
   ) as FileType[]
 
+  const additionalAttachmentsRequired = getValueViaPath(
+    answers,
+    'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
+  ) as FileType[]
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -33,6 +38,7 @@ export function getApplicationAnswers(answers: Application['answers']) {
     applicantPhonenumber,
     comment,
     additionalAttachments,
+    additionalAttachmentsRequired,
     tempAnswers,
   }
 }

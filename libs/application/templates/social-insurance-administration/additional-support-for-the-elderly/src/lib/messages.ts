@@ -171,7 +171,7 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       description: 'phonenumber',
     },
     cancelButton: {
-      id: 'oap.application:cancel.button',
+      id: 'asfte.application:cancel.button',
       defaultMessage: 'Hætta við',
       description: 'Cancel',
     },
@@ -196,7 +196,7 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     attachmentDescription: {
       id: 'asfte.application:fileUpload.attachment.description',
       defaultMessage: 'Tekið er við skjölum með endingu: .pdf',
-      description: 'Accepted documents with the following extensions: .pdf',
+      description: 'Documents with the following extensions are accepted: .pdf',
     },
     attachmentMaxSizeError: {
       id: 'asfte.application:fileUpload.attachment.maxSizeError',
@@ -205,32 +205,31 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     },
     additionalFileTitle: {
       id: 'asfte.application:fileUpload.additionalFile.title',
-      defaultMessage: 'Viðbótagögn',
+      defaultMessage: 'Fylgiskjöl viðbótagögn',
       description: 'Additional attachments',
     },
     additionalFileDescription: {
       id: 'asfte.application:fileUpload.additionalFile.description',
       defaultMessage:
-        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis staðfestingu frá Þjóðskrá vegna rangra upplýsinga. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description:
-        'Here you can submit additional data to TR. For example, confirmation from the National Registry due to incorrect information. Note that the document must be in .pdf format.',
+        'Hér getur þú skilað viðbótargögnum til Tryggingastofnunar. Til dæmis dvalarleyfi frá útlendingastofnun (skila þarf inn báðum hliðum dvalarleyfis). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description: 'english description',
     },
-
     additionalDocumentsEditSubmit: {
-      id: 'oap.application:fileUpload.additionalDocumentsEditSubmit',
+      id: 'asfte.application:fileUpload.additionalDocumentsEditSubmit',
       defaultMessage: 'Senda inn',
       description: 'Submit',
     },
     additionalDocumentRequiredTitle: {
       id: 'asfte.application:fileUpload.additionalDocumentRequired.title',
-      defaultMessage: 'Viðbótargögn krafist',
-      description: 'Additional attachments required',
+      defaultMessage: 'Viðbótargagna krafist',
+      description: 'Additional documents required',
     },
     additionalDocumentRequiredDescription: {
       id: 'asfte.application:fileUpload.additionalDocumentRequired.description#markdown',
       defaultMessage:
-        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í pósthólfinu þínu. Athugaðu að skjalið þarf að vera á .pdf formi.',
-      description: 'english translation',
+        'Vinsamlegast hlaðið upp viðbótargögnum til Tryggingastofnunar. Ef þú ert ekki viss hvaða viðbótagögn það eru geturu séð það í [stafræna pósthólfinu þínu](https://island.is/minarsidur/postholf). Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Please submit additional documents for the Social Insurance Administration. If you are not sure which additional documents you should submit, you can see it in [your inbox on My Pages](https://island.is/minarsidur/postholf). Note that the document must be in .pdf format.',
     },
   }),
 
@@ -303,6 +302,11 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Símanúmerið þarf að vera gilt.',
     description: 'The phone number must be valid.',
   },
+  requireAttachment: {
+    id: 'asfte.application:fileUpload.required.attachment',
+    defaultMessage: 'Þú þarft að hlaða upp viðhenginu til að halda áfram.',
+    description: 'You must upload an attachment to continue.',
+  },
 })
 
 export const inReviewFormMessages = defineMessages({
@@ -361,8 +365,10 @@ export const statesMessages = defineMessages({
   },
   applicationRejectedDescription: {
     id: 'asfte.application:applicationRejectedDescription',
-    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið hafnað',
-    description: 'The application for old-age pension has been rejected',
+    defaultMessage:
+      'Umsókn vegna félagsleg viðbótarstuðnings við aldraða hefur verið hafnað',
+    description:
+      'The application for additional support for the elderly has been rejected',
   },
   applicationApproved: {
     id: 'asfte.application:applicationApproved',
@@ -371,8 +377,10 @@ export const statesMessages = defineMessages({
   },
   applicationApprovedDescription: {
     id: 'asfte.application:applicationApprovedDescription',
-    defaultMessage: 'Umsókn vegna ellilífeyris hefur verið samþykkt',
-    description: 'The application for old-age pension has been approved',
+    defaultMessage:
+      'Umsókn vegna félagsleg viðbótarstuðnings við aldraða hefur verið samþykkt',
+    description:
+      'The application for additional support for the elderly has been approved',
   },
   additionalDocumentRequired: {
     id: 'asfte.application:additionalDocumentRequired',
@@ -387,7 +395,8 @@ export const statesMessages = defineMessages({
   additionalDocumentRequiredDescription: {
     id: 'asfte.application:additionalDocumentRequired.description',
     defaultMessage: 'Tryggingastofnun vantar frekari gögn vegna umsóknarinnar.',
-    description: 'Description of the state - additionalDocumentRequired',
+    description:
+      'Social Insurance Administration needs additional documentation regarding your application.',
   },
   pendingTag: {
     id: 'asfte.application:pending.tag',

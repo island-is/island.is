@@ -202,7 +202,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.APPROVE,
+                onEvent: DefaultEvents.SUBMIT,
                 logMessage: statesMessages.additionalDocumentsAdded,
               },
             ],
@@ -235,6 +235,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
+        entry: ['moveAdditionalDocumentRequired'],
         meta: {
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           status: 'inprogress',
@@ -250,12 +251,12 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               displayStatus: 'warning',
             },
           },
-          // onExit: defineTemplateApi({
-          //   action: Actions.SEND_DOCUMENTS,
-          //   namespace: 'SocialInsuranceAdministration',
-          //   triggerEvent: DefaultEvents.SUBMIT,
-          //   throwOnError: true,
-          // }),
+          onExit: defineTemplateApi({
+            action: Actions.SEND_DOCUMENTS,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -412,6 +413,26 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
           assignees: [],
         },
       })),
+      moveAdditionalDocumentRequired: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { additionalAttachmentsRequired, additionalAttachments } =
+          getApplicationAnswers(answers)
+
+        const mergedAdditionalDocumentRequired = [
+          ...additionalAttachments,
+          ...additionalAttachmentsRequired,
+        ]
+
+        set(
+          answers,
+          'fileUploadAdditionalFiles.additionalDocuments',
+          mergedAdditionalDocumentRequired,
+        )
+        unset(answers, 'fileUploadAdditionalFilesRequired')
+
+        return context
+      }),
     },
   },
   mapUserToRole(
