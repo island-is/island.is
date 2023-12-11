@@ -300,6 +300,13 @@ export const OrganizationHeader: React.FC<
               ? 'cover'
               : 'contain'
           }
+          imageObjectPosition={
+            organizationPage.themeProperties.imageObjectPosition === 'left'
+              ? 'left'
+              : organizationPage.themeProperties.imageObjectPosition === 'right'
+              ? 'right'
+              : 'center'
+          }
         />
       )
   }

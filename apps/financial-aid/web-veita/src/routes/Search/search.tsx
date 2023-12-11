@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 
 import {
   TableHeaders,
@@ -23,9 +23,11 @@ import {
   sanitizeOnlyNumbers,
 } from '@island.is/financial-aid/shared/lib'
 import { useRouter } from 'next/router'
+import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
 
 export const Search = () => {
   const router = useRouter()
+  const { admin } = useContext(AdminContext)
 
   const [searchNationalId, setSearchNationalId] = useState<string>(
     router?.query?.search as string,
@@ -114,7 +116,11 @@ export const Search = () => {
                 applicationSearchResult.map((item: Application, index) => (
                   <TableBody
                     items={[
-                      usePseudoName(item.nationalId, item.name),
+                      usePseudoName(
+                        item.nationalId,
+                        item.name,
+                        admin?.staff?.usePseudoName,
+                      ),
                       State(item.state),
                       TextTableItem(
                         'default',
