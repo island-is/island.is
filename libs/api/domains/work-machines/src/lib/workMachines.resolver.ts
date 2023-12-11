@@ -119,6 +119,6 @@ export class WorkMachinesResolver {
     @CurrentUser() auth: User,
     @Args('regNumber') regNumber: string,
   ) {
-    return await this.workMachinesService.isPaymentRequired(auth, regNumber)
+    return this.workMachinesService.isPaymentRequired(auth, regNumber)
   }
 }

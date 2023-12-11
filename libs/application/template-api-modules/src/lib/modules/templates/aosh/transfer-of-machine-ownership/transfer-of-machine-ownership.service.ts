@@ -27,6 +27,8 @@ import { generateApplicationRejectedEmail } from './emailGenerators/applicationR
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
   ChangeMachineOwner,
+  MachineDto,
+  MachineFriendlyDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -103,7 +105,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
       )
     }
     if (!answers.machine.id) {
-      throw new Error('Ekki er búið að velja vél')
+      throw new Error('Machine has not been selected')
     }
     await this.workMachineClientService.confirmOwnerChange(auth, {
       applicationId: application.id,

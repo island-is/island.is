@@ -51,11 +51,6 @@ export const apiProviders = [
     acceptHeader: 'application/vnd.ver.machines.hateoas.v1+json',
   },
   {
-    api: MachinesApi,
-    provide: CustomMachineApi,
-    acceptHeader: 'application/vnd.ver.machine.hateoas.v1+json',
-  },
-  {
     api: MachineOwnerChangeApi,
     provide: MachineOwnerChangeApi,
     acceptHeader: 'application/json',
@@ -75,17 +70,17 @@ export const apiProviders = [
     provide: MachinesDocumentApi,
     acceptHeader: 'application/vnd.ver.hateoas.v1+json',
   },
-].map(({api, provide, acceptHeader}) => ({
-  provide: item.provide,
+].map(({ api, provide, acceptHeader }) => ({
+  provide: provide,
   scope: LazyDuringDevScope,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof WorkMachinesClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
-    return new item.api(
+    return new api(
       new Configuration(
-        ConfigFactory(xRoadConfig, config, idsClientConfig, item.acceptHeader),
+        ConfigFactory(xRoadConfig, config, idsClientConfig, acceptHeader),
       ),
     )
   },

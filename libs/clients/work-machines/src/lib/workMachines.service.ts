@@ -12,7 +12,6 @@ import {
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
 } from '../../gen/fetch'
-import { CustomMachineApi } from './providers'
 import {
   MachineDto,
   ChangeMachineOwner,
@@ -28,17 +27,12 @@ export class WorkMachinesClientService {
   constructor(
     private readonly machinesApi: MachinesApi,
     private readonly docApi: MachinesDocumentApi,
-    private readonly machineApi: CustomMachineApi,
     private readonly machineOwnerChangeApi: MachineOwnerChangeApi,
     private readonly machineCategoryApi: MachineCategoryApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
     this.machinesApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  private machineApiWithAuth(auth: Auth) {
-    return this.machineApi.withMiddleware(new AuthMiddleware(auth))
-  }
 
   private machineOwnerChangeApiWithAuth(auth: Auth) {
     return this.machineOwnerChangeApi.withMiddleware(new AuthMiddleware(auth))
@@ -70,7 +64,7 @@ export class WorkMachinesClientService {
   }
 
   public async getMachineDetail(auth: User, id: string): Promise<MachineDto> {
-    const result = await this.machineApiWithAuth(auth).getMachine({
+    const result = await this.machinesApiWithAuth(auth).getMachine({
       id,
     })
     const [type, ...subType] = result.type?.split(' ') || ''

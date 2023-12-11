@@ -665,16 +665,6 @@ export const DirectorateOfImmigration = new XroadConf({
   },
 })
 
-export const TransferOfMachineOwnership = new XroadConf({
-  env: {
-    XROAD_TRANSFER_MACHINE_OWNERSHIP_PATH: {
-      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/vinnuvelar-token',
-      staging:
-        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
-      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
-    },
-  },
-})
 export const UniversityGatewayUniversityOfIceland = new XroadConf({
   env: {
     XROAD_UNIVERSITY_GATEWAY_UNIVERSITY_OF_ICELAND_PATH: {

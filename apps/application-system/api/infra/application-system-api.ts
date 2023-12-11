@@ -31,7 +31,6 @@ import {
   Vehicles,
   VehicleServiceFjsV1,
   DirectorateOfImmigration,
-  TransferOfMachineOwnership,
   SocialInsuranceAdministration,
 } from '../../../../infra/src/dsl/xroad'
 
@@ -263,7 +262,6 @@ export const serviceSetup = (services: {
       Passports,
       EHIC,
       DirectorateOfImmigration,
-      TransferOfMachineOwnership,
       SocialInsuranceAdministration,
     )
     .secrets({
