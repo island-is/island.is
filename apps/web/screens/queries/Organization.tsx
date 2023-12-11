@@ -252,6 +252,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       signLanguageVideo {
         url
+        thumbnailImageUrl
       }
       description {
         ...AllSlices

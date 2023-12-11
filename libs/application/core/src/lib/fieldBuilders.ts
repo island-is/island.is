@@ -26,6 +26,7 @@ import {
   Option,
   PaymentChargeOverviewField,
   PaymentPendingField,
+  PdfLinkButtonField,
   PhoneField,
   RadioField,
   RecordObject,
@@ -579,5 +580,28 @@ export function buildImageField(
     titleVariant,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
+  }
+}
+
+export function buildPdfLinkButtonField(
+  data: Omit<PdfLinkButtonField, 'type' | 'component' | 'children'>,
+): PdfLinkButtonField {
+  const {
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+  } = data
+  return {
+    ...extractCommonFields(data),
+    verificationDescription,
+    verificationLinkTitle,
+    verificationLinkUrl,
+    getPdfFiles,
+    setViewPdfFile,
+    children: undefined,
+    type: FieldTypes.PDF_LINK_BUTTON,
+    component: FieldComponents.PDF_LINK_BUTTON,
   }
 }
