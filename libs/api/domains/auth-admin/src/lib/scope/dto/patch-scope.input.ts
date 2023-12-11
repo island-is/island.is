@@ -37,4 +37,10 @@ export class AdminPatchScopeInput {
 
   @Field(() => Boolean, { nullable: true })
   grantToPersonalRepresentatives?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  onlyForCompanies?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  onlyForProcurationHolder?: boolean
 }

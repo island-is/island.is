@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   FilterInput,
+  GridRow,
   Inline,
   Stack,
   Text,
@@ -18,6 +19,7 @@ import { AuthClients } from './Clients.loader'
 import { ClientType } from '../../components/ClientType'
 import IdsAdminCard from '../../components/IdsAdminCard/IdsAdminCard'
 import { useLooseSearch } from '../../hooks/useLooseSearch'
+import { SearchInput } from '../../components/SearchInput/SearchInput'
 
 const Clients = () => {
   const originalClients = useLoaderData() as AuthClients
@@ -75,79 +77,77 @@ const Clients = () => {
     )
   }
 
-  return originalClients.length === 0 ? (
-    <>
-      {getHeader(false)}
-      <Box
-        width="full"
-        display="flex"
-        flexDirection="column"
-        border="standard"
-        borderRadius="large"
-        justifyContent="center"
-        alignItems="center"
-        padding={10}
-      >
-        <Text variant="h3">{formatMessage(m.noClients)}</Text>
-        <Text paddingTop="gutter">{formatMessage(m.noClientsDescription)}</Text>
-        <Box marginTop={6}>
-          <Button size="small" onClick={openCreateClientModal}>
-            {formatMessage(m.createClient)}
-          </Button>
-        </Box>
-        <Box marginTop="gutter">
-          <Button variant={'text'}>{formatMessage(m.learnMore)}</Button>
-        </Box>
-      </Box>
-      <Outlet />
-    </>
-  ) : (
-    <>
-      {getHeader()}
-      <Stack space={2}>
-        <Inline>
-          <FilterInput
-            placeholder={formatMessage(m.searchPlaceholder)}
-            name="session-nationalId-input"
-            value={inputSearchValue}
+  return (
+    <GridRow direction="column">
+      {originalClients.length === 0 ? (
+        <>
+          {getHeader(false)}
+          <Box
+            width="full"
+            display="flex"
+            flexDirection="column"
+            border="standard"
+            borderRadius="large"
+            justifyContent="center"
+            alignItems="center"
+            padding={6}
+          >
+            <Text variant="h3">{formatMessage(m.noClients)}</Text>
+            <Text paddingTop="gutter">
+              {formatMessage(m.noClientsDescription)}
+            </Text>
+            <Box marginTop={5}>
+              <Button size="small" onClick={openCreateClientModal}>
+                {formatMessage(m.createClient)}
+              </Button>
+            </Box>
+          </Box>
+          <Outlet />
+        </>
+      ) : (
+        <>
+          {getHeader()}
+          <SearchInput
+            inputSearchValue={inputSearchValue}
             onChange={handleSearch}
-            backgroundColor="blue"
           />
-        </Inline>
 
-        {clients.map((item) => {
-          const href = replaceParams({
-            href: IDSAdminPaths.IDSAdminClient,
-            params: {
-              tenant,
-              client: item.clientId,
-            },
-          })
-          return (
-            <IdsAdminCard
-              key={`clients-${item.clientId}`}
-              dataTestId="tenant-applications-list-item"
-              title={
-                item.defaultEnvironment.displayName.find(
-                  (translatedValue) => locale === translatedValue.locale,
-                )?.value
-              }
-              text={item.defaultEnvironment.clientId}
-              tags={item.availableEnvironments.map((tag) => ({
-                children: tag,
-                onClick: () => navigate(`${href}?env=${tag}`),
-              }))}
-              eyebrow={<ClientType client={item} />}
-              cta={{
-                label: formatMessage(m.change),
-                to: href,
-              }}
-            />
-          )
-        })}
-      </Stack>
-      <Outlet />
-    </>
+          <Stack space={2}>
+            {clients.map((item) => {
+              const href = replaceParams({
+                href: IDSAdminPaths.IDSAdminClient,
+                params: {
+                  tenant,
+                  client: item.clientId,
+                },
+              })
+              return (
+                <IdsAdminCard
+                  key={`clients-${item.clientId}`}
+                  dataTestId="tenant-applications-list-item"
+                  title={
+                    item.defaultEnvironment.displayName.find(
+                      (translatedValue) => locale === translatedValue.locale,
+                    )?.value
+                  }
+                  text={item.defaultEnvironment.clientId}
+                  tags={item.availableEnvironments.map((tag) => ({
+                    children: tag,
+                    onClick: () => navigate(`${href}?env=${tag}`),
+                  }))}
+                  eyebrow={<ClientType client={item} />}
+                  cta={{
+                    label: formatMessage(m.change),
+                    to: href,
+                  }}
+                />
+              )
+            })}
+          </Stack>
+          <Outlet />
+        </>
+      )}
+    </GridRow>
   )
 }
 

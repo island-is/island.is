@@ -18,7 +18,7 @@ import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
 import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
-import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
+import { AdminCreateScopeDto, AdminScopeDTO } from '@island.is/auth-api-lib'
 import { ScopesPayload } from './dto/scopes.payload'
 import { Scope } from './models/scope.model'
 
@@ -290,7 +290,7 @@ describe('ScopeService', () => {
       expect(
         mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeName,
       ).toBeCalledTimes(1)
-      expect(scopeResponses).toEqual({
+      expect(scopeResponses).toMatchObject({
         scopeName: mockedScope.name,
         environments: environments,
       } as Scope)

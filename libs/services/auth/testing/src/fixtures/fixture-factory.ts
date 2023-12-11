@@ -244,6 +244,7 @@ export class FixtureFactory {
       isAccessControlled: apiScope.isAccessControlled ?? false,
       groupId: apiScope.groupId,
       domainName,
+      customDelegationOnlyFor: apiScope.customDelegationOnlyFor,
     })
   }
 

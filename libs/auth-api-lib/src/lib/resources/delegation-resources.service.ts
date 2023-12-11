@@ -1,14 +1,13 @@
-import { ForbiddenException, Inject, Injectable } from '@nestjs/common'
+import { ForbiddenException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
-import { and, Op, or } from 'sequelize'
+import { Op, and, or } from 'sequelize'
 import { Includeable } from 'sequelize/types/model'
 
 import { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
 import { AuthDelegationType } from '@island.is/shared/types'
 
-import { DelegationConfig } from '../delegations/DelegationConfig'
 import { DelegationScope } from '../delegations/models/delegation-scope.model'
 import { Delegation } from '../delegations/models/delegation.model'
 import { DelegationDirection } from '../delegations/types/delegationDirection'
@@ -23,13 +22,6 @@ import { col } from './utils/col'
 import { mapToScopeTree } from './utils/scope-tree.mapper'
 
 import type { Attributes, WhereOptions } from 'sequelize'
-import type { ConfigType } from '@island.is/nest/config'
-type DelegationConfigType = ConfigType<typeof DelegationConfig>
-type ScopeRule = DelegationConfigType['customScopeRules'] extends Array<
-  infer ScopeRule
->
-  ? ScopeRule
-  : never
 
 @Injectable()
 export class DelegationResourcesService {
@@ -39,8 +31,6 @@ export class DelegationResourcesService {
     @InjectModel(Domain)
     private domainModel: typeof Domain,
     private resourceTranslationService: ResourceTranslationService,
-    @Inject(DelegationConfig.KEY)
-    private delegationConfig: ConfigType<typeof DelegationConfig>,
   ) {}
 
   async findAllDomains(
@@ -67,7 +57,11 @@ export class DelegationResourcesService {
     const domains = await this.domainModel.findAll({
       where: onlyDelegations
         ? and(
-            ...this.apiScopeFilter({ user, prefix: 'scopes', direction }),
+            ...(await this.apiScopeFilter({
+              user,
+              prefix: 'scopes',
+              direction,
+            })),
             domainNameFilter,
           )
         : domainNameFilter,
@@ -101,7 +95,7 @@ export class DelegationResourcesService {
         {
           name: domainName,
         },
-        ...this.apiScopeFilter({ user, prefix: 'scopes' }),
+        ...(await this.apiScopeFilter({ user, prefix: 'scopes' })),
       ),
       include: [
         {
@@ -185,7 +179,7 @@ export class DelegationResourcesService {
     return scopesToCheck.every((scopeName) => userScopes.includes(scopeName))
   }
 
-  apiScopeFilter({
+  async apiScopeFilter({
     user,
     prefix,
     direction,
@@ -203,13 +197,14 @@ export class DelegationResourcesService {
 
     if (direction === DelegationDirection.OUTGOING) {
       apiScopeFilter.push(
-        ...this.skipScopeFilter(user, prefix),
+        ...(await this.skipScopeFilter(user, prefix)),
         ...this.accessControlFilter(user, prefix),
         ...this.delegationTypeFilter(user, prefix),
         ...this.grantToAuthenticatedUserFilter(user, prefix),
       )
     }
 
+    console.log('apiScopeFilter', apiScopeFilter)
     return apiScopeFilter
   }
 
@@ -243,7 +238,7 @@ export class DelegationResourcesService {
         {
           domainName,
         },
-        ...this.apiScopeFilter({ user, direction }),
+        ...(await this.apiScopeFilter({ user, direction })),
       ),
       include: [ApiScopeGroup, ...this.apiScopeInclude(user, direction)],
       order: [
@@ -259,16 +254,40 @@ export class DelegationResourcesService {
     return scopes
   }
 
-  private skipScopeFilter(
+  private async skipScopeFilter(
     user: User,
     prefix?: string,
-  ): Array<WhereOptions<ApiScope>> {
-    const skipScopes = this.delegationConfig.customScopeRules
-      .filter((scopeRule) => !this.scopeRuleMatchesUser(user, scopeRule))
-      .map((scopeRule) => scopeRule.scopeName)
-    return skipScopes.length === 0
-      ? []
-      : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
+  ): Promise<Array<WhereOptions<ApiScope>>> {
+    const skipScopes = await this.apiScopeModel
+    //   .findAll({
+    //     attributes: ['name', 'customDelegationOnlyFor'],
+    //     where: {
+    //       customDelegationOnlyFor: {
+    //         [Op.not]: null,
+    //       },
+    //     },
+    //   })
+    //   .then((scopes) =>
+    //     scopes
+    //       .filter(
+    //         (scopeRule) =>
+    //           !this.scopeRuleMatchesUser(
+    //             user,
+    //             scopeRule.customDelegationOnlyFor || [],
+    //           ),
+    //       )
+    //       .map((scopeRule) => scopeRule.name),
+    //   )
+    // return skipScopes.length === 0
+    //   ? []
+    //   : [{ [col(prefix, 'name')]: { [Op.notIn]: skipScopes } }]
+    return [
+      {
+        [col(prefix, 'custom_delegation_only_for')]: {
+          [Op.overlap]: user.delegationType,
+        },
+      },
+    ]
   }
 
   private accessControlInclude(user: User): Includeable {
@@ -374,7 +393,7 @@ export class DelegationResourcesService {
 
   private scopeRuleMatchesUser(
     { delegationType }: User,
-    { onlyForDelegationType }: ScopeRule,
+    onlyForDelegationType: string[],
   ) {
     if (!delegationType) {
       return false

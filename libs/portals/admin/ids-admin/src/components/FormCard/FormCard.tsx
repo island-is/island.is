@@ -55,6 +55,10 @@ type FormCardProps<Intent> = {
    * Note: This function should be memoized to prevent unnecessary re-renders.
    */
   customValidation?(currentValue: FormData, originalValue: FormData): boolean
+
+  /**
+   * Controls margin from card header as design using tabs has smaller margin
+   */
   headerMarginBottom?: 3 | 5
 }
 

@@ -49,7 +49,7 @@ const Translations = ({ translations }: TranslationsProps) => {
           tabs={copyTranslations.map((language) => ({
             label: language.locale === 'is' ? 'Íslenska' : 'English',
             content: (
-              <Box marginTop="gutter">
+              <Box marginTop={4}>
                 <Input
                   backgroundColor="blue"
                   type="text"

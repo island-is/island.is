@@ -41,7 +41,6 @@ describe('DomainsController', () => {
           // Arrange
           app = await setupWithAuth({
             user: testCase.user,
-            customScopeRules: testCase.customScopeRules,
           })
           server = request(app.getHttpServer())
 
@@ -272,7 +271,6 @@ describe('DomainsController', () => {
           // Arrange
           app = await setupWithAuth({
             user: testCase.user,
-            customScopeRules: testCase.customScopeRules,
           })
           server = request(app.getHttpServer())
 

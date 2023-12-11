@@ -57,6 +57,8 @@ const accessControlSchema = z
     grantToLegalGuardians: booleanCheckbox,
     allowExplicitDelegationGrant: booleanCheckbox,
     grantToPersonalRepresentatives: booleanCheckbox,
+    onlyForCompanies: booleanCheckbox,
+    onlyForProcurationHolder: booleanCheckbox,
   })
   .merge(defaultEnvironmentSchema)
 

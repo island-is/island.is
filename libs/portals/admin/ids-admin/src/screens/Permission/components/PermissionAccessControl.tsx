@@ -1,7 +1,13 @@
 import React from 'react'
 
 import { useLocale } from '@island.is/localization'
-import { Checkbox, CheckboxProps, Stack } from '@island.is/island-ui/core'
+import {
+  Box,
+  Checkbox,
+  CheckboxProps,
+  Stack,
+  Tooltip,
+} from '@island.is/island-ui/core'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -27,6 +33,8 @@ export const PermissionAccessControl = () => {
     grantToLegalGuardians,
     allowExplicitDelegationGrant,
     grantToPersonalRepresentatives,
+    onlyForCompanies,
+    onlyForProcurationHolder,
   } = selectedPermission
 
   const [inputValues, setInputValues] = useEnvironmentState({
@@ -36,12 +44,17 @@ export const PermissionAccessControl = () => {
     grantToLegalGuardians,
     allowExplicitDelegationGrant,
     grantToPersonalRepresentatives,
+    onlyForCompanies,
+    onlyForProcurationHolder,
   })
 
   return (
     <FormCard
       title={formatMessage(m.accessControl)}
+      description={formatMessage(m.accessControlDescription)}
       intent={PermissionFormTypes.ACCESS_CONTROL}
+      accordionLabel={formatMessage(m.settings)}
+      headerMarginBottom={3}
       inSync={checkEnvironmentsSync(permission.environments, [
         'isAccessControlled',
         'grantToAuthenticatedUser',
@@ -113,9 +126,66 @@ export const PermissionAccessControl = () => {
             setInputValues({
               ...inputValues,
               allowExplicitDelegationGrant: e.target.checked,
+              // Reset onlyForCompanies and onlyForProcurationHolder
+              onlyForCompanies: false,
+              onlyForProcurationHolder: false,
             })
           }}
           {...commonProps}
+          children={
+            inputValues.allowExplicitDelegationGrant && (
+              <Box marginX={3} marginBottom={2}>
+                <Checkbox
+                  label={formatMessage(m.onlyForCompanies)}
+                  subLabel={formatMessage(m.onlyForCompaniesDescription)}
+                  name="onlyForCompanies"
+                  onChange={(e) => {
+                    setInputValues({
+                      ...inputValues,
+                      onlyForCompanies: e.target.checked,
+                      // Reset onlyForProcurationHolder
+                      onlyForProcurationHolder: false,
+                    })
+                  }}
+                  checked={inputValues.onlyForCompanies}
+                  {...commonProps}
+                  children={
+                    <Box
+                      marginX={8}
+                      marginBottom={3}
+                      display="flex"
+                      alignItems="center"
+                      columnGap={inputValues.onlyForProcurationHolder ? 1 : 0}
+                    >
+                      <Checkbox
+                        labelVariant="small"
+                        checked={
+                          inputValues.onlyForProcurationHolder &&
+                          inputValues.onlyForCompanies
+                        }
+                        value={inputValues.onlyForProcurationHolder.toString()}
+                        name="onlyForProcurationHolder"
+                        disabled={!inputValues.onlyForCompanies}
+                        onChange={(e) => {
+                          setInputValues({
+                            ...inputValues,
+                            onlyForProcurationHolder: e.target.checked,
+                          })
+                        }}
+                        label={formatMessage(m.onlyForProcuringHolders)}
+                      />
+                      <Tooltip
+                        placement="right"
+                        text={formatMessage(
+                          m.onlyForProcuringHoldersDescription,
+                        )}
+                      />
+                    </Box>
+                  }
+                />
+              </Box>
+            )
+          }
         />
         <Checkbox
           label={formatMessage(m.grantToPersonalRepresentatives)}

@@ -39,7 +39,7 @@ export const m = defineMessages({
   },
   searchPlaceholder: {
     id: 'ap.ids-admin:search-placeholder',
-    defaultMessage: 'Search',
+    defaultMessage: 'Search by name or ID',
   },
   client: {
     id: 'ap.ids-admin:client',
@@ -663,10 +663,6 @@ export const m = defineMessages({
     id: 'ap.ids-admin:permission-list-description',
     defaultMessage: 'Here you can view and create permissions.',
   },
-  permissionsSearchPlaceholder: {
-    id: 'ap.ids-admin:permissions-search-placeholder',
-    defaultMessage: 'Search by name or ID',
-  },
   dangerZone: {
     id: 'ap.ids-admin:danger-zone',
     defaultMessage: 'Danger zone',
@@ -751,6 +747,10 @@ export const m = defineMessages({
     id: 'ap.ids-admin:english',
     defaultMessage: 'English',
   },
+  accessControlDescription: {
+    id: 'ap.ids-admin:access-control-description',
+    defaultMessage: 'Configure access control settings for this permission.',
+  },
   isAccessControlled: {
     id: 'ap.ids-admin:is-access-controlled',
     defaultMessage: 'Specific national ids',
@@ -793,6 +793,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:allow-explicit-delegation-grant-description',
     defaultMessage:
       'Should users be able to grant other users custom delegation for this permission.',
+  },
+  onlyForCompanies: {
+    id: 'ap.ids-admin:only-for-companies',
+    defaultMessage: 'Only for companies',
+  },
+  onlyForCompaniesDescription: {
+    id: 'ap.ids-admin:only-for-companies-description',
+    defaultMessage:
+      'Should only companies be able to grant other users delegation for this permission.',
   },
   grantToPersonalRepresentatives: {
     id: 'ap.ids-admin:grant-to-personal-representatives',
@@ -843,5 +852,14 @@ export const m = defineMessages({
   typeNotFoundMessage: {
     id: 'ap.ids-admin:type-not-found-message',
     defaultMessage: 'It may have been removed or moved',
+  },
+  onlyForProcuringHolders: {
+    id: 'ap.ids-admin:only-for-procuring-holders',
+    defaultMessage: 'Only for procuration holders',
+  },
+  onlyForProcuringHoldersDescription: {
+    id: 'ap.ids-admin:only-for-procuring-holders-description',
+    defaultMessage:
+      'Excludes access control users from being able to grant delegations for this permission on behalf of companies.',
   },
 })

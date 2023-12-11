@@ -14,8 +14,8 @@ module.exports = {
     password: 'test_db',
     database: 'test_db',
     host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
     dialect: 'postgres',
-    port: process.env.PORT,
     seederStorage: 'sequelize',
   },
   production: {

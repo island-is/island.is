@@ -7,7 +7,8 @@ import {
   Min,
   Max,
 } from 'class-validator'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { CustomDelegationOnlyForDelegationType } from '../../types'
 
 export class ApiScopeBaseDTO {
   @IsBoolean()
@@ -99,6 +100,22 @@ export class ApiScopeBaseDTO {
     example: false,
   })
   readonly allowExplicitDelegationGrant!: boolean
+
+  @ApiPropertyOptional({
+    description: `Array of delegation types that are allowed to use custom delegations.
+      Default: undefined - meaning all delegation types are allowed to use custom delegations.
+      If set then only the delegation types in the array are allowed to use custom delegations,
+      which disables normal authenticated users.`,
+    enum: CustomDelegationOnlyForDelegationType,
+    enumName: 'CustomDelegationOnlyForDelegationType',
+    isArray: true,
+    example: [
+      CustomDelegationOnlyForDelegationType.ProcurationHolder,
+      CustomDelegationOnlyForDelegationType.Custom,
+    ],
+    default: undefined,
+  })
+  customDelegationOnlyFor?: CustomDelegationOnlyForDelegationType[]
 
   @IsBoolean()
   @IsNotEmpty()

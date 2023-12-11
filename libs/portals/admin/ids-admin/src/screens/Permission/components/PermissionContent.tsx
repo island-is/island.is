@@ -56,7 +56,7 @@ export const PermissionContent = () => {
       id: langKey,
       label: formatMessage(langKey === Languages.IS ? m.icelandic : m.english),
       content: (
-        <Box display="flex" flexDirection="column" rowGap={5}>
+        <Box display="flex" flexDirection="column" rowGap={5} marginTop={4}>
           <Stack space={1}>
             <Input
               backgroundColor="blue"
@@ -108,6 +108,7 @@ export const PermissionContent = () => {
     <FormCard
       title={formatMessage(m.content)}
       intent={PermissionFormTypes.CONTENT}
+      headerMarginBottom={3}
       inSync={checkEnvironmentsSync(permission.environments, [
         'description',
         'displayName',

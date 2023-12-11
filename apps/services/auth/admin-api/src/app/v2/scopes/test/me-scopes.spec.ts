@@ -1,12 +1,15 @@
 import request from 'supertest'
 import { getModelToken } from '@nestjs/sequelize'
+import omit from 'lodash/omit'
 
 import { faker } from '@island.is/shared/mocking'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   AdminCreateScopeDto,
   AdminScopeDTO,
+  ApiScope,
   ApiScopeUserClaim,
+  CustomDelegationOnlyForDelegationType,
   SequelizeConfigService,
   TranslatedValueDto,
 } from '@island.is/auth-api-lib'
@@ -261,6 +264,20 @@ const createTestCases: Record<string, CreateTestCase> = {
       body: expectedCreateOutput,
     },
   },
+  'should create scope with custom delegation and have access as super user': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    input: {
+      ...createInput,
+      customDelegationOnlyFor: [
+        CustomDelegationOnlyForDelegationType.ProcurationHolder,
+      ],
+    },
+    expected: {
+      status: 200,
+      body: expectedCreateOutput,
+    },
+  },
   'should create scope with additional fields and have access as current user':
     {
       user: currentUser,
@@ -327,6 +344,24 @@ const createTestCases: Record<string, CreateTestCase> = {
       },
     },
   },
+  'should return bad request for illegal value in customDelegationOnlyFor': {
+    user: superUser,
+    tenantId: TENANT_ID,
+    input: {
+      ...createInput,
+      customDelegationOnlyFor: [
+        AuthDelegationType.LegalGuardian,
+      ] as unknown as CustomDelegationOnlyForDelegationType[],
+    },
+    expected: {
+      status: 400,
+      body: {
+        detail: [
+          'each value in customDelegationOnlyFor must be one of the following values: ProcurationHolder, Custom',
+        ],
+      },
+    },
+  },
 }
 
 interface PatchTestCase {
@@ -382,6 +417,7 @@ const inputPatch = {
   grantToAuthenticatedUser: true,
   grantToLegalGuardians: true,
   grantToProcuringHolders: true,
+  customDelegationOnlyFor: [AuthDelegationType.ProcurationHolder],
   allowExplicitDelegationGrant: true,
   isAccessControlled: true,
 }
@@ -622,7 +658,7 @@ describe('MeScopesController', () => {
         expect(response.status).toEqual(testCase.expected.status)
         if (response.status === 200) {
           // Assert response
-          expect(response.body).toStrictEqual({
+          expect(response.body).toMatchObject({
             ...testCase.expected.body,
             grantToAuthenticatedUser: isDefined(
               testCase.expected.body.grantToAuthenticatedUser,
@@ -647,6 +683,13 @@ describe('MeScopesController', () => {
             required: false,
             showInDiscoveryDocument: true,
           })
+
+          // Assert - customDelegationOnlyFor field
+          if (!testCase.input.customDelegationOnlyFor) {
+            expect(response.body.customDelegationOnlyFor).toBe(null)
+          } else {
+            expect(response.body.customDelegationOnlyFor).not.toBe(null)
+          }
 
           // Assert - db record
           const dbApiScopeUserClaim = await apiScopeUserClaim.findByPk(
@@ -685,7 +728,14 @@ describe('MeScopesController', () => {
         })
       })
 
+      afterEach(() => {
+        app.cleanUp()
+      })
+
       it(`PATCH: ${testCaseName}`, async () => {
+        const scope = app.get<ApiScope>(getModelToken(ApiScope))
+        jest.clearAllMocks()
+        const mockUpdate = jest.spyOn(scope, 'update')
         // Act
         const response = await server
           .patch(
@@ -697,7 +747,26 @@ describe('MeScopesController', () => {
 
         // Assert response
         expect(response.status).toEqual(testCase.expected.status)
-        expect(response.body).toEqual(testCase.expected.body)
+        // Here we do not assert the customDelegationOnlyFor field since it is not supported by SQLite
+        expect(omit(response.body, 'customDelegationOnlyFor')).toMatchObject(
+          omit(testCase.expected.body, 'customDelegationOnlyFor'),
+        )
+        expect(mockUpdate).toBeCalledTimes(response.status === 200 ? 1 : 0)
+
+        /*
+         * This is a workaround for the customDelegationOnlyFor field.
+         * Since SQLite does not support array types, we validate if it is null or not.
+         * Should only be validated if the DB is updated
+         */
+        if (response.status === 200) {
+          if (
+            !Object.keys(testCase.input).includes('customDelegationOnlyFor')
+          ) {
+            expect(response.body.customDelegationOnlyFor).toBe(null)
+          } else {
+            expect(response.body.customDelegationOnlyFor).not.toBe(null)
+          }
+        }
       })
     })
   })

@@ -1,6 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 import { Environment } from '@island.is/shared/types'
+
 import { TranslatedValue } from '../../models/translated-value.model'
 
 @ObjectType('AuthAdminScopeEnvironment')
@@ -58,4 +59,10 @@ export class ScopeEnvironment {
 
   @Field(() => Boolean)
   isAccessControlled!: boolean
+
+  @Field(() => Boolean)
+  onlyForCompanies?: boolean
+
+  @Field(() => Boolean)
+  onlyForProcurationHolder?: boolean
 }

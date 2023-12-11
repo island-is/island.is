@@ -6,6 +6,7 @@ export {
   CreateClientType,
   MeClientsControllerCreateRequest,
   MeClientsControllerUpdateRequest,
+  CustomDelegationOnlyForDelegationType,
   AdminPatchClientDto,
   RefreshTokenExpiration,
   AdminClientDto,

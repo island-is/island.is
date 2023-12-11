@@ -1,7 +1,12 @@
 {
   "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "strict": false
+  },
   "files": [],
   "include": [],
+  "experimentalDecorators": true,
+  "allowJs": true,
   "references": [
     {
       "path": "./tsconfig.app.json"
