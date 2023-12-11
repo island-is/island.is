@@ -53,7 +53,10 @@ const OldAgePensionTemplate: ApplicationTemplate<
   name: oldAgePensionFormMessage.shared.applicationTitle,
   institution: oldAgePensionFormMessage.shared.institution,
   featureFlag: Features.oldAgePensionApplication,
-  translationNamespaces: [ApplicationConfigurations.OldAgePension.translation],
+  translationNamespaces: [
+    ApplicationConfigurations.OldAgePension.translation,
+    'sia.application',
+  ],
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
