@@ -17,7 +17,6 @@ export const airDiscountSchemeAdminModule: PortalModule = {
   name: m.airDiscountScheme,
   layout: 'full',
   enabled: ({ userInfo }) => {
-    console.log(userInfo)
     return userInfo.scopes.includes(AdminPortalScope.airDiscountScheme)
   },
   routes: (props) => [

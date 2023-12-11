@@ -6,6 +6,7 @@ import { Cache as CacheManager } from 'cache-manager'
 import { Discount, ExplicitCode } from './discount.model'
 import { Flight } from '../flight/flight.model'
 import {
+  AKUREYRI_FLIGHT_CODES,
   CONNECTING_FLIGHT_GRACE_PERIOD,
   REYKJAVIK_FLIGHT_CODES,
 } from '../flight/flight.service'
@@ -14,8 +15,8 @@ import { User } from '../user/user.model'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserService } from '../user/user.service'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
-import { number } from 'yargs'
 import { ExplicitFlight } from './dto/ExplicitFlight.dto'
+import { CreateSuperExplicitDiscountCodeParams } from './dto'
 
 interface CachedDiscount {
   user: User
@@ -458,5 +459,43 @@ export class DiscountService {
       cacheId,
       ttl,
     )
+  }
+
+  async createManualDiscountCode(
+    discountService: DiscountService,
+    body: CreateSuperExplicitDiscountCodeParams,
+    auth: AuthUser,
+    isExplicit: boolean,
+  ): Promise<Array<Discount>> {
+    const date = new Date()
+    date.setDate(date.getDate() + body.numberOfDaysUntilExpiration)
+
+    const flight: ExplicitFlight = {
+      connectable: true,
+      id: 'explicit',
+      flightLegs: [
+        {
+          origin: REYKJAVIK_FLIGHT_CODES[0],
+          destination: AKUREYRI_FLIGHT_CODES[0],
+          date,
+        },
+      ],
+    }
+
+    const discount = await this.createExplicitDiscountCode(
+      auth,
+      body.nationalId,
+      body.postalcode,
+      auth.nationalId,
+      body.comment,
+      body.numberOfDaysUntilExpiration,
+      body.needsConnectionFlight ? [flight] : [],
+      isExplicit,
+      body.flightLegs,
+    )
+    if (!discount) {
+      throw new Error(`Could not create explicit discount`)
+    }
+    return discount
   }
 }

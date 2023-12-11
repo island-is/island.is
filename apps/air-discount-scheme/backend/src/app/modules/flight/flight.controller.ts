@@ -59,6 +59,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User as AuthUser } from '@island.is/auth-nest-tools'
 import { uuid } from 'uuidv4'
+import { ExplicitFlightLeg } from '../discount/dto/ExplicitFlight.dto'
+
 @ApiTags('Flights')
 @Controller('api/public')
 @UseGuards(AuthGuard)
@@ -115,7 +117,7 @@ export class PublicFlightController {
       return adate.getTime() - bdate.getTime()
     })
 
-    let incomingLeg = {
+    let incomingLeg: ExplicitFlightLeg = {
       origin: chronoLogicallegs[0].origin,
       destination: chronoLogicallegs[0].destination,
       date: new Date(Date.parse(chronoLogicallegs[0].date.toString())),
@@ -127,7 +129,7 @@ export class PublicFlightController {
         ? true
         : await this.flightService.isFlightLegConnectingFlight(
             connectingId,
-            incomingLeg as FlightLeg, // must have date, destination and origin
+            incomingLeg, // must have date, destination and origin
           )
     // If round-trip
     if (
@@ -148,7 +150,7 @@ export class PublicFlightController {
           ? true
           : await this.flightService.isFlightLegConnectingFlight(
               connectingId,
-              incomingLeg as FlightLeg,
+              incomingLeg,
             )
     }
 

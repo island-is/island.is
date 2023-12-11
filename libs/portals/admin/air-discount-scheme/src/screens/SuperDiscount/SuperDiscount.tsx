@@ -215,9 +215,9 @@ const AdminCreateDiscount = () => {
             variables: {
               input: {
                 nationalId: nationalId.replace('-', ''),
-                postalcode: parseInt(postalcode, 10),
+                postalcode: Number.parseInt(postalcode, 10),
                 comment,
-                numberOfDaysUntilExpiration: parseInt(length.value, 10),
+                numberOfDaysUntilExpiration: Number.parseInt(length.value, 10),
                 isExplicit: true,
                 flightLegs: flightLegs.value,
                 needsConnectionFlight: needsConnecting.value,

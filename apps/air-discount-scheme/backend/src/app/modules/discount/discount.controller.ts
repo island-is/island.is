@@ -25,7 +25,7 @@ import {
   GetCurrentDiscountByNationalIdParams,
 } from './dto'
 import { DiscountService } from './discount.service'
-import { Flight, FlightService } from '../flight'
+import { FlightService } from '../flight'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -145,7 +145,12 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
-    return await discountCode(this.discountService, body, auth, false)
+    return await this.discountService.createManualDiscountCode(
+      this.discountService,
+      body,
+      auth,
+      false,
+    )
   }
   @Post('users/createSuperExplicitDiscountCode')
   @ApiOkResponse({ type: [Discount] })
@@ -155,43 +160,11 @@ export class PrivateDiscountAdminController {
     @Body() body: CreateSuperExplicitDiscountCodeParams,
     @CurrentUser() auth: AuthUser,
   ): Promise<Array<Discount>> {
-    return await discountCode(this.discountService, body, auth, true)
+    return await this.discountService.createManualDiscountCode(
+      this.discountService,
+      body,
+      auth,
+      true,
+    )
   }
-}
-async function discountCode(
-  discountService: DiscountService,
-  body: CreateSuperExplicitDiscountCodeParams,
-  auth: AuthUser,
-  isExplicit: boolean,
-): Promise<Array<Discount>> {
-  const date = new Date()
-  date.setDate(date.getDate() + body.numberOfDaysUntilExpiration)
-
-  const flight: ExplicitFlight = {
-    connectable: true,
-    id: 'explicit',
-    flightLegs: [
-      {
-        origin: REYKJAVIK_FLIGHT_CODES[0],
-        destination: AKUREYRI_FLIGHT_CODES[0],
-        date,
-      },
-    ],
-  }
-
-  const discount = await discountService.createExplicitDiscountCode(
-    auth,
-    body.nationalId,
-    body.postalcode,
-    auth.nationalId,
-    body.comment,
-    body.numberOfDaysUntilExpiration,
-    body.needsConnectionFlight ? [flight] : [],
-    isExplicit,
-    body.flightLegs,
-  )
-  if (!discount) {
-    throw new Error(`Could not create explicit discount`)
-  }
-  return discount
 }
