@@ -127,10 +127,6 @@ export default function FinanceTransactionSelectedPeriod({
                       value: record.collectingOrganization,
                     },
                     {
-                      title: formatMessage(m.recordCategory),
-                      value: record.category,
-                    },
-                    {
                       title: formatMessage(m.recordAction),
                       value: record.subCategory,
                     },
