@@ -134,7 +134,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {
-        exit: ['createTempAnswers'],
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees', 'createTempAnswers'],
         meta: {
           name: States.TRYGGINGASTOFNUN_SUBMITTED,
           status: 'inprogress',
@@ -190,6 +191,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        entry: ['assignOrganization'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.TRYGGINGASTOFNUN_IN_REVIEW,
           status: 'inprogress',
@@ -235,7 +238,8 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
         },
       },
       [States.ADDITIONAL_DOCUMENTS_REQUIRED]: {
-        entry: ['moveAdditionalDocumentRequired'],
+        entry: ['assignOrganization', 'moveAdditionalDocumentRequired'],
+        exit: ['clearAssignees'],
         meta: {
           name: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           status: 'inprogress',
