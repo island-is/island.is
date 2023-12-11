@@ -302,7 +302,6 @@ export class IntellectualPropertiesService {
   ): Promise<Array<Image> | null> {
     const response = await this.ipService.getDesignImages(user, designId)
 
-    //shady stuff
     const designImages = response
       .flatMap(({ designNumber, designImage }) =>
         designImage?.flatMap((i) => ({
