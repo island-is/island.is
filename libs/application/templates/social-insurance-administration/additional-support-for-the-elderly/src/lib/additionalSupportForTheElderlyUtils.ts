@@ -67,11 +67,18 @@ export function getApplicationExternalData(
     externalData,
     'socialInsuranceAdministrationApplicant.data.emailAddress',
   ) as string
+  
+  const isEligible = true
+  // const isEligible = getValueViaPath(
+  //   externalData,
+  //   'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  // ) as boolean
 
   return {
     applicantName,
     applicantNationalId,
     email,
+    isEligible,
   }
 }
 

@@ -1,7 +1,9 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -17,13 +19,15 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCurrenciesApi,
 } from '../dataProviders'
+import { getApplicationExternalData } from '../lib/additionalSupportForTheElderlyUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'AdditionalSupportForTheElderlyPrerequisites',
   title: additionalSupportForTheElderyFormMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'prerequisites',
@@ -78,11 +82,39 @@ export const PrerequisitesForm: Form = buildForm({
             }),
           ],
         }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: additionalSupportForTheElderyFormMessage.pre.isNotEligibleLabel,
+          condition: (FormValue, externalData) => {
+            const { isEligible } = getApplicationExternalData(externalData)
+            // Show if applicant is not eligible
+            return !isEligible
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible',
+              title: '',
+              description:
+              additionalSupportForTheElderyFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
       id: 'infoSection',
       title: additionalSupportForTheElderyFormMessage.info.section,
+      children: [],
+    }),
+    buildSection({
+      id: 'periodSection',
+      title: additionalSupportForTheElderyFormMessage.info.periodTitle,
       children: [],
     }),
     buildSection({

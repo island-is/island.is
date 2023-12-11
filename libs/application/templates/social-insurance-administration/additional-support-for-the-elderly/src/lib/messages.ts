@@ -86,6 +86,19 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
+    isNotEligibleLabel: {
+      id: 'asfte.application:is.not.eligible.label',
+      defaultMessage: 'Því miður átt þú ekki rétt á félagslegum viðbótarstuðningi',
+      description:
+        'Unfortunately, you are not entitled to additional support for the elderly',
+    },
+    isNotEligibleDescription: {
+      id: 'asfte.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi\n* Þú hefur ekki náð 67 ára\n* Þú ert ekki með skráð lögheimili á Íslandi\nÞú ert lífeyrisþeki með 90% réttindi eða meira í almannatryggingakerfinu\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reasons for this could be the following\n* You are not yet 67 years of age\n* You do not have a registered domicile in Iceland\nYou are a pensioner with 90% or more rights in the social security system\nIf you do not think this apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
   }),
 
   info: defineMessages({
