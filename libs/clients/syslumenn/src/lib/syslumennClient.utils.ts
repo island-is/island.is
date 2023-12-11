@@ -325,9 +325,7 @@ export const assetMapper = (assetRaw: EignirDanarbus): EstateAsset => {
     description: assetRaw.lysing ?? '',
     assetNumber: assetRaw.fastanumer ?? '',
     share:
-      assetRaw.eignarhlutfall !== undefined
-        ? assetRaw.eignarhlutfall / 100.0
-        : 1,
+      assetRaw.eignarhlutfall !== undefined ? assetRaw.eignarhlutfall : 100,
   }
 }
 

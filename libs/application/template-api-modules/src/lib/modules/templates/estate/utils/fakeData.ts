@@ -18,24 +18,24 @@ export const getFakeData = (
       {
         assetNumber: 'F2318696',
         description: 'Íbúð í Reykjavík',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: 'F2262202',
         description: 'Raðhús á Akureyri',
-        share: 1,
+        share: 100,
       },
     ],
     vehicles: [
       {
         assetNumber: 'VA334',
         description: 'Nissan Terrano II',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: 'YZ927',
         description: 'Subaru Forester',
-        share: 1,
+        share: 100,
       },
     ],
     knowledgeOfOtherWills: 'Yes',
@@ -45,12 +45,12 @@ export const getFakeData = (
       {
         assetNumber: '009-2018-0505',
         description: 'Framhlaðningur (púður)',
-        share: 1,
+        share: 100,
       },
       {
         assetNumber: '007-2018-1380',
         description: 'Mauser P38',
-        share: 1,
+        share: 100,
       },
     ],
     estateMembers: [
