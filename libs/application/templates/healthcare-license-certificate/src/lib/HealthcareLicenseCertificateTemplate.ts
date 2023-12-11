@@ -44,20 +44,20 @@ const template: ApplicationTemplate<
   dataSchema: HealthcareLicenseCertificateSchema,
   featureFlag: Features.healthcareLicenseCertificate,
   stateMachineConfig: {
-    initial: States.DRAFT,
+    initial: States.PREREQUISITES,
     states: {
-      [States.DRAFT]: {
+      [States.PREREQUISITES]: {
         meta: {
-          name: 'Vottorð vegna starfsleyfis',
+          name: 'Gagnaöflun',
           status: 'draft',
           actionCard: {
             tag: {
-              label: applicationMessage.actionCardDraft,
+              label: applicationMessage.actionCardPrerequisites,
               variant: 'blue',
             },
             historyLogs: [
               {
-                logMessage: coreHistoryMessages.paymentStarted,
+                logMessage: coreHistoryMessages.applicationStarted,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -67,9 +67,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/HealthcareLicenseCertificateForm').then(
-                  (module) =>
-                    Promise.resolve(module.HealthcareLicenseCertificateForm),
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
                 ),
               actions: [
                 {
@@ -86,6 +85,40 @@ const template: ApplicationTemplate<
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,
               ],
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
+      },
+      [States.DRAFT]: {
+        meta: {
+          name: 'Vottorð vegna starfsleyfis',
+          status: 'draft',
+          actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
+            historyLogs: [
+              {
+                logMessage: coreHistoryMessages.paymentStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
+          lifecycle: pruneAfterDays(1),
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/HealthcareLicenseCertificateForm').then(
+                  (module) =>
+                    Promise.resolve(module.HealthcareLicenseCertificateForm),
+                ),
+              write: 'all',
+              delete: true,
             },
           ],
         },

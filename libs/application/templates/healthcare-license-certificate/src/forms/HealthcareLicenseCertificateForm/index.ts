@@ -1,7 +1,6 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { confirmation, payment } from '../../lib/messages'
-import { PrerequisitesSection } from './prerequisitesSection'
+import { confirmation, externalData, payment } from '../../lib/messages'
 import { PersonalSection } from './personalSection'
 import { SelectLicenseSection } from './selectLicenseSection'
 import { Logo } from '../../assets/Logo'
@@ -16,7 +15,11 @@ export const HealthcareLicenseCertificateForm: Form = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
-    PrerequisitesSection,
+    buildSection({
+      id: 'externalData',
+      title: externalData.dataProvider.sectionTitle,
+      children: [],
+    }),
     PersonalSection,
     SelectLicenseSection,
     buildFormPaymentChargeOverviewSection({
