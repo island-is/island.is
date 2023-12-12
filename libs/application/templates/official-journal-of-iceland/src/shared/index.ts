@@ -1,1 +1,1 @@
-export { TEMPLATE_API_ACTIONS } from './constants'
+export { TemplateApiActions } from './constants'

@@ -1,7 +1,12 @@
 import React from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 
-import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
+import {
+  Select,
+  Option,
+  InputBackgroundColor,
+  SelectProps,
+} from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 interface SelectControllerProps<Value> {
@@ -18,6 +23,7 @@ interface SelectControllerProps<Value> {
   isSearchable?: boolean
   required?: boolean
   rules?: RegisterOptions
+  size?: SelectProps<Value>['size']
 }
 
 export const SelectController = <Value,>({
@@ -33,6 +39,7 @@ export const SelectController = <Value,>({
   backgroundColor,
   isSearchable,
   dataTestId,
+  size,
   required = false,
   rules,
 }: SelectControllerProps<Value> & TestSupport) => {
@@ -57,6 +64,7 @@ export const SelectController = <Value,>({
           placeholder={placeholder}
           value={options.find((option) => option.value === value)}
           isSearchable={isSearchable}
+          size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onChange={(newVal) => {

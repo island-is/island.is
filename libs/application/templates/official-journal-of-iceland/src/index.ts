@@ -1,5 +1,5 @@
-import OfficalJournalOfIcelandApplicationTemplate from './lib/OfficalJournalOfIcelandApplicationTemplate'
+import OfficialJournalOfIcelandApplicationTemplate from './lib/OfficialJournalOfIcelandApplicationTemplate'
 
 export const getFields = () => import('./fields/')
 
-export default OfficalJournalOfIcelandApplicationTemplate
+export default OfficialJournalOfIcelandApplicationTemplate

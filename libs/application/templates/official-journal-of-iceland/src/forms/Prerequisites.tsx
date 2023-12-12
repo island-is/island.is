@@ -11,7 +11,7 @@ import { m } from '../lib/messages'
 export const PrerequsitesForm: Form = buildForm({
   id: 'OfficalJournalOfIcelandPreRequsitesForm',
   title: 'Skilyrði', // page title
-  mode: FormModes.NOT_STARTED,
+  mode: FormModes.DRAFT,
   children: [
     buildSection({
       id: 'ExternalData',

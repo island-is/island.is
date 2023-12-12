@@ -1,3 +1,3 @@
-export enum TEMPLATE_API_ACTIONS {
-  getPreviousTemplates = 'getPreviousTemplates',
+export enum TemplateApiActions {
+  getCaseData = 'getCaseData',
 }

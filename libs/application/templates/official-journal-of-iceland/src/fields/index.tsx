@@ -1,2 +1,2 @@
-export { Prerequisites } from './Prerequisites'
-export { BasicInformation } from './BasicInformation'
+export { Prerequisites } from './Prerequisites/Prerequisites'
+export { BasicInformation } from './BasicInformation/BasicInformation'

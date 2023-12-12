@@ -10,7 +10,7 @@ import { m } from '../lib/messages'
 export const BasicInformation: Form = buildForm({
   id: 'OfficalJournalOfIcelandBasicInformation',
   title: 'Stjórnartíðindi',
-  mode: FormModes.NOT_STARTED,
+  mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   children: [
     buildSection({

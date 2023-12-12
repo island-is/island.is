@@ -13,6 +13,71 @@ export const m = defineMessages({
     id: 'ojoi.application:searchPlaceholder',
     defaultMessage: 'Sláðu inn leitarorð',
   },
+  chooseDepartment: {
+    id: 'ojoi.application:chooseDepartment',
+    defaultMessage: 'Veldu deild',
+  },
+  choosePublishingType: {
+    id: 'ojoi.application:choosePublishingType',
+    defaultMessage: 'Veldu tegund birtingar',
+  },
+  choosePublishingSubType: {
+    id: 'ojoi.application:choosePublishingSubType',
+    defaultMessage: 'Veldu undirtegund',
+  },
+  chooseCaseTitle: {
+    id: 'ojoi.application:chooseCase',
+    defaultMessage: 'Skráðu heiti auglýsinga',
+  },
+  chooseContentTemplate: {
+    id: 'ojoi.application:chooseContentTemplate',
+    defaultMessage: 'Fyrirmynd auglýsinga',
+  },
+  chooseTypeOfSignature: {
+    id: 'ojoi.application:typicalSignature',
+    defaultMessage: 'Dæmigerð undirritun',
+  },
+  department: {
+    id: 'ojoi.application:department',
+    defaultMessage: 'Deild',
+  },
+  publishingType: {
+    id: 'ojoi.application:publishingType',
+    defaultMessage: 'Tegund birtingar',
+  },
+  publishingSubType: {
+    id: 'ojoi.application:publishingSubType',
+    defaultMessage: 'Undirtegund',
+  },
+  caseTitle: {
+    id: 'ojoi.application:caseTitle',
+    defaultMessage: 'Heiti auglýsingar',
+  },
+  materialForPublication: {
+    id: 'ojoi.application:materialForPublication',
+    defaultMessage: 'Efni til birtingar',
+  },
+  contentTemplate: {
+    id: 'ojoi.application:contentTemplate',
+    defaultMessage: 'Sniðmát efnis',
+  },
+  textOfSignatureSectionTitle: {
+    id: 'ojoi.application:textOfSignatureSection',
+    defaultMessage: 'Texti undirritunarkafla',
+  },
+  textOfSignatureSectionDescription: {
+    id: 'ojoi.application:textOfSignatureSectionDescription',
+    defaultMessage:
+      'Hér má velja þá uppsetningu undirrritana sem best á við. Mikilvægt er að tryggja samræmi við frumtexta, til dæmis varðandi stað og dagsetningu.',
+  },
+  typeOfSignature: {
+    id: 'ojoi.application:typeOfSignature',
+    defaultMessage: 'Tegund undirskriftar',
+  },
+  copyLastSignature: {
+    id: 'ojoi.application:copyLastSignature',
+    defaultMessage: 'Afrita síðustu undirritun',
+  },
   caseForCopying: {
     id: 'ojoi.application:caseForCopying',
     defaultMessage: 'Mál til afritunar',

@@ -3,8 +3,8 @@ import { Text, Box, Button, Checkbox } from '@island.is/island-ui/core'
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
-import { m } from '../lib/messages'
-import { FormWrap } from '../components/FormWrap/FormWrap'
+import { m } from '../../lib/messages'
+import { FormWrap } from '../../components/FormWrap/FormWrap'
 import {
   SUBMIT_APPLICATION,
   UPDATE_APPLICATION,

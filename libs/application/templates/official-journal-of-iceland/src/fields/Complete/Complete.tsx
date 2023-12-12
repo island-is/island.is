@@ -3,7 +3,7 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { Box, BulletList, Text, Bullet } from '@island.is/island-ui/core'
 import { formatText } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../lib/messages'
+import { m } from '../../lib/messages'
 
 export const Complete: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
