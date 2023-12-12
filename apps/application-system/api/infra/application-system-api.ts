@@ -238,7 +238,10 @@ export const serviceSetup = (services: {
         prod: 'https://innskra.island.is/api',
       },
       RECYCLING_FUND_GQL_BASE_PATH: ref(
-        (h) => `http://${h.svc(services.skilavottordWs)}`,
+        (h) =>
+          `http://${h.svc(
+            services.skilavottordWs,
+          )}/app/skilavottord/api/graphql`,
       ),
     })
     .xroad(
