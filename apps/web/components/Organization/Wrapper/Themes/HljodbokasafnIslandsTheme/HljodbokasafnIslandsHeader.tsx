@@ -15,7 +15,7 @@ const HljodbokasafnIslandsHeader: React.FC<
 > = ({ organizationPage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
-    () => JSON.parse(organizationPage.organization?.namespace?.fields ?? '{}'),
+    () => JSON.parse(organizationPage.organization?.namespace?.fields || '{}'),
     [organizationPage.organization?.namespace?.fields],
   )
   const n = useNamespace(namespace)
