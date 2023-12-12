@@ -16,6 +16,8 @@ import * as styles from './BasicInformation.css'
 import { FormGroup } from '../../components/FromGroup/FormGroup'
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormatMessage } from '../../hooks'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 export type CaseTemplate = {
   applicationId?: string
   department?: string
@@ -45,9 +47,11 @@ type ExternalData = {
 
 export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
+  setBeforeSubmitCallback,
   refetch,
 }) => {
-  const { f } = useFormatMessage(application)
+  const { f, locale } = useFormatMessage(application)
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const [visibility, setVisibility] = useState(false)
   const [templateFilter, setTemplateFilter] = useState('')
@@ -86,6 +90,28 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       template?.title?.toLowerCase().includes(templateFilter.toLowerCase()),
     )
   }, [oldTemplates, templateFilter])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const res = await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              ...application.answers,
+              case: newCase,
+            },
+          },
+          locale,
+        },
+      })
+
+      if (!res) {
+        return [false, 'Could not update application']
+      }
+
+      return [true, null]
+    })
 
   const handleTemplateChange = () => {
     setVisibility(false)
@@ -129,7 +155,10 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 label: department,
                 value: department,
               }))}
-              defaultValue={departments?.[0]}
+              defaultValue={newCase.department}
+              onSelect={(value) =>
+                setNewCase({ ...newCase, department: value.value })
+              }
             />
           </Box>
           <Box width="half">
@@ -139,12 +168,15 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               backgroundColor="blue"
               id="publishingType"
               label={f(m.publishingType)}
-              defaultValue={categories?.[0]}
+              defaultValue={newCase.category}
               placeholder={f(m.choosePublishingType)}
               options={categories?.map((category) => ({
                 label: category,
                 value: category,
               }))}
+              onSelect={(value) =>
+                setNewCase({ ...newCase, category: value.value })
+              }
             />
           </Box>
           <Box width="full">
@@ -154,7 +186,11 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               textarea
               rows={4}
               placeholder={f(m.chooseCaseTitle)}
+              onChange={(e) =>
+                setNewCase({ ...newCase, title: e.target.value })
+              }
               name="case-title"
+              value={newCase.title}
             />
           </Box>
         </FormGroup>
@@ -166,10 +202,22 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               name="content-template"
               placeholder={f(m.chooseContentTemplate)}
               label={f(m.contentTemplate)}
+              value={newCase.template}
+              onChange={(e) =>
+                setNewCase({ ...newCase, template: e.target.value })
+              }
             />
           </Box>
           <Box width="full">
-            <Input textarea rows={4} name="case-content" />
+            <Input
+              textarea
+              rows={4}
+              name="case-content"
+              value={newCase.documentContents}
+              onChange={(e) =>
+                setNewCase({ ...newCase, documentContents: e.target.value })
+              }
+            />
           </Box>
         </FormGroup>
         <FormGroup
@@ -189,6 +237,10 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                 name="signature-template"
                 placeholder={f(m.chooseTypeOfSignature)}
                 label={f(m.typeOfSignature)}
+                value={newCase.signatureType}
+                onChange={(e) =>
+                  setNewCase({ ...newCase, signatureType: e.target.value })
+                }
               />
             </Box>
             <Box>
@@ -204,7 +256,15 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             </Box>
           </Box>
           <Box width="full">
-            <Input textarea rows={4} name="signature-content" />
+            <Input
+              textarea
+              rows={4}
+              name="signature-content"
+              value={newCase.signatureContents}
+              onChange={(e) =>
+                setNewCase({ ...newCase, signatureContents: e.target.value })
+              }
+            />
           </Box>
         </FormGroup>
       </FormWrap>
