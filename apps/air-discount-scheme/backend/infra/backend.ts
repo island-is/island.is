@@ -78,4 +78,4 @@ export const serviceSetup = (): ServiceBuilder<'air-discount-scheme-backend'> =>
       limits: { cpu: '400m', memory: '512Mi' },
       requests: { cpu: '50m', memory: '256Mi' },
     })
-    .grantNamespaces('nginx-ingress-external', 'islandis')
+    .grantNamespaces('islandis')
