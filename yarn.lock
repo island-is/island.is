@@ -10145,7 +10145,7 @@ __metadata:
     "@react-native-firebase/app": 16.7.0
     "@react-native-firebase/messaging": 16.7.0
     "@react-native-firebase/perf": 16.7.0
-    "@tsconfig/react-native": ^2.0.2
+    "@tsconfig/react-native": ^3.0.2
     "@types/intl": ^1
     "@types/jest": ^29.2.1
     "@types/react": ^18.0.24
@@ -16743,10 +16743,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tsconfig/react-native@npm:^2.0.2":
-  version: 2.0.3
-  resolution: "@tsconfig/react-native@npm:2.0.3"
-  checksum: 757edb4435a12d4ece9cf61c010df3dab771fbf6065c5b03445ecf440398df641d2859fc3ace3790a1f07eca990f54d16912fab59f144090871bf70612f47a80
+"@tsconfig/react-native@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "@tsconfig/react-native@npm:3.0.2"
+  checksum: 792146b5e249614cc03786ee861297a32188358ba760ef8f2881ea5261021f3757a9c8d75e84814c9a0e22920468939ebc617a66c37f0128f2d817e5eb9d224f
   languageName: node
   linkType: hard
 
