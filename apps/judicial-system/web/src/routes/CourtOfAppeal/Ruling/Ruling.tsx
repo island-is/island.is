@@ -22,6 +22,7 @@ import {
   PageLayout,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import RestrictionLength from '@island.is/judicial-system-web/src/components/RestrictionLength/RestrictionLength'
 import { CaseAppealRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
@@ -32,6 +33,7 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { isCourtOfAppealRulingStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
@@ -217,6 +219,60 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           </BlueBox>
         </Box>
+        {workingCase.appealRulingDecision ===
+          CaseAppealRulingDecision.CHANGED && (
+          <RestrictionLength
+            workingCase={workingCase}
+            handleIsolationChange={(
+              event: React.ChangeEvent<HTMLInputElement>,
+            ): void => {
+              setAndSendCaseToServer(
+                [
+                  {
+                    isAppealCustodyIsolation: event.target.checked,
+                    force: true,
+                  },
+                ],
+                workingCase,
+                setWorkingCase,
+              )
+            }}
+            handleIsolationDateChange={(
+              date: Date | undefined,
+              valid: boolean,
+            ): void => {
+              if (date && valid) {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      appealIsolationToDate: formatDateForServer(date),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+            }}
+            handleValidToDateChange={(
+              date: Date | undefined,
+              valid: boolean,
+            ): void => {
+              if (date && valid) {
+                setAndSendCaseToServer(
+                  [
+                    {
+                      appealValidToDate: formatDateForServer(date),
+                      force: true,
+                    },
+                  ],
+                  workingCase,
+                  setWorkingCase,
+                )
+              }
+            }}
+          />
+        )}
         <Box marginBottom={5}>
           <Text as="h3" variant="h3" marginBottom={3}>
             {formatMessage(strings.conclusionHeading)}

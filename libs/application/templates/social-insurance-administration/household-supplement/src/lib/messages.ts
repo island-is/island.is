@@ -558,45 +558,6 @@ export const householdSupplementFormMessage: MessageDir = {
   }),
 }
 
-export const errorMessages = defineMessages({
-  phoneNumber: {
-    id: 'hs.application:error.phonenumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
-  },
-  bank: {
-    id: 'hs.application:error.bank',
-    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
-    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
-  },
-  period: {
-    id: 'hs.application:error.period',
-    defaultMessage: 'Ógildur mánuður.',
-    description: 'Invalid month.',
-  },
-  noEmailFound: {
-    id: 'hs.application:error.no.email.found.title',
-    defaultMessage: 'Ekkert netfang skráð',
-    description: 'english translation',
-  },
-  noEmailFoundDescription: {
-    id: 'hs.application:error.no.email.found.description#markdown',
-    defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það [hér](https://minarsidur.tr.is/min-sida) og komdu svo aftur til að sækja um ellilífeyri.',
-    description: 'english translation',
-  },
-  iban: {
-    id: 'hs.application:error.iban',
-    defaultMessage: 'Ógilt IBAN',
-    description: 'Invalid IBAN',
-  },
-  swift: {
-    id: 'hs.application:error.swift',
-    defaultMessage: 'Ógilt SWIFT',
-    description: 'Invalid SWIFT',
-  },
-})
-
 export const inReviewFormMessages = defineMessages({
   formTitle: {
     id: 'hs.application:inReview.form.title',

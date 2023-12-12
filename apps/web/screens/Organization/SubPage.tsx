@@ -243,6 +243,9 @@ const SubPage: Screen<SubPageProps> = ({
                       {subpage?.signLanguageVideo?.url && (
                         <SignLanguageButton
                           videoUrl={subpage.signLanguageVideo.url}
+                          videoThumbnailImageUrl={
+                            subpage.signLanguageVideo.thumbnailImageUrl
+                          }
                           content={
                             <>
                               <Box className="rs_read" marginBottom={2}>
