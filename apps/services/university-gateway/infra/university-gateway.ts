@@ -74,7 +74,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
       max: 10,
     })
     .liveness('/liveness')
-    .readiness('/readiness')
+    .readiness('/liveness')
     .grantNamespaces('islandis', 'nginx-ingress-internal')
 }
 
