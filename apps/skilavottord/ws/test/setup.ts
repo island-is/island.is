@@ -24,6 +24,7 @@ export const truncate = async () => {
         cascade: true,
         truncate: true,
         force: true,
+        logging: false,
       })
     }),
   )
@@ -37,7 +38,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
   try {
-    await sequelize.sync()
+    await sequelize.sync({ logging: false })
   } catch (err) {
     logger.error('Migration error', err)
   }

@@ -51,15 +51,12 @@ export class VehicleService {
   async findByVehicleId(vehicleId: string): Promise<VehicleModel> {
     try {
       return await VehicleModel.findOne({
+        logging: false,
         where: { vehicleId },
       })
     } catch (error) {
       throw new Error('Failed on findByVehicleId request with error:' + error)
     }
-  }
-
-  test() {
-    return 'test'
   }
 
   async create(vehicle: VehicleModel): Promise<boolean> {
@@ -71,14 +68,13 @@ export class VehicleService {
         if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
           return true
         } else {
-          await findVehicle.destroy()
+          await findVehicle.destroy({ logging: false })
         }
       }
       // Save vehicle to database
-      await vehicle.save()
+      await vehicle.save({ logging: false })
       return true
     } catch (err) {
-      console.log('error----> ' + err)
       throw new Error(
         `Getting error while trying to create new vehicle with number: ${vehicle.vehicleId}`,
       )
