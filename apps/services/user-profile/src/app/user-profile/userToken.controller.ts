@@ -3,9 +3,10 @@ import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
 import {
   Controller,
   Get,
-  NotFoundException,
+  Inject,
   Param,
   UseGuards,
+  Logger,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -17,12 +18,17 @@ import {
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
 import { UserProfileService } from './userProfile.service'
 import { UserProfile } from './userProfile.model'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @ApiTags('User Profile')
 @Controller()
 export class UserTokenController {
-  constructor(private readonly userProfileService: UserProfileService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+    private readonly userProfileService: UserProfileService,
+  ) {}
   @ApiOperation({
     summary: 'admin access - returns a list of user device tokens',
   })
@@ -52,9 +58,11 @@ export class UserTokenController {
       nationalId,
     )
     if (!userProfile) {
-      throw new NotFoundException(
+      this.logger.info(
         `A user profile with nationalId ${nationalId} does not exist`,
       )
+    } else {
+      this.logger.info(`Found user profile with nationalId ${nationalId}`)
     }
     return userProfile
   }
