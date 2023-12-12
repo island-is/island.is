@@ -17,9 +17,9 @@ import {
   formatDate,
   IntroHeader,
   EmptyState,
-  SAMGONGUSTOFA_ID,
   FootNote,
   LinkResolver,
+  SAMGONGUSTOFA_SLUG,
 } from '@island.is/service-portal/core'
 
 import {
@@ -95,7 +95,7 @@ const DrivingLessonsBook = () => {
           title={formatMessage(messages.vehicleDrivingLessonsTitle)}
           intro={formatMessage(messages.vehicleDrivingLessonsText)}
           img="./assets/images/drivingLessons.svg"
-          serviceProviderID={SAMGONGUSTOFA_ID}
+          serviceProviderSlug={SAMGONGUSTOFA_SLUG}
           serviceProviderTooltip={formatMessage(m.drivingLessonTooltip)}
         />
       </Box>
@@ -205,7 +205,7 @@ const DrivingLessonsBook = () => {
           <EmptyState />
           <Box display="flex" alignItems="center" justifyContent="center">
             <LinkResolver href={formatMessage(urls.licenseApplication)}>
-              <Button type="button">
+              <Button as="span" unfocusable>
                 {formatMessage(messages.signupToDrivingSchool)}
               </Button>
             </LinkResolver>
@@ -213,7 +213,7 @@ const DrivingLessonsBook = () => {
         </Box>
       )}
       <FootNote
-        serviceProviderID={SAMGONGUSTOFA_ID}
+        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         notes={[
           { text: formatMessage(messages.vehicleDrivingLessonsInfoNote) },
         ]}

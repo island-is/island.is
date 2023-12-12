@@ -277,6 +277,10 @@ export const UpdateCaseMutation = gql`
       }
       appealConclusion
       appealRulingDecision
+      appealRulingModifiedHistory
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
     }
   }
 `

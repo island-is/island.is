@@ -3,8 +3,8 @@ import {
   Box,
   Columns,
   Column,
-  LoadingDots,
   InputError,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { useUpdateOrCreateUserProfile } from '@island.is/service-portal/graphql'

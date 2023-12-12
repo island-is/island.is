@@ -1,73 +1,84 @@
 import React, {
-  useRef,
-  useEffect,
-  useState,
   FC,
+  useEffect,
   useMemo,
   useReducer,
+  useRef,
+  useState,
 } from 'react'
-import { useLazyQuery } from '@apollo/client'
-import Head from 'next/head'
 import { useWindowSize } from 'react-use'
-import { NextRouter, useRouter } from 'next/router'
+import Head from 'next/head'
 import NextLink from 'next/link'
-import { theme } from '@island.is/island-ui/theme'
+import { NextRouter, useRouter } from 'next/router'
+import { useQueryState } from 'next-usequerystate'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   Box,
-  Text,
-  Stack,
   Breadcrumbs,
-  Pagination,
-  Link,
-  LinkContext,
+  Button,
   ColorSchemeContext,
-  Inline,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
+  Inline,
+  Link,
+  LinkContext,
+  Pagination,
+  Stack,
   Tag,
-  Button,
+  Text,
 } from '@island.is/island-ui/core'
-import { SearchInput, Card, CardTagsProps } from '@island.is/web/components'
-import { useI18n } from '@island.is/web/i18n'
-import { useNamespace } from '@island.is/web/hooks'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
 import {
-  Image,
-  Tag as TagType,
+  Card,
+  CardTagsProps,
+  FilterTag,
+  SearchInput,
+} from '@island.is/web/components'
+import {
+  AdgerdirPage,
+  Article,
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSearchCountTagsQuery,
   GetSearchResultsDetailedQuery,
   GetSearchResultsNewsQuery,
-  GetSearchCountTagsQuery,
-  QuerySearchResultsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  Article,
+  GetSearchResultsTotalQuery,
+  Image,
+  AnchorPage,
   LifeEventPage,
+  Link as LinkItem,
+  Manual,
   News,
+  OrganizationPage,
+  OrganizationSubpage,
+  ProjectPage,
+  QueryGetNamespaceArgs,
+  QuerySearchResultsArgs,
   SearchableContentTypes,
   SearchableTags,
-  AdgerdirPage,
   SubArticle,
-  GetSearchResultsTotalQuery,
-  OrganizationSubpage,
-  OrganizationPage,
-  Link as LinkItem,
-  ProjectPage,
+  Tag as TagType,
 } from '@island.is/web/graphql/schema'
-import { AnchorPageType } from '@island.is/web/utils/anchorPage'
-import { ActionType, reducer, initialState } from './Search.state'
+import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver, usePlausible } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { AnchorPageType } from '@island.is/web/utils/anchorPage'
+import { hasProcessEntries } from '@island.is/web/utils/article'
+
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
-  GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_COUNT_QUERY,
+  GET_SEARCH_RESULTS_QUERY_DETAILED,
   GET_SEARCH_RESULTS_TOTAL,
+  GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY,
 } from '../queries'
-
-import { FilterMenu, CategoriesProps, FilterLabels } from './FilterMenu'
+import { CategoriesProps, FilterLabels, FilterMenu } from './FilterMenu'
+import { ActionType, initialState, reducer } from './Search.state'
 
 const PERPAGE = 10
 
@@ -82,6 +93,7 @@ interface CategoryProps {
   searchResults: GetSearchResultsDetailedQuery['searchResults']
   countResults: GetSearchCountTagsQuery['searchResults']
   namespace: GetNamespaceQuery['getNamespace']
+  referencedByTitle?: string
 }
 
 type TagsList = {
@@ -90,7 +102,10 @@ type TagsList = {
   key: string
 }
 
-type SearchType = Article &
+type ManualChapterItem = Manual['chapters'][number]['chapterItems'][number]
+
+export type SearchEntryType = Article &
+  AnchorPage &
   LifeEventPage &
   News &
   AdgerdirPage &
@@ -98,7 +113,9 @@ type SearchType = Article &
   OrganizationSubpage &
   OrganizationPage &
   LinkItem &
-  ProjectPage
+  ProjectPage &
+  Manual &
+  ManualChapterItem
 
 const connectedTypes: Partial<
   Record<
@@ -117,6 +134,7 @@ const connectedTypes: Partial<
   webNews: ['WebNews'],
   webQNA: ['WebQna'],
   webLifeEventPage: ['WebLifeEventPage'],
+  webManual: ['WebManual', 'WebManualChapterItem'],
 }
 
 const stringToArray = (value: string | string[]) =>
@@ -128,6 +146,7 @@ const Search: Screen<CategoryProps> = ({
   searchResults,
   countResults,
   namespace,
+  referencedByTitle,
 }) => {
   const { query } = useRouter()
   const [state, dispatch] = useReducer(reducer, {
@@ -205,18 +224,24 @@ const Search: Screen<CategoryProps> = ({
     ],
   )
 
-  const getLabels = (item: SearchType) => {
+  const getLabels = (item: SearchEntryType) => {
     const labels = []
 
     switch (item.__typename) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      case 'LifeEventPage': {
+      case 'AnchorPage':
         if (item.pageType === AnchorPageType.LIFE_EVENT) {
           labels.push(n('lifeEvent'))
         }
         break
-      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      case 'LifeEventPage':
+        if (item.pageType === AnchorPageType.LIFE_EVENT) {
+          labels.push(n('lifeEvent'))
+        }
+        break
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
       case 'News':
@@ -227,11 +252,18 @@ const Search: Screen<CategoryProps> = ({
       case 'AdgerdirPage':
         labels.push(n('adgerdirTitle'))
         break
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore make web strict
+      case 'ManualChapterItem':
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        labels.push(item.manualChapter.title)
+        break
       default:
         break
     }
 
-    if (checkForProcessEntries(item)) {
+    if (item.__typename === 'Article' && hasProcessEntries(item)) {
       labels.push(n('applicationForm'))
     }
 
@@ -270,6 +302,8 @@ const Search: Screen<CategoryProps> = ({
       webNews: n('webNews', 'Fréttir og tilkynningar'),
       webQNA: n('webQNA', 'Spurt og svarað'),
       webLifeEventPage: n('webLifeEventPage', 'Lífsviðburðir'),
+      webManual: n('webManual', 'Handbækur'),
+      webManualChapterItem: n('webManual', 'Handbækur'),
     }),
     [n],
   )
@@ -306,35 +340,35 @@ const Search: Screen<CategoryProps> = ({
     ]
   }, [countResults.typesCount, getArticleCount, tagTitles])
 
-  const checkForProcessEntries = (item: SearchType) => {
-    if (item.__typename === 'Article') {
-      const hasMainProcessEntry =
-        !!item.processEntry?.processTitle || !!item.processEntry?.processLink
-      const hasProcessEntryInBody = !!item.body?.filter((content) => {
-        return content.__typename === 'ProcessEntry'
-      }).length
-
-      return hasMainProcessEntry || hasProcessEntryInBody
-    }
-
-    return false
-  }
-
-  const getItemLink = (item: SearchType) => {
+  const getItemLink = (item: SearchEntryType) => {
     if (
-      item.__typename === 'LifeEventPage' &&
+      (item.__typename === 'AnchorPage' ||
+        item.__typename === 'LifeEventPage') &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return linkResolver('digitalicelandservicesdetailpage', [item.slug])
     }
+
+    if (item.__typename === 'ManualChapterItem') {
+      return linkResolver('manualchapter', [
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        item.manual.slug,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore make web strict
+        item.manualChapter.slug,
+      ])
+    }
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore make web strict
     return linkResolver(item.__typename, item.url ?? item.slug?.split('/'))
   }
 
-  const getItemImages = (item: SearchType) => {
+  const getItemImages = (item: SearchEntryType) => {
     if (
-      item.__typename === 'LifeEventPage' &&
+      (item.__typename === 'AnchorPage' ||
+        item.__typename === 'LifeEventPage') &&
       item.pageType === AnchorPageType.DIGITAL_ICELAND_SERVICE
     ) {
       return {
@@ -356,22 +390,23 @@ const Search: Screen<CategoryProps> = ({
     }
   }
 
-  const searchResultsItems = (searchResults.items as Array<SearchType>).map(
-    (item) => ({
-      typename: item.__typename,
-      title: item.title,
-      parentTitle: item.parent?.title,
-      description:
-        item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
-      link: getItemLink(item),
-      categorySlug: item.category?.slug ?? item.parent?.category?.slug,
-      category: item.category ?? item.parent?.category,
-      hasProcessEntry: checkForProcessEntries(item),
-      group: item.group,
-      ...getItemImages(item),
-      labels: getLabels(item),
-    }),
-  )
+  const searchResultsItems = (
+    searchResults.items as Array<SearchEntryType>
+  ).map((item) => ({
+    typename: item.__typename,
+    title: item.title,
+    parentTitle: item.parent?.title ?? item.manual?.title,
+    description:
+      item.intro ?? item.description ?? item.parent?.intro ?? item.subtitle,
+    link: getItemLink(item),
+    categorySlug: item.category?.slug ?? item.parent?.category?.slug,
+    category: item.category ?? item.parent?.category,
+    hasProcessEntry:
+      item.__typename === 'Article' && hasProcessEntries(item as Article),
+    group: item.group,
+    ...getItemImages(item),
+    labels: getLabels(item),
+  }))
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const noUncategorized = (item) => {
@@ -467,6 +502,9 @@ const Search: Screen<CategoryProps> = ({
     labelResult: n('labelResult', 'Sjá niðurstöður'),
     inputPlaceholder: n('inputPlaceholder', 'Leita að nafni'),
   }
+
+  const [referencedBy, setReferencedBy] = useQueryState('referencedBy')
+
   return (
     <>
       <Head>
@@ -518,70 +556,104 @@ const Search: Screen<CategoryProps> = ({
                   flexWrap="nowrap"
                   collapseBelow="md"
                 >
-                  <Inline space={1}>
-                    {countResults.total > 0 && (
-                      <Tag
-                        variant="blue"
-                        active={!query?.type?.length}
+                  {referencedBy && (
+                    <Inline alignY="center" space={1}>
+                      {referencedByTitle && (
+                        <Text>
+                          {n(
+                            'referencedByPrefix',
+                            activeLocale === 'is'
+                              ? 'Síað eftir'
+                              : 'Filtered by',
+                          )}
+                          :
+                        </Text>
+                      )}
+                      <FilterTag
                         onClick={() => {
+                          setReferencedBy(null)
                           dispatch({
                             type: ActionType.RESET_SEARCH,
                           })
                         }}
                       >
-                        {n('showAllResults', 'Sýna allt')}
-                      </Tag>
-                    )}
-                    {tagsList
-                      .filter((x) => x.count > 0)
-                      .map(({ title, key }, index) => (
+                        {referencedByTitle ||
+                          n(
+                            'clearSearchFilters',
+                            activeLocale === 'is'
+                              ? 'Hreinsa síu'
+                              : 'Clear filters',
+                          )}
+                      </FilterTag>
+                    </Inline>
+                  )}
+                  {!referencedBy && (
+                    <Inline space={1}>
+                      {countResults.total > 0 && (
                         <Tag
-                          key={index}
                           variant="blue"
-                          active={
-                            query?.processentry !== 'true' &&
-                            query?.type?.includes(key)
-                          }
+                          active={!query?.type?.length}
                           onClick={() => {
                             dispatch({
-                              type: ActionType.SET_PARAMS,
-                              payload: {
-                                query: {
-                                  processentry: false,
-                                  ...getSearchParams(key),
-                                  category: [],
-                                  organization: [],
-                                },
-                                searchLocked: false,
-                              },
+                              type: ActionType.RESET_SEARCH,
                             })
                           }}
                         >
-                          {title}
-                        </Tag>
-                      ))}
-                    {typeof countResults.processEntryCount == 'number' &&
-                      countResults.processEntryCount > 0 && (
-                        <Tag
-                          variant="blue"
-                          active={query?.processentry === 'true'}
-                          onClick={() => {
-                            dispatch({
-                              type: ActionType.SET_PARAMS,
-                              payload: {
-                                query: {
-                                  processentry: true,
-                                  ...getSearchParams('webArticle'),
-                                },
-                                searchLocked: false,
-                              },
-                            })
-                          }}
-                        >
-                          {n('processEntry', 'Umsóknir')}
+                          {n('showAllResults', 'Sýna allt')}
                         </Tag>
                       )}
-                  </Inline>
+                      {tagsList
+                        .filter((x) => x.count > 0)
+                        .map(({ title, key }, index) => (
+                          <Tag
+                            key={index}
+                            variant="blue"
+                            active={
+                              query?.processentry !== 'true' &&
+                              query?.type?.includes(key)
+                            }
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: false,
+                                    ...getSearchParams(key),
+                                    category: [],
+                                    organization: [],
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {title}
+                          </Tag>
+                        ))}
+                      {typeof countResults.processEntryCount == 'number' &&
+                        countResults.processEntryCount > 0 && (
+                          <Tag
+                            variant="blue"
+                            active={query?.processentry === 'true'}
+                            onClick={() => {
+                              dispatch({
+                                type: ActionType.SET_PARAMS,
+                                payload: {
+                                  query: {
+                                    processentry: true,
+                                    ...getSearchParams('webArticle'),
+                                  },
+                                  searchLocked: false,
+                                },
+                              })
+                            }}
+                          >
+                            {n('processEntry', 'Umsóknir')}
+                          </Tag>
+                        )}
+                    </Inline>
+                  )}
+
                   <FilterMenu
                     {...filterLabels}
                     categories={categories}
@@ -601,6 +673,10 @@ const Search: Screen<CategoryProps> = ({
                         },
                       })
                     }
+                    clearFilter={() => {
+                      setReferencedBy(null)
+                      dispatch({ type: ActionType.RESET_SEARCH })
+                    }}
                     align="right"
                     variant={isMobile ? 'dialog' : 'popover'}
                   />
@@ -729,6 +805,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
   const type = query.type ?? ''
   const organization = query.organization ?? ''
   const processentry = query.processentry ?? ''
+  const referencedBy = query.referencedBy ?? ''
   const countTag = {}
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
@@ -751,6 +828,12 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
         key: 'true',
       },
     ]),
+    ...stringToArray(referencedBy).map(
+      (key: string): TagType => ({
+        type: 'referencedBy' as SearchableTags,
+        key,
+      }),
+    ),
   ]
 
   const types: SearchableContentTypes[] = stringToArray(type).map(
@@ -770,6 +853,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     'webOrganizationSubpage',
     'webOrganizationPage',
     'webProjectPage',
+    'webManual',
+    'webManualChapterItem',
   ]
 
   const ensureContentTypeExists = (
@@ -785,6 +870,7 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
       data: { searchResults: countResults },
     },
     namespace,
+    referencedByTitleResponse,
   ] = await Promise.all([
     apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       fetchPolicy: 'no-cache', // overriding because at least local caching is broken
@@ -841,11 +927,23 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
           ? JSON.parse(variables.data.getNamespace.fields)
           : {},
       ),
+    referencedBy
+      ? apolloClient.query({
+          query: GET_SINGLE_ENTRY_TITLE_BY_ID_QUERY,
+          variables: {
+            input: {
+              lang: locale,
+              id: referencedBy,
+            },
+          },
+        })
+      : null,
   ])
 
   if (searchResults.items.length === 0 && page > 1) {
     throw new CustomNextError(404)
   }
+
   return {
     q: queryString,
     searchResults,
@@ -853,6 +951,8 @@ Search.getProps = async ({ apolloClient, locale, query }) => {
     namespace,
     showSearchInHeader: false,
     page,
+    referencedByTitle:
+      referencedByTitleResponse?.data?.getSingleEntryTitleById?.title,
   }
 }
 

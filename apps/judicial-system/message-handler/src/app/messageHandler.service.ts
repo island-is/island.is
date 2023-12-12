@@ -105,6 +105,13 @@ export class MessageHandlerService implements OnModuleDestroy {
           'deliverCaseToPolice',
         )
         break
+      case MessageType.DELIVER_APPEAL_TO_POLICE:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'deliverAppealToPolice',
+        )
+        break
       case MessageType.ARCHIVE_CASE_FILE: {
         const caseFileMessage = message as CaseFileMessage
         handled = await this.internalDeliveryService.deliver(
@@ -227,6 +234,14 @@ export class MessageHandlerService implements OnModuleDestroy {
           message.caseId,
           'notification',
           { type: NotificationType.APPEAL_COMPLETED },
+        )
+        break
+      case MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION:
+        handled = await this.internalDeliveryService.deliver(
+          message.user,
+          message.caseId,
+          'notification',
+          { type: NotificationType.APPEAL_JUDGES_ASSIGNED },
         )
         break
       default:

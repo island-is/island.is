@@ -177,6 +177,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:vehicles-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þín ökutæki úr ökutækjaskrá Samgöngustofu.`,
   },
+  vehicleMileageIntro: {
+    id: 'sp.vehicles:vehicle-mileage-intro',
+    defaultMessage: `Sýnir kílómetrastöðu fyrir hvert ár. Athugið að einungis er hægt að skrá einu sinni fyrir hvert tímabil, <href>sjá nánar um það hér.</href>`,
+  },
   historyIntro: {
     id: 'sp.vehicles:vehicles-history-intro',
     defaultMessage: `Hér má nálgast upplýsingar um þinn ökutækjaferil úr ökutækjaskrá Samgöngustofu.`,
@@ -197,6 +201,10 @@ export const vehicleMessage = defineMessages({
   category: {
     id: 'sp.vehicles:category',
     defaultMessage: 'flokkur',
+  },
+  postSuccess: {
+    id: 'sp.vehicles:post-mileage-success',
+    defaultMessage: 'Skráning tókst!',
   },
   type: {
     id: 'sp.vehicles:type',
@@ -753,6 +761,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:more',
     defaultMessage: 'Meira',
   },
+  actions: {
+    id: 'sp.vehicles:actions',
+    defaultMessage: 'Aðgerðir',
+  },
   orderRegistrationNumber: {
     id: 'sp.vehicles:order-registration-number',
     defaultMessage: 'Panta skráningarmerki',
@@ -789,6 +801,218 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:odometer',
     defaultMessage: 'Kílómetrastaða',
   },
+  lastKnownOdometerStatus: {
+    id: 'sp.vehicles:last-known-odometer-status',
+    defaultMessage: 'Síðasta kílómetrastaða',
+  },
+  vehicleMileageInputLabel: {
+    id: 'sp.vehicles:mileage-input-label',
+    defaultMessage: 'Kílómetrastaða',
+  },
+  vehicleMileageInputPlaceholder: {
+    id: 'sp.vehicles:mileage-input-placeholder',
+    defaultMessage: 'Skráðu inn kílómetrastöðu',
+  },
+  vehicleMileageInputTitle: {
+    id: 'sp.vehicles:mileage-input-title',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  vehicleMileageRegistration: {
+    id: 'sp.vehicles:mileage-registration',
+    defaultMessage: 'Skráning',
+  },
+  searchForPlate: {
+    id: 'sp.vehicles:search-for-plate',
+    defaultMessage: 'Leita eftir bílnúmeri',
+  },
+  mileageInputTooLow: {
+    id: 'sp.vehicles:mileage-errors-input-too-low',
+    defaultMessage: 'Verður að vera hærri en hæsta staðfesta skráning',
+  },
+  mileageInputMinLength: {
+    id: 'sp.vehicles:mileage-errors-min-length',
+    defaultMessage: 'Skrá verður inn kílómetrastöðu til að vista',
+  },
+  mileageSuccessFormTitle: {
+    id: 'sp.vehicles:mileage-success-form-title',
+    defaultMessage: 'Kílómetrastaða skráð',
+  },
+  mileageSuccessFormText: {
+    id: 'sp.vehicles:mileage-success-form-text',
+    defaultMessage:
+      'Kílómetrastaða fyrir núverandi tímabil er skráð. Hægt er að uppfæra skráninguna hér að neðan til miðnættis {date}.',
+  },
+  mileageTagText: {
+    id: 'sp.vehicles:mileage-tag-text',
+    defaultMessage: 'Skrá kílómetrastöðu',
+  },
+  mileageAlreadyRegistered: {
+    id: 'sp.vehicles:mileage-already-registered',
+    defaultMessage: 'Kílómetrastaða fyrir núverandi tímabil er skráð.',
+  },
+  mileageExtLink: {
+    id: 'sp.vehicles:mileage-external-link',
+    defaultMessage: '/kilometragjald-a-vetnis-og-rafmagnsbila',
+  },
+})
+
+export const ipMessages = defineMessages({
+  title: {
+    id: 'sp.intellectual-property:title',
+    defaultMessage: 'Hugverkaréttindin mín',
+  },
+  description: {
+    id: 'sp.intellectual-property:description',
+    defaultMessage: 'Lýsing',
+  },
+  baseInfo: {
+    id: 'sp.intellectual-property:base-info',
+    defaultMessage: 'Grunnupplýsingar',
+  },
+  text: {
+    id: 'sp.intellectual-property:text',
+    defaultMessage: 'Texti',
+  },
+  image: {
+    id: 'sp.intellectual-property:image',
+    defaultMessage: 'Mynd',
+  },
+  images: {
+    id: 'sp.intellectual-property:images',
+    defaultMessage: 'Myndir',
+  },
+  audio: {
+    id: 'sp.intellectual-property:audio',
+    defaultMessage: 'Hljóðskrá',
+  },
+  video: {
+    id: 'sp.intellectual-property:video',
+    defaultMessage: 'Myndband',
+  },
+  animation: {
+    id: 'sp.intellectual-property:animation',
+    defaultMessage: 'Hreyfimynd',
+  },
+  name: {
+    id: 'sp.intellectual-property:name',
+    defaultMessage: 'Nafn',
+  },
+  type: {
+    id: 'sp.intellectual-property:type',
+    defaultMessage: 'Tegund',
+  },
+  make: {
+    id: 'sp.intellectual-property:make',
+    defaultMessage: 'Gerð',
+  },
+  internationalRegistration: {
+    id: 'sp.intellectual-property:international-registration',
+    defaultMessage: 'Alþjóðleg skráning',
+  },
+  internationalRegistrationDate: {
+    id: 'sp.intellectual-property:international-registration-date',
+    defaultMessage: 'Alþjóðlegur skráningardagur',
+  },
+  publish: {
+    id: 'sp.intellectual-property:publish',
+    defaultMessage: 'Birting',
+  },
+  publishDate: {
+    id: 'sp.intellectual-property:publish-date',
+    defaultMessage: 'Birtingardagur',
+  },
+  registration: {
+    id: 'sp.intellectual-property:registration',
+    defaultMessage: 'Skráning',
+  },
+  registrationDate: {
+    id: 'sp.intellectual-property:registration-date',
+    defaultMessage: 'Skráningardagur',
+  },
+  expires: {
+    id: 'sp.intellectual-property:expires',
+    defaultMessage: 'Gildir til',
+  },
+  application: {
+    id: 'sp.intellectual-property:application',
+    defaultMessage: 'Umsókn',
+  },
+  applicationNumber: {
+    id: 'sp.intellectual-property:application-number',
+    defaultMessage: 'Umsóknarnúmer',
+  },
+  maxValidObjectionDate: {
+    id: 'sp.intellectual-property:max-valid-objection-date',
+    defaultMessage: 'Andmælafrestur',
+  },
+  imageCategories: {
+    id: 'sp.intellectual-property:image-categories',
+    defaultMessage: 'Myndflokkar',
+  },
+  colorMark: {
+    id: 'sp.intellectual-property:color-mark',
+    defaultMessage: 'Merkið er í lit',
+  },
+  owner: {
+    id: 'sp.intellectual-property:owner',
+    defaultMessage: 'Eigandi',
+  },
+  address: {
+    id: 'sp.intellectual-property:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  agent: {
+    id: 'sp.intellectual-property:agent',
+    defaultMessage: 'Umboðsmaður',
+  },
+  designer: {
+    id: 'sp.intellectual-property:designer',
+    defaultMessage: 'Hönnuður',
+  },
+  category: {
+    id: 'sp.intellectual-property:category',
+    defaultMessage: 'Flokkur',
+  },
+  classification: {
+    id: 'sp.intellectual-property:classification',
+    defaultMessage: 'Flokkun',
+  },
+  information: {
+    id: 'sp.intellectual-property:information',
+    defaultMessage: 'Upplýsingar',
+  },
+  registrationCertificate: {
+    id: 'sp.intellectual-property:registration-certificate',
+    defaultMessage: 'Skráningarskírteini',
+  },
+  timeline: {
+    id: 'sp.intellectual-property:timeline',
+    defaultMessage: 'Tímalína',
+  },
+  invalidation: {
+    id: 'sp.intellectual-property:invalidation',
+    defaultMessage: 'Ógilding',
+  },
+  mortgage: {
+    id: 'sp.intellectual-property:mortgage',
+    defaultMessage: 'Veðsetning',
+  },
+  usagePermit: {
+    id: 'sp.intellectual-property:usage-permit',
+    defaultMessage: 'Nytjaleyfi',
+  },
+  revocation: {
+    id: 'sp.intellectual-property:revocation',
+    defaultMessage: 'Afturköllun',
+  },
+  otherInformation: {
+    id: 'sp.intellectual-property:other-information',
+    defaultMessage: 'Aðrar upplýsingar',
+  },
+  applicationDate: {
+    id: 'sp.intellectual-property:application-date',
+    defaultMessage: 'Umsóknardagur',
+  },
 })
 
 export const urls = defineMessages({
@@ -814,7 +1038,7 @@ export const urls = defineMessages({
   },
   renewPrivate: {
     id: 'sp.vehicles:url-renew-private',
-    defaultMessage: 'https://island.is/endurnyjun-a-einkamerki',
+    defaultMessage: 'https://island.is/umsoknir/endurnyja-einkanumer',
   },
   hideName: {
     id: 'sp.vehicles:url-hide-private-name',

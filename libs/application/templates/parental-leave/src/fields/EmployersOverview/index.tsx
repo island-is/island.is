@@ -89,7 +89,10 @@ const EmployersOverview: FC<React.PropsWithChildren<RepeaterProps>> = ({
       <Box paddingTop={5} paddingBottom={5}>
         <EmployersTable
           employers={employers}
-          editable={application.state === States.DRAFT}
+          editable={
+            application.state === States.DRAFT ||
+            application.state === States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+          }
           onDeleteEmployer={onDeleteEmployer}
         />
       </Box>

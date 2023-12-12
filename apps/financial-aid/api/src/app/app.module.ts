@@ -20,7 +20,7 @@ const debug = !environment.production
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/financial-aid/api.graphql'
+  : 'apps/financial-aid/api/src/api.graphql'
 
 @Module({
   imports: [

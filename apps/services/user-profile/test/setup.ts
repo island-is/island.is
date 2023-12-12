@@ -44,7 +44,7 @@ beforeEach(truncate)
 
 afterAll(async () => {
   if (app && sequelize) {
-    await app.close()
     await sequelize.close()
+    await app.close()
   }
 })

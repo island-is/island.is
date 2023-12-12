@@ -87,7 +87,10 @@ describe('InternalNotificationController - Send appeal received by court notific
             },
           ],
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
-          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
+            getStatementDeadline(receivedDate),
+            'PPPp',
+          )}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(

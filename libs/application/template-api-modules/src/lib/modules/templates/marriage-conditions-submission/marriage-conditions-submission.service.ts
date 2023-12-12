@@ -86,25 +86,6 @@ export class MarriageConditionsSubmissionService extends BaseTemplateApiService 
     }
   }
 
-  async createCharge({
-    application: { id },
-    auth,
-  }: TemplateApiModuleActionProps) {
-    const response = await this.sharedTemplateAPIService.createCharge(
-      auth,
-      id,
-      InstitutionNationalIds.SYSLUMENN,
-      ['AY129'],
-    )
-
-    // last chance to validate before the user receives a dummy
-    if (!response?.paymentUrl) {
-      throw new Error('paymentUrl missing in response')
-    }
-
-    return response
-  }
-
   async assignSpouse({ application, auth }: TemplateApiModuleActionProps) {
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,

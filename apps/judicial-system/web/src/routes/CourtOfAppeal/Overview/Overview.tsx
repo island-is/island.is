@@ -2,11 +2,12 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertBanner, Box, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  AlertBanner,
   CaseFilesAccordionItem,
   Conclusion,
   FormContentContainer,
@@ -18,11 +19,11 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { conclusion } from '@island.is/judicial-system-web/src/components/Conclusion/Conclusion.strings'
+import CaseOverviewHeader from '@island.is/judicial-system-web/src/routes/CourtOfAppeal/components/CaseOverviewHeader/CaseOverviewHeader'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CourtOfAppealCaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 
 const CourtOfAppealOverview: React.FC<
   React.PropsWithChildren<unknown>
@@ -30,7 +31,8 @@ const CourtOfAppealOverview: React.FC<
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { title, description } = useAppealAlertBanner(workingCase)
+  const { title, description, isLoadingAppealBanner } =
+    useAppealAlertBanner(workingCase)
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -40,7 +42,13 @@ const CourtOfAppealOverview: React.FC<
 
   return (
     <>
-      <AlertBanner variant="warning" title={title} description={description} />
+      {!isLoadingAppealBanner && (
+        <AlertBanner
+          variant="warning"
+          title={title}
+          description={description}
+        />
+      )}
       <PageLayout
         workingCase={workingCase}
         isLoading={isLoadingWorkingCase}
@@ -49,7 +57,7 @@ const CourtOfAppealOverview: React.FC<
       >
         <PageHeader title={titleForCase(formatMessage, workingCase)} />
         <FormContentContainer>
-          <CourtOfAppealCaseOverviewHeader />
+          <CaseOverviewHeader />
           <Box marginBottom={5}>
             <InfoCard
               defendants={
@@ -125,6 +133,7 @@ const CourtOfAppealOverview: React.FC<
             <Conclusion
               title={formatMessage(conclusion.title)}
               conclusionText={workingCase.conclusion}
+              judgeName={workingCase.judge?.name}
             />
           </Box>
           <CaseFilesOverview />

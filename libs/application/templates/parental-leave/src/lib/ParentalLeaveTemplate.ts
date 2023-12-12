@@ -649,7 +649,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               cond: hasDateOfBirth,
@@ -728,7 +730,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
           [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               cond: hasDateOfBirth,
@@ -1045,7 +1049,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
       //     ADDITIONALDOCUMENTSREQUIRED: { target: States.ADDITIONAL_DOCUMENTS_REQUIRED },
       //     [DefaultEvents.APPROVE]: { target: States.APPROVED },
       //     [DefaultEvents.REJECT]: { target: States.VINNUMALASTOFNUN_ACTION },
-      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+      //     [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS },
       //   },
       // },
       [States.APPROVED]: {
@@ -1106,7 +1110,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           CLOSED: { target: States.CLOSED },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           SUBMIT: [
             {
               target: States.RESIDENCE_GRAND_APPLICATION,
@@ -1141,17 +1147,25 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       // Edit Flow States
-      [States.EDIT_OR_ADD_PERIODS]: {
-        entry: ['createTempPeriods', 'removeNullPeriod', 'setNavId'],
+      [States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS]: {
+        entry: [
+          'createTempPeriods',
+          'removeNullPeriod',
+          'setNavId',
+          'createTempEmployers',
+        ],
         exit: [
+          'removeAddedEmployers',
+          'removeAddedPeriods',
           'restorePeriodsFromTemp',
           'removeNullPeriod',
           'setNavId',
           'setActionName',
           'clearEmployers',
+          'restoreEmployersFromTemp',
         ],
         meta: {
-          name: States.EDIT_OR_ADD_PERIODS,
+          name: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           status: 'inprogress',
           actionCard: {
             pendingAction: {
@@ -1182,8 +1196,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/EditOrAddPeriods').then((val) =>
-                  Promise.resolve(val.EditOrAddPeriods),
+                import('../forms/EditOrAddEmployersAndPeriods').then((val) =>
+                  Promise.resolve(val.EditOrAddEmployersAndPeriods),
                 ),
               read: 'all',
               write: 'all',
@@ -1191,7 +1205,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: [
+          SUBMIT: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
@@ -1225,6 +1239,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         exit: [
           'setEmployerReviewerNationalRegistryId',
           'restorePeriodsFromTemp',
+          'restoreEmployersFromTemp',
         ],
         meta: {
           name: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
@@ -1258,7 +1273,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.ASSIGN]: { target: States.EMPLOYER_APPROVE_EDITS },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
         },
       },
       [States.EMPLOYER_APPROVE_EDITS]: {
@@ -1267,6 +1284,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           'clearAssignees',
           'setIsApprovedOnEmployer',
           'restorePeriodsFromTemp',
+          'restoreEmployersFromTemp',
         ],
         meta: {
           name: States.EMPLOYER_APPROVE_EDITS,
@@ -1352,12 +1370,14 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
             },
           ],
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: { target: States.EMPLOYER_EDITS_ACTION },
         },
       },
       [States.EMPLOYER_EDITS_ACTION]: {
-        exit: 'restorePeriodsFromTemp',
+        exit: ['restorePeriodsFromTemp', 'restoreEmployersFromTemp'],
         meta: {
           name: States.EMPLOYER_EDITS_ACTION,
           status: 'inprogress',
@@ -1400,7 +1420,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           MODIFY: {
-            target: States.EDIT_OR_ADD_PERIODS,
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: { target: States.APPROVED },
         },
@@ -1496,7 +1516,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
@@ -1585,7 +1607,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ADDITIONALDOCUMENTSREQUIRED: {
             target: States.ADDITIONAL_DOCUMENTS_REQUIRED,
           },
-          [DefaultEvents.EDIT]: { target: States.EDIT_OR_ADD_PERIODS },
+          [DefaultEvents.EDIT]: {
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
+          },
           [DefaultEvents.REJECT]: {
             target: States.VINNUMALASTOFNUN_EDITS_ACTION,
           },
@@ -1601,7 +1625,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
       },
       [States.VINNUMALASTOFNUN_EDITS_ACTION]: {
-        exit: 'restorePeriodsFromTemp',
+        exit: ['restorePeriodsFromTemp', 'restoreEmployersFromTemp'],
         meta: {
           name: States.VINNUMALASTOFNUN_EDITS_ACTION,
           status: 'inprogress',
@@ -1649,7 +1673,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         },
         on: {
           MODIFY: {
-            target: States.EDIT_OR_ADD_PERIODS,
+            target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
           [DefaultEvents.ABORT]: {
             target: States.VINNUMALASTOFNUN_APPROVE_EDITS_ABORT,
@@ -1681,12 +1705,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
        * Restore the periods to their original state from temp.
        */
       restorePeriodsFromTemp: assign((context, event) => {
-        if (
-          !(
-            event.type === DefaultEvents.ABORT ||
-            event.type === DefaultEvents.EDIT
-          )
-        ) {
+        if (event.type !== DefaultEvents.ABORT) {
           return context
         }
 
@@ -1696,6 +1715,77 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         if (answers.tempPeriods) {
           set(answers, 'periods', cloneDeep(answers.tempPeriods))
           unset(answers, 'tempPeriods')
+        }
+
+        return context
+      }),
+      /**
+       * Copy the current employers to temp. If the user cancels the edits,
+       * we will restore the employers to their original state from temp.
+       */
+      createTempEmployers: assign((context, event) => {
+        if (event.type !== DefaultEvents.EDIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'tempEmployers', answers.employers)
+
+        return context
+      }),
+      /**
+       * The user canceled the edits.
+       * Restore the employers to their original state from temp.
+       */
+      restoreEmployersFromTemp: assign((context, event) => {
+        if (event.type !== DefaultEvents.ABORT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempEmployers) {
+          set(answers, 'employers', cloneDeep(answers.tempEmployers))
+          unset(answers, 'tempEmployers')
+        }
+
+        return context
+      }),
+      /**
+       * The user submitted the edits but did not make any changes to the employer.
+       * Restore the employers to their original state from temp.
+       */
+      removeAddedEmployers: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempEmployers && answers.addEmployer === NO) {
+          set(answers, 'employers', cloneDeep(answers.tempEmployers))
+        }
+
+        return context
+      }),
+      /**
+       * The user submitted the edits but did not make any changes to the periods.
+       * Restore the periods to their original state from temp.
+       */
+      removeAddedPeriods: assign((context, event) => {
+        if (event.type !== DefaultEvents.SUBMIT) {
+          return context
+        }
+
+        const { application } = context
+        const { answers } = application
+
+        if (answers.tempPeriods && answers.addPeriods === NO) {
+          set(answers, 'periods', cloneDeep(answers.tempPeriods))
         }
 
         return context
@@ -1768,6 +1858,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
         const { answers } = application
 
         unset(answers, 'tempPeriods')
+        unset(answers, 'tempEmployers')
 
         return context
       }),

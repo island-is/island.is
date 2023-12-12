@@ -6,9 +6,9 @@ import {
   Columns,
   Column,
   Icon,
-  LoadingDots,
   Checkbox,
   Hidden,
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/service-portal/core'
 import { msg } from '../../../../../../lib/messages'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { defineMessage } from 'react-intl'
 import { checkDelegation } from '@island.is/shared/utils'
 import { info } from 'kennitala'
@@ -10,7 +10,7 @@ import {
   formatNationalId,
   IntroHeader,
   m,
-  THJODSKRA_ID,
+  THJODSKRA_SLUG,
   UserInfoLine,
 } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
@@ -22,11 +22,6 @@ import {
 import { spmm, urls } from '../../lib/messages'
 import { formatAddress, formatNameBreaks } from '../../helpers/formatting'
 import { useNationalRegistryPersonQuery } from './UserInfo.generated'
-import { NationalRegistryName } from '@island.is/api/schema'
-import {
-  FeatureFlagClient,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 
 const dataNotFoundMessage = defineMessage({
   id: 'sp.family:data-not-found',
@@ -37,27 +32,10 @@ const SubjectInfo = () => {
   useNamespaces('sp.family')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [useNatRegV3, setUseNatRegV3] = useState(false)
-
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-
-  /* Should use v3? */
-  useEffect(() => {
-    const isFlagEnabled = async () => {
-      const ffEnabled = await featureFlagClient.getValue(
-        `isserviceportalnationalregistryv3enabled`,
-        false,
-      )
-      if (ffEnabled) {
-        setUseNatRegV3(ffEnabled as boolean)
-      }
-    }
-    isFlagEnabled()
-  }, [])
 
   const { data, loading, error } = useNationalRegistryPersonQuery({
     variables: {
-      api: useNatRegV3 ? 'v3' : undefined,
+      api: 'v3',
     },
   })
 
@@ -71,7 +49,7 @@ const SubjectInfo = () => {
       <IntroHeader
         title={userInfo.profile.name}
         intro={spmm.userInfoDesc}
-        serviceProviderID={THJODSKRA_ID}
+        serviceProviderSlug={THJODSKRA_SLUG}
         serviceProviderTooltip={formatMessage(m.tjodskraTooltip)}
       />
       <Stack space={2}>
@@ -265,7 +243,7 @@ const SubjectInfo = () => {
           </>
         )}
       </Stack>
-      <FootNote serviceProviderID={THJODSKRA_ID} />
+      <FootNote serviceProviderSlug={THJODSKRA_SLUG} />
     </>
   )
 }

@@ -4,6 +4,9 @@ import {
   TagAggregationResponse,
   TypeAggregationResponse,
   ProcessEntryAggregationResponse,
+  SortDirection,
+  sortRule,
+  SortField,
 } from '@island.is/content-search-toolkit'
 import { logger } from '@island.is/logging'
 import { SearchResult } from './models/searchResult.model'
@@ -68,9 +71,30 @@ export class ContentSearchService {
     }))
   }
 
-  async find(query: SearcherInput): Promise<SearchResult> {
+  async find(input: SearcherInput): Promise<SearchResult> {
+    const {
+      language,
+      sort: sortBy,
+      order = SortDirection.DESC,
+      ...restInput
+    } = input
+    let sort: sortRule[] = []
+
+    if (sortBy === SortField.TITLE) {
+      sort = [{ 'title.sort': { order } }]
+    }
+
+    if (sortBy === SortField.POPULAR) {
+      sort = [{ popularityScore: { order } }]
+    }
+
+    const query = {
+      ...restInput,
+      sort,
+    }
+
     const { body } = await this.elasticService.search(
-      this.getIndex(query.language),
+      this.getIndex(language),
       query,
     )
 

@@ -313,6 +313,33 @@ describe('MessageHandlerService - Handle message', () => {
     })
   })
 
+  describe('deliver appeal to police', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
+        user,
+        caseId,
+      })
+    })
+
+    it('should deliver appeal to police', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/deliverAppealToPolice`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({ user }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
   describe('archive case file', () => {
     const caseFileId = uuid()
     let then: Then
@@ -744,6 +771,36 @@ describe('MessageHandlerService - Handle message', () => {
           },
           body: JSON.stringify({
             type: NotificationType.APPEAL_COMPLETED,
+            user,
+          }),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('send judges assigned notification in appeal cases', () => {
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type: MessageType.SEND_APPEAL_JUDGES_ASSIGNED_NOTIFICATION,
+        user,
+        caseId,
+      })
+    })
+
+    it('should send judges assigned notification in appeal cases', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/case/${caseId}/notification`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({
+            type: NotificationType.APPEAL_JUDGES_ASSIGNED,
             user,
           }),
         },

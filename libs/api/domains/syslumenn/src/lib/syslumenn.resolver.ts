@@ -27,6 +27,7 @@ import { SearchForPropertyInput } from './dto/searchForProperty.input'
 import { EstateRelations } from './models/relations'
 import { AlcoholLicence } from './models/alcoholLicence'
 import { TemporaryEventLicence } from './models/temporaryEventLicence'
+import { MasterLicencesResponse } from './models/masterLicence'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -148,5 +149,13 @@ export class SyslumennResolver {
   @Query(() => EstateRelations)
   getSyslumennEstateRelations(): Promise<EstateRelations> {
     return this.syslumennService.getEstateRelations()
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => MasterLicencesResponse)
+  @BypassAuth()
+  async getMasterLicences(): Promise<MasterLicencesResponse> {
+    const licences = await this.syslumennService.getMasterLicences()
+    return { licences }
   }
 }

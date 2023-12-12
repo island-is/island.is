@@ -1,6 +1,35 @@
 import gql from 'graphql-tag'
 
-export const slices = gql`
+export const processEntryFields = gql`
+  fragment ProcessEntryFields on ProcessEntry {
+    __typename
+    id
+    processTitle
+    processLink
+    openLinkInModal
+    buttonText
+  }
+`
+
+export const htmlFields = gql`
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+`
+
+export const assetFields = gql`
+  fragment AssetFields on Asset {
+    __typename
+    id
+    title
+    url
+    contentType
+  }
+`
+
+export const imageFields = gql`
   fragment ImageFields on Image {
     __typename
     id
@@ -10,14 +39,11 @@ export const slices = gql`
     width
     height
   }
+`
 
-  fragment AssetFields on Asset {
-    __typename
-    id
-    title
-    url
-    contentType
-  }
+export const slices = gql`
+  ${imageFields}
+  ${assetFields}
 
   fragment TimelineFields on TimelineSlice {
     __typename
@@ -86,15 +112,21 @@ export const slices = gql`
     }
   }
 
-  fragment LinkCardFields on LinkCardSlice {
+  fragment LinkCardFields on LinkCard {
+    __typename
+    id
+    title
+    body
+    linkUrl
+    linkText
+  }
+
+  fragment LinkCardSectionFields on LinkCardSection {
     __typename
     id
     title
     cards {
-      title
-      body
-      link
-      linkText
+      ...LinkCardFields
     }
   }
 
@@ -178,26 +210,14 @@ export const slices = gql`
     }
   }
 
-  fragment ProcessEntryFields on ProcessEntry {
-    __typename
-    id
-    processTitle
-    processLink
-    openLinkInModal
-    buttonText
-  }
-
-  fragment HtmlFields on Html {
-    __typename
-    id
-    document
-  }
+  ${htmlFields}
 
   fragment EmbeddedVideoFields on EmbeddedVideo {
     __typename
     id
     title
     url
+    thumbnailImageUrl
   }
 
   fragment SectionWithImageFields on SectionWithImage {
@@ -356,7 +376,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
     }
@@ -365,7 +385,7 @@ export const slices = gql`
       slug
       title
       processEntry {
-        id
+        ...ProcessEntryFields
       }
       processEntryButtonText
       importance
@@ -565,6 +585,27 @@ export const slices = gql`
     }
   }
 
+  fragment AnchorPageListSliceFields on AnchorPageListSlice {
+    id
+    title
+    pages {
+      id
+      title
+      shortTitle
+      slug
+      pageType
+      tinyThumbnail {
+        url
+        title
+      }
+      thumbnail {
+        url
+        title
+      }
+      intro
+    }
+  }
+
   fragment LifeEventPageListSliceFields on LifeEventPageListSlice {
     id
     title
@@ -587,6 +628,7 @@ export const slices = gql`
   }
 
   fragment SidebarCardFields on SidebarCard {
+    id
     title
     contentString
     type
@@ -712,11 +754,79 @@ export const slices = gql`
     aspectRatio
   }
 
+  fragment LatestEventsSliceFields on LatestEventsSlice {
+    title
+    events {
+      title
+      slug
+      startDate
+      time {
+        startTime
+        endTime
+      }
+      location {
+        streetAddress
+        floor
+        postalCode
+        freeText
+        useFreeText
+      }
+      thumbnailImage {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+
+  fragment EmbedFields on Embed {
+    embedUrl
+    altText
+    aspectRatio
+  }
+
+  fragment ChartFields on Chart {
+    __typename
+    id
+    title
+    chartDescription
+    alternativeDescription
+    displayAsCard
+    startExpanded
+    dateFrom
+    dateTo
+    numberOfDataPoints
+    components {
+      __typename
+      label
+      type
+      sourceDataKey
+      interval
+      stackId
+    }
+    sourceData
+    xAxisKey
+    xAxisValueType
+  }
+
+  fragment ChartNumberBoxFields on ChartNumberBox {
+    __typename
+    title
+    numberBoxDescription
+    sourceDataKey
+    valueType
+    displayChangeMonthOverMonth
+    displayChangeYearOverYear
+    numberBoxDate
+  }
+
   fragment BaseSlices on Slice {
     ...TimelineFields
     ...StoryFields
     ...LatestNewsFields
     ...LinkCardFields
+    ...LinkCardSectionFields
     ...HeadingFields
     ...LogoListFields
     ...BulletListFields
@@ -744,6 +854,7 @@ export const slices = gql`
     ...FormFields
     ...StepperFields
     ...GraphCardFields
+    ...AnchorPageListSliceFields
     ...LifeEventPageListSliceFields
     ...SidebarCardFields
     ...PowerBiSliceFields
@@ -751,6 +862,9 @@ export const slices = gql`
     ...EmailSignupFields
     ...SliceDropdownFields
     ...EmbedFields
+    ...LatestEventsSliceFields
+    ...ChartFields
+    ...ChartNumberBoxFields
   }
 
   fragment AllSlices on Slice {
@@ -758,6 +872,7 @@ export const slices = gql`
     ...FaqListFields
     ...FeaturedSupportQNAsFields
   }
+  ${processEntryFields}
 `
 
 export const nestedOneColumnTextFields = gql`
@@ -793,7 +908,7 @@ const nestedContainerFields = `
     }
   }
   ... on TabSection {
-    ...TabSectionFields 
+    ...TabSectionFields
     tabs {
       tabTitle
       contentTitle

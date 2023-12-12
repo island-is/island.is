@@ -24,10 +24,12 @@ import { m } from '@island.is/service-portal/core'
 interface Props {
   setSideMenuOpen: (status: boolean) => void
   sideMenuOpen: boolean
+  rightPosition?: number
 }
 const Sidemenu = ({
   setSideMenuOpen,
   sideMenuOpen,
+  rightPosition,
 }: Props): ReactElement | null => {
   useNamespaces(['service.portal'])
   const navigation = useDynamicRoutesWithNavigation(MAIN_NAVIGATION)
@@ -63,6 +65,7 @@ const Sidemenu = ({
           isMobile ? styles.fullScreen : styles.dropdown,
           styles.container,
         )}
+        style={!isMobile ? { right: rightPosition } : undefined}
       >
         <Box display="flex" flexDirection="column" className={styles.wrapper}>
           <Box

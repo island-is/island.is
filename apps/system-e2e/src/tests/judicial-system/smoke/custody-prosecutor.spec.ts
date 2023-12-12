@@ -43,7 +43,7 @@ test.describe('Custody Prosecutor', () => {
     await page
       .locator('input[name=defenderEmail]')
       .fill('jl-auto-defender@kolibri.is')
-    await page.getByRole('checkbox').last().check()
+    await page.locator('input[name=defender-access-no]').click()
     await page.locator('input[name=leadInvestigator]').fill('Stjórinn')
     await page.getByRole('button', { name: 'Stofna mál' }).click()
     await expect(page).toHaveURL(/.*\/krafa\/fyrirtaka\/.*/)

@@ -38,6 +38,7 @@ import {
   EventType,
   isIndictmentCase,
   isRestrictionCase,
+  prosecutorShouldSelectDefenderForInvestigationCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -122,6 +123,7 @@ export interface UpdateCase
     | 'judgeId'
     | 'registrarId'
     | 'caseModifiedExplanation'
+    | 'rulingModifiedHistory'
     | 'caseResentExplanation'
     | 'crimeScenes'
     | 'indictmentIntroduction'
@@ -137,7 +139,11 @@ export interface UpdateCase
     | 'appealJudge3Id'
     | 'appealConclusion'
     | 'appealRulingDecision'
+    | 'appealRulingModifiedHistory'
     | 'requestSharedWithDefender'
+    | 'appealValidToDate'
+    | 'isAppealCustodyIsolation'
+    | 'appealIsolationToDate'
   > {
   type?: CaseType
   state?: CaseState
@@ -145,7 +151,6 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
-  rulingModifiedHistory?: string
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -154,17 +159,8 @@ export interface UpdateCase
 const eventTypes = Object.values(EventType)
 
 export const include: Includeable[] = [
-  { model: Defendant, as: 'defendants' },
-  { model: IndictmentCount, as: 'indictmentCounts' },
-  {
-    model: EventLog,
-    as: 'eventLogs',
-    required: false,
-    where: {
-      eventType: { [Op.in]: eventTypes },
-    },
-  },
   { model: Institution, as: 'court' },
+  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'creatingProsecutor',
@@ -175,7 +171,6 @@ export const include: Includeable[] = [
     as: 'prosecutor',
     include: [{ model: Institution, as: 'institution' }],
   },
-  { model: Institution, as: 'sharedWithProsecutorsOffice' },
   {
     model: User,
     as: 'judge',
@@ -190,25 +185,6 @@ export const include: Includeable[] = [
     model: User,
     as: 'courtRecordSignatory',
     include: [{ model: Institution, as: 'institution' }],
-  },
-  {
-    model: Case,
-    as: 'parentCase',
-    include: [
-      {
-        model: CaseFile,
-        as: 'caseFiles',
-        required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
-      },
-    ],
-  },
-  { model: Case, as: 'childCase' },
-  {
-    model: CaseFile,
-    as: 'caseFiles',
-    required: false,
-    where: { state: { [Op.not]: CaseFileState.DELETED } },
   },
   {
     model: User,
@@ -229,6 +205,27 @@ export const include: Includeable[] = [
     model: User,
     as: 'appealJudge3',
     include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: Case,
+    as: 'parentCase',
+  },
+  { model: Case, as: 'childCase' },
+  { model: Defendant, as: 'defendants' },
+  { model: IndictmentCount, as: 'indictmentCounts' },
+  {
+    model: CaseFile,
+    as: 'caseFiles',
+    required: false,
+    where: { state: { [Op.not]: CaseFileState.DELETED } },
+  },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: {
+      eventType: { [Op.in]: eventTypes },
+    },
   },
 ]
 
@@ -751,14 +748,19 @@ export class CaseService {
           caseId: theCase.id,
           caseFileId: caseFile.id,
         })) ?? []
-    messages.push(
-      {
-        type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+    messages.push({
+      type: MessageType.SEND_APPEAL_COMPLETED_NOTIFICATION,
+      user,
+      caseId: theCase.id,
+    })
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVER_APPEAL_TO_POLICE,
         user,
         caseId: theCase.id,
-      },
-      { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId: theCase.id },
-    )
+      })
+    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -814,7 +816,10 @@ export class CaseService {
     if (updatedCase.appealState !== theCase.appealState) {
       if (updatedCase.appealState === CaseAppealState.APPEALED) {
         await this.addMessagesForAppealedCaseToQueue(updatedCase, user)
-      } else if (updatedCase.appealState === CaseAppealState.RECEIVED) {
+      } else if (
+        theCase.appealState === CaseAppealState.APPEALED && // Do not send messages when reopening a case
+        updatedCase.appealState === CaseAppealState.RECEIVED
+      ) {
         await this.addMessagesForReceivedAppealCaseToQueue(updatedCase, user)
       } else if (updatedCase.appealState === CaseAppealState.COMPLETED) {
         await this.addMessagesForCompletedAppealCaseToQueue(updatedCase, user)
@@ -1159,16 +1164,26 @@ export class CaseService {
   async extend(theCase: Case, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
+        const shouldCopyDefender =
+          isRestrictionCase(theCase.type) ||
+          prosecutorShouldSelectDefenderForInvestigationCase(theCase.type)
+
         const caseId = await this.createCase(
           {
             origin: theCase.origin,
             type: theCase.type,
             description: theCase.description,
             policeCaseNumbers: theCase.policeCaseNumbers,
-            defenderName: theCase.defenderName,
-            defenderNationalId: theCase.defenderNationalId,
-            defenderEmail: theCase.defenderEmail,
-            defenderPhoneNumber: theCase.defenderPhoneNumber,
+            defenderName: shouldCopyDefender ? theCase.defenderName : undefined,
+            defenderNationalId: shouldCopyDefender
+              ? theCase.defenderNationalId
+              : undefined,
+            defenderEmail: shouldCopyDefender
+              ? theCase.defenderEmail
+              : undefined,
+            defenderPhoneNumber: shouldCopyDefender
+              ? theCase.defenderPhoneNumber
+              : undefined,
             leadInvestigator: theCase.leadInvestigator,
             courtId: theCase.courtId,
             translator: theCase.translator,

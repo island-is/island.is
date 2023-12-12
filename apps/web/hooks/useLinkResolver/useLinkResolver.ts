@@ -1,6 +1,8 @@
 import { useContext } from 'react'
+
 import { defaultLanguage } from '@island.is/shared/constants'
 import { Locale } from '@island.is/shared/types'
+
 import { I18nContext, isLocale } from '../../i18n/I18n'
 
 export interface LinkResolverResponse {
@@ -19,7 +21,11 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
+export type LinkType =
+  | keyof typeof routesTemplate
+  | 'linkurl'
+  | 'link'
+  | 'lifeeventpage'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -33,9 +39,17 @@ export const routesTemplate = {
     is: '/s/[organization]/frett',
     en: '/en/o/[organization]/news',
   },
+  organizationeventoverview: {
+    is: '/s/[organization]/vidburdir',
+    en: '/en/o/[organization]/events',
+  },
   aboutsubpage: {
     is: '/s/stafraent-island/[slug]',
     en: '',
+  },
+  applications: {
+    is: '/yfirlit-umsokna',
+    en: '/en/applications-overview',
   },
   page: {
     is: '/stafraent-island',
@@ -60,6 +74,26 @@ export const routesTemplate = {
   newsoverview: {
     is: '/frett',
     en: '/en/news',
+  },
+  manual: {
+    is: '/handbaekur/[slug]',
+    en: '/en/manuals/[slug]',
+  },
+  manualchangelog: {
+    is: '/handbaekur/[slug]/breytingasaga',
+    en: '/en/manuals/[slug]/changelog',
+  },
+  manualchapter: {
+    is: '/handbaekur/[slug]/[chapterSlug]',
+    en: '/en/manuals/[slug]/[chapterSlug]',
+  },
+  vacancies: {
+    is: '/starfatorg',
+    en: '',
+  },
+  vacancydetails: {
+    is: '/starfatorg/[id]',
+    en: '',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -101,6 +135,10 @@ export const routesTemplate = {
     is: '/s/[organization]/frett/[slug]',
     en: '/en/o/[organization]/news/[slug]',
   },
+  organizationevent: {
+    is: '/s/[organization]/vidburdir/[slug]',
+    en: '/en/o/[organization]/events/[slug]',
+  },
   organizationsubpage: {
     is: '/s/[slug]/[subSlug]',
     en: '/en/o/[slug]/[subSlug]',
@@ -141,11 +179,10 @@ export const routesTemplate = {
     is: '/lifsvidburdir',
     en: '/en/life-events',
   },
-  lifeeventpage: {
+  anchorpage: {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
-
   adgerdirpage: {
     is: '/covid-adgerdir/[slug]',
     en: '/en/covid-operations/[slug]',
@@ -210,14 +247,6 @@ export const routesTemplate = {
     is: '/undirskriftalistar',
     en: '/en/petitions',
   },
-  vacancies: {
-    is: '/starfatorg',
-    en: '',
-  },
-  vacancydetails: {
-    is: '/starfatorg/[id]',
-    en: '',
-  },
 }
 
 // This considers one block ("[someVar]") to be one variable and ignores the path variables name
@@ -281,10 +310,15 @@ export const linkResolver = (
   The __typename fields seem to have case issues, that will be addressed at a later time
   We also guard against accidental passing of nully values. ??
   */
-  const type = linkType?.toLowerCase() as
+  let type = linkType?.toLowerCase() as
     | LinkResolverInput['linkType']
     | undefined
     | null
+
+  // Temporarily reassign life event pages to anchor pages
+  if (type === 'lifeeventpage') {
+    type = 'anchorpage'
+  }
 
   // special case for external url resolution
   if (type === 'linkurl') {

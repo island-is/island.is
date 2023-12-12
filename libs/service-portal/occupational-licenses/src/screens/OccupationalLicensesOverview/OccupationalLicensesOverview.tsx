@@ -5,9 +5,9 @@ import {
   CardLoader,
   IntroHeader,
   FootNote,
-  ICELAND_ID,
   m,
   ErrorScreen,
+  ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
 import { Organization } from '@island.is/shared/types'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -20,6 +20,7 @@ import {
   OccupationalLicensesError,
   OccupationalLicensesErrorStatus,
 } from '@island.is/api/schema'
+import { OrganizationSlugType } from '@island.is/shared/constants'
 
 const OccupationalLicensesOverview = () => {
   const { data, loading, error } = useGetOccupationalLicensesQuery({})
@@ -78,8 +79,8 @@ const OccupationalLicensesOverview = () => {
       <IntroHeader
         title={m.occupationaLicenses}
         intro={formatMessage(m.occupationalLicensesDescription)}
-        serviceProviderID={ICELAND_ID}
-        serviceProviderTooltip={formatMessage(m.licensesTooltip)}
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+        serviceProviderTooltip={formatMessage(m.occupationalLicenseTooltip)}
       />
       {data?.occupationalLicenses?.errors.map((err) => {
         const message = formatErrorMessage(err)
@@ -122,7 +123,9 @@ const OccupationalLicensesOverview = () => {
           )}
         </Stack>
       </Box>
-      <FootNote serviceProviderID={ICELAND_ID} />
+      <FootNote
+        serviceProviderSlug={ISLAND_SYSLUMENN_SLUG as OrganizationSlugType}
+      />
     </Box>
   )
 }

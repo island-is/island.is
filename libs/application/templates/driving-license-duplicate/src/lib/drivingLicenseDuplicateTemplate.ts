@@ -13,6 +13,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   JurisdictionApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -26,8 +27,9 @@ import {
 import { SyslumadurPaymentCatalogApi } from '../dataProviders'
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { buildPaymentState } from '@island.is/application/utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -38,6 +40,17 @@ const pruneAfter = (time: number) => {
     shouldBePruned: true,
     whenToPrune: time,
   }
+}
+const getCodes = (application: Application) => {
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+
+  if (!chargeItemCode) {
+    throw new Error('chargeItemCode missing in answers')
+  }
+  return [chargeItemCode]
 }
 
 const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
@@ -114,44 +127,10 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
           [DefaultEvents.REJECT]: { target: States.DECLINED },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-            historyLogs: {
-              onEvent: DefaultEvents.SUBMIT,
-              logMessage: coreHistoryMessages.paymentAccepted,
-            },
-          },
-          progress: 0.9,
-          lifecycle: pruneAfter(thirtyDays),
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/Payment').then((val) =>
-                  Promise.resolve(val.payment),
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
-              ],
-              write: 'all',
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.DONE },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.SYSLUMENN,
+        chargeItemCodes: getCodes,
+      }),
       [States.DONE]: {
         meta: {
           name: 'Done',

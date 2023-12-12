@@ -6,7 +6,7 @@ import {
   DocumentApi,
   MemoApi,
   SecurityApi,
-} from '../gen/fetch/dev'
+} from '../gen/fetch'
 
 import { logger } from '@island.is/logging'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'

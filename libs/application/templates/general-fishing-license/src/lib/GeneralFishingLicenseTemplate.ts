@@ -8,6 +8,7 @@ import {
   ApplicationTypes,
   DefaultEvents,
   defineTemplateApi,
+  InstitutionNationalIds,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, States, Roles } from '../constants'
@@ -22,11 +23,14 @@ import {
 } from '../dataProviders'
 import {
   coreHistoryMessages,
-  corePendingActionMessages,
   DefaultStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { gflPendingActionMessages } from './messages/actionCards'
 import { Features } from '@island.is/feature-flags'
+import { buildPaymentState } from '@island.is/application/utils'
+import { GeneralFishingLicenseAnswers } from '..'
+import { ChargeItemCode } from '@island.is/shared/constants'
 
 const pruneAtMidnight = () => {
   const date = new Date()
@@ -39,6 +43,28 @@ const pruneAtMidnight = () => {
     shouldBePruned: true,
     whenToPrune: timeToPrune,
   }
+}
+
+const getCodes = (application: Application) => {
+  const answers = application.answers as GeneralFishingLicenseAnswers
+  const chargeItemCode = getValueViaPath(
+    answers,
+    'fishingLicense.chargeType',
+  ) as string
+
+  if (!chargeItemCode) {
+    throw new Error('Vörunúmer fyrir FJS vantar.')
+  }
+
+  // If strandveiðileyfi, then we set the const to "Sérstakt gjald vegna strandleyfa", otherwise null.
+  const strandveidileyfi =
+    chargeItemCode === ChargeItemCode.GENERAL_FISHING_LICENSE_COASTAL
+      ? ChargeItemCode.GENERAL_FISHING_LICENSE_SPECIAL_COASTAL
+      : false
+
+  return strandveidileyfi
+    ? [chargeItemCode, strandveidileyfi]
+    : [chargeItemCode]
 }
 
 const GeneralFishingLicenseTemplate: ApplicationTemplate<
@@ -146,62 +172,11 @@ const GeneralFishingLicenseTemplate: ApplicationTemplate<
           },
         },
       },
-      [States.PAYMENT]: {
-        meta: {
-          name: 'Payment state',
-          status: 'inprogress',
-          actionCard: {
-            pendingAction: {
-              title: corePendingActionMessages.paymentPendingTitle,
-              content: corePendingActionMessages.paymentPendingDescription,
-              displayStatus: 'warning',
-            },
-            historyLogs: [
-              {
-                logMessage: coreHistoryMessages.paymentAccepted,
-                onEvent: DefaultEvents.SUBMIT,
-              },
-              {
-                logMessage: coreHistoryMessages.paymentCancelled,
-                onEvent: DefaultEvents.ABORT,
-              },
-            ],
-          },
-          progress: 0.9,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          onEntry: defineTemplateApi({
-            action: ApiActions.createCharge,
-          }),
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/GeneralFishingLicensePaymentForm').then(
-                  (val) => val.GeneralFishingLicensePaymentForm,
-                ),
-              actions: [
-                { event: DefaultEvents.SUBMIT, name: 'Panta', type: 'primary' },
-                {
-                  event: DefaultEvents.ABORT,
-                  name: 'Hætta við',
-                  type: 'reject',
-                },
-              ],
-              write: 'all',
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: { target: States.SUBMITTED },
-          [DefaultEvents.ABORT]: { target: States.DRAFT },
-        },
-      },
+      [States.PAYMENT]: buildPaymentState({
+        organizationId: InstitutionNationalIds.FISKISTOFA,
+        chargeItemCodes: getCodes,
+        submitTarget: States.SUBMITTED,
+      }),
       [States.SUBMITTED]: {
         meta: {
           name: application.general.name.defaultMessage,

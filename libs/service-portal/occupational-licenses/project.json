@@ -26,7 +26,7 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/occupational-licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
     },
-    "schemas/codegen": {
+    "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "output": "libs/service-portal/occupational-licenses/src/**/*.generated.ts",

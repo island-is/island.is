@@ -104,4 +104,11 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   mobileStatus?: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  lastNudge?: Date
 }

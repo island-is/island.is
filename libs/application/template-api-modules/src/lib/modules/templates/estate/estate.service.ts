@@ -14,7 +14,6 @@ import { infer as zinfer } from 'zod'
 import { estateSchema } from '@island.is/application/templates/estate'
 import {
   estateTransformer,
-  filterAndRemoveRepeaterMetadata,
   generateRawUploadData,
   getFakeData,
   stringifyObject,
@@ -151,12 +150,15 @@ export class EstateTemplateService extends BaseTemplateApiService {
     const answers = application.answers as unknown as EstateSchema
 
     const uploadData = generateRawUploadData(answers, externalData, application)
+    // We deep copy the pdfData since the transform function
+    // for the PDF creation mutates the object
+    const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
 
     // Convert form data to a PDF backup for syslumenn
     const pdfBuffer = await transformUploadDataToPDFStream(
-      uploadData,
+      pdfData,
       application.id,
     )
     attachments.push({

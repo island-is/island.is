@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FeatureFlagClient } from '@island.is/feature-flags'
-import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import {
   m,
   ErrorScreen,
   EmptyState,
   UserInfoLine,
   IntroHeader,
-  SJUKRATRYGGINGAR_ID,
   CardLoader,
+  SJUKRATRYGGINGAR_SLUG,
 } from '@island.is/service-portal/core'
 import { useLocation } from 'react-router-dom'
 import { useGetHealthCenterQuery } from './HealthCenter.generated'
@@ -19,7 +16,6 @@ import {
   Divider,
   SkeletonLoader,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import { messages } from '../../lib/messages'
 import HistoryTable from './HistoryTable'
@@ -48,7 +44,7 @@ const HealthCenter = () => {
     fetchPolicy: 'no-cache',
   })
 
-  const healthCenterData = data?.rightsPortalUserHealthCenterRegistration
+  const healthCenterData = data?.rightsPortalHealthCenterRegistrationHistory
 
   const canRegister = healthCenterData?.canRegister ?? false
 
@@ -81,8 +77,8 @@ const HealthCenter = () => {
       <IntroHeader
         title={formatMessage(messages.healthCenterTitle)}
         intro={formatMessage(messages.healthCenterDescription)}
-        serviceProviderID={SJUKRATRYGGINGAR_ID}
-        serviceProviderTooltip={formatMessage(m.healthTooltip)}
+        serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
+        serviceProviderTooltip={formatMessage(messages.healthTooltip)}
       />
 
       {!loading && !healthCenterData?.current && (
@@ -141,11 +137,6 @@ const HealthCenter = () => {
       {!loading && !error && healthCenterData?.history && (
         <HistoryTable history={healthCenterData.history} />
       )}
-      <Box marginTop={6}>
-        <Text fontWeight="regular" variant="small">
-          {formatMessage(hm.healthCenterOverviewInfo)}
-        </Text>
-      </Box>
     </Box>
   )
 }

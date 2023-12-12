@@ -492,7 +492,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
         printHidden
       >
         {/**
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment 
+         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
          // @ts-ignore make web strict */}
         {processEntry?.processLink && <ProcessEntry {...processEntry} />}
       </Box>
@@ -705,6 +705,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore make web strict
                   videoUrl={(subArticle ?? article).signLanguageVideo.url}
+                  videoThumbnailImageUrl={
+                    (subArticle ?? article)?.signLanguageVideo
+                      ?.thumbnailImageUrl
+                  }
                   content={
                     <>
                       {!inStepperView && (
@@ -746,7 +750,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
               printHidden
               className="rs_read"
             >
-              {/** 
+              {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}
               <ProcessEntry {...processEntry} />
@@ -782,7 +786,7 @@ const ArticleScreen: Screen<ArticleProps> = ({
           isVisible &&
           createPortal(
             <Box marginTop={5} display={['block', 'block', 'none']} printHidden>
-              {/** 
+              {/**
                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                // @ts-ignore make web strict */}
               <ProcessEntry fixed {...processEntry} />

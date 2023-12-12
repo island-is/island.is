@@ -14,7 +14,7 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import type { Gender } from '@island.is/judicial-system/types'
+import type { Gender, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -652,6 +652,35 @@ export function formatDefenderAssignedEmailNotification(
     linkStart: `<a href="${overviewUrl}">`,
     linkEnd: '</a>',
   })
+
+  return { body, subject }
+}
+
+export function formatCourtOfAppealJudgeAssignedEmailNotification(
+  formatMessage: FormatMessage,
+  caseNumber: string,
+  isForeperson: boolean,
+  forepersonName: string,
+  role: UserRole,
+  overviewUrl: string,
+) {
+  const subject = formatMessage(notifications.COAJudgeAssigned.subject, {
+    caseNumber,
+  })
+
+  const body = isForeperson
+    ? formatMessage(notifications.COAJudgeAssigned.forepersonBody, {
+        caseNumber,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
+    : formatMessage(notifications.COAJudgeAssigned.body, {
+        role,
+        caseNumber,
+        foreperson: forepersonName,
+        linkStart: `<a href="${overviewUrl}">`,
+        linkEnd: '</a>',
+      })
 
   return { body, subject }
 }

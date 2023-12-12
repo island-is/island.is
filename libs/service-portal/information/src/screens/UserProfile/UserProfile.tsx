@@ -1,6 +1,4 @@
-import React from 'react'
-import { Text } from '@island.is/island-ui/core'
-import { ISLANDIS_ID, IntroHeader, m } from '@island.is/service-portal/core'
+import { ISLANDIS_SLUG, IntroHeader, m } from '@island.is/service-portal/core'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { useLocale } from '@island.is/localization'
@@ -19,7 +17,7 @@ const UserProfile = () => {
         title={formatMessage(m.mySettings)}
         intro={formatMessage(msg.overlayIntro)}
         serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
-        serviceProviderID={ISLANDIS_ID}
+        serviceProviderSlug={ISLANDIS_SLUG}
       />
       <ProfileForm
         showIntroText={false}

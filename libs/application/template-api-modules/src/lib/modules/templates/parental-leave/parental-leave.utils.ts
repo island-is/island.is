@@ -256,7 +256,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-FÓ' : 'M-FÓ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-FÓ' : 'M-FÓ'
+        return 'FO-FÓ'
       } else {
         return applicantIsMale(application) ? 'F-FÓ' : 'FO-FÓ'
       }
@@ -266,7 +266,7 @@ export const parentPrefix = (
       return applicantIsMale(application) ? 'F-Æ' : 'M-Æ'
     } else {
       if (selectedChild.primaryParentGenderCode === '1') {
-        return applicantIsMale(application) ? 'FO-Æ' : 'M-Æ'
+        return 'FO-Æ'
       } else {
         return applicantIsMale(application) ? 'F-Æ' : 'FO-Æ'
       }
@@ -346,7 +346,13 @@ export const transformApplicationToParentalLeaveDTO = (
   periods: Period[],
   attachments?: Attachment[],
   onlyValidate?: boolean,
-  type?: 'period' | 'documentPeriod' | 'document' | undefined,
+  type?:
+    | 'period'
+    | 'documentPeriod'
+    | 'document'
+    | 'empper'
+    | 'employer'
+    | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
     application.answers,
@@ -365,6 +371,7 @@ export const transformApplicationToParentalLeaveDTO = (
     isSelfEmployed,
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
+    language,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -432,6 +439,7 @@ export const transformApplicationToParentalLeaveDTO = (
         ? multipleBirths.toString()
         : undefined,
     type,
+    language,
   }
 }
 

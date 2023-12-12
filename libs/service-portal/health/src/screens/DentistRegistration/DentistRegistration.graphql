@@ -5,7 +5,7 @@ query getDentistStatus {
   }
 }
 
-query getPaginatedDentists($input: DentistsInput!) {
+query getPaginatedDentists($input: RightsPortalDentistsInput!) {
   response: rightsPortalPaginatedDentists(input: $input) {
     totalCount
     pageInfo {
@@ -33,7 +33,7 @@ query getPaginatedDentists($input: DentistsInput!) {
   }
 }
 
-mutation registerDentist($input: RegisterDentistInput!) {
+mutation registerDentist($input: RightsPortalDentistRegisterInput!) {
   rightsPortalRegisterDentist(input: $input) {
     success
   }

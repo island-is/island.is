@@ -376,6 +376,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
   },
+  applicationSubmitFailed: {
+    id: 'application.system:core.application.SubmitFailed',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission of application failed',
+  },
   paymentSubmitRetryButtonCaption: {
     id: 'application.system:core.payment.retryCaption',
     defaultMessage: 'Reyna aftur',
@@ -450,6 +455,19 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message summary when a user has no children in joint custody',
   },
+  nationalRegistryAlreadyIcelandicCitizenTitle: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenTitle',
+    defaultMessage: 'Nú þegar með íslenskt ríkisfang',
+    description:
+      'Error message title when a user already has icelandic citizenship',
+  },
+  nationalRegistryAlreadyIcelandicCitizenSummary: {
+    id: 'application.system:core.fetch.data.nationalRegistryAlreadyIcelandicCitizenSummary',
+    defaultMessage:
+      'Samkvæmt gögnum úr Þjóðskrá Ísland er innskráður notandi nú þegar með íslenskt ríkisfang.',
+    description:
+      'Error message summary when a user already has icelandic citizenship',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
@@ -520,7 +538,16 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja fæðingarstað',
     description: 'Not able to fetch birthplace',
   },
-
+  nationalRegistryResidenceHistoryMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryResidenceHistoryMissing',
+    defaultMessage: 'Náði ekki að sækja búsetusögu',
+    description: 'Not able to fetch residence history',
+  },
+  nationalRegistryCohabitantsMissing: {
+    id: 'application.system:core.fetch.data.nationalRegistryCohabitantsMissing',
+    defaultMessage: 'Náði ekki að sækja samíbúa',
+    description: 'Not able to fetch cohabitants',
+  },
   applicationIsPrunedAndReadOnly: {
     id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
     defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
@@ -551,6 +578,13 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:copyLink.copyLinkErrorToast',
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
+  },
+  electricVehicleListEmptyOwner: {
+    id: 'application.system:core.fetch.data.electricVehicleListEmptyOwner',
+    defaultMessage:
+      'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
+    description:
+      'You do not have any electric vehicles where you are the main owner',
   },
 })
 

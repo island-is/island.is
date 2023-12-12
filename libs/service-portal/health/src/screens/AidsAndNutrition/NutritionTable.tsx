@@ -1,6 +1,5 @@
 import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { FC } from 'react'
 import {
   ExpandHeader,
   amountFormat,
@@ -17,12 +16,7 @@ interface Props {
   linkText: string
 }
 
-const NutritionTable: FC<React.PropsWithChildren<Props>> = ({
-  data,
-  footnote,
-  link,
-  linkText,
-}) => {
+const NutritionTable = ({ data, footnote, link, linkText }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 

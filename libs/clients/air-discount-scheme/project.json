@@ -20,12 +20,14 @@
         "passWithNoTests": true
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/air-discount-scheme/gen/fetch -i apps/air-discount-scheme/backend/src/private-openapi.yaml --additional-properties=enumPropertyNaming=original"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
+  "implicitDependencies": ["air-discount-scheme-backend"],
   "tags": ["lib:client", "scope:client"]
 }

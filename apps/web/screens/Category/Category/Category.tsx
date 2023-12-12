@@ -24,13 +24,13 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
-  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+  GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
 } from '@island.is/web/screens/queries'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import {
-  GetLifeEventsInCategoryQuery,
+  GetAnchorPagesInCategoryQuery,
   GetNamespaceQuery,
   GetArticlesQuery,
   QueryGetArticlesArgs,
@@ -38,10 +38,11 @@ import {
   QueryGetNamespaceArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
-  QueryGetLifeEventsInCategoryArgs,
+  QueryGetAnchorPagesInCategoryArgs,
   Image,
   ArticleGroup,
-} from '../../../graphql/schema'
+  Article,
+} from '@island.is/web/graphql/schema'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
@@ -51,9 +52,10 @@ import {
   getHashString,
   updateHashArray,
 } from './utils'
+import { hasProcessEntries } from '@island.is/web/utils/article'
 
 type Articles = GetArticlesQuery['getArticles']
-type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
+type LifeEvents = GetAnchorPagesInCategoryQuery['getAnchorPagesInCategory']
 
 interface CategoryProps {
   articles: Articles
@@ -352,39 +354,32 @@ const Category: Screen<CategoryProps> = ({
                     </Text>
                   )}
                   <Stack space={2}>
-                    {sortedArticles.map(
-                      ({
-                        __typename: typename,
-                        title,
-                        slug,
-                        processEntry,
-                        processEntryButtonText,
-                      }) => {
-                        return (
-                          <FocusableBox key={slug} borderRadius="large">
-                            <TopicCard
-                              href={
-                                linkResolver(
-                                  typename?.toLowerCase() as LinkType,
-                                  [slug],
-                                ).href
-                              }
-                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                              // @ts-ignore make web strict
-                              tag={
-                                (!!processEntry || processEntryButtonText) &&
-                                n(
-                                  processEntryButtonText || 'application',
-                                  'Umsókn',
-                                )
-                              }
-                            >
-                              {title}
-                            </TopicCard>
-                          </FocusableBox>
-                        )
-                      },
-                    )}
+                    {sortedArticles.map((article) => {
+                      return (
+                        <FocusableBox key={article.slug} borderRadius="large">
+                          <TopicCard
+                            href={
+                              linkResolver(
+                                article.__typename?.toLowerCase() as LinkType,
+                                [article.slug],
+                              ).href
+                            }
+                            {...(hasProcessEntries(article as Article) ||
+                            article.processEntryButtonText
+                              ? {
+                                  tag: n(
+                                    article.processEntryButtonText ||
+                                      'application',
+                                    'Umsókn',
+                                  ),
+                                }
+                              : {})}
+                          >
+                            {article.title}
+                          </TopicCard>
+                        </FocusableBox>
+                      )
+                    })}
                   </Stack>
                 </React.Fragment>
               )
@@ -575,7 +570,7 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles: articles },
     },
     {
-      data: { getLifeEventsInCategory: lifeEvents },
+      data: { getAnchorPagesInCategory: lifeEvents },
     },
     {
       data: { getArticleCategories },
@@ -593,10 +588,10 @@ Category.getProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient.query<
-      GetLifeEventsInCategoryQuery,
-      QueryGetLifeEventsInCategoryArgs
+      GetAnchorPagesInCategoryQuery,
+      QueryGetAnchorPagesInCategoryArgs
     >({
-      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+      query: GET_ANCHOR_PAGES_IN_CATEGORY_QUERY,
       variables: {
         input: {
           slug,

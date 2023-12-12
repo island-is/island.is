@@ -254,4 +254,27 @@ export class InternalCaseController {
       deliverDto.user,
     )
   }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    CaseCompletedGuard,
+  )
+  @Post('case/:caseId/deliverAppealToPolice')
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a completed appeal to police',
+  })
+  deliverAppealToPolice(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Delivering appeal ${caseId} to police`)
+
+    return this.internalCaseService.deliverAppealToPolice(
+      theCase,
+      deliverDto.user,
+    )
+  }
 }

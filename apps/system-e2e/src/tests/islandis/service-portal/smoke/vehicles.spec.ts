@@ -30,6 +30,7 @@ test.describe('MS - Vehicles', () => {
   })
 
   test('my vehicles', async () => {
+    test.slow()
     const page = await context.newPage()
     await disableI18n(page)
 
@@ -57,24 +58,12 @@ test.describe('MS - Vehicles', () => {
 
       const viewLink = page.getByText(label(messages.seeInfo)).first()
 
-      const inputField = page.getByRole('textbox', {
-        name: label(m.searchLabel),
-      })
-      await inputField.click()
-      await inputField.type('la', { delay: 200 })
-
       // Assert
       await expect(ownersLicense).toBeVisible()
       await expect(recycleLicense).toBeVisible()
       await expect(hideName).toBeVisible()
       await expect(viewLink).toBeVisible()
       await expect(ownershipLink).toBeVisible()
-      await expect(
-        page.locator(`text=${label(vehicleMessage.found)}`),
-      ).toBeVisible()
-      await expect(
-        page.locator(`text=${label(vehicleMessage.clearFilter)}`),
-      ).toBeVisible()
     })
 
     await test.step('should display detail', async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   Box,
   Hidden,
@@ -33,7 +33,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const { unreadCounter } = useListDocuments()
   const { width } = useWindowSize()
-
+  const ref = useRef<HTMLButtonElement>(null)
   const isMobile = width < theme.breakpoints.md
   const { userInfo: user } = useAuth()
   const badgeActive: keyof typeof styles.badge =
@@ -119,6 +119,7 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                               : setSideMenuOpen(true)
                             setUserMenuOpen(false)
                           }}
+                          ref={ref}
                         >
                           {formatMessage(m.overview)}
                         </Button>
@@ -127,6 +128,10 @@ export const Header = ({ position, sideMenuOpen, setSideMenuOpen }: Props) => {
                       <Sidemenu
                         setSideMenuOpen={(set: boolean) => setSideMenuOpen(set)}
                         sideMenuOpen={sideMenuOpen}
+                        rightPosition={
+                          window.outerWidth -
+                          (ref.current?.getBoundingClientRect().right ?? 0)
+                        }
                       />
 
                       {/* Display X button instead if open in mobile*/}

@@ -15,10 +15,13 @@ export interface IntroHeaderProps {
   title: MessageDescriptor | string
   intro?: MessageDescriptor | string
   img?: string
+  imgPosition?: 'center' | 'right'
+  imgHiddenBelow?: 'xl' | 'lg' | 'md' | 'sm'
   hideImgPrint?: boolean
   marginBottom?: BoxProps['marginBottom']
   children?: React.ReactNode
   buttonGroup?: React.ReactNode
+  isSubheading?: boolean
 }
 
 export const IntroHeader = ({
@@ -29,13 +32,16 @@ export const IntroHeader = ({
   hideImgPrint = false,
   marginBottom = 6,
   children,
+  isSubheading = false,
+  imgPosition = 'center',
+  imgHiddenBelow = 'lg',
 }: IntroHeaderProps) => {
   const { formatMessage } = useLocale()
 
   return (
     <GridRow marginBottom={marginBottom}>
       <GridColumn span={['8/8', '5/8']}>
-        <Text variant="h3" as="h1">
+        <Text variant={isSubheading ? 'h5' : 'h3'} as="h1">
           {formatMessage(title)}
         </Text>
         {intro && (
@@ -47,8 +53,8 @@ export const IntroHeader = ({
       </GridColumn>
       {img && (
         <GridColumn span={['8/8', '3/8']}>
-          <Hidden print={hideImgPrint} below="lg">
-            <Box textAlign="center" padding={[6, 0]}>
+          <Hidden print={hideImgPrint} below={imgHiddenBelow}>
+            <Box textAlign={imgPosition} padding={[6, 0]}>
               <img src={img} alt="" />
             </Box>
           </Hidden>

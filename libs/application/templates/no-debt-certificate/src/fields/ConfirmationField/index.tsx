@@ -174,7 +174,6 @@ export const ConfirmationField: FC<
 
       <Box marginBottom={3}>
         <TopicCard
-          href="/"
           onClick={() => setViewNoDebtCertificate(true)}
           tag="Pdf"
           colorScheme="blue"

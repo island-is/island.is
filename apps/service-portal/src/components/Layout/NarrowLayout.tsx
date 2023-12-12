@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import {
   Box,
   Navigation,
@@ -10,13 +10,13 @@ import {
   m,
   ServicePortalNavigationItem,
   ModuleAlertBannerSection,
+  GoBack,
 } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useWindowSize } from 'react-use'
 import SidebarLayout from './SidebarLayout'
 import Sticky from '../Sticky/Sticky'
 import { Link as ReactLink } from 'react-router-dom'
-import GoBack from '../GoBack/GoBack'
 import { theme } from '@island.is/island-ui/theme'
 import * as styles from './Layout.css'
 import { PortalNavigationItem } from '@island.is/portals/core'
@@ -30,23 +30,23 @@ interface NarrowLayoutProps {
 
 export type SubNavItemType = NavigationItem & { enabled?: boolean }
 
-export const NarrowLayout: FC<NarrowLayoutProps> = ({
+export const NarrowLayout = ({
   children,
   pathname,
   height,
   activeParent,
-}) => {
+}: NarrowLayoutProps) => {
   const { formatMessage } = useLocale()
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
-  const mapChildren = (item: ServicePortalNavigationItem): any => {
+  const mapChildren = (item: ServicePortalNavigationItem): SubNavItemType => {
     if (item.children) {
       return {
         title: formatMessage(item.name),
         href: item.path,
-        active: item.path && pathname.includes(item.path),
+        active: item.path ? pathname.includes(item.path) : undefined,
         items: item.children
           .filter((x) => !x.navHide)
           .map((child) => {

@@ -16,6 +16,7 @@ import {
   SamgongustofaModule,
   FjarsyslaModule,
 } from './modules'
+import { AuthModule as AuthJwtModule } from '@island.is/auth-nest-tools'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments'
 
@@ -23,7 +24,7 @@ const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
 const autoSchemaFile = environment.production
   ? true
-  : 'apps/skilavottord/api.graphql'
+  : 'apps/skilavottord/ws/src/api.graphql'
 
 @Module({
   imports: [
@@ -38,6 +39,10 @@ const autoSchemaFile = environment.production
       useClass: SequelizeConfigService,
     }),
     AuthModule,
+    AuthJwtModule.register({
+      audience: null,
+      issuer: environment.auth.issuer,
+    }),
     AccessControlModule,
     RecyclingRequestModule,
     SamgongustofaModule,

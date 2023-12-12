@@ -67,17 +67,12 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/ws"]
     },
-    "schemas/build-graphql-schema": {
+    "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
         "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/skilavottord/ws/tsconfig.json scripts/build-graphql-schema.ts apps/skilavottord/ws/src/app/app.module"
-      }
-    },
-    "schemas/codegen": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "graphql-codegen --config apps/skilavottord/codegen.yml"
-      }
+      },
+      "outputs": ["{projectRoot}/src/api.graphql"]
     },
     "migrate": {
       "executor": "nx:run-commands",

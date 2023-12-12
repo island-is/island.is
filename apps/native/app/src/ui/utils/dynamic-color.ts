@@ -1,5 +1,5 @@
-import {DynamicColorIOS, Platform} from 'react-native';
-import {Shade, StyledProps} from 'styled-components';
+import {DynamicColorIOS, DynamicColorIOSTuple, Platform} from 'react-native';
+import {Shade, StyledProps, useTheme} from 'styled-components';
 
 type DynamicShade = keyof Shade;
 type DynamicColorValue = DynamicShade | (string & {});
@@ -92,4 +92,17 @@ export function dynamicColor<T>(
       return `color(DynamicColor, '${JSON.stringify(shape)}')`;
     }
   };
+}
+
+export function useDynamicColor() {
+  const theme = useTheme();
+  const res = (tuple: DynamicColorIOSTuple) => {
+    if (Platform.OS === 'ios') {
+      return DynamicColorIOS(tuple);
+    } else {
+      return theme.isDark ? tuple.dark : tuple.light;
+    }
+  };
+  res.theme = theme;
+  return res;
 }

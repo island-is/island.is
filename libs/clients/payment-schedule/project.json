@@ -12,11 +12,12 @@
         ]
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/payment-schedule/src/gen/fetch/ -i libs/clients/payment-schedule/src/openapi.json"
-      }
+      },
+      "outputs": ["{projectRoot}/src/gen/fetch"]
     },
     "test": {
       "executor": "@nx/jest:jest",

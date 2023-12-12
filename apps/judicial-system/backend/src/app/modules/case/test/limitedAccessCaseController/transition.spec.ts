@@ -17,7 +17,7 @@ import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: Case

@@ -31,11 +31,12 @@
         "cwd": "libs/clients/ship-registry"
       }
     },
-    "schemas/external-openapi-generator": {
+    "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn openapi-generator -o libs/clients/ship-registry/gen/fetch -i libs/clients/ship-registry/src/clientConfig.json"
-      }
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   },
   "tags": ["lib:client"]

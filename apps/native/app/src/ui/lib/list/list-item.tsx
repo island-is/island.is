@@ -1,12 +1,14 @@
 import {theme} from '../../utils/theme';
-import React from 'react';
+import React, {useState} from 'react';
 import {FormattedDate} from 'react-intl';
-import {StyleSheet} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
 import styled from 'styled-components/native';
 import {dynamicColor} from '../../utils';
 import {font} from '../../utils/font';
+import Star from '../../../assets/icons/star.png';
+import StarFilled from '../../../assets/icons/star-filled.png';
 
-const Host = styled.SafeAreaView<{background: boolean}>`
+const Host = styled.SafeAreaView<{background?: boolean}>`
   margin-right: 16px;
   flex-direction: row;
   background-color: ${dynamicColor(props =>
@@ -32,6 +34,7 @@ const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
   padding-bottom: ${({theme}) => theme.spacing[1]}px;
+  gap: 4px;
 `;
 
 const Title = styled.View`
@@ -81,6 +84,7 @@ const Dot = styled.View`
 
 const Message = styled.Text`
   padding-bottom: ${({theme}) => theme.spacing[1]}px;
+  flex: 1;
 
   ${font({
     fontWeight: '300',
@@ -126,6 +130,16 @@ const Divider = styled.View`
   }))};
 `;
 
+const StarImage = styled.Image<{active?: boolean}>`
+  tint-color: ${dynamicColor(({active, theme}) => ({
+    dark: active ? theme.color.blue400 : theme.color.dark300,
+    light: active ? theme.color.blue400 : theme.color.dark300,
+  }))};
+  width: 16px;
+  height: 16px;
+  margin-top: -4px;
+`;
+
 interface ListItemAction {
   id: string;
   text: string;
@@ -139,6 +153,8 @@ interface ListItemProps {
   unread?: boolean;
   actions?: ListItemAction[];
   icon?: React.ReactNode;
+  onStarPress?(): void;
+  starred?: boolean;
 }
 
 export function ListItem({
@@ -147,8 +163,11 @@ export function ListItem({
   date,
   icon,
   actions,
+  onStarPress,
+  starred = false,
   unread = false,
 }: ListItemProps) {
+  const [active, setActive] = useState(false);
   return (
     <Cell>
       <Host>
@@ -167,7 +186,15 @@ export function ListItem({
               {unread && <Dot />}
             </Date>
           </Row>
-          <Message>{subtitle}</Message>
+          <Row style={{alignItems: 'center', paddingBottom: 0}}>
+            <Message numberOfLines={1}>{subtitle}</Message>
+            <Pressable hitSlop={16} onPress={onStarPress}>
+              <StarImage
+                source={starred ? StarFilled : Star}
+                active={starred}
+              />
+            </Pressable>
+          </Row>
           {actions?.length ? (
             <Actions>
               {actions.map(action => (

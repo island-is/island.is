@@ -2,14 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../../shared'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import {
-  ApplicationTypes,
-  InstitutionNationalIds,
-} from '@island.is/application/types'
-import {
-  OrderVehicleLicensePlateAnswers,
-  getChargeItemCodes,
-} from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
+import { ApplicationTypes } from '@island.is/application/types'
+import { OrderVehicleLicensePlateAnswers } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import {
   PlateOrderValidation,
   SGS_DELIVERY_STATION_CODE,
@@ -119,25 +113,6 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
 
   async getPlateTypeList() {
     return await this.vehicleCodetablesClient.getPlateTypes()
-  }
-
-  async createCharge({ application, auth }: TemplateApiModuleActionProps) {
-    try {
-      const answers = application.answers as OrderVehicleLicensePlateAnswers
-
-      const chargeItemCodes = getChargeItemCodes(answers)
-
-      const result = this.sharedTemplateAPIService.createCharge(
-        auth,
-        application.id,
-        InstitutionNationalIds.SAMGONGUSTOFA,
-        chargeItemCodes,
-        [{ name: 'vehicle', value: answers?.pickVehicle?.plate }],
-      )
-      return result
-    } catch (exeption) {
-      return { id: '', paymentUrl: '' }
-    }
   }
 
   async submitApplication({

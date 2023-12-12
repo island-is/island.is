@@ -27,7 +27,9 @@ interface Props {
 }
 
 const getBackgroundColor = (status: CaseFileStatus): StatusColor => {
-  if (status === 'broken') return { background: 'dark100', border: 'dark200' }
+  if (status === 'broken') {
+    return { background: 'dark100', border: 'dark200' }
+  }
 
   return { background: 'blue100', border: 'blue300' }
 }

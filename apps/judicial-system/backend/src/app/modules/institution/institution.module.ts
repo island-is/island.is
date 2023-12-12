@@ -9,5 +9,6 @@ import { InstitutionService } from './institution.service'
   imports: [SequelizeModule.forFeature([Institution])],
   controllers: [InstitutionController],
   providers: [InstitutionService],
+  exports: [InstitutionService],
 })
 export class InstitutionModule {}

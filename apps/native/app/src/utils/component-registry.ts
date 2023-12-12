@@ -41,9 +41,7 @@ export const ComponentRegistry = {
   EditConfirmScreen: `${prefix}.screens.EditConfirmScreen`,
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
-
-  // ui components
-  AndroidSearchBar: `${prefix}.ui.AndroidSearchBar`,
+  InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
 };
 
 export const ButtonRegistry = {
@@ -54,6 +52,8 @@ export const ButtonRegistry = {
   ShareButton: `${prefix}.button.ShareButton`,
   ScanLicenseButton: `${prefix}.button.ScanLicenseButton`,
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
+  DocumentStarButton: `${prefix}.button.DocumentStarButton`,
+  DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
 };
 
 export const StackRegistry = {

@@ -168,7 +168,6 @@ export const ConfirmationField: FC<
 
       <Box marginBottom={3}>
         <TopicCard
-          href="/"
           onClick={() => setViewCriminalRecord(true)}
           tag="Pdf"
           colorScheme="blue"

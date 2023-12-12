@@ -26,7 +26,10 @@ interface Props {
   forceBackgroundColor?: boolean
   extraChildrenPadding?: boolean
   showLine?: boolean
+
+  expandWhenLoadingFinished?: boolean
   onExpandCallback?: () => void
+  startExpanded?: boolean
 }
 
 const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
@@ -39,11 +42,13 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   loading,
   extraChildrenPadding,
   showLine = true,
+  expandWhenLoadingFinished = false,
   error,
+  startExpanded = false,
 }) => {
   const { formatMessage } = useLocale()
-  const [expanded, toggleExpand] = useState<boolean>(false)
-  const [closed, setClosed] = useState<boolean>(true)
+  const [expanded, toggleExpand] = useState<boolean>(startExpanded)
+  const [closed, setClosed] = useState<boolean>(!startExpanded)
 
   const handleAnimationEnd = useCallback((height: Height) => {
     if (height === 0) {
@@ -79,6 +84,10 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
       : backgroundColor === 'default'
       ? 'blue100'
       : 'transparent'
+
+  const shouldExpand = expandWhenLoadingFinished
+    ? !loading && children && expanded
+    : children && expanded
 
   return (
     <>
@@ -177,7 +186,7 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
           <AnimateHeight
             onHeightAnimationEnd={(newHeight) => handleAnimationEnd(newHeight)}
             duration={300}
-            height={children && expanded ? 'auto' : 0}
+            height={shouldExpand ? 'auto' : 0}
           >
             {showLine && <div className={styles.line} />}
             {children}

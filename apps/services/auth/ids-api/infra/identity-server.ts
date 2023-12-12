@@ -71,12 +71,22 @@ export const serviceSetup = (services: {
         staging: 'false',
         prod: 'true',
       },
+      MeUserProfileApiSettings__BaseAddress: {
+        dev: 'http://web-service-portal-api.service-portal.svc.cluster.local',
+        staging:
+          'http://web-service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
       Application__MinCompletionPortThreads: '10',
-      NO_UPDATE_NOTIFIER: 'true',
       ContentfulSettings__BaseAddress: {
         dev: 'https://preview.contentful.com',
         staging: 'https://cdn.contentful.com',
         prod: 'https://cdn.contentful.com',
+      },
+      Application__AllowedRedirectUris: {
+        dev: 'https://beta.dev01.devland.is/minarsidur',
+        staging: 'https://beta.staging01.devland.is/minarsidur',
+        prod: 'https://island.is/minarsidur',
       },
     })
     .secrets({

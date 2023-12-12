@@ -6,6 +6,7 @@ import IconStatusNonVerified from '../../assets/card/danger.png';
 import IconStatusVerified from '../../assets/card/is-verified.png';
 import BackgroundCovidCertificate from '../../assets/card/covid.png';
 import BackgroundDriversLicense from '../../assets/card/okuskirteini.png';
+import BackgroundPCardLicense from '../../assets/card/p-card.png';
 import BackgroundWeaponLicense from '../../assets/card/skotvopnaleyfi.png';
 import BackgroundHuntingCard from '../../assets/card/veidikort.png';
 import BackgroundADR from '../../assets/card/adr-bg.png';
@@ -166,6 +167,12 @@ const LicenseCardPresets = {
     logo: DisabilityLicenseLogo,
     backgroundImage: DisabilityLicenseBg,
     backgroundColor: '#C5D5C8',
+  },
+  PCard: {
+    title: 'Stæðiskort',
+    logo: LogoCoatOfArms,
+    backgroundImage: BackgroundPCardLicense,
+    backgroundColor: '#F2F7FF',
   },
 };
 

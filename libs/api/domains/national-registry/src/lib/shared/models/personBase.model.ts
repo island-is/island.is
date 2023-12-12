@@ -8,6 +8,9 @@ export class PersonBase {
   @Field(() => String, { nullable: true })
   fullName!: string | null
 
-  @Field(() => String, { nullable: true })
-  nationalIdType?: string | null
+  @Field(() => String, {
+    nullable: true,
+    description: 'Deprecated',
+  })
+  fate?: string | null
 }

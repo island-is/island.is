@@ -43,7 +43,7 @@ nx run native-app:script --name=<some-script-from-package.json>
 ```
 
 ```bash
-nx run native-app:schemas/codegen
+nx run native-app:codegen/frontend-client
 ```
 
 ## NOTES

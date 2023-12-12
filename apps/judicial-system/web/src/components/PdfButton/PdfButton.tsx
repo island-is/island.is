@@ -59,7 +59,9 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   ) : (
     <Box
       data-testid={`${pdfType || ''}PDFButton`}
-      className={`${styles.pdfRow} ${disabled ? '' : styles.cursor}`}
+      className={`${styles.pdfRow} ${
+        disabled ? styles.disabled : styles.cursor
+      }`}
       onClick={() => {
         if (disabled) {
           return
@@ -74,9 +76,11 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
         }
       }}
     >
-      <Text color="blue400" variant="h4">
-        {title}
-      </Text>
+      <span className={styles.fileNameContainer}>
+        <Text color="blue400" variant="h4">
+          {title}
+        </Text>
+      </span>
       {children}
     </Box>
   )

@@ -10,6 +10,7 @@ import {
   expandDebts,
   expandEstateMembers,
   expandStocks,
+  trueOrHasYes,
 } from './mappers'
 type EstateSchema = zinfer<typeof estateSchema>
 
@@ -61,9 +62,11 @@ export const generateRawUploadData = (
       dateOfDeath: externalData.estate.dateOfDeath?.toString() ?? '',
       address: externalData.estate.addressOfDeceased ?? '',
     },
-    districtCommissionerHasWill: answers.estate?.testament?.wills ?? '',
-    settlement: answers.estate?.testament?.agreement ?? '',
-    dividedEstate: answers.estate?.testament?.dividedEstate ?? '',
+    districtCommissionerHasWill: trueOrHasYes(
+      answers.estate?.testament?.wills ?? 'false',
+    ),
+    settlement: trueOrHasYes(answers.estate?.testament?.agreement ?? 'false'),
+    dividedEstate: trueOrHasYes(answers.estate?.testament?.dividedEstate ?? ''),
     remarksOnTestament: answers.estate?.testament?.additionalInfo ?? '',
     guns: expandAssetFrames(processedGuns),
     applicationType: answers.selectedEstate,
@@ -95,8 +98,12 @@ export const generateRawUploadData = (
     stocks: expandStocks(answers.stocks ?? []),
     vehicles: expandAssetFrames(processedVehicles),
     estateWithoutAssetsInfo: {
-      estateAssetsExist: answers?.estateWithoutAssets?.estateAssetsExist ?? '',
-      estateDebtsExist: answers?.estateWithoutAssets?.estateDebtsExist ?? '',
+      estateAssetsExist: trueOrHasYes(
+        answers?.estateWithoutAssets?.estateAssetsExist ?? 'false',
+      ),
+      estateDebtsExist: trueOrHasYes(
+        answers?.estateWithoutAssets?.estateDebtsExist ?? 'false',
+      ),
     },
     ...(answers.representative?.name
       ? {
@@ -115,10 +122,20 @@ export const generateRawUploadData = (
               name: answers.deceasedWithUndividedEstate.spouse.name ?? '',
               nationalId: answers.deceasedWithUndividedEstate.spouse.nationalId,
             },
-            selection: answers.deceasedWithUndividedEstate.selection ?? '',
+            selection: trueOrHasYes(
+              answers.deceasedWithUndividedEstate.selection ?? 'false',
+            ),
           },
         }
-      : { deceasedWithUndividedEstate: undefined }),
+      : {
+          deceasedWithUndividedEstate: {
+            spouse: {
+              name: '',
+              nationalId: '',
+            },
+            selection: 'false',
+          },
+        }),
   }
 
   return uploadData

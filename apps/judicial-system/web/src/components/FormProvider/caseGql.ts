@@ -220,6 +220,10 @@ const CaseQuery = gql`
         id
         name
       }
+      appealRulingModifiedHistory
+      appealValidToDate
+      isAppealCustodyIsolation
+      appealIsolationToDate
       eventLogs {
         id
         created

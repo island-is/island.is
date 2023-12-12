@@ -172,6 +172,7 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
   const {dismiss, dismissed} = usePreferencesStore();
   const showPassport = useFeatureFlag('isPassportEnabled', false);
   const showDisability = useFeatureFlag('isDisabilityFlagEnabled', false);
+  const showPCard = useFeatureFlag('isPCardEnabled', false);
 
   const res = useQuery<ListGenericLicensesResponse>(
     LIST_GENERIC_LICENSES_QUERY,
@@ -186,6 +187,7 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
             GenericLicenseType.MachineLicense,
             GenericLicenseType.FirearmLicense,
             showDisability ? GenericLicenseType.DisabilityLicense : null,
+            showPCard ? GenericLicenseType.PCard : null,
           ].filter(Boolean),
         },
       },
@@ -223,6 +225,11 @@ export const WalletScreen: NavigationFunctionComponent = ({componentId}) => {
         if (!showDisability) {
           items = items.filter(
             item => item.license.type !== GenericLicenseType.DisabilityLicense,
+          );
+        }
+        if (!showPCard) {
+          items = items.filter(
+            item => item.license.type !== GenericLicenseType.PCard,
           );
         }
         setLicenseItems(items);

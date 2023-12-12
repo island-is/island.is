@@ -8,12 +8,13 @@ global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
     AWS_REGION: 'eu-west-1'
-    NO_UPDATE_NOTIFIER: 'true'
+    NPM_CONFIG_UPDATE_NOTIFIER: 'false'
     PORT: '3333'
     name: 'staging'
   initContainer:
     env:
       AWS_REGION: 'eu-west-1'
+      NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 judicial-system-api:
   enabled: true
   env:
@@ -30,7 +31,7 @@ judicial-system-api:
     CONTENTFUL_HOST: 'cdn.contentful.com'
     HIDDEN_FEATURES: ''
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
-    NODE_OPTIONS: '--max-old-space-size=230'
+    NODE_OPTIONS: '--max-old-space-size=460'
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -78,11 +79,11 @@ judicial-system-api:
     min: 1
   resources:
     limits:
+      cpu: '350m'
+      memory: '512Mi'
+    requests:
       cpu: '200m'
       memory: '256Mi'
-    requests:
-      cpu: '100m'
-      memory: '128Mi'
   secrets:
     AUTH_IDS_SECRET: '/k8s/judicial-system/AUTH_IDS_SECRET'
     AUTH_JWT_SECRET: '/k8s/judicial-system/AUTH_JWT_SECRET'
@@ -113,7 +114,6 @@ judicial-system-backend:
     EMAIL_REGION: 'eu-west-1'
     NODE_OPTIONS: '--max-old-space-size=921'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
-    NO_UPDATE_NOTIFIER: 'true'
     S3_BUCKET: 'island-is-staging-upload-judicial-system'
     S3_REGION: 'eu-west-1'
     S3_TIME_TO_LIVE_GET: '5'
@@ -172,7 +172,6 @@ judicial-system-backend:
       DB_NAME: 'judicial_system'
       DB_REPLICAS_HOST: 'postgres-applications.internal'
       DB_USER: 'judicial_system'
-      NO_UPDATE_NOTIFIER: 'true'
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/judicial-system/DB_PASSWORD'

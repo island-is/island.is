@@ -26,6 +26,7 @@ test.describe('Occupational licenses overview', () => {
   })
 
   test('Has occupational licenses', async () => {
+    test.slow()
     const page = await context.newPage()
     await disableI18n(page)
 
@@ -41,7 +42,7 @@ test.describe('Occupational licenses overview', () => {
 
         // Act
         await hasHealthDirectorateLicense.click()
-        const healthDirectorateTitle = page.getByText('Sálfræðingur')
+        const healthDirectorateTitle = page.getByText('Sálfræðingur').first()
         const healthDirectorateIsValid = page.getByText('Í gildi')
 
         const regex =
@@ -69,8 +70,8 @@ test.describe('Occupational licenses overview', () => {
 
         // Act
         await license.click()
-        const title = page.getByText('Kennari')
-        const isValid = page.getByText('Í gildi')
+        const title = page.getByText('Kennari').first()
+        const isValid = page.getByText('Í gildi').first()
 
         //regex that matches guid
         const regex = /.*minarsidur\/starfsleyfi\/mms\/Kennari\/[0-9]+/

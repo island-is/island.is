@@ -32,6 +32,7 @@ interface Props {
   refetchInboxItems?: (input?: GetDocumentListInput) => void
   active: boolean
   asFrame?: boolean
+  includeTopBorder?: boolean
   selected?: boolean
   bookmarked?: boolean
   archived?: boolean
@@ -56,6 +57,7 @@ export const DocumentLine: FC<Props> = ({
   refetchInboxItems,
   active,
   asFrame,
+  includeTopBorder,
   bookmarked,
   archived,
   selected,
@@ -86,8 +88,9 @@ export const DocumentLine: FC<Props> = ({
         document:
           docContent || (getFileByIdData?.getDocument as DocumentDetails),
         id: documentLine.id,
-        subject: documentLine.subject,
         sender: documentLine.senderName,
+        subject: documentLine.subject,
+        senderNatReg: documentLine.senderNatReg,
         downloadUrl: documentLine.url,
         date: date,
         img,
@@ -162,12 +165,13 @@ export const DocumentLine: FC<Props> = ({
   const isArchived = archived || archiveSuccess
 
   return (
-    <Box className={styles.wrapper} ref={wrapperRef}>
+    <Box className={styles.wrapper}>
       <Box
         display="flex"
         position="relative"
         borderColor="blue200"
         borderBottomWidth="standard"
+        borderTopWidth={includeTopBorder ? 'standard' : undefined}
         paddingX={2}
         width="full"
         className={cn(styles.docline, {
@@ -175,38 +179,40 @@ export const DocumentLine: FC<Props> = ({
           [styles.unread]: unread,
         })}
       >
-        <AvatarImage
-          img={img}
-          onClick={(e) => {
-            e.stopPropagation()
-            if (documentLine.id && setSelectLine) {
-              setSelectLine(documentLine.id)
+        <div ref={wrapperRef}>
+          <AvatarImage
+            img={img}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (documentLine.id && setSelectLine) {
+                setSelectLine(documentLine.id)
+              }
+            }}
+            avatar={
+              (avatarCheckmark || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
             }
-          }}
-          avatar={
-            (avatarCheckmark || selected) && !asFrame ? (
-              <Box
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                background={selected ? 'blue400' : 'blue300'}
-                borderRadius="circle"
-                className={styles.checkCircle}
-              >
-                <Icon icon="checkmark" color="white" type="filled" />
-              </Box>
-            ) : undefined
-          }
-          background={
-            avatarCheckmark
-              ? asFrame
-                ? 'white'
-                : 'blue200'
-              : documentLine.opened
-              ? 'blue100'
-              : 'white'
-          }
-        />
+            background={
+              avatarCheckmark
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
+                : documentLine.opened
+                ? 'blue100'
+                : 'white'
+            }
+          />
+        </div>
         <Box
           width="full"
           display="flex"
@@ -221,12 +227,7 @@ export const DocumentLine: FC<Props> = ({
             </Text>
             <Text variant="small">{date}</Text>
           </Box>
-          <Box
-            className={styles.title}
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-          >
+          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
             <button
               onClick={async () => onLineClick()}
               aria-label={formatMessage(m.openDocumentAriaLabel, {

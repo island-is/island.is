@@ -25,13 +25,14 @@ import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetGenericOverviewPageInput } from './dto/getGenericOverviewPage.input'
-import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
-import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetAnchorPageInput } from './dto/getAnchorPage.input'
+import { GetAnchorPagesInput } from './dto/getAnchorPages.input'
+import { GetAnchorPagesInCategoryInput } from './dto/getAnchorPagesInCategory.input'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
-import { LifeEventPage } from './models/lifeEventPage.model'
+import { AnchorPage } from './models/anchorPage.model'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsContentfulService } from './cms.contentful.service'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
@@ -40,7 +41,6 @@ import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { GetContentSlugInput } from './dto/getContentSlug.input'
-import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import { GetUrlInput } from './dto/getUrl.input'
 import { Url } from './models/url.model'
 import { GetSingleArticleInput } from './dto/getSingleArticle.input'
@@ -48,8 +48,6 @@ import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsDatesInput } from './dto/getNewsDates.input'
 import { NewsList } from './models/newsList.model'
-import { GetTellUsAStoryInput } from './dto/getTellUsAStory.input'
-import { TellUsAStory } from './models/tellUsAStory.model'
 import { GroupedMenu } from './models/groupedMenu.model'
 import { GetSingleMenuInput } from './dto/getSingleMenu.input'
 import { SubpageHeader } from './models/subpageHeader.model'
@@ -95,6 +93,15 @@ import { GetPowerBiEmbedPropsFromServerResponse } from './dto/getPowerBiEmbedPro
 import { GetOrganizationByTitleInput } from './dto/getOrganizationByTitle.input'
 import { ServiceWebPage } from './models/serviceWebPage.model'
 import { GetServiceWebPageInput } from './dto/getServiceWebPage.input'
+import { LatestEventsSlice } from './models/latestEventsSlice.model'
+import { Event as EventModel } from './models/event.model'
+import { GetSingleEventInput } from './dto/getSingleEvent.input'
+import { GetEventsInput } from './dto/getEvents.input'
+import { EventList } from './models/eventList.model'
+import { Manual } from './models/manual.model'
+import { GetSingleManualInput } from './dto/getSingleManual.input'
+import { GetSingleEntryTitleByIdInput } from './dto/getSingleEntryTitleById.input'
+import { EntryTitle } from './models/entryTitle.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -317,27 +324,27 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => LifeEventPage, { nullable: true })
-  getLifeEventPage(
-    @Args('input') input: GetLifeEventPageInput,
-  ): Promise<LifeEventPage | null> {
-    return this.cmsContentfulService.getLifeEventPage(input.slug, input.lang)
+  @Query(() => AnchorPage, { nullable: true })
+  getAnchorPage(
+    @Args('input') input: GetAnchorPageInput,
+  ): Promise<AnchorPage | null> {
+    return this.cmsContentfulService.getAnchorPage(input.slug, input.lang)
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [LifeEventPage])
-  getLifeEvents(
-    @Args('input') input: GetLifeEventsInput,
-  ): Promise<LifeEventPage[]> {
-    return this.cmsContentfulService.getLifeEvents(input.lang)
+  @Query(() => [AnchorPage])
+  getAnchorPages(
+    @Args('input') input: GetAnchorPagesInput,
+  ): Promise<AnchorPage[]> {
+    return this.cmsContentfulService.getAnchorPages(input.lang)
   }
 
   @CacheControl(defaultCache)
-  @Query(() => [LifeEventPage])
-  getLifeEventsInCategory(
-    @Args('input') input: GetLifeEventsInCategoryInput,
-  ): Promise<LifeEventPage[]> {
-    return this.cmsContentfulService.getLifeEventsInCategory(
+  @Query(() => [AnchorPage])
+  getAnchorPagesInCategory(
+    @Args('input') input: GetAnchorPagesInCategoryInput,
+  ): Promise<AnchorPage[]> {
+    return this.cmsContentfulService.getAnchorPagesInCategory(
       input.lang,
       input.slug,
     )
@@ -410,6 +417,26 @@ export class CmsResolver {
     return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<News>(
       getElasticsearchIndex(lang),
       { type: 'webNews', slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => EventModel, { nullable: true })
+  getSingleEvent(
+    @Args('input') { lang, slug }: GetSingleEventInput,
+  ): Promise<EventModel | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug<EventModel>(
+      getElasticsearchIndex(lang),
+      { type: 'webEvent', slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => EventList)
+  getEvents(@Args('input') input: GetEventsInput): Promise<EventList> {
+    return this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
     )
   }
 
@@ -547,6 +574,30 @@ export class CmsResolver {
   ): Promise<GenericTag | null> {
     return this.cmsContentfulService.getGenericTagBySlug(input)
   }
+
+  @CacheControl(defaultCache)
+  @Query(() => Manual, { nullable: true })
+  getSingleManual(
+    @Args('input') input: GetSingleManualInput,
+  ): Promise<Manual | null> {
+    return this.cmsElasticsearchService.getSingleDocumentTypeBySlug(
+      getElasticsearchIndex(input.lang),
+      { type: 'webManual', slug: input.slug },
+    )
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => EntryTitle, { nullable: true })
+  async getSingleEntryTitleById(
+    @Args('input') input: GetSingleEntryTitleByIdInput,
+  ): Promise<EntryTitle | null> {
+    const document = await this.cmsElasticsearchService.getSingleDocumentById(
+      getElasticsearchIndex(input.lang),
+      input.id,
+    )
+    if (typeof document?.title !== 'string') return null
+    return { title: document.title }
+  }
 }
 
 @Resolver(() => LatestNewsSlice)
@@ -562,6 +613,24 @@ export class LatestNewsSliceResolver {
       input,
     )
     return newsList.items
+  }
+}
+
+@Resolver(() => LatestEventsSlice)
+@CacheControl(defaultCache)
+export class LatestEventsSliceResolver {
+  constructor(private cmsElasticsearchService: CmsElasticsearchService) {}
+
+  @CacheControl(defaultCache)
+  @ResolveField(() => [EventModel])
+  async events(
+    @Parent() { events: input }: LatestEventsSlice,
+  ): Promise<EventModel[]> {
+    const eventsList = await this.cmsElasticsearchService.getEvents(
+      getElasticsearchIndex(input.lang),
+      input,
+    )
+    return eventsList.items
   }
 }
 

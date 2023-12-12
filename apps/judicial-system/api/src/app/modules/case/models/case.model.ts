@@ -40,7 +40,6 @@ registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
 registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
 registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
 registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
-
 registerEnumType(RequestSharedWithDefender, {
   name: 'requestSharedWithDefender',
 })
@@ -365,6 +364,18 @@ export class Case implements TCase {
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
 
+  @Field({ nullable: true })
+  readonly appealRulingModifiedHistory?: string
+
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
+
+  @Field({ nullable: true })
+  readonly appealValidToDate?: string
+
+  @Field({ nullable: true })
+  readonly isAppealCustodyIsolation?: boolean
+
+  @Field({ nullable: true })
+  readonly appealIsolationToDate?: string
 }

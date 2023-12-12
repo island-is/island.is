@@ -48,6 +48,7 @@ export * from './lib/tableview/tableview-group';
 export * from './lib/view-pager/view-pager';
 export * from './lib/top-line/top-line';
 export * from './lib/link/link';
+export * from './lib/tag/tag';
 export * from './lib/link/link-text';
 export * from './lib/typography/typography';
 export * from './lib/scan-result-card/scan-result-card';

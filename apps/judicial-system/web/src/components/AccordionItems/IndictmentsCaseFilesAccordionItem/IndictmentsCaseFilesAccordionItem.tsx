@@ -482,6 +482,12 @@ const IndictmentsCaseFilesAccordionItem: React.FC<
         input: {
           caseId,
           files: filesToUpdate.map((file, index) => {
+            // This nasty update-in-place is needed to keep local data current
+            file.chapter = chapter ?? undefined
+            file.orderWithinChapter =
+              orderWithinChapter === null
+                ? undefined
+                : orderWithinChapter + index
             return {
               id: file.id,
               chapter,
