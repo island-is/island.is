@@ -11,7 +11,7 @@ import React, { FC, useMemo, useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { m } from '../lib/messages'
-import { FormWrap } from '../components/FormWrap'
+import { FormWrap } from '../components/FormWrap/FormWrap'
 import { FieldBaseProps } from '@island.is/application/types'
 import * as styles from './BasicInformation.css'
 export type CaseTemplate = {
@@ -23,7 +23,7 @@ export type CaseTemplate = {
   template: string
   documentContents: string
   autographType: string
-  autographcontents: string
+  autographContents: string
   autographDate?: string
   ministry?: string
   preferedPublicationDate?: string
@@ -40,13 +40,32 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
   refetch,
 }) => {
-  const [visibility, setVisibility] = useState(false)
   const { formatMessage } = useLocale()
+
+  const [newCase, setNewCase] = useState<CaseTemplate>({
+    applicationId: '',
+    department: '',
+    category: '',
+    subCategory: '',
+    title: '',
+    template: '',
+    documentContents: '',
+    autographType: '',
+    autographContents: '',
+    autographDate: '',
+    ministry: '',
+    preferedPublicationDate: '',
+    fastTrack: false,
+  })
+
+  const [visibility, setVisibility] = useState(false)
+  const [templateFilter, setTemplateFilter] = useState('')
   const [selectedPreviousTemplate, setSelectedPreviousTemplate] =
-    useState<Record<string, any> | null>(null)
+    useState<CaseTemplate | null>(null)
+
   const externalData = application.externalData as ExternalData
   const oldTemplates = externalData?.previousTemplates?.data
-  const [templateFilter, setTemplateFilter] = useState('')
+
   const filteredTemplates = useMemo(() => {
     if (!oldTemplates) {
       return []
@@ -55,6 +74,13 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       template.title.toLowerCase().includes(templateFilter.toLowerCase()),
     )
   }, [oldTemplates, templateFilter])
+
+  const handleTemplateChange = () => {
+    setVisibility(false)
+    if (selectedPreviousTemplate) {
+      setNewCase(selectedPreviousTemplate)
+    }
+  }
 
   return (
     <>
@@ -119,14 +145,18 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               {filteredTemplates?.map((template, i) => (
                 <Box
                   padding={2}
-                  key={template.applicationId}
+                  key={i}
                   borderBottomWidth="standard"
                   borderColor="blue200"
                   borderTopWidth={i === 0 ? 'standard' : undefined}
                 >
                   <RadioButton
                     label={template.title}
-                    name="copyTemplate"
+                    checked={
+                      selectedPreviousTemplate?.applicationId ===
+                      template.applicationId
+                    }
+                    name={`option-${i}`}
                     value={template.applicationId}
                     onChange={() => setSelectedPreviousTemplate(template)}
                   />
@@ -137,7 +167,7 @@ export const BasicInformation: FC<React.PropsWithChildren<FieldBaseProps>> = ({
               <Button variant="ghost" onClick={() => setVisibility(false)}>
                 {formatText(m.cancel, application, formatMessage)}
               </Button>
-              <Button onClick={() => setVisibility(false)}>
+              <Button onClick={() => handleTemplateChange()}>
                 {formatText(m.confirm, application, formatMessage)}
               </Button>
             </Box>
