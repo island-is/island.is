@@ -388,6 +388,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Sending umsóknar mistókst',
     description: 'Message indicating submission after payment failed',
   },
+  applicationSubmitFailed: {
+    id: 'application.system:core.application.SubmitFailed',
+    defaultMessage: 'Sending umsóknar mistókst',
+    description: 'Message indicating submission of application failed',
+  },
   paymentSubmitRetryButtonCaption: {
     id: 'application.system:core.payment.retryCaption',
     defaultMessage: 'Reyna aftur',
@@ -585,6 +590,13 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:copyLink.copyLinkErrorToast',
     defaultMessage: 'Tókst ekki að afrita hlekk',
     description: 'Copy link error toast',
+  },
+  electricVehicleListEmptyOwner: {
+    id: 'application.system:core.fetch.data.electricVehicleListEmptyOwner',
+    defaultMessage:
+      'Þú átt engan rafbíl þar sem þú ert aðaleigandi og uppfyllir umsóknarskilyrði',
+    description:
+      'You do not have any electric vehicles where you are the main owner',
   },
 })
 

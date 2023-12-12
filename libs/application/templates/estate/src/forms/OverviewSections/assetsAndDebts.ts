@@ -51,7 +51,7 @@ export const overviewAssetsAndDebts = [
               (asset.marketValue ? formatCurrency(asset.marketValue) : '0 kr.'),
             m.propertyShare.defaultMessage +
               ': ' +
-              (asset.share ? asset.share + '%' : ''),
+              (asset.share ? asset.share + '%' : '0%'),
           ],
         })),
     },

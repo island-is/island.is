@@ -984,45 +984,6 @@ export const oldAgePensionFormMessage: MessageDir = {
   }),
 }
 
-export const errorMessages = defineMessages({
-  phoneNumber: {
-    id: 'oap.application:error.phonenumber',
-    defaultMessage: 'Símanúmerið þarf að vera gilt.',
-    description: 'The phone number must be valid.',
-  },
-  bank: {
-    id: 'oap.application:error.bank',
-    defaultMessage: 'Ógilt bankanúmer. Þarf að vera á forminu: 0000-11-222222',
-    description: 'Invalid bank account. Has to be formatted: 0000-11-222222',
-  },
-  period: {
-    id: 'oap.application:error.period',
-    defaultMessage: 'Tímabil þarf að vera gilt.',
-    description: 'The period must be valid.',
-  },
-  noEmailFound: {
-    id: 'oap.application:error.no.email.found.title',
-    defaultMessage: 'Ekkert netfang skráð',
-    description: 'english translation',
-  },
-  noEmailFoundDescription: {
-    id: 'oap.application:error.no.email.found.description',
-    defaultMessage:
-      'Þú ert ekki með skráð netfang hjá Tryggingastofnun. Vinsamlegast skráðu það inná mínum síðum á tr.is og komdu svo aftur til að sækja um ellilífeyri.',
-    description: 'english translation',
-  },
-  iban: {
-    id: 'oap.application:error.iban',
-    defaultMessage: 'Ógilt IBAN',
-    description: 'Invalid IBAN',
-  },
-  swift: {
-    id: 'oap.application:error.swift',
-    defaultMessage: 'Ógilt SWIFT',
-    description: 'Invalid SWIFT',
-  },
-})
-
 export const validatorErrorMessages = defineMessages({
   requireAnswer: {
     id: 'oap.application:fileUpload.required.answer',

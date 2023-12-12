@@ -7,8 +7,8 @@ export const getMarketValueShare = (answers: FormValue) => {
 
   if (Array.isArray(assets) && assets.length > 0) {
     const sum = assets.reduce((acc, cur) => {
-      const marketValue = parseFloat(cur?.marketValue ?? 0)
-      const share = parseFloat(cur?.share ?? 0)
+      const marketValue = parseInt(cur?.marketValue ?? 0, 10)
+      const share = parseInt(cur?.share ?? 0, 10)
 
       if (share === 0) {
         return acc
