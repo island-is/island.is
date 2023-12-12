@@ -25,7 +25,12 @@ export interface SectionWithVideoProps {
   title: string
   html?: { __typename: 'Html'; id: string; document: Document }
   link?: { text: string; url: string }
-  video?: { url: string; title: string; locale: string }
+  video?: {
+    url: string
+    title: string
+    locale: string
+    thumbnailImageUrl?: string
+  }
   locale: string
 }
 
@@ -41,7 +46,12 @@ export const SectionWithVideo: FC<SectionWithVideoProps> = ({
       <GridRow>
         {video?.url && (
           <GridColumn span={COLUMN_SPAN}>
-            <EmbeddedVideo url={video.url} locale={locale} title={title} />
+            <EmbeddedVideo
+              url={video.url}
+              locale={locale}
+              title={title}
+              thumbnailImageUrl={video.thumbnailImageUrl}
+            />
           </GridColumn>
         )}
         <GridColumn
