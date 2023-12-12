@@ -6,7 +6,7 @@ import { UserProfileClientConfig } from './userProfileClient.config'
 import { createRedisCacheManager } from '@island.is/cache'
 
 export const ApiConfiguration = {
-  provide: 'UserProfileCLientApiConfiguration',
+  provide: 'UserProfileClientApiConfiguration',
   // Necessary because of cache-manager.
   // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (config: ConfigType<typeof UserProfileClientConfig>) => {

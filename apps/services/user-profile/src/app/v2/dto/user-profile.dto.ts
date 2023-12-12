@@ -29,20 +29,17 @@ export class UserProfileDto {
   @IsEnum(Locale)
   readonly locale?: Locale
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly mobilePhoneNumberVerified?: boolean
+  readonly mobilePhoneNumberVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly emailVerified?: boolean
+  readonly emailVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly documentNotifications?: boolean
+  readonly documentNotifications!: boolean
 
   @ApiPropertyOptional()
   @IsOptional()
@@ -54,8 +51,7 @@ export class UserProfileDto {
   @IsBoolean()
   readonly needsNudge?: boolean | null
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  emailNotifications?: boolean
+  emailNotifications!: boolean
 }

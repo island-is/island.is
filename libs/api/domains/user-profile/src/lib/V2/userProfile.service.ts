@@ -50,12 +50,18 @@ export class UserProfileServiceV2 {
     return this.updateUserProfile(input, user)
   }
 
-  async updateUserProfile(input: UpdateUserProfileInput, user: User) {
+  async updateUserProfile(
+    input: UpdateUserProfileInput,
+    user: User,
+  ): Promise<UserProfile> {
     const { bankInfo, ...alteredInput } = input
 
     const userProfile = await this.v2UserProfileApiWithAuth(user)
       .meUserProfileControllerPatchUserProfile({
-        patchUserProfileDto: alteredInput,
+        patchUserProfileDto: {
+          ...alteredInput,
+          emailNotifications: alteredInput.canNudge,
+        },
       })
       .catch((e) => handleError(e, `updateEmailNotifications error`))
 
@@ -70,7 +76,7 @@ export class UserProfileServiceV2 {
     return {
       ...userProfile,
       canNudge: userProfile.emailNotifications,
-    } as UserProfile
+    }
   }
 
   async getUserProfile(user: User): Promise<UserProfile> {
@@ -84,7 +90,7 @@ export class UserProfileServiceV2 {
       ...userProfile,
       bankInfo,
       canNudge: userProfile.emailNotifications,
-    } as UserProfile
+    }
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {

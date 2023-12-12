@@ -118,5 +118,5 @@ export class UserProfile extends Model {
     allowNull: true,
   })
   @ApiProperty()
-  emailNotifications?: boolean
+  emailNotifications!: boolean
 }
