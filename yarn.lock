@@ -34243,7 +34243,7 @@ __metadata:
     sanitize-html: 2.10.0
     sequelize: 6.19.0
     sequelize-cli: 6.4.1
-    sequelize-replace-enum-postgres: 1.5.0
+    sequelize-replace-enum-postgres: 1.6.0
     sequelize-typescript: 2.1.3
     shorthash: 0.0.2
     slate: 0.70.0
@@ -47995,10 +47995,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sequelize-replace-enum-postgres@npm:1.5.0":
-  version: 1.5.0
-  resolution: "sequelize-replace-enum-postgres@npm:1.5.0"
-  checksum: d4a6cd36fce36a4c0105b6924e2119fc6485dfe2ebba73db97b5bc7e6c961ceb78e06d840d6cb745f3c67508af791643bcbf576d5ac86e2d4dac1edeafc78025
+"sequelize-replace-enum-postgres@npm:1.6.0":
+  version: 1.6.0
+  resolution: "sequelize-replace-enum-postgres@npm:1.6.0"
+  checksum: 24804c9757e20b990e812cb5233464b8596a1912336f7925a640d96451d9ccf5f35cf8cc0471eb0da5a44a945dac5ce833f837da2714521d6088fb1e8a5e54ed
   languageName: node
   linkType: hard
 
