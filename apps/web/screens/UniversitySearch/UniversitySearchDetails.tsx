@@ -20,6 +20,7 @@ import {
   TabType,
   Text,
 } from '@island.is/island-ui/core'
+import { Requirement } from '@island.is/university-gateway'
 import { IconTitleCard } from '@island.is/web/components'
 import {
   GetNamespaceQuery,
@@ -92,34 +93,91 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     )
   }, [data, sortedCourses])
 
+  function mapArrayToDictionary(array: Array<unknown>, mapByKey: string) {
+    const dictionary: { [key: string]: Array<UniversityGatewayProgramCourse> } =
+      {}
+
+    array.forEach((course: any) => {
+      const keyValue = course[mapByKey]
+
+      if (keyValue === undefined) {
+        return
+      }
+      if (dictionary[keyValue] === undefined) {
+        // If the key doesn't exist in the dictionary, create a new array
+        dictionary[keyValue] = [course]
+      } else {
+        // If the key already exists, push the value to the existing array
+        dictionary[keyValue].push(course)
+      }
+    })
+
+    return dictionary
+  }
+
   const createTabContent = () => {
     if (sortedCourses.length === 0) {
       return
     }
-    const tabContentList = []
     const tabList: Array<TabType> = []
-    sortedCourses.map((course, index) => {
-      if (
-        index > 0 &&
-        course.semesterSeason + course.semesterYear !==
-          sortedCourses[index - 1].semesterSeason +
-            sortedCourses[index - 1].semesterYear
-      ) {
-        tabList.push({
-          id: course.id,
-          label: `${n(
-            course.semesterSeason,
-            TranslationDefaults[course.semesterSeason],
-          )} - ${course.semesterYear || ''}`,
-          content: <p>TESTING</p>,
-        })
+    const mappedDictionary = mapArrayToDictionary(
+      sortedCourses,
+      'semesterYearNumber',
+    )
+    let index = 0
+    for (const key in mappedDictionary) {
+      const value = mappedDictionary[key]
+      const mappedBySemester = mapArrayToDictionary(value, 'semesterSeason')
+
+      const contentItems: Array<React.ReactElement> = []
+      for (const x in mappedBySemester) {
+        contentItems.push(
+          <Box className={styles.capitalizeText}>
+            <Text variant="h4" color="blue400" paddingBottom={2} paddingTop={2}>
+              {n(x, TranslationDefaults[x])}
+            </Text>
+            {mappedBySemester[x].map((item) => {
+              return (
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="spaceBetween"
+                >
+                  <Text variant="h4" as="p" paddingBottom={1} paddingTop={1}>
+                    {locale === 'en' ? item.nameEn : item.nameIs}
+                  </Text>
+                  <Box className={styles.courseTypeIconBlue}>
+                    <Text
+                      fontWeight="semiBold"
+                      color={
+                        item.requirement === Requirement.MANDATORY
+                          ? 'red600'
+                          : item.requirement === Requirement.FREE_ELECTIVE
+                          ? 'blue600'
+                          : 'purple600'
+                      }
+                    >
+                      {item.requirement === Requirement.MANDATORY
+                        ? 'S'
+                        : item.requirement === Requirement.FREE_ELECTIVE
+                        ? 'V'
+                        : 'B'}
+                    </Text>
+                  </Box>
+                </Box>
+              )
+            })}
+          </Box>,
+        )
       }
-      // tabContentList.push({
-      //   id: course.id,
-      //   label: locale === 'en' ? course.nameEn : course.nameIs,
-      //   content: <p>HALLOOO</p>
-      // })
-    })
+
+      tabList.push({
+        id: index.toString(),
+        label: `${parseInt(key) + 1}. ${n('year', 'ár')}`,
+        content: contentItems,
+      })
+      index++
+    }
 
     return tabList
   }
@@ -360,34 +418,83 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
               expanded={isOpen[2]}
               onToggle={() => toggleIsOpen(2)}
             >
-              {/* <Tabs /> */}
-              <Text as="p">
-                {sortedCourses &&
-                  sortedCourses.map((i, index) => {
-                    if (
-                      (index > 0 &&
-                        sortedCourses[index - 1].semesterSeason +
-                          sortedCourses[index - 1].semesterYear !==
-                          sortedCourses[index].semesterSeason +
-                            sortedCourses[index].semesterYear) ||
-                      index === 0
-                    ) {
-                      return (
-                        <Box marginTop={1}>
-                          <p className={styles.capitalizeText}>
-                            {n(
-                              i.semesterSeason,
-                              TranslationDefaults[i.semesterSeason],
-                            )}{' '}
-                            - {i.semesterYear}
-                          </p>
-                          <p>{i.nameIs}</p>
-                        </Box>
-                      )
-                    }
-                    return <p>{i.nameIs}</p>
-                  })}
-              </Text>
+              <Tabs
+                tabs={createTabContent() || []}
+                label="PRUFA"
+                onlyRenderSelectedTab
+                contentBackground="white"
+              />
+              <Box
+                display="flex"
+                flexDirection="row"
+                justifyContent="flexStart"
+                alignItems="center"
+                paddingTop={2}
+              >
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[
+                      styles.courseTypeIcon,
+                      styles.capitalizeText,
+                      'small',
+                      'red',
+                    ]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="red600"
+                      variant="eyebrow"
+                    >
+                      S
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.MANDATORY, 'Skylda')}
+                    </Text>
+                  </Box>
+                </Box>
+
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[styles.courseTypeIcon, styles.capitalizeText]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="purple600"
+                      variant="eyebrow"
+                    >
+                      B
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.FREE_ELECTIVE, 'Bundið val')}
+                    </Text>
+                  </Box>
+                </Box>
+                <Box display="flex" paddingRight={1} alignItems="center">
+                  <Box
+                    marginRight={1}
+                    className={[styles.courseTypeIcon, styles.capitalizeText]}
+                  >
+                    <Text
+                      fontWeight="semiBold"
+                      color="blue600"
+                      variant="eyebrow"
+                    >
+                      V
+                    </Text>
+                  </Box>
+                  <Box className={styles.capitalizeText}>
+                    <Text variant="eyebrow">
+                      {n(Requirement.RESTRICTED_ELECTIVE, 'Valfag')}
+                    </Text>
+                  </Box>
+                </Box>
+              </Box>
             </AccordionItem>
             <AccordionItem
               id="annual-cost"

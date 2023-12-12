@@ -124,5 +124,74 @@ export const filterInput = style({
 })
 
 export const capitalizeText = style({
-  textTransform: 'capitalize',
+  display: 'block',
+  selectors: {
+    '&:first-letter': {
+      textTransform: 'uppercase',
+    },
+  },
+})
+
+export const courseTypeIcon = style({
+  borderRadius: 50,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: 5,
+  selectors: {
+    '&.large': {
+      height: '27px',
+      width: '27px',
+    },
+    '&.small': {
+      height: '21px',
+      width: '21px',
+    },
+    '&.blue': {
+      backgroundColor: `${theme.color.blue100}`,
+    },
+    '&.red': {
+      backgroundColor: `${theme.color.red100}`,
+    },
+    '&.purple': {
+      backgroundColor: `${theme.color.purple100}`,
+    },
+  },
+})
+
+export const courseTypeIconBlue = style({
+  height: '27px',
+  width: '27px',
+  borderRadius: 50,
+  padding: 5,
+  backgroundColor: `${theme.color.red100}`,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const courseTypeIconPurple = style({
+  height: '27px',
+  width: '27px',
+  borderRadius: 50,
+  padding: 5,
+  backgroundColor: `${theme.color.blue100}`,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+})
+
+export const courseTypeIconRed = style({
+  height: '27px',
+  width: '27px',
+  borderRadius: 50,
+  padding: 5,
+  backgroundColor: `${theme.color.purple100}`,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
 })
