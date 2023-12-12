@@ -61,21 +61,17 @@ export class VehicleService {
 
   async create(vehicle: VehicleModel): Promise<boolean> {
     try {
-      console.log('------> create...')
       // Check if Vehicle is already in database
       const findVehicle = await this.findByVehicleId(vehicle.vehicleId)
       if (findVehicle) {
         // Remove old request if new owner
         if (vehicle.ownerNationalId === findVehicle.ownerNationalId) {
-          console.log('------> found...')
           return true
         } else {
-          console.log('------> destroy...')
           await findVehicle.destroy({ logging: false })
         }
       }
       // Save vehicle to database
-      console.log('------> save...')
       await vehicle.save({ logging: false })
       return true
     } catch (err) {
