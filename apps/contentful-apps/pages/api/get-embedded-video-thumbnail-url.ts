@@ -37,7 +37,16 @@ const fetchVimeoVideoThumbnailUrl = async (vimeoUrl: string) => {
   return data.thumbnail_url
 }
 
-const createYoutubeVideoThumbnailUrl = (youtubeVideoId: string) => {
+const createYoutubeVideoThumbnailUrl = async (youtubeVideoId: string) => {
+  const url = `https://i.ytimg.com/vi/${youtubeVideoId}/maxresdefault.jpg`
+  const response = await fetch(url)
+
+  // If there exists a "maxres" thumbnail so we'll use that
+  if (response.ok) {
+    return url
+  }
+
+  // Fallback to using the "hqdefault" thumbnail in case a "maxres" thumbnail doesn't exist
   return `https://i.ytimg.com/vi/${youtubeVideoId}/hqdefault.jpg`
 }
 
