@@ -92,15 +92,6 @@ export const getEstateMembersDescriptionText = (
       m.estateMembersDescriptionDivisionOfEstateByHeirs
 }
 
-export const checkIfValidationFails = (answers: FormValue) => {
-  let failedValidations = answers.availableSettlements.toString().split(',')
-
-  return (
-    failedValidations.length > 0 &&
-    failedValidations.includes(answers.selectedEstate.toString())
-  )
-}
-
 export const customCurrencyFormat = (input: number | string): string => {
   if (typeof input === 'number') {
     return `${input.toLocaleString('de-DE')} kr.`
