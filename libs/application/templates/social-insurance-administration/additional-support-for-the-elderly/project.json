@@ -26,6 +26,12 @@
           "codeCoverage": true
         }
       }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/social-insurance-administration/additional-support-for-the-elderly/src/lib/messages.ts'"
+      }
     }
   },
   "tags": ["scope:application-system", "lib:application-system"]

@@ -110,7 +110,7 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
     periodDescription: {
       id: 'asfte.application:info.period.description',
       defaultMessage:
-        'Veldu tímabil sem þú vilt byrja að fá greidda heimilisuppbót. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
+        'Veldu tímabil sem þú vilt byrja að fá greiddan félagslegan viðbótastuðning. Hægt er að sækja um fyrir þrjá mánuði aftur í tímann.',
       description: `english translation`,
     },
     periodYear: {
