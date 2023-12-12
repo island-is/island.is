@@ -1,73 +1,94 @@
 import { ref, service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
-const MAIN_QUEUE_NAME = 'user-notification'
-const DEAD_LETTER_QUEUE_NAME = 'user-notification-failure'
+const serviceName = 'user-notification'
+const serviceWorkerName = `${serviceName}-worker`
+const dbName = `${serviceName.replace('-', '_')}`
+const imageName = `services-${serviceName}`
+const MAIN_QUEUE_NAME = serviceName
+const DEAD_LETTER_QUEUE_NAME = `${serviceName}-failure`
 
-export const userNotificationServiceSetup =
-  (): ServiceBuilder<'user-notification'> =>
-    service('user-notification')
-      .image('services-user-notification')
-      .namespace('user-notification')
-      .serviceAccount('user-notification')
-      .command('node')
-      .args('--no-experimental-fetch', 'main.js')
-      .env({
-        MAIN_QUEUE_NAME,
-        DEAD_LETTER_QUEUE_NAME,
-      })
-      .secrets({
-        FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
-        CONTENTFUL_ACCESS_TOKEN:
-          '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
-      })
-      .liveness('/liveness')
-      .readiness('/liveness')
-      .ingress({
-        primary: {
-          host: {
-            dev: 'user-notification-xrd',
-            staging: 'user-notification-xrd',
-            prod: 'user-notification-xrd',
+const postgresInfo = {
+  username: dbName,
+  name: dbName,
+  passwordSecret: `/k8s/${serviceName}/DB_PASSWORD`,
+}
+
+export const userNotificationServiceSetup = (): ServiceBuilder<
+  typeof serviceName
+> =>
+  service(serviceName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceName)
+    .postgres(postgresInfo)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js')
+    .env({
+      MAIN_QUEUE_NAME,
+      DEAD_LETTER_QUEUE_NAME,
+      IDENTITY_SERVER_ISSUER_URL: {
+        dev: 'https://identity-server.dev01.devland.is',
+        staging: 'https://identity-server.staging01.devland.is',
+        prod: 'https://innskra.island.is',
+      },
+    })
+    .secrets({
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
+    })
+    .liveness('/liveness')
+    .readiness('/readiness')
+    .ingress({
+      primary: {
+        host: {
+          dev: `${serviceName}-xrd`,
+          staging: `${serviceName}-xrd`,
+          prod: `${serviceName}-xrd`,
+        },
+        paths: ['/'],
+        public: false,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
-          paths: ['/'],
-          public: false,
-          extraAnnotations: {
-            dev: {
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
-            staging: {
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
-            prod: {
-              'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
-              'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
-            },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
           },
         },
-      })
-      .resources({
-        limits: {
-          cpu: '200m',
-          memory: '384Mi',
-        },
-        requests: {
-          cpu: '15m',
-          memory: '256Mi',
-        },
-      })
-      .grantNamespaces('nginx-ingress-internal')
+      },
+    })
+    .resources({
+      limits: {
+        cpu: '200m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '15m',
+        memory: '256Mi',
+      },
+    })
+    .grantNamespaces('nginx-ingress-internal')
 
 export const userNotificationWorkerSetup = (services: {
-  userProfileApi: ServiceBuilder<'service-portal-api'>
-}): ServiceBuilder<'user-notification-worker'> =>
-  service('user-notification-worker')
-    .image('services-user-notification')
-    .namespace('user-notification')
-    .serviceAccount('user-notification-worker')
+  userProfileApi: ServiceBuilder<typeof serviceWorkerName>
+}): ServiceBuilder<typeof serviceWorkerName> =>
+  service(serviceWorkerName)
+    .image(imageName)
+    .namespace(serviceName)
+    .serviceAccount(serviceWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .postgres(postgresInfo)
+    .initContainer({
+      containers: [{ command: 'npx', args: ['sequelize-cli', 'db:migrate'] }],
+      postgres: postgresInfo,
+    })
     .env({
       MAIN_QUEUE_NAME,
       DEAD_LETTER_QUEUE_NAME,
@@ -91,12 +112,10 @@ export const userNotificationWorkerSetup = (services: {
       },
     })
     .secrets({
-      FIREBASE_CREDENTIALS: '/k8s/user-notification/firestore-credentials',
-      USER_NOTIFICATION_CLIENT_ID:
-        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_ID',
-      USER_NOTIFICATION_CLIENT_SECRET:
-        '/k8s/user-notification/USER_NOTIFICATION_CLIENT_SECRET',
-      CONTENTFUL_ACCESS_TOKEN: '/k8s/user-notification/CONTENTFUL_ACCESS_TOKEN',
+      FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
+      USER_NOTIFICATION_CLIENT_ID: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_ID`,
+      USER_NOTIFICATION_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
+      CONTENTFUL_ACCESS_TOKEN: `/k8s/${serviceName}/CONTENTFUL_ACCESS_TOKEN`,
     })
     .liveness('/liveness')
-    .readiness('/liveness')
+    .readiness('/readiness')
