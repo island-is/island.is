@@ -413,7 +413,7 @@
     "csv-parse": "4.16.0",
     "cypress": "13.0.0",
     "cypress-file-upload": "5.0.8",
-    "dotenv": "14.3.2",
+    "dotenv": "16.3.1",
     "esbuild": "0.15.7",
     "eslint": "8.46.0",
     "eslint-config-next": "13.1.1",
