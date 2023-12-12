@@ -56,9 +56,17 @@ yargs(process.argv.slice(2))
     'render-local-env',
     'Render environment variables needed by service.\nThis is to be used when developing locally and loading of the environment variables for "dev" environment is needed.',
     (yargs) => {
-      return yargs.option('service', { demandOption: true, array: true })
+      return yargs
+        .option('service', { demandOption: true, array: true })
+        .option('json', { type: 'boolean', default: false })
     },
     async (argv) => {
+      if (argv.json) {
+        console.log(
+          JSON.stringify(await renderLocalServices(argv.service as string[])),
+        )
+        return
+      }
       console.log(await renderLocalServices(argv.service as string[]))
     },
   )
