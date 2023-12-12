@@ -20,11 +20,6 @@ const vehicleMoc = {
   save: jest.fn(),
 } as unknown as VehicleModel
 
-const vehicleMocNewOwner = {
-  ...vehicleMoc,
-  ownerNationalId: '2222222222',
-} as unknown as VehicleModel
-
 describe('PublicVehicleServiceTest', () => {
   it('create vehicle, same owner', async () => {
     jest
@@ -34,6 +29,10 @@ describe('PublicVehicleServiceTest', () => {
     expect(result).toBe(true)
   })
   it('create vehicle, owner has changed', async () => {
+    const vehicleMocNewOwner = {
+      ...vehicleMoc,
+      ownerNationalId: '2222222222',
+    } as unknown as VehicleModel
     jest
       .spyOn(vehicleService, 'findByVehicleId')
       .mockImplementation(() => Promise.resolve(vehicleMoc))
