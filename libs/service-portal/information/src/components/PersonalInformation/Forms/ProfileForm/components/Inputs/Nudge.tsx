@@ -16,7 +16,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
-import { msg } from '@island.is/service-portal/information/messages'
+import { msg } from '../../../../../../lib/messages'
 
 interface Props {
   refuseMail: boolean
