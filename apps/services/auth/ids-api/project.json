@@ -131,7 +131,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn get-secrets services-auth-ids-api services-user-profile services-sessions --reset && grep -v 'DB_PASS' .env.secret > .env.secret.tmp && mv .env.secret.tmp .env.secret"
+          "yarn get-secrets services-auth-ids-api services-user-profile services-sessions"
         ],
         "parallel": false
       }
