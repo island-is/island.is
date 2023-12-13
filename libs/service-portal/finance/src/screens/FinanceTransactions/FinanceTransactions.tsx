@@ -22,6 +22,7 @@ import {
   Filter,
   FJARSYSLAN_SLUG,
 } from '@island.is/service-portal/core'
+import { m as messages } from '../../lib/messages'
 
 import DropdownExport from '../../components/DropdownExport/DropdownExport'
 import FinanceTransactionsTable from '../../components/FinanceTransactionsTable/FinanceTransactionsTable'
@@ -125,7 +126,7 @@ const FinanceTransactions = () => {
           text={formatMessage({
             id: 'sp.finance-transactions:intro',
             defaultMessage:
-              'Hér er að finna hreyfingar fyrir valin skilyrði. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
+              'Hér sérð þú hreyfingar gjaldflokka fyrir valin skilyrði. Opnaðu síu og veldu gjaldflokka og tímabil. Hreyfingar geta verið gjöld, greiðslur, skuldajöfnuður o.fl.',
           })}
         />
         <Stack space={2}>
@@ -186,7 +187,7 @@ const FinanceTransactions = () => {
                   categories={[
                     {
                       id: 'flokkur',
-                      label: formatMessage(m.transactionsLabel),
+                      label: formatMessage(messages.transactionsLabel),
                       selected: dropdownSelect ? [...dropdownSelect] : [],
                       filters: chargeTypeSelect,
                       inline: false,

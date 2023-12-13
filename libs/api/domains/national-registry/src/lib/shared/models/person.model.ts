@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Gender, MaritalStatus } from '../types'
+import { Gender, MaritalStatus, NationalIdType } from '../types'
 import { Birthplace } from './birthplace.model'
 import { Citizenship } from './citizenship.model'
 import { Spouse } from './spouse.model'
@@ -18,6 +18,9 @@ export class Person extends PersonBase {
 
   @Field(() => Gender, { nullable: true })
   gender?: Gender
+
+  @Field(() => NationalIdType, { nullable: true })
+  nationalIdType?: string | null
 
   @Field(() => Boolean, { nullable: true })
   exceptionFromDirectMarketing?: boolean | null

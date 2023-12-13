@@ -54,7 +54,7 @@ export class BrokerService {
       return null
     }
 
-    return formatPersonDiscriminated(user)
+    return formatPersonDiscriminated(user, useFakeApi)
   }
 
   async getAddress(
@@ -152,10 +152,14 @@ export class BrokerService {
   async getChildrenCustodyInformation(
     parentNationalId: string,
     rawData?: EinstaklingurDTOAllt | null,
+    useFakeData?: boolean,
   ): Promise<Array<ChildCustodyV3> | null> {
     const parentData =
       rawData ??
-      (await this.nationalRegistryV3.getAllDataIndividual(parentNationalId))
+      (await this.nationalRegistryV3.getAllDataIndividual(
+        parentNationalId,
+        useFakeData,
+      ))
 
     if (!parentData) {
       return null
@@ -165,11 +169,19 @@ export class BrokerService {
       ? parentData.forsja.born
       : []
 
-    return children.map((c) => formatChildCustody(c)).filter(isDefined)
+    return children
+      .map((c) => formatChildCustody(c, useFakeData))
+      .filter(isDefined)
   }
 
-  async getChildDetails(nationalId: string): Promise<PersonV3 | null> {
-    const child = await this.nationalRegistryV3.getAllDataIndividual(nationalId)
+  async getChildDetails(
+    nationalId: string,
+    useFakeApi?: boolean,
+  ): Promise<PersonV3 | null> {
+    const child = await this.nationalRegistryV3.getAllDataIndividual(
+      nationalId,
+      useFakeApi,
+    )
 
     if (!child) {
       return null

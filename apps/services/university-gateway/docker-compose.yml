@@ -1,0 +1,17 @@
+version: '3.3'
+
+services:
+  db_university_gateway:
+    image: public.ecr.aws/docker/library/postgres:11.14-alpine
+    container_name: db_university_gateway
+    networks:
+      - local
+    environment:
+      - POSTGRES_DB=dev_db
+      - POSTGRES_USER=dev_db
+      - POSTGRES_PASSWORD=dev_db
+    ports:
+      - 5438:5432
+
+networks:
+  local:

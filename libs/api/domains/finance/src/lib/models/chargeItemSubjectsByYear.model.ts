@@ -35,8 +35,8 @@ export class ChargeItemSubjectsByYear {
   @Field(() => [ChargeItemSubjectsByYearData])
   chargeItemSubjects!: ChargeItemSubjectsByYearData[]
 
-  @Field(() => Boolean)
-  more!: boolean
+  @Field(() => Boolean, { nullable: true })
+  more?: boolean
 
   @Field({ nullable: true })
   nextKey?: string

@@ -106,6 +106,93 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
   }
 }
 
+export interface IAnchorPageFields {
+  /** title */
+  title: string
+
+  /** short title */
+  shortTitle?: string | undefined
+
+  /** slug */
+  slug: string
+
+  /** intro */
+  intro?: string | undefined
+
+  /** short intro */
+  shortIntro?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
+  /** tiny thumbnail */
+  tinyThumbnail?: Asset | undefined
+
+  /** content */
+  content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
+
+  /** see more text */
+  seeMoreText?: string | undefined
+
+  /** page type */
+  pageType?:
+    | 'Digital Iceland Service'
+    | 'Digital Iceland Community Page'
+    | 'Life Event'
+    | undefined
+
+  /** featured image */
+  featuredImage?: Asset | undefined
+}
+
+export interface IAnchorPage extends Entry<IAnchorPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IAnchorPageListFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Pages */
+  pages?: IAnchorPage[] | undefined
+}
+
+export interface IAnchorPageList extends Entry<IAnchorPageListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'anchorPageList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IAppUriFields {
   /** URI */
   uri: string
@@ -748,6 +835,9 @@ export interface IEmbeddedVideoFields {
 
   /** url */
   url: string
+
+  /** Thumbnail Image */
+  thumbnailImage?: Asset | undefined
 }
 
 /** YouTube or Vimeo */
@@ -1251,7 +1341,7 @@ export interface IFrontpageFields {
   slides?: IFrontpageSlider[] | undefined
 
   /** Life Events */
-  lifeEvents?: ILifeEventPage[] | undefined
+  lifeEvents?: (ILifeEventPage | IAnchorPage)[] | undefined
 
   /** Namespace */
   namespace: IUiConfiguration
@@ -1644,6 +1734,7 @@ export interface IIntroLinkImageFields {
     | INews
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 
   /** Open Link in New Tab */
@@ -1795,7 +1886,7 @@ export interface ILifeEventPageListSliceFields {
   title?: string | undefined
 
   /** List */
-  lifeEventPageList?: ILifeEventPage[] | undefined
+  lifeEventPageList?: (ILifeEventPage | IAnchorPage)[] | undefined
 }
 
 export interface ILifeEventPageListSlice
@@ -2139,6 +2230,7 @@ export interface IMenuLinkFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 }
 
@@ -2178,6 +2270,7 @@ export interface IMenuLinkWithChildrenFields {
     | IOrganizationSubpage
     | IVidspyrnaFrontpage
     | IVidspyrnaPage
+    | IAnchorPage
     | undefined
 
   /** Child links */
@@ -2644,6 +2737,7 @@ export interface IOrganizationPageFields {
         | ITimeline
         | ITwoColumnText
         | ISectionWithVideo
+        | IAnchorPageList
       )[]
     | undefined
 
@@ -2785,6 +2879,7 @@ export interface IOrganizationSubpageFields {
         | ITeamList
         | ITellUsAStory
         | ITwoColumnText
+        | IAnchorPageList
       )[]
     | undefined
 
@@ -3098,6 +3193,9 @@ export interface IProjectPageFields {
 
   /** Default Header Background Color */
   defaultHeaderBackgroundColor?: string | undefined
+
+  /** Theme Properties */
+  themeProperties?: Record<string, any> | undefined
 
   /** Featured Description */
   featuredDescription?: string | undefined
@@ -4611,6 +4709,8 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 export type CONTENT_TYPE =
   | 'accordionSlice'
   | 'alertBanner'
+  | 'anchorPage'
+  | 'anchorPageList'
   | 'appUri'
   | 'article'
   | 'articleCategory'
