@@ -83,6 +83,10 @@ export const routesTemplate = {
     is: '/handbaekur/[slug]/breytingasaga',
     en: '/en/manuals/[slug]/changelog',
   },
+  manualchapteritem: {
+    is: '/handbaekur/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+    en: '/en/manuals/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+  },
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
