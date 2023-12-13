@@ -5,6 +5,7 @@ import { renderers, withUpstreamDependencies } from '../upstream-dependencies'
 import { hacks } from './hacks'
 import { getLocalrunValueFile } from '../value-files-generators/local-setup'
 import { generateOutput } from '../processing/rendering-pipeline'
+import { logger } from '../../common'
 
 export async function localrun(
   envConfig: EnvironmentConfig,
@@ -13,7 +14,7 @@ export async function localrun(
   services: ServiceBuilder<any>[],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  console.log('localrun', { services, options })
+  logger.info('localrun', { services, options })
   const fullSetOfServices = await withUpstreamDependencies(
     envConfig,
     habitat,

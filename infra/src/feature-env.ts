@@ -19,6 +19,7 @@ import {
   renderHelmValueFileContent,
 } from './dsl/exports/helm'
 import { ServiceBuilder } from './dsl/dsl'
+import { logger } from './common'
 
 type ChartName = 'islandis' | 'identity-server'
 
@@ -53,13 +54,13 @@ const writeToOutput = async (data: string, output?: string) => {
       const s3 = new AWS.S3(config)
       try {
         await s3.putObject(objectParams).promise()
-        console.log(`Successfully uploaded data to ${output}`)
+        logger.info(`Successfully uploaded data to ${output}`)
       } catch (err) {
-        console.log('Error', err)
+        logger.info('Error', err)
       }
     }
   } else {
-    console.log(data)
+    logger.info(data)
   }
 }
 

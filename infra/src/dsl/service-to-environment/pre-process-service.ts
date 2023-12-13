@@ -20,6 +20,7 @@ import {
 import { EnvironmentConfig } from '../types/charts'
 import { FeatureNames } from '../features'
 import { ContainerSecrets, SerializeErrors } from '../types/output-types'
+import { logger } from '../../common'
 
 export const prepareServiceForEnv = (
   service: ServiceDefinition,
@@ -30,7 +31,7 @@ export const prepareServiceForEnv = (
       serviceDef: ServiceDefinitionForEnv
     }
   | SerializeErrors => {
-  console.log('prepareServiceForEnv', { serviceName: service.name })
+  logger.info('prepareServiceForEnv', { serviceName: service.name })
   let allErrors: string[] = []
   const checkCollisions = (
     target: { [name: string]: any },

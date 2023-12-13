@@ -2,6 +2,7 @@ import { Envs } from '../environments'
 import { Charts } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
 import { getSsmParams } from '../dsl/adapters/get-ssm-params'
+import { logger } from '../common'
 
 const EXCLUDED_ENVIRONMENT_NAMES = [
   'DB_PASSWORD',
@@ -16,11 +17,11 @@ const OVERRIDE_ENVIRONMENT_NAMES: Record<string, string> = {
 export const renderSecretsCommand = async (service: string) => {
   renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
-      console.error(
+      logger.error(
         'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
       )
     } else {
-      console.error(error)
+      logger.error(error)
     }
     process.exit(1)
   })
@@ -66,6 +67,6 @@ export const renderSecrets = async (service: string) => {
     const escapedValue = values[ssmName]
       .replace(/\s+/g, ' ')
       .replace(/'/g, "'\\''")
-    console.log(`export ${envName}='${escapedValue}'`)
+    logger.info(`export ${envName}='${escapedValue}'`)
   })
 }

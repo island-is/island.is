@@ -8,13 +8,14 @@ import {
 import { ReferenceResolver, EnvironmentConfig } from '../types/charts'
 import { prepareServiceForEnv } from '../service-to-environment/pre-process-service'
 import { ServiceBuilder } from '../dsl'
+import { logger } from '../../common'
 
 export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
   services: ServiceBuilder<any>[] | ServiceBuilder<any>
   env: EnvironmentConfig
   outputFormat: OutputFormat<T>
 }) {
-  console.log('prepareServicesForEnv', {
+  logger.info('prepareServicesForEnv', {
     numberOfServices: Array.isArray(options.services)
       ? options.services.length
       : 1,
@@ -51,7 +52,7 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
 }) => {
-  console.log('generateOutput', {
+  logger.info('generateOutput', {
     numberOfServices: Array.isArray(options.services)
       ? options.services.length
       : 1,
@@ -67,7 +68,7 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
     outputFormat: outputFormat,
   })
 
-  console.log('Serializing services', {
+  logger.info('Serializing services', {
     numberOfServices: preparedServices.length,
     env: env,
   })

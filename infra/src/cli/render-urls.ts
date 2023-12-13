@@ -8,6 +8,7 @@ import {
   Deployments,
 } from '../uber-charts/all-charts'
 import { renderHelmServices } from '../dsl/exports/helm'
+import { logger } from '../common'
 
 const renderUrlsForService = ({ ingress = {} }: HelmService) => {
   const urls: string[] = []
@@ -44,7 +45,7 @@ const renderUrlsForChart = async (
 }
 
 export const renderUrls = async (environment: OpsEnv) => {
-  console.log(
+  logger.info(
     await ChartNames.reduce(async (acc, chartName) => {
       return {
         ...(await acc),

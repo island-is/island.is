@@ -1,4 +1,5 @@
 import { SSM } from '@aws-sdk/client-ssm'
+import { logger } from '../../common'
 
 const API_INITIALIZATION_OPTIONS = {
   region: 'eu-west-1',
@@ -8,7 +9,7 @@ const client = new SSM(API_INITIALIZATION_OPTIONS)
 export async function getSsmParams(
   ssmNames: string[],
 ): Promise<{ [name: string]: string }> {
-  console.log('getSsmParams', { numSsmNames: ssmNames.length })
+  logger.debug('getSsmParams', { numSsmNames: ssmNames.length })
   const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
     const ch = Math.floor(i / 10)
     all[ch] = ([] as string[]).concat(all[ch] || [], one)

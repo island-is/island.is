@@ -20,6 +20,7 @@ import {
 import { getSsmParams } from '../adapters/get-ssm-params'
 import { getPostgresExtensions } from './map-to-helm-values'
 import { getScaledValue } from '../utils/scale-value'
+import { logger } from '../../common'
 
 /**
  * Transforms our definition of a service to a definition for a local running serivce
@@ -33,7 +34,7 @@ const serializeService = async (
   withSecrets: boolean,
   env1: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
-  console.log('Serializing service', {
+  logger.info('Serializing service', {
     service: service.name,
     env: env1,
   })

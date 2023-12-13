@@ -2,12 +2,13 @@ import { Envs } from '../environments'
 import { Charts, Deployments } from '../uber-charts/all-charts'
 import { Localhost } from '../dsl/localhost-runtime'
 import { localrun } from '../dsl/exports/localrun'
+import { logger } from '../common'
 
 export async function renderLocalServices(
   services: string[],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  console.log('renderLocalServices', { services, options })
+  logger.info('renderLocalServices', { services, options })
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
@@ -28,16 +29,16 @@ export async function runLocalServices(
   dependencies: string[] = [],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
-  console.log('runLocalServices', { services, dependencies })
+  logger.info('runLocalServices', { services, dependencies })
   const renderedLocalServices = await renderLocalServices(services, {
     dryRun: options.dryRun,
   })
   for (const service of Object.keys(renderedLocalServices.services)) {
     if (dependencies.length > 0 && !dependencies.includes(service)) {
-      console.log(`Skipping ${service} as it is not specified as a dependency`)
+      logger.info(`Skipping ${service} as it is not specified as a dependency`)
       continue
     }
-    console.log(`Running ${service} in the background`)
+    logger.info(`Running ${service} in the background`)
   }
   return
 }

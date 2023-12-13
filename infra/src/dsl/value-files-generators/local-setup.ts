@@ -9,6 +9,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { globSync } from 'glob'
 import { join } from 'path'
 import { rootDir } from '../consts'
+import { logger } from '../../common'
 
 const mapServiceToNXname = async (serviceName: string) => {
   const projectRootPath = join(__dirname, '..', '..', '..', '..')
@@ -59,9 +60,9 @@ export const getLocalrunValueFile = async (
   services: Services<LocalrunService>,
   options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<LocalrunValueFile> => {
-  console.log('getLocalrunValueFile', { runtime, services })
+  logger.info('getLocalrunValueFile', { runtime, services })
 
-  console.log('Process services', { services })
+  logger.info('Process services', { services })
   const dockerComposeServices = await Object.entries(services).reduce(
     async (acc, [name, service]) => {
       const portConfig = runtime.ports[name]
@@ -95,13 +96,13 @@ export const getLocalrunValueFile = async (
     ),
   )
 
-  console.log('Dump all env values to files', {
+  logger.info('Dump all env values to files', {
     dockerComposeServices,
   })
   await Promise.all(
     Object.entries(dockerComposeServices).map(async ([name, svc]) => {
       const serviceNXName = await mapServiceToNXname(name)
-      console.log(`Writing env to file for ${name}`, { name, serviceNXName })
+      logger.info(`Writing env to file for ${name}`, { name, serviceNXName })
       if (options.dryRun) return
       await writeFile(
         join(rootDir, `.env.${serviceNXName}`),
@@ -166,7 +167,7 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
-  console.log('Writing default mountebank config to file', {
+  logger.info('Writing default mountebank config to file', {
     defaultMountebankConfig,
     mocksConfigs,
   })
@@ -195,7 +196,7 @@ export const getLocalrunValueFile = async (
     mocksObj.command,
   ]
   const mocksStr = mocks.join(' ')
-  console.log(`Docker command for mocks:`, { mocks })
+  logger.info(`Docker command for mocks:`, { mocks })
 
   return {
     services: Object.entries(dockerComposeServices).reduce(

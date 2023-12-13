@@ -10,6 +10,7 @@ import {
   OpsEnvNames,
 } from './uber-charts/all-charts'
 import { renderHelmServices } from './dsl/exports/helm'
+import { logger } from './common'
 
 const { hideBin } = require('yargs/helpers')
 
@@ -61,7 +62,7 @@ yargs(hideBin(process.argv))
       const secrets = services.flatMap((s) => {
         return Object.values(s.secrets)
       })
-      console.log([...new Set(secrets)].join('\n'))
+      logger.info([...new Set(secrets)].join('\n'))
     },
   )
   .command(
@@ -76,7 +77,7 @@ yargs(hideBin(process.argv))
 
       const { Parameter } = await ssm.getParameter(parameterInput).promise()
       if (Parameter) {
-        return console.log(Parameter.Value)
+        return logger.info(Parameter.Value)
       }
     },
   )
@@ -92,7 +93,7 @@ yargs(hideBin(process.argv))
           Type: 'SecureString',
         })
         .promise()
-      console.log('Done!')
+      logger.info('Done!')
     },
   )
 
@@ -109,7 +110,7 @@ yargs(hideBin(process.argv))
         })
         .promise()
       if (Parameters && Parameters.length > 0) {
-        console.log(
+        logger.info(
           `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
         )
         await Promise.all(
