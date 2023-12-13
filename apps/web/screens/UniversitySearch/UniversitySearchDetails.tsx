@@ -217,7 +217,7 @@ const UniversityDetails: Screen<UniversityDetailsProps> = ({
     >
       <Stack space={3}>
         <Hidden above="sm">
-          <LinkV2 href="/haskolanam" skipTab>
+          <LinkV2 href={linkResolver('universitysearch').href} skipTab>
             <Button
               preTextIcon="arrowBack"
               preTextIconType="filled"

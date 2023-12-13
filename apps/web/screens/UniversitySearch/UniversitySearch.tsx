@@ -82,11 +82,6 @@ interface FilterProps {
   universityId: Array<string>
   durationInYears: Array<string>
   startingSemesterSeason: Array<string>
-  // applications: Array<string>
-  // fieldOfStudy: Array<string>
-  // location: Array<string>
-  // tuition: Array<string>
-  // tags: Array<string>
 }
 
 const initialFilters: FilterProps = {
@@ -95,11 +90,6 @@ const initialFilters: FilterProps = {
   durationInYears: [],
   universityId: [],
   startingSemesterSeason: [],
-  // applications: [],
-  // fieldOfStudy: [],
-  // location: [],
-  // tuition: [],
-  // tags: [],
 }
 
 const stripHtml = (html: string) => {
