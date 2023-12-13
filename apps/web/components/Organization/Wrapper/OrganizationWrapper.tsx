@@ -775,6 +775,8 @@ export const OrganizationWrapper: React.FC<
 
   const SidebarContainer = stickySidebar ? Sticky : Box
 
+  const sidebarCards = organizationPage.sidebarCards ?? []
+
   return (
     <>
       <HeadWithSocialSharing
@@ -967,10 +969,11 @@ export const OrganizationWrapper: React.FC<
           <Box className="rs_read" paddingTop={fullWidthContent ? 0 : 4}>
             {mainContent ?? children}
           </Box>
-          {isMobile && (
+
+          {isMobile && sidebarCards.length > 0 && (
             <Box marginY={4}>
               <Stack space={3}>
-                {(organizationPage.sidebarCards ?? []).map((card) => {
+                {sidebarCards.map((card) => {
                   if (card.__typename === 'SidebarCard') {
                     return (
                       <ProfileCard
