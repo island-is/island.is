@@ -16,11 +16,7 @@ import { VehicleGrant } from './models'
 export class MainResolver {
   constructor(private readonly energyFundsService: EnergyFundsService) {}
 
-  @Scopes(
-    ApiScope.internal,
-    ApiScope.internalProcuring,
-    ApiScope.samgongustofaVehicles,
-  )
+  @Scopes(ApiScope.energyFunds)
   @Query(() => VehicleGrant, {
     name: 'energyFundVehicleGrant',
     nullable: true,

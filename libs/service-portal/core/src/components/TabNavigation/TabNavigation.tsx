@@ -77,7 +77,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
           />
         </Box>
       )}
-      {activeItem && activeItemChildren?.length ? (
+      {activeItem && activeItemChildren && activeItemChildren?.length > 1 ? (
         <Box
           display="flex"
           flexDirection="row"
