@@ -7,6 +7,7 @@ export async function renderLocalServices(
   services: string[],
   options: { dryRun?: boolean } = { dryRun: false },
 ) {
+  console.log('renderLocalServices', { services, options })
   const chartName = 'islandis'
   const env = 'dev'
   const envConfig = Envs[Deployments[chartName][env]]
@@ -18,6 +19,7 @@ export async function renderLocalServices(
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
+    options,
   )
 }
 

@@ -33,6 +33,10 @@ const serializeService = async (
   withSecrets: boolean,
   env1: EnvironmentConfig,
 ): Promise<SerializeSuccess<LocalrunService> | SerializeErrors> => {
+  console.log('Serializing service', {
+    service: service.name,
+    env: env1,
+  })
   const { addToErrors, mergeObjects, getErrors } = checksAndValidations(
     service.name,
   )

@@ -30,13 +30,20 @@ class UpstreamDependencyTracer implements ReferenceResolver {
 export const renderers = {
   helm: HelmOutput,
   localrun: LocalrunOutput({ secrets: SecretOptions.withSecrets }),
+  localrunDry: LocalrunOutput({ secrets: SecretOptions.withoutSecrets }),
 }
 
 const findUpstreamDependencies = (
   runtime: UpstreamDependencyTracer,
   svc: ServiceBuilder<any> | string,
   level: number = 0,
+  options: { dryRun?: boolean } = { dryRun: false },
 ): string[] => {
+  if (typeof level !== 'number') {
+    options = level
+    level = 0
+  }
+  console.log('findUpstreamDependencies', { svc, level, options })
   if (level > MAX_LEVEL_DEPENDENCIES)
     throw new Error(
       `Too deep level of dependencies - ${MAX_LEVEL_DEPENDENCIES}. Some kind of circular dependency or you fellas have gone off the deep end ;)`,
@@ -45,6 +52,7 @@ const findUpstreamDependencies = (
     runtime.deps[typeof svc === 'string' ? svc : svc.serviceDef.name] ??
       new Set<string>(),
   )
+  console.log('Recursively finding upstream dependencies', { upstreams })
   return upstreams
     .map((dependency) =>
       findUpstreamDependencies(runtime, dependency, level + 1),
@@ -58,26 +66,34 @@ export const withUpstreamDependencies = async <T extends ServiceOutputType>(
   habitat: ServiceBuilder<any>[],
   services: ServiceBuilder<any>[],
   serializer: OutputFormat<T>,
+  options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<ServiceBuilder<any>[]> => {
+  console.log('withUpstreamDependencies', { services, options })
   const dependencyTracer = new UpstreamDependencyTracer()
   const localHabitat = cloneDeep(habitat)
+
+  console.log(`Generating output for ${localHabitat.length} services`)
   await generateOutput({
     runtime: dependencyTracer,
     services: localHabitat,
     outputFormat: serializer,
     env: env,
   }) // doing this so we find out the dependencies
+
+  console.log('Finding downstream dependencies')
   const downstreamServices = services
-    .map((s) => findUpstreamDependencies(dependencyTracer, s))
+    .map((s) => findUpstreamDependencies(dependencyTracer, s, options))
     .flatMap((x) => x)
 
+  console.log('Doing some hacks')
   const hacks = services
     .map((s) => s.serviceDef.name)
     .concat(downstreamServices)
     .includes('application-system-api')
-    ? findUpstreamDependencies(dependencyTracer, 'api').concat(['api'])
+    ? findUpstreamDependencies(dependencyTracer, 'api', options).concat(['api'])
     : []
 
+  console.log('Rebuilding the output')
   return services
     .concat(
       downstreamServices

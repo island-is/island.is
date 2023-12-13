@@ -14,6 +14,12 @@ export function prepareServicesForEnv<T extends ServiceOutputType>(options: {
   env: EnvironmentConfig
   outputFormat: OutputFormat<T>
 }) {
+  console.log('prepareServicesForEnv', {
+    numberOfServices: Array.isArray(options.services)
+      ? options.services.length
+      : 1,
+    env: options.env,
+  })
   const servicesToProcess = Array.isArray(options.services)
     ? options.services
     : [options.services]
@@ -45,6 +51,12 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
   outputFormat: OutputFormat<T>
   env: EnvironmentConfig
 }) => {
+  console.log('generateOutput', {
+    numberOfServices: Array.isArray(options.services)
+      ? options.services.length
+      : 1,
+    env: options.env,
+  })
   const runtime = options.runtime
   const services = options.services
   const outputFormat = options.outputFormat
@@ -55,6 +67,10 @@ export const generateOutput = async <T extends ServiceOutputType>(options: {
     outputFormat: outputFormat,
   })
 
+  console.log('Serializing services', {
+    numberOfServices: preparedServices.length,
+    env: env,
+  })
   return preparedServices.reduce(async (acc, s) => {
     const accVal = await acc
     const values = await outputFormat.serializeService(

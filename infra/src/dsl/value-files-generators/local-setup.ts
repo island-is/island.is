@@ -47,7 +47,8 @@ const mapServiceToNXname = async (serviceName: string) => {
  * and a `services` object. It returns a promise that resolves to a `LocalrunValueFile` object.
  *
  * The function processes the `services` and `runtime` objects to create configurations for Docker
- * and mock services. These configurations are then written to specific files in the root directory.
+ * and mock services. These configurations are then written to specific files in the root directory,
+ * of the form `.env.${service-name}`.
  *
  * @param {Localhost} runtime - The runtime object.
  * @param {Services<LocalrunService>} services - The services object.
@@ -57,6 +58,9 @@ export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
 ): Promise<LocalrunValueFile> => {
+  console.log('getLocalrunValueFile', { runtime, services })
+
+  console.log('Process services', { services })
   const dockerComposeServices = await Object.entries(services).reduce(
     async (acc, [name, service]) => {
       const portConfig = runtime.ports[name]
@@ -90,10 +94,13 @@ export const getLocalrunValueFile = async (
     ),
   )
 
-  // dump all env values to files
+  console.log('Dump all env values to files', {
+    dockerComposeServices,
+  })
   await Promise.all(
     Object.entries(dockerComposeServices).map(async ([name, svc]) => {
       const serviceNXName = await mapServiceToNXname(name)
+      console.log(`Write env file for ${name}`, { name, serviceNXName })
       await writeFile(
         join(rootDir, `.env.${serviceNXName}`),
         Object.entries(svc.env)
@@ -157,6 +164,10 @@ export const getLocalrunValueFile = async (
     { ports: [] as number[], configs: [] as any[] },
   )
   const defaultMountebankConfig = 'mountebank-imposter-config.json'
+  console.log('Writing default mountebank config to file', {
+    defaultMountebankConfig,
+    mocksConfigs,
+  })
   await writeFile(
     defaultMountebankConfig,
     JSON.stringify({ imposters: mocksConfigs.configs }),

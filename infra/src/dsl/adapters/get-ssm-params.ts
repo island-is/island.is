@@ -5,9 +5,10 @@ const API_INITIALIZATION_OPTIONS = {
   maxAttempts: 10,
 }
 const client = new SSM(API_INITIALIZATION_OPTIONS)
-export const getSsmParams = async (
+export async function getSsmParams(
   ssmNames: string[],
-): Promise<{ [name: string]: string }> => {
+): Promise<{ [name: string]: string }> {
+  console.log('getSsmParams', { numSsmNames: ssmNames.length })
   const chunks = ssmNames.reduce((all: string[][], one: string, i: number) => {
     const ch = Math.floor(i / 10)
     all[ch] = ([] as string[]).concat(all[ch] || [], one)
