@@ -1,5 +1,6 @@
 import {
   DataValue,
+  RadioValue,
   ReviewGroup,
   formatBankInfo,
 } from '@island.is/application/ui-components'
@@ -9,6 +10,8 @@ import { additionalSupportForTheElderyFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../lib/additionalSupportForTheElderlyUtils'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
+import { YES } from '@island.is/application/types'
+import { getTaxLevelOption } from './utils'
 
 export const Payment = ({
   application,
@@ -23,6 +26,9 @@ export const Payment = ({
     bankName,
     bankAddress,
     currency,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
   } = getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
@@ -103,8 +109,43 @@ export const Payment = ({
               />
             </GridColumn>
           </GridRow>
-        </>
-      )}
+         </>  
+      )}  
+
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '5/12']}
+          paddingBottom={3}
+        >
+          <RadioValue
+            label={formatMessage(
+              additionalSupportForTheElderyFormMessage.review.personalAllowance,
+            )}
+            value={personalAllowance}
+          />
+        </GridColumn>
+
+        {personalAllowance === YES && (
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '5/12']}
+            paddingBottom={3}
+          >
+            <DataValue
+              label={formatMessage(additionalSupportForTheElderyFormMessage.review.ratio)}
+              value={`${personalAllowanceUsage}%`}
+            />
+          </GridColumn>
+        )}
+      </GridRow>
+      
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+          <DataValue
+            label={formatMessage(additionalSupportForTheElderyFormMessage.review.taxLevel)}
+            value={formatMessage(getTaxLevelOption(taxLevel))}
+          />
+        </GridColumn>
+      </GridRow>
     </ReviewGroup>
   )
 }

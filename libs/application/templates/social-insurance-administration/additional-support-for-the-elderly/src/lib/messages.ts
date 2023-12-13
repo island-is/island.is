@@ -226,6 +226,48 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       defaultMessage: 'Veldu mynt',
       description: 'Select currency',
     },
+    personalAllowance: {
+      id: 'asfte.application:payment.personal.allowance',
+      defaultMessage: 'Vilt þú nýta persónuafsláttinn þinn?',
+      description: 'Do you want to use your personal allowance?',
+    },
+    personalAllowancePercentage: {
+      id: 'asfte.application:payment.personal.allowance.percentage',
+      defaultMessage: 'Skráðu tölu á bilinu 1-100',
+      description: 'Enter a number between 1-100',
+    },
+    alertSpouseAllowance: {
+      id: 'asfte.application:payment.alert.spouse.allowance',
+      defaultMessage:
+        'Ef þú vilt nýta persónuafslátt maka þíns þá verður makinn þinn að fara inná mínar síður hjá Tryggingastofnun og veita leyfi.',
+      description: 'If you wish to use your spouse\'s personal discount, your spouse must log into My Pages at the Social Insurance Administration and grant their permission.',
+    },
+    taxLevel: {
+      id: 'asfte.application:payment.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
+    },
+    taxIncomeLevel: {
+      id: 'asfte.application:payment.tax.first.level',
+      defaultMessage:
+        'Ég vil að staðgreiðslan sé reiknuð út frá tekjuáætlun minni',
+      description:
+        'I want the withholding tax to be calculated based on my income estimate',
+    },
+    taxFirstLevel: {
+      id: 'asfte.application:payment.tax.second.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      description:
+        'I want tax level 1 to be taken into account in the withholding calculations (31.45% of income: 0 - 409,986 ISK)',
+    },
+    taxSecondLevel: {
+      id: 'asfte.application:payment.tax.third.level',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      description:
+        'I want tax level 2 to be taken into account in the withholding calculations (37.95% of income: ISK 409,986 - ISK 1,151,012)',
+    },
   }),
 
   confirm: defineMessages({
@@ -402,6 +444,24 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
         'Hjá Tryggingastofnun verður farið yfir umsóknina. Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. Þegar öll nauðsynleg gögn hafa borist er afstaða tekin til félagslegs viðbótarstuðnings við aldraða.',
       description:
         'The application will be reviewed at the Insurance Agency. If needed, additional information/data is requested. Once all the necessary data have been received, a position is taken on the retirement pension.',
+    },
+  }),
+
+  review: defineMessages({
+    personalAllowance: {
+      id: 'asfte.application:conformation.personal.allowance',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'Personal allowance',
+    },
+    ratio: {
+      id: 'asfte.application:conformation.ratio',
+      defaultMessage: 'Hlutall',
+      description: 'Ratio',
+    },
+    taxLevel: {
+      id: 'asfte.application:conformation.tax.level',
+      defaultMessage: 'Skattþrep',
+      description: 'Tax level',
     },
   }),
 

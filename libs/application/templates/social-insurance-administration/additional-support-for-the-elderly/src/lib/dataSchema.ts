@@ -5,6 +5,8 @@ import addMonths from 'date-fns/addMonths'
 import subMonths from 'date-fns/subMonths'
 import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/constants'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/socialInsuranceAdministrationUtils'
+import { TaxLevelOptions } from './constants'
+import { NO, YES } from '@island.is/application/types'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -41,6 +43,13 @@ export const dataSchema = z.object({
     currency: z.string(),
     iban: z.string(),
     swift: z.string(),
+    personalAllowance: z.enum([YES, NO]),
+    personalAllowanceUsage: z.string().optional(),
+    taxLevel: z.enum([
+      TaxLevelOptions.INCOME,
+      TaxLevelOptions.FIRST_LEVEL,
+      TaxLevelOptions.SECOND_LEVEL,
+    ]),
   })
   .partial()
   .refine(

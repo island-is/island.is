@@ -4,6 +4,12 @@ import { MessageDescriptor } from 'react-intl'
 export const YES = 'yes'
 export const NO = 'no'
 
+export enum TaxLevelOptions {
+  INCOME = '2',
+  FIRST_LEVEL = '1',
+  SECOND_LEVEL = '3',
+}
+
 export const MONTHS = [
   {
     value: 'January',
