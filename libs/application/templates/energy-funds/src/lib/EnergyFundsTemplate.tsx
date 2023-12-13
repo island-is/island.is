@@ -48,7 +48,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.samgongustofaVehicles],
+  requiredScopes: [ApiScope.energyFunds],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
