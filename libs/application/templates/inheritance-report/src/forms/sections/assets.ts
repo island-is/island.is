@@ -274,7 +274,6 @@ export const assets = buildSection({
                   {
                     title: m.bankAccount.defaultMessage,
                     id: 'accountNumber',
-                    format: '#### - ## - ######',
                   },
                   {
                     title: m.bankAccountBalance.defaultMessage,
