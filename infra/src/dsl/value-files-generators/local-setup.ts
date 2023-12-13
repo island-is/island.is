@@ -57,6 +57,7 @@ const mapServiceToNXname = async (serviceName: string) => {
 export const getLocalrunValueFile = async (
   runtime: Localhost,
   services: Services<LocalrunService>,
+  options: { dryRun?: boolean } = { dryRun: false },
 ): Promise<LocalrunValueFile> => {
   console.log('getLocalrunValueFile', { runtime, services })
 
@@ -100,7 +101,8 @@ export const getLocalrunValueFile = async (
   await Promise.all(
     Object.entries(dockerComposeServices).map(async ([name, svc]) => {
       const serviceNXName = await mapServiceToNXname(name)
-      console.log(`Write env file for ${name}`, { name, serviceNXName })
+      console.log(`Writing env to file for ${name}`, { name, serviceNXName })
+      if (options.dryRun) return
       await writeFile(
         join(rootDir, `.env.${serviceNXName}`),
         Object.entries(svc.env)
@@ -168,11 +170,12 @@ export const getLocalrunValueFile = async (
     defaultMountebankConfig,
     mocksConfigs,
   })
-  await writeFile(
-    defaultMountebankConfig,
-    JSON.stringify({ imposters: mocksConfigs.configs }),
-    { encoding: 'utf-8' },
-  )
+  if (!options.dryRun)
+    await writeFile(
+      defaultMountebankConfig,
+      JSON.stringify({ imposters: mocksConfigs.configs }),
+      { encoding: 'utf-8' },
+    )
 
   const mocksObj = {
     containerer: 'docker',
