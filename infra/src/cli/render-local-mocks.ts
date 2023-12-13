@@ -75,14 +75,16 @@ export async function runLocalServices(
       dryRun ? 'false' : 'true',
       ...(service.commands ?? []),
     ].join(' && ')
-    const command = [builtCommand, neverFail ? 'true' : 'false'].join(' || ')
+    const noFailCommand = [builtCommand, neverFail ? 'true' : 'false'].join(
+      ' || ',
+    )
     logger.warn(`Running ${name} in the background`)
     logger.info('Running in the background', {
       service: name,
-      command,
+      command: noFailCommand,
       builtCommand,
     })
-    const proc = exec(command, (err, stdout, stderr) => {
+    const proc = exec(noFailCommand, (err, stdout, stderr) => {
       if (err) {
         logger.error(`Error running ${name}`, { err })
       }
